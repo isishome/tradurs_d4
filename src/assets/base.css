@@ -1,0 +1,83 @@
+@font-face {
+  font-family: 'Kodia';
+  src: url('@/assets/fonts/kodia.woff2') format('woff2'),
+    url('@/assets/fonts/kodia.woff') format('woff');
+}
+
+body.body--light {
+  background-color: var(--q-light-page);
+  color: var(--q-dark-page);
+}
+
+body.body--dark {
+  background-color: var(--q-dark-page);
+  color: var(--q-light-page);
+}
+
+.q-dark {
+  color: var(--q-light-page);
+}
+
+.kodia {
+  font-family: 'Kodia';
+}
+
+.invert,
+.body--dark .icon,
+.body--dark .q-select__dropdown-icon img,
+.body--light .q-notifications .q-icon {
+  filter: invert(100%) !important;
+}
+
+.q-focus-helper {
+  opacity: .05 !important;
+}
+
+.no-hover .q-focus-helper {
+  display: none;
+}
+
+.q-checkbox__inner:before {
+  display: none;
+}
+
+.body--light .q-drawer {
+  background-color: var(--q-light-page);
+}
+
+@media (min-width:1024px) {
+  .q-drawer {
+    position: fixed !important;
+  }
+
+  .body--dark .q-drawer {
+    background-color: var(--q-dark-page);
+  }
+}
+
+@media (min-width:1440px) {
+  .q-drawer {
+    width: calc((100vw - 840px) / 2) !important;
+  }
+
+  .q-page-container {
+    padding-left: calc((100vw - 840px) / 2) !important;
+  }
+}
+
+.desktop .q-dialog__backdrop {
+  background: rgba(0, 0, 0, .8);
+  transition: none;
+}
+
+.q-separator--dark {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.q-field__control:before {
+  background-color: white;
+}
+
+.q-field--dark .q-field__control:before {
+  background-color: black;
+}
