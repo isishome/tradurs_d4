@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { routes } from './routes.js'
-import { useAccountStore } from '@/stores/account.js'
+import { routes } from './routes'
+import { useAccountStore } from '@/stores/account'
 
 // Init Router
 export const router = createRouter({
@@ -18,7 +18,7 @@ router.beforeEach(async (to) => {
   const accountStore = useAccountStore()
   await accountStore.checkSign()
   if (accountStore.signed) {
-    if (to.matched.some(m => ['Sign', 'Forgot', 'Join'].includes(m.name)))
+    if (to.matched.some(m => ['Sign', 'Forgot', 'Join'].includes(m.name as string)))
       return { name: 'Main' }
   }
   else {

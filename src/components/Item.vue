@@ -1,8 +1,9 @@
-<script setup>
+<script setup lang="ts">
 import { reactive, ref, computed, useSlots } from 'vue'
 import { useQuasar } from 'quasar'
-import { useItemStore } from '@/stores/item.js'
-import { checkName } from '@/common'
+import type { Quality, RuneType, ItemType } from '@/stores/item'
+import { useItemStore } from '@/stores/item'
+import { checkName, parse } from '@/common'
 import attack from '@/assets/types/attack.svg'
 import defense from '@/assets/types/defense.svg'
 import regular from '@/assets/attribute_types/regular.svg'
@@ -22,7 +23,6 @@ const props = defineProps({
     default: false
   }
 })
-
 const emit = defineEmits(['update', 'apply'])
 
 // common variable
@@ -31,43 +31,41 @@ const slots = useSlots()
 const store = useItemStore()
 
 // loading variable
-const loadingBase = computed(() => store.base.loading)
-const loadingAffixes = computed(() => store.affixes.loading)
-const loadingProperties = computed(() => store.properties.loading)
-const globalLoading = computed(() => props.loading || loadingBase.value || loadingProperties.value || loadingAffixes.value)
+const loadingBase = computed<boolean>(() => store.base.loading)
+const loadingAffixes = computed<boolean>(() => store.affixes.loading)
+const loadingProperties = computed<boolean>(() => store.properties.loading)
+const globalLoading = computed<boolean>(() => props.loading || loadingBase.value || loadingProperties.value || loadingAffixes.value)
 
 // variable
-const _name = ref(props.data.name)
-const quality = computed(() => store.quality)
-const _quality = ref(props.data.quality || 'regular')
-const types = computed(() => store.types)
-const _type = ref(props.data.item_type || 'weapons')
-const runeTypes = computed(() => store.runeTypes)
+const _name = ref<string>(props.data.name)
+const quality = computed<Array<Quality>>(() => store.quality)
+const _quality = ref<string>(props.data.quality || 'regular')
+const types = computed<Array<ItemType>>(() => store.types)
+const _type = ref<string>(props.data.itemType || 'weapons')
+const runeTypes = computed<Array<RuneType>>(() => store.runeTypes)
 const runes = store.filterRunes
-const _rune = ref(props.data.rune_id || 'amn')
+const _rune = ref<string>(props.data.runeId || 'amn')
 const findRune = store.findRune
-const hasProperties = computed(() => types.value.find(t => t.value === props.data.item_type) ? types.value.find(t => t.value === props.data.item_type).has_properties : 0)
-const hasAffixes = computed(() => types.value.find(t => t.value === props.data.item_type) ? types.value.find(t => t.value === props.data.item_type).has_affixes : 0)
-const classes = store.filterClasses
-const _class = ref(props.data.equipment_class || 'axes')
 const findType = store.findType
-const typeInfo = ref(findType(props.data.item_type) && findType(props.data.item_type).attribute ? findType(props.data.item_type).attribute.split(/\{x\}/g).flatMap((s, i) => [{ type: 'text', value: s }, { type: 'variable', value: props.data.item_type_values[i] || 0 }]).slice(0, -1) : [])
+const classes = store.filterClasses
+const _class = ref<string>(props.data.equipmentClass || 'axes')
+const typeInfo = ref(parse(findType(props.data.itemType)?.attribute, props.data.itemTypeValues))
 const _price = reactive({
   currency: props.data.price && props.data.price.currency ? props.data.price.currency : 'amn',
   quantity: props.data.price && props.data.price.quantity ? props.data.price.quantity : 1
 })
 
-const updateType = (val) => {
-  typeInfo.value = findType(val) && findType(val).attribute ? findType(val).attribute.split(/\{x\}/g).flatMap((s, i) => [{ type: 'text', value: s }, { type: 'variable', value: 0 }]).slice(0, -1) : []
-  _class.value = classes(val)[0]
+const updateType = (val: string): void => {
+  typeInfo.value = parse(findType(val)?.attribute)
+  _class.value = classes(val).length > 0 ? classes(val)[0].value : 'axes'
   update()
 }
 
-const update = () => {
-  emit('update', { name: _name, values: typeInfo.value.filter(i => i.type === 'variable').map(i => parseInt(i.value)), quality: _quality.value, type: _type.value, rune: _rune.value, eClass: _class.value, price: _price })
+const update = (): void => {
+  emit('update', { name: _name, values: typeInfo.value?.filter(i => i.type === 'variable').map(i => parseInt(i.value.toString())), quality: _quality.value, type: _type.value, rune: _rune.value, eClass: _class.value, price: _price })
 }
 
-const apply = () => {
+const apply = (): void => {
   emit('apply')
 }
 </script>
@@ -92,11 +90,11 @@ const apply = () => {
                     :options="types" @update:model-value="updateType" />
                 </div>
                 <div class="col">
-                  <q-select v-show="classes(data.item_type).length > 0" v-model="_class" outlined dense no-error-icon
+                  <q-select v-show="classes(data.itemType).length > 0" v-model="_class" outlined dense no-error-icon
                     hide-bottom-space emit-value map-options transition-show="none" transition-hide="none"
-                    label="장비 클래스" :dropdown-icon="`img:${dropdown}`" :options="classes(data.item_type)"
+                    label="장비 클래스" :dropdown-icon="`img:${dropdown}`" :options="classes(data.itemType)"
                     @update:model-value="update" />
-                  <q-select v-show="data.item_type === 'rune'" v-model="_rune" outlined dense no-error-icon
+                  <q-select v-show="data.itemType === 'rune'" v-model="_rune" outlined dense no-error-icon
                     hide-bottom-space emit-value map-options transition-show="none" transition-hide="none" label="룬 선택"
                     :options="runes()" :dropdown-icon="`img:${dropdown}`" @update:model-value="update">
                     <template #option="scope">
@@ -118,12 +116,12 @@ const apply = () => {
         <q-separator class="q-mx-xs" />
       </template>
       <q-card-section v-if="editable" class="row items-center">
-        <div v-show="data.item_type === 'rune'" class="row items-center q-gutter-x-sm">
-          <div class="kodia name">{{(runes().find(r => r.value === data.rune_id) ||
+        <div v-show="data.itemType === 'rune'" class="row items-center q-gutter-x-sm">
+          <div class="kodia name">{{(runes().find(r => r.value === data.runeId) ||
           {}).label}}</div>
-          <div>{{ (runeTypes.find(rt => rt.value === (findRune(props.data.rune_id) || {}).type) || {}).label }}</div>
+          <div>{{ (runeTypes.find(rt => rt.value === (findRune(props.data.runeId) || {}).type) || {}).label }}</div>
         </div>
-        <q-input v-show="data.item_type !== 'rune'" dense no-error-icon hide-bottom-space autofocus v-model="_name"
+        <q-input v-show="data.itemType !== 'rune'" dense no-error-icon hide-bottom-space autofocus v-model="_name"
           outlined class="col-12" label="아이템 명" @update:model-value="update" :rules="[val => checkName(val) || '']" />
       </q-card-section>
       <q-card-section v-else>
@@ -131,14 +129,14 @@ const apply = () => {
           <div class="row no-wrap justify-between items-center full-height">
             <q-skeleton v-show="globalLoading" width="50%" :height="$q.platform.is.mobile ? '16px' : '20px'" />
             <div v-show="!globalLoading">
-              <div v-show="data.item_type === 'rune'" class="row items-center q-gutter-x-sm">
-                <div class="kodia name">{{(runes().find(r => r.value === data.rune_id) ||
+              <div v-show="data.itemType === 'rune'" class="row items-center q-gutter-x-sm">
+                <div class="kodia name">{{(runes().find(r => r.value === data.runeId) ||
                 {}).label}}</div>
-                <div>{{ (runeTypes.find(rt => rt.value === (findRune(props.data.rune_id) || {}).type) || {}).label }}
+                <div>{{ (runeTypes.find(rt => rt.value === (findRune(props.data.runeId) || {}).type) || {}).label }}
                 </div>
               </div>
-              <div v-show="data.item_type !== 'rune'">
-                <div v-show="!editable && data.item_type !== 'rune'" class="kodia name ellipsis-2-lines">
+              <div v-show="data.itemType !== 'rune'">
+                <div v-show="!editable && data.itemType !== 'rune'" class="kodia name ellipsis-2-lines">
                   {{ data.name }}
                 </div>
               </div>
@@ -172,8 +170,8 @@ const apply = () => {
           </div>
         </div>
       </q-card-section>
-      <q-separator v-show="data.item_type === 'rune'" class="q-mx-xs" />
-      <q-card-section v-show="data.item_type === 'rune'" class="col">
+      <q-separator v-show="data.itemType === 'rune'" class="q-mx-xs" />
+      <q-card-section v-show="data.itemType === 'rune'" class="col">
         <q-item v-show="globalLoading" style="min-height:10px;padding:3px">
           <q-item-section side class="q-pr-sm">
             <q-skeleton type="circle" width="10px" height="10px" />
@@ -186,12 +184,13 @@ const apply = () => {
         </q-item>
         <div v-show="!globalLoading" class="row no-wrap items-baseline q-gutter-x-xs">
           <q-icon class="icon rotate-45" size="13px" :name="`img:${regular}`" />
-          <div>{{ (runes().find(r => r.value === data.rune_id) || {}).attribute }}
+          <div>{{ (runes().find(r => r.value === data.runeId) || {}).attribute }}
           </div>
         </div>
       </q-card-section>
-      <q-separator v-show="findType(data.item_type).attribute || hasProperties" class="q-mx-xs" />
-      <q-card-section v-if="findType(data.item_type).attribute">
+      <q-separator v-show="findType(data.itemType)?.attribute || findType(data.itemType)?.has_properties"
+        class="q-mx-xs" />
+      <q-card-section v-if="findType(data.itemType)?.attribute">
         <q-item v-show="globalLoading" style="min-height:10px;padding:3px">
           <q-item-section side class="q-pr-sm">
             <q-skeleton type="circle" width="10px" height="10px" />
@@ -203,32 +202,32 @@ const apply = () => {
           </q-item-section>
         </q-item>
         <div v-show="!globalLoading" class="row no-wrap items-center q-gutter-x-xs">
-          <q-icon class="icon" size="18px" :name="`img:${data.item_type === 'armor' ? defense : attack}`" />
+          <q-icon class="icon" size="18px" :name="`img:${data.itemType === 'armor' ? defense : attack}`" />
           <div v-if="editable" class="row items-center q-gutter-x-xs">
             <template v-for="(comp, k) in typeInfo" :key="k">
               <template v-if="comp.type === 'text'">
-                <div class="q-ml-xs" v-for="(word, i) in comp.value.split(/\s+/g).filter(w => w !== '')" :key="i">
+                <div class="q-ml-xs"
+                  v-for="(word, i) in comp.value.toString().split(/\s+/g).filter((w: string) => w !== '')" :key="i">
                   {{ word }}</div>
               </template>
               <div v-else-if="!editable && comp.type === 'variable'">{{ comp.value }}</div>
               <q-input v-else class="var" input-class="text-center text-caption no-padding" dense hide-bottom-space
                 hide-hint no-error-icon outlined v-model="comp.value" type="tel" maxlength="4" mask="####"
                 debounce="500" :rules="[val => Number.isInteger(parseInt(val)) && parseInt(val) !== 0 || '']"
-                @update:model-value="update" @focus="evt => evt.target.select()" />
+                @update:model-value="update" @focus="evt => (evt.target as HTMLInputElement).select()" />
             </template>
           </div>
           <div v-else class="row items-center q-gutter-x-xs">
-            <template
-              v-for="word in store.findType(props.data.item_type).attribute.split(/\{x\}/g).flatMap((s, i) => [s, props.data.item_type_values[i]]).slice(0, -1)">
-              {{ word }}
+            <template v-for="comp in parse(findType(data.itemType)?.attribute, data.itemTypeValues)">
+              {{ comp.value }}
             </template>
           </div>
         </div>
       </q-card-section>
-      <q-card-section v-if="slots['add-property'] && editable && hasProperties">
+      <q-card-section v-if="slots['add-property'] && editable && findType(data.itemType)?.has_properties">
         <slot name="add-property"></slot>
       </q-card-section>
-      <q-card-section v-show="hasProperties" :class="editable ? 'scroll col' : ''">
+      <q-card-section v-show="findType(data.itemType)?.has_properties" :class="editable ? 'scroll col' : ''">
         <q-item v-show="globalLoading" v-for="c in 2" :key="c" style="min-height:10px;padding:3px">
           <q-item-section side class="q-pr-sm">
             <q-skeleton type="circle" width="10px" height="10px" />
@@ -244,11 +243,12 @@ const apply = () => {
           </slot>
         </div>
       </q-card-section>
-      <q-separator v-show="findType(data.item_type).attribute || hasAffixes" class="q-mx-xs" />
-      <q-card-section v-if="slots['add-affix'] && editable && hasAffixes">
+      <q-separator v-show="findType(data.itemType)?.attribute || findType(data.itemType)?.has_affixes"
+        class="q-mx-xs" />
+      <q-card-section v-if="slots['add-affix'] && editable && findType(data.itemType)?.has_affixes">
         <slot name="add-affix"></slot>
       </q-card-section>
-      <q-card-section v-show="hasAffixes" :class="editable ? 'scroll col' : ''">
+      <q-card-section v-show="findType(data.itemType)?.has_affixes" :class="editable ? 'scroll col' : ''">
         <q-item v-show="loading" v-for="c in 3" :key="c" style="min-height:10px;padding:3px">
           <q-item-section side class="q-pr-sm">
             <q-skeleton type="circle" width="10px" height="10px" />
@@ -290,7 +290,7 @@ const apply = () => {
             <q-input style="max-width:50px" input-class="text-center" dense hide-bottom-space hide-hint no-error-icon
               outlined v-model="_price.quantity" type="tel" maxlength="3" mask="###" debounce="500"
               :rules="[val => Number.isInteger(parseInt(val)) && parseInt(val) !== 0 || '']"
-              @update:model-value="update" @focus="evt => evt.target.select()" />
+              @update:model-value="update" @focus="evt => (evt.target as HTMLInputElement).select()" />
             <q-btn size="sm" unelevated flat dense round :disable="parseInt(_price.quantity) > 998" @click="
             _price.quantity++; update()">
               <img class="icon" width="17" src="@/assets/icons/add.svg" />

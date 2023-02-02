@@ -1,33 +1,34 @@
-<script setup>
+<script setup lang="ts">
 import { inject, ref, computed, watch, onMounted, onUnmounted, nextTick, defineAsyncComponent } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useQuasar, uid } from 'quasar'
+import { useQuasar, uid, Screen } from 'quasar'
 import { useAccountStore } from '@/stores/account'
+import type { AxiosInstance } from 'axios'
 
 const Filter = defineAsyncComponent(() => import('@/components/Filter.vue'))
 
-const prod = import.meta.env.PROD
-const tradurs = import.meta.env.VITE_APP_TRADURS_ORIGIN || `${document.location.protocol}//${document.location.hostname}:6081`
+const prod: boolean = import.meta.env.PROD
+const tradurs: string = import.meta.env.VITE_APP_TRADURS_ORIGIN || `${document.location.protocol}//${document.location.hostname}:6081`
 
-const axios = inject('axios')
+const axios = inject('axios') as AxiosInstance
 const route = useRoute()
 const router = useRouter()
 const $q = useQuasar()
 const accountStore = useAccountStore()
 
-const leftDrawerOpen = ref(false)
-const signed = computed(() => accountStore.signed)
-const screen = computed(() => $q.screen)
-const offsetTop = ref(0)
-const asideHeight = computed(() => `calc(100vh - ${screen.value.gt.sm ? offsetTop.value : 0}px)`)
-const asideTop = computed(() => `${offsetTop.value + 10}px`)
+const leftDrawerOpen = ref<boolean>(false)
+const signed = computed<boolean>(() => accountStore.signed)
+const screen = computed<Screen>(() => $q.screen)
+const offsetTop = ref<number>(0)
+const asideHeight = computed<string>(() => `calc(100vh - ${screen.value.gt.sm ? offsetTop.value : 0}px)`)
+const asideTop = computed<string>(() => `${offsetTop.value + 10}px`)
 
 const thumbStyle = {
   right: '4px',
   borderRadius: '5px',
   backgroundColor: '#cccccc',
   width: '5px',
-  opacity: 0.75
+  opacity: '0.75'
 }
 
 const barStyle = {
@@ -35,14 +36,14 @@ const barStyle = {
   borderRadius: '9px',
   backgroundColor: '#dddddd',
   width: '9px',
-  opacity: 0.2
+  opacity: '0.2'
 }
 
-const myTweak = (offset) => {
+const myTweak = (offset: number): void => {
   offsetTop.value = offset || 0
 }
 
-const sign = () => {
+const sign = (): void => {
   if (!signed.value) {
     document.location.href = `${tradurs}/sign?redirect=${encodeURIComponent(document.location.href)}`
     return
@@ -51,7 +52,7 @@ const sign = () => {
   axios.get('/account/signOut')
     .then(() => {
       accountStore.signed = false
-      router.go()
+      router.go(0)
     })
     .catch(() => {
     })
@@ -70,8 +71,10 @@ watch(() => route.name, (val, old) => {
     reload()
 })
 
+
+
 const onWindowLoad = () => {
-  if (prod.value) {
+  if (prod) {
     const adsbygoogle = window.adsbygoogle || []
     adsbygoogle.push({})
     adsbygoogle.push({})

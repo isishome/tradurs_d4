@@ -3,7 +3,7 @@ import { instance } from '@/axios'
 
 export const useAccountStore = defineStore('account', {
   state: () => ({
-    signed: null
+    signed: false as boolean
   }),
   actions: {
     async checkSign() {

@@ -1,8 +1,8 @@
-<script setup>
+<script setup lang="ts">
 import { defineAsyncComponent, ref, computed } from 'vue'
-import { useQuasar, uid } from 'quasar'
-import { useItemStore } from '@/stores/item.js'
-
+import { useQuasar } from 'quasar'
+import { useItemStore } from '@/stores/item'
+import { Item } from '@/types/item'
 import PhraseGen from 'korean-random-words'
 
 // define async component
@@ -18,23 +18,25 @@ const phraseGen = new PhraseGen({
 })
 
 // variable
-const items = ref(Array.from({ length: 3 }, (_, i) => ({ item_type: 'weapons', item_type_values: [0], properties: [], affixes: [], price: {}, loading: true })))
+const items = ref<Array<Item>>(Array.from({ length: 3 }, () => {
+  const item = new Item()
+  item.loading = true
+  return item
+}))
 const quality = computed(() => store.quality)
 const types = computed(() => store.types)
 const classes = computed(() => store.classes)
 const runes = computed(() => store.runes)
 
 // set item
-const setItem = (item, newItem) => {
-  if (!item || !newItem)
-    return
-
+const setItem = (item: Item, newItem: Item): void => {
+  item.itemId = newItem.itemId
   item.name = newItem.name
   item.quality = newItem.quality
-  item.item_type = newItem.item_type
-  item.item_type_values = newItem.item_type_values
-  item.equipment_class = newItem.equipment_class
-  item.rune_id = newItem.rune_id
+  item.itemType = newItem.itemType
+  item.itemTypeValues = newItem.itemTypeValues
+  item.equipmentClass = newItem.equipmentClass
+  item.runeId = newItem.runeId
   item.properties.splice(0, item.properties.length)
   item.properties.push(...newItem.properties.filter(p => p.action !== 8))
   item.affixes.splice(0, item.affixes.length)
@@ -45,38 +47,41 @@ const setItem = (item, newItem) => {
 }
 
 // update item
-const updateItem = (item) => {
-  const findItem = items.value.find(i => i.item_id === item.item_id)
-  setItem(findItem, item)
+const updateItem = (item: Item): void => {
+  const findItem = items.value.find(i => i.itemId === item.itemId)
+
+  if (findItem)
+    setItem(findItem, item)
 }
 
 // temp generate items
-const gen = () => {
-  const genItems = Array.from({ length: 100 }, (_, i) => ({
-    item_id: i + 1,
-    name: phraseGen.generatePhrase(),
-    quality: quality.value.map(q => q.value)[Math.floor(Math.random() * quality.value.length)],
-    item_type: types.value.map(t => t.value)[Math.floor(Math.random() * types.value.length)],
-    item_type_values: [100],
-    equipment_class: classes.value.map(c => c.value)[Math.floor(Math.random() * classes.value.length)],
-    rune_id: runes.value.map(r => r.value)[Math.floor(Math.random() * runes.value.length)],
-    properties: Array.from({ length: Math.floor(Math.random() * 2 + 1) }, () => ({
-      value_id: uid(),
-      property_id: Math.floor(Math.random() * 200 + 1),
-      property_values: [Math.floor(Math.random() * 999), Math.floor(Math.random() * 999), Math.floor(Math.random() * 999)]
-    })),
-    affixes: Array.from({ length: Math.floor(Math.random() * 6 + 1) }, () => ({
-      value_id: uid(),
-      affix_id: Math.floor(Math.random() * 200 + 1),
-      affix_values: [Math.floor(Math.random() * 999), Math.floor(Math.random() * 999), Math.floor(Math.random() * 999)]
-    })),
-    price: {
+const gen = (): void => {
+  const genItems = Array.from({ length: 100 }, (_, i) => {
+    const item = new Item()
+    item.itemId = Math.floor(Math.random() * 1000000)
+    item.name = phraseGen.generatePhrase()
+    item.quality = quality.value.map(q => q.value)[Math.floor(Math.random() * quality.value.length)]
+    item.itemType = types.value.map(t => t.value)[Math.floor(Math.random() * types.value.length)]
+    item.itemTypeValues = [100]
+    item.equipmentClass = classes.value.map(c => c.value)[Math.floor(Math.random() * classes.value.length)]
+    item.runeId = runes.value.map(r => r.value)[Math.floor(Math.random() * runes.value.length)]
+    item.properties = Array.from({ length: Math.floor(Math.random() * 2 + 1) }, () => ({
+      valueId: Math.floor(Math.random() * 1000000),
+      propertyId: Math.floor(Math.random() * 200 + 1),
+      propertyValues: [Math.floor(Math.random() * 999), Math.floor(Math.random() * 999), Math.floor(Math.random() * 999)]
+    }))
+    item.affixes = Array.from({ length: Math.floor(Math.random() * 6 + 1) }, () => ({
+      valueId: Math.floor(Math.random() * 1000000),
+      affixId: Math.floor(Math.random() * 200 + 1),
+      affixValues: [Math.floor(Math.random() * 999), Math.floor(Math.random() * 999), Math.floor(Math.random() * 999)]
+    }))
+    item.price = {
       currency: runes.value.map(r => r.value)[Math.floor(Math.random() * runes.value.length)],
       quantity: Math.floor(Math.random() * 1 + 1)
-    },
-    editable: false
-  }))
-
+    }
+    item.loading = false
+    return item
+  })
   // add adsense
   // let i = 1
   // while (items.value[i * 10]) {
@@ -103,7 +108,7 @@ store.getBase().then(() => {
   store.getProperties()
   setTimeout(() => {
     gen()
-  }, 5000)
+  }, 500)
 })
 
 $q.dark.set(true)

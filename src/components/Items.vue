@@ -1,8 +1,10 @@
-<script setup>
+<script setup lang="ts">
 import { defineAsyncComponent, ref, computed, reactive } from 'vue'
-import { useQuasar, uid } from 'quasar'
-import { useItemStore } from '@/stores/item.js'
+import { useQuasar, QInput } from 'quasar'
+import type { AttributeType } from '@/stores/item'
+import { useItemStore } from '@/stores/item'
 import { checkAttribute } from '@/common'
+import { Item, Advertise } from '@/types/item'
 import dropdown from '@/assets/icons/dropdown.svg'
 
 const props = defineProps({
@@ -19,10 +21,11 @@ const props = defineProps({
     default: '180'
   }
 })
+
 const emit = defineEmits(['update-item'])
 
 // define async component
-const Item = defineAsyncComponent(() => import('@/components/Item.vue'))
+const ItemComp = defineAsyncComponent(() => import('@/components/Item.vue'))
 const Affix = defineAsyncComponent(() => import('@/components/Affix.vue'))
 const Property = defineAsyncComponent(() => import('@/components/Property.vue'))
 
@@ -31,71 +34,86 @@ const $q = useQuasar()
 const store = useItemStore()
 
 // common variable
-const requestAffixes = computed(() => store.affixes.request)
-const requestProperties = computed(() => store.properties.request)
+const requestAffixes = computed<number>(() => store.affixes.request)
+const requestProperties = computed<number>(() => store.properties.request)
 
 // about editable item
-const activated = reactive({
+interface Activated {
+  show: boolean,
+  editable: boolean
+}
+
+const activated = reactive<Activated>({
   show: false,
   editable: false
 })
-const activatedItem = ref(null)
-const activate = (item) => {
+const activatedItem = ref<Item>(new Item())
+const activate = (item: Item): void => {
   activatedItem.value = JSON.parse(JSON.stringify(item))
   activated.editable = true
   activated.show = true
 }
 
-const hide = () => {
-  activatedItem.value = null
+const hide = (): void => {
+  activatedItem.value = new Item()
   activated.editable = false
 }
 
-const updateItem = ({ name, values, quality, type, rune, eClass, price }) => {
+const updateItem = ({ name, values, quality, type, rune, eClass, price }): void => {
   activatedItem.value.name = name
-  activatedItem.value.item_type_values = values
+  activatedItem.value.itemTypeValues = values
   activatedItem.value.quality = quality
-  activatedItem.value.rune_id = rune
-  activatedItem.value.equipment_class = eClass
+  activatedItem.value.runeId = rune
+  activatedItem.value.equipmentClass = eClass
   activatedItem.value.price.currency = price.currency
   activatedItem.value.price.quantity = price.quantity
 
-  if (activatedItem.value.item_type !== type) {
-    activatedItem.value.item_type = type
+  if (activatedItem.value.itemType !== type) {
+    activatedItem.value.itemType = type
     activatedItem.value.properties.splice(0, activatedItem.value.properties.length)
     activatedItem.value.affixes.splice(0, activatedItem.value.affixes.length)
-    activatedItem.value.rune_id = null
-    activatedItem.value.equipment_class = null
+    activatedItem.value.runeId = ''
+    activatedItem.value.equipmentClass = ''
     activatedItem.value.price.currency = 'amn'
     activatedItem.value.price.quantity = 1
   }
 }
 
-const apply = () => {
+const apply = (): void => {
   emit('update-item', activatedItem.value)
   activated.show = false
 }
 
 // about add
-const refAttribute = ref(null)
-const add = reactive({
-  show: false,
-  category: null,
+interface Add {
+  show: boolean,
+  category: string | null,
+  types: Array<AttributeType>,
+  type: string,
+  attribute: string,
+  error: boolean,
+  errorMessage: string
+}
+
+const refAttribute = ref<typeof QInput>()
+const add = reactive<Add>({
+  show: false as boolean,
+  category: null as string | null,
   types: store.attributeTypes,
   type: 'regular',
-  attribute: null,
+  attribute: '',
   error: false,
   errorMessage: ''
 })
-const hideAdd = () => {
+const hideAdd = (): void => {
   add.category = null
   add.type = 'regular'
-  add.attribute = null
+  add.attribute = ''
   add.error = false
   add.errorMessage = ''
 }
 
-const applyAdd = () => {
+const applyAdd = (): void => {
   let errorMessage = ''
   if (!add.attribute || add.attribute === '')
     errorMessage = '내용을 입력해 주세요'
@@ -107,11 +125,12 @@ const applyAdd = () => {
   if (errorMessage !== '') {
     add.error = true
     add.errorMessage = errorMessage
-    refAttribute.value.focus()
+    refAttribute.value?.focus()
     return
   }
 
-  const attribute_id = uid()
+  const uuid: number = Math.floor(Math.random() * 1000000)
+  const attribute_id: number = Math.floor(Math.random() * 1000000)
   store.addAttribute(add.category, {
     value: attribute_id,
     label: add.attribute,
@@ -119,45 +138,45 @@ const applyAdd = () => {
   })
 
   if (add.category === 'properties')
-    activatedItem.value.properties.push({ value_id: uid(), property_id: attribute_id, property_values: [], action: 2 })
+    activatedItem.value.properties.push({ valueId: uuid, propertyId: attribute_id, propertyValues: [], action: 2 })
   else if (add.category === 'affixes')
-    activatedItem.value.affixes.push({ value_id: uid(), affix_id: attribute_id, affix_values: [], action: 2 })
+    activatedItem.value.affixes.push({ valueId: uuid, affixId: attribute_id, affixValues: [], action: 2 })
 
   add.show = false
 }
 
 // about property
-const propertyId = ref(null)
+const propertyId = ref<number | null>(null)
 const propertyOptions = store.filterProperties
-const propertyNeedle = ref(null)
+const propertyNeedle = ref<string | null>(null)
 
-const filterProperties = (val) => {
+const filterProperties = (val: string): void => {
   propertyNeedle.value = val.toLowerCase()
 }
 
-const selectedProperty = (val) => {
+const selectedProperty = (val: number): void => {
   if (val) {
-    activatedItem.value.properties.push({ value_id: uid(), property_id: val, property_values: [], action: 2 })
+    activatedItem.value.properties.push({ propertyId: val, propertyValues: [], action: 2 })
     propertyId.value = null
     propertyNeedle.value = null
   }
 }
 
-const createProperty = () => {
+const createProperty = (): void => {
   add.category = 'properties'
   add.show = true
 }
 
-const updateProperty = ({ valueId, propertyValues }) => {
-  const findProperty = activatedItem.value.properties.find(p => p.value_id === valueId)
+const updateProperty = ({ valueId, propertyValues }): void => {
+  const findProperty = activatedItem.value.properties.find(p => p.valueId === valueId)
   if (findProperty) {
     findProperty.action = findProperty.action !== 2 ? 4 : 2
-    findProperty.property_values = propertyValues
+    findProperty.propertyValues = propertyValues
   }
 }
 
-const removeProperty = ({ valueId }) => {
-  const findProperty = activatedItem.value.properties.find(p => p.value_id === valueId)
+const removeProperty = ({ valueId }): void => {
+  const findProperty = activatedItem.value.properties.find(p => p.valueId === valueId)
   if (findProperty) {
     findProperty.disable = findProperty.action !== 8
     findProperty.restore = findProperty.action !== 8 ? findProperty.action : undefined
@@ -166,35 +185,35 @@ const removeProperty = ({ valueId }) => {
 }
 
 // about affix
-const affixId = ref(null)
+const affixId = ref<number | null>(null)
 const affixOptions = store.filterAffixes
-const affixNeedle = ref(null)
+const affixNeedle = ref<string | null>(null)
 
-const filterAffixes = (val) => {
+const filterAffixes = (val: string): void => {
   affixNeedle.value = val.toLowerCase()
 }
 
-const selectedAffix = (val) => {
-  activatedItem.value.affixes.push({ value_id: uid(), affix_id: val, affix_values: [], action: 2 })
+const selectedAffix = (val: number): void => {
+  activatedItem.value.affixes.push({ affixId: val, affixValues: [], action: 2 })
   affixId.value = null
   affixNeedle.value = null
 }
 
-const createAffix = () => {
+const createAffix = (): void => {
   add.category = 'affixes'
   add.show = true
 }
 
-const updateAffix = ({ valueId, affixValues }) => {
-  const findAffix = activatedItem.value.affixes.find(a => a.value_id === valueId)
+const updateAffix = ({ valueId, affixValues }): void => {
+  const findAffix = activatedItem.value.affixes.find(a => a.valueId === valueId)
   if (findAffix) {
     findAffix.action = findAffix.action !== 2 ? 4 : 2
-    findAffix.affix_values = affixValues
+    findAffix.affixValues = affixValues
   }
 }
 
-const removeAffix = ({ valueId }) => {
-  const findAffix = activatedItem.value.affixes.find(a => a.value_id === valueId)
+const removeAffix = ({ valueId }): void => {
+  const findAffix = activatedItem.value.affixes.find(a => a.valueId === valueId)
   if (findAffix) {
     findAffix.disable = findAffix.action !== 8
     findAffix.restore = findAffix.action !== 8 ? findAffix.action : undefined
@@ -203,43 +222,42 @@ const removeAffix = ({ valueId }) => {
 }
 
 // Execute function if an item is visible
-const visible = (isVisible, item) => {
+const visible = (isVisible: boolean, item: Item): void => {
 }
 </script>
 
 <template>
   <div class="col-12" :style="`max-width:${width}px`">
     <div class="column" :class="$q.platform.is.mobile ? 'q-gutter-y-xl' : 'q-gutter-y-xxl'">
-      <q-intersection class="item"
-        :style="item.expanded ? 'height: 100%' : `height: ${height - ($q.platform.is.mobile ? 50 : 0)}px`"
-        v-for="(item, i) in items" :key="item.item_id" transition="jump-up"
-        @visibility="isVisible => visible(isVisible, item)" once>
-        <div v-if="item.ad" class="bg-grey" style="width:100%;height:500px"></div>
-        <Item v-else :data="item" :loading="item.loading">
+      <q-intersection v-for="(item, i) in (items as Array<Item | Advertise>)" :key="`item$_{i}`" class="item"
+        :style="item.expanded ? 'height: 100%' : `height: ${height as number - ($q.platform.is.mobile ? 50 : 0)}px`"
+        transition="jump-up" @visibility="isVisible => visible(isVisible, item)" once>
+        <div v-if="(item instanceof Advertise)" class="bg-grey" style="width:100%;height:500px"></div>
+        <ItemComp v-else :data="item" :loading="item.loading">
           <template #top-right>
             <q-btn unelevated dense round padding="0" @click.stop="activate(item)">
               <img class="icon" width="24" src="@/assets/icons/edit.svg" />
             </q-btn>
           </template>
           <template v-if="requestProperties > 0" #properties>
-            <Property v-for="property in item.properties" :key="property.id" :data="property" />
+            <Property v-for="(property, i) in item.properties" :key="`property_${i}`" :data="property" />
           </template>
           <template v-if="requestAffixes > 0" #affixes>
-            <Affix v-for="affix in item.affixes" :key="affix.id" :data="affix" />
+            <Affix v-for="affix in item.affixes" :key="affix.valueId || `create_${Math.floor(Math.random() * 1000000)}`"
+              :data="affix" />
           </template>
           <template #more="{ loading }">
-
             <q-btn v-if="!item.expanded" flat :disable="loading" text-color="black" class="more" padding="20px"
               @click="item.expanded = true">
               <img class="icon" width="16" height="16" src="@/assets/icons/more.svg" />
             </q-btn>
           </template>
-        </Item>
+        </ItemComp>
       </q-intersection>
     </div>
     <q-dialog v-model="activated.show" @hide="hide" :maximized="$q.platform.is.mobile" transition-show="none"
       transition-hide="none">
-      <Item :data="activatedItem" :editable="activated.editable" @update="updateItem" @apply="apply">
+      <ItemComp :data="activatedItem" :editable="activated.editable" @update="updateItem" @apply="apply">
         <template #add-property>
           <div class="row no-wrap items-center q-gutter-x-sm">
             <q-select v-model="propertyId" outlined dense no-error-icon use-input hide-bottom-space hide-selected
@@ -260,7 +278,8 @@ const visible = (isVisible, item) => {
           </div>
         </template>
         <template #properties>
-          <Property v-for="property in activatedItem.properties" :key="property.id" :data="property"
+          <Property v-for="property in activatedItem.properties"
+            :key="property.valueId || `create_${Math.floor(Math.random() * 1000000)}`" :data="property"
             :editable="activated.editable" @update="updateProperty" @remove="removeProperty" />
         </template>
         <template #add-affix>
@@ -283,14 +302,15 @@ const visible = (isVisible, item) => {
           </div>
         </template>
         <template #affixes>
-          <Affix v-for="affix in activatedItem.affixes" :key="affix.id" :data="affix" :editable="activated.editable"
-            @update="updateAffix" @remove="removeAffix" />
+          <Affix v-for="affix in activatedItem.affixes"
+            :key="affix.valueId || `create_${Math.floor(Math.random() * 1000000)}`" :data="affix"
+            :editable="activated.editable" @update="updateAffix" @remove="removeAffix" />
         </template>
         <template #actions>
           <q-btn dense unelevated outline color="grey-8" label="취소" @click="activated.show = false" />
           <q-btn dense unelevated color="primary" label="적용" type="submit" />
         </template>
-      </Item>
+      </ItemComp>
     </q-dialog>
     <q-dialog v-model="add.show" @hide="hideAdd" :maximized="$q.platform.is.mobile" transition-show="none"
       transition-hide="none">

@@ -1,11 +1,10 @@
-<script setup>
+<script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { useQuasar } from 'quasar'
+import type { Property } from '@/stores/item'
 import { useItemStore } from '@/stores/item'
-import regular from '@/assets/attribute_types/regular.svg'
-import legendary from '@/assets/attribute_types/legendary.svg'
-import unique from '@/assets/attribute_types/unique.svg'
-import socket from '@/assets/attribute_types/socket.svg'
+import { icons } from '@/common/icons'
+import { parse } from '@/common'
 
 const props = defineProps({
   data: {
@@ -21,37 +20,22 @@ const props = defineProps({
 
 const emit = defineEmits(['update', 'remove'])
 
-const icons = {
-  regular,
-  legendary,
-  unique,
-  socket
-}
 const $q = useQuasar()
 const store = useItemStore()
-const properties = computed(() => store.properties.data)
-const findProperty = properties.value ? properties.value.find(p => p.value === props.data.property_id) : null
-const propertyType = findProperty ? findProperty.type : ''
-const propertyInfo = ref(findProperty ? findProperty.label.split(/\{x\}/g).reduce((acc, e, i) => {
-  if (i === 0)
-    return [{ type: 'text', value: e }]
-  return [...acc, { type: 'variable', value: props.data.property_values[i - 1] || 0 }, { type: 'text', value: e }]
-}, []) : [])
 
-const update = () => {
-  emit('update', { valueId: props.data.value_id, propertyValues: propertyInfo.value.filter(i => i.type === 'variable').map(i => parseInt(i.value)) })
+const properties = computed<Array<Property>>(() => store.properties.data)
+const findProperty = properties.value.find(p => p.value === props.data.propertyId)
+const propertyInfo = ref(parse(findProperty?.label, props.data.propertyValues))
+const update = (): void => {
+  emit('update', { valueId: props.data.valueId, propertyValues: propertyInfo.value.filter(i => i.type === 'variable').map(i => parseInt(i.value.toString())) })
 }
 
 const remove = () => {
-  emit('remove', { valueId: props.data.value_id })
+  emit('remove', { valueId: props.data.valueId })
 }
 
 watch(() => props.data, (val) => {
-  propertyInfo.value = findProperty.label.split(/\{x\}/g).reduce((acc, e, i) => {
-    if (i === 0)
-      return [{ type: 'text', value: e }]
-    return [...acc, { type: 'variable', value: val.property_values[i - 1] || 0 }, { type: 'text', value: e }]
-  }, [])
+  propertyInfo.value = parse(findProperty?.label, props.data.propertyValues)
 })
 </script>
 
@@ -59,13 +43,13 @@ watch(() => props.data, (val) => {
   <div class="row items-center">
     <div class="row no-wrap q-gutter-x-xs" :class="data.disable ? 'disable' : ''">
       <div>
-        <q-icon class="icon" :class="propertyType === 'regular' ? 'rotate-45' : ''" size="13px"
-          :name="`img:${icons[propertyType]}`" />
+        <q-icon class="icon" :class="findProperty?.type === 'regular' ? 'rotate-45' : ''" size="13px"
+          :name="`img:${icons[findProperty?.type || '']}`" />
       </div>
       <div class="row items-center q-gutter-x-xs">
         <template v-for="(comp, k) in propertyInfo" :key="k">
           <template v-if="comp.type === 'text'">
-            <div v-for="(word, i) in comp.value.split(/\s+/g).filter(w => w !== '')" :key="i">{{ word }}
+            <div v-for="(word, i) in (comp.value as string).split(/\s+/g).filter(w => w !== '')" :key="i">{{ word }}
             </div>
           </template>
           <div v-else-if="!editable && comp.type === 'variable'">{{ comp.value }}</div>
@@ -73,7 +57,7 @@ watch(() => props.data, (val) => {
             hide-hint no-error-icon outlined v-model="comp.value" type="tel" maxlength="3" mask="###" debounce="500"
             :disable="data.disable"
             :rules="[val => !data.disable && Number.isInteger(parseInt(val)) && parseInt(val) !== 0 || '']"
-            @update:model-value="update" @focus="evt => evt.target.select()" />
+            @update:model-value="update" @focus="evt => (evt.target as HTMLInputElement).select()" />
         </template>
       </div>
     </div>

@@ -1,11 +1,10 @@
-<script setup>
+<script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { useQuasar } from 'quasar'
+import type { Affix } from '@/stores/item'
 import { useItemStore } from '@/stores/item'
-import regular from '@/assets/attribute_types/regular.svg'
-import legendary from '@/assets/attribute_types/legendary.svg'
-import unique from '@/assets/attribute_types/unique.svg'
-import socket from '@/assets/attribute_types/socket.svg'
+import { icons } from '@/common/icons'
+import { parse } from '@/common'
 
 const props = defineProps({
   data: {
@@ -21,37 +20,24 @@ const props = defineProps({
 
 const emit = defineEmits(['update', 'remove'])
 
-const icons = {
-  regular,
-  legendary,
-  unique,
-  socket
-}
 const $q = useQuasar()
 const store = useItemStore()
-const affixes = computed(() => store.affixes.data)
-const findAffix = affixes.value ? affixes.value.find(a => a.value === props.data.affix_id) : null
-const affixType = findAffix ? findAffix.type : ''
-const affixInfo = ref(findAffix ? findAffix.label.split(/\{x\}/g).reduce((acc, e, i) => {
-  if (i === 0)
-    return [{ type: 'text', value: e }]
-  return [...acc, { type: 'variable', value: props.data.affix_values[i - 1] || 0 }, { type: 'text', value: e }]
-}, []) : [])
 
-const update = () => {
-  emit('update', { valueId: props.data.value_id, affixValues: affixInfo.value.filter(i => i.type === 'variable').map(i => parseInt(i.value)) })
+const affixes = computed<Array<Affix>>(() => store.affixes.data)
+const findAffix = affixes.value.find(a => a.value === props.data.affixId)
+const affixType = findAffix ? findAffix.type : ''
+const affixInfo = ref(parse(findAffix?.label, props.data.affixValues))
+
+const update = (): void => {
+  emit('update', { valueId: props.data.valueId, affixValues: affixInfo.value.filter(i => i.type === 'variable').map(i => parseInt(i.value.toString())) })
 }
 
-const remove = () => {
-  emit('remove', { valueId: props.data.value_id })
+const remove = (): void => {
+  emit('remove', { valueId: props.data.valueId })
 }
 
 watch(() => props.data, (val) => {
-  affixInfo.value = findAffix.label.split(/\{x\}/g).reduce((acc, e, i) => {
-    if (i === 0)
-      return [{ type: 'text', value: e }]
-    return [...acc, { type: 'variable', value: val.affix_values[i - 1] || 0 }, { type: 'text', value: e }]
-  }, [])
+  affixInfo.value = parse(findAffix?.label, val.affixValues)
 })
 </script>
 
@@ -66,7 +52,7 @@ watch(() => props.data, (val) => {
       <div class="row items-center q-gutter-x-xs">
         <template v-for="(comp, k) in affixInfo" :key="k">
           <template v-if="comp.type === 'text'">
-            <div v-for="(word, i) in comp.value.split(/\s+/g).filter(w => w !== '')" :key="i">{{ word }}
+            <div v-for="(word, i) in (comp.value as string).split(/\s+/g).filter(w => w !== '')" :key="i">{{ word }}
             </div>
           </template>
           <div v-else-if="!editable && comp.type === 'variable'">{{ comp.value }}</div>
@@ -74,7 +60,7 @@ watch(() => props.data, (val) => {
             hide-hint no-error-icon outlined v-model="comp.value" type="tel" maxlength="3" mask="###" debounce="500"
             :disable="data.disable"
             :rules="[val => !data.disable && Number.isInteger(parseInt(val)) && parseInt(val) !== 0 || '']"
-            @update:model-value="update" @focus="evt => evt.target.select()" />
+            @update:model-value="update" @focus="evt => (evt.target as HTMLInputElement).select()" />
         </template>
 
       </div>

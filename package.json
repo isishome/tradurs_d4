@@ -1,24 +1,31 @@
 {
-  "name": "tradurs_d4_front",
+  "name": "d4ts",
   "version": "0.0.0",
+  "private": true,
   "scripts": {
     "dev": "vite --host --port 6090",
-    "comp": "vite --host --port 6090",
-    "build": "vite build",
-    "preview": "vite preview"
+    "build": "run-p type-check build-only",
+    "preview": "vite preview",
+    "build-only": "vite build",
+    "type-check": "vue-tsc --noEmit"
   },
   "dependencies": {
-    "@quasar/extras": "^1.15.6",
-    "axios": "^1.1.3",
+    "@quasar/extras": "^1.15.10",
+    "axios": "^1.3.0",
     "korean-random-words": "^1.0.3",
-    "pinia": "^2.0.26",
-    "quasar": "^2.10.2",
-    "vue": "^3.2.41",
+    "pinia": "^2.0.29",
+    "quasar": "^2.11.5",
+    "vue": "^3.2.45",
     "vue-router": "^4.1.6"
   },
   "devDependencies": {
-    "@quasar/vite-plugin": "^1.2.3",
-    "@vitejs/plugin-vue": "^3.1.2",
-    "vite": "^3.1.8"
+    "@quasar/vite-plugin": "^1.3.0",
+    "@types/node": "^18.11.12",
+    "@vitejs/plugin-vue": "^4.0.0",
+    "@vue/tsconfig": "^0.1.3",
+    "npm-run-all": "^4.1.5",
+    "typescript": "~4.7.4",
+    "vite": "^4.0.0",
+    "vue-tsc": "^1.0.12"
   }
 }
