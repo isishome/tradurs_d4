@@ -47,7 +47,7 @@ watch(() => props.data, (val) => {
     <div class="row no-wrap q-gutter-x-xs" :class="data.disable ? 'disable' : ''">
       <div>
         <q-icon class="icon" :class="affixType === 'regular' ? 'rotate-45' : ''" size="13px"
-          :name="`img:${icons[affixType]}`" />
+          :name="`img:${icons[affixType as keyof typeof icons]}`" />
       </div>
       <div class="row items-center q-gutter-x-xs">
         <template v-for="(comp, k) in affixInfo" :key="k">

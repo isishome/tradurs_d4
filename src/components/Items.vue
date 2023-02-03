@@ -4,6 +4,7 @@ import { useQuasar, QInput } from 'quasar'
 import type { AttributeType } from '@/stores/item'
 import { useItemStore } from '@/stores/item'
 import { checkAttribute } from '@/common'
+import type { Price } from '@/types/item'
 import { Item, Advertise } from '@/types/item'
 import dropdown from '@/assets/icons/dropdown.svg'
 
@@ -59,7 +60,17 @@ const hide = (): void => {
   activated.editable = false
 }
 
-const updateItem = ({ name, values, quality, type, rune, eClass, price }): void => {
+interface IItem {
+  name: string,
+  values: Array<number>,
+  quality: string,
+  type: string,
+  rune: string,
+  eClass: string,
+  price: Price
+}
+
+const updateItem = ({ name, values, quality, type, rune, eClass, price }: IItem): void => {
   activatedItem.value.name = name
   activatedItem.value.itemTypeValues = values
   activatedItem.value.quality = quality
@@ -167,7 +178,7 @@ const createProperty = (): void => {
   add.show = true
 }
 
-const updateProperty = ({ valueId, propertyValues }): void => {
+const updateProperty = ({ valueId, propertyValues }: { valueId: number, propertyValues: Array<number> }): void => {
   const findProperty = activatedItem.value.properties.find(p => p.valueId === valueId)
   if (findProperty) {
     findProperty.action = findProperty.action !== 2 ? 4 : 2
@@ -175,7 +186,7 @@ const updateProperty = ({ valueId, propertyValues }): void => {
   }
 }
 
-const removeProperty = ({ valueId }): void => {
+const removeProperty = ({ valueId }: { valueId: number }): void => {
   const findProperty = activatedItem.value.properties.find(p => p.valueId === valueId)
   if (findProperty) {
     findProperty.disable = findProperty.action !== 8
@@ -204,7 +215,7 @@ const createAffix = (): void => {
   add.show = true
 }
 
-const updateAffix = ({ valueId, affixValues }): void => {
+const updateAffix = ({ valueId, affixValues }: { valueId: number, affixValues: Array<number> }): void => {
   const findAffix = activatedItem.value.affixes.find(a => a.valueId === valueId)
   if (findAffix) {
     findAffix.action = findAffix.action !== 2 ? 4 : 2
@@ -212,7 +223,7 @@ const updateAffix = ({ valueId, affixValues }): void => {
   }
 }
 
-const removeAffix = ({ valueId }): void => {
+const removeAffix = ({ valueId }: { valueId: number }): void => {
   const findAffix = activatedItem.value.affixes.find(a => a.valueId === valueId)
   if (findAffix) {
     findAffix.disable = findAffix.action !== 8

@@ -44,7 +44,7 @@ watch(() => props.data, (val) => {
     <div class="row no-wrap q-gutter-x-xs" :class="data.disable ? 'disable' : ''">
       <div>
         <q-icon class="icon" :class="findProperty?.type === 'regular' ? 'rotate-45' : ''" size="13px"
-          :name="`img:${icons[findProperty?.type || '']}`" />
+          :name="`img:${icons[findProperty?.type as keyof typeof icons || 'regular']}`" />
       </div>
       <div class="row items-center q-gutter-x-xs">
         <template v-for="(comp, k) in propertyInfo" :key="k">

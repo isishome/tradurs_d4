@@ -44,14 +44,14 @@ export interface Property {
   value: number,
   type: string,
   label: string,
-  sort: number
+  sort?: number
 }
 
 export interface Affix {
   value: number,
   type: string,
   label: string,
-  sort: number
+  sort?: number
 }
 
 export const useItemStore = defineStore('item', {
@@ -107,14 +107,14 @@ export const useItemStore = defineStore('item', {
     getBase() {
       const self = this
       return new Promise((resolve, reject) => {
-        let error = null
+        let error: unknown = null
         if (self.base.request === 0) {
           self.base.loading = true
           instance.get('/d4/item/base')
             .then((response) => {
               self.quality = response.data.quality
               self.runeTypes = response.data.runeTypes
-              self.runes = response.data.runes.map(r => ({ ...r, img: runeImgs[r.value] }))
+              self.runes = response.data.runes.map((r: Rune) => ({ ...r, img: runeImgs[r.value as keyof typeof runeImgs] }))
               self.types = response.data.types
               self.classes = response.data.classes
               self.attributeTypes = response.data.attributeTypes
@@ -136,7 +136,7 @@ export const useItemStore = defineStore('item', {
           resolve(0)
       })
     },
-    getProperties() {
+    getProperties(): void {
       const self = this
       if (self.properties.request === 0) {
         self.properties.loading = true
@@ -153,10 +153,9 @@ export const useItemStore = defineStore('item', {
           self.properties.request++
           self.properties.loading = false
         }, 200)
-
       }
     },
-    getAffixes() {
+    getAffixes(): void {
       const self = this
       if (self.affixes.request === 0) {
         self.affixes.loading = true
@@ -175,9 +174,10 @@ export const useItemStore = defineStore('item', {
         }, 200)
       }
     },
-    addAttribute(category, property) {
-      if (this[category].data.filter(p => p.value === property.value).length === 0) {
-        this[category].data.push(property)
+    addAttribute(category: string | null, property: Property | Affix): void {
+      const target = category === 'properties' ? this.properties : category === 'affixes' ? this.affixes : undefined
+      if (target?.data.filter(p => p.value === property.value).length === 0) {
+        target?.data.push(property)
       }
     }
   }
