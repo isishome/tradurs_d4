@@ -23,22 +23,6 @@ const offsetTop = ref<number>(0)
 const asideHeight = computed<string>(() => `calc(100vh - ${screen.value.gt.sm ? offsetTop.value : 0}px)`)
 const asideTop = computed<string>(() => `${offsetTop.value + 10}px`)
 
-const thumbStyle = {
-  right: '4px',
-  borderRadius: '5px',
-  backgroundColor: '#cccccc',
-  width: '5px',
-  opacity: '0.75'
-}
-
-const barStyle = {
-  right: '2px',
-  borderRadius: '9px',
-  backgroundColor: '#dddddd',
-  width: '9px',
-  opacity: '0.2'
-}
-
 const myTweak = (offset: number): void => {
   offsetTop.value = offset || 0
 }
@@ -98,20 +82,18 @@ onUnmounted(() => {
 <template>
   <q-layout view="hHh lpR lFf">
     <q-drawer show-if-above v-model="leftDrawerOpen" side="left" :behavior="screen.gt.sm ? 'desktop' : 'mobile'"
-      class="row justify-end" :width="300">
-      <q-scroll-area :dark="$q.dark.isActive" :visible="true" :thumb-style="thumbStyle" :bar-style="barStyle"
-        :style="`width:280px;height:${asideHeight}`">
-        <div class="q-py-lg" :class="screen.gt.md ? 'q-px-lg' : 'q-px-md'">
-          <div v-for="c in 50" :key="c">test</div>
-          <!-- <Filter /> -->
-        </div>
-      </q-scroll-area>
+      class="row justify-end scroll" :width="300">
+      <div class="q-py-lg" :class="screen.gt.md ? 'q-px-lg' : 'q-px-md'">
+        <div v-for="c in 50" :key="c">test</div>
+        <!-- <Filter /> -->
+      </div>
     </q-drawer>
     <q-header class="q-py-sm header row justify-center">
       <q-toolbar class="toolbar">
         <div class="col-3 row items-center">
           <q-btn class="gt-sm no-hover" dense flat padding="0" :ripple="false" :to="{ name: 'Main' }">
-            <!-- <img src="@/assets/logo.webp" height="48" /> -->
+            <img v-show="$q.dark.isActive" src="@/assets/logo.webp" height="48" />
+            <img v-show="!$q.dark.isActive" src="@/assets/logo_light.webp" height="48" />
           </q-btn>
           <q-btn dense flat round class="lt-md" :ripple="false" @click="leftDrawerOpen = !leftDrawerOpen">
             <img src="@/assets/icons/filter.svg" class="icon" width="24" />
@@ -119,7 +101,8 @@ onUnmounted(() => {
         </div>
         <div class="col row justify-center">
           <q-btn class="lt-md no-hover" dense flat padding="0" :ripple="false" :to="{ name: 'Main' }">
-            <!-- <img src="@/assets/logo.webp" width="48" /> -->
+            <img v-show="$q.dark.isActive" src="@/assets/logo.webp" height="48" />
+            <img v-show="!$q.dark.isActive" src="@/assets/logo_light.webp" height="48" />
           </q-btn>
           <q-tabs dense class="gt-sm q-px-md bg-transparent no-hover">
             <q-route-tab :ripple="false" label="일반" exact />
@@ -183,10 +166,6 @@ onUnmounted(() => {
   background-color: var(--q-dark);
   color: var(--q-light);
   box-shadow: inset 0 -1px 0 0 var(--q-dark-border);
-}
-
-.body--light .header:deep(img) {
-  filter: contrast(.5);
 }
 
 .body--light .header {

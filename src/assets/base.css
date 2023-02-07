@@ -8,10 +8,10 @@
   --q-primary: #A59263;
   --q-secondary: #26A69A;
   --q-accent: #9C27B0;
-  --q-light: #FFFFFF;
+  --q-light: #eeeeee;
   /* --q-light: #FDFDFD; */
   /* --q-light-page: #DBDBDB; */
-  --q-light-page: #FBFBFB;
+  --q-light-page: #F4F4F4;
   --q-light-border: #DDDDDD;
   --q-dark: #1a1a1a;
   --q-dark-page: #040404;
@@ -34,6 +34,10 @@
   --q-filter-rare: invert(90%) sepia(51%) saturate(4962%) hue-rotate(358deg) brightness(106%) contrast(54%);
   --q-filter-set: invert(60%) sepia(44%) saturate(4863%) hue-rotate(84deg) brightness(118%) contrast(54%);
   --q-filter-unique: invert(76%) sepia(11%) saturate(1353%) hue-rotate(5deg) brightness(77%) contrast(75%);
+}
+
+body.body--light::before {
+  filter: invert(100%);
 }
 
 body.body--light {
@@ -77,6 +81,23 @@ body.body--dark {
   background-color: var(--q-light-page);
 }
 
+.q-drawer::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-image: url('@/assets/back.webp');
+  background-size: 550px;
+  background-repeat: repeat;
+}
+
+.body--light .q-drawer::before {
+  filter: invert(100%);
+}
+
 @media (min-width:1024px) {
   .q-drawer {
     position: fixed !important;
@@ -112,4 +133,33 @@ body.body--dark {
 
 .q-field--dark .q-field__control:before {
   background-color: black;
+}
+
+.scroll {
+  overflow-y: scroll;
+  min-height: 30px !important;
+}
+
+.scroll::-webkit-scrollbar {
+  width: 4px !important;
+}
+
+.scroll::-webkit-scrollbar-track {
+  box-shadow: none !important;
+  background-color: rgba(255, 255, 255, .1);
+  border-radius: 0 !important;
+}
+
+.scroll::-webkit-scrollbar-thumb {
+  box-shadow: none !important;
+  background: rgba(255, 255, 255, .2);
+  border-radius: 0 !important;
+}
+
+.body--light .scroll::-webkit-scrollbar-track {
+  background-color: rgba(0, 0, 0, .05);
+}
+
+.body--light .scroll::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, .2);
 }

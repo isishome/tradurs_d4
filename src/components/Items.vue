@@ -4,11 +4,11 @@ import { useQuasar, QInput } from 'quasar'
 import type { AttributeType } from '@/stores/item'
 import { useItemStore } from '@/stores/item'
 import { checkAttribute } from '@/common'
-import type { Price } from '@/types/item'
-import { Item, Advertise } from '@/types/item'
+import type { IPrice } from '@/types/item'
+import { Item, Advertise, Price } from '@/types/item'
 import dropdown from '@/assets/icons/dropdown.svg'
 
-const props = defineProps({
+defineProps({
   items: {
     type: Array,
     default: () => []
@@ -19,7 +19,11 @@ const props = defineProps({
   },
   height: {
     type: [String, Number],
-    default: '180'
+    default: '200'
+  },
+  loading: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -39,12 +43,12 @@ const requestAffixes = computed<number>(() => store.affixes.request)
 const requestProperties = computed<number>(() => store.properties.request)
 
 // about editable item
-interface Activated {
+interface Dialog {
   show: boolean,
   editable: boolean
 }
 
-const activated = reactive<Activated>({
+const activated = reactive<Dialog>({
   show: false,
   editable: false
 })
@@ -55,6 +59,19 @@ const activate = (item: Item): void => {
   activated.show = true
 }
 
+const makeOffered = reactive<Dialog>({
+  show: false,
+  editable: false
+})
+const makeOfferPrice = ref<Price>(new Price())
+const makeOffer = (itemId: number): void => {
+  makeOffered.show = true
+}
+const hideMakeOffer = (): void => {
+  makeOfferPrice.value = new Price()
+  makeOffered.editable = false
+}
+
 const hide = (): void => {
   activatedItem.value = new Item()
   activated.editable = false
@@ -63,6 +80,7 @@ const hide = (): void => {
 interface IItem {
   name: string,
   values: Array<number>,
+  quantity: number,
   quality: string,
   type: string,
   rune: string,
@@ -70,23 +88,23 @@ interface IItem {
   price: Price
 }
 
-const updateItem = ({ name, values, quality, type, rune, eClass, price }: IItem): void => {
+const updateItem = ({ name, values, quantity, quality, type, rune, eClass, price }: IItem): void => {
   activatedItem.value.name = name
   activatedItem.value.itemTypeValues = values
+  activatedItem.value.quantity = quantity
   activatedItem.value.quality = quality
   activatedItem.value.runeId = rune
   activatedItem.value.equipmentClass = eClass
   activatedItem.value.price.currency = price.currency
+  activatedItem.value.price.currencyValue = price.currencyValue
   activatedItem.value.price.quantity = price.quantity
 
   if (activatedItem.value.itemType !== type) {
     activatedItem.value.itemType = type
+    activatedItem.value.quantity = 1
     activatedItem.value.properties.splice(0, activatedItem.value.properties.length)
     activatedItem.value.affixes.splice(0, activatedItem.value.affixes.length)
-    activatedItem.value.runeId = ''
     activatedItem.value.equipmentClass = ''
-    activatedItem.value.price.currency = 'amn'
-    activatedItem.value.price.quantity = 1
   }
 }
 
@@ -239,13 +257,16 @@ const visible = (isVisible: boolean, item: Item): void => {
 
 <template>
   <div class="col-12" :style="`max-width:${width}px`">
-    <div class="column" :class="$q.platform.is.mobile ? 'q-gutter-y-xl' : 'q-gutter-y-xxl'">
+    <div :class="$q.platform.is.mobile ? 'q-gutter-y-xl' : 'q-gutter-y-xxl'">
       <q-intersection v-for="(item, i) in (items as Array<Item | Advertise>)" :key="`item$_{i}`" class="item"
         :style="item.expanded ? 'height: 100%' : `height: ${height as number - ($q.platform.is.mobile ? 50 : 0)}px`"
         transition="jump-up" @visibility="isVisible => visible(isVisible, item)" once>
         <div v-if="(item instanceof Advertise)" class="bg-grey" style="width:100%;height:500px"></div>
-        <ItemComp v-else :data="item" :loading="item.loading">
+        <ItemComp v-else :data="item" :loading="loading || item.loading">
           <template #top-right>
+            <q-btn unelevated dense round padding="0" @click.stop="makeOffer(item.itemId as number)">
+              <img class="icon" width="24" src="@/assets/icons/offer.svg" />
+            </q-btn>
             <q-btn unelevated dense round padding="0" @click.stop="activate(item)">
               <img class="icon" width="24" src="@/assets/icons/edit.svg" />
             </q-btn>
@@ -258,9 +279,9 @@ const visible = (isVisible: boolean, item: Item): void => {
               :data="affix" />
           </template>
           <template #more="{ loading }">
-            <q-btn v-if="!item.expanded" flat :disable="loading" text-color="black" class="more" padding="20px"
+            <q-btn v-if="!item.expanded" flat :disable="loading" text-color="black" class="more no-hover" padding="20px"
               @click="item.expanded = true">
-              <img class="icon" width="16" height="16" src="@/assets/icons/more.svg" />
+              <img class="icon" width="24" height="16" src="@/assets/icons/more.svg" />
             </q-btn>
           </template>
         </ItemComp>
@@ -325,7 +346,33 @@ const visible = (isVisible: boolean, item: Item): void => {
     </q-dialog>
     <q-dialog v-model="add.show" @hide="hideAdd" :maximized="$q.platform.is.mobile" transition-show="none"
       transition-hide="none">
-      <q-card class="card-item add-attribute">
+      <q-card class="card-item dialog">
+        <q-form class="inner column full-height" @submit="applyAdd">
+          <q-card-section>
+            <div class="kodia q-py-lg q-pl-sm name">{{ add.category === 'properties' ? '특성 ' : '옵션 ' }} 추가</div>
+          </q-card-section>
+          <q-separator />
+          <q-card-section :class="$q.platform.is.mobile ? 'col' : ''">
+            <div class="column q-gutter-y-sm">
+              <q-option-group v-model="add.type" :options="add.types" color="primary" size="xs" inline />
+              <q-input autofocus ref="refAttribute" v-model="add.attribute"
+                placeholder="엘리트 몬스터 처치 시 6초 동안 이동 속도 {x}% 증가" :error="add.error" :error-message="add.errorMessage"
+                :outlined="!$q.dark.isActive" :standout="$q.dark.isActive" dense no-error-icon hide-hint />
+            </div>
+          </q-card-section>
+          <q-separator inset />
+          <q-card-section :class="$q.platform.is.mobile ? 'col-1' : ''">
+            <div class="row justify-end items-center q-gutter-x-sm" :class="$q.platform.is.mobile ? '' : 'q-pa-md'">
+              <q-btn dense unelevated outline color="grey-8" label="취소" @click="add.show = false" />
+              <q-btn dense unelevated color="primary" label="추가" type="submit" />
+            </div>
+          </q-card-section>
+        </q-form>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="makeOffered.show" @hide="hideMakeOffer" :maximized="$q.platform.is.mobile" transition-show="none"
+      transition-hide="none">
+      <q-card class="card-item dialog">
         <q-form class="inner column full-height" @submit="applyAdd">
           <q-card-section>
             <div class="kodia q-py-lg q-pl-sm name">{{ add.category === 'properties' ? '특성 ' : '옵션 ' }} 추가</div>
@@ -356,6 +403,19 @@ const visible = (isVisible: boolean, item: Item): void => {
   height: inherit;
 }
 
+.body--light .item:deep(>div:after) {
+  border-radius: 10px;
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 3px;
+  bottom: 3px;
+  left: 3px;
+  right: 3px;
+  background-color: rgba(50, 50, 93, 0.25);
+  box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
+}
+
 .q-gutter-y-xxl {
   margin-top: -96px;
 }
@@ -370,7 +430,7 @@ const visible = (isVisible: boolean, item: Item): void => {
   z-index: 1;
   left: 0;
   right: 0;
-  opacity: .6;
+  opacity: .4;
 }
 
 .more.disabled {
@@ -379,7 +439,7 @@ const visible = (isVisible: boolean, item: Item): void => {
 
 @media (max-width:600px) {
   .more {
-    padding: 10px !important;
+    padding: 8px !important;
   }
 }
 
@@ -400,7 +460,7 @@ const visible = (isVisible: boolean, item: Item): void => {
   max-width: 90%;
 }
 
-.add-attribute {
+.dialog {
   width: 600px;
   max-width: 100vw;
 }

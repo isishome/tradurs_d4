@@ -17,15 +17,17 @@ interface Rune {
   value: string,
   type: string,
   label: string,
-  attribute: string
+  attribute: string,
+  img: string
 }
 
 export interface ItemType {
   value: string,
   label: string,
   attribute: string,
-  has_properties: boolean,
-  has_affixes: boolean
+  hasProperties: boolean,
+  hasAffixes: boolean,
+  isCurrency: boolean
 }
 
 export interface EquipmentClass {
@@ -64,6 +66,7 @@ export const useItemStore = defineStore('item', {
     runeTypes: [] as Array<RuneType>,
     runes: [] as Array<Rune>,
     types: [] as Array<ItemType>,
+    currencies: [] as Array<ItemType>,
     classes: [] as Array<EquipmentClass>,
     attributeTypes: [] as Array<AttributeType>,
     properties: {
@@ -116,6 +119,7 @@ export const useItemStore = defineStore('item', {
               self.runeTypes = response.data.runeTypes
               self.runes = response.data.runes.map((r: Rune) => ({ ...r, img: runeImgs[r.value as keyof typeof runeImgs] }))
               self.types = response.data.types
+              self.currencies = [{ value: 'offer', label: '제안 받기' }, ...response.data.types.filter((t: ItemType) => t.isCurrency)]
               self.classes = response.data.classes
               self.attributeTypes = response.data.attributeTypes
             })

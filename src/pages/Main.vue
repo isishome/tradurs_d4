@@ -17,6 +17,12 @@ const phraseGen = new PhraseGen({
   delimiter: ' '
 })
 
+// loading variable
+const loadingBase = computed<boolean>(() => store.base.loading)
+const loadingAffixes = computed<boolean>(() => store.affixes.loading)
+const loadingProperties = computed<boolean>(() => store.properties.loading)
+const loading = computed<boolean>(() => loadingBase.value || loadingProperties.value || loadingAffixes.value)
+
 // variable
 const items = ref<Array<Item>>(Array.from({ length: 3 }, () => {
   const item = new Item()
@@ -32,6 +38,7 @@ const runes = computed(() => store.runes)
 const setItem = (item: Item, newItem: Item): void => {
   item.itemId = newItem.itemId
   item.name = newItem.name
+  item.quantity = newItem.quantity
   item.quality = newItem.quality
   item.itemType = newItem.itemType
   item.itemTypeValues = newItem.itemTypeValues
@@ -42,7 +49,9 @@ const setItem = (item: Item, newItem: Item): void => {
   item.affixes.splice(0, item.affixes.length)
   item.affixes.push(...newItem.affixes.filter(a => a.action !== 8))
   item.price.currency = newItem.price.currency
+  item.price.currencyValue = newItem.price.currencyValue
   item.price.quantity = newItem.price.quantity
+  item.user = newItem.user
   item.loading = newItem.loading
 }
 
@@ -56,10 +65,11 @@ const updateItem = (item: Item): void => {
 
 // temp generate items
 const gen = (): void => {
-  const genItems = Array.from({ length: 100 }, (_, i) => {
+  const genItems = Array.from({ length: 50 }, (_, i) => {
     const item = new Item()
     item.itemId = Math.floor(Math.random() * 1000000)
     item.name = phraseGen.generatePhrase()
+    item.quantity = Math.floor(Math.random() * 10)
     item.quality = quality.value.map(q => q.value)[Math.floor(Math.random() * quality.value.length)]
     item.itemType = types.value.map(t => t.value)[Math.floor(Math.random() * types.value.length)]
     item.itemTypeValues = [100]
@@ -75,10 +85,12 @@ const gen = (): void => {
       affixId: Math.floor(Math.random() * 200 + 1),
       affixValues: [Math.floor(Math.random() * 999), Math.floor(Math.random() * 999), Math.floor(Math.random() * 999)]
     }))
-    item.price = {
-      currency: runes.value.map(r => r.value)[Math.floor(Math.random() * runes.value.length)],
+    item.price = [{
+      currency: types.value.filter(t => t.isCurrency).map(t => t.value)[Math.floor(Math.random() * types.value.filter(t => t.isCurrency).length)],
+      currencyValue: runes.value.map(r => r.value)[Math.floor(Math.random() * runes.value.length)],
       quantity: Math.floor(Math.random() * 1 + 1)
-    }
+    }, { currency: 'offer', currencyValue: null, quantity: null }][Math.round(Math.random())]
+    item.user = phraseGen.generatePhrase()
     item.loading = false
     return item
   })
@@ -108,10 +120,8 @@ store.getBase().then(() => {
   store.getProperties()
   setTimeout(() => {
     gen()
-  }, 500)
+  }, 1000)
 })
-
-$q.dark.set(true)
 </script>
 
 <template>
@@ -119,6 +129,6 @@ $q.dark.set(true)
     <!-- <textarea class="col-12" rows="20" style="padding:0;margin:0;line-height:10px;font-size:8px;">
       {{ items }}
     </textarea> -->
-    <Items :items="items" @update-item="updateItem" />
+    <Items :items="items" :loading="loading" @update-item="updateItem" />
   </div>
 </template>
