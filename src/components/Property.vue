@@ -34,6 +34,13 @@ const remove = () => {
   emit('remove', { valueId: props.data.valueId })
 }
 
+const focus = (evt: Event) => {
+  const el: HTMLInputElement | null = (evt.target as Element)?.closest('input')
+
+  if (el)
+    el.select()
+}
+
 watch(() => props.data, (val) => {
   propertyInfo.value = parse(findProperty?.label, props.data.propertyValues)
 })
@@ -57,7 +64,7 @@ watch(() => props.data, (val) => {
             hide-hint no-error-icon outlined v-model="comp.value" type="tel" maxlength="3" mask="###" debounce="500"
             :disable="data.disable"
             :rules="[val => !data.disable && Number.isInteger(parseInt(val)) && parseInt(val) !== 0 || '']"
-            @update:model-value="update" @focus="evt => (evt.target as HTMLInputElement).select()" />
+            @update:model-value="update" @focus="focus" />
         </template>
       </div>
     </div>

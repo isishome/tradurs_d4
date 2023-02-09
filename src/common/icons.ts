@@ -7,6 +7,8 @@ import socket from '@/assets/attribute_types/socket.svg'
 import attack from '@/assets/types/attack.svg'
 import defense from '@/assets/types/defense.svg'
 
+import remove from '@/assets/icons/remove.svg'
+import add from '@/assets/icons/add.svg'
 import price from '@/assets/icons/price.svg'
 import dropdown from '@/assets/icons/dropdown.svg'
 
@@ -17,6 +19,8 @@ export const icons = {
   socket,
   attack,
   defense,
+  remove,
+  add,
   price,
   dropdown
 }

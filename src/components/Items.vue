@@ -1,14 +1,18 @@
 <script setup lang="ts">
-import { defineAsyncComponent, ref, computed, reactive } from 'vue'
+import { ref, computed, reactive } from 'vue'
 import { useQuasar, QInput } from 'quasar'
 import type { AttributeType } from '@/stores/item'
 import { useItemStore } from '@/stores/item'
 import { checkAttribute } from '@/common'
-import type { IPrice } from '@/types/item'
-import { Item, Advertise, Price } from '@/types/item'
+import type { IItem } from '@/types/item'
+import { Item, Advertise, Offer } from '@/types/item'
 import dropdown from '@/assets/icons/dropdown.svg'
+import ItemComp from '@/components/Item.vue'
+import Affix from '@/components/Affix.vue'
+import Property from '@/components/Property.vue'
+import PriceComp from '@/components/Price.vue'
 
-defineProps({
+const props = defineProps({
   items: {
     type: Array,
     default: () => []
@@ -29,11 +33,6 @@ defineProps({
 
 const emit = defineEmits(['update-item'])
 
-// define async component
-const ItemComp = defineAsyncComponent(() => import('@/components/Item.vue'))
-const Affix = defineAsyncComponent(() => import('@/components/Affix.vue'))
-const Property = defineAsyncComponent(() => import('@/components/Property.vue'))
-
 // init module
 const $q = useQuasar()
 const store = useItemStore()
@@ -48,6 +47,7 @@ interface Dialog {
   editable: boolean
 }
 
+const activatedRef = ref<typeof ItemComp | null>(null)
 const activated = reactive<Dialog>({
   show: false,
   editable: false
@@ -59,48 +59,46 @@ const activate = (item: Item): void => {
   activated.show = true
 }
 
-const makeOffered = reactive<Dialog>({
-  show: false,
-  editable: false
-})
-const makeOfferPrice = ref<Price>(new Price())
-const makeOffer = (itemId: number): void => {
-  makeOffered.show = true
-}
-const hideMakeOffer = (): void => {
-  makeOfferPrice.value = new Price()
-  makeOffered.editable = false
-}
-
-const hide = (): void => {
+const hideActivated = (): void => {
   activatedItem.value = new Item()
   activated.editable = false
 }
 
-interface IItem {
-  name: string,
-  values: Array<number>,
-  quantity: number,
-  quality: string,
-  type: string,
-  rune: string,
-  eClass: string,
-  price: Price
+// make an offer
+const runes = computed(() => store.runes)
+const offers = ref<Array<Offer>>([])
+const makeOffer = ref<boolean>(false)
+const offer = ref<Offer>(new Offer(123))
+
+const makingOffer = (itemId: number): void => {
+  offer.value.itemId = itemId
+  offers.value = Array.from({ length: Math.floor(Math.random() * 20) }, (_, i) => {
+    const currency: string = ['offer', 'rune', 'essence', 'glyph'][Math.floor(Math.random() * 4)]
+    const currencyValue: string | null = currency === 'rune' ? runes.value.map(r => r.value)[Math.floor(Math.random() * runes.value.length)] : null
+    const genOffer = new Offer(123, currency, currencyValue, Math.floor(Math.random() * 1 + 1))
+    genOffer.itemId = itemId
+    return genOffer
+  })
+  makeOffer.value = true
+}
+const hideMakeOffer = (): void => {
+  offer.value = new Offer(123)
+  makeOffer.value = false
 }
 
-const updateItem = ({ name, values, quantity, quality, type, rune, eClass, price }: IItem): void => {
+const updateItem = ({ name, itemTypeValues, quantity, quality, itemType, runeId, equipmentClass, price }: IItem): void => {
   activatedItem.value.name = name
-  activatedItem.value.itemTypeValues = values
+  activatedItem.value.itemTypeValues = itemTypeValues
   activatedItem.value.quantity = quantity
   activatedItem.value.quality = quality
-  activatedItem.value.runeId = rune
-  activatedItem.value.equipmentClass = eClass
+  activatedItem.value.runeId = runeId
+  activatedItem.value.equipmentClass = equipmentClass
   activatedItem.value.price.currency = price.currency
   activatedItem.value.price.currencyValue = price.currencyValue
   activatedItem.value.price.quantity = price.quantity
 
-  if (activatedItem.value.itemType !== type) {
-    activatedItem.value.itemType = type
+  if (activatedItem.value.itemType !== itemType) {
+    activatedItem.value.itemType = itemType
     activatedItem.value.quantity = 1
     activatedItem.value.properties.splice(0, activatedItem.value.properties.length)
     activatedItem.value.affixes.splice(0, activatedItem.value.affixes.length)
@@ -171,6 +169,7 @@ const applyAdd = (): void => {
   else if (add.category === 'affixes')
     activatedItem.value.affixes.push({ valueId: uuid, affixId: attribute_id, affixValues: [], action: 2 })
 
+  activatedRef.value?.scrollEnd(add.category)
   add.show = false
 }
 
@@ -188,6 +187,7 @@ const selectedProperty = (val: number): void => {
     activatedItem.value.properties.push({ propertyId: val, propertyValues: [], action: 2 })
     propertyId.value = null
     propertyNeedle.value = null
+    activatedRef.value?.scrollEnd('properties')
   }
 }
 
@@ -226,6 +226,7 @@ const selectedAffix = (val: number): void => {
   activatedItem.value.affixes.push({ affixId: val, affixValues: [], action: 2 })
   affixId.value = null
   affixNeedle.value = null
+  activatedRef.value?.scrollEnd('affixes')
 }
 
 const createAffix = (): void => {
@@ -264,12 +265,6 @@ const visible = (isVisible: boolean, item: Item): void => {
         <div v-if="(item instanceof Advertise)" class="bg-grey" style="width:100%;height:500px"></div>
         <ItemComp v-else :data="item" :loading="loading || item.loading">
           <template #top-right>
-            <q-btn unelevated dense round padding="0" @click.stop="makeOffer(item.itemId as number)">
-              <img class="icon" width="24" src="@/assets/icons/offer.svg" />
-            </q-btn>
-            <q-btn unelevated dense round padding="0" @click.stop="activate(item)">
-              <img class="icon" width="24" src="@/assets/icons/edit.svg" />
-            </q-btn>
           </template>
           <template v-if="requestProperties > 0" #properties>
             <Property v-for="(property, i) in item.properties" :key="`property_${i}`" :data="property" />
@@ -278,8 +273,18 @@ const visible = (isVisible: boolean, item: Item): void => {
             <Affix v-for="affix in item.affixes" :key="affix.valueId || `create_${Math.floor(Math.random() * 1000000)}`"
               :data="affix" />
           </template>
+          <template #actions>
+            <div class="row justify-between items-center">
+              <div>
+                <Btn label="수정" color="rgb(200,0,0)" :loading="loading || item.loading" @click="activate(item)" />
+              </div>
+              <div>
+                <Btn label="제안 리스트" :loading="loading || item.loading" @click="makingOffer(item.itemId as number)" />
+              </div>
+            </div>
+          </template>
           <template #more="{ loading }">
-            <q-btn v-if="!item.expanded" flat :disable="loading" text-color="black" class="more no-hover" padding="20px"
+            <q-btn v-if="!item.expanded && !loading" flat text-color="black" class="more no-hover" padding="20px"
               @click="item.expanded = true">
               <img class="icon" width="24" height="16" src="@/assets/icons/more.svg" />
             </q-btn>
@@ -287,9 +292,10 @@ const visible = (isVisible: boolean, item: Item): void => {
         </ItemComp>
       </q-intersection>
     </div>
-    <q-dialog v-model="activated.show" @hide="hide" :maximized="$q.platform.is.mobile" transition-show="none"
+    <q-dialog v-model="activated.show" @hide="hideActivated" :maximized="$q.platform.is.mobile" transition-show="none"
       transition-hide="none">
-      <ItemComp :data="activatedItem" :editable="activated.editable" @update="updateItem" @apply="apply">
+      <ItemComp ref="activatedRef" :data="activatedItem" :editable="activated.editable" @update="updateItem"
+        @apply="apply">
         <template #add-property>
           <div class="row no-wrap items-center q-gutter-x-sm">
             <q-select v-model="propertyId" outlined dense no-error-icon use-input hide-bottom-space hide-selected
@@ -315,7 +321,7 @@ const visible = (isVisible: boolean, item: Item): void => {
             :editable="activated.editable" @update="updateProperty" @remove="removeProperty" />
         </template>
         <template #add-affix>
-          <div class="row no-wrap items-center q-gutter-x-sm">
+          <div class="row items-center q-gutter-x-sm">
             <q-select v-model="affixId" outlined dense no-error-icon use-input hide-bottom-space emit-value map-options
               transition-show="none" transition-hide="none" class="select" label="옵션 선택"
               :options="affixOptions(affixNeedle)" :dropdown-icon="`img:${dropdown}`"
@@ -339,8 +345,10 @@ const visible = (isVisible: boolean, item: Item): void => {
             :editable="activated.editable" @update="updateAffix" @remove="removeAffix" />
         </template>
         <template #actions>
-          <q-btn dense unelevated outline color="grey-8" label="취소" @click="activated.show = false" />
-          <q-btn dense unelevated color="primary" label="적용" type="submit" />
+          <div class="row justify-end items-center q-gutter-x-sm" :class="$q.platform.is.mobile ? '' : 'q-pa-md'">
+            <Btn label="취소" color="rgb(150,150,150)" @click="activated.show = false" />
+            <Btn label="적용" color="var(--q-primary)" type="submit" />
+          </div>
         </template>
       </ItemComp>
     </q-dialog>
@@ -363,16 +371,27 @@ const visible = (isVisible: boolean, item: Item): void => {
           <q-separator inset />
           <q-card-section :class="$q.platform.is.mobile ? 'col-1' : ''">
             <div class="row justify-end items-center q-gutter-x-sm" :class="$q.platform.is.mobile ? '' : 'q-pa-md'">
-              <q-btn dense unelevated outline color="grey-8" label="취소" @click="add.show = false" />
-              <q-btn dense unelevated color="primary" label="추가" type="submit" />
+              <Btn label="취소" color="rgb(150,150,150)" @click="add.show = false" />
+              <Btn label="추가" color="var(--q-primary)" type="submit" />
             </div>
           </q-card-section>
         </q-form>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="makeOffered.show" @hide="hideMakeOffer" :maximized="$q.platform.is.mobile" transition-show="none"
+    <q-dialog v-model="makeOffer" @hide="hideMakeOffer" :maximized="$q.platform.is.mobile" transition-show="none"
       transition-hide="none">
-      <q-card class="card-item dialog">
+      <q-card class="card-item dialog overflow-hidden">
+        <q-card-section>
+          <div class="row items-center q-col-gutter-sm scroll">
+            <div class="col-12 col-sm-6" v-for="(offer, idx) in offers" :key="idx">
+              <q-card flat bordered class="bg-transparent">
+                <PriceComp offer :data="offer" />
+              </q-card>
+            </div>
+          </div>
+        </q-card-section>
+      </q-card>
+      <!-- <q-card class="card-item dialog">
         <q-form class="inner column full-height" @submit="applyAdd">
           <q-card-section>
             <div class="kodia q-py-lg q-pl-sm name">{{ add.category === 'properties' ? '특성 ' : '옵션 ' }} 추가</div>
@@ -394,7 +413,7 @@ const visible = (isVisible: boolean, item: Item): void => {
             </div>
           </q-card-section>
         </q-form>
-      </q-card>
+      </q-card> -->
     </q-dialog>
   </div>
 </template>
@@ -412,7 +431,7 @@ const visible = (isVisible: boolean, item: Item): void => {
   bottom: 3px;
   left: 3px;
   right: 3px;
-  background-color: rgba(50, 50, 93, 0.25);
+  background-color: rgba(50, 50, 93, 0.1);
   box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
 }
 
@@ -457,7 +476,7 @@ const visible = (isVisible: boolean, item: Item): void => {
 
 .select {
   width: 700px;
-  max-width: 90%;
+  max-width: 80%;
 }
 
 .dialog {

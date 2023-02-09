@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { useQuasar } from 'quasar'
+import { QInput, useQuasar } from 'quasar'
 import type { Affix } from '@/stores/item'
 import { useItemStore } from '@/stores/item'
 import { icons } from '@/common/icons'
@@ -36,6 +36,13 @@ const remove = (): void => {
   emit('remove', { valueId: props.data.valueId })
 }
 
+const focus = (evt: Event) => {
+  const el: HTMLInputElement | null = (evt.target as Element)?.closest('input')
+
+  if (el)
+    el.select()
+}
+
 watch(() => props.data, (val) => {
   affixInfo.value = parse(findAffix?.label, val.affixValues)
 })
@@ -43,7 +50,7 @@ watch(() => props.data, (val) => {
 
 <template>
   <div class="row items-center"
-    :class="affixType === 'unique' ? 'unique' : affixType === 'socket' ? 'text-grey-7' : ''">
+    :class="affixType === 'unique' ? 'unique' : affixType === 'socket' ? 'text-grey-6' : ''">
     <div class="row no-wrap q-gutter-x-xs" :class="data.disable ? 'disable' : ''">
       <div>
         <q-icon class="icon" :class="affixType === 'regular' ? 'rotate-45' : ''" size="13px"
@@ -56,11 +63,11 @@ watch(() => props.data, (val) => {
             </div>
           </template>
           <div v-else-if="!editable && comp.type === 'variable'">{{ comp.value }}</div>
-          <q-input v-else class="var" input-class="text-center text-caption no-padding" dense hide-bottom-space
+          <q-input v-else ref="ai" class="var" input-class="text-center text-caption no-padding" dense hide-bottom-space
             hide-hint no-error-icon outlined v-model="comp.value" type="tel" maxlength="3" mask="###" debounce="500"
             :disable="data.disable"
             :rules="[val => !data.disable && Number.isInteger(parseInt(val)) && parseInt(val) !== 0 || '']"
-            @update:model-value="update" @focus="evt => (evt.target as HTMLInputElement).select()" />
+            @update:model-value="update" @focus="focus" />
         </template>
 
       </div>

@@ -15,10 +15,10 @@ export interface Affix extends Attribute {
     affixValues: Array<number>
 }
 
-export interface IPrice {
+export interface Price {
     currency: string,
     currencyValue: string | null,
-    quantity: number | null
+    quantity: number
 }
 
 export interface IItem {
@@ -32,8 +32,9 @@ export interface IItem {
     runeId: string,
     properties: Array<Property>,
     affixes: Array<Affix>,
-    price: IPrice,
+    price: Price,
     user: string,
+    offers: number,
     editable: boolean,
     action: number,
     loading: boolean,
@@ -57,8 +58,9 @@ export class Item implements IItem {
     public runeId: string = ''
     public properties: Array<Property> = []
     public affixes: Array<Affix> = []
-    public price: IPrice = { currency: 'offer', currencyValue: null, quantity: null }
+    public price: Price = { currency: 'offer', currencyValue: null, quantity: 1 }
     public user: string = ''
+    public offers: number = 0
     public editable: boolean = false
     public action: number = 0
     public loading: boolean = false
@@ -73,14 +75,18 @@ export class Advertise extends Item {
     public height: number = 600
 }
 
-export class Price implements IPrice {
+export class Offer implements Price {
+    public itemId: number | null
+    public userId: number
     public currency: string
     public currencyValue: string | null
-    public quantity: number | null
+    public quantity: number
 
-    constructor(currency?: string, currencyValue?: string, quantity?: number) {
-        this.currency = currency || 'offer'
-        this.currencyValue = currencyValue || null
-        this.quantity = quantity || null
+    constructor(userId: number, currency?: string, currencyValue?: string | null, quantity?: number) {
+        this.itemId = null
+        this.userId = userId
+        this.currency = currency || 'rune'
+        this.currencyValue = currencyValue || 'eld'
+        this.quantity = quantity || 1
     }
 }

@@ -20,20 +20,20 @@
   --q-negative: #C10015;
   --q-info: #31CCEC;
   --q-warning: #F2C037;
-  --q-magic: #4169E1;
-  --q-dark-magic: #010951;
-  --q-rare: #FFFF00;
-  --q-dark-rare: #332200;
+  --q-magic: #7B7DF6;
+  --q-dark-magic: #1B263A;
+  --q-rare: #EAEB0B;
+  --q-dark-rare: #533809;
   --q-set: #00FF00;
   --q-dark-set: #003300;
-  --q-unique: #A59263;
-  --q-dark-unique: #463213;
+  --q-unique: #D9A979;
+  --q-dark-unique: #4A361B;
   --q-shadow: #000000;
   --q-filter-normal: invert(39%) sepia(1%) saturate(1823%) hue-rotate(16deg) brightness(100%) contrast(89%);
-  --q-filter-magic: invert(33%) sepia(27%) saturate(7235%) hue-rotate(219deg) brightness(97%) contrast(82%);
-  --q-filter-rare: invert(90%) sepia(51%) saturate(4962%) hue-rotate(358deg) brightness(106%) contrast(54%);
-  --q-filter-set: invert(60%) sepia(44%) saturate(4863%) hue-rotate(84deg) brightness(118%) contrast(54%);
-  --q-filter-unique: invert(76%) sepia(11%) saturate(1353%) hue-rotate(5deg) brightness(77%) contrast(75%);
+  --q-filter-magic: invert(35%) sepia(72%) saturate(1098%) hue-rotate(212deg) brightness(80%) contrast(96%);
+  --q-filter-rare: invert(91%) sepia(21%) saturate(2166%) hue-rotate(5deg) brightness(96%) contrast(91%);
+  --q-filter-set: invert(37%) sepia(91%) saturate(1265%) hue-rotate(91deg) brightness(95%) contrast(106%);
+  --q-filter-unique: invert(57%) sepia(68%) saturate(273%) hue-rotate(349deg) brightness(87%) contrast(93%);
 }
 
 body.body--light::before {

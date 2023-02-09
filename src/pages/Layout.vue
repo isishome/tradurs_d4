@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { inject, ref, computed, watch, onMounted, onUnmounted, nextTick, defineAsyncComponent } from 'vue'
+import { inject, ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useQuasar, uid, Screen } from 'quasar'
 import { useAccountStore } from '@/stores/account'
 import type { AxiosInstance } from 'axios'
-
-const Filter = defineAsyncComponent(() => import('@/components/Filter.vue'))
+import Filter from '@/components/Filter.vue'
 
 const prod: boolean = import.meta.env.PROD
 const tradurs: string = import.meta.env.VITE_APP_TRADURS_ORIGIN || `${document.location.protocol}//${document.location.hostname}:6081`
@@ -149,7 +148,6 @@ onUnmounted(() => {
           <div class="gt-md col">
             <div class="full-height q-px-lg q-py-xl" :style="`width:280px;height:${asideHeight}`">
               <div :style="`position:sticky;top:${asideTop}`">
-
                 <ins class="adsbygoogle" style="display:inline-block;width:160px;height:600px"
                   data-ad-client="ca-pub-5110777286519562" data-ad-slot="7240136439" :data-adtest="prod ? 'off' : 'on'"
                   :key="key"></ins>

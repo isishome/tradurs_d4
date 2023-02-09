@@ -198,10 +198,10 @@
 .card-item .inner::after {
   content: '';
   position: absolute;
-  top: 6px;
-  bottom: 6px;
-  left: 6px;
-  right: 6px;
+  top: 4px;
+  bottom: 4px;
+  left: 4px;
+  right: 4px;
   border-style: solid;
   border-color: inherit;
   border-image: url(@/assets/frames/inner.webp) 40;

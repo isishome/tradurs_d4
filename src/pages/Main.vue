@@ -1,12 +1,10 @@
 <script setup lang="ts">
-import { defineAsyncComponent, ref, computed } from 'vue'
+import { ref, computed } from 'vue'
 import { useQuasar } from 'quasar'
 import { useItemStore } from '@/stores/item'
 import { Item } from '@/types/item'
 import PhraseGen from 'korean-random-words'
-
-// define async component
-const Items = defineAsyncComponent(() => import('@/components/Items.vue'))
+import Items from '@/components/Items.vue'
 
 // init module
 const $q = useQuasar()
@@ -49,9 +47,10 @@ const setItem = (item: Item, newItem: Item): void => {
   item.affixes.splice(0, item.affixes.length)
   item.affixes.push(...newItem.affixes.filter(a => a.action !== 8))
   item.price.currency = newItem.price.currency
-  item.price.currencyValue = newItem.price.currencyValue
+  item.price.currencyValue = newItem.price.currency === 'offer' ? null : newItem.price.currencyValue
   item.price.quantity = newItem.price.quantity
   item.user = newItem.user
+  item.offers = newItem.offers
   item.loading = newItem.loading
 }
 
@@ -65,9 +64,9 @@ const updateItem = (item: Item): void => {
 
 // temp generate items
 const gen = (): void => {
-  const genItems = Array.from({ length: 50 }, (_, i) => {
+  const genItems = Array.from({ length: 1000 }, (_, i) => {
     const item = new Item()
-    item.itemId = Math.floor(Math.random() * 1000000)
+    item.itemId = i + 1// Math.floor(Math.random() * 1000000)
     item.name = phraseGen.generatePhrase()
     item.quantity = Math.floor(Math.random() * 10)
     item.quality = quality.value.map(q => q.value)[Math.floor(Math.random() * quality.value.length)]
@@ -89,8 +88,9 @@ const gen = (): void => {
       currency: types.value.filter(t => t.isCurrency).map(t => t.value)[Math.floor(Math.random() * types.value.filter(t => t.isCurrency).length)],
       currencyValue: runes.value.map(r => r.value)[Math.floor(Math.random() * runes.value.length)],
       quantity: Math.floor(Math.random() * 1 + 1)
-    }, { currency: 'offer', currencyValue: null, quantity: null }][Math.round(Math.random())]
+    }, { currency: 'offer', currencyValue: null, quantity: 1 }][Math.round(Math.random())]
     item.user = phraseGen.generatePhrase()
+    item.offers = Math.floor(Math.random() * 20)
     item.loading = false
     return item
   })

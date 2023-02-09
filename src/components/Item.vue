@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { reactive, ref, computed, useSlots, defineAsyncComponent } from 'vue'
-import { useQuasar } from 'quasar'
+import { reactive, ref, computed, useSlots, nextTick } from 'vue'
+import { QCardSection, useQuasar } from 'quasar'
 import type { Quality, RuneType, ItemType } from '@/stores/item'
 import type { Price } from '@/types/item'
 import { useItemStore } from '@/stores/item'
 import { checkName, parse } from '@/common'
 import { icons } from '@/common/icons'
-
-const PriceComp = defineAsyncComponent(() => import('@/components/Price.vue'))
+import PriceComp from '@/components/Price.vue'
+import Counter from '@/components/Counter.vue'
 
 const props = defineProps({
   data: {
@@ -58,7 +58,7 @@ const updateType = (val: string): void => {
 }
 
 const update = (): void => {
-  emit('update', { name: _name, values: typeInfo.value?.filter(i => i.type === 'variable').map(i => parseInt(i.value.toString())), quantity: _quantity.value, quality: _quality.value, type: _type.value, rune: _rune.value, eClass: _class.value, price: _price })
+  emit('update', { name: _name, itemTypeValues: typeInfo.value?.filter(i => i.type === 'variable').map(i => parseInt(i.value.toString())), quantity: _quantity.value, quality: _quality.value, itemType: _type.value, runeId: _rune.value, equipmentClass: _class.value, price: _price })
 }
 
 const updatePrice = (price: Price): void => {
@@ -68,19 +68,40 @@ const updatePrice = (price: Price): void => {
   update()
 }
 
+const focus = (evt: Event) => {
+  const el: HTMLInputElement | null = (evt.target as Element)?.closest('input')
+
+  if (el)
+    el.select()
+}
+
+// control scroll
+const propertyRef = ref<QCardSection | null>(null)
+const affixRef = ref<QCardSection | null>(null)
+const scrollEnd = (pType: string): void => {
+  nextTick(() => {
+    if (pType === 'properties' && propertyRef.value && propertyRef.value.$el) {
+      propertyRef.value.$el.scrollTop = propertyRef.value.$el.scrollHeight
+    }
+    else if (pType === 'affixes' && affixRef.value && affixRef.value.$el)
+      affixRef.value.$el.scrollTop = affixRef.value.$el.scrollHeight
+  })
+}
 const apply = (): void => {
   emit('apply')
 }
+
+defineExpose({ scrollEnd })
 </script>
 
 <template>
   <q-card v-if="editable" class="card-item non-selectable no-scroll editable" :class="data.quality">
-    <q-form class="inner" :class="$q.platform.is.mobile ? 'column no-wrap' : 'justify-between'" @submit="apply"
+    <q-form class="inner column no-wrap" :class="$q.platform.is.mobile ? '' : 'justify-between'" @submit="apply"
       :style="$q.platform.is.mobile ? 'height:100%' : 'max-height:90vh'">
       <q-card-section>
         <div class="column items-start q-gutter-y-sm">
-          <div class="row items-center q-gutter-x-sm quality">
-            <q-btn :ripple="false" v-for="q in quality" :key="q.value" round unelevated size="12px"
+          <div class="row items-center q-gutter-sm quality">
+            <q-btn :ripple="false" v-for="q in quality" :key="q.value" round size="13px" unelevated
               :class="['text-weight-bold', _quality === q.value ? 'active' : '']" :label="q.label"
               @click="_quality = q.value; update()" />
           </div>
@@ -120,21 +141,7 @@ const apply = (): void => {
                   </template>
                 </q-select>
               </div>
-              <div class="col no-wrap row items-center">
-                <q-btn v-show="!$q.platform.is.mobile" size="sm" flat dense round
-                  :disable="parseInt(_quantity.toString()) < 2" @click="_quantity--; update()">
-                  <img class="icon" width="17" src="@/assets/icons/remove.svg" />
-                </q-btn>
-                <q-input v-model="_quantity" label="수량" style="max-width:50px" input-class="text-center" dense
-                  hide-bottom-space hide-hint no-error-icon outlined type="tel" maxlength="3" mask="###" debounce="500"
-                  :rules="[val => Number.isInteger(parseInt(val)) && parseInt(val) !== 0 || '']"
-                  @update:model-value="update" @focus="evt => (evt.target as HTMLInputElement).select()" />
-                <q-btn v-show="!$q.platform.is.mobile" size="sm" flat dense round
-                  :disable="parseInt(_quantity.toString()) > 998" @click="
-                  _quantity++; update()">
-                  <img class="icon" width="17" src="@/assets/icons/add.svg" />
-                </q-btn>
-              </div>
+              <Counter v-model="_quantity" @update:model-value="update" />
             </div>
           </div>
         </div>
@@ -187,7 +194,7 @@ const apply = (): void => {
               <q-input v-else class="var" input-class="text-center text-caption no-padding" dense hide-bottom-space
                 hide-hint no-error-icon outlined v-model="comp.value" type="tel" maxlength="4" mask="####"
                 debounce="500" :rules="[val => Number.isInteger(parseInt(val)) && parseInt(val) !== 0 || '']"
-                @update:model-value="update" @focus="evt => (evt.target as HTMLInputElement).select()" />
+                @update:model-value="update" @focus="focus" />
             </template>
           </div>
         </div>
@@ -195,7 +202,7 @@ const apply = (): void => {
       <q-card-section v-if="slots['add-property'] && findType(data.itemType)?.hasProperties">
         <slot name="add-property"></slot>
       </q-card-section>
-      <q-card-section v-show="findType(data.itemType)?.hasProperties" class="col scroll">
+      <q-card-section ref="propertyRef" v-show="findType(data.itemType)?.hasProperties" class="col scroll">
         <q-item v-show="loading" v-for="c in 2" :key="c" style="min-height:10px;padding:3px">
           <q-item-section side class="q-pr-sm">
             <q-skeleton type="circle" width="10px" height="10px" />
@@ -215,7 +222,7 @@ const apply = (): void => {
       <q-card-section v-if="slots['add-affix'] && findType(data.itemType)?.hasAffixes">
         <slot name="add-affix"></slot>
       </q-card-section>
-      <q-card-section v-show="findType(data.itemType)?.hasAffixes" class="col scroll">
+      <q-card-section ref="affixRef" v-show="findType(data.itemType)?.hasAffixes" class="col scroll">
         <q-item v-show="loading" v-for="c in 3" :key="c" style="min-height:10px;padding:3px">
           <q-item-section side class="q-pr-sm">
             <q-skeleton type="circle" width="10px" height="10px" />
@@ -256,7 +263,7 @@ const apply = (): void => {
         <div :class="$q.platform.is.mobile ? 'q-pl-sm q-gutter-y-xs' : 'q-gutter-y-sm q-py-sm q-pl-sm'">
           <div class="row no-wrap justify-between items-center full-height">
             <q-skeleton v-show="loading" width="70%" :height="$q.platform.is.mobile ? '26px' : '32px'" />
-            <div v-show="!loading" class="col-9 col-sm-10 row no-wrap items-center q-col-gutter-x-xs">
+            <div v-show="!loading" class="col-11 col-sm-10 row no-wrap items-center q-col-gutter-x-xs">
               <div v-show="data.itemType === 'rune'" class="row items-center">
                 <div class="kodia name">{{(runes().find(r => r.value === data.runeId) || {}).label}}</div>
                 <div class="q-ml-xs">{{ (runeTypes.find(rt => rt.value === (findRune(data.runeId) || {}).type) ||
@@ -270,9 +277,6 @@ const apply = (): void => {
                 <div class="text-lowercase">x</div>
                 <div>{{ data.quantity }}</div>
               </div>
-            </div>
-            <div v-show="loading" class="row no-wrap justify-end items-center q-gutter-x-sm">
-              <q-skeleton v-for="c in 2" :key="c" width="24px" height="24px" />
             </div>
             <div v-if="!loading && slots['top-right']" class="row items-center q-gutter-x-sm">
               <slot name="top-right"></slot>
@@ -307,9 +311,9 @@ const apply = (): void => {
           </div>
         </div>
       </q-card-section>
-      <q-separator v-show="findType(data.itemType)?.attribute || findType(data.itemType)?.hasProperties"
+      <q-separator v-show="loading || findType(data.itemType)?.attribute || findType(data.itemType)?.hasProperties"
         class="q-mx-xs" />
-      <q-card-section v-if="findType(data.itemType)?.attribute">
+      <q-card-section v-if="loading || findType(data.itemType)?.attribute">
         <q-item v-show="loading" style="min-height:10px;padding:3px">
           <q-item-section side class="q-pr-sm">
             <q-skeleton type="circle" width="10px" height="10px" />
@@ -329,7 +333,7 @@ const apply = (): void => {
           </div>
         </div>
       </q-card-section>
-      <q-card-section v-show="findType(data.itemType)?.hasProperties">
+      <q-card-section v-show="loading || findType(data.itemType)?.hasProperties">
         <q-item v-show="loading" v-for="c in 2" :key="c" style="min-height:10px;padding:3px">
           <q-item-section side class="q-pr-sm">
             <q-skeleton type="circle" width="10px" height="10px" />
@@ -345,8 +349,9 @@ const apply = (): void => {
           </slot>
         </div>
       </q-card-section>
-      <q-separator v-show="findType(data.itemType)?.attribute || findType(data.itemType)?.hasAffixes" class="q-mx-xs" />
-      <q-card-section v-show="findType(data.itemType)?.hasAffixes">
+      <q-separator v-show="loading || findType(data.itemType)?.attribute || findType(data.itemType)?.hasAffixes"
+        class="q-mx-xs" />
+      <q-card-section v-show="loading || findType(data.itemType)?.hasAffixes">
         <q-item v-show="loading" v-for="c in 3" :key="c" style="min-height:10px;padding:3px">
           <q-item-section side class="q-pr-sm">
             <q-skeleton type="circle" width="10px" height="10px" />
@@ -368,10 +373,7 @@ const apply = (): void => {
           :class="$q.platform.is.mobile ? '' : 'q-pa-md'">
           <q-skeleton v-for="c in 2" :key="c" type="QBtn" width="36px" height="30px" />
         </div>
-        <div v-show="!loading" class="row justify-end items-center q-gutter-x-sm"
-          :class="$q.platform.is.mobile ? '' : 'q-pa-md'">
-          <slot name="actions"></slot>
-        </div>
+        <slot v-if="!loading" name="actions"></slot>
       </q-card-section>
     </div>
     <slot name="more" :loading="loading"></slot>
