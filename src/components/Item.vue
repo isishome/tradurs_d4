@@ -146,7 +146,7 @@ defineExpose({ scrollEnd })
           </div>
         </div>
       </q-card-section>
-      <q-separator class="q-mx-xs" />
+      <q-separator />
       <q-card-section v-show="data.itemType !== 'rune'">
         <q-input v-show="data.itemType !== 'rune'" dense no-error-icon hide-bottom-space autofocus v-model="_name"
           outlined class="col-10" label="아이템 명" @update:model-value="update" :rules="[val => checkName(val) || '']" />
@@ -238,20 +238,13 @@ defineExpose({ scrollEnd })
           </slot>
         </div>
       </q-card-section>
-      <q-separator class="q-mx-xs" />
+      <q-separator />
       <q-card-section>
         <PriceComp :data="data.price" :editable="editable" @update="updatePrice" />
       </q-card-section>
-      <q-separator class="q-mx-xs" v-if="slots.actions" />
+      <q-separator v-if="slots.actions" />
       <q-card-section v-if="slots.actions">
-        <div v-show="loading" class="row justify-end items-center q-gutter-x-sm"
-          :class="$q.platform.is.mobile ? '' : 'q-pa-md'">
-          <q-skeleton v-for="c in 2" :key="c" type="QBtn" width="36px" height="30px" />
-        </div>
-        <div v-show="!loading" class="row justify-end items-center q-gutter-x-sm"
-          :class="$q.platform.is.mobile ? '' : 'q-pa-md'">
-          <slot name="actions"></slot>
-        </div>
+        <slot name="actions"></slot>
       </q-card-section>
     </q-form>
     <slot name="more" :loading="loading"></slot>
@@ -262,15 +255,15 @@ defineExpose({ scrollEnd })
       <q-card-section>
         <div :class="$q.platform.is.mobile ? 'q-pl-sm q-gutter-y-xs' : 'q-gutter-y-sm q-py-sm q-pl-sm'">
           <div class="row no-wrap justify-between items-center full-height">
-            <q-skeleton v-show="loading" width="70%" :height="$q.platform.is.mobile ? '26px' : '32px'" />
+            <q-skeleton v-show="loading" width="50%" height="24px" />
             <div v-show="!loading" class="col-11 col-sm-10 row no-wrap items-center q-col-gutter-x-xs">
               <div v-show="data.itemType === 'rune'" class="row items-center">
-                <div class="kodia name">{{(runes().find(r => r.value === data.runeId) || {}).label}}</div>
+                <div class="name">{{(runes().find(r => r.value === data.runeId) || {}).label}}</div>
                 <div class="q-ml-xs">{{ (runeTypes.find(rt => rt.value === (findRune(data.runeId) || {}).type) ||
                 {}).label }}
                 </div>
               </div>
-              <div v-show="data.itemType !== 'rune'" class="kodia name ellipsis-2-lines">
+              <div v-show="data.itemType !== 'rune'" class="name ellipsis-2-lines">
                 {{ data.name }}
               </div>
               <div v-if="data.quantity > 1" class="col-3 col-sm-2 price row items-center q-gutter-x-xs">
@@ -367,12 +360,8 @@ defineExpose({ scrollEnd })
           </slot>
         </div>
       </q-card-section>
-      <q-separator class="q-mx-xs" v-if="slots.actions" />
+      <q-separator v-if="slots.actions" />
       <q-card-section v-if="slots.actions">
-        <div v-show="loading" class="row justify-end items-center q-gutter-x-sm"
-          :class="$q.platform.is.mobile ? '' : 'q-pa-md'">
-          <q-skeleton v-for="c in 2" :key="c" type="QBtn" width="36px" height="30px" />
-        </div>
         <slot v-if="!loading" name="actions"></slot>
       </q-card-section>
     </div>

@@ -8,7 +8,7 @@ import Link from '@/components/paragraph/Link.vue'
 import Title from '@/components/paragraph/Title.vue'
 import Move from '@/components/paragraph/Move.vue'
 import Note from '@/components/paragraph/Note.vue'
-import Btn from '@/components/ui/Btn.vue'
+import Btn from '@/components/UI/Btn.vue'
 
 // Import icon libraries
 //import '@quasar/extras/roboto-font/roboto-font.css'

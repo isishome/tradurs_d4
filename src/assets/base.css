@@ -1,12 +1,6 @@
-@font-face {
-  font-family: 'Kodia';
-  src: url('@/assets/fonts/kodia.woff2') format('woff2'),
-    url('@/assets/fonts/kodia.woff') format('woff');
-}
-
 :root {
   --q-primary: #A59263;
-  --q-secondary: #26A69A;
+  --q-secondary: #A50905;
   --q-accent: #9C27B0;
   --q-light: #eeeeee;
   /* --q-light: #FDFDFD; */
@@ -20,13 +14,18 @@
   --q-negative: #C10015;
   --q-info: #31CCEC;
   --q-warning: #F2C037;
+  --q-light-normal: #AAAAAA;
   --q-magic: #7B7DF6;
+  --q-light-magic: #4B4DC6;
   --q-dark-magic: #1B263A;
   --q-rare: #EAEB0B;
+  --q-light-rare: #CACB00;
   --q-dark-rare: #533809;
   --q-set: #00FF00;
+  --q-light-set: #00BB00;
   --q-dark-set: #003300;
   --q-unique: #D9A979;
+  --q-light-unique: #B99959;
   --q-dark-unique: #4A361B;
   --q-shadow: #000000;
   --q-filter-normal: invert(39%) sepia(1%) saturate(1823%) hue-rotate(16deg) brightness(100%) contrast(89%);
@@ -52,10 +51,6 @@ body.body--dark {
 
 .q-dark {
   color: var(--q-light-page);
-}
-
-.kodia {
-  font-family: 'Kodia';
 }
 
 .invert,

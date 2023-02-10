@@ -274,9 +274,9 @@ const visible = (isVisible: boolean, item: Item): void => {
               :data="affix" />
           </template>
           <template #actions>
-            <div class="row justify-between items-center">
+            <div class="row justify-between items-center" :class="$q.platform.is.mobile ? '' : 'q-pt-xl'">
               <div>
-                <Btn label="수정" color="rgb(200,0,0)" :loading="loading || item.loading" @click="activate(item)" />
+                <Btn label="수정" color="var(--q-secondary)" :loading="loading || item.loading" @click="activate(item)" />
               </div>
               <div>
                 <Btn label="제안 리스트" :loading="loading || item.loading" @click="makingOffer(item.itemId as number)" />
@@ -345,9 +345,9 @@ const visible = (isVisible: boolean, item: Item): void => {
             :editable="activated.editable" @update="updateAffix" @remove="removeAffix" />
         </template>
         <template #actions>
-          <div class="row justify-end items-center q-gutter-x-sm" :class="$q.platform.is.mobile ? '' : 'q-pa-md'">
-            <Btn label="취소" color="rgb(150,150,150)" @click="activated.show = false" />
-            <Btn label="적용" color="var(--q-primary)" type="submit" />
+          <div class="row justify-end items-center q-gutter-x-sm" :class="$q.platform.is.mobile ? '' : 'q-pt-xl'">
+            <Btn label="취소" :loading="loading" color="rgb(150,150,150)" @click="activated.show = false" />
+            <Btn label="적용" :loading="loading" type="submit" />
           </div>
         </template>
       </ItemComp>
@@ -357,7 +357,7 @@ const visible = (isVisible: boolean, item: Item): void => {
       <q-card class="card-item dialog">
         <q-form class="inner column full-height" @submit="applyAdd">
           <q-card-section>
-            <div class="kodia q-py-lg q-pl-sm name">{{ add.category === 'properties' ? '특성 ' : '옵션 ' }} 추가</div>
+            <div class="q-py-lg q-pl-sm name">{{ add.category === 'properties' ? '특성 ' : '옵션 ' }} 추가</div>
           </q-card-section>
           <q-separator />
           <q-card-section :class="$q.platform.is.mobile ? 'col' : ''">
@@ -370,9 +370,9 @@ const visible = (isVisible: boolean, item: Item): void => {
           </q-card-section>
           <q-separator inset />
           <q-card-section :class="$q.platform.is.mobile ? 'col-1' : ''">
-            <div class="row justify-end items-center q-gutter-x-sm" :class="$q.platform.is.mobile ? '' : 'q-pa-md'">
-              <Btn label="취소" color="rgb(150,150,150)" @click="add.show = false" />
-              <Btn label="추가" color="var(--q-primary)" type="submit" />
+            <div class="row justify-end items-center q-gutter-x-sm" :class="$q.platform.is.mobile ? '' : 'q-pt-xl'">
+              <Btn label="취소" :loading="loading" color="rgb(150,150,150)" @click="add.show = false" />
+              <Btn label="추가" :loading="loading" type="submit" />
             </div>
           </q-card-section>
         </q-form>
@@ -394,7 +394,7 @@ const visible = (isVisible: boolean, item: Item): void => {
       <!-- <q-card class="card-item dialog">
         <q-form class="inner column full-height" @submit="applyAdd">
           <q-card-section>
-            <div class="kodia q-py-lg q-pl-sm name">{{ add.category === 'properties' ? '특성 ' : '옵션 ' }} 추가</div>
+            <div class="q-py-lg q-pl-sm name">{{ add.category === 'properties' ? '특성 ' : '옵션 ' }} 추가</div>
           </q-card-section>
           <q-separator />
           <q-card-section :class="$q.platform.is.mobile ? 'col' : ''">
@@ -423,7 +423,6 @@ const visible = (isVisible: boolean, item: Item): void => {
 }
 
 .body--light .item:deep(>div:after) {
-  border-radius: 10px;
   content: '';
   position: absolute;
   z-index: -1;
@@ -431,7 +430,6 @@ const visible = (isVisible: boolean, item: Item): void => {
   bottom: 3px;
   left: 3px;
   right: 3px;
-  background-color: rgba(50, 50, 93, 0.1);
   box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
 }
 
