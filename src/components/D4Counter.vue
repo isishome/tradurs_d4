@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useQuasar } from 'quasar'
-import { icons } from '@/common/icons'
+import { icons } from 'src/common/icons'
 
 const props = defineProps({
     modelValue: {

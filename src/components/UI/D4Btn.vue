@@ -18,15 +18,19 @@ const props = defineProps({
   loading: {
     type: Boolean,
     default: false
+  },
+  disable: {
+    type: Boolean,
+    default: false
   }
 })
 const $q = useQuasar()
-const bg = computed<string>(() => $q.dark.isActive ? `background: radial-gradient(ellipse at top, ${props.color ? props.color : 'var(--q-primary)'}, 50%, var(--q-dark-page));` : `background-color: ${props.color ? props.color : 'var(--q-primary)'};`)
+const bg = computed<string>(() => $q.dark.isActive ? `background: radial-gradient(ellipse at top, ${props.color ? props.color : 'var(--q-primary)'}, 20%, var(--q-dark-page));` : `background-color: ${props.color ? props.color : 'var(--q-primary)'};`)
 const tc = computed<string>(() => `color:${props.textColor ? props.textColor : 'var(--q-light-page)'};`)
 </script>
 
 <template>
-  <div>
+  <div :class="disable ? 'disable' : ''">
     <q-skeleton v-show="loading" rounded type="QBtn" class="skeleton" />
     <div v-show="!loading" class="btn-wrap">
       <button class="btn" :style="`${bg}${tc}`">
@@ -37,6 +41,25 @@ const tc = computed<string>(() => `color:${props.textColor ? props.textColor : '
 </template>
 
 <style scoped>
+.disable {
+  user-select: none;
+  pointer-events: none;
+  opacity: .6;
+  position: relative;
+}
+
+.disable::after {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  cursor: not-allowed;
+  pointer-events: fill;
+}
+
 .skeleton {
   height: 37px;
   border-radius: 28px;
@@ -50,6 +73,12 @@ const tc = computed<string>(() => `color:${props.textColor ? props.textColor : '
   cursor: pointer;
   transition: filter .3s ease;
   font-weight: 700;
+}
+
+@media (max-width:600px) {
+  .btn {
+    padding: 4px 10px;
+  }
 }
 
 .body--light .btn {
@@ -86,7 +115,7 @@ const tc = computed<string>(() => `color:${props.textColor ? props.textColor : '
   right: 0;
   border-style: solid;
   border-image-width: 9px !important;
-  border-image: url(@/assets/frames/outer.webp) 30;
+  border-image: url(assets/frames/outer.webp) 30;
   filter: brightness(160%);
   pointer-events: none;
 }
@@ -105,7 +134,7 @@ const tc = computed<string>(() => `color:${props.textColor ? props.textColor : '
   left: 4px;
   right: 4px;
   border-style: solid;
-  border-image: url(@/assets/frames/inner.webp) 36;
+  border-image: url(assets/frames/inner.webp) 36;
   border-image-width: 30px;
   pointer-events: none;
   filter: invert(50%);

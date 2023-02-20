@@ -1,0 +1,272 @@
+.card-item {
+  max-height: 100%;
+  box-sizing: border-box;
+  position: relative;
+  background-color: transparent;
+  z-index: 0;
+  box-shadow: none;
+  padding: 4px;
+}
+
+.card-item .q-separator {
+  margin: 0 2%;
+  position: relative;
+}
+
+.body--light .card-item {
+  border-style: solid;
+  border-width: 5px;
+  border-color: var(--q-light-normal);
+  border-radius: 10px;
+}
+
+.body--dark .card-item {
+  border-style: solid;
+  border-width: 6px;
+  border-image-width: 20px !important;
+  letter-spacing: 0;
+  border-radius: 0 !important;
+  border-image: url('assets/frames/outer.webp') 20;
+}
+
+.body--light .card-item.magic {
+  border-color: var(--q-light-magic);
+}
+
+.body--light .card-item.rare {
+  border-color: var(--q-light-rare);
+}
+
+.body--light .card-item.set {
+  border-color: var(--q-light-set);
+}
+
+.body--light .card-item.unique {
+  border-color: var(--q-light-unique);
+}
+
+.card-item::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+}
+
+.body--light .card-item::before {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: var(--q-light);
+}
+
+.body--dark .card-item::before {
+  top: 2px;
+  bottom: 2px;
+  left: 2px;
+  right: 2px;
+  background-color: var(--q-dark-page);
+}
+
+.card-item .q-card__section--vert {
+  padding: 8px;
+}
+
+.name {
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 500;
+}
+
+.price {
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.info {
+  font-size: 16px;
+  line-height: 1em;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+@media (max-width:600px) {
+  .name {
+    font-size: 14px;
+  }
+
+  .price {
+    font-size: 14px;
+  }
+
+  .info {
+    font-size: 14px;
+  }
+
+  .card-item {
+    font-size: 12px;
+  }
+
+  .card-item .q-card__section--vert {
+    padding: 6px;
+  }
+}
+
+.body--dark .card-item.magic .name {
+  color: var(--q-magic);
+}
+
+.body--dark .card-item.rare .name {
+  color: var(--q-rare);
+}
+
+.body--dark .card-item.set .name {
+  color: var(--q-set);
+}
+
+.body--dark .card-item.unique .name {
+  color: var(--q-unique);
+}
+
+.body--dark .card-item.magic .unique {
+  font-weight: 600;
+  color: var(--q-magic);
+}
+
+.body--dark .card-item.rare .unique {
+  font-weight: 600;
+  color: var(--q-rare);
+}
+
+.body--dark .card-item.set .unique {
+  font-weight: 600;
+  color: var(--q-set);
+}
+
+.body--dark .card-item.unique .unique {
+  font-weight: 600;
+  color: var(--q-unique);
+}
+
+.body--dark .card-item.magic .unique .icon {
+  filter: var(--q-filter-magic) !important;
+}
+
+.body--dark .card-item.rare .unique .icon {
+  filter: var(--q-filter-rare) !important;
+}
+
+.body--dark .card-item.set .unique .icon {
+  filter: var(--q-filter-set) !important;
+}
+
+.body--dark .card-item.unique .unique .icon {
+  filter: var(--q-filter-unique) !important;
+}
+
+.card-item .inner {
+  padding: 10px;
+  position: relative;
+  z-index: 0;
+}
+
+.body--dark .card-item .inner {
+  background-blend-mode: color-dodge;
+  background: linear-gradient(to bottom, var(--q-dark-normal), var(--q-dark-page));
+}
+
+.body--dark .card-item.magic .inner {
+  background: linear-gradient(to bottom, var(--q-dark-magic), var(--q-dark-page));
+}
+
+.body--dark .card-item.rare .inner {
+  background: linear-gradient(to bottom, var(--q-dark-rare), var(--q-dark-page));
+}
+
+.body--dark .card-item.set .inner {
+  background: linear-gradient(to bottom, var(--q-dark-set), var(--q-dark-page));
+}
+
+.body--dark .card-item.unique .inner {
+  background: linear-gradient(to bottom, var(--q-dark-unique), var(--q-dark-page));
+}
+
+.body--dark .card-item .inner::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 4px;
+  right: 4px;
+  border-style: solid;
+  border-color: inherit;
+  border-image: url('assets/frames/inner.webp') 40;
+  border-image-width: 30px;
+  background-color: transparent !important;
+  filter: brightness(0) saturate(100%);
+  pointer-events: none;
+}
+
+.card-item.normal .inner::after {
+  filter: var(--q-filter-normal);
+}
+
+.card-item.magic .inner::after {
+  filter: var(--q-filter-magic);
+}
+
+.card-item.rare .inner::after {
+  filter: var(--q-filter-rare);
+}
+
+.card-item.set .inner::after {
+  filter: var(--q-filter-set);
+}
+
+.card-item.unique .inner::after {
+  filter: var(--q-filter-unique);
+}
+
+.card-item.editable,
+.card-item.dialog {
+  width: 800px;
+  max-width: 100vw;
+}
+
+.card-item:not(.expanded, .editable, .dialog)::after {
+  content: '';
+  position: absolute;
+  top: 70%;
+  bottom: -30px;
+  left: -30px;
+  right: -30px;
+  border-radius: 2px;
+  filter: blur(16px);
+  background-color: var(--q-light);
+}
+
+.body--dark .card-item:not(.expanded, .editable, .dialog)::after {
+  background-color: var(--q-dark-page);
+}
+
+@media (max-width:600px) {
+  .card-item:not(.expanded, .editable, .dialog)::after {
+    top: 68%;
+  }
+
+  .card-item .inner {
+    padding: 6px;
+  }
+}
+
+.var {
+  max-width: 34px;
+}
+
+.var .q-field__control {
+  height: 20px;
+  line-height: 20px;
+  padding: 0 !important;
+  margin: 0;
+}

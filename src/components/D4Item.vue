@@ -1,18 +1,18 @@
 <script setup lang="ts">
 import { reactive, ref, computed, useSlots, nextTick } from 'vue'
 import { QCardSection, useQuasar } from 'quasar'
-import type { Quality, RuneType, ItemType } from '@/stores/item'
-import type { Price } from '@/types/item'
-import { useItemStore } from '@/stores/item'
-import { checkName, parse } from '@/common'
-import { icons } from '@/common/icons'
-import PriceComp from '@/components/Price.vue'
-import Counter from '@/components/Counter.vue'
+import type { Quality, RuneType, ItemType } from 'stores/item-store'
+import type { Price } from 'src/types/item'
+import { useItemStore } from 'src/stores/item-store'
+import { checkName, parse } from 'src/common'
+import { icons } from 'src/common/icons'
+import D4Price from 'components/D4Price.vue'
+import D4Counter from 'components/D4Counter.vue'
 
 const props = defineProps({
   data: {
     type: Object,
-    default: () => { }
+    required:true
   },
   editable: {
     type: Boolean,
@@ -141,17 +141,17 @@ defineExpose({ scrollEnd })
                   </template>
                 </q-select>
               </div>
-              <Counter v-model="_quantity" @update:model-value="update" />
+              <D4Counter v-model="_quantity" @update:model-value="update" />
             </div>
           </div>
         </div>
       </q-card-section>
-      <q-separator />
+      <q-separator v-show="data.itemType !== 'rune'" />
       <q-card-section v-show="data.itemType !== 'rune'">
         <q-input v-show="data.itemType !== 'rune'" dense no-error-icon hide-bottom-space autofocus v-model="_name"
           outlined class="col-10" label="아이템 명" @update:model-value="update" :rules="[val => checkName(val) || '']" />
       </q-card-section>
-      <q-separator v-show="data.itemType === 'rune'" class="q-mx-xs" />
+      <q-separator v-show="data.itemType === 'rune'" />
       <q-card-section v-show="data.itemType === 'rune'" class="col">
         <q-item v-show="loading" style="min-height:10px;padding:3px">
           <q-item-section side class="q-pr-sm">
@@ -169,8 +169,7 @@ defineExpose({ scrollEnd })
           </div>
         </div>
       </q-card-section>
-      <q-separator v-show="findType(data.itemType)?.attribute || findType(data.itemType)?.hasProperties"
-        class="q-mx-xs" />
+      <q-separator v-show="findType(data.itemType)?.attribute || findType(data.itemType)?.hasProperties" />
       <q-card-section v-if="findType(data.itemType)?.attribute">
         <q-item v-show="loading" style="min-height:10px;padding:3px">
           <q-item-section side class="q-pr-sm">
@@ -218,7 +217,7 @@ defineExpose({ scrollEnd })
           </slot>
         </div>
       </q-card-section>
-      <q-separator v-show="findType(data.itemType)?.attribute || findType(data.itemType)?.hasAffixes" class="q-mx-xs" />
+      <q-separator v-show="findType(data.itemType)?.attribute || findType(data.itemType)?.hasAffixes" />
       <q-card-section v-if="slots['add-affix'] && findType(data.itemType)?.hasAffixes">
         <slot name="add-affix"></slot>
       </q-card-section>
@@ -240,7 +239,7 @@ defineExpose({ scrollEnd })
       </q-card-section>
       <q-separator />
       <q-card-section>
-        <PriceComp :data="data.price" :editable="editable" @update="updatePrice" />
+        <D4Price :data="data.price" :editable="editable" @update="updatePrice" />
       </q-card-section>
       <q-separator v-if="slots.actions" />
       <q-card-section v-if="slots.actions">
@@ -283,10 +282,10 @@ defineExpose({ scrollEnd })
               {{ data.user }}
             </div>
           </div>
-          <PriceComp :data="data.price" :editable="editable" :loading="loading" />
+          <D4Price :data="data.price" :editable="editable" :loading="loading" />
         </div>
       </q-card-section>
-      <q-separator v-show="data.itemType === 'rune'" class="q-mx-xs" />
+      <q-separator v-show="data.itemType === 'rune'" />
       <q-card-section v-show="data.itemType === 'rune'" class="col">
         <q-item v-show="loading" style="min-height:10px;padding:3px">
           <q-item-section side class="q-pr-sm">
@@ -304,8 +303,7 @@ defineExpose({ scrollEnd })
           </div>
         </div>
       </q-card-section>
-      <q-separator v-show="loading || findType(data.itemType)?.attribute || findType(data.itemType)?.hasProperties"
-        class="q-mx-xs" />
+      <q-separator v-show="loading || findType(data.itemType)?.attribute || findType(data.itemType)?.hasProperties" />
       <q-card-section v-if="loading || findType(data.itemType)?.attribute">
         <q-item v-show="loading" style="min-height:10px;padding:3px">
           <q-item-section side class="q-pr-sm">
@@ -342,8 +340,7 @@ defineExpose({ scrollEnd })
           </slot>
         </div>
       </q-card-section>
-      <q-separator v-show="loading || findType(data.itemType)?.attribute || findType(data.itemType)?.hasAffixes"
-        class="q-mx-xs" />
+      <q-separator v-show="loading || findType(data.itemType)?.attribute || findType(data.itemType)?.hasAffixes" />
       <q-card-section v-show="loading || findType(data.itemType)?.hasAffixes">
         <q-item v-show="loading" v-for="c in 3" :key="c" style="min-height:10px;padding:3px">
           <q-item-section side class="q-pr-sm">

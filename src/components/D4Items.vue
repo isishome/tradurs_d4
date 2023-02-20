@@ -1,18 +1,18 @@
 <script setup lang="ts">
 import { ref, computed, reactive } from 'vue'
 import { useQuasar, QInput } from 'quasar'
-import type { AttributeType } from '@/stores/item'
-import { useItemStore } from '@/stores/item'
-import { checkAttribute } from '@/common'
-import type { IItem } from '@/types/item'
-import { Item, Advertise, Offer } from '@/types/item'
-import dropdown from '@/assets/icons/dropdown.svg'
-import ItemComp from '@/components/Item.vue'
-import Affix from '@/components/Affix.vue'
-import Property from '@/components/Property.vue'
-import PriceComp from '@/components/Price.vue'
+import type { AttributeType } from 'stores/item-store'
+import { useItemStore } from 'stores/item-store'
+import { checkAttribute } from 'src/common'
+import type { IItem } from 'src/types/item'
+import { Item, Advertise, Offer } from 'src/types/item'
+import dropdown from 'assets/icons/dropdown.svg'
+import D4Item from 'components/D4Item.vue'
+import D4Affix from 'components/D4Affix.vue'
+import D4Property from 'components/D4Property.vue'
+import D4Price from 'components/D4Price.vue'
 
-const props = defineProps({
+defineProps({
   items: {
     type: Array,
     default: () => []
@@ -47,7 +47,7 @@ interface Dialog {
   editable: boolean
 }
 
-const activatedRef = ref<typeof ItemComp | null>(null)
+const activatedRef = ref<typeof D4Item | null>(null)
 const activated = reactive<Dialog>({
   show: false,
   editable: false
@@ -72,7 +72,7 @@ const offer = ref<Offer>(new Offer(123))
 
 const makingOffer = (itemId: number): void => {
   offer.value.itemId = itemId
-  offers.value = Array.from({ length: Math.floor(Math.random() * 20) }, (_, i) => {
+  offers.value = Array.from({ length: Math.floor(Math.random() * 6 + 1) }, () => {
     const currency: string = ['offer', 'rune', 'essence', 'glyph'][Math.floor(Math.random() * 4)]
     const currencyValue: string | null = currency === 'rune' ? runes.value.map(r => r.value)[Math.floor(Math.random() * runes.value.length)] : null
     const genOffer = new Offer(123, currency, currencyValue, Math.floor(Math.random() * 1 + 1))
@@ -253,48 +253,50 @@ const removeAffix = ({ valueId }: { valueId: number }): void => {
 
 // Execute function if an item is visible
 const visible = (isVisible: boolean, item: Item): void => {
+  isVisible
+  item
 }
 </script>
 
 <template>
   <div class="col-12" :style="`max-width:${width}px`">
     <div :class="$q.platform.is.mobile ? 'q-gutter-y-xl' : 'q-gutter-y-xxl'">
-      <q-intersection v-for="(item, i) in (items as Array<Item | Advertise>)" :key="`item$_{i}`" class="item"
+      <q-intersection v-for="(item, i) in (items as Array<Item | Advertise>)" :key="`item_${i}`" class="item"
         :style="item.expanded ? 'height: 100%' : `height: ${height as number - ($q.platform.is.mobile ? 50 : 0)}px`"
         transition="jump-up" @visibility="isVisible => visible(isVisible, item)" once>
         <div v-if="(item instanceof Advertise)" class="bg-grey" style="width:100%;height:500px"></div>
-        <ItemComp v-else :data="item" :loading="loading || item.loading">
+        <D4Item v-else :data="item" :loading="loading || item.loading">
           <template #top-right>
           </template>
           <template v-if="requestProperties > 0" #properties>
-            <Property v-for="(property, i) in item.properties" :key="`property_${i}`" :data="property" />
+            <D4Property v-for="(property, i) in item.properties" :key="`property_${i}`" :data="property" />
           </template>
           <template v-if="requestAffixes > 0" #affixes>
-            <Affix v-for="affix in item.affixes" :key="affix.valueId || `create_${Math.floor(Math.random() * 1000000)}`"
+            <D4Affix v-for="affix in item.affixes" :key="affix.valueId || `create_${Math.floor(Math.random() * 1000000)}`"
               :data="affix" />
           </template>
           <template #actions>
-            <div class="row justify-between items-center" :class="$q.platform.is.mobile ? '' : 'q-pt-xl'">
+            <div class="row justify-between items-center q-px-md q-pt-lg">
               <div>
-                <Btn label="수정" color="var(--q-secondary)" :loading="loading || item.loading" @click="activate(item)" />
+                <D4Btn label="수정" color="var(--q-secondary)" :loading="loading || item.loading" @click="activate(item)" />
               </div>
               <div>
-                <Btn label="제안 리스트" :loading="loading || item.loading" @click="makingOffer(item.itemId as number)" />
+                <D4Btn label="제안 리스트" :loading="loading || item.loading" @click="makingOffer(item.itemId as number)" />
               </div>
             </div>
           </template>
           <template #more="{ loading }">
             <q-btn v-if="!item.expanded && !loading" flat text-color="black" class="more no-hover" padding="20px"
               @click="item.expanded = true">
-              <img class="icon" width="24" height="16" src="@/assets/icons/more.svg" />
+              <img class="icon" width="24" height="16" src="~assets/icons/more.svg" />
             </q-btn>
           </template>
-        </ItemComp>
+        </D4Item>
       </q-intersection>
     </div>
-    <q-dialog v-model="activated.show" @hide="hideActivated" :maximized="$q.platform.is.mobile" transition-show="none"
-      transition-hide="none">
-      <ItemComp ref="activatedRef" :data="activatedItem" :editable="activated.editable" @update="updateItem"
+    <q-dialog v-model="activated.show" @hide="hideActivated" :maximized="$q.platform.is.mobile"
+      :seamless="$q.platform.is.mobile" transition-show="none" transition-hide="none">
+      <D4Item ref="activatedRef" :data="activatedItem" :editable="activated.editable" @update="updateItem"
         @apply="apply">
         <template #add-property>
           <div class="row no-wrap items-center q-gutter-x-sm">
@@ -311,12 +313,12 @@ const visible = (isVisible: boolean, item: Item): void => {
               </template>
             </q-select>
             <q-btn size="sm" unelevated flat dense round @click="createProperty">
-              <img class="icon" width="24" src="@/assets/icons/add.svg" />
+              <img class="icon" width="24" src="~assets/icons/add.svg" />
             </q-btn>
           </div>
         </template>
         <template #properties>
-          <Property v-for="property in activatedItem.properties"
+          <D4Property v-for="property in activatedItem.properties"
             :key="property.valueId || `create_${Math.floor(Math.random() * 1000000)}`" :data="property"
             :editable="activated.editable" @update="updateProperty" @remove="removeProperty" />
         </template>
@@ -335,26 +337,27 @@ const visible = (isVisible: boolean, item: Item): void => {
               </template>
             </q-select>
             <q-btn size="sm" unelevated flat dense round @click="createAffix">
-              <img class="icon" width="24" src="@/assets/icons/add.svg" />
+              <img class="icon" width="24" src="~assets/icons/add.svg" />
             </q-btn>
           </div>
         </template>
         <template #affixes>
-          <Affix v-for="affix in activatedItem.affixes"
+          <D4Affix v-for="affix in activatedItem.affixes"
             :key="affix.valueId || `create_${Math.floor(Math.random() * 1000000)}`" :data="affix"
             :editable="activated.editable" @update="updateAffix" @remove="removeAffix" />
         </template>
         <template #actions>
-          <div class="row justify-end items-center q-gutter-x-sm" :class="$q.platform.is.mobile ? '' : 'q-pt-xl'">
-            <Btn label="취소" :loading="loading" color="rgb(150,150,150)" @click="activated.show = false" />
-            <Btn label="적용" :loading="loading" type="submit" />
+          <div class="row justify-end items-center q-gutter-x-sm q-px-md"
+            :class="$q.platform.is.mobile ? '' : 'q-pt-lg'">
+            <D4Btn label="취소" :loading="loading" color="rgb(150,150,150)" @click="activated.show = false" />
+            <D4Btn label="적용" :loading="loading" type="submit" />
           </div>
         </template>
-      </ItemComp>
+      </D4Item>
     </q-dialog>
-    <q-dialog v-model="add.show" @hide="hideAdd" :maximized="$q.platform.is.mobile" transition-show="none"
-      transition-hide="none">
-      <q-card class="card-item dialog">
+    <q-dialog v-model="add.show" @hide="hideAdd" :maximized="$q.platform.is.mobile" :seamless="$q.platform.is.mobile"
+      transition-show="none" transition-hide="none">
+      <q-card class="card-item dialog normal">
         <q-form class="inner column full-height" @submit="applyAdd">
           <q-card-section>
             <div class="q-py-lg q-pl-sm name">{{ add.category === 'properties' ? '특성 ' : '옵션 ' }} 추가</div>
@@ -365,31 +368,37 @@ const visible = (isVisible: boolean, item: Item): void => {
               <q-option-group v-model="add.type" :options="add.types" color="primary" size="xs" inline />
               <q-input autofocus ref="refAttribute" v-model="add.attribute"
                 placeholder="엘리트 몬스터 처치 시 6초 동안 이동 속도 {x}% 증가" :error="add.error" :error-message="add.errorMessage"
-                :outlined="!$q.dark.isActive" :standout="$q.dark.isActive" dense no-error-icon hide-hint />
+                outlined dense no-error-icon hide-hint />
             </div>
           </q-card-section>
           <q-separator inset />
           <q-card-section :class="$q.platform.is.mobile ? 'col-1' : ''">
-            <div class="row justify-end items-center q-gutter-x-sm" :class="$q.platform.is.mobile ? '' : 'q-pt-xl'">
-              <Btn label="취소" :loading="loading" color="rgb(150,150,150)" @click="add.show = false" />
-              <Btn label="추가" :loading="loading" type="submit" />
+            <div class="row justify-end items-center q-gutter-x-sm q-px-md"
+              :class="$q.platform.is.mobile ? '' : 'q-pt-lg'">
+              <D4Btn label="취소" :loading="loading" color="rgb(150,150,150)" @click="add.show = false" />
+              <D4Btn label="추가" :loading="loading" type="submit" />
             </div>
           </q-card-section>
         </q-form>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="makeOffer" @hide="hideMakeOffer" :maximized="$q.platform.is.mobile" transition-show="none"
-      transition-hide="none">
-      <q-card class="card-item dialog overflow-hidden">
-        <q-card-section>
-          <div class="row items-center q-col-gutter-sm scroll">
-            <div class="col-12 col-sm-6" v-for="(offer, idx) in offers" :key="idx">
-              <q-card flat bordered class="bg-transparent">
-                <PriceComp offer :data="offer" />
-              </q-card>
+    <q-dialog v-model="makeOffer" @hide="hideMakeOffer" :maximized="$q.platform.is.mobile"
+      :seamless="$q.platform.is.mobile" transition-show="none" transition-hide="none">
+      <q-card class="card-item dialog no-scroll normal">
+        <div class="inner column" :style="$q.platform.is.mobile ? 'height:100%' : 'max-height:90vh'">
+          <q-card-section class="col scroll">
+            <div class="row items-center q-col-gutter-lg">
+              <q-intersection v-for="(offer, i) in (offers as Array<Offer>)" :key="`offer_${i}`"
+                class="col-12 col-sm-6 offer" transition="jump-up" once>
+                <q-card flat bordered class="card-item expanded set">
+                  <div class="inner">
+                    <D4Price offer :data="offer" />
+                  </div>
+                </q-card>
+              </q-intersection>
             </div>
-          </div>
-        </q-card-section>
+          </q-card-section>
+        </div>
       </q-card>
       <!-- <q-card class="card-item dialog">
         <q-form class="inner column full-height" @submit="applyAdd">
@@ -477,8 +486,7 @@ const visible = (isVisible: boolean, item: Item): void => {
   max-width: 80%;
 }
 
-.dialog {
-  width: 600px;
-  max-width: 100vw;
+.offer {
+  height: 200px;
 }
 </style>

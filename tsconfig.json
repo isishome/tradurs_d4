@@ -1,26 +1,9 @@
 {
-  "extends": "@vue/tsconfig/tsconfig.web.json",
-  "include": [
-    "env.d.ts",
-    "index.d.ts",
-    "src/**/*",
-    "src/**/*.vue"
-  ],
+  "extends": "@quasar/app-vite/tsconfig-preset",
   "compilerOptions": {
     "baseUrl": ".",
-    "paths": {
-      "@/*": [
-        "./src/*"
-      ]
-    },
     "strict": true,
     "noImplicitAny": true,
-    "strictNullChecks": true,
-    "allowJs": true
-  },
-  "references": [
-    {
-      "path": "./tsconfig.config.json"
-    }
-  ]
+    "strictNullChecks": true
+  }
 }

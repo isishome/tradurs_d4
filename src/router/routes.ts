@@ -1,22 +1,21 @@
-import NotFound from '@/pages/NotFound.vue'
-import Layout from '@/pages/Layout.vue'
-import Main from '@/pages/Main.vue'
+import { RouteRecordRaw } from 'vue-router'
 
-export const routes = [
-  {
-    path: '/:pathMatch(.*)*',
-    name: 'NotFound',
-    component: NotFound
-  },
+const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    component: Layout,
+    component: () => import('layouts/MainLayout.vue'),
     children: [
-      {
-        path: '',
-        name: 'Main',
-        component: Main
-      }
+      { path: '', component: () => import('pages/IndexPage.vue') },
+      { path: 'sub', component: () => import('pages/SubPage.vue') },
     ]
+  },
+
+  // Always leave this as last one,
+  // but you can also remove it
+  {
+    path: '/:catchAll(.*)*',
+    component: () => import('pages/ErrorNotFound.vue')
   }
 ]
+
+export default routes

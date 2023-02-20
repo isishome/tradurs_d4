@@ -2,9 +2,9 @@
 import { inject, ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useQuasar, uid, Screen } from 'quasar'
-import { useAccountStore } from '@/stores/account'
+import { useAccountStore } from 'stores/account-store'
 import type { AxiosInstance } from 'axios'
-import Filter from '@/components/Filter.vue'
+// import Filter from 'components/Filter.vue'
 
 const prod: boolean = import.meta.env.PROD
 const tradurs: string = import.meta.env.VITE_APP_TRADURS_ORIGIN || `${document.location.protocol}//${document.location.hostname}:6081`
@@ -37,8 +37,6 @@ const sign = (): void => {
       accountStore.signed = false
       router.go(0)
     })
-    .catch(() => {
-    })
 }
 
 const key = ref(uid())
@@ -54,8 +52,6 @@ watch(() => route.name, (val, old) => {
     reload()
 })
 
-
-
 const onWindowLoad = () => {
   if (prod) {
     const adsbygoogle = window.adsbygoogle || []
@@ -66,7 +62,7 @@ const onWindowLoad = () => {
 
 onMounted(() => {
   if (document.readyState !== 'complete')
-    window.addEventListener("load", onWindowLoad)
+    window.addEventListener('load', onWindowLoad)
   else {
     nextTick(() => {
       onWindowLoad()
@@ -75,7 +71,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  window.removeEventListener("load", onWindowLoad)
+  window.removeEventListener('load', onWindowLoad)
 })
 </script>
 <template>
@@ -87,26 +83,27 @@ onUnmounted(() => {
         <!-- <Filter /> -->
       </div>
     </q-drawer>
-    <q-header class="q-py-sm header row justify-center">
+    <q-header :elevated="!$q.dark.isActive" class="q-py-sm header row justify-center">
       <q-toolbar class="toolbar">
         <div class="col-3 row items-center">
-          <q-btn class="gt-sm no-hover" dense flat padding="0" :ripple="false" :to="{ name: 'Main' }">
-            <img v-show="$q.dark.isActive" src="@/assets/logo.webp" height="48" />
-            <img v-show="!$q.dark.isActive" src="@/assets/logo_light.webp" height="48" />
+          <q-btn class="gt-sm no-hover" dense flat padding="0" :ripple="false" :to="{ path: '/' }">
+            <img v-show="$q.dark.isActive" src="~assets/logo.webp" height="48" />
+            <img v-show="!$q.dark.isActive" src="~assets/logo_light.webp" height="48" />
           </q-btn>
           <q-btn dense flat round class="lt-md" :ripple="false" @click="leftDrawerOpen = !leftDrawerOpen">
-            <img src="@/assets/icons/filter.svg" class="icon" width="24" />
+            <img src="~assets/icons/filter.svg" class="icon" width="24" />
           </q-btn>
         </div>
         <div class="col row justify-center">
-          <q-btn class="lt-md no-hover" dense flat padding="0" :ripple="false" :to="{ name: 'Main' }">
-            <img v-show="$q.dark.isActive" src="@/assets/logo.webp" height="48" />
-            <img v-show="!$q.dark.isActive" src="@/assets/logo_light.webp" height="48" />
+          <q-btn class="lt-md no-hover" dense flat padding="0" :ripple="false" :to="{ path: '/' }">
+            <img v-show="$q.dark.isActive" src="~assets/logo.webp" height="48" />
+            <img v-show="!$q.dark.isActive" src="~assets/logo_light.webp" height="48" />
           </q-btn>
-          <q-tabs dense class="gt-sm q-px-md bg-transparent no-hover">
+          <q-tabs dense class="gt-sm q-px-md bg-transparent no-hover nav">
+            <q-route-tab :ripple="false" label="서브" :to="{ path: 'sub' }" exact />
             <q-route-tab :ripple="false" label="일반" exact />
-            <q-route-tab :ripple="false" content-class="text-indigo-12" label="마법" exact />
-            <q-route-tab :ripple="false" content-class="text-yellow-4" label="희귀" exact />
+            <q-route-tab :ripple="false" style="color:var(--q-light-magic)" label="마법" exact />
+            <q-route-tab :ripple="false" style="color:var(--q-light-rare)" label="희귀" exact />
             <!-- <q-route-tab :ripple="false" content-class="text-amber-8" label="전설" exact />
             <q-route-tab :ripple="false" content-class="text-light-green-13" label="세트" exact />
             <q-route-tab :ripple="false" content-class="text-brown-12" label="고유" exact /> -->
@@ -114,12 +111,12 @@ onUnmounted(() => {
         </div>
         <div class="col-3 row justify-end" :class="screen.gt.sm ? 'q-gutter-x-md' : 'q-gutter-x-sm'">
           <q-btn round flat dense :ripple="false" @click="$q.dark.set(!$q.dark.isActive)">
-            <img v-show="$q.dark.isActive" class="icon" width="24" src="@/assets/icons/light.svg" />
-            <img v-show="!$q.dark.isActive" class="icon" width="24" src="@/assets/icons/dark.svg" />
+            <img v-show="$q.dark.isActive" class="icon" width="24" src="~assets/icons/light.svg" />
+            <img v-show="!$q.dark.isActive" class="icon" width="24" src="~assets/icons/dark.svg" />
           </q-btn>
           <q-btn round flat dense :ripple="false" @click="sign">
-            <img v-if="signed" class="icon" width="24" src="@/assets/icons/logout.svg" />
-            <img v-else class="icon" width="24" src="@/assets/icons/login.svg" />
+            <img v-if="signed" class="icon" width="24" src="~assets/icons/logout.svg" />
+            <img v-else class="icon" width="24" src="~assets/icons/login.svg" />
           </q-btn>
         </div>
       </q-toolbar>
@@ -168,9 +165,6 @@ onUnmounted(() => {
 
 .body--light .header {
   box-shadow: inset 0 -1px 0 0 var(--q-light-border);
-}
-
-.body--light .header {
   background-color: var(--q-light);
   color: var(--q-dark);
 }
@@ -209,5 +203,10 @@ ins::after {
 
 .body--light ins::after {
   color: var(--q-dark);
+}
+
+.nav,
+.nav:deep(.q-tab) {
+  transition: none !important;
 }
 </style>

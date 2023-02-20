@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
-import { instance } from '@/axios'
+import { api } from 'boot/axios'
 import PhraseGen from 'korean-random-words'
-import { runeImgs } from '@/common/runes'
+import { runeImgs } from 'src/common/runes'
 
 export interface Quality {
   value: string,
@@ -108,75 +108,84 @@ export const useItemStore = defineStore('item', {
   },
   actions: {
     getBase() {
-      const self = this
-      return new Promise((resolve, reject) => {
+      return new Promise<void>((resolve, reject) => {
         let error: unknown = null
-        if (self.base.request === 0) {
-          self.base.loading = true
-          instance.get('/d4/item/base')
+        if (this.base.request === 0) {
+          this.base.loading = true
+          api.get('/d4/item/base')
             .then((response) => {
-              self.quality = response.data.quality
-              self.runeTypes = response.data.runeTypes
-              self.runes = response.data.runes.map((r: Rune) => ({ ...r, img: runeImgs[r.value as keyof typeof runeImgs] }))
-              self.types = response.data.types
-              self.currencies = [{ value: 'offer', label: '제안 받기' }, ...response.data.types.filter((t: ItemType) => t.isCurrency)]
-              self.classes = response.data.classes
-              self.attributeTypes = response.data.attributeTypes
+              this.quality = response.data.quality
+              this.runeTypes = response.data.runeTypes
+              this.runes = response.data.runes.map((r: Rune) => ({ ...r, img: runeImgs[r.value as keyof typeof runeImgs] }))
+              this.types = response.data.types
+              this.currencies = [{ value: 'offer', label: '제안 받기' }, ...response.data.types.filter((t: ItemType) => t.isCurrency)]
+              this.classes = response.data.classes
+              this.attributeTypes = response.data.attributeTypes
             })
             .catch((e) => {
               error = e
             })
             .then(() => {
-              self.base.loading = false
-              self.base.request++
+              this.base.loading = false
+              this.base.request++
 
               if (error)
                 reject()
               else
-                resolve(0)
+                resolve()
             })
         }
         else
-          resolve(0)
+          resolve()
       })
     },
-    getProperties(): void {
-      const self = this
-      if (self.properties.request === 0) {
-        self.properties.loading = true
-        const phraseGen = new PhraseGen({
-          delimiter: ' {x} '
-        })
-        setTimeout(() => {
-          self.properties.data = Array.from({ length: 200 }, (_, i) => ({
-            value: i + 1,
-            label: phraseGen.generatePhrase(),
-            type: self.attributeTypes.filter(at => at.value !== 'socket').map(at => at.value)[Math.floor(Math.random() * (self.attributeTypes.length - 1))],
-            sort: i + 1
-          }))
-          self.properties.request++
-          self.properties.loading = false
-        }, 200)
-      }
+    getProperties() {
+      return new Promise<void>((resolve) => {
+        //let error: unknown = null
+        if (this.properties.request === 0) {
+          this.properties.loading = true
+          const phraseGen = new PhraseGen({
+            delimiter: ' {x} '
+          })
+          setTimeout(() => {
+            this.properties.data = Array.from({ length: 200 }, (_, i) => ({
+              value: i + 1,
+              label: phraseGen.generatePhrase(),
+              type: this.attributeTypes.filter(at => at.value !== 'socket').map(at => at.value)[Math.floor(Math.random() * (this.attributeTypes.length - 1))],
+              sort: i + 1
+            }))
+            this.properties.request++
+            this.properties.loading = false
+            resolve()
+          }, 200)
+        }
+        else
+          resolve()
+      })
     },
-    getAffixes(): void {
-      const self = this
-      if (self.affixes.request === 0) {
-        self.affixes.loading = true
-        const phraseGen = new PhraseGen({
-          delimiter: ' {x} '
-        })
-        setTimeout(() => {
-          self.affixes.data = Array.from({ length: 200 }, (_, i) => ({
-            value: i + 1,
-            label: phraseGen.generatePhrase(),
-            type: self.attributeTypes.map(at => at.value)[Math.floor(Math.random() * self.attributeTypes.length)],
-            sort: i + 1
-          }))
-          self.affixes.request++
-          self.affixes.loading = false
-        }, 200)
-      }
+    getAffixes() {
+      return new Promise<void>((resolve) => {
+        //let error: unknown = null
+        if (this.affixes.request === 0) {
+          this.affixes.loading = true
+          const phraseGen = new PhraseGen({
+            delimiter: ' {x} '
+          })
+          setTimeout(() => {
+            this.affixes.data = Array.from({ length: 200 }, (_, i) => ({
+              value: i + 1,
+              label: phraseGen.generatePhrase(),
+              type: this.attributeTypes.map(at => at.value)[Math.floor(Math.random() * this.attributeTypes.length)],
+              sort: i + 1
+            }))
+            this.affixes.request++
+            this.affixes.loading = false
+            resolve()
+          }, 200)
+        }
+        else
+          resolve()
+      })
     },
     addAttribute(category: string | null, property: Property | Affix): void {
       const target = category === 'properties' ? this.properties : category === 'affixes' ? this.affixes : undefined

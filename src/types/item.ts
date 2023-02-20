@@ -49,30 +49,30 @@ export interface IItem {
 
 export class Item implements IItem {
     public itemId: number | null = null
-    public name: string = ''
+    public name = ''
     public quantity = 1
-    public quality: string = ''
-    public itemType: string = ''
+    public quality = ''
+    public itemType = ''
     public itemTypeValues: Array<number> = []
-    public equipmentClass: string = ''
-    public runeId: string = ''
+    public equipmentClass = ''
+    public runeId = ''
     public properties: Array<Property> = []
     public affixes: Array<Affix> = []
     public price: Price = { currency: 'offer', currencyValue: null, quantity: 1 }
-    public user: string = ''
-    public offers: number = 0
-    public editable: boolean = false
-    public action: number = 0
-    public loading: boolean = false
-    public expanded: boolean = false
+    public user = ''
+    public offers = 0
+    public editable = false
+    public action = 0
+    public loading = false
+    public expanded = false
 
-    constructor() { }
+    //constructor() { }
 }
 
 export class Advertise extends Item {
-    public slot: string = ''
-    public width: number = 160
-    public height: number = 600
+    public slot = ''
+    public width = 160
+    public height = 600
 }
 
 export class Offer implements Price {

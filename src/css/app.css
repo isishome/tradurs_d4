@@ -2,7 +2,7 @@
   --q-primary: #A59263;
   --q-secondary: #A50905;
   --q-accent: #9C27B0;
-  --q-light: #eeeeee;
+  --q-light: #EAEAEA;
   /* --q-light: #FDFDFD; */
   /* --q-light-page: #DBDBDB; */
   --q-light-page: #F4F4F4;
@@ -14,7 +14,8 @@
   --q-negative: #C10015;
   --q-info: #31CCEC;
   --q-warning: #F2C037;
-  --q-light-normal: #AAAAAA;
+  --q-light-normal: #888888;
+  --q-dark-normal: #333333;
   --q-magic: #7B7DF6;
   --q-light-magic: #4B4DC6;
   --q-dark-magic: #1B263A;
@@ -84,7 +85,7 @@ body.body--dark {
   bottom: 0;
   left: 0;
   right: 0;
-  background-image: url('@/assets/back.webp');
+  background-image: url('assets/back.webp');
   background-size: 550px;
   background-repeat: repeat;
 }
@@ -157,4 +158,8 @@ body.body--dark {
 
 .body--light .scroll::-webkit-scrollbar-thumb {
   background: rgba(0, 0, 0, .2);
+}
+
+.q-notifications .q-icon img {
+  filter: invert(100%);
 }

@@ -1,14 +1,18 @@
-<script setup lang="ts">
-import { useQuasar } from 'quasar'
+<script lang="ts">
+import { useItemStore } from 'stores/item-store'
 
-const $q = useQuasar()
-//$q.dark.set(true)
+export default {
+  preFetch({ store }) {
+    const s = useItemStore(store)
+    return s.getBase()
+  }
+}
+</script>
+
+<script setup lang="ts">
+
 </script>
 
 <template>
-  <RouterView />
+  <router-view />
 </template>
-
-<style scoped>
-
-</style>
