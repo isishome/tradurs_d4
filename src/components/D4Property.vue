@@ -13,6 +13,10 @@ const props = defineProps({
   editable: {
     type: Boolean,
     default: false
+  },
+  disable: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -45,10 +49,11 @@ watch(() => props.data, () => {
 
 <template>
   <div class="row items-center">
-    <div class="row no-wrap q-gutter-x-xs" :class="data.disable ? 'disable' : ''">
+    <div class="row no-wrap q-gutter-x-xs" :class="disable ? 'disable' : ''">
       <div>
-        <q-icon class="icon" :class="findProperty?.type === 'regular' ? 'rotate-45' : ''" size="13px"
-          :name="`img:${icons[findProperty?.type as keyof typeof icons || 'regular']}`" />
+        <q-icon class="icon"
+          :class="['regular', 'offensive', 'defensive', 'utility'].includes(findProperty?.type as string) ? 'rotate-45' : ''"
+          size="13px" :name="`img:${icons[findProperty?.type as keyof typeof icons || 'regular']}`" />
       </div>
       <div class="row items-center q-gutter-x-xs">
         <template v-for="(comp, k) in propertyInfo" :key="k">
@@ -59,13 +64,13 @@ watch(() => props.data, () => {
           <div v-else-if="!editable && comp.type === 'variable'">{{ comp.value }}</div>
           <q-input v-else class="var" input-class="text-center text-caption no-padding" dense hide-bottom-space
             hide-hint no-error-icon outlined v-model="comp.value" type="tel" maxlength="3" mask="###" debounce="500"
-            :disable="data.disable"
-            :rules="[val => !data.disable && Number.isInteger(parseInt(val)) && parseInt(val) !== 0 || '']"
+            :disable="disable"
+            :rules="[val => !disable && Number.isInteger(parseInt(val)) && parseInt(val) !== 0 || '']"
             @update:model-value="update" @focus="focus" />
         </template>
       </div>
     </div>
-    <q-btn v-show="editable" dense unelevated flat round size="xs" class="q-ml-sm" @click="remove">
+    <q-btn v-show="editable" :disable="disable" dense unelevated flat round size="xs" class="q-ml-sm" @click="remove">
       <img v-show="data.action !== 8" class="icon" width="13" src="~assets/icons/close.svg" />
       <img v-show="data.action === 8" class="icon flip-horizontal" width="13" src="~assets/icons/restore.svg" />
     </q-btn>

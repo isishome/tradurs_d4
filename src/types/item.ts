@@ -1,44 +1,50 @@
+import { nanoid } from 'nanoid'
+import { User } from './user'
+
 export interface Attribute {
-    valueId?: number,
-    action?: number,
-    disable?: boolean,
-    restore?: number
+  valueId?: string,
+  action?: number,
+  disable?: boolean,
+  restore?: number
 }
 
 export interface Property extends Attribute {
-    propertyId: number,
-    propertyValues: Array<number>
+  propertyId: number,
+  propertyValues: Array<number>
 }
 
 export interface Affix extends Attribute {
-    affixId: number,
-    affixValues: Array<number>
+  affixId: number,
+  affixValues: Array<number>
 }
 
 export interface Price {
-    currency: string,
-    currencyValue: string | null,
-    quantity: number
+  currency: string,
+  currencyValue: string | null,
+  quantity: number
 }
 
 export interface IItem {
-    itemId: number | null,
-    name: string,
-    quantity: number,
-    quality: string,
-    itemType: string,
-    itemTypeValues: Array<number>,
-    equipmentClass: string,
-    runeId: string,
-    properties: Array<Property>,
-    affixes: Array<Affix>,
-    price: Price,
-    user: string,
-    offers: number,
-    editable: boolean,
-    action: number,
-    loading: boolean,
-    expanded: boolean
+  itemId: string,
+  tradeType: string,
+  itemStatus: number,
+  name: string,
+  quantity: number,
+  quality: string,
+  itemType: string,
+  itemPowerValues: Array<number>,
+  itemTypeValues: Array<number>,
+  equipmentClass: string,
+  runeId: string,
+  properties: Array<Property>,
+  affixes: Array<Affix>,
+  price: Price,
+  user: string,
+  offers: number,
+  editable: boolean,
+  action: number,
+  loading: boolean,
+  expanded: boolean
 }
 
 // export interface Advertise extends IItem {
@@ -48,45 +54,59 @@ export interface IItem {
 // }
 
 export class Item implements IItem {
-    public itemId: number | null = null
-    public name = ''
-    public quantity = 1
-    public quality = ''
-    public itemType = ''
-    public itemTypeValues: Array<number> = []
-    public equipmentClass = ''
-    public runeId = ''
-    public properties: Array<Property> = []
-    public affixes: Array<Affix> = []
-    public price: Price = { currency: 'offer', currencyValue: null, quantity: 1 }
-    public user = ''
-    public offers = 0
-    public editable = false
-    public action = 0
-    public loading = false
-    public expanded = false
+  public itemId = ''
+  public tradeType = 'sell'
+  public itemStatus = 0
+  public name = ''
+  public quantity = 1
+  public quality = ''
+  public itemType = 'weapons'
+  public itemPowerValues: Array<number> = []
+  public itemTypeValues: Array<number> = []
+  public equipmentClass = 'axes'
+  public runeId = ''
+  public properties: Array<Property> = []
+  public affixes: Array<Affix> = []
+  public price: Price = { currency: 'offer', currencyValue: null, quantity: 1 }
+  public user = ''
+  public offers = 0
+  public editable = false
+  public action = 0
+  public loading = false
+  public expanded = false
 
-    //constructor() { }
+  constructor(id?: string) {
+    this.itemId = id === undefined ? nanoid() : id
+  }
 }
 
 export class Advertise extends Item {
-    public slot = ''
-    public width = 160
-    public height = 600
+  public slot = ''
+  public width = 160
+  public height = 600
 }
 
 export class Offer implements Price {
-    public itemId: number | null
-    public userId: number
-    public currency: string
-    public currencyValue: string | null
-    public quantity: number
+  public itemId: string
+  public user: User
+  public currency: string
+  public currencyValue: string | null
+  public quantity: number
+  public accepted = false
+  public loading = false
 
-    constructor(userId: number, currency?: string, currencyValue?: string | null, quantity?: number) {
-        this.itemId = null
-        this.userId = userId
-        this.currency = currency || 'rune'
-        this.currencyValue = currencyValue || 'eld'
-        this.quantity = quantity || 1
-    }
+  constructor(itemId: string, userId: string, currency?: string, currencyValue?: string | null, quantity?: number) {
+    this.itemId = itemId
+    this.user = new User(userId)
+    this.currency = currency || 'rune'
+    this.currencyValue = currencyValue || 'eld'
+    this.quantity = quantity || 1
+  }
+
+  getInfo() {
+    this.loading = true
+    setTimeout(() => {
+      this.loading = false
+    }, 2000)
+  }
 }

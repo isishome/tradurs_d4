@@ -1,15 +1,23 @@
 <script setup lang="ts">
-import { useItemStore } from 'stores/item-store'
+import { nanoid } from 'nanoid'
+import { useRoute, useRouter } from 'vue-router'
+import { useItemStore, type Property, type Affix } from 'stores/item-store'
 import { AxiosInstance } from 'axios'
-import { ref, computed, inject } from 'vue'
+import { ref, computed, inject, onMounted, watch } from 'vue'
+import { useQuasar } from 'quasar'
 import { Item } from 'src/types/item'
+import { icons } from 'src/common/icons'
 import PhraseGen from 'korean-random-words'
 import D4Items from 'components/D4Items.vue'
 
 // init module
+const route = useRoute()
+const router = useRouter()
 const store = useItemStore()
+const $q = useQuasar()
 
 // common variable
+const routeName = computed(() => route.name)
 const phraseGen = new PhraseGen({
   delimiter: ' '
 })
@@ -22,6 +30,7 @@ const loading = computed<boolean>(
 )
 
 // variable
+const itemsRef = ref<typeof D4Items | null>(null)
 const items = ref<Array<Item>>(
   Array.from({ length: 3 }, () => {
     const item = new Item()
@@ -35,12 +44,18 @@ const classes = computed(() => store.classes)
 const runes = computed(() => store.runes)
 
 // set item
+const saveItems = (items: Array<Item>) => {
+  $q.localStorage.set('items', JSON.stringify(items))
+}
+
 const setItem = (item: Item, newItem: Item): void => {
   item.itemId = newItem.itemId
+  item.tradeType = newItem.tradeType
   item.name = newItem.name
   item.quantity = newItem.quantity
   item.quality = newItem.quality
   item.itemType = newItem.itemType
+  item.itemPowerValues = newItem.itemPowerValues
   item.itemTypeValues = newItem.itemTypeValues
   item.equipmentClass = newItem.equipmentClass
   item.runeId = newItem.runeId
@@ -55,20 +70,55 @@ const setItem = (item: Item, newItem: Item): void => {
   item.user = newItem.user
   item.offers = newItem.offers
   item.loading = newItem.loading
+
+  saveItems(items.value)
 }
 
-// update item
-const updateItem = (item: Item): void => {
+// insert or update item
+const upsertItem = (item: Item, done: Function) => {
   const findItem = items.value.find((i) => i.itemId === item.itemId)
 
-  if (findItem) setItem(findItem, item)
+  if (findItem) {
+    setItem(findItem, item)
+    findItem.loading = false
+  }
+  else if (item.itemId === '') {
+    store.addItem(item)
+      .then((itemId: string) => {
+        item.itemId = itemId
+        items.value.splice(0, 0, item)
+        saveItems(items.value)
+      })
+      .catch(() => { })
+      .then(() => { done() })
+  }
+}
+
+const deleteItem = (item: Item, done: Function) => {
+  const findItem = items.value.find((i) => i.itemId === item.itemId)
+  const findIndex = items.value.findIndex((i) => i.itemId === item.itemId)
+
+  if (findItem) {
+    // remove api here
+    items.value.splice(findIndex, 1)
+
+    saveItems(items.value)
+  }
+
+  setTimeout(() => {
+    done()
+  }, 2000)
 }
 
 // temp generate items
-const gen = (): void => {
-  const genItems = Array.from({ length: 1000 }, (_, i) => {
+const gen = (): Array<Item> => {
+  const propertyIds = store.properties.data.map((p: Property) => p.value)
+  const affixIds = store.affixes.data.map((a: Affix) => a.value)
+  const genItems = Array.from({ length: 100 }, (_, i) => {
     const item = new Item()
-    item.itemId = i + 1 // Math.floor(Math.random() * 1000000)
+    item.tradeType = ['sell', 'buy'][
+      Math.floor(Math.random() * 2)
+    ]
     item.name = phraseGen.generatePhrase()
     item.quantity = Math.floor(Math.random() * 10)
     item.quality = quality.value.map((q) => q.value)[
@@ -77,7 +127,8 @@ const gen = (): void => {
     item.itemType = types.value.map((t) => t.value)[
       Math.floor(Math.random() * types.value.length)
     ]
-    item.itemTypeValues = [100]
+    item.itemPowerValues = [333]
+    item.itemTypeValues = [123]
     item.equipmentClass = classes.value.map((c) => c.value)[
       Math.floor(Math.random() * classes.value.length)
     ]
@@ -85,27 +136,19 @@ const gen = (): void => {
       Math.floor(Math.random() * runes.value.length)
     ]
     item.properties = Array.from(
-      { length: Math.floor(Math.random() * 2 + 1) },
+      { length: Math.floor(Math.random() * 2 + 5) },
       () => ({
-        valueId: Math.floor(Math.random() * 1000000),
-        propertyId: Math.floor(Math.random() * 200 + 1),
-        propertyValues: [
-          Math.floor(Math.random() * 999),
-          Math.floor(Math.random() * 999),
-          Math.floor(Math.random() * 999)
-        ]
+        valueId: nanoid(),
+        propertyId: propertyIds[Math.floor(Math.random() * propertyIds.length)],
+        propertyValues: [11]
       })
     )
     item.affixes = Array.from(
-      { length: Math.floor(Math.random() * 6 + 1) },
+      { length: Math.floor(Math.random() * 6 + 5) },
       () => ({
-        valueId: Math.floor(Math.random() * 1000000),
-        affixId: Math.floor(Math.random() * 200 + 1),
-        affixValues: [
-          Math.floor(Math.random() * 999),
-          Math.floor(Math.random() * 999),
-          Math.floor(Math.random() * 999)
-        ]
+        valueId: nanoid(),
+        affixId: affixIds[Math.floor(Math.random() * affixIds.length)],
+        affixValues: [11]
       })
     )
     item.price = [
@@ -123,7 +166,6 @@ const gen = (): void => {
       { currency: 'offer', currencyValue: null, quantity: 1 }
     ][Math.round(Math.random())]
     item.user = phraseGen.generatePhrase()
-    item.offers = Math.floor(Math.random() * 20)
     item.loading = false
     return item
   })
@@ -143,26 +185,87 @@ const gen = (): void => {
     } else items.value.splice(2, 1)
   }
 
-  items.value = [...items.value, ...genItems]
+  return [...items.value, ...genItems]
 }
 
-store.getAffixes()
-store.getProperties()
-const axios = inject('axios') as AxiosInstance
+const create = () => {
+  if (itemsRef.value)
+    itemsRef.value.create()
+}
 
-axios
-  .get('/test')
+//store.getAffixes()
+//store.getProperties()
+// const axios = inject('axios') as AxiosInstance
 
-setTimeout(() => {
-  gen()
-}, 200)
+// axios
+//   .get('/test')
+
+let itemList: Array<Item> = []
+
+const getDetail = (): Item | undefined => {
+  getList()
+
+  const findItem = itemList.find((i: Item) => i.itemId === route.params.itemid)
+  if (findItem)
+    findItem.expanded = true
+
+  return findItem
+}
+
+const getList = () => {
+  if (itemList.length === 0) {
+    if ($q.localStorage.has('items'))
+      itemList = JSON.parse($q.localStorage.getItem('items') as string) as Array<Item>
+    else {
+      itemList = gen()
+      saveItems(itemList)
+    }
+  }
+}
+
+watch(() => route.params.itemid, (val: string | string[] | undefined) => {
+  if (val)
+    items.value = [getDetail() as Item]
+  else
+    items.value = itemList
+})
+
+onMounted(() => {
+  Promise.all([store.getAffixes(), store.getProperties()])
+    .then(() => {
+      if (route.params.itemid)
+        items.value = [getDetail() as Item]
+      else {
+        setTimeout(() => {
+          getList()
+          items.value = itemList
+        }, 1000)
+      }
+    })
+})
 </script>
  
 <template>
+  <D4Btn v-if="routeName === 'item-detail'" round :to="{ name: 'item-list' }" class="create" color="var(--q-secondary)"
+    shadow>
+    <img :src="icons.list" height="20" class="invert" />
+  </D4Btn>
+  <D4Btn v-if="routeName === 'item-list'" round @click="create" class="create" shadow>
+    <img :src="icons.add" height="20" class="invert" />
+  </D4Btn>
   <div class="row justify-center items-center">
     <!-- <textarea class="col-12" rows="20" style="padding:0;margin:0;line-height:10px;font-size:8px;">
-          {{ items }}
-          </textarea> -->
-    <D4Items :items="items" :loading="loading" @update-item="updateItem" />
+                  {{ items }}
+                  </textarea> -->
+    <D4Items ref="itemsRef" :items="items" :loading="loading" @upsert-item="upsertItem" @delete-item="deleteItem" />
   </div>
 </template>
+
+<style scoped>
+.create {
+  position: sticky;
+  top: 90%;
+  left: 100%;
+  z-index: 1;
+}
+</style>

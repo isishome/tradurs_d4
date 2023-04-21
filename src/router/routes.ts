@@ -5,8 +5,20 @@ const routes: RouteRecordRaw[] = [
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/IndexPage.vue') },
-      { path: 'sub', component: () => import('pages/SubPage.vue') },
+      {
+        name: 'item-list',
+        path: '',
+        component: () => import('pages/IndexPage.vue'),
+        children: [
+          {
+            name: 'item-detail',
+            path: ':itemid',
+            component: () => import('pages/IndexPage.vue'),
+            props: true
+          }
+        ]
+      },
+      { path: 'sub', component: () => import('pages/SubPage.vue') }
     ]
   },
 

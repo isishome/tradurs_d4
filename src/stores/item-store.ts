@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { api } from 'boot/axios'
-import PhraseGen from 'korean-random-words'
 import { runeImgs } from 'src/common/runes'
+import { Item } from 'src/types/item'
 
 export interface Quality {
   value: string,
@@ -13,7 +13,7 @@ export interface RuneType {
   label: string
 }
 
-interface Rune {
+export interface Rune {
   value: string,
   type: string,
   label: string,
@@ -140,48 +140,52 @@ export const useItemStore = defineStore('item', {
       })
     },
     getProperties() {
-      return new Promise<void>((resolve) => {
-        //let error: unknown = null
+      return new Promise<void>((resolve, reject) => {
+        let error: unknown = null
         if (this.properties.request === 0) {
           this.properties.loading = true
-          const phraseGen = new PhraseGen({
-            delimiter: ' {x} '
-          })
-          setTimeout(() => {
-            this.properties.data = Array.from({ length: 200 }, (_, i) => ({
-              value: i + 1,
-              label: phraseGen.generatePhrase(),
-              type: this.attributeTypes.filter(at => at.value !== 'socket').map(at => at.value)[Math.floor(Math.random() * (this.attributeTypes.length - 1))],
-              sort: i + 1
-            }))
-            this.properties.request++
-            this.properties.loading = false
-            resolve()
-          }, 200)
+          api.get('/d4/item/properties')
+            .then((response) => {
+              this.properties.data = response.data
+            })
+            .catch((e) => {
+              error = e
+            })
+            .then(() => {
+              this.properties.loading = false
+              this.properties.request++
+
+              if (error)
+                reject()
+              else
+                resolve()
+            })
         }
         else
           resolve()
       })
     },
     getAffixes() {
-      return new Promise<void>((resolve) => {
-        //let error: unknown = null
+      return new Promise<void>((resolve, reject) => {
+        let error: unknown = null
         if (this.affixes.request === 0) {
           this.affixes.loading = true
-          const phraseGen = new PhraseGen({
-            delimiter: ' {x} '
-          })
-          setTimeout(() => {
-            this.affixes.data = Array.from({ length: 200 }, (_, i) => ({
-              value: i + 1,
-              label: phraseGen.generatePhrase(),
-              type: this.attributeTypes.map(at => at.value)[Math.floor(Math.random() * this.attributeTypes.length)],
-              sort: i + 1
-            }))
-            this.affixes.request++
-            this.affixes.loading = false
-            resolve()
-          }, 200)
+          api.get('/d4/item/affixes')
+            .then((response) => {
+              this.affixes.data = response.data
+            })
+            .catch((e) => {
+              error = e
+            })
+            .then(() => {
+              this.affixes.loading = false
+              this.affixes.request++
+
+              if (error)
+                reject()
+              else
+                resolve()
+            })
         }
         else
           resolve()
@@ -192,6 +196,17 @@ export const useItemStore = defineStore('item', {
       if (target?.data.filter(p => p.value === property.value).length === 0) {
         target?.data.push(property)
       }
+    },
+    addItem(item: Item) {
+      return new Promise<string>((resolve, reject) => {
+        api.post('/d4/item/add', { item: item })
+          .then((response) => {
+            resolve(response.data)
+          })
+          .catch((e) => {
+            reject(e)
+          })
+      })
     }
   }
 })

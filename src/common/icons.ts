@@ -12,8 +12,13 @@ import add from 'assets/icons/add.svg'
 import price from 'assets/icons/price.svg'
 import dropdown from 'assets/icons/dropdown.svg'
 
+import list from 'assets/icons/list.svg'
+
 export const icons = {
   regular,
+  offensive: regular,
+  defensive: regular,
+  utility: regular,
   legendary,
   unique,
   socket,
@@ -22,5 +27,6 @@ export const icons = {
   remove,
   add,
   price,
-  dropdown
+  dropdown,
+  list
 }

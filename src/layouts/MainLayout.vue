@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useQuasar, uid, Screen } from 'quasar'
 import { useAccountStore } from 'stores/account-store'
 import type { AxiosInstance } from 'axios'
+
 // import Filter from 'components/Filter.vue'
 
 const prod: boolean = import.meta.env.PROD
@@ -53,11 +54,9 @@ watch(() => route.name, (val, old) => {
 })
 
 const onWindowLoad = () => {
-  if (prod) {
-    const adsbygoogle = window.adsbygoogle || []
-    adsbygoogle.push({})
-    adsbygoogle.push({})
-  }
+  const adsbygoogle = window.adsbygoogle || []
+  adsbygoogle.push({})
+  adsbygoogle.push({})
 }
 
 onMounted(() => {
@@ -79,42 +78,42 @@ onUnmounted(() => {
     <q-drawer show-if-above v-model="leftDrawerOpen" side="left" :behavior="screen.gt.sm ? 'desktop' : 'mobile'"
       class="row justify-end scroll" :width="300">
       <div class="q-py-lg" :class="screen.gt.md ? 'q-px-lg' : 'q-px-md'">
-        <div v-for="c in 50" :key="c">test</div>
+        <div v-for="c in 50" :key="c">{{ c }}</div>
         <!-- <Filter /> -->
       </div>
     </q-drawer>
     <q-header :elevated="!$q.dark.isActive" class="q-py-sm header row justify-center">
       <q-toolbar class="toolbar">
         <div class="col-3 row items-center">
-          <q-btn class="gt-sm no-hover" dense flat padding="0" :ripple="false" :to="{ path: '/' }">
-            <img v-show="$q.dark.isActive" src="~assets/logo.webp" height="48" />
-            <img v-show="!$q.dark.isActive" src="~assets/logo_light.webp" height="48" />
-          </q-btn>
-          <q-btn dense flat round class="lt-md" :ripple="false" @click="leftDrawerOpen = !leftDrawerOpen">
+          <!-- <q-btn class="gt-sm no-hover" dense flat padding="0" :ripple="!$q.dark.isActive" :to="{ path: '/' }">
+  <img v-show="$q.dark.isActive" src="~assets/logo.webp" height="48" />
+  <img v-show="!$q.dark.isActive" src="~assets/logo_light.webp" height="48" />
+                        </q-btn> -->
+          <q-btn dense flat round class="lt-md" :ripple="!$q.dark.isActive" @click="leftDrawerOpen = !leftDrawerOpen">
             <img src="~assets/icons/filter.svg" class="icon" width="24" />
           </q-btn>
         </div>
         <div class="col row justify-center">
-          <q-btn class="lt-md no-hover" dense flat padding="0" :ripple="false" :to="{ path: '/' }">
-            <img v-show="$q.dark.isActive" src="~assets/logo.webp" height="48" />
-            <img v-show="!$q.dark.isActive" src="~assets/logo_light.webp" height="48" />
-          </q-btn>
+          <!-- <q-btn class="lt-md no-hover" dense flat padding="0" :ripple="!$q.dark.isActive" :to="{ path: '/' }">
+    <img v-show="$q.dark.isActive" src="~assets/logo.webp" height="48" />
+    <img v-show="!$q.dark.isActive" src="~assets/logo_light.webp" height="48" />
+  </q-btn> -->
           <q-tabs dense class="gt-sm q-px-md bg-transparent no-hover nav">
-            <q-route-tab :ripple="false" label="서브" :to="{ path: 'sub' }" exact />
-            <q-route-tab :ripple="false" label="일반" exact />
-            <q-route-tab :ripple="false" style="color:var(--q-light-magic)" label="마법" exact />
-            <q-route-tab :ripple="false" style="color:var(--q-light-rare)" label="희귀" exact />
-            <!-- <q-route-tab :ripple="false" content-class="text-amber-8" label="전설" exact />
-            <q-route-tab :ripple="false" content-class="text-light-green-13" label="세트" exact />
-            <q-route-tab :ripple="false" content-class="text-brown-12" label="고유" exact /> -->
+            <q-route-tab :ripple="!$q.dark.isActive" label="서브" :to="{ path: '/sub' }" exact />
+            <q-route-tab :ripple="!$q.dark.isActive" label="일반" :to="{ path: '/' }" exact />
+            <!-- <q-route-tab :ripple="!$q.dark.isActive" style="color:var(--q-light-magic)" label="마법" exact />
+          <q-route-tab :ripple="!$q.dark.isActive" style="color:var(--q-light-rare)" label="희귀" exact />
+            <q-route-tab :ripple="!$q.dark.isActive" content-class="text-amber-8" label="전설" exact />
+    <q-route-tab :ripple="!$q.dark.isActive" content-class="text-light-green-13" label="세트" exact />
+    <q-route-tab :ripple="!$q.dark.isActive" content-class="text-brown-12" label="고유" exact /> -->
           </q-tabs>
         </div>
         <div class="col-3 row justify-end" :class="screen.gt.sm ? 'q-gutter-x-md' : 'q-gutter-x-sm'">
-          <q-btn round flat dense :ripple="false" @click="$q.dark.set(!$q.dark.isActive)">
+          <q-btn round flat dense :ripple="!$q.dark.isActive" @click="$q.dark.set(!$q.dark.isActive)">
             <img v-show="$q.dark.isActive" class="icon" width="24" src="~assets/icons/light.svg" />
             <img v-show="!$q.dark.isActive" class="icon" width="24" src="~assets/icons/dark.svg" />
           </q-btn>
-          <q-btn round flat dense :ripple="false" @click="sign">
+          <q-btn round flat dense :ripple="!$q.dark.isActive" @click="sign">
             <img v-if="signed" class="icon" width="24" src="~assets/icons/logout.svg" />
             <img v-else class="icon" width="24" src="~assets/icons/login.svg" />
           </q-btn>
@@ -125,10 +124,10 @@ onUnmounted(() => {
       <q-page :style-fn="myTweak">
         <div class="row">
           <div :class="screen.gt.md ? 'q-pa-xl' : 'q-pa-sm'" :style="screen.gt.md ? 'width:830px' : 'width:100%'">
-            <div style="min-height:40vh">
+            <div class="view">
               <RouterView />
+              <div class="q-py-lg"></div>
             </div>
-            <div class="q-py-xl"></div>
             <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5110777286519562"
               data-ad-slot="8610177982" data-ad-format="auto" data-full-width-responsive="true"
               :data-adtest="prod ? 'off' : 'on'" :key="key"></ins>
@@ -208,5 +207,11 @@ ins::after {
 .nav,
 .nav:deep(.q-tab) {
   transition: none !important;
+}
+
+.view {
+  position: relative;
+  min-height: 40vh;
+  padding-bottom: 24px;
 }
 </style>
