@@ -8,6 +8,11 @@ export interface Attribute {
   restore?: number
 }
 
+export interface Power extends Attribute {
+  powerId: number,
+  powerValues: Array<number>
+}
+
 export interface Property extends Attribute {
   propertyId: number,
   propertyValues: Array<number>
@@ -32,10 +37,10 @@ export interface IItem {
   quantity: number,
   quality: string,
   itemType: string,
-  itemPowerValues: Array<number>,
   itemTypeValues: Array<number>,
   equipmentClass: string,
   runeId: string,
+  powers: Array<Power>,
   properties: Array<Property>,
   affixes: Array<Affix>,
   price: Price,
@@ -59,12 +64,12 @@ export class Item implements IItem {
   public itemStatus = 0
   public name = ''
   public quantity = 1
-  public quality = ''
+  public quality = 'normal'
   public itemType = 'weapons'
-  public itemPowerValues: Array<number> = []
   public itemTypeValues: Array<number> = []
   public equipmentClass = 'axes'
   public runeId = ''
+  public powers: Array<Power> = []
   public properties: Array<Property> = []
   public affixes: Array<Affix> = []
   public price: Price = { currency: 'offer', currencyValue: null, quantity: 1 }

@@ -120,7 +120,7 @@ const updateCurrency = (val: string | null): void => {
       </q-item-section>
       <q-item-section>
         <q-item-label>
-          <q-skeleton width="20%" height="24px" />
+          <q-skeleton width="60px" height="24px" />
         </q-item-label>
       </q-item-section>
     </q-item>

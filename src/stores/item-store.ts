@@ -25,6 +25,7 @@ export interface ItemType {
   value: string,
   label: string,
   attribute: string,
+  hasPowers: boolean,
   hasProperties: boolean,
   hasAffixes: boolean,
   isCurrency: boolean
@@ -40,6 +41,13 @@ export interface AttributeType {
   value: string,
   label: string,
   sort: number
+}
+
+export interface Power {
+  value: number,
+  type: string,
+  label: string,
+  sort?: number
 }
 
 export interface Property {
@@ -69,6 +77,11 @@ export const useItemStore = defineStore('item', {
     currencies: [] as Array<ItemType>,
     classes: [] as Array<EquipmentClass>,
     attributeTypes: [] as Array<AttributeType>,
+    powers: {
+      data: [] as Array<Power>,
+      loading: false,
+      request: 0
+    },
     properties: {
       data: [] as Array<Property>,
       loading: false,
@@ -93,11 +106,17 @@ export const useItemStore = defineStore('item', {
     findRune: (state) => {
       return (id: string): Rune | undefined => state.runes.find(r => r.value === id)
     },
+    filterPowers: (state) => {
+      return (word: string | null): Array<Power> => word ? state.powers.data.filter(p => p.label.indexOf(word) !== -1) : state.powers.data
+    },
     filterProperties: (state) => {
       return (word: string | null): Array<Property> => word ? state.properties.data.filter(p => p.label.indexOf(word) !== -1) : state.properties.data
     },
     filterAffixes: (state) => {
       return (word: string | null): Array<Affix> => word ? state.affixes.data.filter(a => a.label.indexOf(word) !== -1) : state.affixes.data
+    },
+    matchPowers: (state) => {
+      return (attribute: string): boolean => attribute ? state.powers.data.filter(p => p.label.trim() === attribute).length > 0 : false
     },
     matchProperties: (state) => {
       return (attribute: string): boolean => attribute ? state.properties.data.filter(p => p.label.trim() === attribute).length > 0 : false
@@ -128,6 +147,32 @@ export const useItemStore = defineStore('item', {
             .then(() => {
               this.base.loading = false
               this.base.request++
+
+              if (error)
+                reject()
+              else
+                resolve()
+            })
+        }
+        else
+          resolve()
+      })
+    },
+    getPowers() {
+      return new Promise<void>((resolve, reject) => {
+        let error: unknown = null
+        if (this.powers.request === 0) {
+          this.powers.loading = true
+          api.get('/d4/item/powers')
+            .then((response) => {
+              this.powers.data = response.data
+            })
+            .catch((e) => {
+              error = e
+            })
+            .then(() => {
+              this.powers.loading = false
+              this.powers.request++
 
               if (error)
                 reject()
@@ -191,14 +236,27 @@ export const useItemStore = defineStore('item', {
           resolve()
       })
     },
-    addAttribute(category: string | null, property: Property | Affix): void {
-      const target = category === 'properties' ? this.properties : category === 'affixes' ? this.affixes : undefined
-      if (target?.data.filter(p => p.value === property.value).length === 0) {
-        target?.data.push(property)
-      }
+    addAttribute(category: string | null, attribute: Power | Property | Affix) {
+      return new Promise<Power | Property | Affix>((resolve, reject) => {
+        api.post('/d4/item/attribute', { category: category, attribute: attribute })
+          .then((response) => {
+            if (response.data.length) {
+              attribute.value = response.data[0].value
+              attribute.sort = response.data[0].sort
+              const target = category === 'powers' ? this.powers : category === 'properties' ? this.properties : category === 'affixes' ? this.affixes : undefined
+              if (target?.data.filter(p => p.value === attribute.value).length === 0)
+                target?.data.push(attribute)
+
+              resolve(attribute)
+            }
+            else
+              reject()
+          })
+          .catch((e) => { reject(e) })
+      })
     },
     addItem(item: Item) {
-      return new Promise<string>((resolve, reject) => {
+      return new Promise<Item>((resolve, reject) => {
         api.post('/d4/item/add', { item: item })
           .then((response) => {
             resolve(response.data)

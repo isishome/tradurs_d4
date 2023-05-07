@@ -68,8 +68,7 @@ watch(() => props.data, (val) => {
           <div v-else-if="!editable && comp.type === 'variable'">{{ comp.value }}</div>
           <q-input v-else ref="ai" class="var" input-class="text-center text-caption no-padding" dense hide-bottom-space
             hide-hint no-error-icon outlined v-model="comp.value" type="tel" maxlength="3" mask="###" debounce="500"
-            :disable="disable"
-            :rules="[val => !disable && Number.isInteger(parseInt(val)) && parseInt(val) !== 0 || '']"
+            :disable="disable" :rules="[val => !disable && Number.isInteger(parseInt(val)) || '']"
             @update:model-value="update" @focus="focus" />
         </template>
 

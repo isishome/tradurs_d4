@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { nanoid } from 'nanoid'
 import { ref, computed, reactive } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
 import { useQuasar, QInput, QSelect } from 'quasar'
-import type { AttributeType } from 'stores/item-store'
+import type { AttributeType, Power, Property, Affix } from 'stores/item-store'
 import { useItemStore } from 'stores/item-store'
 import { checkAttribute } from 'src/common'
 import type { IItem } from 'src/types/item'
@@ -11,6 +10,7 @@ import { Item, Advertise, Offer } from 'src/types/item'
 import { icons } from 'src/common/icons'
 import D4Item from 'components/D4Item.vue'
 import D4Affix from 'components/D4Affix.vue'
+import D4Power from 'components/D4Power.vue'
 import D4Property from 'components/D4Property.vue'
 import D4Price from 'components/D4Price.vue'
 import D4User from 'components/D4User.vue'
@@ -37,12 +37,11 @@ defineProps({
 const emit = defineEmits(['upsert-item', 'delete-item'])
 
 // init module
-const route = useRoute()
-const router = useRouter()
 const $q = useQuasar()
 const store = useItemStore()
 
 // common variable
+const requestPowers = computed<number>(() => store.powers.request)
 const requestAffixes = computed<number>(() => store.affixes.request)
 const requestProperties = computed<number>(() => store.properties.request)
 
@@ -80,10 +79,9 @@ const showMakeOffer = (offer: Offer) => {
   offer.user.getInfo()
 }
 
-const updateItem = ({ tradeType, name, itemPowerValues, itemTypeValues, quantity, quality, itemType, runeId, equipmentClass, price }: IItem): void => {
+const updateItem = ({ tradeType, name, itemTypeValues, quantity, quality, itemType, runeId, equipmentClass, price }: IItem): void => {
   activatedItem.value.tradeType = tradeType
   activatedItem.value.name = name
-  activatedItem.value.itemPowerValues = itemPowerValues
   activatedItem.value.itemTypeValues = itemTypeValues
   activatedItem.value.quantity = quantity
   activatedItem.value.quality = quality
@@ -96,6 +94,7 @@ const updateItem = ({ tradeType, name, itemPowerValues, itemTypeValues, quantity
   if (activatedItem.value.itemType !== itemType) {
     activatedItem.value.itemType = itemType
     activatedItem.value.quantity = 1
+    activatedItem.value.powers.splice(0, activatedItem.value.powers.length)
     activatedItem.value.properties.splice(0, activatedItem.value.properties.length)
     activatedItem.value.affixes.splice(0, activatedItem.value.affixes.length)
     activatedItem.value.equipmentClass = ''
@@ -103,8 +102,10 @@ const updateItem = ({ tradeType, name, itemPowerValues, itemTypeValues, quantity
 }
 
 const disable = ref<boolean>(false)
+const progress = ref<boolean>(false)
 const hideEditable = () => {
   disable.value = false
+  progress.value = false
   activatedItem.value = new Item('')
   activateShow.value = false
 }
@@ -116,6 +117,7 @@ const deleteItem = () => {
 
 const apply = () => {
   disable.value = true
+  progress.value = true
   emit('upsert-item', activatedItem.value, hideEditable)
 }
 
@@ -154,7 +156,7 @@ const applyAdd = (): void => {
     errorMessage = '내용을 입력해 주세요'
   else if (!checkAttribute(add.attribute))
     errorMessage = '잘못된 형식이 입력되었습니다'
-  else if ((add.category === 'properties' && store.matchProperties(add.attribute)) || (add.category === 'affixes' && store.matchAffixes(add.attribute)))
+  else if ((add.category === 'powers' && store.matchPowers(add.attribute)) || (add.category === 'properties' && store.matchProperties(add.attribute)) || (add.category === 'affixes' && store.matchAffixes(add.attribute)))
     errorMessage = '이미 존재하는 형식입니다'
 
   if (errorMessage !== '') {
@@ -164,20 +166,72 @@ const applyAdd = (): void => {
     return
   }
 
-  const attribute_id: number = Math.floor(Math.random() * 1000000)
+  // add attribute request place
+  disable.value = true
   store.addAttribute(add.category, {
-    value: attribute_id,
+    value: 0,
     label: add.attribute,
     type: add.type
   })
+    .then((result: Power | Property | Affix) => {
+      const attribute: any = { valueId: nanoid(), action: 2 }
+      attribute[add.category === 'powers' ? 'powerId' : add.category === 'properties' ? 'propertyId' : 'affixId'] = result.value
+      attribute[add.category === 'powers' ? 'powerValues' : add.category === 'properties' ? 'propertyValues' : 'affixValues'] = []
+      const target = add.category === 'powers' ? activatedItem.value.powers : add.category === 'properties' ? activatedItem.value.properties : activatedItem.value.affixes
+      target.push(attribute)
+      activatedRef.value?.scrollEnd(add.category)
+      add.show = false
+    })
+    .catch((e) => {
+      $q.notify({
+        type: 'negative',
+        position: 'top',
+        message: e,
+      })
+    })
+    .then(() => {
+      disable.value = false
+    })
+}
 
-  if (add.category === 'properties')
-    activatedItem.value.properties.push({ valueId: nanoid(), propertyId: attribute_id, propertyValues: [], action: 2 })
-  else if (add.category === 'affixes')
-    activatedItem.value.affixes.push({ valueId: nanoid(), affixId: attribute_id, affixValues: [], action: 2 })
+// about power
+const powerId = ref<number | null>(null)
+const powerOptions = store.filterPowers
+const powerNeedle = ref<string | null>(null)
 
-  activatedRef.value?.scrollEnd(add.category)
-  add.show = false
+const filterPowers = (val: string): void => {
+  powerNeedle.value = val.toLowerCase()
+}
+
+const selectedPower = (val: number): void => {
+  if (val) {
+    activatedItem.value.powers.push({ valueId: nanoid(), powerId: val, powerValues: [], action: 2 })
+    powerId.value = null
+    powerNeedle.value = null
+    activatedRef.value?.scrollEnd('powers')
+  }
+}
+
+const createPower = (): void => {
+  add.category = 'powers'
+  add.show = true
+}
+
+const updatePower = ({ valueId, powerValues }: { valueId: string, powerValues: Array<number> }): void => {
+  const findPower = activatedItem.value.powers.find(p => p.valueId === valueId)
+  if (findPower) {
+    findPower.action = findPower.action !== 2 ? 4 : 2
+    findPower.powerValues = powerValues
+  }
+}
+
+const removePower = ({ valueId }: { valueId: string }): void => {
+  const findPower = activatedItem.value.powers.find(p => p.valueId === valueId)
+  if (findPower) {
+    findPower.disable = findPower.action !== 8
+    findPower.restore = findPower.action !== 8 ? findPower.action : undefined
+    findPower.action = findPower.action !== 8 ? 8 : findPower.restore
+  }
 }
 
 // about property
@@ -191,7 +245,7 @@ const filterProperties = (val: string): void => {
 
 const selectedProperty = (val: number): void => {
   if (val) {
-    activatedItem.value.properties.push({ propertyId: val, propertyValues: [], action: 2 })
+    activatedItem.value.properties.push({ valueId: nanoid(), propertyId: val, propertyValues: [], action: 2 })
     propertyId.value = null
     propertyNeedle.value = null
     activatedRef.value?.scrollEnd('properties')
@@ -220,11 +274,6 @@ const removeProperty = ({ valueId }: { valueId: string }): void => {
   }
 }
 
-const propertyRef = ref<QSelect | null>(null)
-const requireProperty = () => {
-  propertyRef.value?.focus()
-}
-
 // about affix
 const affixId = ref<number | null>(null)
 const affixOptions = store.filterAffixes
@@ -235,7 +284,7 @@ const filterAffixes = (val: string): void => {
 }
 
 const selectedAffix = (val: number): void => {
-  activatedItem.value.affixes.push({ affixId: val, affixValues: [], action: 2 })
+  activatedItem.value.affixes.push({ valueId: nanoid(), affixId: val, affixValues: [], action: 2 })
   affixId.value = null
   affixNeedle.value = null
   activatedRef.value?.scrollEnd('affixes')
@@ -263,11 +312,6 @@ const removeAffix = ({ valueId }: { valueId: string }): void => {
   }
 }
 
-const affixRef = ref<QSelect | null>(null)
-const requireAffix = () => {
-  affixRef.value?.focus()
-}
-
 // Execute function if an item is visible
 const visible = (isVisible: boolean, item: Item): void => {
   isVisible
@@ -289,6 +333,9 @@ defineExpose({ create })
         <div v-if="(item instanceof Advertise)" class="bg-grey" style="width:100%;height:500px"></div>
         <D4Item v-else :data="item" :loading="loading || item.loading">
           <template #top-right>
+          </template>
+          <template v-if="requestPowers > 0" #powers>
+            <D4Power v-for="(power, i) in item.powers" :key="power.valueId" :data="power" />
           </template>
           <template v-if="requestProperties > 0" #properties>
             <D4Property v-for="(property, i) in item.properties" :key="property.valueId" :data="property" />
@@ -317,17 +364,40 @@ defineExpose({ create })
         </D4Item>
       </q-intersection>
     </div>
-    <q-dialog v-model="activateShow" :maximized="$q.platform.is.mobile" :seamless="$q.platform.is.mobile"
-      :persistent="disable" transition-show="none" transition-hide="none" @hide="hideEditable">
+    <q-dialog v-model="activateShow" :maximized="$q.platform.is.mobile" :persistent="disable" transition-show="none"
+      transition-hide="none" @hide="hideEditable">
       <D4Item ref="activatedRef" :data="activatedItem" editable :loading="activatedItem.loading" :disable="disable"
-        @update="updateItem" @apply="apply" @require-property="requireProperty" @require-affix="requireAffix">
+        @update="updateItem" @apply="apply">
+        <template #add-power>
+          <div class="row no-wrap items-center q-gutter-x-sm">
+            <q-select v-model="powerId" :disable="disable" outlined dense no-error-icon use-input hide-bottom-space
+              hide-selected emit-value map-options transition-show="none" transition-hide="none" class="select col"
+              label="능력 선택" :options="powerOptions(powerNeedle)" :dropdown-icon="`img:${icons.dropdown}`"
+              @update:model-value="selectedPower" @input-value="filterPowers">
+              <template #no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    능력을 찾을 수 없습니다
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+            <q-btn size="sm" :disable="disable" unelevated flat dense round @click="createPower">
+              <img class="icon" width="24" src="~assets/icons/add.svg" />
+            </q-btn>
+          </div>
+        </template>
+        <template #powers>
+          <D4Power v-for="power in activatedItem.powers"
+            :key="power.valueId || `create_${Math.floor(Math.random() * 1000000)}`" :data="power" editable
+            :disable="disable" @update="updatePower" @remove="removePower" />
+        </template>
         <template #add-property>
           <div class="row no-wrap items-center q-gutter-x-sm">
-            <q-select ref="propertyRef" v-model="propertyId" :disable="disable" outlined dense no-error-icon use-input
-              hide-bottom-space hide-selected emit-value map-options transition-show="none" transition-hide="none"
-              class="select" label="특성 선택" :options="propertyOptions(propertyNeedle)"
-              :dropdown-icon="`img:${icons.dropdown}`" @update:model-value="selectedProperty"
-              @input-value="filterProperties">
+            <q-select v-model="propertyId" :disable="disable" outlined dense no-error-icon use-input hide-bottom-space
+              hide-selected emit-value map-options transition-show="none" transition-hide="none" class="col"
+              label="특성 선택" :options="propertyOptions(propertyNeedle)" :dropdown-icon="`img:${icons.dropdown}`"
+              @update:model-value="selectedProperty" @input-value="filterProperties">
               <template #no-option>
                 <q-item>
                   <q-item-section class="text-grey">
@@ -348,9 +418,9 @@ defineExpose({ create })
         </template>
         <template #add-affix>
           <div class="row items-center q-gutter-x-sm">
-            <q-select ref="affixRef" v-model="affixId" :disable="disable" outlined dense no-error-icon use-input
-              hide-bottom-space emit-value map-options transition-show="none" transition-hide="none" class="select"
-              label="옵션 선택" :options="affixOptions(affixNeedle)" :dropdown-icon="`img:${icons.dropdown}`"
+            <q-select v-model="affixId" :disable="disable" outlined dense no-error-icon use-input hide-bottom-space
+              emit-value map-options transition-show="none" transition-hide="none" class="col" label="옵션 선택"
+              :options="affixOptions(affixNeedle)" :dropdown-icon="`img:${icons.dropdown}`"
               @update:model-value="selectedAffix" @input-value="filterAffixes">
               <template #no-option>
                 <q-item>
@@ -380,26 +450,28 @@ defineExpose({ create })
             <div>
               <D4Btn label="취소" :loading="activatedItem.loading" :disable="disable" color="rgb(150,150,150)"
                 @click="activateShow = false" />
-              <D4Btn label="적용" :loading="activatedItem.loading" :progress="disable" type="submit" />
+              <D4Btn label="적용" :loading="activatedItem.loading" :disable="disable" :progress="progress"
+                type="submit" />
             </div>
           </div>
         </template>
       </D4Item>
     </q-dialog>
-    <q-dialog v-model="add.show" @hide="hideAdd" :maximized="$q.platform.is.mobile" :seamless="$q.platform.is.mobile"
-      transition-show="none" transition-hide="none">
+    <q-dialog v-model="add.show" @hide="hideAdd" :maximized="$q.platform.is.mobile" transition-show="none"
+      transition-hide="none">
       <q-card class="card-item dialog normal">
         <q-form class="inner column full-height" @submit="applyAdd">
           <q-card-section>
-            <div class="q-py-lg q-pl-sm name">{{ add.category === 'properties' ? '특성 ' : '옵션 ' }} 추가</div>
+            <div class="q-py-lg q-pl-sm name">{{ `${add.category === 'powers' ? '능력 ' : add.category === 'properties' ?
+            '특성 ' : '옵션 '} 추가`}}</div>
           </q-card-section>
           <q-separator />
           <q-card-section :class="$q.platform.is.mobile ? 'col' : ''">
             <div class="column q-gutter-y-sm">
               <q-option-group v-model="add.type" :options="add.types" color="primary" size="xs" inline />
               <q-input autofocus ref="refAttribute" v-model="add.attribute"
-                placeholder="엘리트 몬스터 처치 시 6초 동안 이동 속도 {x}% 증가" :error="add.error" :error-message="add.errorMessage"
-                outlined dense no-error-icon hide-hint />
+                placeholder="엘리트 몬스터 처치 시 6초 동안 이동 속도 {x}% 증가" :disable="disable" :error="add.error"
+                :error-message="add.errorMessage" outlined dense no-error-icon hide-hint />
             </div>
           </q-card-section>
           <q-separator inset />
@@ -408,14 +480,13 @@ defineExpose({ create })
               :class="$q.platform.is.mobile ? '' : 'q-pt-lg'">
               <D4Btn label="취소" :loading="loading" :disable="disable" color="rgb(150,150,150)"
                 @click="add.show = false" />
-              <D4Btn label="추가" :loading="loading" :disable="disable" type="submit" />
+              <D4Btn label="추가" :loading="loading" :progress="disable" type="submit" />
             </div>
           </q-card-section>
         </q-form>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="makeOffer" :maximized="$q.platform.is.mobile" :seamless="$q.platform.is.mobile"
-      transition-show="none" transition-hide="none">
+    <q-dialog v-model="makeOffer" :maximized="$q.platform.is.mobile" transition-show="none" transition-hide="none">
       <q-card class="card-item dialog no-scroll normal">
         <div class="inner column" :style="$q.platform.is.mobile ? 'height:100%' : 'max-height:90vh'">
           <q-card-section class="col scroll">
@@ -515,11 +586,6 @@ defineExpose({ create })
 
 .more:not(.disabled):hover:deep(.icon) {
   transform: translateY(30%);
-}
-
-.select {
-  width: 700px;
-  max-width: 80%;
 }
 
 .offer {

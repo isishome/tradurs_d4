@@ -52,7 +52,7 @@ watch(() => props.data, () => {
     <div class="row no-wrap q-gutter-x-xs" :class="disable ? 'disable' : ''">
       <div>
         <q-icon class="icon"
-          :class="['regular', 'offensive', 'defensive', 'utility'].includes(findProperty?.type as string) ? 'rotate-45' : ''"
+          :class="['regular', 'offensive', 'defensive', 'utility', 'resistance'].includes(findProperty?.type as string) ? 'rotate-45' : ''"
           size="13px" :name="`img:${icons[findProperty?.type as keyof typeof icons || 'regular']}`" />
       </div>
       <div class="row items-center q-gutter-x-xs">
@@ -64,8 +64,7 @@ watch(() => props.data, () => {
           <div v-else-if="!editable && comp.type === 'variable'">{{ comp.value }}</div>
           <q-input v-else class="var" input-class="text-center text-caption no-padding" dense hide-bottom-space
             hide-hint no-error-icon outlined v-model="comp.value" type="tel" maxlength="3" mask="###" debounce="500"
-            :disable="disable"
-            :rules="[val => !disable && Number.isInteger(parseInt(val)) && parseInt(val) !== 0 || '']"
+            :disable="disable" :rules="[val => !disable && Number.isInteger(parseInt(val)) || '']"
             @update:model-value="update" @focus="focus" />
         </template>
       </div>

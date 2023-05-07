@@ -27,7 +27,7 @@ const props = defineProps({
     default: false
   }
 })
-const emit = defineEmits(['update', 'apply', 'require-property', 'require-affix'])
+const emit = defineEmits(['update', 'apply'])
 
 // common variable
 const $q = useQuasar()
@@ -35,6 +35,10 @@ const slots = useSlots()
 const store = useItemStore()
 
 // variable
+const typeAttribute = computed(() => findType(props.data.itemType)?.attribute)
+const hasPowers = computed(() => findType(props.data.itemType)?.hasPowers)
+const hasProperties = computed(() => findType(props.data.itemType)?.hasProperties)
+const hasAffixes = computed(() => findType(props.data.itemType)?.hasAffixes)
 const _tradeType = ref<string>(props.data.tradeType)
 const _name = ref<string>(props.data.name)
 const _quantity = ref<number>(props.data.quantity || 1)
@@ -49,13 +53,17 @@ const findRune = store.findRune
 const findType = store.findType
 const classes = store.filterClasses
 const _class = ref<string>(props.data.equipmentClass || 'axes')
-const _power = ref(parse('{x} 아이템 능력', props.data.itemPowerValues))
-const typeInfo = ref(parse(findType(props.data.itemType)?.attribute, props.data.itemTypeValues))
+const typeInfo = ref(parse(typeAttribute.value, props.data.itemTypeValues))
 const _price = reactive<Price>({
   currency: (props.data.price && props.data.price.currency ? props.data.price.currency : 'offer'),
   currencyValue: (props.data.price && props.data.price.currencyValue ? props.data.price.currencyValue : null),
   quantity: (props.data.price && props.data.price.quantity ? props.data.price.quantity : null)
 })
+const attributes = computed(() => [
+  { label: '능력', value: 'powers', hide: !hasPowers.value },
+  { label: '특성', value: 'properties', hide: !hasProperties.value },
+  { label: '옵션', value: 'affixes', hide: !hasAffixes.value }
+].filter(a => !a.hide))
 
 interface ITradeType {
   label: string,
@@ -67,17 +75,18 @@ const tradeTypes: Array<ITradeType> = [
   { label: '구매', value: 'buy' }
 ]
 
-const updateType = (val: string): void => {
+const updateType = (val: string) => {
   typeInfo.value = parse(findType(val)?.attribute)
   _class.value = classes(val).length > 0 ? classes(val)[0].value : 'axes'
+  attribute.value = findType(val)?.hasPowers ? 'powers' : findType(val)?.hasProperties ? 'properties' : 'affixes'
   update()
 }
 
-const update = (): void => {
-  emit('update', { tradeType: _tradeType.value, name: _name, itemPowerValues: _power.value?.filter(i => i.type === 'variable').map(i => parseInt(i.value.toString())), itemTypeValues: typeInfo.value?.filter(i => i.type === 'variable').map(i => parseInt(i.value.toString())), quantity: _quantity.value, quality: _quality.value, itemType: _type.value, runeId: _rune.value, equipmentClass: _class.value, price: _price })
+const update = () => {
+  emit('update', { tradeType: _tradeType.value, name: _name, itemTypeValues: typeInfo.value?.filter(i => i.type === 'variable').map(i => parseInt(i.value.toString())), quantity: _quantity.value, quality: _quality.value, itemType: _type.value, runeId: _rune.value, equipmentClass: _class.value, price: _price })
 }
 
-const updatePrice = (price: Price): void => {
+const updatePrice = (price: Price) => {
   _price.currency = price.currency
   _price.currencyValue = price.currencyValue
   _price.quantity = price.quantity
@@ -92,25 +101,25 @@ const focus = (evt: Event) => {
 }
 
 // control scroll
-const propertyRef = ref<QCardSection | null>(null)
-const affixRef = ref<QCardSection | null>(null)
-const scrollEnd = (pType: string): void => {
+const powerRef = ref<HTMLDivElement | null>(null)
+const propertyRef = ref<HTMLDivElement | null>(null)
+const affixRef = ref<HTMLDivElement | null>(null)
+const scrollEnd = (pType: string) => {
   nextTick(() => {
-    if (pType === 'properties' && propertyRef.value && propertyRef.value.$el) {
-      propertyRef.value.$el.scrollTop = propertyRef.value.$el.scrollHeight
-    }
-    else if (pType === 'affixes' && affixRef.value && affixRef.value.$el)
-      affixRef.value.$el.scrollTop = affixRef.value.$el.scrollHeight
+    if (pType === 'powers' && powerRef.value)
+      powerRef.value.scrollTop = powerRef.value.scrollHeight
+    else if (pType === 'properties' && propertyRef.value)
+      propertyRef.value.scrollTop = propertyRef.value.scrollHeight
+    else if (pType === 'affixes' && affixRef.value)
+      affixRef.value.scrollTop = affixRef.value.scrollHeight
   })
 }
-const apply = (): void => {
-  if (findType(props.data.itemType)?.hasProperties && props.data.properties.length === 0)
-    emit('require-property')
-  else if (findType(props.data.itemType)?.hasAffixes && props.data.affixes.length === 0)
-    emit('require-affix')
-  else
-    emit('apply')
+const apply = () => {
+  emit('apply')
 }
+
+// attribute tabs
+const attribute = ref<string>(hasPowers.value ? 'powers' : hasProperties.value ? 'properties' : 'affixes')
 
 defineExpose({ scrollEnd })
 </script>
@@ -131,7 +140,7 @@ defineExpose({ scrollEnd })
             </div>
             <div>
               <q-toggle v-model="_tradeType" :disable="disable" true-value="sell" false-value="buy" class="trade-type"
-                color="primary" unchecked-icon="health_and_safety" checked-icon="monetization_on" size="lg"
+                color="primary" :unchecked-icon="`img:${icons.buy}`" :checked-icon="`img:${icons.sell}`" size="lg"
                 :label="tradeTypes.find((t: ITradeType) => t.value === _tradeType)?.label" dense
                 @update:model-value="update" />
             </div>
@@ -201,62 +210,6 @@ defineExpose({ scrollEnd })
           <div>{{ (runes().find(r => r.value === data.runeId) || {}).attribute }}
           </div>
         </div>
-      </q-card-section>
-      <q-separator v-show="findType(data.itemType)?.attribute || findType(data.itemType)?.hasProperties" />
-      <q-card-section>
-        <q-item v-show="loading" style="min-height:10px;padding:3px">
-          <q-item-section>
-            <q-item-label>
-              <q-skeleton type="text" width="20%" />
-            </q-item-label>
-          </q-item-section>
-        </q-item>
-        <div v-show="!loading" class="row no-wrap items-center q-gutter-x-xs">
-          <div class="row items-center q-gutter-x-xs">
-            <template v-for="p in _power">
-              <q-input v-if="p.type !== 'text'" class="var" input-class="text-center text-caption no-padding"
-                :disable="disable" dense hide-bottom-space hide-hint no-error-icon outlined v-model="p.value" type="tel"
-                maxlength="4" mask="####" debounce="500"
-                :rules="[val => Number.isInteger(parseInt(val)) && parseInt(val) !== 0 || '']"
-                @update:model-value="update" @focus="focus" />
-            </template>
-            <div>아이템 능력</div>
-          </div>
-        </div>
-      </q-card-section>
-      <q-card-section v-if="findType(data.itemType)?.attribute">
-        <q-item v-show="loading" style="min-height:10px;padding:3px">
-          <q-item-section side class="q-pr-sm">
-            <q-skeleton type="circle" width="10px" height="10px" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>
-              <q-skeleton type="text" width="20%" />
-            </q-item-label>
-          </q-item-section>
-        </q-item>
-        <div v-show="!loading" class="row no-wrap items-center q-gutter-x-xs">
-          <q-icon class="icon" size="18px" :name="`img:${data.itemType === 'armor' ? icons.defense : icons.attack}`" />
-          <div class="row items-center q-gutter-x-xs">
-            <template v-for="( comp, k ) in  typeInfo" :key="k">
-              <template v-if="comp.type === 'text'">
-                <div class="q-ml-xs"
-                  v-for="( word, i ) in  comp.value.toString().split(/\s+/g).filter((w: string) => w !== '')" :key="i">
-                  {{ word }}</div>
-              </template>
-              <q-input v-else class="var" input-class="text-center text-caption no-padding" :disable="disable" dense
-                hide-bottom-space hide-hint no-error-icon outlined v-model="comp.value" type="tel" maxlength="4"
-                mask="####" debounce="500"
-                :rules="[val => Number.isInteger(parseInt(val)) && parseInt(val) !== 0 || '']"
-                @update:model-value="update" @focus="focus" />
-            </template>
-          </div>
-        </div>
-      </q-card-section>
-      <q-card-section v-if="slots['add-property'] && findType(data.itemType)?.hasProperties">
-        <slot name="add-property"></slot>
-      </q-card-section>
-      <q-card-section ref="propertyRef" v-if="findType(data.itemType)?.hasProperties" class="col scroll">
         <q-item v-show="loading" v-for="c in 2" :key="c" style="min-height:10px;padding:3px">
           <q-item-section side class="q-pr-sm">
             <q-skeleton type="circle" width="10px" height="10px" />
@@ -267,32 +220,104 @@ defineExpose({ scrollEnd })
             </q-item-label>
           </q-item-section>
         </q-item>
-        <div v-if="slots.properties && !loading" class="column q-gutter-y-xs" style="min-height:25px;">
-          <slot name="properties">
-          </slot>
-        </div>
       </q-card-section>
-      <q-separator v-show="findType(data.itemType)?.attribute || findType(data.itemType)?.hasAffixes" />
-      <q-card-section v-if="slots['add-affix'] && findType(data.itemType)?.hasAffixes">
-        <slot name="add-affix"></slot>
-      </q-card-section>
-      <q-card-section ref="affixRef" v-if="findType(data.itemType)?.hasAffixes" class="col scroll">
-        <q-item v-show="loading" v-for="c in 3" :key="c" style="min-height:10px;padding:3px">
+      <q-separator v-if="typeAttribute" />
+      <q-card-section v-if="typeAttribute">
+        <q-item v-show="loading" style="min-height:10px;padding:3px">
           <q-item-section side class="q-pr-sm">
             <q-skeleton type="circle" width="10px" height="10px" />
           </q-item-section>
           <q-item-section>
             <q-item-label>
-              <q-skeleton type="text" width="65%" />
+              <q-skeleton type="text" width="20%" />
             </q-item-label>
           </q-item-section>
         </q-item>
-        <div v-if="slots.affixes && !loading" class="column q-gutter-y-sm" style="min-height:25px;">
-          <slot name="affixes">
-          </slot>
+        <div v-show="!loading" class="row items-center q-gutter-x-xs">
+          <template v-for="( comp, k ) in  typeInfo" :key="k">
+            <template v-if="comp.type === 'text'">
+              <div class="q-ml-xs"
+                v-for="( word, i ) in comp.value.toString().split(/\s+/g).filter((w: string) => w !== '')" :key="i">
+                {{ word }}</div>
+            </template>
+            <q-input v-else class="var" input-class="text-center text-caption no-padding" :disable="disable" dense
+              hide-bottom-space hide-hint no-error-icon outlined v-model="comp.value" type="tel" maxlength="4"
+              mask="####" debounce="500" :rules="[val => Number.isInteger(parseInt(val)) || '']"
+              @update:model-value="update" @focus="focus" />
+          </template>
         </div>
       </q-card-section>
-      <q-separator />
+      <q-card-section v-if="hasPowers || hasProperties || hasAffixes" class="col column no-wrap" style="padding-top:0">
+        <div class="attribute column">
+          <div class="row justify-center">
+            <q-btn-toggle v-model="attribute" square flat :ripple="false"
+              :color="$q.dark.isActive ? 'grey-5' : 'grey-8'" toggle-color="transparent toggle" :options="attributes" />
+          </div>
+          <q-tab-panels v-model="attribute" class="q-pa-xs bg-transparent col">
+            <q-tab-panel v-if="hasPowers" name="powers" class="column q-gutter-y-xs no-padding">
+              <div v-if="slots['add-power']">
+                <slot name="add-power"></slot>
+              </div>
+              <div ref="powerRef" class="col scroll">
+                <q-item v-show="loading" v-for="c in 2" :key="c" style="min-height:10px;padding:3px">
+                  <q-item-section>
+                    <q-item-label>
+                      <q-skeleton type="text" width="65%" />
+                    </q-item-label>
+                  </q-item-section>
+                </q-item>
+                <div v-if="slots.powers && !loading" class="list column no-wrap q-gutter-y-xs q-pa-sm">
+                  <slot name="powers">
+                  </slot>
+                </div>
+              </div>
+            </q-tab-panel>
+            <q-tab-panel v-if="hasProperties" name="properties" class="column q-gutter-y-xs no-padding">
+              <div v-if="slots['add-property']">
+                <slot name="add-property"></slot>
+              </div>
+              <div ref="propertyRef" class="col scroll">
+                <q-item v-show="loading" v-for="c in 2" :key="c" style="min-height:10px;padding:3px">
+                  <q-item-section side class="q-pr-sm">
+                    <q-skeleton type="circle" width="10px" height="10px" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>
+                      <q-skeleton type="text" width="65%" />
+                    </q-item-label>
+                  </q-item-section>
+                </q-item>
+                <div v-if="slots.properties && !loading" class="list column q-gutter-y-xs">
+                  <slot name="properties">
+                  </slot>
+                </div>
+              </div>
+            </q-tab-panel>
+            <q-tab-panel v-if="hasAffixes" name="affixes" class="column q-gutter-y-xs no-padding">
+              <div v-if="slots['add-affix']">
+                <slot name="add-affix"></slot>
+              </div>
+              <div ref="affixRef" class="col scroll">
+                <q-item v-show="loading" v-for="c in 3" :key="c" style="min-height:10px;padding:3px">
+                  <q-item-section side class="q-pr-sm">
+                    <q-skeleton type="circle" width="10px" height="10px" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>
+                      <q-skeleton type="text" width="65%" />
+                    </q-item-label>
+                  </q-item-section>
+                </q-item>
+                <div v-if="slots.affixes && !loading" class="list column q-gutter-y-sm">
+                  <slot name="affixes">
+                  </slot>
+                </div>
+              </div>
+            </q-tab-panel>
+          </q-tab-panels>
+        </div>
+      </q-card-section>
+      <q-separator v-if="!hasPowers && !hasProperties && !hasAffixes" />
       <q-card-section>
         <D4Price :data="data.price" :editable="editable" :loading="loading" :disable="disable" @update="updatePrice" />
       </q-card-section>
@@ -308,125 +333,118 @@ defineExpose({ scrollEnd })
     <div class="trade-type-chip" :class="data.tradeType === 'buy' ? 'bg-red' : 'bg-primary'"></div>
     <div class="inner" :style="$q.platform.is.mobile ? 'height:100%' : ''">
       <q-card-section>
-        <div :class="$q.platform.is.mobile ? 'q-pl-sm q-gutter-y-xs' : 'q-gutter-y-sm q-py-sm q-pl-sm'">
-          <div class="row no-wrap justify-between items-center full-height">
-            <q-skeleton v-show="loading" width="50%" height="24px" />
-            <div v-show="!loading" class="col-10 col-sm-9 row no-wrap items-center q-col-gutter-x-xs">
-              <div v-show="data.itemType === 'rune'" class="row items-center">
-                <div class="name">{{ (runes().find(r => r.value === data.runeId) || {}).label }}</div>
-                <div class="q-ml-xs">{{ (runeTypes.find(rt => rt.value === (findRune(data.runeId) || {}).type) ||
-                {}).label }}
+        <div class="row justify-beween q-pl-sm">
+          <div class="col" :class="$q.platform.is.mobile ? 'q-gutter-y-xs' : 'q-gutter-y-sm q-py-sm'">
+            <div>
+              <q-skeleton v-show="loading" width="50%" height="24px" />
+              <div v-show="!loading" class="col-10 col-sm-9 row no-wrap items-center q-col-gutter-x-xs">
+                <div v-show="data.itemType === 'rune'" class="row items-center">
+                  <div class="name">{{ (runes().find(r => r.value === data.runeId) || {}).label }}</div>
+                  <div class="q-ml-xs">{{ (runeTypes.find(rt => rt.value === (findRune(data.runeId) || {}).type) ||
+                  {}).label }}
+                  </div>
+                </div>
+                <div v-show="data.itemType !== 'rune'" class="name ellipsis-2-lines">
+                  {{ data.name }}
+                </div>
+                <div v-if="data.quantity > 1" class="col-3 col-sm-2 price row items-center q-gutter-x-xs">
+                  <div class="text-lowercase">x</div>
+                  <div>{{ data.quantity }}</div>
                 </div>
               </div>
-              <div v-show="data.itemType !== 'rune'" class="name ellipsis-2-lines">
-                {{ data.name }}
-              </div>
-              <div v-if="data.quantity > 1" class="col-3 col-sm-2 price row items-center q-gutter-x-xs">
-                <div class="text-lowercase">x</div>
-                <div>{{ data.quantity }}</div>
+            </div>
+            <div>
+              <q-skeleton v-show="loading" width="20%" :height="$q.platform.is.mobile ? '18px' : '21px'" />
+              <div v-if="!loading" style="opacity:.5">
+                <!-- {{ data.user }} -->
+                판매 또는 구매자
               </div>
             </div>
-            <div v-if="!loading && slots['top-right']" class="row items-center q-gutter-x-sm">
+            <div v-if="slots.powers && !loading && data.powers.length > 0" class="column q-gutter-y-xs">
+              <slot name="powers">
+              </slot>
+            </div>
+          </div>
+          <div class="column justify-center items-end q-gutter-x-sm">
+            <div v-if="slots['top-right']">
               <slot name="top-right"></slot>
             </div>
+            <D4Price :data="data.price" :editable="editable" :loading="loading" />
           </div>
-          <div>
-            <div v-show="loading">
-              <q-skeleton v-show="loading" width="20%" :height="$q.platform.is.mobile ? '18px' : '21px'" />
-            </div>
-            <div v-if="!loading" style="opacity:.5">
-              {{ data.user }}
-            </div>
-          </div>
-          <D4Price :data="data.price" :editable="editable" :loading="loading" />
         </div>
       </q-card-section>
-      <q-separator v-show="data.itemType === 'rune'" />
+      <q-separator style="width:50%" />
       <q-card-section v-show="data.itemType === 'rune'" class="col">
-        <q-item v-show="loading" style="min-height:10px;padding:3px">
-          <q-item-section side class="q-pr-sm">
-            <q-skeleton type="circle" size="24px" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>
-              <q-skeleton type="text" width="20%" height="24px" />
-            </q-item-label>
-          </q-item-section>
-        </q-item>
-        <div v-show="!loading" class="row no-wrap items-baseline q-gutter-x-xs">
-          <q-icon class="icon rotate-45" size="13px" :name="`img:${icons.regular}`" />
-          <div>{{ (runes().find(r => r.value === data.runeId) || {}).attribute }}
+        <div class="q-pa-sm">
+          <q-item v-show="loading" style="min-height:10px;padding:3px">
+            <q-item-section side class="q-pr-sm">
+              <q-skeleton type="circle" size="24px" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>
+                <q-skeleton type="text" width="20%" height="24px" />
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+          <div v-show="!loading" class="row no-wrap items-baseline q-gutter-x-xs">
+            <q-icon class="icon rotate-45" size="13px" :name="`img:${icons.regular}`" />
+            <div>{{ (runes().find(r => r.value === data.runeId) || {}).attribute }}
+            </div>
           </div>
         </div>
       </q-card-section>
-      <q-card-section>
-        <q-item v-show="loading" style="min-height:10px;padding:3px">
-          <q-item-section>
-            <q-item-label>
-              <q-skeleton type="text" width="20%" />
-            </q-item-label>
-          </q-item-section>
-        </q-item>
-        <div v-show="!loading" class="row no-wrap items-center q-gutter-x-xs">
-          <div class="row items-center q-gutter-x-xs">
-            <template v-for="p in parse('{x} 아이템 능력', data.itemPowerValues)">
-              <div> {{ p.value }}</div>
-            </template>
+      <q-card-section v-show="loading || hasProperties">
+        <div class="q-pa-sm">
+          <q-item v-show="loading" style="min-height:10px;padding:3px">
+            <q-item-section side class="q-pr-sm">
+              <q-skeleton type="circle" width="10px" height="10px" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>
+                <q-skeleton type="text" width="20%" />
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+          <div v-show="!loading" class="row no-wrap items-center q-gutter-x-xs">
+            <div class="row items-center q-gutter-x-xs">
+              <template v-for="comp in parse(typeAttribute, data.itemTypeValues)">
+                {{ comp.value }}
+              </template>
+            </div>
+          </div>
+          <q-item v-show="loading" v-for="c in 2" :key="c" style="min-height:10px;padding:3px">
+            <q-item-section side class="q-pr-sm">
+              <q-skeleton type="circle" width="10px" height="10px" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>
+                <q-skeleton type="text" width="65%" />
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+          <div v-if="slots.properties && !loading" class="column q-gutter-y-xs" style="min-height:25px;">
+            <slot name="properties">
+            </slot>
           </div>
         </div>
       </q-card-section>
-      <q-separator v-show="loading || findType(data.itemType)?.attribute || findType(data.itemType)?.hasProperties" />
-      <q-card-section v-if="loading || findType(data.itemType)?.attribute">
-        <q-item v-show="loading" style="min-height:10px;padding:3px">
-          <q-item-section side class="q-pr-sm">
-            <q-skeleton type="circle" width="10px" height="10px" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>
-              <q-skeleton type="text" width="20%" />
-            </q-item-label>
-          </q-item-section>
-        </q-item>
-        <div v-show="!loading" class="row no-wrap items-center q-gutter-x-xs">
-          <q-icon class="icon" size="18px" :name="`img:${data.itemType === 'armor' ? icons.defense : icons.attack}`" />
-          <div class="row items-center q-gutter-x-xs">
-            <template v-for="comp in parse(findType(data.itemType)?.attribute, data.itemTypeValues)">
-              {{ comp.value }}
-            </template>
+      <q-separator v-show="loading || typeAttribute || hasProperties" />
+      <q-card-section v-show="loading || hasAffixes">
+        <div class="q-pl-sm">
+          <q-item v-show="loading" v-for="c in 3" :key="c" style="min-height:10px;padding:3px">
+            <q-item-section side class="q-pr-sm">
+              <q-skeleton type="circle" width="10px" height="10px" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>
+                <q-skeleton type="text" width="65%" />
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+          <div v-if="slots.affixes && !loading" class="column q-gutter-y-sm" style="min-height:25px;">
+            <slot name="affixes">
+            </slot>
           </div>
-        </div>
-      </q-card-section>
-      <q-card-section v-show="loading || findType(data.itemType)?.hasProperties">
-        <q-item v-show="loading" v-for="c in 2" :key="c" style="min-height:10px;padding:3px">
-          <q-item-section side class="q-pr-sm">
-            <q-skeleton type="circle" width="10px" height="10px" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>
-              <q-skeleton type="text" width="65%" />
-            </q-item-label>
-          </q-item-section>
-        </q-item>
-        <div v-if="slots.properties && !loading" class="column q-gutter-y-xs" style="min-height:25px;">
-          <slot name="properties">
-          </slot>
-        </div>
-      </q-card-section>
-      <q-separator v-show="loading || findType(data.itemType)?.attribute || findType(data.itemType)?.hasAffixes" />
-      <q-card-section v-show="loading || findType(data.itemType)?.hasAffixes">
-        <q-item v-show="loading" v-for="c in 3" :key="c" style="min-height:10px;padding:3px">
-          <q-item-section side class="q-pr-sm">
-            <q-skeleton type="circle" width="10px" height="10px" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>
-              <q-skeleton type="text" width="65%" />
-            </q-item-label>
-          </q-item-section>
-        </q-item>
-        <div v-if="slots.affixes && !loading" class="column q-gutter-y-sm" style="min-height:25px;">
-          <slot name="affixes">
-          </slot>
         </div>
       </q-card-section>
       <q-separator v-if="slots.actions" />
@@ -473,8 +491,9 @@ defineExpose({ scrollEnd })
 }
 
 .trade-type:deep(.q-toggle__thumb .q-icon) {
-  color: white;
+  filter: invert(100%);
   opacity: 1;
+  padding: 10px;
 }
 
 .trade-type-chip {
@@ -495,5 +514,27 @@ defineExpose({ scrollEnd })
   width: 3px;
   height: 8px;
   background-color: inherit;
+}
+
+.attribute {
+  padding: 8px;
+  border-radius: 4px;
+  background-color: rgba(125, 125, 125, .1);
+  height: 100%;
+}
+
+.attribute:deep(.q-btn-group .toggle) {
+  font-weight: 700;
+  color: inherit !important;
+  background-color: rgba(125, 125, 125, .2);
+  border-radius: 4px;
+}
+
+.attribute:deep(.q-panel) {
+  overflow: hidden;
+}
+
+.attribute:deep(.list) {
+  max-height: 30vh;
 }
 </style>

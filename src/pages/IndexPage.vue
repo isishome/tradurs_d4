@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { nanoid } from 'nanoid'
 import { useRoute, useRouter } from 'vue-router'
-import { useItemStore, type Property, type Affix } from 'stores/item-store'
+import { useItemStore, type Power, type Property, type Affix } from 'stores/item-store'
 import { AxiosInstance } from 'axios'
 import { ref, computed, inject, onMounted, watch } from 'vue'
 import { useQuasar } from 'quasar'
@@ -23,10 +23,11 @@ const phraseGen = new PhraseGen({
 })
 
 // loading variable
+const loadingPowers = computed<boolean>(() => store.powers.loading)
 const loadingAffixes = computed<boolean>(() => store.affixes.loading)
 const loadingProperties = computed<boolean>(() => store.properties.loading)
 const loading = computed<boolean>(
-  () => loadingProperties.value || loadingAffixes.value
+  () => loadingPowers.value || loadingProperties.value || loadingAffixes.value
 )
 
 // variable
@@ -45,7 +46,7 @@ const runes = computed(() => store.runes)
 
 // set item
 const saveItems = (items: Array<Item>) => {
-  $q.localStorage.set('items', JSON.stringify(items))
+  $q.localStorage.set('items', JSON.stringify(items.map(i => ({ ...i, loading: false, expanded: false, editable: false }))))
 }
 
 const setItem = (item: Item, newItem: Item): void => {
@@ -55,10 +56,11 @@ const setItem = (item: Item, newItem: Item): void => {
   item.quantity = newItem.quantity
   item.quality = newItem.quality
   item.itemType = newItem.itemType
-  item.itemPowerValues = newItem.itemPowerValues
   item.itemTypeValues = newItem.itemTypeValues
   item.equipmentClass = newItem.equipmentClass
   item.runeId = newItem.runeId
+  item.powers.splice(0, item.powers.length)
+  item.powers.push(...newItem.powers.filter((p) => p.action !== 8))
   item.properties.splice(0, item.properties.length)
   item.properties.push(...newItem.properties.filter((p) => p.action !== 8))
   item.affixes.splice(0, item.affixes.length)
@@ -80,13 +82,12 @@ const upsertItem = (item: Item, done: Function) => {
 
   if (findItem) {
     setItem(findItem, item)
-    findItem.loading = false
+    done()
   }
   else if (item.itemId === '') {
     store.addItem(item)
-      .then((itemId: string) => {
-        item.itemId = itemId
-        items.value.splice(0, 0, item)
+      .then((resultItem: Item) => {
+        items.value.splice(0, 0, resultItem)
         saveItems(items.value)
       })
       .catch(() => { })
@@ -112,6 +113,7 @@ const deleteItem = (item: Item, done: Function) => {
 
 // temp generate items
 const gen = (): Array<Item> => {
+  const powerIds = store.powers.data.map((p: Power) => p.value)
   const propertyIds = store.properties.data.map((p: Property) => p.value)
   const affixIds = store.affixes.data.map((a: Affix) => a.value)
   const genItems = Array.from({ length: 100 }, (_, i) => {
@@ -127,7 +129,6 @@ const gen = (): Array<Item> => {
     item.itemType = types.value.map((t) => t.value)[
       Math.floor(Math.random() * types.value.length)
     ]
-    item.itemPowerValues = [333]
     item.itemTypeValues = [123]
     item.equipmentClass = classes.value.map((c) => c.value)[
       Math.floor(Math.random() * classes.value.length)
@@ -135,6 +136,14 @@ const gen = (): Array<Item> => {
     item.runeId = runes.value.map((r) => r.value)[
       Math.floor(Math.random() * runes.value.length)
     ]
+    item.powers = Array.from(
+      { length: Math.ceil(Math.random() * 2) },
+      () => ({
+        valueId: nanoid(),
+        powerId: powerIds[Math.floor(Math.random() * powerIds.length)],
+        powerValues: [11]
+      })
+    )
     item.properties = Array.from(
       { length: Math.floor(Math.random() * 2 + 5) },
       () => ({
@@ -231,7 +240,7 @@ watch(() => route.params.itemid, (val: string | string[] | undefined) => {
 })
 
 onMounted(() => {
-  Promise.all([store.getAffixes(), store.getProperties()])
+  Promise.all([store.getPowers(), store.getAffixes(), store.getProperties()])
     .then(() => {
       if (route.params.itemid)
         items.value = [getDetail() as Item]

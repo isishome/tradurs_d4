@@ -1,45 +1,26 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { RouteLocationRaw, useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 
-const props = defineProps({
-  label: {
-    type: String,
-    default: null
-  },
-  color: {
-    type: String,
-    default: null
-  },
-  textColor: {
-    type: String,
-    default: null
-  },
-  round: {
-    type: Boolean,
-    default: false
-  },
-  shadow: {
-    type: Boolean,
-    default: false
-  },
-  to: {
-    type: Object,
-    default: () => []
-  },
-  loading: {
-    type: Boolean,
-    default: false
-  },
-  disable: {
-    type: Boolean,
-    default: false
-  },
-  progress: {
-    type: Boolean,
-    default: false
-  }
+interface IProps {
+  type?: 'button' | 'submit' | 'reset',
+  label?: string,
+  color?: string,
+  textColor?: string,
+  round?: boolean,
+  shadow?: boolean,
+  to?: RouteLocationRaw,
+  loading?: boolean,
+  disable?: boolean,
+  progress?: boolean
+}
+
+const props = withDefaults(defineProps<IProps>(), {
+  type: 'button',
+  loading: false,
+  disable: false,
+  progress: false
 })
 
 const emit = defineEmits(['click'])
@@ -54,7 +35,7 @@ const tc = computed<string>(() => `color:${props.textColor ? props.textColor : '
 const click = () => {
   if (props.loading || props.disable || props.progress)
     return
-  else if (props.to.name || props.to.path)
+  else if (props.to)
     router.push(props.to)
   else
     emit('click')
@@ -66,7 +47,7 @@ const click = () => {
     <q-skeleton v-show="loading" :type="$q.dark.isActive ? 'rect' : 'QChip'"
       :width="`${label ? label.length * textWidth : 0}px`" :height="`${textHeight}px`" class="btn all-pointer-events" />
     <div v-show="!loading" class="btn-wrap" :class="round ? '' : 'frame'">
-      <button class="btn row items-center all-pointer-events"
+      <button :type="type" class="btn row items-center all-pointer-events"
         :class="[round ? 'round' : '', shadow ? 'shadow' : '', props.progress ? 'progress' : 'cursor-pointer']"
         :style="`${bg}${tc}`" @click="click">
         <div class="label relative-position">
