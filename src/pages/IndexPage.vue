@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import { nanoid } from 'nanoid'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { useItemStore, type Power, type Property, type Affix } from 'stores/item-store'
-import { AxiosInstance } from 'axios'
-import { ref, computed, inject, onMounted, watch } from 'vue'
-import { useQuasar } from 'quasar'
+import { ref, computed, onMounted, watch } from 'vue'
 import { Item } from 'src/types/item'
 import { icons } from 'src/common/icons'
 import PhraseGen from 'korean-random-words'
@@ -12,9 +10,7 @@ import D4Items from 'components/D4Items.vue'
 
 // init module
 const route = useRoute()
-const router = useRouter()
 const store = useItemStore()
-const $q = useQuasar()
 
 // common variable
 const routeName = computed(() => route.name)
@@ -44,11 +40,6 @@ const types = computed(() => store.types)
 const classes = computed(() => store.classes)
 const runes = computed(() => store.runes)
 
-// set item
-const saveItems = (items: Array<Item>) => {
-  $q.localStorage.set('items', JSON.stringify(items.map(i => ({ ...i, loading: false, expanded: false, editable: false }))))
-}
-
 const setItem = (item: Item, newItem: Item): void => {
   item.itemId = newItem.itemId
   item.tradeType = newItem.tradeType
@@ -72,8 +63,6 @@ const setItem = (item: Item, newItem: Item): void => {
   item.user = newItem.user
   item.offers = newItem.offers
   item.loading = newItem.loading
-
-  saveItems(items.value)
 }
 
 // insert or update item
@@ -81,14 +70,17 @@ const upsertItem = (item: Item, done: Function) => {
   const findItem = items.value.find((i) => i.itemId === item.itemId)
 
   if (findItem) {
-    setItem(findItem, item)
-    done()
+    store.updateItem(item)
+      .then((resultItem: Item) => {
+        setItem(findItem, resultItem)
+      })
+      .catch(() => { })
+      .then(() => { done() })
   }
   else if (item.itemId === '') {
     store.addItem(item)
       .then((resultItem: Item) => {
         items.value.splice(0, 0, resultItem)
-        saveItems(items.value)
       })
       .catch(() => { })
       .then(() => { done() })
@@ -102,8 +94,6 @@ const deleteItem = (item: Item, done: Function) => {
   if (findItem) {
     // remove api here
     items.value.splice(findIndex, 1)
-
-    saveItems(items.value)
   }
 
   setTimeout(() => {
@@ -185,14 +175,7 @@ const gen = (): Array<Item> => {
   //   i++
   // }
 
-  let i = 0
-  while (i < items.value.length) {
-    const item = genItems.shift()
-    if (item) {
-      setItem(items.value[i], item)
-      i++
-    } else items.value.splice(2, 1)
-  }
+
 
   return [...items.value, ...genItems]
 }
@@ -202,58 +185,34 @@ const create = () => {
     itemsRef.value.create()
 }
 
-//store.getAffixes()
-//store.getProperties()
-// const axios = inject('axios') as AxiosInstance
-
-// axios
-//   .get('/test')
-
-let itemList: Array<Item> = []
-
-const getDetail = (): Item | undefined => {
-  getList()
-
-  const findItem = itemList.find((i: Item) => i.itemId === route.params.itemid)
-  if (findItem)
-    findItem.expanded = true
-
-  return findItem
-}
-
-const getList = () => {
-  if (itemList.length === 0) {
-    if ($q.localStorage.has('items'))
-      itemList = JSON.parse($q.localStorage.getItem('items') as string) as Array<Item>
-    else {
-      itemList = gen()
-      saveItems(itemList)
-    }
-  }
-}
-
 watch(() => route.params.itemid, (val: string | string[] | undefined) => {
-  if (val)
-    items.value = [getDetail() as Item]
-  else
-    items.value = itemList
+  getList(val)
 })
+
+const getList = (itemId: string | string[] | undefined) => {
+  store.getItems(itemId)
+    .then((result: Array<Item>) => {
+      items.value = result
+      // let i = 0
+      // while (i < items.value.length) {
+      //   const item = result.shift()
+      //   if (item) {
+      //     setItem(items.value[i], item)
+      //     i++
+      //   } else items.value.splice(2, 1)
+      // }
+    })
+
+}
 
 onMounted(() => {
   Promise.all([store.getPowers(), store.getAffixes(), store.getProperties()])
     .then(() => {
-      if (route.params.itemid)
-        items.value = [getDetail() as Item]
-      else {
-        setTimeout(() => {
-          getList()
-          items.value = itemList
-        }, 1000)
-      }
+      getList(route.params.itemid)
     })
 })
 </script>
- 
+
 <template>
   <D4Btn v-if="routeName === 'item-detail'" round :to="{ name: 'item-list' }" class="create" color="var(--q-secondary)"
     shadow>

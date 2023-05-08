@@ -18,7 +18,7 @@ declare module '@vue/runtime-core' {
 // for each client)
 const api = axios.create({
   baseURL: import.meta.env.VITE_APP_BACKEND_ORIGIN,
-  timeout: 10000,
+  timeout: 0,
   withCredentials: true
 });
 

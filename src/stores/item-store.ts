@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { api } from 'boot/axios'
 import { runeImgs } from 'src/common/runes'
-import { Item } from 'src/types/item'
+import { Item, type Power as IPower, type Property as IProperty, type Affix as IAffix } from 'src/types/item'
 
 export interface Quality {
   value: string,
@@ -236,6 +236,17 @@ export const useItemStore = defineStore('item', {
           resolve()
       })
     },
+    getItems(itemId: string | string[] | undefined) {
+      return new Promise<Array<Item>>((resolve, reject) => {
+        api.get('/d4/item', { params: { itemId: itemId } })
+          .then((response) => {
+            resolve(response.data)
+          })
+          .catch((e) => {
+            reject(e)
+          })
+      })
+    },
     addAttribute(category: string | null, attribute: Power | Property | Affix) {
       return new Promise<Power | Property | Affix>((resolve, reject) => {
         api.post('/d4/item/attribute', { category: category, attribute: attribute })
@@ -259,6 +270,25 @@ export const useItemStore = defineStore('item', {
       return new Promise<Item>((resolve, reject) => {
         api.post('/d4/item/add', { item: item })
           .then((response) => {
+            delete response.data.expanded
+            response.data.powers = (response.data.powers as Array<IPower>).filter((pw: IPower) => pw.action !== 8).map(({ action, ...pw }) => pw)
+            response.data.properties = (response.data.properties as Array<IProperty>).filter((p: IProperty) => p.action !== 8).map(({ action, ...p }) => p)
+            response.data.affixes = (response.data.affixes as Array<IAffix>).filter((a: IAffix) => a.action !== 8).map(({ action, ...a }) => a)
+            resolve(response.data)
+          })
+          .catch((e) => {
+            reject(e)
+          })
+      })
+    },
+    updateItem(item: Item) {
+      return new Promise<Item>((resolve, reject) => {
+        api.post('/d4/item/update', { item: item })
+          .then((response) => {
+            delete response.data.expanded
+            response.data.powers = (response.data.powers as Array<IPower>).filter((pw: IPower) => pw.action !== 8).map(({ action, ...pw }) => pw)
+            response.data.properties = (response.data.properties as Array<IProperty>).filter((p: IProperty) => p.action !== 8).map(({ action, ...p }) => p)
+            response.data.affixes = (response.data.affixes as Array<IAffix>).filter((a: IAffix) => a.action !== 8).map(({ action, ...a }) => a)
             resolve(response.data)
           })
           .catch((e) => {
