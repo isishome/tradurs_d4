@@ -32,7 +32,7 @@ api.interceptors.response.use(function (response) {
     //router.push({ name: 'Sign' })
   }
   else {
-    const message = error.message || error.response && error.response.data
+    const message = error.response && error.response.data || error.message
 
     Notify.create({
       icon: `img:${alert}`,

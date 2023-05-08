@@ -48,7 +48,7 @@ watch(() => props.data, () => {
 
 <template>
   <div class="row items-center">
-    <div class="row items-center q-gutter-x-xs" :class="disable ? 'disable' : ''">
+    <div class="row items-center q-gutter-x-xs" :class="disable ? 'disable' : ''" :data-id="data.valueId">
       <template v-for="(comp, k) in powerInfo" :key="k">
         <template v-if="comp.type === 'text'">
           <div v-for="(word, i) in (comp.value as string).split(/\s+/g).filter(w => w !== '')" :key="i">{{ word }}

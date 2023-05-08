@@ -53,7 +53,7 @@ watch(() => props.data, (val) => {
 <template>
   <div class="row items-center"
     :class="affixType === 'unique' ? 'unique' : affixType === 'socket' ? 'text-grey-6' : ''">
-    <div class="row no-wrap q-gutter-x-xs" :class="disable ? 'disable' : ''">
+    <div class="row no-wrap q-gutter-x-xs" :class="disable ? 'disable' : ''" :data-id="data.valueId">
       <div>
         <q-icon class="icon"
           :class="['regular', 'offensive', 'defensive', 'utility'].includes(affixType) ? 'rotate-45' : ''" size="13px"

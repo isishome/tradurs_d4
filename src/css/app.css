@@ -160,6 +160,6 @@ body.body--dark {
   background: rgba(0, 0, 0, .2);
 }
 
-.q-notifications .q-icon img {
-  filter: invert(100%);
+.body--dark .q-notifications .q-icon img {
+  filter: invert(100%) !important;
 }

@@ -79,8 +79,9 @@ const showMakeOffer = (offer: Offer) => {
   offer.user.getInfo()
 }
 
-const updateItem = ({ tradeType, name, itemTypeValues, quantity, quality, itemType, runeId, equipmentClass, price }: IItem): void => {
-  activatedItem.value.tradeType = tradeType
+const updateItem = ({ hardcore, ladder, name, itemTypeValues, quantity, quality, itemType, runeId, equipmentClass, price }: IItem): void => {
+  activatedItem.value.hardcore = hardcore
+  activatedItem.value.ladder = ladder
   activatedItem.value.name = name
   activatedItem.value.itemTypeValues = itemTypeValues
   activatedItem.value.quantity = quantity
@@ -174,12 +175,13 @@ const applyAdd = (): void => {
     type: add.type
   })
     .then((result: Power | Property | Affix) => {
-      const attribute: any = { valueId: nanoid(), action: 2 }
+      const tempId = nanoid()
+      const attribute: any = { valueId: tempId, action: 2 }
       attribute[add.category === 'powers' ? 'powerId' : add.category === 'properties' ? 'propertyId' : 'affixId'] = result.value
       attribute[add.category === 'powers' ? 'powerValues' : add.category === 'properties' ? 'propertyValues' : 'affixValues'] = []
       const target = add.category === 'powers' ? activatedItem.value.powers : add.category === 'properties' ? activatedItem.value.properties : activatedItem.value.affixes
       target.push(attribute)
-      activatedRef.value?.scrollEnd(add.category)
+      activatedRef.value?.scrollEnd(add.category, tempId)
       add.show = false
     })
     .catch((e) => {
@@ -205,10 +207,11 @@ const filterPowers = (val: string): void => {
 
 const selectedPower = (val: number): void => {
   if (val) {
-    activatedItem.value.powers.push({ valueId: nanoid(), powerId: val, powerValues: [], action: 2 })
+    const tempId = nanoid()
+    activatedItem.value.powers.push({ valueId: tempId, powerId: val, powerValues: [], action: 2 })
     powerId.value = null
     powerNeedle.value = null
-    activatedRef.value?.scrollEnd('powers')
+    activatedRef.value?.scrollEnd('powers', tempId)
   }
 }
 
@@ -245,10 +248,11 @@ const filterProperties = (val: string): void => {
 
 const selectedProperty = (val: number): void => {
   if (val) {
-    activatedItem.value.properties.push({ valueId: nanoid(), propertyId: val, propertyValues: [], action: 2 })
+    const tempId = nanoid()
+    activatedItem.value.properties.push({ valueId: tempId, propertyId: val, propertyValues: [], action: 2 })
     propertyId.value = null
     propertyNeedle.value = null
-    activatedRef.value?.scrollEnd('properties')
+    activatedRef.value?.scrollEnd('properties', tempId)
   }
 }
 
@@ -284,10 +288,11 @@ const filterAffixes = (val: string): void => {
 }
 
 const selectedAffix = (val: number): void => {
-  activatedItem.value.affixes.push({ valueId: nanoid(), affixId: val, affixValues: [], action: 2 })
+  const tempId = nanoid()
+  activatedItem.value.affixes.push({ valueId: tempId, affixId: val, affixValues: [], action: 2 })
   affixId.value = null
   affixNeedle.value = null
-  activatedRef.value?.scrollEnd('affixes')
+  activatedRef.value?.scrollEnd('affixes', tempId)
 }
 
 const createAffix = (): void => {

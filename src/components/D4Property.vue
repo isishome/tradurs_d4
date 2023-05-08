@@ -49,7 +49,7 @@ watch(() => props.data, () => {
 
 <template>
   <div class="row items-center">
-    <div class="row no-wrap q-gutter-x-xs" :class="disable ? 'disable' : ''">
+    <div class="row no-wrap q-gutter-x-xs" :class="disable ? 'disable' : ''" :data-id="data.valueId">
       <div>
         <q-icon class="icon"
           :class="['regular', 'offensive', 'defensive', 'utility', 'resistance'].includes(findProperty?.type as string) ? 'rotate-45' : ''"

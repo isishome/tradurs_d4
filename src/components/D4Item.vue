@@ -39,7 +39,8 @@ const typeAttribute = computed(() => findType(props.data.itemType)?.attribute)
 const hasPowers = computed(() => findType(props.data.itemType)?.hasPowers)
 const hasProperties = computed(() => findType(props.data.itemType)?.hasProperties)
 const hasAffixes = computed(() => findType(props.data.itemType)?.hasAffixes)
-const _tradeType = ref<string>(props.data.tradeType)
+const _hardcore = ref<boolean>(props.data.hardcore)
+const _ladder = ref<boolean>(props.data.ladder)
 const _name = ref<string>(props.data.name)
 const _quantity = ref<number>(props.data.quantity || 1)
 const quality = computed<Array<Quality>>(() => store.quality)
@@ -65,16 +66,6 @@ const attributes = computed(() => [
   { label: '옵션', value: 'affixes', hide: !hasAffixes.value }
 ].filter(a => !a.hide))
 
-interface ITradeType {
-  label: string,
-  value: string
-}
-
-const tradeTypes: Array<ITradeType> = [
-  { label: '판매', value: 'sell' },
-  { label: '구매', value: 'buy' }
-]
-
 const updateType = (val: string) => {
   typeInfo.value = parse(findType(val)?.attribute)
   _class.value = classes(val).length > 0 ? classes(val)[0].value : 'axes'
@@ -83,7 +74,7 @@ const updateType = (val: string) => {
 }
 
 const update = () => {
-  emit('update', { tradeType: _tradeType.value, name: _name, itemTypeValues: typeInfo.value?.filter(i => i.type === 'variable').map(i => parseInt(i.value.toString())), quantity: _quantity.value, quality: _quality.value, itemType: _type.value, runeId: _rune.value, equipmentClass: _class.value, price: _price })
+  emit('update', { hardcore: _hardcore.value, ladder: _ladder.value, name: _name, itemTypeValues: typeInfo.value?.filter(i => i.type === 'variable').map(i => parseInt(i.value.toString())), quantity: _quantity.value, quality: _quality.value, itemType: _type.value, runeId: _rune.value, equipmentClass: _class.value, price: _price })
 }
 
 const updatePrice = (price: Price) => {
@@ -104,14 +95,20 @@ const focus = (evt: Event) => {
 const powerRef = ref<HTMLDivElement | null>(null)
 const propertyRef = ref<HTMLDivElement | null>(null)
 const affixRef = ref<HTMLDivElement | null>(null)
-const scrollEnd = (pType: string) => {
+const scrollEnd = (pType: string, valueId: string) => {
   nextTick(() => {
-    if (pType === 'powers' && powerRef.value)
-      powerRef.value.scrollTop = powerRef.value.scrollHeight
-    else if (pType === 'properties' && propertyRef.value)
-      propertyRef.value.scrollTop = propertyRef.value.scrollHeight
-    else if (pType === 'affixes' && affixRef.value)
-      affixRef.value.scrollTop = affixRef.value.scrollHeight
+    if (pType === 'powers' && powerRef.value) {
+      const findValue = powerRef.value.querySelector(`div[data-id="${valueId}"] input`) as HTMLInputElement
+      findValue?.focus()
+    }
+    else if (pType === 'properties' && propertyRef.value) {
+      const findValue = propertyRef.value.querySelector(`div[data-id="${valueId}"] input`) as HTMLInputElement
+      findValue?.focus()
+    }
+    else if (pType === 'affixes' && affixRef.value) {
+      const findValue = affixRef.value.querySelector(`div[data-id="${valueId}"] input`) as HTMLInputElement
+      findValue?.focus()
+    }
   })
 }
 const apply = () => {
@@ -138,10 +135,10 @@ defineExpose({ scrollEnd })
                   @click="_quality = q.value; update()" />
               </div>
             </div>
-            <div>
-              <q-toggle v-model="_tradeType" :disable="disable" true-value="sell" false-value="buy" class="trade-type"
-                color="primary" :unchecked-icon="`img:${icons.buy}`" :checked-icon="`img:${icons.sell}`" size="lg"
-                :label="tradeTypes.find((t: ITradeType) => t.value === _tradeType)?.label" dense
+            <div class="col-12 col-sm row justify-end items-center q-gutter-x-md toggles">
+              <q-toggle v-model="_hardcore" :disable="disable" color="primary" label="하드코어" dense
+                @update:model-value="update" />
+              <q-toggle v-model="_ladder" :disable="disable" color="primary" label="래더" dense
                 @update:model-value="update" />
             </div>
           </div>
@@ -330,7 +327,6 @@ defineExpose({ scrollEnd })
   </q-card>
   <q-card v-else class="card-item non-selectable no-scroll full-height overflow-hidden"
     :class="[data.expanded ? 'expanded' : '', data.quality]">
-    <div class="trade-type-chip" :class="data.tradeType === 'buy' ? 'bg-red' : 'bg-primary'"></div>
     <div class="inner" :style="$q.platform.is.mobile ? 'height:100%' : ''">
       <q-card-section>
         <div class="row justify-beween q-pl-sm">
@@ -478,44 +474,6 @@ defineExpose({ scrollEnd })
   color: var(--q-dark-page);
 }
 
-.trade-type:deep(.q-toggle__inner) {
-  color: var(--q-secondary);
-}
-
-.trade-type:deep(.q-toggle__thumb:before) {
-  display: none;
-}
-
-.trade-type:deep(.q-toggle__inner:not(.q-toggle__inner--truthy) .q-toggle__thumb:after) {
-  background: var(--q-secondary);
-}
-
-.trade-type:deep(.q-toggle__thumb .q-icon) {
-  filter: invert(100%);
-  opacity: 1;
-  padding: 10px;
-}
-
-.trade-type-chip {
-  position: absolute;
-  left: 4px;
-  top: 4px;
-  padding: 0;
-  width: 8px;
-  height: 3px;
-  border-radius: 0 !important;
-  z-index: 5000;
-}
-
-.trade-type-chip::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  width: 3px;
-  height: 8px;
-  background-color: inherit;
-}
-
 .attribute {
   padding: 8px;
   border-radius: 4px;
@@ -536,5 +494,9 @@ defineExpose({ scrollEnd })
 
 .attribute:deep(.list) {
   max-height: 30vh;
+}
+
+.toggles:deep(.q-toggle__thumb::before) {
+  display: none !important;
 }
 </style>

@@ -31,7 +31,8 @@ export interface Price {
 
 export interface IItem {
   itemId: string,
-  tradeType: string,
+  hardcore: boolean,
+  ladder: boolean,
   itemStatus: number,
   name: string,
   quantity: number,
@@ -60,7 +61,8 @@ export interface IItem {
 
 export class Item implements IItem {
   public itemId = ''
-  public tradeType = 'sell'
+  public hardcore = false
+  public ladder = true
   public itemStatus = 0
   public name = ''
   public quantity = 1
