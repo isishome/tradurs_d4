@@ -3,27 +3,24 @@ import { api } from 'boot/axios'
 import { runeImgs } from 'src/common/runes'
 import { Item, type Power as IPower, type Property as IProperty, type Affix as IAffix } from 'src/types/item'
 
-export interface Quality {
-  value: string,
+interface ILabel {
+  value: number | string,
   label: string
 }
 
-export interface RuneType {
-  value: string,
-  label: string
-}
+export interface Status extends ILabel { }
 
-export interface Rune {
-  value: string,
+export interface Quality extends ILabel { }
+
+export interface RuneType extends ILabel { }
+
+export interface Rune extends ILabel {
   type: string,
-  label: string,
   attribute: string,
   img: string
 }
 
-export interface ItemType {
-  value: string,
-  label: string,
+export interface ItemType extends ILabel {
   attribute: string,
   hasPowers: boolean,
   hasProperties: boolean,
@@ -31,36 +28,26 @@ export interface ItemType {
   isCurrency: boolean
 }
 
-export interface EquipmentClass {
-  value: string,
-  label: string,
+export interface EquipmentClass extends ILabel {
   type: string
 }
 
-export interface AttributeType {
-  value: string,
-  label: string,
+export interface AttributeType extends ILabel {
   sort: number
 }
 
-export interface Power {
-  value: number,
+export interface Power extends ILabel {
   type: string,
-  label: string,
   sort?: number
 }
 
-export interface Property {
-  value: number,
+export interface Property extends ILabel {
   type: string,
-  label: string,
   sort?: number
 }
 
-export interface Affix {
-  value: number,
+export interface Affix extends ILabel {
   type: string,
-  label: string,
   sort?: number
 }
 
@@ -70,6 +57,7 @@ export const useItemStore = defineStore('item', {
       loading: false as boolean,
       request: 0 as number
     },
+    status: [] as Array<Status>,
     quality: [] as Array<Quality>,
     runeTypes: [] as Array<RuneType>,
     runes: [] as Array<Rune>,
@@ -94,6 +82,9 @@ export const useItemStore = defineStore('item', {
     }
   }),
   getters: {
+    findStatus: (state) => {
+      return (statusCode?: string): Status | undefined => state.status.find(s => s.value === statusCode)
+    },
     filterClasses: (state) => {
       return (type?: string): Array<EquipmentClass> => type ? state.classes.filter(c => c.type === type) : state.classes
     },
@@ -133,6 +124,7 @@ export const useItemStore = defineStore('item', {
           this.base.loading = true
           api.get('/d4/item/base')
             .then((response) => {
+              this.status = response.data.status
               this.quality = response.data.quality
               this.runeTypes = response.data.runeTypes
               this.runes = response.data.runes.map((r: Rune) => ({ ...r, img: runeImgs[r.value as keyof typeof runeImgs] }))
@@ -286,10 +278,22 @@ export const useItemStore = defineStore('item', {
         api.post('/d4/item/update', { item: item })
           .then((response) => {
             delete response.data.expanded
+            delete response.data.action
             response.data.powers = (response.data.powers as Array<IPower>).filter((pw: IPower) => pw.action !== 8).map(({ action, ...pw }) => pw)
             response.data.properties = (response.data.properties as Array<IProperty>).filter((p: IProperty) => p.action !== 8).map(({ action, ...p }) => p)
             response.data.affixes = (response.data.affixes as Array<IAffix>).filter((a: IAffix) => a.action !== 8).map(({ action, ...a }) => a)
             resolve(response.data)
+          })
+          .catch((e) => {
+            reject(e)
+          })
+      })
+    },
+    deleteItem(itemId: string) {
+      return new Promise<void>((resolve, reject) => {
+        api.post('/d4/item/delete', { itemId: itemId })
+          .then(() => {
+            resolve()
           })
           .catch((e) => {
             reject(e)

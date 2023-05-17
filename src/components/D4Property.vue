@@ -37,9 +37,7 @@ const remove = () => {
 
 const focus = (evt: Event) => {
   const el: HTMLInputElement | null = (evt.target as Element)?.closest('input')
-
-  if (el)
-    el.select()
+  el?.select()
 }
 
 watch(() => props.data, () => {

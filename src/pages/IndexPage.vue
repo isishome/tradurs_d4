@@ -17,14 +17,15 @@ const routeName = computed(() => route.name)
 const loadingPowers = computed<boolean>(() => store.powers.loading)
 const loadingAffixes = computed<boolean>(() => store.affixes.loading)
 const loadingProperties = computed<boolean>(() => store.properties.loading)
+const disable = ref(true)
 const loading = computed<boolean>(
-  () => loadingPowers.value || loadingProperties.value || loadingAffixes.value
+  () => loadingPowers.value || loadingProperties.value || loadingAffixes.value || disable.value
 )
 
 // variable
 const itemsRef = ref<typeof D4Items | null>(null)
 const items = ref<Array<Item>>(
-  Array.from({ length: 3 }, () => {
+  Array.from({ length: 4 }, () => {
     const item = new Item()
     item.loading = true
     return item
@@ -35,6 +36,7 @@ const setItem = (item: Item, newItem: Item): void => {
   item.itemId = newItem.itemId
   item.hardcore = newItem.hardcore
   item.ladder = newItem.ladder
+  item.statusCode = newItem.statusCode
   item.name = newItem.name
   item.quantity = newItem.quantity
   item.quality = newItem.quality
@@ -53,6 +55,7 @@ const setItem = (item: Item, newItem: Item): void => {
   item.price.quantity = newItem.price.quantity
   item.user = newItem.user
   item.offers = newItem.offers
+  item.action = newItem.action
 }
 
 // insert or update item
@@ -68,12 +71,16 @@ const upsertItem = (item: Item, done: Function) => {
       .then(() => { done() })
   }
   else if (item.itemId === '') {
+    //let i = 0
+    //while (i < 100) {
     store.addItem(item)
       .then((resultItem: Item) => {
-        items.value.splice(0, 0, resultItem)
+        items.value.unshift(resultItem)
       })
       .catch(() => { })
       .then(() => { done() })
+    //i++
+    // }
   }
 }
 
@@ -83,12 +90,17 @@ const deleteItem = (item: Item, done: Function) => {
 
   if (findItem) {
     // remove api here
-    items.value.splice(findIndex, 1)
+    disable.value = true
+    store.deleteItem(item.itemId)
+      .then(() => {
+        items.value.splice(findIndex, 1)
+        done()
+      })
+      .catch(() => { })
+      .then(() => {
+        disable.value = false
+      })
   }
-
-  setTimeout(() => {
-    done()
-  }, 2000)
 }
 
 const create = () => {
@@ -103,17 +115,24 @@ watch(() => route.params.itemid, (val: string | string[] | undefined) => {
 const getList = (itemId: string | string[] | undefined) => {
   store.getItems(itemId)
     .then((result: Array<Item>) => {
-      items.value = result
-      // let i = 0
-      // while (i < items.value.length) {
-      //   const item = result.shift()
-      //   if (item) {
-      //     setItem(items.value[i], item)
-      //     i++
-      //   } else items.value.splice(2, 1)
-      // }
+      let i = 0
+      while (i < items.value.length) {
+        const item = result.shift()
+        if (item) {
+          setItem(items.value[i], item)
+          items.value[i].loading = false
+          i++
+        } else {
+          items.value.splice(i)
+          break
+        }
+      }
+      items.value.push(...result)
+    }).catch(() => {
+      items.value = []
+    }).then(() => {
+      disable.value = false
     })
-
 }
 
 onMounted(() => {
@@ -129,8 +148,9 @@ onMounted(() => {
     shadow>
     <img :src="icons.list" height="20" class="invert" />
   </D4Btn>
-  <D4Btn v-if="routeName === 'item-list'" round @click="create" class="create" shadow>
-    <img :src="icons.add" height="20" class="invert" />
+  <D4Btn v-if="routeName === 'item-list'" round @click="create" class="create" color="var(--q-secondary)"
+    :disable="disable" shadow>
+    <img :src="icons.add" height="24" class="invert" />
   </D4Btn>
   <div class="row justify-center items-center">
     <D4Items ref="itemsRef" :items="items" :loading="loading" @upsert-item="upsertItem" @delete-item="deleteItem" />

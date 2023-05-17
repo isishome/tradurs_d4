@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref, computed, useSlots, nextTick } from 'vue'
+import { reactive, ref, computed, useSlots, nextTick, watch } from 'vue'
 import { QCardSection, useQuasar } from 'quasar'
 import type { Quality, RuneType, ItemType } from 'stores/item-store'
 import type { Price } from 'src/types/item'
@@ -50,6 +50,7 @@ const _type = ref<string>(props.data.itemType || 'weapons')
 const runeTypes = computed<Array<RuneType>>(() => store.runeTypes)
 const runes = store.filterRunes
 const _rune = ref<string>(props.data.runeId || 'eld')
+const findStatus = store.findStatus
 const findRune = store.findRune
 const findType = store.findType
 const classes = store.filterClasses
@@ -68,7 +69,8 @@ const attributes = computed(() => [
 
 const updateType = (val: string) => {
   typeInfo.value = parse(findType(val)?.attribute)
-  _class.value = classes(val).length > 0 ? classes(val)[0].value : 'axes'
+  _name.value = val === 'rune' ? '' : _name.value
+  _class.value = classes(val).length > 0 ? classes(val)[0].value as string : 'axes'
   attribute.value = findType(val)?.hasPowers ? 'powers' : findType(val)?.hasProperties ? 'properties' : 'affixes'
   update()
 }
@@ -86,9 +88,7 @@ const updatePrice = (price: Price) => {
 
 const focus = (evt: Event) => {
   const el: HTMLInputElement | null = (evt.target as Element)?.closest('input')
-
-  if (el)
-    el.select()
+  el?.select()
 }
 
 // control scroll
@@ -118,27 +118,31 @@ const apply = () => {
 // attribute tabs
 const attribute = ref<string>(hasPowers.value ? 'powers' : hasProperties.value ? 'properties' : 'affixes')
 
+watch(() => props.data.quantity, (val) => {
+  _quantity.value = val
+})
+
 defineExpose({ scrollEnd })
 </script>
 
 <template>
   <q-card v-if="editable" class="card-item non-selectable no-scroll editable" :class="data.quality">
-    <q-form class="inner column no-wrap" :class="$q.platform.is.mobile ? '' : 'justify-between'" @submit="apply"
-      :style="$q.platform.is.mobile ? 'height:100%' : 'max-height:90vh'">
+    <q-form class="inner column no-wrap" :class="$q.screen.lt.sm ? '' : 'justify-between'" @submit="apply"
+      :style="$q.screen.lt.sm ? 'height:100%' : 'max-height:90vh'">
       <q-card-section>
         <div class="column items-start q-gutter-y-sm">
           <div class="row items-center justify-between full-width q-gutter-sm">
             <div>
               <div class="row items-center q-gutter-sm quality">
-                <q-btn :ripple="!$q.dark.isActive" v-for="q in quality" :key="q.value" :disable="disable" round
-                  unelevated :class="['text-weight-bold', _quality === q.value ? 'active' : '']" :label="q.label"
-                  @click="_quality = q.value; update()" />
+                <q-btn :ripple="!$q.dark.isActive" v-for="q in quality" :key="q.value" :disable="disable" round unelevated
+                  :class="['text-weight-bold', _quality === q.value ? 'active' : '']" :label="q.label"
+                  @click="_quality = q.value as string; update()" />
               </div>
             </div>
-            <div class="col-12 col-sm row justify-end items-center q-gutter-x-md toggles">
-              <q-toggle v-model="_hardcore" :disable="disable" color="primary" label="하드코어" dense
+            <div class="col column items-end q-gutter-y-sm toggles">
+              <q-toggle left-label v-model="_hardcore" :disable="disable" color="secondary" label="하드코어" dense
                 @update:model-value="update" />
-              <q-toggle v-model="_ladder" :disable="disable" color="primary" label="래더" dense
+              <q-toggle left-label v-model="_ladder" :disable="disable" color="primary" label="래더" dense
                 @update:model-value="update" />
             </div>
           </div>
@@ -156,8 +160,7 @@ defineExpose({ scrollEnd })
               <div class="col" v-show="classes(data.itemType).length > 0">
                 <q-select v-model="_class" :disable="disable" outlined dense no-error-icon hide-bottom-space emit-value
                   map-options transition-show="none" transition-hide="none" label="장비 클래스"
-                  :dropdown-icon="`img:${icons.dropdown}`" :options="classes(data.itemType)"
-                  @update:model-value="update">
+                  :dropdown-icon="`img:${icons.dropdown}`" :options="classes(data.itemType)" @update:model-value="update">
                   <template #selected-item="scope">
                     <div class="ellipsis">{{ scope.opt.label }}</div>
                   </template>
@@ -185,13 +188,13 @@ defineExpose({ scrollEnd })
         </div>
       </q-card-section>
       <q-separator v-show="data.itemType !== 'rune'" />
-      <q-card-section v-show="data.itemType !== 'rune'">
+      <q-card-section v-if="data.itemType !== 'rune'">
         <q-input v-show="data.itemType !== 'rune'" :disable="disable" dense no-error-icon hide-bottom-space autofocus
           v-model="_name" outlined class="col-10" label="아이템 명" @update:model-value="update"
           :rules="[val => checkName(val) || '']" />
       </q-card-section>
       <q-separator v-show="data.itemType === 'rune'" />
-      <q-card-section v-show="data.itemType === 'rune'" class="col">
+      <q-card-section v-if="data.itemType === 'rune'" class="col">
         <q-item v-show="loading" style="min-height:10px;padding:3px">
           <q-item-section side class="q-pr-sm">
             <q-skeleton type="circle" width="10px" height="10px" />
@@ -219,37 +222,39 @@ defineExpose({ scrollEnd })
         </q-item>
       </q-card-section>
       <q-separator v-if="typeAttribute" />
-      <q-card-section v-if="typeAttribute">
-        <q-item v-show="loading" style="min-height:10px;padding:3px">
-          <q-item-section side class="q-pr-sm">
-            <q-skeleton type="circle" width="10px" height="10px" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>
-              <q-skeleton type="text" width="20%" />
-            </q-item-label>
-          </q-item-section>
-        </q-item>
-        <div v-show="!loading" class="row items-center q-gutter-x-xs">
-          <template v-for="( comp, k ) in  typeInfo" :key="k">
-            <template v-if="comp.type === 'text'">
-              <div class="q-ml-xs"
-                v-for="( word, i ) in comp.value.toString().split(/\s+/g).filter((w: string) => w !== '')" :key="i">
-                {{ word }}</div>
+      <q-card-section v-if="typeAttribute || hasPowers || hasProperties || hasAffixes" class="tab">
+        <div class="row justify-between items-center">
+          <q-item v-show="loading" style="min-height:10px;padding:3px">
+            <q-item-section side class="q-pr-sm">
+              <q-skeleton type="circle" width="10px" height="10px" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>
+                <q-skeleton type="text" width="20%" />
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+          <div v-show="!loading" class="row items-center q-gutter-x-xs">
+            <template v-for="( comp, k ) in  typeInfo" :key="k">
+              <template v-if="comp.type === 'text'">
+                <div class="q-ml-xs"
+                  v-for="( word, i ) in comp.value.toString().split(/\s+/g).filter((w: string) => w !== '')" :key="i">
+                  {{ word }}</div>
+              </template>
+              <q-input v-else class="var" input-class="text-center text-caption no-padding" :disable="disable" dense
+                hide-bottom-space hide-hint no-error-icon outlined v-model="comp.value" type="tel" maxlength="4"
+                mask="####" debounce="500" :rules="[val => Number.isInteger(parseInt(val)) || '']"
+                @update:model-value="update" @focus="focus" />
             </template>
-            <q-input v-else class="var" input-class="text-center text-caption no-padding" :disable="disable" dense
-              hide-bottom-space hide-hint no-error-icon outlined v-model="comp.value" type="tel" maxlength="4"
-              mask="####" debounce="500" :rules="[val => Number.isInteger(parseInt(val)) || '']"
-              @update:model-value="update" @focus="focus" />
-          </template>
+          </div>
+          <div>
+            <q-btn-toggle v-model="attribute" square flat :ripple="false" :color="$q.dark.isActive ? 'grey-5' : 'grey-8'"
+              toggle-color="transparent toggle" :options="attributes" />
+          </div>
         </div>
       </q-card-section>
       <q-card-section v-if="hasPowers || hasProperties || hasAffixes" class="col column no-wrap" style="padding-top:0">
         <div class="attribute column">
-          <div class="row justify-center">
-            <q-btn-toggle v-model="attribute" square flat :ripple="false"
-              :color="$q.dark.isActive ? 'grey-5' : 'grey-8'" toggle-color="transparent toggle" :options="attributes" />
-          </div>
           <q-tab-panels v-model="attribute" class="q-pa-xs bg-transparent col">
             <q-tab-panel v-if="hasPowers" name="powers" class="column q-gutter-y-xs no-padding">
               <div v-if="slots['add-power']">
@@ -326,18 +331,18 @@ defineExpose({ scrollEnd })
     <slot name="more" :loading="loading"></slot>
   </q-card>
   <q-card v-else class="card-item non-selectable no-scroll full-height overflow-hidden"
-    :class="[data.expanded ? 'expanded' : '', data.quality]">
-    <div class="inner" :style="$q.platform.is.mobile ? 'height:100%' : ''">
+    :class="[data.expanded ? 'expanded' : '', data.quality, `status-${data.statusCode}`]">
+    <div class="inner" :style="$q.screen.lt.sm ? 'height:100%' : ''">
       <q-card-section>
-        <div class="row justify-beween q-pl-sm">
-          <div class="col" :class="$q.platform.is.mobile ? 'q-gutter-y-xs' : 'q-gutter-y-sm q-py-sm'">
+        <div class="row justify-beween q-px-sm">
+          <div class="col" :class="$q.screen.lt.sm ? 'q-gutter-y-xs' : 'q-gutter-y-sm q-py-sm'">
             <div>
               <q-skeleton v-show="loading" width="50%" height="24px" />
               <div v-show="!loading" class="col-10 col-sm-9 row no-wrap items-center q-col-gutter-x-xs">
                 <div v-show="data.itemType === 'rune'" class="row items-center">
                   <div class="name">{{ (runes().find(r => r.value === data.runeId) || {}).label }}</div>
                   <div class="q-ml-xs">{{ (runeTypes.find(rt => rt.value === (findRune(data.runeId) || {}).type) ||
-                  {}).label }}
+                    {}).label }}
                   </div>
                 </div>
                 <div v-show="data.itemType !== 'rune'" class="name ellipsis-2-lines">
@@ -350,18 +355,19 @@ defineExpose({ scrollEnd })
               </div>
             </div>
             <div>
-              <q-skeleton v-show="loading" width="20%" :height="$q.platform.is.mobile ? '18px' : '21px'" />
+              <q-skeleton v-show="loading" width="20%" :height="$q.screen.lt.sm ? '18px' : '21px'" />
               <div v-if="!loading" style="opacity:.5">
-                <!-- {{ data.user }} -->
-                판매 또는 구매자
+                {{ data.user.battleTag }}
               </div>
             </div>
-            <div v-if="slots.powers && !loading && data.powers.length > 0" class="column q-gutter-y-xs">
+            <div v-if="slots.powers && !loading && hasPowers" class="column q-gutter-y-xs">
               <slot name="powers">
               </slot>
             </div>
           </div>
-          <div class="column justify-center items-end q-gutter-x-sm">
+          <div class="column justify-center items-end q-gutter-xs">
+            <q-skeleton v-show="loading" width="50px" :height="$q.screen.lt.sm ? '16px' : '18px'" />
+            <div v-show="!loading">{{ findStatus(data.statusCode)?.label }}</div>
             <div v-if="slots['top-right']">
               <slot name="top-right"></slot>
             </div>
@@ -389,7 +395,7 @@ defineExpose({ scrollEnd })
           </div>
         </div>
       </q-card-section>
-      <q-card-section v-show="loading || hasProperties">
+      <q-card-section v-show="loading || typeAttribute || hasProperties">
         <div class="q-pa-sm">
           <q-item v-show="loading" style="min-height:10px;padding:3px">
             <q-item-section side class="q-pr-sm">
@@ -424,9 +430,9 @@ defineExpose({ scrollEnd })
           </div>
         </div>
       </q-card-section>
-      <q-separator v-show="loading || typeAttribute || hasProperties" />
+      <q-separator v-show="loading || (hasProperties && hasAffixes)" />
       <q-card-section v-show="loading || hasAffixes">
-        <div class="q-pl-sm">
+        <div class="q-px-sm">
           <q-item v-show="loading" v-for="c in 3" :key="c" style="min-height:10px;padding:3px">
             <q-item-section side class="q-pr-sm">
               <q-skeleton type="circle" width="10px" height="10px" />
@@ -477,16 +483,29 @@ defineExpose({ scrollEnd })
 .attribute {
   padding: 8px;
   border-radius: 4px;
-  background-color: rgba(125, 125, 125, .1);
+  background-color: rgba(250, 250, 250, .1);
   height: 100%;
 }
 
-.attribute:deep(.q-btn-group .toggle) {
+.body--light .attribute {
+  background-color: rgba(125, 125, 125, .1);
+}
+
+.tab {
+  padding-bottom: 0;
+}
+
+.tab:deep(.q-btn-group .toggle) {
   font-weight: 700;
   color: inherit !important;
-  background-color: rgba(125, 125, 125, .2);
-  border-radius: 4px;
+  background-color: rgba(250, 250, 250, .1);
+  border-radius: 4px 4px 0 0;
 }
+
+.body--light .tab:deep(.q-btn-group .toggle) {
+  background-color: rgba(125, 125, 125, .1);
+}
+
 
 .attribute:deep(.q-panel) {
   overflow: hidden;

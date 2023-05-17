@@ -246,6 +246,14 @@
   background-color: var(--q-light);
 }
 
+.item:has(.card-item.status-001) {
+  filter: grayscale(100%);
+}
+
+.item:has(.card-item.status-002) {
+  opacity: .4;
+}
+
 .body--dark .card-item:not(.expanded, .editable, .dialog)::after {
   background-color: var(--q-dark-page);
 }

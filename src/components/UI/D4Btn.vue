@@ -29,7 +29,7 @@ const router = useRouter()
 const $q = useQuasar()
 const textWidth = computed(() => $q.screen.width > 600 ? 32 : 24)
 const textHeight = computed(() => $q.screen.width > 600 ? 37 : 30)
-const bg = computed<string>(() => $q.dark.isActive ? `background: radial-gradient(ellipse at top, ${props.color ? props.color : 'var(--q-primary)'}, 20%, var(--q-dark-page));` : `background-color: ${props.color ? props.color : 'var(--q-primary)'};`)
+const bg = computed<string>(() => $q.dark.isActive ? `background: radial-gradient(ellipse at top, ${props.color ? props.color : 'var(--q-primary)'}, 30%, var(--q-dark-page));` : `background-color: ${props.color ? props.color : 'var(--q-primary)'};`)
 const tc = computed<string>(() => `color:${props.textColor ? props.textColor : 'var(--q-light-page)'};`)
 
 const click = () => {
@@ -68,8 +68,8 @@ const click = () => {
 .disable {
   user-select: none;
   pointer-events: none;
-  opacity: .6;
   position: relative;
+  filter: contrast(40%);
 }
 
 .progress {
@@ -99,8 +99,12 @@ const click = () => {
   padding: 8px 20px;
   border: none;
   transition: filter .3s ease;
-  font-weight: 700;
+  font-weight: 500;
   outline: 0;
+}
+
+.body--dark .btn {
+  filter: brightness(140%);
 }
 
 .btn.non-label {
@@ -188,7 +192,6 @@ const click = () => {
   box-shadow: rgb(38, 57, 77) 0px 20px 30px 0;
 }
 
-
 .body--dark .round::after {
   content: '';
   position: absolute;
@@ -197,8 +200,8 @@ const click = () => {
   left: 0;
   right: 0;
   border-radius: inherit;
-  box-shadow: inset 0 0 0 2px var(--q-dark), inset 0 0 0 3px var(--q-primary);
-  border: double 3px var(--q-dark-normal);
+  box-shadow: inset 0 0 0 1px var(--q-dark), inset 0 0 0 2px var(--q-dark-normal);
+  border: double 2px var(--q-dark-normal);
 }
 
 

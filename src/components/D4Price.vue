@@ -114,7 +114,7 @@ const updateCurrency = (val: string | null): void => {
     </q-item>
   </template>
   <div v-else>
-    <q-item v-show="loading" style="min-height:10px;padding:3px">
+    <q-item v-show="loading" style="padding:0;min-height:10px">
       <q-item-section side class="q-pr-sm">
         <q-skeleton type="circle" size="24px" />
       </q-item-section>

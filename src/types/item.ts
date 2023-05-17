@@ -33,7 +33,7 @@ export interface IItem {
   itemId: string,
   hardcore: boolean,
   ladder: boolean,
-  itemStatus: number,
+  statusCode: string,
   name: string,
   quantity: number,
   quality: string,
@@ -45,8 +45,8 @@ export interface IItem {
   properties: Array<Property>,
   affixes: Array<Affix>,
   price: Price,
-  user: string,
-  offers: number,
+  user: User,
+  offers: Array<Offer>,
   editable: boolean,
   action: number,
   loading: boolean,
@@ -63,7 +63,7 @@ export class Item implements IItem {
   public itemId = ''
   public hardcore = false
   public ladder = true
-  public itemStatus = 0
+  public statusCode = '000'
   public name = ''
   public quantity = 1
   public quality = 'normal'
@@ -75,8 +75,8 @@ export class Item implements IItem {
   public properties: Array<Property> = []
   public affixes: Array<Affix> = []
   public price: Price = { currency: 'offer', currencyValue: null, quantity: 1 }
-  public user = ''
-  public offers = 0
+  public user: User = new User()
+  public offers: Array<Offer> = []
   public editable = false
   public action = 0
   public loading = false

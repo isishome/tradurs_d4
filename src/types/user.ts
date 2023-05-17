@@ -1,20 +1,22 @@
+import { nanoid } from 'nanoid'
+
 export interface IUser {
   id: string,
-  name?: string
+  battleTag?: string
 }
 
 export class User implements IUser {
   public id
-  public name = ''
+  public battleTag = ''
   public loading = false
-  constructor(id: string) {
-    this.id = id
+  constructor(id?: string) {
+    this.id = id === undefined ? nanoid() : id
   }
 
   getInfo() {
     this.loading = true
     setTimeout(() => {
-      this.name = 'Avatar'
+      this.battleTag = '#Avatar'
       this.loading = false
     }, 2000)
   }

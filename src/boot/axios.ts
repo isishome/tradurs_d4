@@ -29,7 +29,24 @@ api.interceptors.response.use(function (response) {
   if (status === 401) {
     const accountStore = useAccountStore()
     accountStore.signed = false
-    //router.push({ name: 'Sign' })
+    accountStore.info = {}
+    const url = `${import.meta.env.VITE_APP_TRADURS_ORIGIN}/sign?redirect=${encodeURIComponent(document.location.href)}`
+    Notify.create({
+      progress: true,
+      icon: `img:${alert}`,
+      classes: 'no-invert',
+      color: 'warning',
+      textColor: 'dark',
+      multiLine: true,
+      message: error.response && error.response.data || error.message,
+      actions: [
+        {
+          label: '이동', color: 'dark', handler: () => {
+            document.location.href = url
+          }
+        }
+      ]
+    })
   }
   else {
     const message = error.response && error.response.data || error.message
@@ -42,7 +59,7 @@ api.interceptors.response.use(function (response) {
     })
   }
 
-  //return Promise.reject(error)
+  return Promise.reject()
 })
 
 export default boot(({ app, ssrContext }) => {

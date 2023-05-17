@@ -57,7 +57,7 @@ body.body--dark {
 .invert,
 .body--dark .icon,
 .body--dark .q-select__dropdown-icon img,
-.body--light .q-notifications .q-icon {
+.body--dark .q-notification:not(.no-invert) .q-icon img {
   filter: invert(100%) !important;
 }
 
@@ -114,7 +114,7 @@ body.body--dark {
   }
 }
 
-.desktop .q-dialog__backdrop {
+.q-dialog__backdrop {
   background: rgba(0, 0, 0, .8);
   transition: none;
 }
@@ -160,6 +160,10 @@ body.body--dark {
   background: rgba(0, 0, 0, .2);
 }
 
-.body--dark .q-notifications .q-icon img {
-  filter: invert(100%) !important;
+.break-keep {
+  word-break: keep-all;
+}
+
+.break-all {
+  word-break: break-all;
 }

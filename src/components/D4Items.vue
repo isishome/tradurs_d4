@@ -63,7 +63,7 @@ const makeOffer = ref<boolean>(false)
 const makingOffer = (itemId: string): void => {
   offers.value = Array.from({ length: Math.floor(Math.random() * 6 + 100) }, () => {
     const currency: string = ['offer', 'rune', 'essence', 'glyph'][Math.floor(Math.random() * 4)]
-    const currencyValue: string | null = currency === 'rune' ? runes.value.map(r => r.value)[Math.floor(Math.random() * runes.value.length)] : null
+    const currencyValue: string | null = currency === 'rune' ? runes.value.map(r => r.value)[Math.floor(Math.random() * runes.value.length)] as string : null
     const genOffer = new Offer(itemId, nanoid(), currency, currencyValue, Math.floor(Math.random() * 1 + 1))
     genOffer.loading = true
     genOffer.user.loading = true
@@ -98,7 +98,7 @@ const updateItem = ({ hardcore, ladder, name, itemTypeValues, quantity, quality,
     activatedItem.value.powers.splice(0, activatedItem.value.powers.length)
     activatedItem.value.properties.splice(0, activatedItem.value.properties.length)
     activatedItem.value.affixes.splice(0, activatedItem.value.affixes.length)
-    activatedItem.value.equipmentClass = ''
+    activatedItem.value.action = 16
   }
 }
 
@@ -196,12 +196,20 @@ const applyAdd = (): void => {
     })
 }
 
+const addAttrNum = () => {
+  add.attribute = add.attribute + '{x}'
+  refAttribute.value?.focus()
+}
+
 // about power
+const powerRef = ref<QSelect | null>(null)
 const powerId = ref<number | null>(null)
 const powerOptions = store.filterPowers
 const powerNeedle = ref<string | null>(null)
 
 const filterPowers = (val: string): void => {
+  if (powerRef.value)
+    powerRef.value.showPopup()
   powerNeedle.value = val.toLowerCase()
 }
 
@@ -238,11 +246,14 @@ const removePower = ({ valueId }: { valueId: string }): void => {
 }
 
 // about property
+const propertyRef = ref<QSelect | null>(null)
 const propertyId = ref<number | null>(null)
 const propertyOptions = store.filterProperties
 const propertyNeedle = ref<string | null>(null)
 
 const filterProperties = (val: string): void => {
+  if (propertyRef.value)
+    propertyRef.value.showPopup()
   propertyNeedle.value = val.toLowerCase()
 }
 
@@ -279,11 +290,14 @@ const removeProperty = ({ valueId }: { valueId: string }): void => {
 }
 
 // about affix
+const affixRef = ref<QSelect | null>(null)
 const affixId = ref<number | null>(null)
 const affixOptions = store.filterAffixes
 const affixNeedle = ref<string | null>(null)
 
 const filterAffixes = (val: string): void => {
+  if (affixRef.value)
+    affixRef.value.showPopup()
   affixNeedle.value = val.toLowerCase()
 }
 
@@ -331,9 +345,9 @@ defineExpose({ create })
 
 <template>
   <div class="col-12" :style="`max-width:${width}px`">
-    <div :class="$q.platform.is.mobile ? 'q-gutter-y-xl' : 'q-gutter-y-xxl'">
-      <q-intersection v-for="(item, i) in (items as Array<Item | Advertise>)" :key="item.itemId" class="item"
-        :style="item.expanded ? 'height: 100%' : `height: ${height as number - ($q.platform.is.mobile ? 50 : 0)}px`"
+    <div :class="$q.screen.lt.sm ? 'q-gutter-y-xl' : 'q-gutter-y-xxl'">
+      <q-intersection v-for="item, idx in (items as Array<Item | Advertise>)" :key="`item_${idx}`" class="item"
+        :style="item.expanded ? 'height: 100%' : `height: ${height as number - ($q.screen.lt.sm ? 50 : 0)}px`"
         transition="jump-up" @visibility="isVisible => visible(isVisible, item)" once>
         <div v-if="(item instanceof Advertise)" class="bg-grey" style="width:100%;height:500px"></div>
         <D4Item v-else :data="item" :loading="loading || item.loading">
@@ -346,14 +360,13 @@ defineExpose({ create })
             <D4Property v-for="(property, i) in item.properties" :key="property.valueId" :data="property" />
           </template>
           <template v-if="requestAffixes > 0" #affixes>
-            <D4Affix v-for="affix in item.affixes"
-              :key="affix.valueId || `create_${Math.floor(Math.random() * 1000000)}`" :data="affix" />
+            <D4Affix v-for="affix in item.affixes" :key="affix.valueId || `create_${Math.floor(Math.random() * 1000000)}`"
+              :data="affix" />
           </template>
           <template #actions>
             <div class="row justify-between items-center q-px-md q-pt-lg">
               <div>
-                <D4Btn label="수정" color="var(--q-secondary)" :loading="loading || item.loading"
-                  @click="editItem(item)" />
+                <D4Btn label="수정" color="var(--q-secondary)" :loading="loading || item.loading" @click="editItem(item)" />
               </div>
               <div>
                 <D4Btn label="제안 리스트" :loading="loading || item.loading" @click="makingOffer(item.itemId)" />
@@ -369,16 +382,28 @@ defineExpose({ create })
         </D4Item>
       </q-intersection>
     </div>
-    <q-dialog v-model="activateShow" :maximized="$q.platform.is.mobile" :persistent="disable" transition-show="none"
+    <q-dialog v-model="activateShow" :maximized="$q.screen.lt.sm" :persistent="disable" transition-show="none"
       transition-hide="none" @hide="hideEditable">
       <D4Item ref="activatedRef" :data="activatedItem" editable :loading="activatedItem.loading" :disable="disable"
         @update="updateItem" @apply="apply">
         <template #add-power>
           <div class="row no-wrap items-center q-gutter-x-sm">
-            <q-select v-model="powerId" :disable="disable" outlined dense no-error-icon use-input hide-bottom-space
-              hide-selected emit-value map-options transition-show="none" transition-hide="none" class="select col"
-              label="능력 선택" :options="powerOptions(powerNeedle)" :dropdown-icon="`img:${icons.dropdown}`"
-              @update:model-value="selectedPower" @input-value="filterPowers">
+            <q-select ref="powerRef" v-model="powerId" :disable="disable" outlined dense no-error-icon use-input
+              hide-bottom-space hide-selected emit-value map-options transition-show="none" transition-hide="none"
+              class="select col" label="능력 검색 / 선택" :options="powerOptions(powerNeedle)"
+              :dropdown-icon="`img:${icons.dropdown}`" @update:model-value="selectedPower" @input-value="filterPowers">
+              <template #option="scope">
+                <q-item v-bind="scope.itemProps">
+                  <q-item-section side>
+                    <q-icon class="icon"
+                      :class="['regular', 'offensive', 'defensive', 'utility', 'resistance'].includes(scope.opt.type as string) ? 'rotate-45' : ''"
+                      size="14px" :name="`img:${icons[scope.opt.type as keyof typeof icons || 'regular']}`" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>{{ scope.opt.label }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
               <template #no-option>
                 <q-item>
                   <q-item-section class="text-grey">
@@ -399,10 +424,23 @@ defineExpose({ create })
         </template>
         <template #add-property>
           <div class="row no-wrap items-center q-gutter-x-sm">
-            <q-select v-model="propertyId" :disable="disable" outlined dense no-error-icon use-input hide-bottom-space
-              hide-selected emit-value map-options transition-show="none" transition-hide="none" class="col"
-              label="특성 선택" :options="propertyOptions(propertyNeedle)" :dropdown-icon="`img:${icons.dropdown}`"
-              @update:model-value="selectedProperty" @input-value="filterProperties">
+            <q-select ref="propertyRef" v-model="propertyId" :disable="disable" outlined dense no-error-icon use-input
+              hide-bottom-space hide-selected emit-value map-options transition-show="none" transition-hide="none"
+              class="col" label="특성 검색 / 선택" :options="propertyOptions(propertyNeedle)"
+              :dropdown-icon="`img:${icons.dropdown}`" @update:model-value="selectedProperty"
+              @input-value="filterProperties">
+              <template #option="scope">
+                <q-item v-bind="scope.itemProps">
+                  <q-item-section side>
+                    <q-icon class="icon"
+                      :class="['regular', 'offensive', 'defensive', 'utility', 'resistance'].includes(scope.opt.type as string) ? 'rotate-45' : ''"
+                      size="14px" :name="`img:${icons[scope.opt.type as keyof typeof icons || 'regular']}`" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>{{ scope.opt.label }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
               <template #no-option>
                 <q-item>
                   <q-item-section class="text-grey">
@@ -423,10 +461,22 @@ defineExpose({ create })
         </template>
         <template #add-affix>
           <div class="row items-center q-gutter-x-sm">
-            <q-select v-model="affixId" :disable="disable" outlined dense no-error-icon use-input hide-bottom-space
-              emit-value map-options transition-show="none" transition-hide="none" class="col" label="옵션 선택"
-              :options="affixOptions(affixNeedle)" :dropdown-icon="`img:${icons.dropdown}`"
+            <q-select ref="affixRef" v-model="affixId" :disable="disable" outlined dense no-error-icon use-input
+              hide-bottom-space emit-value map-options transition-show="none" transition-hide="none" class="col"
+              label="옵션 검색 / 선택" :options="affixOptions(affixNeedle)" :dropdown-icon="`img:${icons.dropdown}`"
               @update:model-value="selectedAffix" @input-value="filterAffixes">
+              <template #option="scope">
+                <q-item v-bind="scope.itemProps">
+                  <q-item-section side>
+                    <q-icon class="icon"
+                      :class="['regular', 'offensive', 'defensive', 'utility', 'resistance'].includes(scope.opt.type as string) ? 'rotate-45' : ''"
+                      size="14px" :name="`img:${icons[scope.opt.type as keyof typeof icons || 'regular']}`" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>{{ scope.opt.label }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
               <template #no-option>
                 <q-item>
                   <q-item-section class="text-grey">
@@ -446,43 +496,46 @@ defineExpose({ create })
             :disable="disable" @update="updateAffix" @remove="removeAffix" />
         </template>
         <template #actions>
-          <div class="row justify-between items-center q-gutter-x-sm q-px-md"
-            :class="$q.platform.is.mobile ? '' : 'q-pt-lg'">
+          <div class="row justify-between items-center q-px-md" :class="$q.screen.lt.sm ? '' : 'q-pt-lg'">
             <div>
               <D4Btn label="삭제" :loading="activatedItem.loading" :disable="disable" color="var(--q-secondary)"
                 @click="deleteItem" />
             </div>
-            <div>
+            <div class="row items-center q-gutter-x-sm">
               <D4Btn label="취소" :loading="activatedItem.loading" :disable="disable" color="rgb(150,150,150)"
                 @click="activateShow = false" />
-              <D4Btn label="적용" :loading="activatedItem.loading" :disable="disable" :progress="progress"
-                type="submit" />
+              <D4Btn label="적용" :loading="activatedItem.loading" :disable="disable" :progress="progress" type="submit" />
             </div>
           </div>
         </template>
       </D4Item>
     </q-dialog>
-    <q-dialog v-model="add.show" @hide="hideAdd" :maximized="$q.platform.is.mobile" transition-show="none"
+    <q-dialog v-model="add.show" @hide="hideAdd" :maximized="$q.screen.lt.sm" transition-show="none"
       transition-hide="none">
       <q-card class="card-item dialog normal">
         <q-form class="inner column full-height" @submit="applyAdd">
           <q-card-section>
             <div class="q-py-lg q-pl-sm name">{{ `${add.category === 'powers' ? '능력 ' : add.category === 'properties' ?
-            '특성 ' : '옵션 '} 추가`}}</div>
+              '특성 ' : '옵션 '} 추가` }}</div>
           </q-card-section>
           <q-separator />
-          <q-card-section :class="$q.platform.is.mobile ? 'col' : ''">
+          <q-card-section :class="$q.screen.lt.sm ? 'col' : ''">
             <div class="column q-gutter-y-sm">
-              <q-option-group v-model="add.type" :options="add.types" color="primary" size="xs" inline />
-              <q-input autofocus ref="refAttribute" v-model="add.attribute"
-                placeholder="엘리트 몬스터 처치 시 6초 동안 이동 속도 {x}% 증가" :disable="disable" :error="add.error"
-                :error-message="add.errorMessage" outlined dense no-error-icon hide-hint />
+              <div class="row justify-between items-center no-wrap">
+                <q-option-group v-model="add.type" :options="add.types" color="primary" size="xs" inline />
+                <div v-show="$q.screen.lt.sm" class="col-2 text-right">
+                  <D4Btn label="{ x }" :loading="loading" round :disable="disable" color="var(--q-light-normal)"
+                    @click="addAttrNum" />
+                </div>
+              </div>
+              <q-input autofocus ref="refAttribute" v-model="add.attribute" placeholder="엘리트 몬스터 처치 시 6초 동안 이동 속도 {x}% 증가"
+                :disable="disable" :error="add.error" :error-message="add.errorMessage" outlined dense no-error-icon
+                hide-hint />
             </div>
           </q-card-section>
           <q-separator inset />
-          <q-card-section :class="$q.platform.is.mobile ? 'col-1' : ''">
-            <div class="row justify-end items-center q-gutter-x-sm q-px-md"
-              :class="$q.platform.is.mobile ? '' : 'q-pt-lg'">
+          <q-card-section :class="$q.screen.lt.sm ? 'col-1' : ''">
+            <div class="row justify-end items-center q-gutter-x-sm q-px-md" :class="$q.screen.lt.sm ? '' : 'q-pt-lg'">
               <D4Btn label="취소" :loading="loading" :disable="disable" color="rgb(150,150,150)"
                 @click="add.show = false" />
               <D4Btn label="추가" :loading="loading" :progress="disable" type="submit" />
@@ -491,9 +544,9 @@ defineExpose({ create })
         </q-form>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="makeOffer" :maximized="$q.platform.is.mobile" transition-show="none" transition-hide="none">
+    <q-dialog v-model="makeOffer" :maximized="$q.screen.lt.sm" transition-show="none" transition-hide="none">
       <q-card class="card-item dialog no-scroll normal">
-        <div class="inner column" :style="$q.platform.is.mobile ? 'height:100%' : 'max-height:90vh'">
+        <div class="inner column" :style="$q.screen.lt.sm ? 'height:100%' : 'max-height:90vh'">
           <q-card-section class="col scroll">
             <div class="row items-center q-col-gutter-lg">
               <q-intersection v-for="offer in (offers as Array<Offer>)" :key="`offer_${offer.itemId}_${offer.user.id}`"
@@ -512,29 +565,6 @@ defineExpose({ create })
           </q-card-section>
         </div>
       </q-card>
-      <!-- <q-card class="card-item dialog">
-          <q-form class="inner column full-height" @submit="applyAdd">
-            <q-card-section>
-              <div class="q-py-lg q-pl-sm name">{{ add.category === 'properties' ? '특성 ' : '옵션 ' }} 추가</div>
-            </q-card-section>
-            <q-separator />
-            <q-card-section :class="$q.platform.is.mobile ? 'col' : ''">
-              <div class="column q-gutter-y-sm">
-                <q-option-group v-model="add.type" :options="add.types" color="primary" size="xs" inline />
-                <q-input autofocus ref="refAttribute" v-model="add.attribute"
-                  placeholder="엘리트 몬스터 처치 시 6초 동안 이동 속도 {x}% 증가" :error="add.error" :error-message="add.errorMessage"
-                  :outlined="!$q.dark.isActive" :standout="$q.dark.isActive" dense no-error-icon hide-hint />
-              </div>
-            </q-card-section>
-            <q-separator inset />
-            <q-card-section :class="$q.platform.is.mobile ? 'col-1' : ''">
-              <div class="row justify-end items-center q-gutter-x-sm" :class="$q.platform.is.mobile ? '' : 'q-pa-md'">
-                <q-btn dense unelevated outline color="grey-8" label="취소" @click="add.show = false" />
-                <q-btn dense unelevated color="primary" label="추가" type="submit" />
-              </div>
-            </q-card-section>
-          </q-form>
-        </q-card> -->
     </q-dialog>
   </div>
 </template>
