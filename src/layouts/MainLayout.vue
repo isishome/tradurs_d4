@@ -1,22 +1,24 @@
 <script setup lang="ts">
-import { inject, ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useQuasar, uid, Screen } from 'quasar'
-import { useAccountStore } from 'stores/account-store'
-import type { AxiosInstance } from 'axios'
+import { useI18n } from 'vue-i18n'
 
-// import Filter from 'components/Filter.vue'
+import { useAccountStore } from 'stores/account-store'
+import { icons } from 'src/common/icons'
+
+import D4Filter from 'components/D4Filter.vue'
 
 const prod: boolean = import.meta.env.PROD
-const tradurs: string = import.meta.env.VITE_APP_TRADURS_ORIGIN
 
-const axios = inject('axios') as AxiosInstance
 const route = useRoute()
 const router = useRouter()
 const $q = useQuasar()
 const accountStore = useAccountStore()
+const { t, locale } = useI18n({ useScope: 'global' })
 
 const leftDrawerOpen = ref<boolean>(false)
+const rightDrawerOpen = ref<boolean>(false)
 const signed = computed<boolean | null>(() => accountStore.signed)
 const screen = computed<Screen>(() => $q.screen)
 const offsetTop = ref<number>(0)
@@ -28,18 +30,29 @@ const myTweak = (offset: number): void => {
 }
 
 const sign = (): void => {
-  if (!signed.value) {
-    document.location.href = `${tradurs}/sign?redirect=${encodeURIComponent(document.location.href)}`
-    return
-  }
-
-  axios.get('/account/signOut')
-    .then(() => {
-      accountStore.signed = false
-      accountStore.info = {}
+  accountStore.sign().then((result: boolean) => {
+    if (!result)
       router.go(0)
-    })
+  })
 }
+
+const localeOptions = [
+  { value: 'en', label: 'English' },
+  { value: 'ko', label: '한국어' }
+]
+
+const brLoc = localeOptions.map(lo => lo.value).includes($q.lang.getLocale()?.substring(0, 2) || '') ? $q.lang.getLocale()?.substring(0, 2) : 'ko'
+const setLang = (lang: string) => {
+  $q.cookies.set('d4.lang', lang)
+}
+
+const setDark = () => {
+  $q.dark.set(!$q.dark.isActive)
+  $q.cookies.set('d4.dark', $q.dark.isActive.toString())
+}
+
+// socket.io
+const badge = computed(() => accountStore.badge)
 
 const key = ref(uid())
 const reload = () => {
@@ -52,6 +65,10 @@ const reload = () => {
 watch(() => route.name, (val, old) => {
   if (val && val !== old)
     reload()
+})
+
+watch(() => $q.screen.gt.sm, () => {
+  rightDrawerOpen.value = false
 })
 
 const onWindowLoad = () => {
@@ -76,21 +93,44 @@ onUnmounted(() => {
 </script>
 <template>
   <q-layout view="hHh lpR lFf">
-    <q-drawer show-if-above v-model="leftDrawerOpen" side="left" :behavior="screen.lt.md ? 'mobile' : 'desktop'"
-      class="row justify-end scroll" :width="300">
-      <div class="q-py-lg" :class="screen.lt.sm ? 'q-px-md' : 'q-px-lg'">
-        <div v-for="c in 50" :key="c">{{ c }}</div>
-        <!-- <Filter /> -->
-      </div>
+    <q-drawer show-if-above bordered v-model="leftDrawerOpen" side="left" :behavior="screen.lt.md ? 'mobile' : 'desktop'"
+      class="row justify-end no-scroll" :width="300">
+      <q-list class="column full-height" style="width:300px">
+        <q-scroll-area class="col">
+          <D4Filter class="q-pa-lg" />
+        </q-scroll-area>
+      </q-list>
+    </q-drawer>
+    <q-drawer show-if-above bordered v-model="rightDrawerOpen" side="right" behavior="mobile"
+      class="row justify-start scroll" :width="300">
+      <q-list class="column full-height" style="width:300px">
+        <q-item class="row justify-end q-gutter-x-sm q-pa-lg">
+          <q-select v-model="locale" :options="localeOptions" :label="t('language', 0, { locale: brLoc })" dense outlined
+            emit-value map-options options-dense style="min-width: 150px" @update:model-value="setLang" />
+          <q-btn round flat :ripple="!$q.dark.isActive" @click="setDark">
+            <img v-show="$q.dark.isActive" class="icon" width="24" :src="icons.light" />
+            <img v-show="!$q.dark.isActive" class="icon" width="24" :src="icons.dark" />
+          </q-btn>
+          <q-btn round flat :ripple="!$q.dark.isActive" @click="sign">
+            <img v-if="signed" class="icon" width="24" :src="icons.logout" />
+            <img v-else class="icon" width="24" :src="icons.login" />
+          </q-btn>
+        </q-item>
+        <q-separator />
+        <q-scroll-area class="col">
+          <q-item>
+          </q-item>
+        </q-scroll-area>
+      </q-list>
     </q-drawer>
     <q-header :elevated="!$q.dark.isActive" class="q-py-sm header row justify-center">
       <q-toolbar class="toolbar">
-        <div class="col-3 row items-center">
+        <div class="col-lg-3 col-4 row items-center">
           <q-btn class="gt-sm no-hover" dense flat padding="0" :ripple="!$q.dark.isActive" :to="{ path: '/' }">
             <img v-show="$q.dark.isActive" src="~assets/logo.webp" height="48" />
             <img v-show="!$q.dark.isActive" src="~assets/logo_light.webp" height="48" />
           </q-btn>
-          <q-btn dense flat round class="lt-md" :ripple="!$q.dark.isActive" @click="leftDrawerOpen = !leftDrawerOpen">
+          <q-btn flat round class="lt-md" :ripple="!$q.dark.isActive" @click="leftDrawerOpen = !leftDrawerOpen">
             <img src="~assets/icons/filter.svg" class="icon" width="24" />
           </q-btn>
         </div>
@@ -99,30 +139,39 @@ onUnmounted(() => {
             <img v-show="$q.dark.isActive" src="~assets/logo.webp" height="48" />
             <img v-show="!$q.dark.isActive" src="~assets/logo_light.webp" height="48" />
           </q-btn>
-          <q-tabs dense class="gt-sm q-px-md bg-transparent no-hover nav">
-            <q-route-tab :ripple="!$q.dark.isActive" label="일반" :to="{ path: '/' }" exact />
-            <q-route-tab :ripple="!$q.dark.isActive" label="서브" :to="{ path: '/sub' }" exact />
+          <q-tabs dense no-caps class="gt-sm q-px-md bg-transparent no-hover nav">
+            <q-route-tab :ripple="!$q.dark.isActive" :label="t('trade')" :to="{ path: '/' }" />
+            <q-route-tab :ripple="!$q.dark.isActive" :label="t('message')" :to="{ path: '/message' }">
+              <q-badge v-show="badge" floating color="red" rounded />
+            </q-route-tab>
           </q-tabs>
         </div>
-        <div class="col-3 row justify-end" :class="screen.lt.sm ? 'q-gutter-x-sm' : 'q-gutter-x-md'">
-          <q-btn round flat dense :ripple="!$q.dark.isActive" @click="$q.dark.set(!$q.dark.isActive)">
-            <img v-show="$q.dark.isActive" class="icon" width="24" src="~assets/icons/light.svg" />
-            <img v-show="!$q.dark.isActive" class="icon" width="24" src="~assets/icons/dark.svg" />
+        <div class="lt-md col-lg-3 col-4 row justify-end q-gutter-x-sm">
+          <q-btn round flat :ripple="!$q.dark.isActive" @click="rightDrawerOpen = !rightDrawerOpen">
+            <img class="icon" width="24" :src="icons.morevert" />
           </q-btn>
-          <q-btn round flat dense :ripple="!$q.dark.isActive" @click="sign">
-            <img v-if="signed" class="icon" width="24" src="~assets/icons/logout.svg" />
-            <img v-else class="icon" width="24" src="~assets/icons/login.svg" />
+        </div>
+        <div class="gt-sm col-lg-3 col-4 row justify-end q-gutter-x-sm">
+          <q-select v-model="locale" :options="localeOptions" :label="t('language', 0, { locale: brLoc })" dense outlined
+            emit-value map-options options-dense style="min-width: 150px" @update:model-value="setLang" />
+          <q-btn round flat :ripple="!$q.dark.isActive" @click="setDark">
+            <img v-show="$q.dark.isActive" class="icon" width="24" :src="icons.light" />
+            <img v-show="!$q.dark.isActive" class="icon" width="24" :src="icons.dark" />
+          </q-btn>
+          <q-btn round flat :ripple="!$q.dark.isActive" @click="sign">
+            <img v-if="signed" class="icon" width="24" :src="icons.logout" />
+            <img v-else class="icon" width="24" :src="icons.login" />
           </q-btn>
         </div>
       </q-toolbar>
     </q-header>
     <q-page-container>
       <q-page :style-fn="myTweak">
-        <div class="row" :class="screen.lt.sm ? 'justify-center' : ''">
+        <div class="row justify-center">
           <div :class="screen.lt.sm ? 'q-pa-sm' : 'q-pa-xl'" :style="screen.lt.sm ? 'width:100%' : 'width:830px'">
             <div class="view">
               <RouterView />
-              <div class="q-py-lg"></div>
+              <div class="q-py-xl"></div>
             </div>
             <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5110777286519562"
               data-ad-slot="8610177982" data-ad-format="auto" data-full-width-responsive="true"
@@ -208,6 +257,5 @@ ins::after {
 .view {
   position: relative;
   min-height: 40vh;
-  padding-bottom: 24px;
 }
 </style>

@@ -1,3 +1,7 @@
+import { nextTick } from "vue"
+import { copyToClipboard, Notify } from 'quasar'
+import { i18n } from "src/boot/i18n"
+
 export const checkName = (name: string) => {
   return /^[0-9a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣\s,\.'"%\(\)\+\-\:]{4,}$/gi.test(name)
 }
@@ -47,4 +51,22 @@ export const parse = (label: string | undefined, value?: Array<number>): Array<A
     }, []).slice(0, -1)
   else
     return []
+}
+
+export const scrollPos = (top?: number) => {
+  nextTick(() => {
+    window.scrollTo({ top: top || 0, behavior: 'smooth' })
+  })
+}
+
+export const clipboard = (text: string) => {
+  copyToClipboard(text)
+    .then(() => {
+      Notify.create({
+        message: i18n.global.t('messages.clipboard', { t: i18n.global.t('battlenet.tag') })
+      })
+    })
+    .catch(() => {
+      // fail
+    })
 }

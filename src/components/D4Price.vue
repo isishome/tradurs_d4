@@ -1,26 +1,24 @@
 <script setup lang="ts">
-import { reactive, computed } from 'vue'
-import type { ItemType } from 'stores/item-store'
-import type { Price } from 'src/types/item'
-import { Offer } from 'src/types/item'
-import type { Rune } from 'stores/item-store'
+import { reactive } from 'vue'
 import { useItemStore } from 'stores/item-store'
+import { useI18n } from 'vue-i18n'
+
+import { Price } from 'src/types/item'
 import { icons } from 'src/common/icons'
 import { itemImgs } from 'src/common/items'
+
 import D4Counter from 'components/D4Counter.vue'
 
 interface IProps {
+  data: Price,
   offer?: boolean,
-  data: Offer,
   editable?: boolean,
-  loading?: boolean,
   disable?: boolean
 }
 
 const props = withDefaults(defineProps<IProps>(), {
   offer: false,
   editable: false,
-  loading: false,
   disable: false
 })
 
@@ -28,12 +26,16 @@ const emit = defineEmits(['update'])
 
 // common variable
 const store = useItemStore()
+const { t } = useI18n({ useScope: 'global' })
 
 // variable
-const _price = reactive<Price>({ currency: props.data.currency, currencyValue: props.data.currencyValue, quantity: props.data.quantity })
+const _price = reactive<Price>(new Price(props.data.currency, props.data.currencyValue, props.data.quantity))
 const findType = store.findType
 const runes = store.filterRunes
-const currencies = computed<Array<ItemType>>(() => store.currencies)
+const currencies = store.currencies()
+
+if (!props.offer)
+  currencies.unshift({ value: 'offer', label: t('price.getOffer') })
 
 const update = (): void => {
   emit('update', _price)
@@ -53,7 +55,7 @@ const updateCurrency = (val: string | null): void => {
         <q-icon class="coin" size="18px" :name="`img:${icons.price}`" />
       </div>
       <q-select v-model="_price.currency" class="col" :disable="disable" outlined dense no-error-icon hide-bottom-space
-        emit-value map-options transition-show="none" transition-hide="none" label="화폐 유형"
+        emit-value map-options transition-show="none" transition-hide="none" :label="t('price.currency')"
         :dropdown-icon="`img:${icons.dropdown}`" :options="currencies" @update:model-value="updateCurrency">
         <template #selected-item="scope">
           <div class="ellipsis">{{ scope.opt.label }}</div>
@@ -73,48 +75,12 @@ const updateCurrency = (val: string | null): void => {
           </q-item>
         </template>
       </q-select>
-      <D4Counter v-if="data.currency !== 'offer'" v-model="_price.quantity" :disable="disable" class="col"
+      <D4Counter v-if="data.currency !== 'offer'" v-model="_price.quantity" :disable="disable"
         @update:model-value="update" />
     </div>
   </div>
-  <template v-else-if="offer">
-    <q-item>
-      <slot name="user"></slot>
-      <q-item-section v-if="loading">
-        <q-item-label>
-          <div class="row q-gutter-x-xs items-center">
-            <q-skeleton width="24px" height="24px" />
-            <q-skeleton type="rect" width="40px" height="12px" />
-          </div>
-        </q-item-label>
-      </q-item-section>
-      <q-item-section v-else>
-        <q-item-label>
-          <div v-if="data.currency === 'offer'">가격 제안</div>
-          <div v-else class="row items-center q-gutter-x-xs">
-            <template v-if="data.currency !== 'rune'">
-              <img :src="itemImgs[data.currency as keyof typeof itemImgs]" width="24" />
-              <div>{{ findType(data.currency)?.label }}</div>
-            </template>
-            <template v-else>
-              <img :src="(runes().find((r: Rune) => r.value === data.currencyValue) || {}).img" width="24" />
-              <div class="q-ml-xs">{{ (runes().find((r: Rune) => r.value === data.currencyValue) ||
-                {}).label
-              }}
-              </div>
-            </template>
-            <div>x</div>
-            <div>{{ data.quantity }}</div>
-          </div>
-        </q-item-label>
-      </q-item-section>
-      <q-item-section side>
-        <D4Btn label="수락" color="var(--q-secondary)" :loading="loading" :disable="disable || data.accepted" />
-      </q-item-section>
-    </q-item>
-  </template>
   <div v-else>
-    <q-item v-show="loading" style="padding:0;min-height:10px">
+    <q-item v-show="data.loading" style="padding:0;min-height:10px">
       <q-item-section side class="q-pr-sm">
         <q-skeleton type="circle" size="24px" />
       </q-item-section>
@@ -124,8 +90,10 @@ const updateCurrency = (val: string | null): void => {
         </q-item-label>
       </q-item-section>
     </q-item>
-    <div v-show="!loading" class="price">
-      <div v-if="data.currency === 'offer'">가격 제안</div>
+    <div v-show="!data.loading" class="price">
+      <div v-if="data.currency === 'offer'">
+        <div>{{ t('offer.title') }}</div>
+      </div>
       <div v-else class="row items-center q-gutter-x-xs">
         <template v-if="data.currency !== 'rune'">
           <img :src="itemImgs[data.currency as keyof typeof itemImgs]" width="24" />

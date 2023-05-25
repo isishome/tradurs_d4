@@ -1,5 +1,8 @@
 import { nanoid } from 'nanoid'
 import { User } from './user'
+import { useItemStore } from 'src/stores/item-store'
+
+const store = useItemStore()
 
 export interface Attribute {
   valueId?: string,
@@ -23,8 +26,8 @@ export interface Affix extends Attribute {
   affixValues: Array<number>
 }
 
-export interface Price {
-  currency: string,
+export interface IPrice {
+  currency: string | null,
   currencyValue: string | null,
   quantity: number
 }
@@ -45,6 +48,8 @@ export interface IItem {
   properties: Array<Property>,
   affixes: Array<Affix>,
   price: Price,
+  relistCount: number,
+  authorized: boolean,
   user: User,
   offers: Array<Offer>,
   editable: boolean,
@@ -58,6 +63,19 @@ export interface IItem {
 //     width: number,
 //     height: number
 // }
+
+export class Price implements IPrice {
+  public currency: string
+  public currencyValue: string | null
+  public quantity: number
+  public loading = false
+
+  constructor(currency?: string, currencyValue?: string | null, quantity?: number) {
+    this.currency = currency || 'rune'
+    this.currencyValue = currencyValue || 'eld'
+    this.quantity = quantity || 1
+  }
+}
 
 export class Item implements IItem {
   public itemId = ''
@@ -74,7 +92,9 @@ export class Item implements IItem {
   public powers: Array<Power> = []
   public properties: Array<Property> = []
   public affixes: Array<Affix> = []
-  public price: Price = { currency: 'offer', currencyValue: null, quantity: 1 }
+  public price: Price = new Price()
+  public relistCount = 0
+  public authorized = false
   public user: User = new User()
   public offers: Array<Offer> = []
   public editable = false
@@ -85,6 +105,47 @@ export class Item implements IItem {
   constructor(id?: string) {
     this.itemId = id === undefined ? nanoid() : id
   }
+
+  upsert(resolve?: Function, reject?: Function) {
+    store[this.itemId !== '' ? 'updateItem' : 'addItem'](this)
+      .then((response) => {
+        Object.assign(this, response)
+        resolve?.()
+      })
+      .catch(() => {
+        reject?.()
+      })
+  }
+
+  relist(resolve?: Function, reject?: Function) {
+    store.relistItem(this.itemId)
+      .then(() => {
+        resolve?.()
+      })
+      .catch(() => {
+        reject?.()
+      })
+  }
+
+  delete(resolve?: Function, reject?: Function) {
+    store.deleteItem(this.itemId)
+      .then(() => {
+        resolve?.()
+      })
+      .catch(() => {
+        reject?.()
+      })
+  }
+
+  status(resolve?: Function, reject?: Function) {
+    store.statusItem(this.itemId)
+      .then(() => {
+        resolve?.()
+      })
+      .catch(() => {
+        reject?.()
+      })
+  }
 }
 
 export class Advertise extends Item {
@@ -93,27 +154,55 @@ export class Advertise extends Item {
   public height = 600
 }
 
-export class Offer implements Price {
+export class Offer {
+  public offerId: string
   public itemId: string
+  public itemStatusCode: string
+  public statusCode: string
   public user: User
-  public currency: string
-  public currencyValue: string | null
-  public quantity: number
-  public accepted = false
+  public price: Price
+  public authorized = false
   public loading = false
 
-  constructor(itemId: string, userId: string, currency?: string, currencyValue?: string | null, quantity?: number) {
-    this.itemId = itemId
-    this.user = new User(userId)
-    this.currency = currency || 'rune'
-    this.currencyValue = currencyValue || 'eld'
-    this.quantity = quantity || 1
+  constructor(itemId?: string, itemStatusCode?: string, statusCode?: string) {
+    this.offerId = ''
+    this.itemId = itemId || ''
+    this.itemStatusCode = itemStatusCode || '000'
+    this.statusCode = statusCode || '000'
+    this.user = new User()
+    this.price = new Price()
   }
 
-  getInfo() {
-    this.loading = true
-    setTimeout(() => {
-      this.loading = false
-    }, 2000)
+  info(resolve?: Function, reject?: Function) {
+    store.getOffers(this.itemId, this.offerId)
+      .then((response) => {
+        if (response.length > 0)
+          Object.assign(this, response[0])
+        resolve?.()
+      })
+      .catch(() => {
+        reject?.()
+      })
+  }
+
+  make(resolve?: Function, reject?: Function) {
+    store.makeOffer(this)
+      .then((response) => {
+        Object.assign(this, response)
+        resolve?.()
+      })
+      .catch(() => {
+        reject?.()
+      })
+  }
+
+  accept(resolve?: Function, reject?: Function) {
+    store.acceptOffer(this.offerId)
+      .then(() => {
+        resolve?.()
+      })
+      .catch(() => {
+        reject?.()
+      })
   }
 }

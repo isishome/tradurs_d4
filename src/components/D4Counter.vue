@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useQuasar } from 'quasar'
+import { useI18n } from 'vue-i18n'
 import { icons } from 'src/common/icons'
 
 const props = defineProps({
@@ -18,6 +19,7 @@ const emit = defineEmits(['update:modelValue'])
 
 // common variable
 const $q = useQuasar()
+const { t } = useI18n({ useScope: 'global' })
 
 // variable
 const _quantity = ref<number>(props.modelValue || 1)
@@ -44,14 +46,14 @@ watch(() => props.modelValue, (val) => {
 </script>
 
 <template>
-  <div class="col no-wrap row items-center">
+  <div class="no-wrap row items-center">
     <q-btn v-show="!$q.screen.lt.sm" size="sm" flat dense round :disable="disable || parseInt(_quantity.toString()) < 2"
       @click="counting('dec')">
       <img class="icon" width="17" :src="icons.remove" />
     </q-btn>
-    <q-input v-model="_quantity" label="수량" style="max-width:50px" input-class="text-center" :disable="disable" dense
-      hide-bottom-space hide-hint no-error-icon outlined type="tel" maxlength="3" mask="###" debounce="500"
-      :rules="[(val: number) => (Number.isInteger(val) && val !== 0) || '']" @update:model-value="update"
+    <q-input v-model="_quantity" :label="t('price.quantity')" style="max-width:50px" input-class="text-center"
+      :disable="disable" dense hide-bottom-space hide-hint no-error-icon outlined type="tel" maxlength="3" mask="###"
+      debounce="500" :rules="[(val: number) => (Number.isInteger(val) && val !== 0) || '']" @update:model-value="update"
       @focus="focus" />
     <q-btn v-show="!$q.screen.lt.sm" size="sm" flat dense round :disable="disable || parseInt(_quantity.toString()) > 998"
       @click="counting('inc')">

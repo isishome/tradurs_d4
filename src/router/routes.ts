@@ -18,7 +18,7 @@ const routes: RouteRecordRaw[] = [
           }
         ]
       },
-      { path: 'sub', component: () => import('pages/SubPage.vue') }
+      { path: 'message', component: () => import('pages/MessagePage.vue') }
     ]
   },
 

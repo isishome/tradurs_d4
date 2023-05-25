@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { RouteLocationRaw, useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
+import { useI18n } from 'vue-i18n'
 
 interface IProps {
   type?: 'button' | 'submit' | 'reset',
@@ -10,6 +11,7 @@ interface IProps {
   textColor?: string,
   round?: boolean,
   shadow?: boolean,
+  shadowDepth?: number,
   to?: RouteLocationRaw,
   loading?: boolean,
   disable?: boolean,
@@ -18,6 +20,7 @@ interface IProps {
 
 const props = withDefaults(defineProps<IProps>(), {
   type: 'button',
+  shadowDepth: 5,
   loading: false,
   disable: false,
   progress: false
@@ -27,7 +30,11 @@ const emit = defineEmits(['click'])
 
 const router = useRouter()
 const $q = useQuasar()
-const textWidth = computed(() => $q.screen.width > 600 ? 32 : 24)
+const { locale } = useI18n({ useScope: 'global' })
+const fontWidthGt = computed(() => locale.value === 'ko' ? 14 : 8)
+const fontWidthLt = computed(() => locale.value === 'ko' ? 12 : 7)
+const padding = computed(() => $q.screen.width > 600 ? 40 : 20)
+const textWidth = computed(() => $q.screen.width > 600 ? fontWidthGt.value : fontWidthLt.value)
 const textHeight = computed(() => $q.screen.width > 600 ? 37 : 30)
 const bg = computed<string>(() => $q.dark.isActive ? `background: radial-gradient(ellipse at top, ${props.color ? props.color : 'var(--q-primary)'}, 30%, var(--q-dark-page));` : `background-color: ${props.color ? props.color : 'var(--q-primary)'};`)
 const tc = computed<string>(() => `color:${props.textColor ? props.textColor : 'var(--q-light-page)'};`)
@@ -45,16 +52,17 @@ const click = () => {
 <template>
   <div :class="disable ? 'disable' : ''" class="no-pointer-events inline-block">
     <q-skeleton v-show="loading" :type="$q.dark.isActive ? 'rect' : 'QChip'"
-      :width="`${label ? label.length * textWidth : 0}px`" :height="`${textHeight}px`" class="btn all-pointer-events" />
+      :width="`${label ? label.length * textWidth + padding : 0}px`" :height="`${textHeight}px`"
+      class="btn all-pointer-events" :class="[round ? 'round' : '']" />
     <div v-show="!loading" class="btn-wrap" :class="round ? '' : 'frame'">
-      <button :type="type" class="btn row items-center all-pointer-events"
-        :class="[round ? 'round' : '', shadow ? 'shadow' : '', props.progress ? 'progress' : 'cursor-pointer']"
+      <button :type="type" class="btn row items-center no-wrap all-pointer-events"
+        :class="[round ? 'round' : '', shadow ? `shadow-depth-${shadowDepth}` : '', props.progress ? 'progress' : 'cursor-pointer']"
         :style="`${bg}${tc}`" @click="click">
         <div class="label relative-position">
           <div v-show="progress" class="fit absolute-center" :style="`z-index: 1;`">
             <q-spinner />
           </div>
-          <div :class="progress ? 'text-transparent' : ''">
+          <div class="text-uppercase" :class="progress ? 'text-transparent' : ''">
             {{ label }}
           </div>
         </div>
@@ -90,7 +98,7 @@ const click = () => {
 
 .skeleton {
   height: 37px;
-  border-radius: 28px;
+  border-radius: 4px;
   padding: 8px 20px;
 }
 
@@ -101,6 +109,7 @@ const click = () => {
   transition: filter .3s ease;
   font-weight: 500;
   outline: 0;
+  width: 100%;
 }
 
 .body--dark .btn {
@@ -122,7 +131,10 @@ const click = () => {
   }
 }
 
-.body--light .btn,
+.body--light .btn {
+  border-radius: 4px;
+}
+
 .round.btn {
   border-radius: 28px;
 }
@@ -188,8 +200,12 @@ const click = () => {
   padding: 10px !important;
 }
 
-.body--light .shadow {
+.body--light .shadow-depth-5 {
   box-shadow: rgb(38, 57, 77) 0px 20px 30px 0;
+}
+
+.body--light .shadow-depth-1 {
+  box-shadow: rgb(38, 57, 77) 0px 4px 6px 0;
 }
 
 .body--dark .round::after {
@@ -206,6 +222,7 @@ const click = () => {
 
 
 .label {
+  width: 100%;
   position: relative;
   z-index: 1;
 }

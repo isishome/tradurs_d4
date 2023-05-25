@@ -1,14 +1,23 @@
 <script setup lang="ts">
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useItemStore } from 'stores/item-store'
+import { useAccountStore } from 'stores/account-store'
 import { ref, computed, onMounted, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useQuasar } from 'quasar'
+import { scrollPos } from 'src/common'
+
 import { Item } from 'src/types/item'
 import { icons } from 'src/common/icons'
 import D4Items from 'components/D4Items.vue'
 
 // init module
 const route = useRoute()
+const router = useRouter()
 const store = useItemStore()
+const as = useAccountStore()
+const { t } = useI18n({ useScope: 'global' })
+const $q = useQuasar()
 
 // common variable
 const routeName = computed(() => route.name)
@@ -21,106 +30,127 @@ const disable = ref(true)
 const loading = computed<boolean>(
   () => loadingPowers.value || loadingProperties.value || loadingAffixes.value || disable.value
 )
+const newItems = computed(() => store.socket.newItems)
+const newOffer = computed(() => store.socket.newOffer)
+const acceptedOffer = computed(() => store.socket.acceptedOffer)
 
 // variable
 const itemsRef = ref<typeof D4Items | null>(null)
-const items = ref<Array<Item>>(
-  Array.from({ length: 4 }, () => {
-    const item = new Item()
-    item.loading = true
-    return item
-  })
-)
-
-const setItem = (item: Item, newItem: Item): void => {
-  item.itemId = newItem.itemId
-  item.hardcore = newItem.hardcore
-  item.ladder = newItem.ladder
-  item.statusCode = newItem.statusCode
-  item.name = newItem.name
-  item.quantity = newItem.quantity
-  item.quality = newItem.quality
-  item.itemType = newItem.itemType
-  item.itemTypeValues = newItem.itemTypeValues
-  item.equipmentClass = newItem.equipmentClass
-  item.runeId = newItem.runeId
-  item.powers.splice(0, item.powers.length)
-  item.powers.push(...newItem.powers.filter((p) => p.action !== 8))
-  item.properties.splice(0, item.properties.length)
-  item.properties.push(...newItem.properties.filter((p) => p.action !== 8))
-  item.affixes.splice(0, item.affixes.length)
-  item.affixes.push(...newItem.affixes.filter((a) => a.action !== 8))
-  item.price.currency = newItem.price.currency
-  item.price.currencyValue = newItem.price.currency === 'offer' ? null : newItem.price.currencyValue
-  item.price.quantity = newItem.price.quantity
-  item.user = newItem.user
-  item.offers = newItem.offers
-  item.action = newItem.action
-}
+const items = ref<Array<Item>>([])
 
 // insert or update item
 const upsertItem = (item: Item, done: Function) => {
-  const findItem = items.value.find((i) => i.itemId === item.itemId)
+  const findIndex = items.value.findIndex((i) => i.itemId === item.itemId)
+  disable.value = true
+  item.upsert(() => {
+    if (findIndex !== -1)
+      items.value.splice(findIndex, 1, item)
+    else
+      items.value.unshift(item)
 
-  if (findItem) {
-    store.updateItem(item)
-      .then((resultItem: Item) => {
-        setItem(findItem, resultItem)
-      })
-      .catch(() => { })
-      .then(() => { done() })
-  }
-  else if (item.itemId === '') {
-    //let i = 0
-    //while (i < 100) {
-    store.addItem(item)
-      .then((resultItem: Item) => {
-        items.value.unshift(resultItem)
-      })
-      .catch(() => { })
-      .then(() => { done() })
-    //i++
-    // }
-  }
+    itemsRef.value?.hideEditable()
+
+    if (findIndex === -1)
+      scrollPos()
+
+    disable.value = false
+  }, () => {
+    done()
+    disable.value = false
+  })
 }
 
 const deleteItem = (item: Item, done: Function) => {
-  const findItem = items.value.find((i) => i.itemId === item.itemId)
   const findIndex = items.value.findIndex((i) => i.itemId === item.itemId)
 
-  if (findItem) {
-    // remove api here
+  if (findIndex !== -1) {
     disable.value = true
-    store.deleteItem(item.itemId)
-      .then(() => {
-        items.value.splice(findIndex, 1)
-        done()
-      })
-      .catch(() => { })
-      .then(() => {
+    item.delete(() => {
+      items.value.splice(findIndex, 1)
+      itemsRef.value?.hideEditable()
+      disable.value = false
+    }, () => {
+      done()
+      disable.value = false
+    })
+  }
+}
+
+const relistItem = (item: Item, done: Function) => {
+  const findIndex = items.value.findIndex((i) => i.itemId === item.itemId)
+  if (findIndex !== -1) {
+    disable.value = true
+    item.relist(() => {
+      const relistItem = items.value.splice(findIndex, 1)
+      items.value.unshift(...relistItem)
+      itemsRef.value?.hideEditable()
+      scrollPos()
+      disable.value = false
+    }, () => {
+      done()
+      disable.value = false
+    })
+  }
+}
+
+const statusItem = (item: Item, done: Function) => {
+  const findItem = items.value.find((i) => i.itemId === item.itemId)
+  if (findItem) {
+    disable.value = true
+    item.status(() => {
+      findItem.statusCode = findItem.statusCode === '000' ? '002' : '000'
+      itemsRef.value?.hideEditable()
+      disable.value = false
+    }, () => {
+      done()
+      disable.value = false
+    })
+  }
+}
+
+const updateOnly = (itemId: string) => {
+  const findItem = items.value.find((i) => i.itemId === itemId)
+
+  if (findItem) {
+    disable.value = true
+    store.getItems(itemId)
+      .then((result: Array<Item>) => {
+        if (result.length > 0)
+          Object.assign(findItem, result[0])
+      }).catch(() => {
+      }).then(() => {
         disable.value = false
       })
   }
 }
 
 const create = () => {
-  if (itemsRef.value)
-    itemsRef.value.create()
+  itemsRef.value?.create()
 }
 
-watch(() => route.params.itemid, (val: string | string[] | undefined) => {
-  getList(val)
-})
+const getList = (itemId?: string | string[]) => {
+  store.socket.newItems = 0
+  store.socket.newOffer = null
+  store.socket.acceptedOffer = null
 
-const getList = (itemId: string | string[] | undefined) => {
+  items.value =
+    Array.from({ length: itemId ? 1 : 4 }, () => {
+      const item = new Item()
+      item.loading = true
+      item.user.loading = true
+      item.price.loading = true
+      return item
+    })
+
   store.getItems(itemId)
     .then((result: Array<Item>) => {
       let i = 0
       while (i < items.value.length) {
         const item = result.shift()
         if (item) {
-          setItem(items.value[i], item)
-          items.value[i].loading = false
+          if (itemId)
+            item.expanded = true
+          items.value[i] = item
           i++
         } else {
           items.value.splice(i)
@@ -135,30 +165,68 @@ const getList = (itemId: string | string[] | undefined) => {
     })
 }
 
-onMounted(() => {
-  Promise.all([store.getPowers(), store.getAffixes(), store.getProperties()])
-    .then(() => {
-      getList(route.params.itemid)
+watch(() => route.params.itemid, (val: string | string[] | undefined) => {
+  getList(val)
+})
+
+const notify = (group: string, message: string, actionLabel: string, action: Function) => {
+  $q.notify({
+    group,
+    progress: true,
+    multiLine: true,
+    message,
+    actions: [
+      {
+        label: actionLabel, color: 'white', handler: () => { action() }
+      }
+    ]
+  })
+}
+
+watch(() => newItems.value, (val: number) => {
+  if (val > 0)
+    notify('newItems', t('messages.newItems', val), t('btn.refresh'), () => {
+      if (route.name !== 'item-list')
+        router.push({ name: 'item-list' })
+      else
+        getList()
     })
+})
+
+watch(() => newOffer.value, (val: string | null) => {
+  if (val)
+    notify('', t('messages.newOffer'), t('btn.move'), () => { router.push({ name: 'item-detail', params: { itemid: val } }) })
+})
+
+watch(() => acceptedOffer.value, (val: { itemName: string, itemId: string } | null) => {
+  if (val)
+    notify('', t('messages.acceptedOffer', { in: val.itemName }), t('btn.move'), () => { router.push({ name: 'item-detail', params: { itemid: val.itemId } }) })
+})
+
+onMounted(() => {
+  getList(route.params.itemid)
 })
 </script>
 
 <template>
-  <D4Btn v-if="routeName === 'item-detail'" round :to="{ name: 'item-list' }" class="create" color="var(--q-secondary)"
+  <D4Btn v-if="routeName === 'item-detail'" round :to="{ name: 'item-list' }" class="sticky" color="var(--q-light-normal)"
     shadow>
     <img :src="icons.list" height="20" class="invert" />
   </D4Btn>
-  <D4Btn v-if="routeName === 'item-list'" round @click="create" class="create" color="var(--q-secondary)"
+  <D4Btn v-if="as.signed && routeName === 'item-list'" round @click="create" class="sticky" color="var(--q-secondary)"
     :disable="disable" shadow>
     <img :src="icons.add" height="24" class="invert" />
   </D4Btn>
-  <div class="row justify-center items-center">
-    <D4Items ref="itemsRef" :items="items" :loading="loading" @upsert-item="upsertItem" @delete-item="deleteItem" />
+  <div>
+    <div class="row justify-center items-center">
+      <D4Items ref="itemsRef" :items="items" :loading="loading" @upsert-item="upsertItem" @delete-item="deleteItem"
+        @relist-item="relistItem" @status-item="statusItem" @update-only="updateOnly" />
+    </div>
   </div>
 </template>
 
 <style scoped>
-.create {
+.sticky {
   position: sticky;
   top: 90%;
   left: 100%;

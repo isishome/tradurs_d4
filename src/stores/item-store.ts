@@ -1,11 +1,13 @@
 import { defineStore } from 'pinia'
 import { api } from 'boot/axios'
+import { i18n } from 'boot/i18n'
 import { runeImgs } from 'src/common/runes'
-import { Item, type Power as IPower, type Property as IProperty, type Affix as IAffix } from 'src/types/item'
+import { Item, Offer, type Power as IPower, type Property as IProperty, type Affix as IAffix } from 'src/types/item'
 
 interface ILabel {
   value: number | string,
-  label: string
+  label: string,
+  lang?: string
 }
 
 export interface Status extends ILabel { }
@@ -57,12 +59,12 @@ export const useItemStore = defineStore('item', {
       loading: false as boolean,
       request: 0 as number
     },
-    status: [] as Array<Status>,
+    itemStatus: [] as Array<Status>,
+    offerStatus: [] as Array<Status>,
     quality: [] as Array<Quality>,
     runeTypes: [] as Array<RuneType>,
     runes: [] as Array<Rune>,
     types: [] as Array<ItemType>,
-    currencies: [] as Array<ItemType>,
     classes: [] as Array<EquipmentClass>,
     attributeTypes: [] as Array<AttributeType>,
     powers: {
@@ -79,32 +81,55 @@ export const useItemStore = defineStore('item', {
       data: [] as Array<Affix>,
       loading: false,
       request: 0
+    },
+    socket: {
+      newItems: 0,
+      newOffer: null as string | null,
+      acceptedOffer: null as { itemName: string, itemId: string } | null
     }
   }),
   getters: {
-    findStatus: (state) => {
-      return (statusCode?: string): Status | undefined => state.status.find(s => s.value === statusCode)
+    findItemStatus: (state) => {
+      return (statusCode?: string): Status | undefined => state.itemStatus.find(s => s.value === statusCode && s.lang === i18n.global.locale.value)
+    },
+    findOfferStatus: (state) => {
+      return (statusCode?: string): Status | undefined => state.offerStatus.find(s => s.value === statusCode && s.lang === i18n.global.locale.value)
+    },
+    filterQuality: (state) => {
+      return (type?: string): Array<Quality> => type ? state.quality.filter(q => q.value === type && q.lang === i18n.global.locale.value) : state.quality.filter(q => q.lang === i18n.global.locale.value)
     },
     filterClasses: (state) => {
-      return (type?: string): Array<EquipmentClass> => type ? state.classes.filter(c => c.type === type) : state.classes
+      return (type?: string): Array<EquipmentClass> => type ? state.classes.filter(c => c.type === type && c.lang === i18n.global.locale.value) : state.classes.filter(c => c.lang === i18n.global.locale.value)
     },
     findType: (state) => {
-      return (type: string): ItemType | undefined => state.types.find(t => t.value === type)
+      return (type: string): ItemType | undefined => state.types.find(t => t.value === type && t.lang === i18n.global.locale.value)
+    },
+    filterTypes: (state) => {
+      return (type?: string): Array<ItemType> => type ? state.types.filter(t => t.value === type && t.lang === i18n.global.locale.value) : state.types.filter(t => t.lang === i18n.global.locale.value)
+    },
+    currencies: (state) => {
+      return (): Array<ILabel> => state.types.filter(t => t.isCurrency && t.lang === i18n.global.locale.value)
+    },
+    findRuneType: (state) => {
+      return (type?: string): RuneType | undefined => state.runeTypes.find(rt => rt.value === type && rt.lang === i18n.global.locale.value)
     },
     filterRunes: (state) => {
-      return (type?: string): Array<Rune> => type ? state.runes.filter(r => r.type === type) : state.runes
+      return (type?: string): Array<Rune> => type ? state.runes.filter(r => r.type === type && r.lang === i18n.global.locale.value) : state.runes.filter(r => r.lang === i18n.global.locale.value)
     },
     findRune: (state) => {
-      return (id: string): Rune | undefined => state.runes.find(r => r.value === id)
+      return (id: string): Rune | undefined => state.runes.find(r => r.value === id && r.lang === i18n.global.locale.value)
+    },
+    filterAttributeTypes: (state) => {
+      return (type?: string): Array<AttributeType> => type ? state.attributeTypes.filter(at => at.value === type && at.lang === i18n.global.locale.value) : state.attributeTypes.filter(at => at.lang === i18n.global.locale.value)
     },
     filterPowers: (state) => {
-      return (word: string | null): Array<Power> => word ? state.powers.data.filter(p => p.label.indexOf(word) !== -1) : state.powers.data
+      return (word?: string): Array<Power> => word ? state.powers.data.filter(p => p.label.toLowerCase().indexOf(word.toLowerCase()) !== -1) : state.powers.data
     },
     filterProperties: (state) => {
-      return (word: string | null): Array<Property> => word ? state.properties.data.filter(p => p.label.indexOf(word) !== -1) : state.properties.data
+      return (word?: string): Array<Property> => word ? state.properties.data.filter(p => p.label.toLowerCase().indexOf(word.toLowerCase()) !== -1) : state.properties.data
     },
     filterAffixes: (state) => {
-      return (word: string | null): Array<Affix> => word ? state.affixes.data.filter(a => a.label.indexOf(word) !== -1) : state.affixes.data
+      return (word?: string): Array<Affix> => word ? state.affixes.data.filter(a => a.label.toLowerCase().indexOf(word.toLowerCase()) !== -1) : state.affixes.data
     },
     matchPowers: (state) => {
       return (attribute: string): boolean => attribute ? state.powers.data.filter(p => p.label.trim() === attribute).length > 0 : false
@@ -124,12 +149,12 @@ export const useItemStore = defineStore('item', {
           this.base.loading = true
           api.get('/d4/item/base')
             .then((response) => {
-              this.status = response.data.status
+              this.itemStatus = response.data.itemStatus
+              this.offerStatus = response.data.offerStatus
               this.quality = response.data.quality
               this.runeTypes = response.data.runeTypes
               this.runes = response.data.runes.map((r: Rune) => ({ ...r, img: runeImgs[r.value as keyof typeof runeImgs] }))
               this.types = response.data.types
-              this.currencies = [{ value: 'offer', label: '제안 받기' }, ...response.data.types.filter((t: ItemType) => t.isCurrency)]
               this.classes = response.data.classes
               this.attributeTypes = response.data.attributeTypes
             })
@@ -260,12 +285,8 @@ export const useItemStore = defineStore('item', {
     },
     addItem(item: Item) {
       return new Promise<Item>((resolve, reject) => {
-        api.post('/d4/item/add', { item: item })
+        api.post('/d4/item/add', { item })
           .then((response) => {
-            delete response.data.expanded
-            response.data.powers = (response.data.powers as Array<IPower>).filter((pw: IPower) => pw.action !== 8).map(({ action, ...pw }) => pw)
-            response.data.properties = (response.data.properties as Array<IProperty>).filter((p: IProperty) => p.action !== 8).map(({ action, ...p }) => p)
-            response.data.affixes = (response.data.affixes as Array<IAffix>).filter((a: IAffix) => a.action !== 8).map(({ action, ...a }) => a)
             resolve(response.data)
           })
           .catch((e) => {
@@ -275,14 +296,20 @@ export const useItemStore = defineStore('item', {
     },
     updateItem(item: Item) {
       return new Promise<Item>((resolve, reject) => {
-        api.post('/d4/item/update', { item: item })
+        api.post('/d4/item/update', { item })
           .then((response) => {
-            delete response.data.expanded
-            delete response.data.action
-            response.data.powers = (response.data.powers as Array<IPower>).filter((pw: IPower) => pw.action !== 8).map(({ action, ...pw }) => pw)
-            response.data.properties = (response.data.properties as Array<IProperty>).filter((p: IProperty) => p.action !== 8).map(({ action, ...p }) => p)
-            response.data.affixes = (response.data.affixes as Array<IAffix>).filter((a: IAffix) => a.action !== 8).map(({ action, ...a }) => a)
             resolve(response.data)
+          })
+          .catch((e) => {
+            reject(e)
+          })
+      })
+    },
+    relistItem(itemId: string) {
+      return new Promise<void>((resolve, reject) => {
+        api.post('/d4/item/relist', { itemId: itemId })
+          .then(() => {
+            resolve()
           })
           .catch((e) => {
             reject(e)
@@ -292,6 +319,50 @@ export const useItemStore = defineStore('item', {
     deleteItem(itemId: string) {
       return new Promise<void>((resolve, reject) => {
         api.post('/d4/item/delete', { itemId: itemId })
+          .then(() => {
+            resolve()
+          })
+          .catch((e) => {
+            reject(e)
+          })
+      })
+    },
+    statusItem(itemId: string) {
+      return new Promise<void>((resolve, reject) => {
+        api.post('/d4/item/status', { itemId: itemId })
+          .then(() => {
+            resolve()
+          })
+          .catch((e) => {
+            reject(e)
+          })
+      })
+    },
+    getOffers(itemId: string, offerId?: string) {
+      return new Promise<Array<Offer>>((resolve, reject) => {
+        api.get('/d4/item/offer', { params: { itemId, offerId } })
+          .then((response) => {
+            resolve(response.data)
+          })
+          .catch((e) => {
+            reject(e)
+          })
+      })
+    },
+    makeOffer(offer: Offer) {
+      return new Promise<Offer>((resolve, reject) => {
+        api.post('/d4/item/offer/make', { offer })
+          .then((response) => {
+            resolve(response.data)
+          })
+          .catch((e) => {
+            reject(e)
+          })
+      })
+    },
+    acceptOffer(offerId: string) {
+      return new Promise<void>((resolve, reject) => {
+        api.post('/d4/item/offer/accept', { offerId })
           .then(() => {
             resolve()
           })
