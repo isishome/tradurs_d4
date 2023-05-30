@@ -6,8 +6,8 @@ export default {
   preFetch({ store }) {
     const as = useAccountStore(store)
     const is = useItemStore(store)
-    //return Promise.all([as.checkSign(), as.getEvaluations(), is.getBase(), is.getProperties(), is.getAffixes(), is.getRestrictions()])
-    return Promise.all([as.getEvaluations(), is.getBase(), is.getProperties(), is.getAffixes(), is.getRestrictions()])
+    return Promise.all([as.checkSign(), as.getEvaluations(), is.getBase(), is.getProperties(), is.getAffixes(), is.getRestrictions()])
+    //return Promise.all([as.getEvaluations(), is.getBase(), is.getProperties(), is.getAffixes(), is.getRestrictions()])
   }
 }
 </script>
@@ -20,8 +20,6 @@ import { useI18n } from 'vue-i18n'
 const $q = useQuasar()
 const as = useAccountStore()
 const { t, locale } = useI18n({ useScope: 'global' })
-
-await as.checkSign()
 
 const view = ref<boolean>(false)
 const isDark = ref($q.cookies.has('d4.dark') ? $q.cookies.get('d4.dark') === 'true' : $q.dark.isActive)
