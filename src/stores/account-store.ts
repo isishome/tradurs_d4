@@ -3,9 +3,7 @@ import { api } from 'boot/axios'
 import { i18n } from 'boot/i18n'
 import { User } from 'src/types/user'
 import { Socket } from 'socket.io-client'
-import { type ILabel, useItemStore } from 'src/stores/item-store'
-import { Notify } from 'quasar'
-import { Manager } from 'socket.io-client'
+import { type ILabel } from 'src/stores/item-store'
 import { sleep } from 'src/common'
 
 export interface IEvaluation extends ILabel { }
@@ -31,51 +29,6 @@ export const useAccountStore = defineStore('account', {
     }
   },
   actions: {
-    initSocket() {
-      if (!this.info.id || this.socket)
-        return
-
-      const manager = new Manager(import.meta.env.VITE_APP_SOCKET, {
-        reconnectionDelayMax: 10000,
-        withCredentials: import.meta.env.PROD
-      })
-
-      const is = useItemStore()
-
-      this.socket = manager.socket('/messenger')
-      const socket = this.socket
-
-      socket.on('connect', () => {
-        socket.emit('join', this.info.id)
-      })
-
-      socket.on('message', (data: string) => {
-        Notify.create({
-          position: 'top',
-          message: data,
-        })
-      })
-
-      socket.on('newItems', () => {
-        is.socket.newItems++
-      })
-
-      socket.on('newOffer', (itemId: string) => {
-        is.socket.newOffer = itemId
-      })
-
-      socket.on('acceptedOffer', (data: { itemName: string, itemId: string }) => {
-        is.socket.acceptedOffer = data
-      })
-
-      socket.on('complete', (data: { itemName: string, itemId: string }) => {
-        is.socket.complete = data
-      })
-
-      socket.on('badge', () => {
-        this.badge = true
-      })
-    },
     async checkSign() {
       return new Promise<void>((resolve, reject) => {
         if (this.signed === null) {

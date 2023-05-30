@@ -2,6 +2,10 @@ import { route } from 'quasar/wrappers'
 import { createMemoryHistory, createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
 import routes from './routes'
 import { useAccountStore } from 'src/stores/account-store'
+import { useItemStore } from 'src/stores/item-store'
+import { Notify } from 'quasar'
+import { Manager } from 'socket.io-client'
+
 /*
  * If not building with SSR mode, you can
  * directly export the Router instantiation;
@@ -10,6 +14,45 @@ import { useAccountStore } from 'src/stores/account-store'
  * async/await or return a Promise which resolves
  * with the Router instance.
  */
+
+const initSocket = (as: any, is: any) => {
+  const manager = new Manager(import.meta.env.VITE_APP_SOCKET, {
+    reconnectionDelayMax: 10000,
+    withCredentials: import.meta.env.PROD
+  })
+
+  as.socket = manager.socket('/messenger')
+  as.socket.on('connect', () => {
+    as.socket.emit('join', as.info.id)
+  })
+
+  as.socket.on('message', (data: string) => {
+    Notify.create({
+      position: 'top',
+      message: data,
+    })
+  })
+
+  as.socket.on('newItems', () => {
+    is.socket.newItems++
+  })
+
+  as.socket.on('newOffer', (itemId: string) => {
+    is.socket.newOffer = itemId
+  })
+
+  as.socket.on('acceptedOffer', (data: { itemName: string, itemId: string }) => {
+    is.socket.acceptedOffer = data
+  })
+
+  as.socket.on('complete', (data: { itemName: string, itemId: string }) => {
+    is.socket.complete = data
+  })
+
+  as.socket.on('badge', () => {
+    as.badge = true
+  })
+}
 
 export default route(function ({ store }/* { store, ssrContext } */) {
   const createHistory = process.env.SERVER
@@ -35,7 +78,11 @@ export default route(function ({ store }/* { store, ssrContext } */) {
   })
 
   Router.beforeEach(async (to) => {
+    const as = useAccountStore(store)
+    const is = useItemStore(store)
 
+    if (as.info.id && !as.socket)
+      initSocket(as, is)
   })
 
   return Router
