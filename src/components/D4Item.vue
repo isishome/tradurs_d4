@@ -342,12 +342,13 @@ defineExpose({ scrollEnd })
           <D4Price :data="data.price" :progress="loading" />
           <D4User :data="data.user" :label="t('seller')" :disable="disable" :progress="loading"
             :authorized="data.authorized" />
+          <q-img v-show="!loading" :src="itemImage" class="item-image" />
         </div>
         <div class="row justify-beween items-start q-px-sm">
           <div class="col relative-position q-gutter-y-xs" :class="{ 'q-py-sm': !$q.screen.lt.sm }">
             <div class="column items-start q-col-gutter-xs q-pb-sm">
               <div v-show="loading">
-                <q-skeleton width="200px" height="24px" />
+                <q-skeleton width="150px" :height="$q.screen.lt.sm ? '16px' : '24px'" />
               </div>
               <div v-show="!loading" class="row no-wrap items-center q-col-gutter-xs">
                 <div v-show="data.itemType === 'rune'" class="row items-center q-gutter-sm">
@@ -371,11 +372,12 @@ defineExpose({ scrollEnd })
                 findType(data.itemType)?.label }}
               </div>
             </div>
-            <div v-show="data.power > 0">{{ t('item.power', { p: data.power }) }}</div>
-            <div v-show="data.upgrade > 0" class="stress">{{ t('item.upgrade', { u: data.upgrade, ul: upgradeLimit }) }}
+            <div v-show="data.power > 0">
+              {{ t('item.power', { p: data.power }) }}
             </div>
-            <q-skeleton v-show="loading" type="circle" class="q-mt-md item-image" height="140%" />
-            <q-img v-show="!loading" no-spinner class="item-image" :src="itemImage" />
+            <div v-show="data.upgrade > 0" class="stress">
+              {{ t('item.upgrade', { u: data.upgrade, ul: upgradeLimit }) }}
+            </div>
           </div>
         </div>
       </q-card-section>
