@@ -85,6 +85,8 @@ export default route(function ({ store }/* { store, ssrContext } */) {
 
     if (as.info.id && !as.socket)
       initSocket(as, is)
+
+    return
   })
 
   return Router

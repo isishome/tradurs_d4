@@ -34,7 +34,6 @@ export const useAccountStore = defineStore('account', {
         if (this.signed === null) {
           api.get('/account/signed')
             .then((response) => {
-              console.log(response.data)
               this.info = response.data
               this.signed = typeof (response.data.id) !== 'undefined'
               resolve()
