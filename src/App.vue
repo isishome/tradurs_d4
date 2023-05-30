@@ -18,8 +18,10 @@ import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
 
 const $q = useQuasar()
-const store = useAccountStore()
+const as = useAccountStore()
 const { t, locale } = useI18n({ useScope: 'global' })
+
+await as.checkSign()
 
 const view = ref<boolean>(false)
 const isDark = ref($q.cookies.has('d4.dark') ? $q.cookies.get('d4.dark') === 'true' : $q.dark.isActive)
@@ -28,12 +30,12 @@ const lang = $q.cookies.has('d4.lang') ? $q.cookies.get('d4.lang') as string : '
 locale.value = lang
 
 const battleTag = ref<string>('')
-const showBT = computed(() => (store.signed as boolean && !(store.info.battleTag && store.info.battleTag !== '') && view.value))
+const showBT = computed(() => (as.signed as boolean && !(as.info.battleTag && as.info.battleTag !== '') && view.value))
 const loading = ref<boolean>(false)
 const updateBattleTag = () => {
-  store.updateBattleTag(battleTag.value)
+  as.updateBattleTag(battleTag.value)
     .then(() => {
-      store.info.battleTag = `#${battleTag.value}`
+      as.info.battleTag = `#${battleTag.value}`
     })
 }
 

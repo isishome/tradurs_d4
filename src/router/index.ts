@@ -81,10 +81,10 @@ export default route(function ({ store }/* { store, ssrContext } */) {
     const as = useAccountStore(store)
     const is = useItemStore(store)
 
-    await as.checkSign()
+    // await as.checkSign()
 
-    if (as.info.id && !as.socket)
-      initSocket(as, is)
+    // if (as.info.id && !as.socket)
+    //   initSocket(as, is)
   })
 
   return Router
