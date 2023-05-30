@@ -42,7 +42,9 @@ export const useAccountStore = defineStore('account', {
 
       const is = useItemStore()
 
-      const socket = manager.socket('/messenger')
+      this.socket = manager.socket('/messenger')
+      const socket = this.socket
+
       socket.on('connect', () => {
         socket.emit('join', this.info.id)
       })
