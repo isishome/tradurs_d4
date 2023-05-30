@@ -42,22 +42,25 @@ const items = ref<Array<Item>>([])
 const upsertItem = (item: Item, done: Function) => {
   const findIndex = items.value.findIndex((i) => i.itemId === item.itemId)
   disable.value = true
-  item.upsert(() => {
-    if (findIndex !== -1)
-      items.value.splice(findIndex, 1, item)
-    else
-      items.value.unshift(item)
+  is[item.itemId !== '' ? 'updateItem' : 'addItem'](item)
+    .then((response) => {
+      Object.assign(item, response)
+      if (findIndex !== -1)
+        items.value.splice(findIndex, 1, item)
+      else
+        items.value.unshift(item)
 
-    itemsRef.value?.hideEditable()
+      itemsRef.value?.hideEditable()
 
-    if (findIndex === -1)
-      scrollPos()
+      if (findIndex === -1)
+        scrollPos()
 
-    disable.value = false
-  }, () => {
-    done()
-    disable.value = false
-  })
+      disable.value = false
+    })
+    .catch(() => {
+      done()
+      disable.value = false
+    })
 }
 
 const deleteItem = (item: Item, done: Function) => {
@@ -65,14 +68,16 @@ const deleteItem = (item: Item, done: Function) => {
 
   if (findIndex !== -1) {
     disable.value = true
-    item.delete(() => {
-      items.value.splice(findIndex, 1)
-      itemsRef.value?.hideEditable()
-      disable.value = false
-    }, () => {
-      done()
-      disable.value = false
-    })
+    is.deleteItem(item.itemId)
+      .then(() => {
+        items.value.splice(findIndex, 1)
+        itemsRef.value?.hideEditable()
+        disable.value = false
+      })
+      .catch(() => {
+        done()
+        disable.value = false
+      })
   }
 }
 
@@ -80,16 +85,18 @@ const relistItem = (item: Item, done: Function) => {
   const findIndex = items.value.findIndex((i) => i.itemId === item.itemId)
   if (findIndex !== -1) {
     disable.value = true
-    item.relist(() => {
-      const relistItem = items.value.splice(findIndex, 1)
-      items.value.unshift(...relistItem)
-      itemsRef.value?.hideEditable()
-      scrollPos()
-      disable.value = false
-    }, () => {
-      done()
-      disable.value = false
-    })
+    is.relistItem(item.itemId)
+      .then(() => {
+        const relistItem = items.value.splice(findIndex, 1)
+        items.value.unshift(...relistItem)
+        itemsRef.value?.hideEditable()
+        scrollPos()
+        disable.value = false
+      })
+      .catch(() => {
+        done()
+        disable.value = false
+      })
   }
 }
 
@@ -97,14 +104,16 @@ const statusItem = (item: Item, done: Function) => {
   const findItem = items.value.find((i) => i.itemId === item.itemId)
   if (findItem) {
     disable.value = true
-    item.status(() => {
-      findItem.statusCode = findItem.statusCode === '000' ? '002' : '000'
-      itemsRef.value?.hideEditable()
-      disable.value = false
-    }, () => {
-      done()
-      disable.value = false
-    })
+    is.statusItem(item.itemId)
+      .then(() => {
+        findItem.statusCode = findItem.statusCode === '000' ? '002' : '000'
+        itemsRef.value?.hideEditable()
+        disable.value = false
+      })
+      .catch(() => {
+        done()
+        disable.value = false
+      })
   }
 }
 

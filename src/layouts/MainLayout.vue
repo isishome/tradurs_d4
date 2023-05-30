@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useQuasar, uid, Screen } from 'quasar'
+import { useQuasar, Screen, uid } from 'quasar'
 import { useI18n } from 'vue-i18n'
 
 import { useAccountStore } from 'stores/account-store'
@@ -142,8 +142,8 @@ onUnmounted(() => {
           <q-tabs dense no-caps class="gt-sm q-px-md bg-transparent no-hover nav">
             <q-route-tab :ripple="!$q.dark.isActive" :label="t('trade')" :to="{ path: '/' }" />
             <!-- <q-route-tab :ripple="!$q.dark.isActive" :label="t('message')" :to="{ path: '/message' }">
-                    <q-badge v-show="badge" floating color="red" rounded />
-                  </q-route-tab> -->
+                              <q-badge v-show="badge" floating color="red" rounded />
+                            </q-route-tab> -->
           </q-tabs>
         </div>
         <div class="lt-md col-lg-3 col-4 row justify-end q-gutter-sm">

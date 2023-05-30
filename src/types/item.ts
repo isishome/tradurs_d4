@@ -1,8 +1,5 @@
-import { nanoid } from 'nanoid'
+import { uid } from 'quasar'
 import { User } from './user'
-import { useItemStore } from 'src/stores/item-store'
-
-const store = useItemStore()
 
 export interface Attribute {
   valueId?: string,
@@ -107,48 +104,7 @@ export class Item implements IItem {
   public expanded = false
 
   constructor(id?: string) {
-    this.itemId = id === undefined ? nanoid() : id
-  }
-
-  upsert(resolve?: Function, reject?: Function) {
-    store[this.itemId !== '' ? 'updateItem' : 'addItem'](this)
-      .then((response) => {
-        Object.assign(this, response)
-        resolve?.()
-      })
-      .catch(() => {
-        reject?.()
-      })
-  }
-
-  relist(resolve?: Function, reject?: Function) {
-    store.relistItem(this.itemId)
-      .then(() => {
-        resolve?.()
-      })
-      .catch(() => {
-        reject?.()
-      })
-  }
-
-  delete(resolve?: Function, reject?: Function) {
-    store.deleteItem(this.itemId)
-      .then(() => {
-        resolve?.()
-      })
-      .catch(() => {
-        reject?.()
-      })
-  }
-
-  status(resolve?: Function, reject?: Function) {
-    store.statusItem(this.itemId)
-      .then(() => {
-        resolve?.()
-      })
-      .catch(() => {
-        reject?.()
-      })
+    this.itemId = id === undefined ? uid() : id
   }
 }
 
@@ -177,38 +133,5 @@ export class Offer {
 
     this.user = new User()
     this.price = new Price()
-  }
-
-  info(resolve?: Function, reject?: Function) {
-    store.getOffers(this.itemId, this.offerId)
-      .then((response) => {
-        if (response.length > 0)
-          Object.assign(this, response[0])
-        resolve?.()
-      })
-      .catch(() => {
-        reject?.()
-      })
-  }
-
-  make(resolve?: Function, reject?: Function) {
-    store.makeOffer(this)
-      .then((response) => {
-        Object.assign(this, response)
-        resolve?.()
-      })
-      .catch(() => {
-        reject?.()
-      })
-  }
-
-  accept(resolve?: Function, reject?: Function) {
-    store.acceptOffer(this.offerId)
-      .then(() => {
-        resolve?.()
-      })
-      .catch(() => {
-        reject?.()
-      })
   }
 }

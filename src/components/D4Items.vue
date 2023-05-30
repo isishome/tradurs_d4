@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { nanoid } from 'nanoid'
 import { ref, computed, reactive } from 'vue'
-import { useQuasar, QInput, QSelect } from 'quasar'
+import { useQuasar, QInput, QSelect, uid } from 'quasar'
 import { useI18n } from 'vue-i18n'
 
 import { useAccountStore } from 'stores/account-store'
@@ -34,13 +33,13 @@ const emit = defineEmits(['upsert-item', 'delete-item', 'relist-item', 'status-i
 // init module
 const $q = useQuasar()
 const as = useAccountStore()
-const store = useItemStore()
+const is = useItemStore()
 const { t } = useI18n({ useScope: 'global' })
 
 // common variable
-const requestProperties = computed<number>(() => store.properties.request)
-const requestAffixes = computed<number>(() => store.affixes.request)
-const requestRestrictions = computed<number>(() => store.restrictions.request)
+const requestProperties = computed<number>(() => is.properties.request)
+const requestAffixes = computed<number>(() => is.affixes.request)
+const requestRestrictions = computed<number>(() => is.restrictions.request)
 
 // about editable item
 const activatedRef = ref<typeof D4Item | null>(null)
@@ -162,7 +161,7 @@ const refAttribute = ref<typeof QInput>()
 const add = reactive<Add>({
   show: false as boolean,
   category: null as string | null,
-  attributeTypes: store.filterAttributeTypes,
+  attributeTypes: is.filterAttributeTypes,
   type: 'regular',
   attribute: '',
   error: false,
@@ -182,7 +181,7 @@ const applyAdd = (): void => {
     errorMessage = t('attribute.enter', { attr: t(add.category as string) })
   else if (!checkAttribute(add.attribute))
     errorMessage = t('attribute.invalid', { attr: t(add.category as string) })
-  else if ((add.category === 'properties' && store.matchProperties(add.attribute)) || (add.category === 'affixes' && store.matchAffixes(add.attribute)) || (add.category === 'restrictions' && store.matchRestrictions(add.attribute)))
+  else if ((add.category === 'properties' && is.matchProperties(add.attribute)) || (add.category === 'affixes' && is.matchAffixes(add.attribute)) || (add.category === 'restrictions' && is.matchRestrictions(add.attribute)))
     errorMessage = t('attribute.exists', { attr: t(add.category as string) })
 
   if (errorMessage !== '') {
@@ -194,13 +193,13 @@ const applyAdd = (): void => {
 
   // add attribute request place
   disable.value = true
-  store.addAttribute(add.category, {
+  is.addAttribute(add.category, {
     value: 0,
     label: add.attribute,
     type: add.type
   })
     .then((result: Property | Affix | Restriction) => {
-      const tempId = nanoid()
+      const tempId = uid()
       const attribute: any = { valueId: tempId, action: 2 }
       attribute[add.category === 'properties' ? 'propertyId' : add.category === 'affixes' ? 'affixId' : 'restrictId'] = result.value
       attribute[add.category === 'properties' ? 'propertyValues' : add.category === 'affixes' ? 'affixValues' : 'restrictValues'] = []
@@ -223,7 +222,7 @@ const addAttrNum = () => {
 // about property
 const propertyRef = ref<QSelect | null>(null)
 const propertyId = ref<number | null>(null)
-const propertyOptions = store.filterProperties
+const propertyOptions = is.filterProperties
 const propertyNeedle = ref<string>()
 
 const filterProperties = (val: string): void => {
@@ -233,8 +232,8 @@ const filterProperties = (val: string): void => {
 
 const selectedProperty = (val: number): void => {
   if (val) {
-    const tempId = nanoid()
-    const tempValues = store.findProperty(val)?.label
+    const tempId = uid()
+    const tempValues = is.findProperty(val)?.label
     activatedItem.value.properties.push({ valueId: tempId, propertyId: val, propertyValues: Array.from({ length: (tempValues?.match(/\{x\}/gi) || []).length }, () => 0), action: 2 })
     propertyId.value = null
     propertyNeedle.value = undefined
@@ -267,7 +266,7 @@ const removeProperty = ({ valueId }: { valueId: string }): void => {
 // about affix
 const affixRef = ref<QSelect | null>(null)
 const affixId = ref<number | null>(null)
-const affixOptions = store.filterAffixes
+const affixOptions = is.filterAffixes
 const affixNeedle = ref<string>()
 
 const filterAffixes = (val: string): void => {
@@ -276,8 +275,8 @@ const filterAffixes = (val: string): void => {
 }
 
 const selectedAffix = (val: number): void => {
-  const tempId = nanoid()
-  const tempValues = store.findAffix(val)?.label
+  const tempId = uid()
+  const tempValues = is.findAffix(val)?.label
   activatedItem.value.affixes.push({ valueId: tempId, affixId: val, affixValues: Array.from({ length: (tempValues?.match(/\{x\}/gi) || []).length }, () => 0), action: 2 })
   affixId.value = null
   affixNeedle.value = undefined
@@ -309,7 +308,7 @@ const removeAffix = ({ valueId }: { valueId: string }): void => {
 // about restrictions
 const restrictionRef = ref<QSelect | null>(null)
 const restrictId = ref<number | null>(null)
-const restrictionOptions = store.filterRestrictions
+const restrictionOptions = is.filterRestrictions
 const restrictionNeedle = ref<string>()
 
 const filterRestrictions = (val: string): void => {
@@ -318,8 +317,8 @@ const filterRestrictions = (val: string): void => {
 }
 
 const selectedRestriction = (val: number): void => {
-  const tempId = nanoid()
-  const tempValues = store.findRestriction(val)?.label
+  const tempId = uid()
+  const tempValues = is.findRestriction(val)?.label
   activatedItem.value.restrictions.push({ valueId: tempId, restrictId: val, restrictValues: Array.from({ length: (tempValues?.match(/\{x\}/gi) || []).length }, () => 0), action: 2 })
   restrictId.value = null
   restrictionNeedle.value = undefined
@@ -380,7 +379,7 @@ const openMakingOffer = (item: Item): void => {
     makeOffer.value.price = item.price
   showOffers.value = true
 
-  store.getOffers(item.itemId)
+  is.getOffers(item.itemId)
     .then((resultOffers: Array<Offer>) => {
       let i = 0
       while (i < offers.value.length) {
@@ -403,49 +402,51 @@ const openMakingOffer = (item: Item): void => {
 const isMakingOffer = computed(() => !offerItem.value?.authorized && as.signed && offerItem.value?.statusCode === '000' && !offers.value.find(o => o.user.battleTag === as.info.battleTag))
 const makingOffer = (offer: Offer) => {
   progressOffer.value = true
-  const clone = JSON.parse(JSON.stringify(offer))
-  Object.assign(new Offer, clone)
-  Object.setPrototypeOf(clone, Offer.prototype)
-  clone.make(() => {
-    const findOffer = offers.value.find(o => o.offerId === clone.offerId)
-    if (findOffer)
-      Object.assign(findOffer, clone)
-    else
-      offers.value.unshift(clone)
 
-    progressOffer.value = false
+  is.makeOffer(offer)
+    .then((response) => {
+      Object.assign(offer, response)
+      const findOffer = offers.value.find(o => o.offerId === offer.offerId)
+      if (findOffer)
+        Object.assign(findOffer, offer)
+      else
+        offers.value.unshift(offer)
 
-  }, () => {
-    progressOffer.value = false
-  })
+      progressOffer.value = false
+    })
+    .catch(() => {
+      progressOffer.value = false
+    })
 }
 
 const acceptOffer = (offer: Offer) => {
   disableOffers.value = true
-  const clone = JSON.parse(JSON.stringify(offer))
-  Object.assign(new Offer, clone)
-  Object.setPrototypeOf(clone, Offer.prototype)
-  clone.accept(() => {
-    clone.info(() => {
-      const findOffer = offers.value.find(o => o.offerId === clone.offerId)
+  is.acceptOffer(offer.offerId)
+    .then(() => {
+      is.getOffers(offer.itemId, offer.offerId)
+        .then((response) => {
+          Object.assign(offer, response)
+          const findOffer = offers.value.find(o => o.offerId === offer.offerId)
 
-      if (findOffer && offerItem.value) {
-        Object.assign(findOffer, clone)
-        emit('update-only', findOffer.itemId)
-      }
+          if (findOffer && offerItem.value) {
+            Object.assign(findOffer, offer)
+            emit('update-only', findOffer.itemId)
+          }
 
-      disableOffers.value = false
-    }, () => {
+          disableOffers.value = false
+        })
+        .catch(() => {
+          disableOffers.value = false
+        })
+    })
+    .catch(() => {
       disableOffers.value = false
     })
-  }, () => {
-    disableOffers.value = false
-  })
 }
 
 const complete = (evaluations: Array<number>) => {
   disableOffers.value = true
-  store.addEvaluations(offerItem.value?.itemId as string, evaluations)
+  is.addEvaluations(offerItem.value?.itemId as string, evaluations)
     .then(() => {
       if (offerItem.value)
         emit('update-only', offerItem.value.itemId)
@@ -558,7 +559,7 @@ defineExpose({ create, hideEditable, openOffers, hideOffers })
           </div>
         </template>
         <template #properties>
-          <D4Property v-for="property in activatedItem.properties" :key="property.valueId || nanoid()" :data="property"
+          <D4Property v-for="property in activatedItem.properties" :key="property.valueId || uid()" :data="property"
             editable :disable="disable" @update="updateProperty" @remove="removeProperty" />
         </template>
         <template #add-affix="props">
@@ -594,7 +595,7 @@ defineExpose({ create, hideEditable, openOffers, hideOffers })
           </div>
         </template>
         <template #affixes>
-          <D4Affix v-for="affix in activatedItem.affixes" :key="affix.valueId || nanoid()" :data="affix" editable
+          <D4Affix v-for="affix in activatedItem.affixes" :key="affix.valueId || uid()" :data="affix" editable
             :disable="disable" @update="updateAffix" @remove="removeAffix" />
         </template>
         <template #add-restriction="props">
@@ -626,7 +627,7 @@ defineExpose({ create, hideEditable, openOffers, hideOffers })
           </div>
         </template>
         <template #restrictions>
-          <D4Restriction v-for="restriction in activatedItem.restrictions" :key="restriction.valueId || nanoid()"
+          <D4Restriction v-for="restriction in activatedItem.restrictions" :key="restriction.valueId || uid()"
             :data="restriction" editable :disable="disable" @update="updateRestriction" @remove="removeRestriction" />
         </template>
         <template #actions>

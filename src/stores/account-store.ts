@@ -58,8 +58,7 @@ export const useAccountStore = defineStore('account', {
       })
     },
     getEvaluations() {
-      return new Promise<void>(async (resolve, reject) => {
-        await sleep(timeout)
+      return new Promise<void>((resolve, reject) => {
         let error: unknown = null
         if (this.evaluations.request === 0) {
           this.evaluations.loading = true

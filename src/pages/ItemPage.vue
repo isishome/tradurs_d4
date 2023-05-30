@@ -39,47 +39,57 @@ const itemInfo = reactive<Item>(new Item())
 // insert or update item
 const upsertItem = (item: Item, done: Function) => {
   disable.value = true
-  item.upsert(() => {
-    Object.assign(itemInfo, item)
-    itemsRef.value?.hideEditable()
 
-    disable.value = false
-  }, () => {
-    done()
-    disable.value = false
-  })
+  is.updateItem(item)
+    .then((response) => {
+      Object.assign(item, response)
+      Object.assign(itemInfo, item)
+      itemsRef.value?.hideEditable()
+
+      disable.value = false
+    })
+    .catch(() => {
+      done()
+      disable.value = false
+    })
 }
 
 const deleteItem = (item: Item, done: Function) => {
   disable.value = true
-  item.delete(() => {
-    router.push({ name: 'item-list' })
-  }, () => {
-    done()
-    disable.value = false
-  })
+  is.deleteItem(item.itemId)
+    .then(() => {
+      router.push({ name: 'item-list' })
+    })
+    .catch(() => {
+      done()
+      disable.value = false
+    })
 }
 
 const relistItem = (item: Item, done: Function) => {
   disable.value = true
-  item.relist(() => {
-    router.push({ name: 'item-list' })
-  }, () => {
-    done()
-    disable.value = false
-  })
+  is.relistItem(item.itemId)
+    .then(() => {
+      router.push({ name: 'item-list' })
+    })
+    .catch(() => {
+      done()
+      disable.value = false
+    })
 }
 
 const statusItem = (item: Item, done: Function) => {
   disable.value = true
-  item.status(() => {
-    itemInfo.statusCode = itemInfo.statusCode === '000' ? '002' : '000'
-    itemsRef.value?.hideEditable()
-    disable.value = false
-  }, () => {
-    done()
-    disable.value = false
-  })
+  is.statusItem(item.itemId)
+    .then(() => {
+      itemInfo.statusCode = itemInfo.statusCode === '000' ? '002' : '000'
+      itemsRef.value?.hideEditable()
+      disable.value = false
+    })
+    .catch(() => {
+      done()
+      disable.value = false
+    })
 }
 
 const updateOnly = (itemId: string) => {
