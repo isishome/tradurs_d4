@@ -4,7 +4,7 @@ import { QInput } from 'quasar'
 import type { Affix } from 'stores/item-store'
 import { useItemStore } from 'stores/item-store'
 import { icons } from 'src/common/icons'
-import { parse } from 'src/common'
+import { parse, focus } from 'src/common'
 
 const props = defineProps({
   data: {
@@ -38,26 +38,20 @@ const remove = (): void => {
   emit('remove', { valueId: props.data.valueId })
 }
 
-const focus = (evt: Event) => {
-  const el: HTMLInputElement | null = (evt.target as Element)?.closest('input')
-  el?.select()
-}
-
 watch(() => props.data, (val) => {
   affixInfo.value = parse(findAffix?.label, val.affixValues)
 })
 </script>
 
 <template>
-  <div class="row items-center"
-    :class="affixType === 'unique' ? 'unique' : affixType === 'socket' ? 'text-grey-6' : ''">
-    <div class="row no-wrap q-gutter-x-xs" :class="disable ? 'disable' : ''" :data-id="data.valueId">
+  <div class="row items-center" :class="{ 'unique': affixType === 'unique', 'text-grey-6': affixType === 'socket' }">
+    <div class="row no-wrap q-gutter-xs" :class="{ disable }" :data-id="data.valueId">
       <div>
         <q-icon class="icon"
-          :class="['regular', 'offensive', 'defensive', 'utility'].includes(affixType) ? 'rotate-45' : ''" size="13px"
+          :class="{ 'rotate-45': ['regular', 'offensive', 'defensive', 'utility'].includes(affixType) }" size="13px"
           :name="`img:${icons[affixType as keyof typeof icons]}`" />
       </div>
-      <div class="row items-center q-gutter-x-xs">
+      <div class="row items-center q-gutter-xs">
         <template v-for="(comp, k) in affixInfo" :key="k">
           <template v-if="comp.type === 'text'">
             <div v-for="(word, i) in (comp.value as string).split(/\s+/g).filter(w => w !== '')" :key="i">{{ word }}

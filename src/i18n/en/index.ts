@@ -1,7 +1,6 @@
 export default {
   language: 'Language',
   battlenet: {
-    tag: 'BattleTag™',
     title: 'Enter BattleTag™',
     msg1: 'In order to provide useful services to you on ',
     msg2: ', you must enter the BattleTag™ used in Battle.net.',
@@ -15,7 +14,9 @@ export default {
   ladder: 'Ladder',
   seller: 'Seller',
   offerer: 'Offerer',
-  sellerHelp: {
+  user: {
+    battleTag: 'BattleTag™',
+    temperature: 'Manner Temperature',
     sh1: 'BattleTags will not be displayed if the trade is ',
     sh2: 'not completed',
     sh3: ' or the trade with the user is ',
@@ -24,9 +25,10 @@ export default {
   },
   searchOrSelect: 'Search / Select',
   noMessage: 'No {attr} were found to match the text you entered',
-  powers: 'Powers',
-  properties: 'Properties',
+  power: 'Power',
+  properties: 'Characteristics',
   affixes: 'Affixes',
+  restrictions: 'Restrictions',
   deleteItem: {
     title: 'Delete Item',
     message: 'Are you sure you want to delete the post?'
@@ -56,7 +58,10 @@ export default {
     makeOffer: 'Make Offer',
     offer: 'Offer',
     refresh: 'Refresh',
-    move: 'Move'
+    move: 'Move',
+    complete: 'Complete',
+    submit: 'Submit',
+    resetSearch: 'Reset Filter'
   },
   attribute: {
     add: 'Add {attr}',
@@ -66,10 +71,14 @@ export default {
     exists: 'Already exists {attr}'
   },
   item: {
+    quality: 'Item Quality',
     selectType: 'Item Type',
     selectClass: 'Equipment Class',
     selectRune: 'Select Rune',
-    name: 'Item Name'
+    name: 'Item Name',
+    power: '{p} Item Power',
+    upgrade: 'Item Level: {u}/{ul}',
+    gold: 'Gold'
   },
   price: {
     currency: 'Currency',
@@ -91,10 +100,20 @@ export default {
     msg5: 'automatically processed as complete',
     msg6: '.'
   },
+  complete: {
+    title: 'Manner Evaluation',
+    message: 'How was the manner of trading partner?',
+    evaluate: 'Trading partner evaluated you as below'
+  },
   messages: {
     newItems: 'A new item has been registered ({n})',
     newOffer: 'A new offer has been added to my Items',
     acceptedOffer: 'my offer has been accepted ({in})',
-    clipboard: 'The {t} has been copied to the clipboard.'
+    clipboard: 'The {t} has been copied to the clipboard',
+    complete: 'Item trade completed ({in})'
+  },
+  notFound: {
+    message: 'Page not found',
+    gotoMain: 'Go to main page'
   }
 }

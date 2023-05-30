@@ -1,6 +1,65 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+import { useQuasar } from 'quasar'
+import Logo from 'src/assets/logo.webp'
+import LogoLight from 'src/assets/logo_light.webp'
 
+const $q = useQuasar()
+const { t } = useI18n({ useScope: 'global' })
 </script>
+
 <template>
-  404 페이지
+  <div class="absolute-center column items-center q-gutter-sm full-width">
+    <div class="row justify-center items-center q-gutter-sm">
+      <img class="logo" :src="$q.dark.isActive ? Logo : LogoLight" width="48" />
+      <div class="letter text-secondary">Tradurs</div>
+    </div>
+    <div class="text-h6">{{ t('notFound.message') }}
+    </div>
+    <div class="q-mt-lg">
+      <D4Btn class="bw" :label="t('notFound.gotoMain')" :to="{ path: '/' }" />
+    </div>
+  </div>
 </template>
+
+<style scoped>
+.logo {
+  animation: opacity 1.4s ease-out forwards;
+}
+
+.letter {
+  transition: fill .3s ease;
+  animation: slidein .3s ease-out .3s forwards;
+  opacity: 0;
+  font-size: 40px;
+  font-weight: bold;
+}
+
+@keyframes opacity {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slidein {
+  0% {
+    transform: translateX(2%);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@media (hover: hover) {
+  .bw:deep(.btn) {
+    filter: none !important;
+  }
+}
+</style>

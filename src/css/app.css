@@ -23,6 +23,9 @@
   --q-set: #00FF00;
   --q-light-set: #00BB00;
   --q-dark-set: #003300;
+  --q-legendary: #F78003;
+  --q-light-legendary: #C76003;
+  --q-dark-legendary: #471B0B;
   --q-unique: #D9A979;
   --q-light-unique: #B99959;
   --q-dark-unique: #4A361B;
@@ -31,6 +34,7 @@
   --q-filter-magic: invert(35%) sepia(72%) saturate(1098%) hue-rotate(212deg) brightness(80%) contrast(96%);
   --q-filter-rare: invert(91%) sepia(21%) saturate(2166%) hue-rotate(5deg) brightness(96%) contrast(91%);
   --q-filter-set: invert(37%) sepia(91%) saturate(1265%) hue-rotate(91deg) brightness(95%) contrast(106%);
+  --q-filter-legendary: invert(41%) sepia(94%) saturate(1295%) hue-rotate(8deg) brightness(93%) contrast(97%);
   --q-filter-unique: invert(57%) sepia(68%) saturate(273%) hue-rotate(349deg) brightness(87%) contrast(93%);
 }
 

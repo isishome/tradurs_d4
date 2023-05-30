@@ -5,15 +5,15 @@ import { useQuasar, QInput, QSelect } from 'quasar'
 import { useI18n } from 'vue-i18n'
 
 import { useAccountStore } from 'stores/account-store'
-import { useItemStore, type Power, type Property, type Affix } from 'stores/item-store'
+import { useItemStore, type Property, type Affix, type Restriction } from 'stores/item-store'
 import { checkAttribute } from 'src/common'
 import { Item, Advertise, Offer, type IItem } from 'src/types/item'
 import { icons } from 'src/common/icons'
 
 import D4Item from 'components/D4Item.vue'
-import D4Affix from 'components/D4Affix.vue'
-import D4Power from 'components/D4Power.vue'
 import D4Property from 'components/D4Property.vue'
+import D4Affix from 'components/D4Affix.vue'
+import D4Restriction from 'components/D4Restriction.vue'
 import D4Offer from 'components/D4Offer.vue'
 
 interface IProps {
@@ -23,7 +23,7 @@ interface IProps {
   loading?: boolean
 }
 
-withDefaults(defineProps<IProps>(), {
+const props = withDefaults(defineProps<IProps>(), {
   width: '700',
   height: '200',
   loading: false
@@ -38,9 +38,9 @@ const store = useItemStore()
 const { t } = useI18n({ useScope: 'global' })
 
 // common variable
-const requestPowers = computed<number>(() => store.powers.request)
-const requestAffixes = computed<number>(() => store.affixes.request)
 const requestProperties = computed<number>(() => store.properties.request)
+const requestAffixes = computed<number>(() => store.affixes.request)
+const requestRestrictions = computed<number>(() => store.restrictions.request)
 
 // about editable item
 const activatedRef = ref<typeof D4Item | null>(null)
@@ -55,14 +55,15 @@ const editItem = (item: Item) => {
   activateShow.value = true
 }
 
-const updateItem = ({ hardcore, ladder, name, itemTypeValues, quantity, quality, itemType, runeId, equipmentClass, price }: IItem): void => {
+const updateItem = ({ hardcore, ladder, name, quantity, quality, itemType, runeId, power, upgrade, equipmentClass, price }: IItem): void => {
   activatedItem.value.hardcore = hardcore
   activatedItem.value.ladder = ladder
   activatedItem.value.name = name
-  activatedItem.value.itemTypeValues = itemTypeValues
   activatedItem.value.quantity = quantity
   activatedItem.value.quality = quality
   activatedItem.value.runeId = runeId
+  activatedItem.value.power = power
+  activatedItem.value.upgrade = upgrade
   activatedItem.value.equipmentClass = equipmentClass
   activatedItem.value.price.currency = price.currency
   activatedItem.value.price.currencyValue = price.currencyValue
@@ -71,9 +72,9 @@ const updateItem = ({ hardcore, ladder, name, itemTypeValues, quantity, quality,
   if (activatedItem.value.itemType !== itemType) {
     activatedItem.value.itemType = itemType
     activatedItem.value.quantity = 1
-    activatedItem.value.powers.splice(0, activatedItem.value.powers.length)
     activatedItem.value.properties.splice(0, activatedItem.value.properties.length)
     activatedItem.value.affixes.splice(0, activatedItem.value.affixes.length)
+    activatedItem.value.restrictions.splice(0, activatedItem.value.restrictions.length)
     activatedItem.value.action = 16
   }
 }
@@ -150,7 +151,7 @@ const apply = () => {
 interface Add {
   show: boolean,
   category: string | null,
-  types: Function,
+  attributeTypes: Function,
   type: string,
   attribute: string,
   error: boolean,
@@ -161,7 +162,7 @@ const refAttribute = ref<typeof QInput>()
 const add = reactive<Add>({
   show: false as boolean,
   category: null as string | null,
-  types: store.filterAttributeTypes,
+  attributeTypes: store.filterAttributeTypes,
   type: 'regular',
   attribute: '',
   error: false,
@@ -181,7 +182,7 @@ const applyAdd = (): void => {
     errorMessage = t('attribute.enter', { attr: t(add.category as string) })
   else if (!checkAttribute(add.attribute))
     errorMessage = t('attribute.invalid', { attr: t(add.category as string) })
-  else if ((add.category === 'powers' && store.matchPowers(add.attribute)) || (add.category === 'properties' && store.matchProperties(add.attribute)) || (add.category === 'affixes' && store.matchAffixes(add.attribute)))
+  else if ((add.category === 'properties' && store.matchProperties(add.attribute)) || (add.category === 'affixes' && store.matchAffixes(add.attribute)) || (add.category === 'restrictions' && store.matchRestrictions(add.attribute)))
     errorMessage = t('attribute.exists', { attr: t(add.category as string) })
 
   if (errorMessage !== '') {
@@ -198,12 +199,12 @@ const applyAdd = (): void => {
     label: add.attribute,
     type: add.type
   })
-    .then((result: Power | Property | Affix) => {
+    .then((result: Property | Affix | Restriction) => {
       const tempId = nanoid()
       const attribute: any = { valueId: tempId, action: 2 }
-      attribute[add.category === 'powers' ? 'powerId' : add.category === 'properties' ? 'propertyId' : 'affixId'] = result.value
-      attribute[add.category === 'powers' ? 'powerValues' : add.category === 'properties' ? 'propertyValues' : 'affixValues'] = []
-      const target = add.category === 'powers' ? activatedItem.value.powers : add.category === 'properties' ? activatedItem.value.properties : activatedItem.value.affixes
+      attribute[add.category === 'properties' ? 'propertyId' : add.category === 'affixes' ? 'affixId' : 'restrictId'] = result.value
+      attribute[add.category === 'properties' ? 'propertyValues' : add.category === 'affixes' ? 'affixValues' : 'restrictValues'] = []
+      const target = add.category === 'properties' ? activatedItem.value.properties : add.category === 'affixes' ? activatedItem.value.affixes : activatedItem.value.restrictions
       target.push(attribute)
       activatedRef.value?.scrollEnd(add.category, tempId)
       add.show = false
@@ -217,49 +218,6 @@ const applyAdd = (): void => {
 const addAttrNum = () => {
   add.attribute = add.attribute + '{x}'
   refAttribute.value?.focus()
-}
-
-// about power
-const powerRef = ref<QSelect | null>(null)
-const powerId = ref<number | null>(null)
-const powerOptions = store.filterPowers
-const powerNeedle = ref<string | undefined>()
-
-const filterPowers = (val: string): void => {
-  powerRef.value?.showPopup()
-  powerNeedle.value = val.toLowerCase()
-}
-
-const selectedPower = (val: number): void => {
-  if (val) {
-    const tempId = nanoid()
-    activatedItem.value.powers.push({ valueId: tempId, powerId: val, powerValues: [], action: 2 })
-    powerId.value = null
-    powerNeedle.value = undefined
-    activatedRef.value?.scrollEnd('powers', tempId)
-  }
-}
-
-const createPower = (): void => {
-  add.category = 'powers'
-  add.show = true
-}
-
-const updatePower = ({ valueId, powerValues }: { valueId: string, powerValues: Array<number> }): void => {
-  const findPower = activatedItem.value.powers.find(p => p.valueId === valueId)
-  if (findPower) {
-    findPower.action = findPower.action !== 2 ? 4 : 2
-    findPower.powerValues = powerValues
-  }
-}
-
-const removePower = ({ valueId }: { valueId: string }): void => {
-  const findPower = activatedItem.value.powers.find(p => p.valueId === valueId)
-  if (findPower) {
-    findPower.disable = findPower.action !== 8
-    findPower.restore = findPower.action !== 8 ? findPower.action : undefined
-    findPower.action = findPower.action !== 8 ? 8 : findPower.restore
-  }
 }
 
 // about property
@@ -276,7 +234,8 @@ const filterProperties = (val: string): void => {
 const selectedProperty = (val: number): void => {
   if (val) {
     const tempId = nanoid()
-    activatedItem.value.properties.push({ valueId: tempId, propertyId: val, propertyValues: [], action: 2 })
+    const tempValues = store.findProperty(val)?.label
+    activatedItem.value.properties.push({ valueId: tempId, propertyId: val, propertyValues: Array.from({ length: (tempValues?.match(/\{x\}/gi) || []).length }, () => 0), action: 2 })
     propertyId.value = null
     propertyNeedle.value = undefined
     activatedRef.value?.scrollEnd('properties', tempId)
@@ -318,7 +277,8 @@ const filterAffixes = (val: string): void => {
 
 const selectedAffix = (val: number): void => {
   const tempId = nanoid()
-  activatedItem.value.affixes.push({ valueId: tempId, affixId: val, affixValues: [], action: 2 })
+  const tempValues = store.findAffix(val)?.label
+  activatedItem.value.affixes.push({ valueId: tempId, affixId: val, affixValues: Array.from({ length: (tempValues?.match(/\{x\}/gi) || []).length }, () => 0), action: 2 })
   affixId.value = null
   affixNeedle.value = undefined
   activatedRef.value?.scrollEnd('affixes', tempId)
@@ -346,6 +306,48 @@ const removeAffix = ({ valueId }: { valueId: string }): void => {
   }
 }
 
+// about restrictions
+const restrictionRef = ref<QSelect | null>(null)
+const restrictId = ref<number | null>(null)
+const restrictionOptions = store.filterRestrictions
+const restrictionNeedle = ref<string>()
+
+const filterRestrictions = (val: string): void => {
+  restrictionRef.value?.showPopup()
+  restrictionNeedle.value = val.toLowerCase()
+}
+
+const selectedRestriction = (val: number): void => {
+  const tempId = nanoid()
+  const tempValues = store.findRestriction(val)?.label
+  activatedItem.value.restrictions.push({ valueId: tempId, restrictId: val, restrictValues: Array.from({ length: (tempValues?.match(/\{x\}/gi) || []).length }, () => 0), action: 2 })
+  restrictId.value = null
+  restrictionNeedle.value = undefined
+  activatedRef.value?.scrollEnd('restrictions', tempId)
+}
+
+const createRestriction = (): void => {
+  add.category = 'restrictions'
+  add.show = true
+}
+
+const updateRestriction = ({ valueId, restrictValues }: { valueId: string, restrictValues: Array<number> }): void => {
+  const findRestriction = activatedItem.value.restrictions.find(r => r.valueId === valueId)
+  if (findRestriction) {
+    findRestriction.action = findRestriction.action !== 2 ? 4 : 2
+    findRestriction.restrictValues = restrictValues
+  }
+}
+
+const removeRestriction = ({ valueId }: { valueId: string }): void => {
+  const findRestriction = activatedItem.value.restrictions.find(r => r.valueId === valueId)
+  if (findRestriction) {
+    findRestriction.disable = findRestriction.action !== 8
+    findRestriction.restore = findRestriction.action !== 8 ? findRestriction.action : undefined
+    findRestriction.action = findRestriction.action !== 8 ? 8 : findRestriction.restore
+  }
+}
+
 // make an offer
 const offerItem = ref<Item | undefined>()
 const offers = ref<Array<Offer>>([])
@@ -357,6 +359,7 @@ const makeOffer = ref<Offer>(new Offer())
 const hideOffers = () => {
   offerItem.value = undefined
   makeOffer.value = new Offer()
+  showOffers.value = false
 }
 
 const openMakingOffer = (item: Item): void => {
@@ -390,7 +393,6 @@ const openMakingOffer = (item: Item): void => {
           break
         }
       }
-      offers.value.push(...resultOffers)
     })
     .catch(() => { })
     .then(() => {
@@ -398,6 +400,7 @@ const openMakingOffer = (item: Item): void => {
     })
 }
 
+const isMakingOffer = computed(() => !offerItem.value?.authorized && as.signed && offerItem.value?.statusCode === '000' && !offers.value.find(o => o.user.battleTag === as.info.battleTag))
 const makingOffer = (offer: Offer) => {
   progressOffer.value = true
   const clone = JSON.parse(JSON.stringify(offer))
@@ -440,6 +443,20 @@ const acceptOffer = (offer: Offer) => {
   })
 }
 
+const complete = (evaluations: Array<number>) => {
+  disableOffers.value = true
+  store.addEvaluations(offerItem.value?.itemId as string, evaluations)
+    .then(() => {
+      if (offerItem.value)
+        emit('update-only', offerItem.value.itemId)
+      showOffers.value = false
+    })
+    .catch(() => { })
+    .then(() => {
+      disableOffers.value = false
+    })
+}
+
 // Execute function if an item is visible
 const visible = (isVisible: boolean, item: Item): void => {
   isVisible
@@ -449,28 +466,36 @@ const visible = (isVisible: boolean, item: Item): void => {
 const create = () => {
   activateShow.value = true
 }
-defineExpose({ create, hideEditable })
+
+const openOffers = (itemId: string) => {
+  const findItem = props.items.find(i => i.itemId.toString() === itemId)
+
+  if (findItem)
+    openMakingOffer(findItem)
+}
+
+defineExpose({ create, hideEditable, openOffers, hideOffers })
 </script>
 
 <template>
   <div class="col-12" :style="`max-width:${width}px`">
     <div :class="$q.screen.lt.sm ? 'q-gutter-y-xl' : 'q-gutter-y-xxl'">
-      <q-intersection v-for="item, idx in (items as Array<Item | Advertise>)" :key="`item_${idx}`" class="item"
-        :style="item.expanded ? 'height: 100%' : `height: ${height as number - ($q.screen.lt.sm ? 50 : 0)}px;`"
-        transition="jump-up" @visibility="isVisible => visible(isVisible, item)" once>
+      <q-intersection v-for="item, idx in (items as Array<Item | Advertise>)" :key="`item_${idx}`"
+        :data-itemid="item.itemId" class="item"
+        :style="item.expanded ? 'min-height:250px' : `height: ${height as number - ($q.screen.lt.sm ? 50 : 0)}px;`"
+        transition="fade" @visibility="isVisible => visible(isVisible, item)" ssr-prerender>
         <div v-if="(item instanceof Advertise)" class="bg-grey" style="width:100%;height:500px"></div>
         <D4Item v-else :data="item" :loading="loading || item.loading">
           <template #top-right>
           </template>
-          <template v-if="requestPowers > 0" #powers>
-            <D4Power v-for="(power, i) in item.powers" :key="power.valueId" :data="power" />
-          </template>
           <template v-if="requestProperties > 0" #properties>
-            <D4Property v-for="(property, i) in item.properties" :key="property.valueId" :data="property" />
+            <D4Property v-for="property in item.properties" :key="property.valueId" :data="property" />
           </template>
           <template v-if="requestAffixes > 0" #affixes>
-            <D4Affix v-for="affix in item.affixes" :key="affix.valueId || `create_${Math.floor(Math.random() * 1000000)}`"
-              :data="affix" />
+            <D4Affix v-for="affix in item.affixes" :key="affix.valueId" :data="affix" />
+          </template>
+          <template v-if="requestRestrictions > 0" #restrictions>
+            <D4Restriction v-for="restriction in item.restrictions" :key="restriction.valueId" :data="restriction" />
           </template>
           <template #actions>
             <div class="row justify-between items-center q-px-md q-pt-lg">
@@ -499,40 +524,8 @@ defineExpose({ create, hideEditable })
       transition-hide="none" @hide="hideEditable">
       <D4Item ref="activatedRef" :data="activatedItem" editable :loading="activatedItem.loading" :disable="disable"
         @update="updateItem" @apply="apply">
-        <template #add-power="props">
-          <div class="row no-wrap items-center q-gutter-x-sm">
-            <q-select ref="powerRef" v-model="powerId" :disable="disable"
-              :popup-content-style="{ 'height': `${props.wrap?.$el.clientHeight / 2}px` }" option-dense outlined dense
-              no-error-icon use-input hide-bottom-space hide-selected emit-value map-options transition-show="none"
-              transition-hide="none" class="select col" :label="t('searchOrSelect')" :options="powerOptions(powerNeedle)"
-              :dropdown-icon="`img:${icons.dropdown}`" @update:model-value="selectedPower" @input-value="filterPowers">
-              <template #option="scope">
-                <q-item v-bind="scope.itemProps">
-                  <q-item-section>
-                    <q-item-label>{{ scope.opt.label }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </template>
-              <template #no-option>
-                <q-item>
-                  <q-item-section class="text-grey">
-                    {{ t('noMessage', { attr: t('powers') }) }}
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
-            <q-btn size="sm" :disable="disable" unelevated flat dense round @click="createPower">
-              <img class="icon" width="24" src="~assets/icons/add.svg" />
-            </q-btn>
-          </div>
-        </template>
-        <template #powers>
-          <D4Power v-for="power in activatedItem.powers"
-            :key="power.valueId || `create_${Math.floor(Math.random() * 1000000)}`" :data="power" editable
-            :disable="disable" @update="updatePower" @remove="removePower" />
-        </template>
         <template #add-property="props">
-          <div class="row no-wrap items-center q-gutter-x-sm">
+          <div class="row no-wrap items-center q-gutter-sm">
             <q-select ref="propertyRef" v-model="propertyId" :disable="disable"
               :popup-content-style="{ 'height': `${props.wrap?.$el.clientHeight / 2}px` }" outlined dense no-error-icon
               use-input hide-bottom-space hide-selected emit-value map-options transition-show="none"
@@ -543,7 +536,7 @@ defineExpose({ create, hideEditable })
                 <q-item v-bind="scope.itemProps">
                   <q-item-section side>
                     <q-icon class="icon"
-                      :class="['regular', 'offensive', 'defensive', 'utility', 'resistance'].includes(scope.opt.type as string) ? 'rotate-45' : ''"
+                      :class="{ 'rotate-45': ['regular', 'offensive', 'defensive', 'utility', 'resistance'].includes(scope.opt.type as string) }"
                       size="14px" :name="`img:${icons[scope.opt.type as keyof typeof icons || 'regular']}`" />
                   </q-item-section>
                   <q-item-section>
@@ -565,12 +558,11 @@ defineExpose({ create, hideEditable })
           </div>
         </template>
         <template #properties>
-          <D4Property v-for="property in activatedItem.properties"
-            :key="property.valueId || `create_${Math.floor(Math.random() * 1000000)}`" :data="property" editable
-            :disable="disable" @update="updateProperty" @remove="removeProperty" />
+          <D4Property v-for="property in activatedItem.properties" :key="property.valueId || nanoid()" :data="property"
+            editable :disable="disable" @update="updateProperty" @remove="removeProperty" />
         </template>
         <template #add-affix="props">
-          <div class="row items-center q-gutter-x-sm">
+          <div class="row items-center q-gutter-sm">
             <q-select ref="affixRef" v-model="affixId" :disable="disable"
               :popup-content-style="{ 'height': `${props.wrap?.$el.clientHeight / 2}px` }" outlined dense no-error-icon
               use-input hide-bottom-space emit-value map-options transition-show="none" transition-hide="none" class="col"
@@ -580,7 +572,7 @@ defineExpose({ create, hideEditable })
                 <q-item v-bind="scope.itemProps">
                   <q-item-section side>
                     <q-icon class="icon"
-                      :class="['regular', 'offensive', 'defensive', 'utility', 'resistance'].includes(scope.opt.type as string) ? 'rotate-45' : ''"
+                      :class="{ 'rotate-45': ['regular', 'offensive', 'defensive', 'utility', 'resistance'].includes(scope.opt.type as string) }"
                       size="14px" :name="`img:${icons[scope.opt.type as keyof typeof icons || 'regular']}`" />
                   </q-item-section>
                   <q-item-section>
@@ -602,24 +594,55 @@ defineExpose({ create, hideEditable })
           </div>
         </template>
         <template #affixes>
-          <D4Affix v-for="affix in activatedItem.affixes"
-            :key="affix.valueId || `create_${Math.floor(Math.random() * 1000000)}`" :data="affix" editable
+          <D4Affix v-for="affix in activatedItem.affixes" :key="affix.valueId || nanoid()" :data="affix" editable
             :disable="disable" @update="updateAffix" @remove="removeAffix" />
+        </template>
+        <template #add-restriction="props">
+          <div class="row items-center q-gutter-sm">
+            <q-select ref="restrictionRef" v-model="restrictId" :disable="disable"
+              :popup-content-style="{ 'height': `${props.wrap?.$el.clientHeight / 2}px` }" outlined dense no-error-icon
+              use-input hide-bottom-space emit-value map-options transition-show="none" transition-hide="none" class="col"
+              :label="t('searchOrSelect')" :options="restrictionOptions(restrictionNeedle)"
+              :dropdown-icon="`img:${icons.dropdown}`" @update:model-value="selectedRestriction"
+              @input-value="filterRestrictions">
+              <template #option="scope">
+                <q-item v-bind="scope.itemProps">
+                  <q-item-section>
+                    <q-item-label>{{ scope.opt.label }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
+              <template #no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    {{ t('noMessage', { attr: t('restrictions') }) }}
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+            <q-btn size="sm" :disable="disable" unelevated flat dense round @click="createRestriction">
+              <img class="icon" width="24" src="~assets/icons/add.svg" />
+            </q-btn>
+          </div>
+        </template>
+        <template #restrictions>
+          <D4Restriction v-for="restriction in activatedItem.restrictions" :key="restriction.valueId || nanoid()"
+            :data="restriction" editable :disable="disable" @update="updateRestriction" @remove="removeRestriction" />
         </template>
         <template #actions>
           <div v-if="activatedItem.authorized || activatedItem.itemId === ''"
-            class="row justify-between items-center q-px-md" :class="$q.screen.lt.sm ? '' : 'q-pt-lg'">
-            <div class="row items-center q-gutter-x-sm">
+            class="row justify-between items-center q-pt-md" :class="{ 'q-pt-lg': !$q.screen.lt.sm }">
+            <div class="row items-center q-gutter-sm">
               <D4Btn v-if="activatedItem.itemId" :label="t('btn.moreActions')" :loading="activatedItem.loading"
                 :disable="disable" color="var(--q-secondary)">
                 <q-icon class="q-ml-xs invert" size="sm" :name="`img:${icons.dropdown}`" />
                 <q-menu fit anchor="bottom middle" self="top middle" auto-close>
-                  <q-item :disable="activatedItem.statusCode === '002'" clickable @click="relistItem">
+                  <q-item :disable="activatedItem.statusCode !== '000'" clickable @click="relistItem">
                     <q-item-section class="text-uppercase">{{ t('btn.relist') }}</q-item-section>
                   </q-item>
-                  <q-item clickable @click="statusItem">
-                    <q-item-section class="text-uppercase">{{ activatedItem.statusCode === '000' ? t('btn.suspend') :
-                      t('btn.resume')
+                  <q-item :disable="!['000', '002'].includes(activatedItem.statusCode)" clickable @click="statusItem">
+                    <q-item-section class="text-uppercase">{{ activatedItem.statusCode === '002' ? t('btn.resume') :
+                      t('btn.suspend')
                     }}</q-item-section>
                   </q-item>
                   <q-item clickable @click="deleteConfirm">
@@ -629,7 +652,7 @@ defineExpose({ create, hideEditable })
                 </q-menu>
               </D4Btn>
             </div>
-            <div class="row items-center q-gutter-x-sm">
+            <div class="row items-center q-gutter-sm">
               <D4Btn :label="t('btn.cancel')" :loading="activatedItem.loading" :disable="disable" color="rgb(150,150,150)"
                 @click="activateShow = false" />
               <D4Btn :label="t('btn.apply')" :loading="activatedItem.loading" :disable="disable" :progress="progress"
@@ -648,11 +671,11 @@ defineExpose({ create, hideEditable })
             </div>
           </q-card-section>
           <q-separator />
-          <q-card-section :class="$q.screen.lt.sm ? 'col' : ''">
+          <q-card-section :class="{ 'col': $q.screen.lt.sm }">
             <div class="column q-gutter-y-sm">
               <div class="row justify-between items-center no-wrap">
-                <q-option-group v-model="add.type" :options="add.types()" :disable="disable" color="primary" size="xs"
-                  inline />
+                <q-option-group v-model="add.type" :options="add.attributeTypes(add.category)" :disable="disable"
+                  color="primary" size="xs" inline />
                 <div v-show="$q.screen.lt.sm" class="col-2 text-right">
                   <D4Btn label="{ x }" :loading="loading" round :disable="disable" color="var(--q-light-normal)"
                     @click="addAttrNum" />
@@ -664,8 +687,9 @@ defineExpose({ create, hideEditable })
             </div>
           </q-card-section>
           <q-separator inset />
-          <q-card-section :class="$q.screen.lt.sm ? 'col-1' : ''">
-            <div class="row justify-end items-center q-gutter-x-sm q-px-md" :class="$q.screen.lt.sm ? '' : 'q-pt-lg'">
+          <q-card-section :class="{ 'col-1': $q.screen.lt.sm }">
+            <div class="row justify-end items-center q-gutter-sm q-px-md q-pt-md"
+              :class="{ 'q-pt-lg': !$q.screen.lt.sm }">
               <D4Btn :label="t('btn.cancel')" :loading="loading" :disable="disable" color="rgb(150,150,150)"
                 @click="add.show = false" />
               <D4Btn :label="t('btn.add')" :loading="loading" :progress="disable" type="submit" />
@@ -675,7 +699,7 @@ defineExpose({ create, hideEditable })
       </q-card>
     </q-dialog>
     <q-dialog v-model="showOffers" @hide="hideOffers" :maximized="$q.screen.lt.sm" transition-show="none"
-      transition-hide="none" :persistent="disableOffers || progressOffer">
+      transition-hide="none" :persistent="disableOffers || progressOffer" :no-route-dismiss="false">
       <q-card class="card-item dialog offers no-scroll normal">
         <div class="inner column no-wrap" :style="$q.screen.lt.sm ? 'height:100%' : 'min-height:50vh;max-height:90vh'">
           <q-card-section class="row justify-end no-padding">
@@ -688,10 +712,12 @@ defineExpose({ create, hideEditable })
               <div class="row items-center q-col-gutter-lg">
                 <q-intersection v-for="offer, idx in (offers as Array<Offer>)" :key="`offers_${idx}`"
                   class="col-12 col-sm-6" transition="fade" once>
-                  <q-card flat bordered class="card-item expanded" :class="offer.statusCode === '003' ? 'unique' : ''">
+                  <q-card flat bordered class="card-item expanded"
+                    :class="{ 'unique': offer.statusCode === '003', 'set': offer.statusCode === '001' }">
                     <div class="inner">
-                      <D4Offer class="offer" :data="offer" :owner="offerItem?.authorized" :disable="disableOffers"
-                        @accept-offer="acceptOffer" />
+                      <D4Offer class="offer" :data="offer" :owner="offerItem?.authorized"
+                        :evaluations="offerItem?.evaluations" :disable="disableOffers" @accept-offer="acceptOffer"
+                        @complete="complete" />
                     </div>
                   </q-card>
                 </q-intersection>
@@ -700,7 +726,7 @@ defineExpose({ create, hideEditable })
                 t('offer.noOffer') }}</div>
             </div>
           </q-card-section>
-          <template v-if="!offerItem?.authorized && as.signed && !offers.find(o => o.statusCode === '003')">
+          <template v-if="isMakingOffer">
             <q-separator />
             <q-card-section>
               <D4Offer :data="makeOffer" make :disable="disableOffers" :progress="progressOffer"

@@ -11,8 +11,11 @@ import dropdown from 'assets/icons/dropdown.svg'
 import close from 'assets/icons/close.svg'
 import alarm from 'assets/icons/alarm.svg'
 import alert from 'assets/icons/alert.svg'
-
+import evaluation from 'assets/icons/evaluation.svg'
 import list from 'assets/icons/list.svg'
+import language from 'assets/icons/language.svg'
+import refresh from 'assets/icons/restore.svg'
+import search from 'assets/icons/search.svg'
 
 import buy from 'assets/icons/buy.svg'
 import sell from 'assets/icons/sell.svg'
@@ -25,8 +28,6 @@ import dark from 'assets/icons/dark.svg'
 
 import login from 'assets/icons/login.svg'
 import logout from 'assets/icons/logout.svg'
-
-import language from 'assets/icons/language.svg'
 
 export const icons = {
   regular,
@@ -44,7 +45,11 @@ export const icons = {
   close,
   alarm,
   alert,
+  evaluation,
   list,
+  language,
+  refresh,
+  search,
   buy,
   sell,
   help,
@@ -52,6 +57,5 @@ export const icons = {
   light,
   dark,
   login,
-  logout,
-  language
+  logout
 }

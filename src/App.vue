@@ -6,7 +6,7 @@ export default {
   preFetch({ store }) {
     const as = useAccountStore(store)
     const is = useItemStore(store)
-    return Promise.all([as.checkSign(), is.getBase(), is.getPowers(), is.getProperties(), is.getAffixes()])
+    return Promise.all([as.checkSign(), as.getEvaluations(), is.getBase(), is.getProperties(), is.getAffixes(), is.getRestrictions()])
   }
 }
 </script>
@@ -70,8 +70,8 @@ onMounted(() => {
           </div>
         </q-card-section>
         <q-separator inset />
-        <q-card-section :class="$q.screen.lt.sm ? 'col-1' : ''">
-          <div class="row justify-end items-center q-gutter-x-sm q-px-md" :class="$q.screen.lt.sm ? '' : 'q-pt-lg'">
+        <q-card-section :class="{ 'col-1': $q.screen.lt.sm }">
+          <div class="row justify-end items-center q-gutter-sm q-px-md" :class="{ 'q-pt-lg': $q.screen.lt.sm }">
             <D4Btn :label="t('btn.apply')" :progress="loading" type="submit" />
           </div>
         </q-card-section>

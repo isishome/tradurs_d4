@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { useItemStore } from 'stores/item-store'
 import { useAccountStore } from 'stores/account-store'
 import { ref, computed, onMounted, watch } from 'vue'
@@ -12,29 +12,29 @@ import { icons } from 'src/common/icons'
 import D4Items from 'components/D4Items.vue'
 
 // init module
-const route = useRoute()
 const router = useRouter()
-const store = useItemStore()
+const is = useItemStore()
 const as = useAccountStore()
 const { t } = useI18n({ useScope: 'global' })
 const $q = useQuasar()
 
-// common variable
-const routeName = computed(() => route.name)
-
 // loading variable
-const loadingPowers = computed<boolean>(() => store.powers.loading)
-const loadingAffixes = computed<boolean>(() => store.affixes.loading)
-const loadingProperties = computed<boolean>(() => store.properties.loading)
+const loadingAffixes = computed<boolean>(() => is.affixes.loading)
+const loadingProperties = computed<boolean>(() => is.properties.loading)
 const disable = ref(true)
 const loading = computed<boolean>(
-  () => loadingPowers.value || loadingProperties.value || loadingAffixes.value || disable.value
+  () => loadingProperties.value || loadingAffixes.value || disable.value
 )
-const newItems = computed(() => store.socket.newItems)
-const newOffer = computed(() => store.socket.newOffer)
-const acceptedOffer = computed(() => store.socket.acceptedOffer)
 
 // variable
+const position = computed(() => as.position)
+const newItems = computed(() => is.socket.newItems)
+const newOffer = computed(() => is.socket.newOffer)
+const acceptedOffer = computed(() => is.socket.acceptedOffer)
+const complete = computed(() => is.socket.complete)
+
+const filter = computed(() => is.filter.request)
+
 const itemsRef = ref<typeof D4Items | null>(null)
 const items = ref<Array<Item>>([])
 
@@ -113,7 +113,7 @@ const updateOnly = (itemId: string) => {
 
   if (findItem) {
     disable.value = true
-    store.getItems(itemId)
+    is.getItems(itemId)
       .then((result: Array<Item>) => {
         if (result.length > 0)
           Object.assign(findItem, result[0])
@@ -128,13 +128,12 @@ const create = () => {
   itemsRef.value?.create()
 }
 
-const getList = (itemId?: string | string[]) => {
-  store.socket.newItems = 0
-  store.socket.newOffer = null
-  store.socket.acceptedOffer = null
+const getList = (filter?: any) => {
+  is.clearSocket()
+  is.filter.loading = true
 
   items.value =
-    Array.from({ length: itemId ? 1 : 4 }, () => {
+    Array.from({ length: 3 }, () => {
       const item = new Item()
       item.loading = true
       item.user.loading = true
@@ -142,14 +141,12 @@ const getList = (itemId?: string | string[]) => {
       return item
     })
 
-  store.getItems(itemId)
+  is.getItems(undefined, filter)
     .then((result: Array<Item>) => {
       let i = 0
       while (i < items.value.length) {
         const item = result.shift()
         if (item) {
-          if (itemId)
-            item.expanded = true
           items.value[i] = item
           i++
         } else {
@@ -158,16 +155,14 @@ const getList = (itemId?: string | string[]) => {
         }
       }
       items.value.push(...result)
+      scrollPos(position.value.top, 'auto')
     }).catch(() => {
       items.value = []
     }).then(() => {
+      is.filter.loading = false
       disable.value = false
     })
 }
-
-watch(() => route.params.itemid, (val: string | string[] | undefined) => {
-  getList(val)
-})
 
 const notify = (group: string, message: string, actionLabel: string, action: Function) => {
   $q.notify({
@@ -183,38 +178,43 @@ const notify = (group: string, message: string, actionLabel: string, action: Fun
   })
 }
 
-watch(() => newItems.value, (val: number) => {
+watch(newItems, (val: number) => {
   if (val > 0)
     notify('newItems', t('messages.newItems', val), t('btn.refresh'), () => {
-      if (route.name !== 'item-list')
-        router.push({ name: 'item-list' })
-      else
-        getList()
+      itemsRef.value?.hideEditable()
+      itemsRef.value?.hideOffers()
+      getList()
     })
 })
 
-watch(() => newOffer.value, (val: string | null) => {
+watch(newOffer, (val: string | null) => {
   if (val)
-    notify('', t('messages.newOffer'), t('btn.move'), () => { router.push({ name: 'item-detail', params: { itemid: val } }) })
+    notify('', t('messages.newOffer'), t('btn.move'), () => {
+      router.push({ name: 'item-detail', params: { itemid: val }, state: { offers: true } })
+    })
 })
 
-watch(() => acceptedOffer.value, (val: { itemName: string, itemId: string } | null) => {
+watch(acceptedOffer, (val: { itemName: string, itemId: string } | null) => {
   if (val)
-    notify('', t('messages.acceptedOffer', { in: val.itemName }), t('btn.move'), () => { router.push({ name: 'item-detail', params: { itemid: val.itemId } }) })
+    notify('', t('messages.acceptedOffer', { in: val.itemName }), t('btn.move'), () => { router.push({ name: 'item-detail', params: { itemid: val.itemId }, state: { offers: true } }) })
+})
+
+watch(complete, (val: { itemName: string, itemId: string } | null) => {
+  if (val)
+    notify('', t('messages.complete', { in: val.itemName }), t('btn.move'), () => { router.push({ name: 'item-detail', params: { itemid: val.itemId }, state: { offers: true } }) })
+})
+
+watch(filter, (val, old) => {
+  if (Number.isInteger(val) && val !== old)
+    getList(is.filter)
 })
 
 onMounted(() => {
-  getList(route.params.itemid)
+  getList()
 })
 </script>
-
 <template>
-  <D4Btn v-if="routeName === 'item-detail'" round :to="{ name: 'item-list' }" class="sticky" color="var(--q-light-normal)"
-    shadow>
-    <img :src="icons.list" height="20" class="invert" />
-  </D4Btn>
-  <D4Btn v-if="as.signed && routeName === 'item-list'" round @click="create" class="sticky" color="var(--q-secondary)"
-    :disable="disable" shadow>
+  <D4Btn v-if="as.signed" round @click="create" class="sticky" color="var(--q-secondary)" :disable="disable" shadow>
     <img :src="icons.add" height="24" class="invert" />
   </D4Btn>
   <div>

@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import type { Property } from 'stores/item-store'
-import { useItemStore } from 'stores/item-store'
-import { icons } from 'src/common/icons'
+import { QInput } from 'quasar'
+import { useItemStore, type Restriction } from 'stores/item-store'
 import { parse, focus } from 'src/common'
 
 const props = defineProps({
@@ -24,42 +23,39 @@ const emit = defineEmits(['update', 'remove'])
 
 const store = useItemStore()
 
-const properties = computed<Array<Property>>(() => store.properties.data)
-const findProperty = properties.value.find(p => p.value === props.data.propertyId)
-const propertyInfo = ref(parse(findProperty?.label, props.data.propertyValues))
+const restrictions = computed<Array<Restriction>>(() => store.restrictions.data)
+const findRestriction = restrictions.value.find(r => r.value === props.data.restrictId)
+const restrictionInfo = ref(parse(findRestriction?.label, props.data.restrictValues))
+
 const update = (): void => {
-  emit('update', { valueId: props.data.valueId, propertyValues: propertyInfo.value.filter(i => i.type === 'variable').map(i => parseInt(i.value.toString())) })
+  emit('update', { valueId: props.data.valueId, restrictValues: restrictionInfo.value.filter(i => i.type === 'variable').map(i => parseInt(i.value.toString())) })
 }
 
-const remove = () => {
+const remove = (): void => {
   emit('remove', { valueId: props.data.valueId })
 }
 
-watch(() => props.data, () => {
-  propertyInfo.value = parse(findProperty?.label, props.data.propertyValues)
+watch(() => props.data, (val) => {
+  restrictionInfo.value = parse(findRestriction?.label, val.restrictValues)
 })
 </script>
 
 <template>
   <div class="row items-center">
     <div class="row no-wrap q-gutter-xs" :class="{ disable }" :data-id="data.valueId">
-      <div>
-        <q-icon class="icon"
-          :class="{ 'rotate-45': ['regular', 'offensive', 'defensive', 'utility', 'resistance'].includes(findProperty?.type as string) }"
-          size="13px" :name="`img:${icons[findProperty?.type as keyof typeof icons || 'regular']}`" />
-      </div>
       <div class="row items-center q-gutter-xs">
-        <template v-for="(comp, k) in propertyInfo" :key="k">
+        <template v-for="comp, k in restrictionInfo" :key="k">
           <template v-if="comp.type === 'text'">
             <div v-for="(word, i) in (comp.value as string).split(/\s+/g).filter(w => w !== '')" :key="i">{{ word }}
             </div>
           </template>
           <div v-else-if="!editable && comp.type === 'variable'">{{ comp.value }}</div>
-          <q-input v-else class="var" input-class="text-center text-caption no-padding" dense hide-bottom-space hide-hint
-            no-error-icon outlined v-model="comp.value" type="tel" maxlength="3" mask="###" debounce="500"
+          <q-input v-else ref="ai" class="var" input-class="text-center text-caption no-padding" dense hide-bottom-space
+            hide-hint no-error-icon outlined v-model="comp.value" type="tel" maxlength="3" mask="###" debounce="500"
             :disable="disable" :rules="[val => !disable && Number.isInteger(parseInt(val)) || '']"
             @update:model-value="update" @focus="focus" />
         </template>
+
       </div>
     </div>
     <q-btn v-show="editable" :disable="disable" dense unelevated flat round size="xs" class="q-ml-sm" @click="remove">
@@ -72,7 +68,7 @@ watch(() => props.data, () => {
 .disable {
   user-select: none;
   pointer-events: none;
-  opacity: .5;
+  opacity: .3;
   position: relative;
 }
 

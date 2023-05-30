@@ -53,20 +53,28 @@ export const parse = (label: string | undefined, value?: Array<number>): Array<A
     return []
 }
 
-export const scrollPos = (top?: number) => {
+export const scrollPos = (top?: number, behavior?: ScrollBehavior) => {
   nextTick(() => {
-    window.scrollTo({ top: top || 0, behavior: 'smooth' })
+    window.scrollTo({ top: top || 0, behavior: (behavior || 'smooth') })
   })
 }
 
 export const clipboard = (text: string) => {
+  if (!text || text.trim() === '')
+    return
+
   copyToClipboard(text)
     .then(() => {
       Notify.create({
-        message: i18n.global.t('messages.clipboard', { t: i18n.global.t('battlenet.tag') })
+        message: i18n.global.t('messages.clipboard', { t: i18n.global.t('user.battleTag') })
       })
     })
     .catch(() => {
       // fail
     })
+}
+
+export const focus = (evt: Event) => {
+  const el: HTMLInputElement | null = (evt.target as Element)?.closest('input')
+  el?.select()
 }

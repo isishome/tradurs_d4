@@ -97,16 +97,16 @@ onUnmounted(() => {
       class="row justify-end no-scroll" :width="300">
       <q-list class="column full-height" style="width:300px">
         <q-scroll-area class="col">
-          <D4Filter class="q-pa-lg" />
+          <D4Filter :disable="$route.name !== 'item-list'" class="q-pa-lg" />
         </q-scroll-area>
       </q-list>
     </q-drawer>
     <q-drawer show-if-above bordered v-model="rightDrawerOpen" side="right" behavior="mobile"
       class="row justify-start scroll" :width="300">
       <q-list class="column full-height" style="width:300px">
-        <q-item class="row justify-end q-gutter-x-sm q-pa-lg">
+        <q-item class="row justify-end q-gutter-sm q-pa-lg">
           <q-select v-model="locale" :options="localeOptions" :label="t('language', 0, { locale: brLoc })" dense outlined
-            emit-value map-options options-dense style="min-width: 150px" @update:model-value="setLang" />
+            behavior="menu" emit-value map-options options-dense style="min-width: 150px" @update:model-value="setLang" />
           <q-btn round flat :ripple="!$q.dark.isActive" @click="setDark">
             <img v-show="$q.dark.isActive" class="icon" width="24" :src="icons.light" />
             <img v-show="!$q.dark.isActive" class="icon" width="24" :src="icons.dark" />
@@ -141,19 +141,19 @@ onUnmounted(() => {
           </q-btn>
           <q-tabs dense no-caps class="gt-sm q-px-md bg-transparent no-hover nav">
             <q-route-tab :ripple="!$q.dark.isActive" :label="t('trade')" :to="{ path: '/' }" />
-            <q-route-tab :ripple="!$q.dark.isActive" :label="t('message')" :to="{ path: '/message' }">
-              <q-badge v-show="badge" floating color="red" rounded />
-            </q-route-tab>
+            <!-- <q-route-tab :ripple="!$q.dark.isActive" :label="t('message')" :to="{ path: '/message' }">
+                    <q-badge v-show="badge" floating color="red" rounded />
+                  </q-route-tab> -->
           </q-tabs>
         </div>
-        <div class="lt-md col-lg-3 col-4 row justify-end q-gutter-x-sm">
+        <div class="lt-md col-lg-3 col-4 row justify-end q-gutter-sm">
           <q-btn round flat :ripple="!$q.dark.isActive" @click="rightDrawerOpen = !rightDrawerOpen">
             <img class="icon" width="24" :src="icons.morevert" />
           </q-btn>
         </div>
-        <div class="gt-sm col-lg-3 col-4 row justify-end q-gutter-x-sm">
+        <div class="gt-sm col-lg-3 col-4 row justify-end q-gutter-sm">
           <q-select v-model="locale" :options="localeOptions" :label="t('language', 0, { locale: brLoc })" dense outlined
-            emit-value map-options options-dense style="min-width: 150px" @update:model-value="setLang" />
+            behavior="menu" emit-value map-options options-dense style="min-width: 150px" @update:model-value="setLang" />
           <q-btn round flat :ripple="!$q.dark.isActive" @click="setDark">
             <img v-show="$q.dark.isActive" class="icon" width="24" :src="icons.light" />
             <img v-show="!$q.dark.isActive" class="icon" width="24" :src="icons.dark" />
@@ -178,7 +178,7 @@ onUnmounted(() => {
               :data-adtest="prod ? 'off' : 'on'" :key="key"></ins>
             <q-separator />
             <div class="q-pt-lg">
-              <div class="row justify-center items-center q-gutter-x-xs text-caption bottom">
+              <div class="row justify-center items-center q-gutter-xs text-caption bottom">
                 <div>Copyright</div>
                 <div>@</div>
                 <div>2022</div>

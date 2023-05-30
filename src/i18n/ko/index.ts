@@ -1,7 +1,6 @@
 export default {
   language: '언어',
   battlenet: {
-    tag: 'BattleTag™',
     title: 'BattleTag™ 입력',
     msg1: '',
     msg2: '의 정상적인 서비스 이용을 위해 Battle.net 에서 사용하는 BattleTag™를 입력해야 합니다.',
@@ -15,7 +14,9 @@ export default {
   ladder: '래더',
   seller: '판매자',
   offerer: '제안자',
-  sellerHelp: {
+  user: {
+    battleTag: 'BattleTag™',
+    temperature: '매너 온도',
     sh1: '거래가 ',
     sh2: '완료',
     sh3: '되지 않거나 사용자와 거래가 ',
@@ -24,9 +25,10 @@ export default {
   },
   searchOrSelect: '검색 / 선택',
   noMessage: '입력 한 텍스트와 매칭되는 {attr}을 찾을 수 없습니다',
-  powers: '능력',
-  properties: '특성',
+  power: '능력',
+  properties: '고유 특성',
   affixes: '옵션',
+  restrictions: '제약 조건',
   deleteItem: {
     title: '아이템 삭제',
     message: '해당 아이템을 삭제할까요?'
@@ -56,7 +58,10 @@ export default {
     makeOffer: '제안하기',
     offer: '제안',
     refresh: '새로고침',
-    move: '이동'
+    move: '이동',
+    complete: '완료 처리',
+    submit: '제출하기',
+    resetSearch: '검색 초기화'
   },
   attribute: {
     add: '{attr} 추가',
@@ -66,10 +71,14 @@ export default {
     exists: '이미 존재하는 {attr} 입니다'
   },
   item: {
+    quality: '아이템 등급',
     selectType: '아이템 유형',
     selectClass: '장비 클래스',
     selectRune: '룬 선택',
-    name: '아이템 명'
+    name: '아이템 명',
+    power: '아이템 능력 {p}',
+    upgrade: '아이템 레벨: {u}/{ul}',
+    gold: '금화'
   },
   price: {
     currency: '화폐 유형',
@@ -91,10 +100,20 @@ export default {
     msg5: '자동으로 완료 처리',
     msg6: '됩니다.'
   },
+  complete: {
+    title: '매너 평가',
+    message: '거래를 진행 한 상대는 어떠셨나요?',
+    evaluate: '상대는 나를 이렇게 평가했어요'
+  },
   messages: {
     newItems: '새로운 아이템이 등록되었습니다 ({n})',
     newOffer: '내 아이템에 새 제안이 등록되었습니다',
     acceptedOffer: '내 제안이 수락되었습니다 ({in})',
-    clipboard: '{t}가 클립보드로 복사되었습니다'
+    clipboard: '{t}가 클립보드로 복사되었습니다',
+    complete: '아이템 거래가 완료되었습니다 ({in})'
+  },
+  notFound: {
+    message: '페이지를 찾을 수 없습니다',
+    gotoMain: '메인 페이지로'
   }
 }

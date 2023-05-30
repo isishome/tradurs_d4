@@ -50,19 +50,19 @@ const click = () => {
 </script>
 
 <template>
-  <div :class="disable ? 'disable' : ''" class="no-pointer-events inline-block">
+  <div :class="{ disable }" class="no-pointer-events inline-block">
     <q-skeleton v-show="loading" :type="$q.dark.isActive ? 'rect' : 'QChip'"
       :width="`${label ? label.length * textWidth + padding : 0}px`" :height="`${textHeight}px`"
-      class="btn all-pointer-events" :class="[round ? 'round' : '']" />
-    <div v-show="!loading" class="btn-wrap" :class="round ? '' : 'frame'">
+      class="btn all-pointer-events" :class="{ round }" />
+    <div v-show="!loading" class="btn-wrap" :class="{ 'frame': !round }">
       <button :type="type" class="btn row items-center no-wrap all-pointer-events"
-        :class="[round ? 'round' : '', shadow ? `shadow-depth-${shadowDepth}` : '', props.progress ? 'progress' : 'cursor-pointer']"
+        :class="[{ round }, shadow ? `shadow-depth-${shadowDepth}` : '', props.progress ? 'progress' : 'cursor-pointer']"
         :style="`${bg}${tc}`" @click="click">
         <div class="label relative-position">
           <div v-show="progress" class="fit absolute-center" :style="`z-index: 1;`">
             <q-spinner />
           </div>
-          <div class="text-uppercase" :class="progress ? 'text-transparent' : ''">
+          <div class="text-uppercase" :class="{ 'text-transparent': progress }">
             {{ label }}
           </div>
         </div>
@@ -139,7 +139,7 @@ const click = () => {
   border-radius: 28px;
 }
 
-.btn-wrap:active:deep(.btn:not(.progress)) {
+.btn-wrap:active:has(.btn:not(.progress)) {
   transform: translateY(1px);
 }
 

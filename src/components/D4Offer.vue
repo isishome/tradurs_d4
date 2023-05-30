@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { reactive, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useQuasar } from 'quasar'
 import { Offer, type Price } from 'src/types/item'
+import { useAccountStore } from 'src/stores/account-store'
+import { useItemStore } from 'src/stores/item-store'
 import { icons } from 'src/common/icons'
-import { clipboard } from 'src/common'
 
 import D4User from 'components/D4User.vue'
 import D4Price from 'components/D4Price.vue'
@@ -14,20 +15,24 @@ interface IProps {
   make?: boolean,
   disable?: boolean,
   progress?: boolean,
-  owner?: boolean
+  owner?: boolean,
+  evaluations?: Array<number>
 }
 
 const props = withDefaults(defineProps<IProps>(), {
   make: false,
   disable: false,
   progress: false,
-  owner: false
+  owner: false,
+  evaluations: () => []
 })
 
-const emit = defineEmits(['make-offer', 'accept-offer'])
+const emit = defineEmits(['make-offer', 'accept-offer', 'complete'])
 
 const { t } = useI18n({ useScope: 'global' })
 const $q = useQuasar()
+const as = useAccountStore()
+const is = useItemStore()
 
 const _offer = reactive<Offer>(JSON.parse(JSON.stringify(props.data)))
 
@@ -57,37 +62,32 @@ const acceptOffer = () => {
   })
 }
 
-const ownerComplete = () => {
+const complete = () => {
   $q.dialog({
-    title: t('accept.title'),
-    message: `<div class="text-subtitle1">${t('accept.msg1')}</div><div class="q-mt-xs text-caption">${t('accept.msg2')}<strong class="text-negative">${t('accept.msg3')}</strong>${t('accept.msg4')}<strong class="text-negative">${t('accept.msg5')}</strong>${t('accept.msg6')}</div>`,
-    html: true,
+    title: t('complete.title'),
+    message: t('complete.message'),
+    options: {
+      color: 'primary',
+      type: 'checkbox',
+      model: [],
+      // inline: true
+      items: as.filterEvaluations()
+    },
     persistent: true,
     cancel: { label: t('btn.cancel'), color: 'grey', outline: true },
-    ok: { label: t('btn.accept'), color: 'primary', unelevated: true, class: 'text-weight-bold invert-icon' },
+    ok: { label: t('btn.submit'), color: 'primary', unelevated: true, class: 'text-weight-bold invert-icon' },
     transitionShow: 'none',
     transitionHide: 'none',
     class: 'q-pa-sm'
-  }).onOk(() => {
-    emit('accept-offer', props.data)
+  }).onOk((data) => {
+    emit('complete', data)
   })
 }
 
-const offererComplete = () => {
-  $q.dialog({
-    title: t('accept.title'),
-    message: `<div class="text-subtitle1">${t('accept.msg1')}</div><div class="q-mt-xs text-caption">${t('accept.msg2')}<strong class="text-negative">${t('accept.msg3')}</strong>${t('accept.msg4')}<strong class="text-negative">${t('accept.msg5')}</strong>${t('accept.msg6')}</div>`,
-    html: true,
-    persistent: true,
-    cancel: { label: t('btn.cancel'), color: 'grey', outline: true },
-    ok: { label: t('btn.accept'), color: 'primary', unelevated: true, class: 'text-weight-bold invert-icon' },
-    transitionShow: 'none',
-    transitionHide: 'none',
-    class: 'q-pa-sm'
-  }).onOk(() => {
-    emit('accept-offer', props.data)
-  })
-}
+const isAcceptable = computed(() => props.data.itemStatusCode === '000' && props.owner)
+const isTradeable = computed(() => props.data.statusCode === '003' && ((props.data.itemStatusCode === '003' && props.owner && props.evaluations.length === 0) || (props.data.authorized && props.data.evaluations.length === 0)))
+const existsEvaluation = computed(() => props.evaluations.length > 0 || props.data.evaluations.length > 0)
+const status = computed(() => is.findOfferStatus(props.data.statusCode)?.label)
 
 </script>
 
@@ -98,46 +98,43 @@ const offererComplete = () => {
     </div>
     <D4Btn :label="t('btn.offer')" :loading="data.loading" :disable="disable" :progress="progress" type="submit" />
   </q-form>
-  <q-item v-else dense>
-    <q-item-section class="q-gutter-xs">
-      <D4User :data="data.user" :disable="disable">
-        <template #battleTag>
-          <div class="row items-center q-gutter-xs">
-            <div :class="[data.authorized ? 'authorized' : '', data.user.battleTag !== '' ? 'allow-copy' : '']"
-              @click="clipboard(data.user.battleTag)">
-              {{ data.user.battleTag === '' ? t('offerer') : data.user.battleTag }}
-            </div>
-            <q-icon v-show="data.user.battleTag === ''" class="icon" :name="`img:${icons.help}`" size="19px">
-              <q-tooltip :class="$q.dark.isActive ? 'bg-grey-4 text-grey-9' : 'bg-grey-9 text-grey-4'"
-                anchor="center right" self="center left" :offset="[10, 0]" transition-hide="jump-right"
-                transition-show="jump-left">
-                <div class="break-keep text-caption" style="max-width:160px;">
-                  {{ t('sellerHelp.sh1') }}
-                  <span class="underline text-weight-bold">{{ t('sellerHelp.sh2') }}</span>
-                  {{ t('sellerHelp.sh3') }}
-                  <span class="underline text-weight-bold">{{ t('sellerHelp.sh4') }}</span>
-                  {{ t('sellerHelp.sh5') }}
-                </div>
-              </q-tooltip>
-            </q-icon>
-          </div>
-        </template>
-      </D4User>
-      <div>
+  <q-item v-else>
+    <q-item-section>
+      <q-item-label>
         <D4Price :data="data.price" :disable="disable" />
-      </div>
+      </q-item-label>
+      <q-item-label caption>
+        <D4User :data="data.user" :label="t('offerer')" :disable="disable" :authorized="data.authorized" />
+      </q-item-label>
     </q-item-section>
     <q-item-section side>
-      <D4Btn v-if="data.statusCode === '000' && owner" :label="t('btn.accept')" color="var(--q-secondary)"
-        :loading="data.loading" :disable="disable" :progress="progress" @click="acceptOffer" />
-      <D4Btn v-else-if="data.statusCode === '003' && owner" label="완료" color="var(--q-primary)" :loading="data.loading"
-        :disable="disable" :progress="progress" @click="ownerComplete" />
-      <D4Btn v-else-if="data.statusCode === '003' && data.authorized" label="완료" color="var(--q-primary)"
-        :loading="data.loading" :disable="disable" :progress="progress" @click="offererComplete" />
-      <div v-else-if="data.statusCode === '003'">거래 중</div>
-      <!-- <div class="text-center text-primary text-weight-bold" style="min-width:80px">
-                                                                        {{ t('offer.accepted') }}
-                                                                      </div> -->
+      <D4Btn v-if="isAcceptable" :label="t('btn.accept')" color="var(--q-secondary)" :loading="data.loading"
+        :disable="disable" :progress="progress" @click="acceptOffer" />
+      <D4Btn v-else-if="isTradeable" :label="t('btn.complete')" color="var(--q-primary)" :loading="data.loading"
+        :disable="disable" :progress="progress" @click="complete" />
+      <div v-else class="row items-start q-col-gutter-xs">
+        <div>{{ status }}
+        </div>
+        <q-icon v-if="existsEvaluation" class="icon" :name="`img:${icons.evaluation}`" size="19px">
+          <q-tooltip :class="['q-pa-md', $q.dark.isActive ? 'bg-grey-4 text-grey-9' : 'bg-grey-9 text-grey-4']"
+            anchor="center right" self="center left" :offset="[10, 0]" transition-hide="jump-right"
+            transition-show="jump-left">
+            <div class="text-overline text-weight-bold">
+              {{ t('complete.evaluate') }}
+            </div>
+            <div class="break-keep text-caption">
+              <ul class="evaluation">
+                <li v-for="evaluation, idx of as.filterEvaluations(evaluations)" :key="idx">
+                  {{ evaluation.label }}
+                </li>
+                <li v-for="evaluation, idx of as.filterEvaluations(data.evaluations)" :key="idx">
+                  {{ evaluation.label }}
+                </li>
+              </ul>
+            </div>
+          </q-tooltip>
+        </q-icon>
+      </div>
     </q-item-section>
   </q-item>
 </template>
@@ -145,5 +142,10 @@ const offererComplete = () => {
 <style scoped>
 .coin {
   filter: invert(65%) sepia(69%) saturate(606%) hue-rotate(3deg) brightness(110%) contrast(102%);
+}
+
+.evaluation {
+  list-style-position: inside;
+  padding-left: 0;
 }
 </style>

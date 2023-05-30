@@ -11,11 +11,6 @@ export interface Attribute {
   restore?: number
 }
 
-export interface Power extends Attribute {
-  powerId: number,
-  powerValues: Array<number>
-}
-
 export interface Property extends Attribute {
   propertyId: number,
   propertyValues: Array<number>
@@ -26,9 +21,14 @@ export interface Affix extends Attribute {
   affixValues: Array<number>
 }
 
+export interface Restriction extends Attribute {
+  restrictId: number,
+  restrictValues: Array<number>
+}
+
 export interface IPrice {
   currency: string | null,
-  currencyValue: string | null,
+  currencyValue: string | number | null,
   quantity: number
 }
 
@@ -41,17 +41,19 @@ export interface IItem {
   quantity: number,
   quality: string,
   itemType: string,
-  itemTypeValues: Array<number>,
   equipmentClass: string,
   runeId: string,
-  powers: Array<Power>,
+  power: number,
+  upgrade: number,
   properties: Array<Property>,
   affixes: Array<Affix>,
+  restrictions: Array<Restriction>,
   price: Price,
   relistCount: number,
   authorized: boolean,
   user: User,
   offers: Array<Offer>,
+  evaluations: Array<number>,
   editable: boolean,
   action: number,
   loading: boolean,
@@ -66,13 +68,13 @@ export interface IItem {
 
 export class Price implements IPrice {
   public currency: string
-  public currencyValue: string | null
+  public currencyValue: string | number | null
   public quantity: number
   public loading = false
 
-  constructor(currency?: string, currencyValue?: string | null, quantity?: number) {
+  constructor(currency?: string, currencyValue?: string | number | null, quantity?: number) {
     this.currency = currency || 'rune'
-    this.currencyValue = currencyValue || 'eld'
+    this.currencyValue = this.currency === 'rune' ? 'eld' : currencyValue || null
     this.quantity = quantity || 1
   }
 }
@@ -85,18 +87,20 @@ export class Item implements IItem {
   public name = ''
   public quantity = 1
   public quality = 'normal'
-  public itemType = 'weapons'
-  public itemTypeValues: Array<number> = []
-  public equipmentClass = 'axes'
+  public itemType = ''
+  public equipmentClass = ''
   public runeId = ''
-  public powers: Array<Power> = []
+  public power = 0
+  public upgrade = 0
   public properties: Array<Property> = []
   public affixes: Array<Affix> = []
+  public restrictions: Array<Restriction> = []
   public price: Price = new Price()
   public relistCount = 0
   public authorized = false
   public user: User = new User()
   public offers: Array<Offer> = []
+  public evaluations: Array<number> = []
   public editable = false
   public action = 0
   public loading = false
@@ -159,6 +163,7 @@ export class Offer {
   public itemId: string
   public itemStatusCode: string
   public statusCode: string
+  public evaluations = []
   public user: User
   public price: Price
   public authorized = false
@@ -169,6 +174,7 @@ export class Offer {
     this.itemId = itemId || ''
     this.itemStatusCode = itemStatusCode || '000'
     this.statusCode = statusCode || '000'
+
     this.user = new User()
     this.price = new Price()
   }

@@ -45,6 +45,10 @@ const initSocket = (as: any, is: any) => {
     is.socket.acceptedOffer = data
   })
 
+  as.socket.on('complete', (data: { itemName: string, itemId: string }) => {
+    is.socket.complete = data
+  })
+
   as.socket.on('badge', () => {
     as.badge = true
   })
@@ -57,12 +61,13 @@ export default route(function ({ store }/* { store, ssrContext } */) {
 
   const Router = createRouter({
     scrollBehavior(to, from, savedPosition) {
-      let result = {}
+      const as = useAccountStore(store)
+      let result = { left: 0, top: 0 }
 
       if (savedPosition)
         result = savedPosition
 
-      return result
+      as.position = result
     },
     routes,
 

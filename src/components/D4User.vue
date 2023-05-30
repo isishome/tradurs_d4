@@ -1,30 +1,40 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useQuasar } from 'quasar'
+import { useI18n } from 'vue-i18n'
 import { User } from 'src/types/user'
-import Avatar from 'src/assets/avatar/avatar.webp'
+import { clipboard } from 'src/common'
+import { icons } from 'src/common/icons'
 
 interface IProps {
   data: User,
-  type?: string,
+  label: string,
+  authorized?: boolean,
   editable?: boolean,
-  disable?: boolean
+  disable?: boolean,
+  progress?: boolean
 }
 
 const props = withDefaults(defineProps<IProps>(), {
   data: () => new User(),
-  type: 'column',
+  authorized: false,
   editable: false,
-  disable: false
+  disable: false,
+  progress: false
 })
 
 const $q = useQuasar()
+const { t } = useI18n({ useScope: 'global' })
 
-// about size
-const avatarSize = computed(() => props.type === 'row' ? 24 : $q.screen.width > 600 ? 48 : 36)
-const btWidth = computed(() => $q.screen.width > 600 ? '80px' : '70px')
-const btHeight = computed(() => $q.screen.width > 600 ? '18px' : '14px')
-const textSize = computed(() => props.type === 'row' ? 'text-caption' : $q.screen.width > 600 ? 'text-body2' : 'text-caption')
+const loading = computed(() => props.data.loading || props.progress)
+const allowCopy = computed(() => !props.authorized && props.data.battleTag !== '')
+
+const copy = (battleTag: string) => {
+  if (!allowCopy.value)
+    return
+
+  clipboard(battleTag)
+}
 
 </script>
 
@@ -32,23 +42,25 @@ const textSize = computed(() => props.type === 'row' ? 'text-caption' : $q.scree
   <div v-if="editable">
   </div>
   <div v-else>
-    <div class="q-gutter-xs" :class="type === 'row' ? 'row no-wrap items-center' : 'column items-start'">
-      <!-- <div>
-              <q-skeleton v-show="loading" type="rect" :size="`${avatarSize}px`" />
-              <q-avatar v-show="!loading" rounded class="text-uppercase" :size="`${avatarSize}px`">
-                <div class="avatar" :style="`background-position: -${avatarSize * data.avatar}px`"></div>
-              </q-avatar>
-            </div> -->
-      <div>
-        <q-skeleton v-show="data.loading" type="rect" :width="btWidth" :height="btHeight" />
-        <div v-show="!data.loading" :class="textSize">
-          <slot v-if="$slots.battleTag" name="battleTag"></slot>
-          <template v-else>
-
-            {{ data.battleTag }}
-          </template>
-        </div>
+    <q-skeleton v-show="loading" width="100px" :height="$q.screen.lt.sm ? '16px' : '18px'" />
+    <div v-show="!loading" class="row items-center q-gutter-xs">
+      <div :class="{ 'authorized': authorized, 'allow-copy': allowCopy }" @click="copy(data.battleTag)">
+        {{ data.battleTag === '' ? label : data.battleTag }}
       </div>
+      <q-icon class="icon" :name="`img:${icons.help}`" size="19px">
+        <q-tooltip :class="['q-pa-md', $q.dark.isActive ? 'bg-grey-4 text-grey-9' : 'bg-grey-9 text-grey-4']"
+          anchor="center right" self="center left" :offset="[10, 0]" transition-hide="jump-right"
+          transition-show="jump-left">
+          <div class="text-overline text-weight-bold">{{ t('user.temperature') }} : {{ data.temperature }}&#8451</div>
+          <div class="break-keep text-caption" style="max-width:160px;">
+            {{ t('user.sh1') }}
+            <span class="underline text-weight-bold">{{ t('user.sh2') }}</span>
+            {{ t('user.sh3') }}
+            <span class="underline text-weight-bold">{{ t('user.sh4') }}</span>
+            {{ t('user.sh5') }}
+          </div>
+        </q-tooltip>
+      </q-icon>
     </div>
   </div>
 </template>
