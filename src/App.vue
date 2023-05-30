@@ -6,7 +6,7 @@ export default {
   preFetch({ store }) {
     const as = useAccountStore(store)
     const is = useItemStore(store)
-    return Promise.all([as.checkSign(), as.getEvaluations(), is.getBase(), is.getProperties(), is.getAffixes(), is.getRestrictions()])
+    return Promise.all([as.getEvaluations(), is.getBase(), is.getProperties(), is.getAffixes(), is.getRestrictions()])
   }
 }
 </script>
@@ -38,6 +38,9 @@ const updateBattleTag = () => {
 
 onMounted(() => {
   view.value = true
+  as.checkSign().then(() => {
+    as.initSocket()
+  })
 })
 </script>
 
