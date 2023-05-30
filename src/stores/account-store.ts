@@ -30,14 +30,21 @@ export const useAccountStore = defineStore('account', {
   },
   actions: {
     async checkSign() {
-      if (this.signed === null) {
-        try {
-          const response = await api.get('/account/signed')
-          this.info = response.data
-          this.signed = typeof (response.data.id) !== 'undefined'
+      return new Promise<void>((resolve, reject) => {
+        if (this.signed === null) {
+          api.get('/account/signed')
+            .then((response) => {
+              this.info = response.data
+              this.signed = typeof (response.data.id) !== 'undefined'
+              resolve()
+            })
+            .catch(() => {
+              reject()
+            })
         }
-        catch { }
-      }
+
+        resolve()
+      })
     },
     sign() {
       return new Promise<boolean>(resolve => {

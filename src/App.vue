@@ -3,10 +3,10 @@ import { useAccountStore } from 'stores/account-store'
 import { useItemStore } from 'stores/item-store'
 
 export default {
-  preFetch({ store }) {
+  async preFetch({ store }) {
     const as = useAccountStore(store)
     const is = useItemStore(store)
-    return Promise.all([as.checkSign(), as.getEvaluations(), is.getBase(), is.getProperties(), is.getAffixes(), is.getRestrictions()])
+    await Promise.all([as.checkSign(), as.getEvaluations(), is.getBase(), is.getProperties(), is.getAffixes(), is.getRestrictions()])
   }
 }
 </script>
