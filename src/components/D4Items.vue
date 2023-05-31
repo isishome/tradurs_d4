@@ -688,9 +688,8 @@ defineExpose({ create, hideEditable, openOffers, hideOffers })
             </div>
           </q-card-section>
           <q-separator inset />
-          <q-card-section :class="{ 'col-1': $q.screen.lt.sm }">
-            <div class="row justify-end items-center q-gutter-sm q-px-md q-pt-md"
-              :class="{ 'q-pt-lg': !$q.screen.lt.sm }">
+          <q-card-section>
+            <div class="row justify-end items-center q-gutter-sm q-pa-md" :class="{ 'q-pt-lg': !$q.screen.lt.sm }">
               <D4Btn :label="t('btn.cancel')" :loading="loading" :disable="disable" color="rgb(150,150,150)"
                 @click="add.show = false" />
               <D4Btn :label="t('btn.add')" :loading="loading" :progress="disable" type="submit" />
