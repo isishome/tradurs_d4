@@ -332,6 +332,7 @@ defineExpose({ scrollEnd })
     :class="[{ 'expanded': data.expanded }, data.quality, `status-${data.statusCode}`]">
     <div class="inner">
       <q-card-section class="relative-position">
+        <q-img v-show="!loading" :src="itemImage" class="item-image" />
         <div class="column justify-center items-end q-gutter-xs user-area">
           <q-skeleton v-show="loading" width="50px" :height="$q.screen.lt.sm ? '16px' : '18px'" />
           <div v-show="!loading">{{
@@ -342,7 +343,6 @@ defineExpose({ scrollEnd })
           <D4Price :data="data.price" :progress="loading" />
           <D4User :data="data.user" :label="t('seller')" :disable="disable" :progress="loading"
             :authorized="data.authorized" />
-          <q-img v-show="!loading" :src="itemImage" class="item-image" />
         </div>
         <div class="row justify-beween items-start q-px-sm">
           <div class="col relative-position q-gutter-y-xs" :class="{ 'q-py-sm': !$q.screen.lt.sm }">
