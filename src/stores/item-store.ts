@@ -303,7 +303,8 @@ export const useItemStore = defineStore('item', {
       return new Promise<Array<Item>>((resolve, reject) => {
         api.get('/d4/item', { params: { itemId: itemId, filter } })
           .then(async (response) => {
-            await sleep(timeout)
+            if (filter)
+              await sleep(1000)
             resolve(response.data)
           })
           .catch((e) => {

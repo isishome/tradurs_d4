@@ -142,8 +142,8 @@ onUnmounted(() => {
           <q-tabs dense no-caps class="gt-sm q-px-md bg-transparent no-hover nav">
             <q-route-tab :ripple="!$q.dark.isActive" :label="t('trade')" :to="{ path: '/' }" />
             <!-- <q-route-tab :ripple="!$q.dark.isActive" :label="t('message')" :to="{ path: '/message' }">
-                              <q-badge v-show="badge" floating color="red" rounded />
-                            </q-route-tab> -->
+                                      <q-badge v-show="badge" floating color="red" rounded />
+                                    </q-route-tab> -->
           </q-tabs>
         </div>
         <div class="lt-md col-lg-3 col-4 row justify-end q-gutter-sm">
@@ -181,8 +181,9 @@ onUnmounted(() => {
               <div class="row justify-center items-center q-gutter-xs text-caption bottom">
                 <div>Copyright</div>
                 <div>@</div>
-                <div>2022</div>
-                <div>SeraSome</div>
+                <div>2023</div>
+                <q-btn class="no-hover" no-caps flat dense padding="0" :ripple="false" href="https://serasome.com"
+                  target="_blank" rel="noopener noreferrer">SeraSome</q-btn>
               </div>
             </div>
           </div>

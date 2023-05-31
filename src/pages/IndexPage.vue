@@ -10,6 +10,7 @@ import { scrollPos } from 'src/common'
 import { Item } from 'src/types/item'
 import { icons } from 'src/common/icons'
 import D4Items from 'components/D4Items.vue'
+import { sleep } from 'src/common'
 
 // init module
 const router = useRouter()
