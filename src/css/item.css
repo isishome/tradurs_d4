@@ -80,6 +80,7 @@
   line-height: 24px;
   font-weight: 700;
   word-break: keep-all;
+  max-width: 66%;
 }
 
 .price {
@@ -99,6 +100,7 @@
 @media (max-width:600px) {
   .name {
     font-size: 14px;
+    max-width: 60%;
   }
 
   .price {
@@ -400,4 +402,19 @@
 .authorized {
   color: var(--q-primary);
   font-weight: 700;
+}
+
+.avatar {
+  position: absolute;
+  left: 0;
+  top: 16px;
+  font-size: 12px;
+  width: 16px;
+}
+
+@media (max-width:600px) {
+  .avatar {
+    top: 8px;
+    font-size: 10px;
+  }
 }

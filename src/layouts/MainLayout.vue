@@ -51,9 +51,6 @@ const setDark = () => {
   $q.cookies.set('d4.dark', $q.dark.isActive.toString())
 }
 
-// socket.io
-const badge = computed(() => accountStore.badge)
-
 const key = ref(uid())
 const reload = () => {
   key.value = uid()

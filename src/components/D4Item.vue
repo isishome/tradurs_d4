@@ -332,9 +332,10 @@ defineExpose({ scrollEnd })
     :class="[data.expanded ? 'expanded' : 'no-expanded', data.quality, `status-${data.statusCode}`]">
     <div class="inner">
       <q-card-section class="relative-position">
-        <q-avatar v-show="!loading" :size="$q.screen.lt.sm ? '14px' : '20px'" class="text-overline avatar">
-          {{ data.hardcore ? 'H' : '' }}{{ data.ladder ? 'L' : '' }}
-        </q-avatar>
+        <div v-show="!loading" class="avatar row justify-end items-center">
+          <div class="text-secondary">{{ data.hardcore ? '&#10074;' : '' }}</div>
+          <div class="text-primary">{{ data.ladder ? '&#10074;' : '' }}</div>
+        </div>
         <q-img v-show="!loading" :src="itemImage" class="item-image" />
         <div class="column justify-center items-end user-area" :class="{ 'q-gutter-xs': !$q.screen.lt.sm }">
           <q-skeleton v-show="loading" width="50px" :height="$q.screen.lt.sm ? '16px' : '18px'" />
@@ -353,26 +354,24 @@ defineExpose({ scrollEnd })
               <div v-show="loading">
                 <q-skeleton width="150px" :height="$q.screen.lt.sm ? '16px' : '24px'" />
               </div>
-              <div v-show="!loading" class="row no-wrap items-center q-col-gutter-xs">
+              <div v-show="!loading" class="full-width row no-wrap items-center q-col-gutter-xs">
                 <div v-show="data.itemType === 'rune'" class="row items-center q-gutter-sm">
                   <div class="name">{{ (runes().find(r => r.value === data.runeId) || {}).label }}</div>
                   <div>{{ findRuneType(findRune(data.runeId)?.type)?.label }}
                   </div>
                 </div>
-                <div v-show="data.itemType !== 'rune'" class="name stress ellipsis-2-lines"
-                  @click="$router.push({ name: 'item-detail', params: { itemid: data.itemId } })">
+                <div v-show="data.itemType !== 'rune'" class="name stress ellipsis-2-lines">
                   {{ data.name }}
                 </div>
                 <div v-if="data.quantity > 1" class="col-3 col-sm-2 price row items-center q-gutter-xs">
                   <div class="text-lowercase">x</div>
                   <div>{{ data.quantity }}</div>
                 </div>
-
               </div>
               <div v-show="loading">
                 <q-skeleton width="100px" :height="$q.screen.lt.sm ? '16px' : '18px'" />
               </div>
-              <div v-show="!loading" class="stress" style="opacity:.6">{{ findQuality(data.quality)?.label }} {{
+              <div v-show="!loading" class="stress" style="opacity:.6">{{ findQuality(data.quality)?.fullName }} {{
                 findType(data.itemType)?.label }}
               </div>
             </div>
@@ -463,17 +462,4 @@ defineExpose({ scrollEnd })
     <slot name="more" :loading="loading"></slot>
   </q-card>
 </template>
-<style scoped>
-.avatar {
-  position: absolute;
-  left: 0;
-  top: 0;
-  font-size: 20px;
-}
-
-@media (max-width:600px) {
-  .avatar {
-    font-size: 14px;
-  }
-}
-</style>
+<style scoped></style>

@@ -16,6 +16,7 @@ export interface Status extends ILabel { }
 export interface RuneType extends ILabel { }
 
 export interface Quality extends ILabel {
+  fullName: string,
   upgradeLimit: number | null,
   affixLimit: number | null
 }
