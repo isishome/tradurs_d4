@@ -58,7 +58,7 @@ export interface Restriction extends ILabel {
   sort?: number
 }
 
-const timeout = 1000
+const timeout = 0
 
 export const useItemStore = defineStore('item', {
   state: () => ({

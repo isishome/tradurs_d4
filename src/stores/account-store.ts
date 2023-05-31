@@ -8,7 +8,7 @@ import { sleep } from 'src/common'
 
 export interface IEvaluation extends ILabel { }
 
-const timeout = 1000
+const timeout = 0
 
 export const useAccountStore = defineStore('account', {
   state: () => ({
