@@ -42,8 +42,8 @@ const { t } = useI18n({ useScope: 'global' })
 
 // variable
 const editWrap = ref<QCard | null>(null)
-const hasProperties = computed(() => findType(props.data.itemType)?.hasProperties)
-const hasAffixes = computed(() => findType(props.data.itemType)?.hasAffixes)
+const hasProperties = computed(() => findType(_type.value)?.hasProperties)
+const hasAffixes = computed(() => findType(_type.value)?.hasAffixes)
 
 const _hardcore = ref<boolean>(props.data.hardcore)
 const _ladder = ref<boolean>(props.data.ladder)
@@ -65,7 +65,7 @@ const findStatus = store.findItemStatus
 const findRune = store.findRune
 const findType = store.findType
 const filterClasses = store.filterClasses
-const _class = ref<string | number | null>(props.data.equipmentClass || filterClasses(props.data.itemType)?.[0]?.value || null)
+const _class = ref<string | number | null>(props.data.equipmentClass || filterClasses(_type.value)?.[0]?.value || null)
 const _price = reactive<Price>(new Price((props.data.price && props.data.price.currency ? props.data.price.currency : 'offer'), (props.data.price && props.data.price.currencyValue ? props.data.price.currencyValue : null), (props.data.price && props.data.price.quantity ? props.data.price.quantity : null)))
 
 const attributes = computed(() => [
@@ -248,7 +248,7 @@ defineExpose({ scrollEnd })
           :color="$q.dark.isActive ? 'grey-5' : 'grey-8'" :padding="$q.screen.lt.sm ? '8px 8px' : ''"
           :size="$q.screen.lt.sm ? '12px' : ''" toggle-color="transparent toggle" :options="attributes" />
       </q-card-section>
-      <q-card-section v-if="hasProperties || hasAffixes" class="col column no-wrap" style="padding-top:0">
+      <q-card-section class="col column no-wrap" style="padding-top:0">
         <div class="attribute column">
           <q-tab-panels v-model="attribute" class="q-pa-xs bg-transparent col">
             <q-tab-panel v-if="hasProperties" name="properties" class="column q-gutter-y-xs no-padding">
