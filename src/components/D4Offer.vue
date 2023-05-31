@@ -116,7 +116,8 @@ const status = computed(() => is.findOfferStatus(props.data.statusCode)?.label)
         <div>{{ status }}
         </div>
         <q-icon v-if="existsEvaluation" class="icon" :name="`img:${icons.evaluation}`" size="19px">
-          <q-tooltip :class="['q-pa-md', $q.dark.isActive ? 'bg-grey-4 text-grey-9' : 'bg-grey-9 text-grey-4']"
+          <q-tooltip v-if="!$q.platform.is.mobile"
+            :class="['q-pa-md', $q.dark.isActive ? 'bg-grey-4 text-grey-9' : 'bg-grey-9 text-grey-4']"
             anchor="center right" self="center left" :offset="[10, 0]" transition-hide="jump-right"
             transition-show="jump-left">
             <div class="text-overline text-weight-bold">
@@ -133,6 +134,24 @@ const status = computed(() => is.findOfferStatus(props.data.statusCode)?.label)
               </ul>
             </div>
           </q-tooltip>
+          <q-popup-proxy v-else>
+            <div
+              :class="['q-pa-md rounded-borders', $q.dark.isActive ? 'bg-grey-4 text-grey-9' : 'bg-grey-9 text-grey-4']">
+              <div class="text-overline text-weight-bold">
+                {{ t('complete.evaluate') }}
+              </div>
+              <div class="break-keep text-caption">
+                <ul class="evaluation">
+                  <li v-for="evaluation, idx of as.filterEvaluations(evaluations)" :key="idx">
+                    {{ evaluation.label }}
+                  </li>
+                  <li v-for="evaluation, idx of as.filterEvaluations(data.evaluations)" :key="idx">
+                    {{ evaluation.label }}
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </q-popup-proxy>
         </q-icon>
       </div>
     </q-item-section>
