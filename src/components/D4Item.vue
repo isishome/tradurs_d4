@@ -373,7 +373,7 @@ defineExpose({ scrollEnd })
               </div>
             </div>
             <div v-show="data.power > 0">
-              {{ t('item.power', { p: data.power }) }}
+              {{ t('item.power', { pp: data.power }) }}
             </div>
             <div v-show="data.upgrade > 0" class="stress">
               {{ t('item.upgrade', { u: data.upgrade, ul: upgradeLimit }) }}

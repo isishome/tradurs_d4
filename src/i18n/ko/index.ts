@@ -76,7 +76,7 @@ export default {
     selectClass: '장비 클래스',
     selectRune: '룬 선택',
     name: '아이템 명',
-    power: '아이템 능력 \{p\}',
+    power: '아이템 능력 {pp}',
     upgrade: '아이템 레벨: {u}/{ul}',
     gold: '금화'
   },
