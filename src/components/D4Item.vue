@@ -329,11 +329,14 @@ defineExpose({ scrollEnd })
     <slot name="more" :loading="loading"></slot>
   </q-card>
   <q-card v-else class="card-item non-selectable no-scroll full-height overflow-hidden"
-    :class="[{ 'expanded': data.expanded }, data.quality, `status-${data.statusCode}`]">
+    :class="[data.expanded ? 'expanded' : 'no-expanded', data.quality, `status-${data.statusCode}`]">
     <div class="inner">
       <q-card-section class="relative-position">
+        <q-avatar v-show="!loading" :size="$q.screen.lt.sm ? '14px' : '20px'" class="text-overline avatar">
+          {{ data.hardcore ? 'H' : '' }}{{ data.ladder ? 'L' : '' }}
+        </q-avatar>
         <q-img v-show="!loading" :src="itemImage" class="item-image" />
-        <div class="column justify-center items-end q-gutter-xs user-area">
+        <div class="column justify-center items-end user-area" :class="{ 'q-gutter-xs': !$q.screen.lt.sm }">
           <q-skeleton v-show="loading" width="50px" :height="$q.screen.lt.sm ? '16px' : '18px'" />
           <div v-show="!loading">{{
             findStatus(data.statusCode)?.label }}</div>
@@ -346,7 +349,7 @@ defineExpose({ scrollEnd })
         </div>
         <div class="row justify-beween items-start q-px-sm">
           <div class="col relative-position q-gutter-y-xs" :class="{ 'q-py-sm': !$q.screen.lt.sm }">
-            <div class="column items-start q-col-gutter-xs q-pb-sm">
+            <div class="column items-start q-pb-sm" :class="{ 'q-col-gutter-xs': !$q.screen.lt.sm }">
               <div v-show="loading">
                 <q-skeleton width="150px" :height="$q.screen.lt.sm ? '16px' : '24px'" />
               </div>
@@ -364,6 +367,7 @@ defineExpose({ scrollEnd })
                   <div class="text-lowercase">x</div>
                   <div>{{ data.quantity }}</div>
                 </div>
+
               </div>
               <div v-show="loading">
                 <q-skeleton width="100px" :height="$q.screen.lt.sm ? '16px' : '18px'" />
@@ -459,4 +463,17 @@ defineExpose({ scrollEnd })
     <slot name="more" :loading="loading"></slot>
   </q-card>
 </template>
-<style scoped></style>
+<style scoped>
+.avatar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-size: 20px;
+}
+
+@media (max-width:600px) {
+  .avatar {
+    font-size: 14px;
+  }
+}
+</style>

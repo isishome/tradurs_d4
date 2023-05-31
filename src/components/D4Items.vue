@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, reactive } from 'vue'
+import { ref, computed, reactive, nextTick } from 'vue'
 import { useQuasar, QInput, QSelect, uid } from 'quasar'
 import { useI18n } from 'vue-i18n'
 
@@ -425,11 +425,10 @@ const acceptOffer = (offer: Offer) => {
     .then(() => {
       is.getOffers(offer.itemId, offer.offerId)
         .then((response) => {
-          Object.assign(offer, response)
           const findOffer = offers.value.find(o => o.offerId === offer.offerId)
 
-          if (findOffer && offerItem.value) {
-            Object.assign(findOffer, offer)
+          if (findOffer && offerItem.value && response.length > 0) {
+            Object.assign(findOffer, response[0])
             emit('update-only', findOffer.itemId)
           }
 
@@ -458,7 +457,16 @@ const complete = (evaluations: Array<number>) => {
     })
 }
 
-// Execute function if an item is visible
+const expanded = (item: Item) => {
+  item.expanded = true
+  nextTick(() => {
+    const findItem = document.querySelector(`div[data-itemid="${item.itemId}"]`) as HTMLDivElement
+    if (findItem)
+      findItem.style.height = `${findItem.offsetHeight}px`
+  })
+}
+
+// Execute function if an item is visible (adsense)
 const visible = (isVisible: boolean, item: Item): void => {
   isVisible
   item
@@ -483,8 +491,8 @@ defineExpose({ create, hideEditable, openOffers, hideOffers })
     <div :class="$q.screen.lt.sm ? 'q-gutter-y-xl' : 'q-gutter-y-xxl'">
       <q-intersection v-for="item, idx in (items as Array<Item | Advertise>)" :key="`item_${idx}`"
         :data-itemid="item.itemId" class="item"
-        :style="item.expanded ? 'min-height:250px' : `height: ${height as number - ($q.screen.lt.sm ? 50 : 0)}px;`"
-        transition="fade" @visibility="isVisible => visible(isVisible, item)" ssr-prerender>
+        :style="item.expanded ? '100%' : `height: ${height as number - ($q.screen.lt.sm ? 50 : 0)}px;`" transition="fade"
+        @visibility="isVisible => visible(isVisible, item)" ssr-prerender>
         <div v-if="(item instanceof Advertise)" class="bg-grey" style="width:100%;height:500px"></div>
         <D4Item v-else :data="item" :loading="loading || item.loading">
           <template #top-right>
@@ -513,7 +521,7 @@ defineExpose({ create, hideEditable, openOffers, hideOffers })
           </template>
           <template #more="{ loading }">
             <q-btn v-if="!item.expanded && !loading" flat text-color="black" class="more no-hover" padding="20px"
-              @click="item.expanded = true">
+              @click="expanded(item)">
               <img class="icon" width="24" height="16" src="~assets/icons/more.svg" />
             </q-btn>
           </template>
@@ -632,7 +640,7 @@ defineExpose({ create, hideEditable, openOffers, hideOffers })
         </template>
         <template #actions>
           <div v-if="activatedItem.authorized || activatedItem.itemId === ''"
-            class="row justify-between items-center q-pt-md" :class="{ 'q-pt-lg': !$q.screen.lt.sm }">
+            class="row justify-between items-center q-pa-md" :class="{ 'q-pt-lg': !$q.screen.lt.sm }">
             <div class="row items-center q-gutter-sm">
               <D4Btn v-if="activatedItem.itemId" :label="t('btn.moreActions')" :loading="activatedItem.loading"
                 :disable="disable" color="var(--q-secondary)">

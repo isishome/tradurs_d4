@@ -88,11 +88,13 @@ const isAcceptable = computed(() => props.data.itemStatusCode === '000' && props
 const isTradeable = computed(() => props.data.statusCode === '003' && ((props.data.itemStatusCode === '003' && props.owner && props.evaluations.length === 0) || (props.data.authorized && props.data.evaluations.length === 0)))
 const existsEvaluation = computed(() => props.evaluations.length > 0 || props.data.evaluations.length > 0)
 const status = computed(() => is.findOfferStatus(props.data.statusCode)?.label)
+const parsEvaluations = computed(() => props.owner ? as.filterEvaluations(props.data.evaluations) : props.data.authorized ? as.filterEvaluations(props.evaluations) : [])
 
 </script>
 
 <template>
-  <q-form v-if="make" @submit="makeOffer" class="q-pt-md row justify-between items-center q-col-gutter-sm">
+  <q-form v-if="make" @submit="makeOffer" class="q-pt-md row justify-end items-center q-col-gutter-sm q-pa-md"
+    :class="{ 'q-pt-lg': !$q.screen.lt.sm }">
     <div class="col">
       <D4Price offer :data="_offer.price" editable :disable="disable || progress" @update="updatePrice" />
     </div>
@@ -125,10 +127,7 @@ const status = computed(() => is.findOfferStatus(props.data.statusCode)?.label)
             </div>
             <div class="break-keep text-caption">
               <ul class="evaluation">
-                <li v-for="evaluation, idx of as.filterEvaluations(evaluations)" :key="idx">
-                  {{ evaluation.label }}
-                </li>
-                <li v-for="evaluation, idx of as.filterEvaluations(data.evaluations)" :key="idx">
+                <li v-for="evaluation, idx of parsEvaluations" :key="idx">
                   {{ evaluation.label }}
                 </li>
               </ul>
@@ -142,10 +141,7 @@ const status = computed(() => is.findOfferStatus(props.data.statusCode)?.label)
               </div>
               <div class="break-keep text-caption">
                 <ul class="evaluation">
-                  <li v-for="evaluation, idx of as.filterEvaluations(evaluations)" :key="idx">
-                    {{ evaluation.label }}
-                  </li>
-                  <li v-for="evaluation, idx of as.filterEvaluations(data.evaluations)" :key="idx">
+                  <li v-for="evaluation, idx of parsEvaluations" :key="idx">
                     {{ evaluation.label }}
                   </li>
                 </ul>

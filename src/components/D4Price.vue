@@ -54,8 +54,8 @@ const updateCurrency = (val: string | null): void => {
 
 <template>
   <div v-if="editable">
-    <div class="row items-center q-gutter-sm">
-      <div>
+    <div class="row justify-between items-center no-wrap q-gutter-sm">
+      <div v-show="!$q.screen.lt.sm">
         <q-icon class="coin" size="18px" :name="`img:${icons.price}`" />
       </div>
       <q-select v-model="_price.currency" class="col" :disable="disable" behavior="menu" outlined dense no-error-icon
