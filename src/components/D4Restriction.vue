@@ -42,8 +42,8 @@ watch(() => props.data, (val) => {
 
 <template>
   <div class="row items-center">
-    <div class="row no-wrap q-gutter-xs" :class="{ disable }" :data-id="data.valueId">
-      <div class="row items-center q-gutter-xs">
+    <div class="row no-wrap items-center q-gutter-xs" :class="{ disable }" :data-id="data.valueId">
+      <div class="row items-center q-gutter-x-xs">
         <template v-for="comp, k in restrictionInfo" :key="k">
           <template v-if="comp.type === 'text'">
             <div v-for="(word, i) in (comp.value as string).split(/\s+/g).filter(w => w !== '')" :key="i">{{ word }}
@@ -55,7 +55,6 @@ watch(() => props.data, (val) => {
             :disable="disable" :rules="[val => !disable && Number.isInteger(parseInt(val)) || '']"
             @update:model-value="update" @focus="focus" />
         </template>
-
       </div>
     </div>
     <q-btn v-show="editable" :disable="disable" dense unelevated flat round size="xs" class="q-ml-sm" @click="remove">

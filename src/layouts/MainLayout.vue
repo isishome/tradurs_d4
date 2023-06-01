@@ -94,7 +94,7 @@ onUnmounted(() => {
       class="row justify-end no-scroll" :width="300">
       <q-list class="column full-height" style="width:300px">
         <q-scroll-area class="col">
-          <D4Filter :disable="$route.name !== 'item-list'" class="q-pa-lg" />
+          <D4Filter :disable="$route.name !== 'tradeList'" class="q-pa-lg" />
         </q-scroll-area>
       </q-list>
     </q-drawer>
@@ -137,10 +137,10 @@ onUnmounted(() => {
             <img v-show="!$q.dark.isActive" src="~assets/logo_light.webp" height="48" />
           </q-btn>
           <q-tabs dense no-caps class="gt-sm q-px-md bg-transparent no-hover nav">
-            <q-route-tab :ripple="!$q.dark.isActive" :label="t('trade')" :to="{ path: '/' }" />
+            <q-route-tab :ripple="!$q.dark.isActive" :label="t('page.tradeList')" :to="{ name: 'tradeList' }" exact />
             <!-- <q-route-tab :ripple="!$q.dark.isActive" :label="t('message')" :to="{ path: '/message' }">
-                                      <q-badge v-show="badge" floating color="red" rounded />
-                                    </q-route-tab> -->
+                                                          <q-badge v-show="badge" floating color="red" rounded />
+                                                        </q-route-tab> -->
           </q-tabs>
         </div>
         <div class="lt-md col-lg-3 col-4 row justify-end q-gutter-sm">

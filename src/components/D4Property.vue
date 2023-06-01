@@ -42,13 +42,13 @@ watch(() => props.data, () => {
 
 <template>
   <div class="row items-center">
-    <div class="row no-wrap q-gutter-xs" :class="{ disable }" :data-id="data.valueId">
+    <div class="row no-wrap items-center q-gutter-xs" :class="{ disable }" :data-id="data.valueId">
       <div>
         <q-icon class="icon"
           :class="{ 'rotate-45': ['regular', 'offensive', 'defensive', 'utility', 'resistance'].includes(findProperty?.type as string) }"
           size="13px" :name="`img:${icons[findProperty?.type as keyof typeof icons || 'regular']}`" />
       </div>
-      <div class="row items-center q-gutter-xs">
+      <div class="row items-center q-gutter-x-xs">
         <template v-for="(comp, k) in propertyInfo" :key="k">
           <template v-if="comp.type === 'text'">
             <div v-for="(word, i) in (comp.value as string).split(/\s+/g).filter(w => w !== '')" :key="i">{{ word }}

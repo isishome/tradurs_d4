@@ -1,5 +1,13 @@
 export default {
   language: 'Language',
+  seo: {
+    title: "{itemName}{pageName}Diablo® IV {'|'} Tradurs",
+    desc: 'Trade various items used in Diablo® IV on the Tradurs'
+  },
+  page: {
+    tradeList: 'Trade List',
+    itemInfo: 'Item Information'
+  },
   battlenet: {
     title: 'Enter BattleTag™',
     msg1: 'In order to provide useful services to you on ',

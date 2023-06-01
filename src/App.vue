@@ -1,11 +1,13 @@
 <script lang="ts">
 import { useAccountStore } from 'stores/account-store'
 import { useItemStore } from 'stores/item-store'
+import { useGlobalStore } from './stores/global-store'
 
 export default {
   preFetch({ store }) {
     const as = useAccountStore(store)
     const is = useItemStore(store)
+
     return Promise.all([as.checkSign(), as.getEvaluations(), is.getBase(), is.getProperties(), is.getAffixes(), is.getRestrictions()])
   }
 }
@@ -13,12 +15,15 @@ export default {
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useQuasar } from 'quasar'
+import { useQuasar, useMeta } from 'quasar'
 import { useI18n } from 'vue-i18n'
+import { useRoute } from 'vue-router'
 
 const $q = useQuasar()
 const as = useAccountStore()
+const gs = useGlobalStore()
 const { t, locale } = useI18n({ useScope: 'global' })
+const route = useRoute()
 
 const view = ref<boolean>(false)
 const isDark = ref($q.cookies.has('d4.dark') ? $q.cookies.get('d4.dark') === 'true' : $q.dark.isActive)
@@ -35,6 +40,30 @@ const updateBattleTag = () => {
       as.info.battleTag = `#${battleTag.value}`
     })
 }
+
+// about Meta
+const titleReactive = computed(() => gs.getTitle(t(`page.${route.name as string}`)))
+const descReactive = computed(() => t('seo.desc'))
+
+useMeta(() => {
+  return {
+    title: titleReactive.value,
+    meta: {
+      description: { name: 'description', content: descReactive.value },
+      equiv: { 'http-equiv': 'Content-Type', content: 'text/html; charset=UTF-8' },
+      ogTitle: { property: 'og:title', content: titleReactive.value },
+      ogDescription: { property: 'og:description', content: descReactive.value },
+      ogUrl: { property: 'og:url', content: 'https://d4.tradurs.com' },
+      ogType: { property: 'og:type', content: 'website' },
+      ogImage: { property: 'og:image', content: 'https://d4.tradurs.com/images/icon.png' },
+      twitterCard: { name: 'twitter:card', content: 'summary' },
+      twitterTitle: { name: 'twitter:title', content: titleReactive.value },
+      twitterDescription: { name: 'twitter:description', content: descReactive.value },
+      twitterUrl: { name: 'twitter:url', content: 'https://d4.tradurs.com' },
+      twitterImage: { name: 'twitter:image', content: 'https://d4.tradurs.com/images/icon.png' }
+    }
+  }
+})
 
 onMounted(() => {
   view.value = true

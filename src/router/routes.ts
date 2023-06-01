@@ -6,12 +6,12 @@ const routes: RouteRecordRaw[] = [
     component: () => import('layouts/MainLayout.vue'),
     children: [
       {
-        name: 'item-list',
+        name: 'tradeList',
         path: '',
         component: () => import('pages/IndexPage.vue')
       },
       {
-        name: 'item-detail',
+        name: 'itemInfo',
         path: ':itemid',
         component: () => import('pages/ItemPage.vue'),
         props: true

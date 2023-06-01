@@ -20,12 +20,7 @@ const { t } = useI18n({ useScope: 'global' })
 const $q = useQuasar()
 
 // loading variable
-const loadingAffixes = computed<boolean>(() => is.affixes.loading)
-const loadingProperties = computed<boolean>(() => is.properties.loading)
-const disable = ref(true)
-const loading = computed<boolean>(
-  () => loadingProperties.value || loadingAffixes.value || disable.value
-)
+const disable = ref(false)
 
 // variable
 const position = computed(() => as.position)
@@ -200,18 +195,18 @@ watch(newItems, (val: number) => {
 watch(newOffer, (val: string | null) => {
   if (val)
     notify('', t('messages.newOffer'), t('btn.move'), () => {
-      router.push({ name: 'item-detail', params: { itemid: val }, state: { offers: true } })
+      router.push({ name: 'itemInfo', params: { itemid: val }, state: { offers: true } })
     })
 })
 
 watch(acceptedOffer, (val: { itemName: string, itemId: string } | null) => {
   if (val)
-    notify('', t('messages.acceptedOffer', { in: val.itemName }), t('btn.move'), () => { router.push({ name: 'item-detail', params: { itemid: val.itemId }, state: { offers: true } }) })
+    notify('', t('messages.acceptedOffer', { in: val.itemName }), t('btn.move'), () => { router.push({ name: 'itemInfo', params: { itemid: val.itemId }, state: { offers: true } }) })
 })
 
 watch(complete, (val: { itemName: string, itemId: string } | null) => {
   if (val)
-    notify('', t('messages.complete', { in: val.itemName }), t('btn.move'), () => { router.push({ name: 'item-detail', params: { itemid: val.itemId }, state: { offers: true } }) })
+    notify('', t('messages.complete', { in: val.itemName }), t('btn.move'), () => { router.push({ name: 'itemInfo', params: { itemid: val.itemId }, state: { offers: true } }) })
 })
 
 watch(filter, (val, old) => {
@@ -229,7 +224,7 @@ onMounted(() => {
   </D4Btn>
   <div>
     <div class="row justify-center items-center">
-      <D4Items ref="itemsRef" :items="items" :loading="loading" @upsert-item="upsertItem" @delete-item="deleteItem"
+      <D4Items ref="itemsRef" :items="items" :loading="disable" @upsert-item="upsertItem" @delete-item="deleteItem"
         @relist-item="relistItem" @status-item="statusItem" @update-only="updateOnly" />
     </div>
   </div>

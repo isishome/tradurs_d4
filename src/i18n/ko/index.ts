@@ -1,5 +1,13 @@
 export default {
   language: '언어',
+  seo: {
+    title: "{itemName}{pageName}디아블로® IV {'|'} 트레이더스",
+    desc: '트레이더스에서 디아블로® IV에 사용하는 다양한 아이템을 거래해 보세요'
+  },
+  page: {
+    tradeList: '거래 목록',
+    itemInfo: '아이템 정보'
+  },
   battlenet: {
     title: 'BattleTag™ 입력',
     msg1: '',
@@ -8,7 +16,6 @@ export default {
     placeholder: '레비아탄5112'
   },
   noItem: '거래 가능한 아이템이 없습니다',
-  trade: '거래',
   message: '메세지',
   hardcore: '하드코어',
   ladder: '래더',

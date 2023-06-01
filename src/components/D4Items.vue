@@ -457,19 +457,11 @@ const complete = (evaluations: Array<number>) => {
     })
 }
 
-const expanded = (item: Item) => {
-  item.expanded = true
-  nextTick(() => {
-    const findItem = document.querySelector(`div[data-itemid="${item.itemId}"]`) as HTMLDivElement
-    if (findItem)
-      findItem.style.height = `${findItem.offsetHeight}px`
-  })
-}
-
 // Execute function if an item is visible (adsense)
 const visible = (isVisible: boolean, item: Item): void => {
-  isVisible
-  item
+  const findItem = document.querySelector(`div[data-itemid="${item.itemId}"]`) as HTMLDivElement
+  if (findItem && item.expanded)
+    findItem.style.height = isVisible ? '100%' : `${findItem.offsetHeight}px`
 }
 
 const create = () => {
@@ -491,8 +483,8 @@ defineExpose({ create, hideEditable, openOffers, hideOffers })
     <div :class="$q.screen.lt.sm ? 'q-gutter-y-xl' : 'q-gutter-y-xxl'">
       <q-intersection v-for="item, idx in (items as Array<Item | Advertise>)" :key="`item_${idx}`"
         :data-itemid="item.itemId" class="item"
-        :style="item.expanded ? '100%' : `height: ${height as number - ($q.screen.lt.sm ? 50 : 0)}px;`" transition="fade"
-        @visibility="isVisible => visible(isVisible, item)" ssr-prerender>
+        :style="item.expanded ? 'height:100%' : `height: ${height as number - ($q.screen.lt.sm ? 50 : 0)}px;`"
+        transition="fade" @visibility="isVisible => visible(isVisible, item)" ssr-prerender>
         <div v-if="(item instanceof Advertise)" class="bg-grey" style="width:100%;height:500px"></div>
         <D4Item v-else :data="item" :loading="loading || item.loading">
           <template #top-right>
@@ -521,7 +513,7 @@ defineExpose({ create, hideEditable, openOffers, hideOffers })
           </template>
           <template #more="{ loading }">
             <q-btn v-if="!item.expanded && !loading" flat text-color="black" class="more no-hover" padding="20px"
-              @click="expanded(item)">
+              @click="item.expanded = true">
               <img class="icon" width="24" height="16" src="~assets/icons/more.svg" />
             </q-btn>
           </template>
@@ -534,7 +526,7 @@ defineExpose({ create, hideEditable, openOffers, hideOffers })
       <D4Item ref="activatedRef" :data="activatedItem" editable :loading="activatedItem.loading" :disable="disable"
         @update="updateItem" @apply="apply">
         <template #add-property="props">
-          <div class="row no-wrap items-center q-gutter-sm">
+          <div class="row items-center q-gutter-sm">
             <q-select ref="propertyRef" v-model="propertyId" :disable="disable"
               :popup-content-style="{ 'height': `${props.wrap?.$el.clientHeight / 2}px` }" outlined dense no-error-icon
               use-input hide-bottom-space hide-selected emit-value map-options transition-show="none"

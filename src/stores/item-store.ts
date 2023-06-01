@@ -105,7 +105,8 @@ export const useItemStore = defineStore('item', {
       name: '' as string,
       request: 0,
       loading: false
-    }
+    },
+    detailItem: [] as Array<Item>
   }),
   getters: {
     findItemStatus: (state) => {
