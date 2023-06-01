@@ -12,7 +12,7 @@ const routes: RouteRecordRaw[] = [
       },
       {
         name: 'itemInfo',
-        path: ':itemid',
+        path: 'item/:itemid',
         component: () => import('pages/ItemPage.vue'),
         props: true
       },
@@ -23,6 +23,7 @@ const routes: RouteRecordRaw[] = [
   // Always leave this as last one,
   // but you can also remove it
   {
+    name: 'pnf',
     path: '/:catchAll(.*)*',
     component: () => import('pages/ErrorNotFound.vue')
   }

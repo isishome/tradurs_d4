@@ -6,7 +6,8 @@ export default {
   },
   page: {
     tradeList: 'Trade List',
-    itemInfo: 'Item Information'
+    itemInfo: 'Item Information',
+    pnf: 'Page not found'
   },
   battlenet: {
     title: 'Enter BattleTag™',
@@ -121,7 +122,6 @@ export default {
     complete: 'Item trade completed ({in})'
   },
   notFound: {
-    message: 'Page not found',
     gotoMain: 'Go to main page'
   }
 }

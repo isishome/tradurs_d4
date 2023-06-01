@@ -14,7 +14,7 @@ const { t } = useI18n({ useScope: 'global' })
       <img class="logo" :src="$q.dark.isActive ? Logo : LogoLight" width="48" />
       <div class="letter text-secondary">Tradurs</div>
     </div>
-    <div class="text-h6">{{ t('notFound.message') }}
+    <div class="text-h6">{{ t('page.pnf') }}
     </div>
     <div class="q-mt-lg">
       <D4Btn class="bw" :label="t('notFound.gotoMain')" :to="{ path: '/' }" />

@@ -6,7 +6,8 @@ export default {
   },
   page: {
     tradeList: '거래 목록',
-    itemInfo: '아이템 정보'
+    itemInfo: '아이템 정보',
+    pnf: '페이지를 찾을 수 없습니다'
   },
   battlenet: {
     title: 'BattleTag™ 입력',
@@ -120,7 +121,6 @@ export default {
     complete: '아이템 거래가 완료되었습니다 ({in})'
   },
   notFound: {
-    message: '페이지를 찾을 수 없습니다',
     gotoMain: '메인 페이지로'
   }
 }

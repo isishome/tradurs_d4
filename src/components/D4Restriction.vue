@@ -41,7 +41,7 @@ watch(() => props.data, (val) => {
 </script>
 
 <template>
-  <div class="row justify-end items-center">
+  <div class="row items-center" :class="{ 'justify-end': !editable }">
     <div class="row no-wrap items-center q-gutter-xs" :class="{ disable }" :data-id="data.valueId">
       <div class="row items-center q-gutter-x-xs">
         <template v-for="comp, k in restrictionInfo" :key="k">
