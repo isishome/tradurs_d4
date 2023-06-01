@@ -414,7 +414,8 @@ defineExpose({ scrollEnd })
               </q-item-label>
             </q-item-section>
           </q-item>
-          <div v-if="slots.properties && !loading" class="column q-gutter-y-xs" style="min-height:25px;">
+          <div v-if="slots.properties && !loading" class="column" :class="{ 'q-gutter-y-xs': !$q.screen.lt.sm }"
+            style="min-height:25px;">
             <slot name="properties">
             </slot>
           </div>
@@ -433,7 +434,8 @@ defineExpose({ scrollEnd })
               </q-item-label>
             </q-item-section>
           </q-item>
-          <div v-if="slots.affixes && !loading" class="column q-gutter-y-sm" style="min-height:25px;">
+          <div v-if="slots.affixes && !loading" class="column" :class="{ 'q-gutter-y-xs': !$q.screen.lt.sm }"
+            style="min-height:25px;">
             <slot name="affixes">
             </slot>
           </div>
@@ -448,7 +450,7 @@ defineExpose({ scrollEnd })
               </q-item-label>
             </q-item-section>
           </q-item>
-          <div v-if="slots.restrictions && !loading" class="column q-gutter-y-sm">
+          <div v-if="slots.restrictions && !loading" class="column" :class="{ 'q-gutter-y-xs': !$q.screen.lt.sm }">
             <slot name="restrictions">
             </slot>
           </div>

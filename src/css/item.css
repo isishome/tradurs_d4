@@ -120,16 +120,12 @@
   }
 }
 
-.body--dark .card-item.magic .stress {
-  color: var(--q-magic);
+.card-item.legendary .stress {
+  font-weight: 700;
 }
 
-.body--dark .card-item.rare .stress {
-  color: var(--q-rare);
-}
-
-.body--dark .card-item.set .stress {
-  color: var(--q-set);
+.card-item.unique .stress {
+  font-weight: 700;
 }
 
 .body--dark .card-item.legendary .stress {
@@ -138,6 +134,14 @@
 
 .body--dark .card-item.unique .stress {
   color: var(--q-unique);
+}
+
+.body--dark .card-item.legendary .stress .icon {
+  filter: var(--q-filter-legendary) !important;
+}
+
+.body--dark .card-item.unique .stress .icon {
+  filter: var(--q-filter-unique) !important;
 }
 
 .body--dark .card-item.magic .unique {
@@ -266,7 +270,7 @@
   content: '';
   position: absolute;
   top: 68%;
-  bottom: 0;
+  bottom: -16%;
   left: 0;
   right: 0;
   border-radius: 2px;
@@ -294,7 +298,7 @@
 }
 
 .var {
-  max-width: 34px;
+  max-width: 50px;
 }
 
 .var .q-field__control {

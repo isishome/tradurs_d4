@@ -28,7 +28,7 @@ const properties = computed<Array<Property>>(() => store.properties.data)
 const findProperty = properties.value.find(p => p.value === props.data.propertyId)
 const propertyInfo = ref(parse(findProperty?.label, props.data.propertyValues))
 const update = (): void => {
-  emit('update', { valueId: props.data.valueId, propertyValues: propertyInfo.value.filter(i => i.type === 'variable').map(i => parseInt(i.value.toString())) })
+  emit('update', { valueId: props.data.valueId, propertyValues: propertyInfo.value.filter(i => i.type === 'variable').map(i => parseFloat(i.value.toString())) })
 }
 
 const remove = () => {
@@ -56,8 +56,8 @@ watch(() => props.data, () => {
           </template>
           <div v-else-if="!editable && comp.type === 'variable'">{{ comp.value }}</div>
           <q-input v-else class="var" input-class="text-center text-caption no-padding" dense hide-bottom-space hide-hint
-            no-error-icon outlined v-model="comp.value" type="tel" maxlength="3" mask="###" debounce="500"
-            :disable="disable" :rules="[val => !disable && Number.isInteger(parseInt(val)) || '']"
+            no-error-icon outlined v-model.number="comp.value" maxlength="6" debounce="500" :disable="disable"
+            :rules="[val => !disable && (parseFloat(val) % 1 !== 0 || parseInt(val) % 1 === 0) || '']"
             @update:model-value="update" @focus="focus" />
         </template>
       </div>

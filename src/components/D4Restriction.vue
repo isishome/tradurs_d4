@@ -28,7 +28,7 @@ const findRestriction = restrictions.value.find(r => r.value === props.data.rest
 const restrictionInfo = ref(parse(findRestriction?.label, props.data.restrictValues))
 
 const update = (): void => {
-  emit('update', { valueId: props.data.valueId, restrictValues: restrictionInfo.value.filter(i => i.type === 'variable').map(i => parseInt(i.value.toString())) })
+  emit('update', { valueId: props.data.valueId, restrictValues: restrictionInfo.value.filter(i => i.type === 'variable').map(i => parseFloat(i.value.toString())) })
 }
 
 const remove = (): void => {
@@ -41,7 +41,7 @@ watch(() => props.data, (val) => {
 </script>
 
 <template>
-  <div class="row items-center">
+  <div class="row justify-end items-center">
     <div class="row no-wrap items-center q-gutter-xs" :class="{ disable }" :data-id="data.valueId">
       <div class="row items-center q-gutter-x-xs">
         <template v-for="comp, k in restrictionInfo" :key="k">
@@ -51,8 +51,8 @@ watch(() => props.data, (val) => {
           </template>
           <div v-else-if="!editable && comp.type === 'variable'">{{ comp.value }}</div>
           <q-input v-else ref="ai" class="var" input-class="text-center text-caption no-padding" dense hide-bottom-space
-            hide-hint no-error-icon outlined v-model="comp.value" type="tel" maxlength="3" mask="###" debounce="500"
-            :disable="disable" :rules="[val => !disable && Number.isInteger(parseInt(val)) || '']"
+            hide-hint no-error-icon outlined v-model.number="comp.value" maxlength="6" debounce="500" :disable="disable"
+            :rules="[val => !disable && (parseFloat(val) % 1 !== 0 || parseInt(val) % 1 === 0) || '']"
             @update:model-value="update" @focus="focus" />
         </template>
       </div>
