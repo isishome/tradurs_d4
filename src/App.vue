@@ -15,7 +15,7 @@ export default {
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useQuasar, useMeta } from 'quasar'
+import { useQuasar, useMeta, QuasarLanguage } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 

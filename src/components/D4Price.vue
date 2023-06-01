@@ -54,35 +54,41 @@ const updateCurrency = (val: string | null): void => {
 
 <template>
   <div v-if="editable">
-    <div class="row justify-between items-center no-wrap q-gutter-sm">
+    <div class="row justify-end items-center no-wrap q-gutter-sm">
       <div v-show="!$q.screen.lt.sm">
         <q-icon class="coin" size="18px" :name="`img:${icons.price}`" />
       </div>
-      <q-select v-model="_price.currency" class="col" :disable="disable" behavior="menu" outlined dense no-error-icon
-        hide-bottom-space emit-value map-options transition-show="none" transition-hide="none"
-        :label="t('price.currency')" :dropdown-icon="`img:${icons.dropdown}`" :options="currencies"
-        @update:model-value="updateCurrency">
-        <template #selected-item="scope">
-          <div class="ellipsis">{{ scope.opt.label }}</div>
-        </template>
-      </q-select>
-      <q-select v-if="data.currency === 'rune'" v-model="_price.currencyValue" class="col" :disable="disable"
-        behavior="menu" outlined dense no-error-icon hide-bottom-space emit-value map-options transition-show="none"
-        transition-hide="none" :options="runes()" :dropdown-icon="`img:${icons.dropdown}`" @update:model-value="update">
-        <template #option="scope">
-          <q-item v-bind="scope.itemProps">
-            <q-item-section avatar>
-              <img :src="scope.opt.img" width="24" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ scope.opt.label }}</q-item-label>
-            </q-item-section>
-          </q-item>
-        </template>
-      </q-select>
-      <q-input v-else-if="data.currency === 'gold'" :disable="disable" dense no-error-icon hide-bottom-space outlined
-        v-model="_price.currencyValue" mask="#############" debounce="500" @update:model-value="update" @focus="focus"
-        input-class="text-right" type="tel" :rules="[val => Number.isInteger(parseInt(val)) || '']" />
+      <div>
+        <q-select v-model="_price.currency" :disable="disable" behavior="menu" outlined dense no-error-icon
+          hide-bottom-space emit-value map-options transition-show="none" transition-hide="none"
+          :label="t('price.currency')" :dropdown-icon="`img:${icons.dropdown}`" :options="currencies"
+          popup-content-class="d4-scroll" @update:model-value="updateCurrency">
+          <template #selected-item="scope">
+            <div class="ellipsis">{{ scope.opt.label }}</div>
+          </template>
+        </q-select>
+      </div>
+      <div v-if="data.currency === 'rune'" class="col">
+        <q-select v-model="_price.currencyValue" :disable="disable" behavior="menu" outlined dense no-error-icon
+          hide-bottom-space emit-value map-options popup-content-class="d4-scroll" transition-show="none"
+          transition-hide="none" :options="runes()" :dropdown-icon="`img:${icons.dropdown}`" @update:model-value="update">
+          <template #option="scope">
+            <q-item v-bind="scope.itemProps">
+              <q-item-section avatar>
+                <img :src="scope.opt.img" width="24" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ scope.opt.label }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </template>
+        </q-select>
+      </div>
+      <div v-else-if="data.currency === 'gold'">
+        <q-input :disable="disable" dense no-error-icon hide-bottom-space outlined v-model="_price.currencyValue"
+          mask="#############" debounce="500" @update:model-value="update" @focus="focus" input-class="text-right"
+          type="tel" :rules="[val => Number.isInteger(parseInt(val)) || '']" />
+      </div>
       <D4Counter v-if="!['offer', 'gold'].includes(data.currency)" v-model="_price.quantity" :disable="disable"
         @update:model-value="update" />
     </div>
@@ -108,7 +114,7 @@ const updateCurrency = (val: string | null): void => {
           <div class="q-ml-xs">{{ (runes().find(r => r.value === data.currencyValue) || {}).label }}</div>
         </template>
         <template v-else-if="data.currency === 'gold'">
-          <img class="coin" :src="icons.price" width="24" />
+          <img class="coin" :src="icons.price" width="18" />
           <div class="q-ml-xs">{{ data.currencyValue }}</div>
         </template>
         <template v-else>
@@ -126,10 +132,10 @@ const updateCurrency = (val: string | null): void => {
 
 <style scoped>
 .coin {
-  filter: invert(65%) sepia(69%) saturate(606%) hue-rotate(3deg) brightness(110%) contrast(102%);
+  filter: invert(65%) sepia(69%) saturate(606%) hue-rotate(3deg) brightness(90%) contrast(102%);
 }
 
 .body--light .coin {
-  filter: invert(55%) sepia(69%) saturate(606%) hue-rotate(3deg) brightness(110%) contrast(102%);
+  filter: invert(55%) sepia(69%) saturate(606%) hue-rotate(3deg) brightness(90%) contrast(102%);
 }
 </style>

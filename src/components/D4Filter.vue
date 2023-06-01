@@ -81,7 +81,7 @@ const update = (quality?: Array<string>) => {
           :options="findType(itemType)?.value === 'rune' ? filterRunes() : filterClasses(itemType)"
           :label="`${findType(itemType)?.label} 종류`" :disable="filterLoading" outlined dense no-error-icon
           hide-bottom-space emit-value map-options multiple transition-show="none" transition-hide="none"
-          :dropdown-icon="`img:${icons.dropdown}`" @update:model-value="update()" />
+          :dropdown-icon="`img:${icons.dropdown}`" popup-content-class="d4-scroll" @update:model-value="update()" />
       </q-item-section>
     </q-item>
     <q-item :inset-level=".2">
@@ -103,10 +103,10 @@ const update = (quality?: Array<string>) => {
       </q-btn>
     </q-item>
     <!-- <q-item>
-                                                    <q-item-section>
-                                                      {{ is.filter }}
-                                                    </q-item-section>
-                                                  </q-item> -->
+                                                      <q-item-section>
+                                                        {{ is.filter }}
+                                                      </q-item-section>
+                                                    </q-item> -->
   </q-list>
 </template>
 

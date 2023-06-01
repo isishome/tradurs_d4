@@ -163,7 +163,7 @@ defineExpose({ scrollEnd })
                 <q-select v-model="_type" :disable="disable" behavior="menu" outlined dense no-error-icon
                   hide-bottom-space emit-value map-options transition-show="none" transition-hide="none"
                   :label="t('item.selectType')" :dropdown-icon="`img:${icons.dropdown}`" :options="filterTypes()"
-                  @update:model-value="updateType">
+                  popup-content-class="d4-scroll" @update:model-value="updateType">
                   <template #selected-item="scope">
                     <div class="ellipsis">{{ scope.opt.label }}</div>
                   </template>
@@ -173,7 +173,7 @@ defineExpose({ scrollEnd })
                 <q-select v-model="_class" :disable="disable" behavior="menu" outlined dense no-error-icon
                   hide-bottom-space emit-value map-options transition-show="none" transition-hide="none"
                   :label="t('item.selectClass')" :dropdown-icon="`img:${icons.dropdown}`"
-                  :options="filterClasses(data.itemType)" @update:model-value="update">
+                  :options="filterClasses(data.itemType)" popup-content-class="d4-scroll" @update:model-value="update">
                   <template #selected-item="scope">
                     <div class="ellipsis">{{ scope.opt.label }}</div>
                   </template>
@@ -183,7 +183,7 @@ defineExpose({ scrollEnd })
                 <q-select v-model="_rune" :disable="disable" behavior="menu" outlined dense no-error-icon
                   hide-bottom-space emit-value map-options transition-show="none" transition-hide="none"
                   :label="t('item.selectRune')" :options="runes()" :dropdown-icon="`img:${icons.dropdown}`"
-                  @update:model-value="update">
+                  popup-content-class="d4-scroll" @update:model-value="update">
                   <template #option="scope">
                     <q-item v-bind="scope.itemProps">
                       <q-item-section avatar>
@@ -251,7 +251,7 @@ defineExpose({ scrollEnd })
       <q-card-section class="col column no-wrap" style="padding-top:0">
         <div class="attribute column">
           <q-tab-panels v-model="attribute" class="q-pa-xs bg-transparent col">
-            <q-tab-panel v-if="hasProperties" name="properties" class="wrap column q-gutter-y-xs no-padding full-width">
+            <q-tab-panel v-if="hasProperties" name="properties" class="column q-gutter-y-xs no-padding full-width">
               <div v-if="slots['add-property']">
                 <slot name="add-property" :wrap="editWrap"></slot>
               </div>
@@ -272,7 +272,7 @@ defineExpose({ scrollEnd })
                 </div>
               </div>
             </q-tab-panel>
-            <q-tab-panel v-if="hasAffixes" name="affixes" class="column q-gutter-y-xs no-padding">
+            <q-tab-panel v-if="hasAffixes" name="affixes" class="column q-gutter-y-xs no-padding full-width">
               <div v-if="slots['add-affix']">
                 <slot name="add-affix" :wrap="editWrap"></slot>
               </div>
@@ -293,7 +293,7 @@ defineExpose({ scrollEnd })
                 </div>
               </div>
             </q-tab-panel>
-            <q-tab-panel name="restrictions" class="column q-gutter-y-xs no-padding">
+            <q-tab-panel name="restrictions" class="column q-gutter-y-xs no-padding full-width">
               <div v-if="slots['add-restriction']">
                 <slot name="add-restriction" :wrap="editWrap"></slot>
               </div>
