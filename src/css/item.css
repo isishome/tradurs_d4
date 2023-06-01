@@ -411,14 +411,14 @@
 .avatar {
   position: absolute;
   left: 0;
-  top: 16px;
+  top: 15px;
   font-size: 12px;
   width: 16px;
 }
 
 @media (max-width:600px) {
   .avatar {
-    top: 8px;
+    top: 10px;
     font-size: 10px;
   }
 }

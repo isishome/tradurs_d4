@@ -251,8 +251,8 @@ defineExpose({ scrollEnd })
       <q-card-section class="col column no-wrap" style="padding-top:0">
         <div class="attribute column">
           <q-tab-panels v-model="attribute" class="q-pa-xs bg-transparent col">
-            <q-tab-panel v-if="hasProperties" name="properties" class="wrap column q-gutter-y-xs no-padding full-width">
-              <div v-if="slots['add-property']">
+            <q-tab-panel v-if="hasProperties" name="properties" class="column q-gutter-y-xs no-padding">
+              <div v-if="slots['add-property']" class="full-width">
                 <slot name="add-property" :wrap="editWrap"></slot>
               </div>
               <div ref="propertyRef" class="col d4-scroll">
@@ -272,8 +272,8 @@ defineExpose({ scrollEnd })
                 </div>
               </div>
             </q-tab-panel>
-            <q-tab-panel v-if="hasAffixes" name="affixes" class="wrap column q-gutter-y-xs no-padding full-width">
-              <div v-if="slots['add-affix']">
+            <q-tab-panel v-if="hasAffixes" name="affixes" class="column q-gutter-y-xs no-padding">
+              <div v-if="slots['add-affix']" class="full-width">
                 <slot name="add-affix" :wrap="editWrap"></slot>
               </div>
               <div ref="affixRef" class="col d4-scroll">
@@ -293,8 +293,8 @@ defineExpose({ scrollEnd })
                 </div>
               </div>
             </q-tab-panel>
-            <q-tab-panel name="restrictions" class="wrap column q-gutter-y-xs no-padding full-width">
-              <div v-if="slots['add-restriction']">
+            <q-tab-panel name="restrictions" class="column q-gutter-y-xs no-padding">
+              <div v-if="slots['add-restriction']" class="full-width">
                 <slot name="add-restriction" :wrap="editWrap"></slot>
               </div>
               <div ref="restrictionRef" class="col d4-scroll">
@@ -337,7 +337,7 @@ defineExpose({ scrollEnd })
           <div class="text-primary">{{ data.ladder ? '&#10074;' : '' }}</div>
         </div>
         <q-img v-show="!loading" :src="itemImage" class="item-image" />
-        <div class="column justify-center items-end user-area" :class="{ 'q-gutter-xs': !$q.screen.lt.sm }">
+        <div class="column justify-center items-end user-area" :class="{ 'q-gutter-xs': !$q.screen.lt.sm || loading }">
           <q-skeleton v-show="loading" width="50px" :height="$q.screen.lt.sm ? '16px' : '18px'" />
           <div v-show="!loading">{{
             findStatus(data.statusCode)?.label }}</div>
@@ -350,7 +350,7 @@ defineExpose({ scrollEnd })
         </div>
         <div class="row justify-beween items-start q-px-sm">
           <div class="col relative-position q-gutter-y-xs" :class="{ 'q-py-sm': !$q.screen.lt.sm }">
-            <div class="column items-start q-pb-sm" :class="{ 'q-col-gutter-xs': !$q.screen.lt.sm }">
+            <div class="column items-start q-pb-sm" :class="{ 'q-gutter-xs': !$q.screen.lt.sm || loading }">
               <div v-show="loading">
                 <q-skeleton width="150px" :height="$q.screen.lt.sm ? '16px' : '24px'" />
               </div>
