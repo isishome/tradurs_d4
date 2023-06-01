@@ -98,13 +98,14 @@ onUnmounted(() => {
         </q-scroll-area>
       </q-list>
     </q-drawer>
-    <q-drawer show-if-above bordered v-model="rightDrawerOpen" side="right" behavior="mobile"
-      class="row justify-start scroll" :width="300">
-    <q-list class="column full-height" style="width:300px">
-      <q-item class="row justify-end q-gutter-sm q-pa-lg">
+  <q-drawer show-if-above bordered v-model="rightDrawerOpen" side="right" behavior="mobile"
+    class="row justify-start scroll" :width="300">
+      <q-list class="column full-height" style="width:300px">
+        <q-item class="row justify-end q-gutter-sm q-pa-lg">
           <q-select v-model="locale" :options="localeOptions" :label="t('language', 0, { locale: brLoc })" dense outlined
-            behavior="menu" emit-value map-options options-dense style="min-width: 150px" @update:model-value="setLang" />
-          <q-btn round flat :ripple="!$q.dark.isActive" popup-content-class="d4-scroll" @click="setDark">
+            behavior="menu" emit-value map-options options-dense style="min-width: 150px"
+            :dropdown-icon="`img:${icons.dropdown}`" popup-content-class="d4-scroll" @update:model-value="setLang" />
+          <q-btn round flat :ripple="!$q.dark.isActive" @click="setDark">
             <img v-show="$q.dark.isActive" class="icon" width="24" :src="icons.light" />
             <img v-show="!$q.dark.isActive" class="icon" width="24" :src="icons.dark" />
           </q-btn>
@@ -138,9 +139,6 @@ onUnmounted(() => {
           </q-btn>
           <q-tabs dense no-caps class="gt-sm q-px-md bg-transparent no-hover nav">
             <q-route-tab :ripple="!$q.dark.isActive" :label="t('page.tradeList')" :to="{ name: 'tradeList' }" exact />
-            <!-- <q-route-tab :ripple="!$q.dark.isActive" :label="t('message')" :to="{ path: '/message' }">
-                                                                            <q-badge v-show="badge" floating color="red" rounded />
-                                                                          </q-route-tab> -->
           </q-tabs>
         </div>
         <div class="lt-md col-lg-3 col-4 row justify-end q-gutter-sm">
@@ -172,8 +170,8 @@ onUnmounted(() => {
               <div class="q-py-xl"></div>
             </div>
             <!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5110777286519562"
-                              data-ad-slot="8610177982" data-ad-format="auto" data-full-width-responsive="true"
-                              :data-adtest="prod ? 'off' : 'on'" :key="key"></ins> -->
+                                    data-ad-slot="8610177982" data-ad-format="auto" data-full-width-responsive="true"
+                                    :data-adtest="prod ? 'off' : 'on'" :key="key"></ins> -->
             <div class="q-py-xl"></div>
             <q-separator />
             <div class="q-pt-lg">
@@ -190,8 +188,8 @@ onUnmounted(() => {
             <div class="full-height q-px-lg q-py-xl" :style="`width:280px;height:${asideHeight}`">
               <div :style="`position:sticky;top:${asideTop}`">
                 <!-- <ins class="adsbygoogle" style="display:inline-block;width:160px;height:600px"
-                                    data-ad-client="ca-pub-5110777286519562" data-ad-slot="7240136439" :data-adtest="prod ? 'off' : 'on'"
-                                    :key="key"></ins> -->
+                                          data-ad-client="ca-pub-5110777286519562" data-ad-slot="7240136439" :data-adtest="prod ? 'off' : 'on'"
+                                          :key="key"></ins> -->
               </div>
             </div>
           </div>

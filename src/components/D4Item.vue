@@ -251,7 +251,7 @@ defineExpose({ scrollEnd })
       <q-card-section class="col column no-wrap" style="padding-top:0">
         <div class="attribute column">
           <q-tab-panels v-model="attribute" class="q-pa-xs bg-transparent col">
-            <q-tab-panel v-if="hasProperties" name="properties" class="column q-gutter-y-xs no-padding full-width">
+            <q-tab-panel v-if="hasProperties" name="properties" class="wrap column q-gutter-y-xs no-padding full-width">
               <div v-if="slots['add-property']">
                 <slot name="add-property" :wrap="editWrap"></slot>
               </div>
@@ -272,7 +272,7 @@ defineExpose({ scrollEnd })
                 </div>
               </div>
             </q-tab-panel>
-            <q-tab-panel v-if="hasAffixes" name="affixes" class="column q-gutter-y-xs no-padding full-width">
+            <q-tab-panel v-if="hasAffixes" name="affixes" class="wrap column q-gutter-y-xs no-padding full-width">
               <div v-if="slots['add-affix']">
                 <slot name="add-affix" :wrap="editWrap"></slot>
               </div>
@@ -293,7 +293,7 @@ defineExpose({ scrollEnd })
                 </div>
               </div>
             </q-tab-panel>
-            <q-tab-panel name="restrictions" class="column q-gutter-y-xs no-padding full-width">
+            <q-tab-panel name="restrictions" class="wrap column q-gutter-y-xs no-padding full-width">
               <div v-if="slots['add-restriction']">
                 <slot name="add-restriction" :wrap="editWrap"></slot>
               </div>

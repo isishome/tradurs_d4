@@ -484,7 +484,8 @@ defineExpose({ create, hideEditable, openOffers, hideOffers })
       <q-intersection v-for="item, idx in (items as Array<Item | Advertise>)" :key="`item_${idx}`"
         :data-itemid="item.itemId" class="item"
         :style="item.expanded ? 'height:100%' : `height: ${height as number - ($q.screen.lt.sm ? 50 : 0)}px;`"
-        transition="fade" @visibility="isVisible => visible(isVisible, item)" ssr-prerender>
+        transition="none" :threshold="[0, 0.25, 0.5, 0.75, 1]" @visibility="isVisible => visible(isVisible, item)"
+        ssr-prerender>
         <div v-if="(item instanceof Advertise)" class="bg-grey" style="width:100%;height:500px"></div>
         <D4Item v-else :data="item" :loading="loading || item.loading">
           <template #top-right>
