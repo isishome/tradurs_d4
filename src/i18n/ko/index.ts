@@ -13,7 +13,7 @@ export default {
     msg1: '',
     msg2: '의 정상적인 서비스 이용을 위해 Battle.net 에서 사용하는 BattleTag™를 입력해야 합니다.',
     desc: '배틀 태그는 Tradurs 사용자 정보 페이지에서 언제나 수정 가능합니다',
-    placeholder: '레비아탄5112'
+    placeholder: '레비아탄#5112'
   },
   noItem: '거래 가능한 아이템이 없습니다',
   message: '메세지',

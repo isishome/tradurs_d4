@@ -37,7 +37,7 @@ const loading = ref<boolean>(false)
 const updateBattleTag = () => {
   as.updateBattleTag(battleTag.value)
     .then(() => {
-      as.info.battleTag = `#${battleTag.value}`
+      as.info.battleTag = battleTag.value
     })
 }
 
@@ -92,9 +92,9 @@ onMounted(() => {
         </q-card-section>
         <q-card-section>
           <div class="q-px-lg q-py-md">
-            <q-input autofocus v-model="battleTag" label="BattleTag™" :placeholder="t('battlenet.placeholder')" prefix="#"
-              fill-mask :disable="loading"
-              :rules="[val => val && (/^([ㄱ-ㅎㅏ-ㅣ가-힣]{1}[ㄱ-ㅎㅏ-ㅣ가-힣0-9]{1,12}|[a-zA-Z]{1}[a-zA-Z0-9]{2,16})$/g).test(val) || '']"
+            <q-input autofocus v-model="battleTag" label="BattleTag™" :placeholder="t('battlenet.placeholder')" fill-mask
+              :disable="loading"
+              :rules="[val => val && (/^([ㄱ-ㅎㅏ-ㅣ가-힣]{1}[ㄱ-ㅎㅏ-ㅣ가-힣]{1,7}#[0-9]{4,5}|[a-zA-Z]{1}[a-zA-Z0-9]{2,11}#[0-9]{4,5})$/g).test(val) || '']"
               outlined no-error-icon hide-hint maxlength="17" />
           </div>
         </q-card-section>

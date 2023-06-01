@@ -13,7 +13,7 @@ export default {
     msg1: 'In order to provide useful services to you on ',
     msg2: ', you must enter the BattleTag™ used in Battle.net.',
     desc: 'BattleTag™ can always be edited on the user information page of the Tradurs site',
-    placeholder: 'Leviathan5112'
+    placeholder: 'leviathan#5112'
   },
   noItem: 'No items available for trade',
   trade: 'Trade',
