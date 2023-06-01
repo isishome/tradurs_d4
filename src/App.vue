@@ -28,7 +28,7 @@ const route = useRoute()
 const view = ref<boolean>(false)
 const isDark = ref($q.cookies.has('d4.dark') ? $q.cookies.get('d4.dark') === 'true' : $q.dark.isActive)
 $q.dark.set(isDark.value)
-const lang = $q.cookies.has('d4.lang') ? $q.cookies.get('d4.lang') as string : 'ko'
+const lang = $q.cookies.has('d4.lang') ? $q.cookies.get('d4.lang') as string : $q.lang.getLocale()?.substring(0, 2) || 'ko'
 locale.value = lang
 
 const battleTag = ref<string>('')
