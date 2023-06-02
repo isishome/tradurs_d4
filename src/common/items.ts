@@ -22,6 +22,8 @@ import shields from 'assets/items/armor/shields.webp'
 import rings from 'assets/items/accesesories/rings.webp'
 import amulets from 'assets/items/accesesories/amulets.webp'
 
+import totems from 'assets/items/inventory/totems.webp'
+
 export const itemImgs = {
   essence,
   glyph,
@@ -41,5 +43,6 @@ export const itemImgs = {
   legarmor,
   shields,
   rings,
-  amulets
+  amulets,
+  totems
 }
