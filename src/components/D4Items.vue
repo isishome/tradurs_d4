@@ -5,7 +5,7 @@ import { useI18n } from 'vue-i18n'
 
 import { useAccountStore } from 'stores/account-store'
 import { useItemStore, type Property, type Affix, type Restriction } from 'stores/item-store'
-import { checkAttribute } from 'src/common'
+import { checkAttribute, scrollPos } from 'src/common'
 import { Item, Advertise, Offer, type IItem } from 'src/types/item'
 import { icons } from 'src/common/icons'
 
@@ -153,6 +153,7 @@ interface Add {
   attributeTypes: Function,
   type: string,
   attribute: string,
+  continuously: boolean,
   error: boolean,
   errorMessage: string
 }
@@ -164,9 +165,11 @@ const add = reactive<Add>({
   attributeTypes: is.filterAttributeTypes,
   type: 'regular',
   attribute: '',
+  continuously: false,
   error: false,
   errorMessage: ''
 })
+
 const hideAdd = (): void => {
   add.category = null
   add.type = 'regular'
@@ -177,7 +180,7 @@ const hideAdd = (): void => {
 
 const applyAdd = (): void => {
   let errorMessage = ''
-  if (!add.attribute || add.attribute === '')
+  if (!add.attribute || add.attribute.trim() === '')
     errorMessage = t('attribute.enter', { attr: t(add.category as string) })
   else if (!checkAttribute(add.attribute))
     errorMessage = t('attribute.invalid', { attr: t(add.category as string) })
@@ -206,11 +209,18 @@ const applyAdd = (): void => {
       const target = add.category === 'properties' ? activatedItem.value.properties : add.category === 'affixes' ? activatedItem.value.affixes : activatedItem.value.restrictions
       target.push(attribute)
       activatedRef.value?.scrollEnd(add.category, tempId)
-      add.show = false
+
+      if (add.continuously)
+        add.attribute = ''
+
+      add.show = add.continuously
     })
     .catch(() => { })
     .then(() => {
       disable.value = false
+      nextTick(() => {
+        refAttribute.value?.focus()
+      })
     })
 }
 
@@ -457,6 +467,16 @@ const complete = (evaluations: Array<number>) => {
     })
 }
 
+const expanded = (item: Item) => {
+  item.expanded = true
+  const findItem = document.querySelector(`div[data-itemid="${item.itemId}"]`) as HTMLDivElement
+  if (findItem) {
+    nextTick(() => {
+      scrollPos(findItem.offsetTop, 'smooth')
+    })
+  }
+}
+
 // Execute function if an item is visible (adsense)
 const visible = (isVisible: boolean, item: Item): void => {
   //if (!isVisible)
@@ -515,7 +535,7 @@ defineExpose({ create, hideEditable, openOffers, hideOffers })
           </template>
           <template #more="{ loading }">
             <q-btn v-if="!item.expanded && !loading" flat text-color="black" class="more no-hover" padding="20px"
-              @click="item.expanded = true">
+              @click="expanded(item)">
               <img class="icon" width="24" height="16" src="~assets/icons/more.svg" />
             </q-btn>
           </template>
@@ -523,12 +543,12 @@ defineExpose({ create, hideEditable, openOffers, hideOffers })
       </q-intersection>
     </div>
     <div v-show="items.length === 0" class="row justify-center items-center" style="height:40vh">{{ t('noItem') }}</div>
-    <q-dialog v-model="activateShow" :maximized="$q.screen.lt.sm" :persistent="disable" transition-show="none"
-      transition-hide="none" :no-route-dismiss="false" @hide="hideEditable">
+    <q-dialog v-model="activateShow" :maximized="$q.screen.lt.sm" persistent transition-show="none" transition-hide="none"
+      :no-route-dismiss="false" @hide="hideEditable">
       <D4Item ref="activatedRef" :data="activatedItem" editable :loading="activatedItem.loading" :disable="disable"
         @update="updateItem" @apply="apply">
         <template #add-property="props">
-          <div class="row items-center q-gutter-sm full-width">
+          <div class="row items-center q-gutter-sm">
             <q-select ref="propertyRef" v-model="propertyId" :disable="disable"
               :popup-content-style="{ 'height': `${props.wrap?.$el.clientHeight / 2}px` }" outlined dense no-error-icon
               use-input hide-bottom-space hide-selected emit-value map-options transition-show="none"
@@ -684,17 +704,21 @@ defineExpose({ create, hideEditable, openOffers, hideOffers })
                     @click="addAttrNum" />
                 </div>
               </div>
-              <q-input autofocus ref="refAttribute" v-model="add.attribute" :placeholder="t('attribute.placeholder')"
-                :disable="disable" :error="add.error" :error-message="add.errorMessage" outlined dense no-error-icon
-                hide-hint />
+              <q-input autofocus ref="refAttribute" v-model="add.attribute" type="textarea"
+                :placeholder="t('attribute.placeholder')" :disable="disable" :error="add.error"
+                :error-message="add.errorMessage" outlined dense no-error-icon hide-hint
+                @keydown.exact.enter.prevent="applyAdd" />
             </div>
           </q-card-section>
           <q-separator inset />
           <q-card-section>
-            <div class="row justify-end items-center q-gutter-sm q-py-xs">
-              <D4Btn :label="t('btn.cancel')" :loading="loading" :disable="disable" color="rgb(150,150,150)"
-                @click="add.show = false" />
-              <D4Btn :label="t('btn.add')" :loading="loading" :progress="disable" type="submit" />
+            <div class="row justify-between items-center q-gutter-sm q-py-xs">
+              <q-checkbox size="xs" :disable="disable" v-model="add.continuously" :label="t('attribute.continuously')" />
+              <div>
+                <D4Btn :label="t('btn.cancel')" :loading="loading" :disable="disable" color="rgb(150,150,150)"
+                  @click="add.show = false" />
+                <D4Btn :label="t('btn.add')" :loading="loading" :progress="disable" type="submit" />
+              </div>
             </div>
           </q-card-section>
         </q-form>

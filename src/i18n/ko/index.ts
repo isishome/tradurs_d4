@@ -76,7 +76,8 @@ export default {
     placeholder: "공격 회피 후 {'{'}x{'}'}초 동안  +{'{'}x{'}'} 공격 속도 증가",
     enter: '{attr}을 입력해 주세요',
     invalid: '잘못된 형식의 {attr} 입니다',
-    exists: '이미 존재하는 {attr} 입니다'
+    exists: '이미 존재하는 {attr} 입니다',
+    continuously: '연속 추가'
   },
   item: {
     quality: '아이템 등급',

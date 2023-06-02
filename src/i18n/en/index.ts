@@ -77,7 +77,8 @@ export default {
     placeholder: "+{'{'}x{'}'}% Increased Attack Speed for {'{'}x{'}'} Seconds After Dodging an Attack",
     enter: 'Please enter the {attr}',
     invalid: 'Invalid {attr} format',
-    exists: 'Already exists {attr}'
+    exists: 'Already exists {attr}',
+    continuously: 'Add continuously'
   },
   item: {
     quality: 'Item Quality',
