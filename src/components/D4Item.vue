@@ -332,10 +332,6 @@ defineExpose({ scrollEnd })
     :class="[data.expanded ? 'expanded' : 'no-expanded', data.quality, `status-${data.statusCode}`]">
     <div class="inner">
       <q-card-section class="relative-position">
-        <div v-show="!loading" class="avatar row justify-end items-center">
-          <div class="text-secondary">{{ data.hardcore ? '&#10074;' : '' }}</div>
-          <div class="text-primary">{{ data.ladder ? '&#10074;' : '' }}</div>
-        </div>
         <q-img v-show="!loading" :src="itemImage" class="item-image" />
         <div class="column justify-center items-end user-area" :class="{ 'q-gutter-xs': !$q.screen.lt.sm || loading }">
           <q-skeleton v-show="loading" width="50px" :height="$q.screen.lt.sm ? '16px' : '18px'" />
@@ -348,39 +344,42 @@ defineExpose({ scrollEnd })
           <D4User :data="data.user" :label="t('seller')" :disable="disable" :progress="loading"
             :authorized="data.authorized" />
         </div>
-        <div class="row justify-beween items-start q-px-sm">
-          <div class="col relative-position q-gutter-y-xs" :class="{ 'q-py-sm': !$q.screen.lt.sm }">
-            <div class="column items-start q-pb-sm" :class="{ 'q-gutter-xs': !$q.screen.lt.sm || loading }">
-              <div v-show="loading">
-                <q-skeleton width="150px" :height="$q.screen.lt.sm ? '16px' : '24px'" />
-              </div>
-              <div v-show="!loading" class="full-width row no-wrap items-center q-col-gutter-xs">
-                <div v-show="data.itemType === 'rune'" class="row items-center q-gutter-sm">
-                  <div class="name">{{ (runes().find(r => r.value === data.runeId) || {}).label }}</div>
-                  <div>{{ findRuneType(findRune(data.runeId)?.type)?.label }}
-                  </div>
-                </div>
-                <div v-show="data.itemType !== 'rune'" class="name stress ellipsis-2-lines">
-                  {{ data.name }}
-                </div>
-                <div v-if="data.quantity > 1" class="col-3 col-sm-2 price row items-center q-gutter-xs">
-                  <div class="text-lowercase">x</div>
-                  <div>{{ data.quantity }}</div>
+        <div class="column items-start q-px-sm q-pb-sm relative-position"
+          :class="{ 'q-gutter-xs': !$q.screen.lt.sm || loading }">
+          <div v-show="!loading" class="avatar row justify-end items-center">
+            <div class="text-secondary">{{ data.hardcore ? '&#10074;' : '' }}</div>
+            <div class="text-primary">{{ data.ladder ? '&#10074;' : '' }}</div>
+          </div>
+          <div v-show="loading">
+            <q-skeleton width="150px" :height="$q.screen.lt.sm ? '16px' : '24px'" />
+          </div>
+          <div style="width:60%">
+            <div v-show="!loading" class="row items-center q-gutter-xs">
+              <div v-show="data.itemType === 'rune'" class="row items-center q-gutter-sm">
+                <div class="name">{{ (runes().find(r => r.value === data.runeId) || {}).label }}</div>
+                <div>{{ findRuneType(findRune(data.runeId)?.type)?.label }}
                 </div>
               </div>
-              <div v-show="loading">
-                <q-skeleton width="100px" :height="$q.screen.lt.sm ? '16px' : '18px'" />
+              <div v-show="data.itemType !== 'rune'" class="name stress ellipsis-2-lines">
+                {{ data.name }}
               </div>
-              <div v-show="!loading" class="stress" style="opacity:.6">{{ findQuality(data.quality)?.fullName }} {{
-                findType(data.itemType)?.label }}
+              <div v-if="data.quantity > 1" class="price row items-center q-gutter-xs">
+                <div class="text-lowercase">x</div>
+                <div>{{ data.quantity }}</div>
               </div>
             </div>
-            <div v-show="data.power > 0">
-              {{ t('item.power', { p: data.power }) }}
-            </div>
-            <div v-show="data.upgrade > 0" class="stress">
-              {{ t('item.upgrade', { u: data.upgrade, ul: upgradeLimit }) }}
-            </div>
+          </div>
+          <div v-show="loading">
+            <q-skeleton width="100px" :height="$q.screen.lt.sm ? '16px' : '18px'" />
+          </div>
+          <div v-show="!loading" class="stress" style="opacity:.6">{{ findQuality(data.quality)?.fullName }} {{
+            findType(data.itemType)?.label }}
+          </div>
+          <div v-show="data.power > 0">
+            {{ t('item.power', { p: data.power }) }}
+          </div>
+          <div v-show="data.upgrade > 0" class="stress">
+            {{ t('item.upgrade', { u: data.upgrade, ul: upgradeLimit }) }}
           </div>
         </div>
       </q-card-section>
