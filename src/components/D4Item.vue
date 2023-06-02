@@ -353,7 +353,7 @@ defineExpose({ scrollEnd })
             <q-skeleton width="150px" :height="$q.screen.lt.sm ? '16px' : '24px'" />
           </div>
           <div style="width:70%">
-            <div v-show="!loading" class="row items-center q-gutter-xs">
+            <div v-show="!loading" class="row items-center q-gutter-xs q-mb-xs">
               <div v-show="data.itemType === 'rune'" class="row items-center q-gutter-sm">
                 <div class="name">{{ (runes().find(r => r.value === data.runeId) || {}).label }}</div>
                 <div>{{ findRuneType(findRune(data.runeId)?.type)?.label }}
