@@ -459,11 +459,11 @@ const complete = (evaluations: Array<number>) => {
 
 // Execute function if an item is visible (adsense)
 const visible = (isVisible: boolean, item: Item): void => {
-  if (!isVisible)
-    item.expanded = false
-  // const findItem = document.querySelector(`div[data-itemid="${item.itemId}"]`) as HTMLDivElement
-  // if (findItem && item.expanded)
-  //   findItem.style.height = isVisible ? '100%' : `${findItem.offsetHeight}px`
+  //if (!isVisible)
+  //item.expanded = false
+  const findItem = document.querySelector(`div[data-itemid="${item.itemId}"]`) as HTMLDivElement
+  if (findItem && item.expanded)
+    findItem.style.height = isVisible ? '100%' : `${findItem.offsetHeight}px`
 }
 
 const create = () => {
@@ -484,9 +484,9 @@ defineExpose({ create, hideEditable, openOffers, hideOffers })
   <div class="col-12" :style="`max-width:${width}px`">
     <div :class="$q.screen.lt.sm ? 'q-gutter-y-xl' : 'q-gutter-y-xxl'">
       <q-intersection v-for="item, idx in (items as Array<Item | Advertise>)" :key="`item_${idx}`"
-        :data-itemid="item.itemId" class="item"
+        :data-itemid="item.itemId" class="item" :threshold="[0, 0.25, 0.5, 0.75, 1]"
         :style="item.expanded ? 'height:100%' : `height: ${height as number - ($q.screen.lt.sm ? 50 : 0)}px;`"
-        transition="none" @visibility="isVisible => visible(isVisible, item)" ssr-prerender>
+        transition="fade" @visibility="isVisible => visible(isVisible, item)" ssr-prerender>
         <div v-if="(item instanceof Advertise)" class="bg-grey" style="width:100%;height:500px"></div>
         <D4Item v-else :data="item" :loading="loading || item.loading">
           <template #top-right>
@@ -523,8 +523,8 @@ defineExpose({ create, hideEditable, openOffers, hideOffers })
       </q-intersection>
     </div>
     <div v-show="items.length === 0" class="row justify-center items-center" style="height:40vh">{{ t('noItem') }}</div>
-    <q-dialog v-model="activateShow" :maximized="$q.screen.lt.sm" :seamless="$q.screen.lt.sm" :persistent="disable"
-      transition-show="none" transition-hide="none" :no-route-dismiss="false" @hide="hideEditable">
+    <q-dialog v-model="activateShow" :maximized="$q.screen.lt.sm" :persistent="disable" transition-show="none"
+      transition-hide="none" :no-route-dismiss="false" @hide="hideEditable">
       <D4Item ref="activatedRef" :data="activatedItem" editable :loading="activatedItem.loading" :disable="disable"
         @update="updateItem" @apply="apply">
         <template #add-property="props">
@@ -665,8 +665,8 @@ defineExpose({ create, hideEditable, openOffers, hideOffers })
         </template>
       </D4Item>
     </q-dialog>
-    <q-dialog v-model="add.show" @hide="hideAdd" :maximized="$q.screen.lt.sm" :seamless="$q.screen.lt.sm"
-      :persistent="disable" transition-show="none" transition-hide="none" :no-route-dismiss="false">
+    <q-dialog v-model="add.show" @hide="hideAdd" :maximized="$q.screen.lt.sm" :persistent="disable" transition-show="none"
+      transition-hide="none" :no-route-dismiss="false">
       <q-card class="card-item dialog normal">
         <q-form class="inner column full-height" @submit="applyAdd">
           <q-card-section>
@@ -700,9 +700,8 @@ defineExpose({ create, hideEditable, openOffers, hideOffers })
         </q-form>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="showOffers" @hide="hideOffers" :maximized="$q.screen.lt.sm" :seamless="$q.screen.lt.sm"
-      transition-show="none" transition-hide="none" :persistent="disableOffers || progressOffer"
-      :no-route-dismiss="false">
+    <q-dialog v-model="showOffers" @hide="hideOffers" :maximized="$q.screen.lt.sm" transition-show="none"
+      transition-hide="none" :persistent="disableOffers || progressOffer" :no-route-dismiss="false">
       <q-card class="card-item dialog offers no-scroll normal">
         <div class="inner column no-wrap" :style="$q.screen.lt.sm ? 'height:100%' : 'min-height:50vh;max-height:90vh'">
           <q-card-section class="row justify-end no-padding">

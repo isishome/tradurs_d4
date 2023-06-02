@@ -332,7 +332,7 @@ defineExpose({ scrollEnd })
     :class="[data.expanded ? 'expanded' : 'no-expanded', data.quality, `status-${data.statusCode}`]">
     <div class="inner">
       <q-card-section class="relative-position">
-        <q-img v-show="!loading" :src="itemImage" class="item-image" />
+        <q-img v-show="!loading" no-spinner :src="itemImage" class="item-image" />
         <div class="column justify-center items-end user-area" :class="{ 'q-gutter-xs': !$q.screen.lt.sm || loading }">
           <q-skeleton v-show="loading" width="50px" :height="$q.screen.lt.sm ? '16px' : '18px'" />
           <div v-show="!loading">{{
@@ -344,8 +344,7 @@ defineExpose({ scrollEnd })
           <D4User :data="data.user" :label="t('seller')" :disable="disable" :progress="loading"
             :authorized="data.authorized" />
         </div>
-        <div class="column items-start q-px-sm q-pb-sm relative-position"
-          :class="{ 'q-gutter-xs': !$q.screen.lt.sm || loading }">
+        <div class="column items-start q-pa-sm relative-position" :class="{ 'q-gutter-xs': !$q.screen.lt.sm || loading }">
           <div v-show="!loading" class="avatar row justify-end items-center">
             <div class="text-secondary">{{ data.hardcore ? '&#10074;' : '' }}</div>
             <div class="text-primary">{{ data.ladder ? '&#10074;' : '' }}</div>
@@ -353,7 +352,7 @@ defineExpose({ scrollEnd })
           <div v-show="loading">
             <q-skeleton width="150px" :height="$q.screen.lt.sm ? '16px' : '24px'" />
           </div>
-          <div style="width:60%">
+          <div style="width:70%">
             <div v-show="!loading" class="row items-center q-gutter-xs">
               <div v-show="data.itemType === 'rune'" class="row items-center q-gutter-sm">
                 <div class="name">{{ (runes().find(r => r.value === data.runeId) || {}).label }}</div>

@@ -70,7 +70,7 @@ export default route(function ({ store }/* { store, ssrContext } */) {
         result = savedPosition
 
       as.position = result
-      console.log(as.position)
+      return result
     },
     routes,
 
