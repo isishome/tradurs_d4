@@ -248,10 +248,10 @@ defineExpose({ scrollEnd })
           :color="$q.dark.isActive ? 'grey-5' : 'grey-8'" :padding="$q.screen.lt.sm ? '8px 8px' : ''"
           :size="$q.screen.lt.sm ? '12px' : ''" toggle-color="transparent toggle" :options="attributes" />
       </q-card-section>
-      <q-card-section class="col column no-wrap" style="padding-top:0">
-        <div class="attribute column">
+      <q-card-section class="col" style="padding-top:0">
+        <div class="attribute">
           <q-tab-panels v-model="attribute" class="q-pa-xs bg-transparent col">
-            <q-tab-panel v-if="hasProperties" name="properties" class="wrap column q-gutter-y-xs no-padding full-width">
+            <q-tab-panel v-if="hasProperties" name="properties" class="q-gutter-y-xs no-padding">
               <div v-if="slots['add-property']">
                 <slot name="add-property" :wrap="editWrap"></slot>
               </div>
@@ -266,7 +266,7 @@ defineExpose({ scrollEnd })
                     </q-item-label>
                   </q-item-section>
                 </q-item>
-                <div v-if="slots.properties && !loading" class="list column q-gutter-y-xs">
+                <div v-if="slots.properties && !loading" class="list q-gutter-y-xs">
                   <slot name="properties">
                   </slot>
                 </div>

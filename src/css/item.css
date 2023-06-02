@@ -397,6 +397,7 @@
 }
 
 .attribute .list {
+  min-height: 100px;
   max-height: 30vh;
 }
 
