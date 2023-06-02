@@ -298,11 +298,17 @@
   }
 }
 
+.card-item .q-field__control,
+.card-item .q-field__marginal {
+  min-height: 34px;
+}
+
 .var {
   max-width: 50px;
 }
 
 .var .q-field__control {
+  min-height: 20px;
   height: 20px;
   line-height: 20px;
   padding: 0 !important;
@@ -397,7 +403,6 @@
 }
 
 .attribute .list {
-  min-height: 100px;
   max-height: 30vh;
 }
 
@@ -416,7 +421,7 @@
   top: 0;
   font-size: 12px;
   width: 18px;
-  transform: translate(-66%, 20%);
+  transform: translate(-70%, 20%);
 }
 
 @media (max-width:600px) {

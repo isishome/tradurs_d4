@@ -634,7 +634,7 @@ defineExpose({ create, hideEditable, openOffers, hideOffers })
         </template>
         <template #actions>
           <div v-if="activatedItem.authorized || activatedItem.itemId === ''"
-            class="row justify-between items-center q-pa-md" :class="{ 'q-pt-lg': !$q.screen.lt.sm }">
+            class="row justify-between items-center q-py-xs">
             <div class="row items-center q-gutter-sm">
               <D4Btn v-if="activatedItem.itemId" :label="t('btn.moreActions')" :loading="activatedItem.loading"
                 :disable="disable" color="var(--q-secondary)">
@@ -691,7 +691,7 @@ defineExpose({ create, hideEditable, openOffers, hideOffers })
           </q-card-section>
           <q-separator inset />
           <q-card-section>
-            <div class="row justify-end items-center q-gutter-sm q-pa-md" :class="{ 'q-pt-lg': !$q.screen.lt.sm }">
+            <div class="row justify-end items-center q-gutter-sm q-py-xs">
               <D4Btn :label="t('btn.cancel')" :loading="loading" :disable="disable" color="rgb(150,150,150)"
                 @click="add.show = false" />
               <D4Btn :label="t('btn.add')" :loading="loading" :progress="disable" type="submit" />

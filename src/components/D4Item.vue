@@ -142,15 +142,15 @@ defineExpose({ scrollEnd })
       :style="$q.screen.lt.sm ? 'height:100%' : 'max-height:90vh'">
       <q-card-section>
         <div class="column items-start q-gutter-y-sm">
-          <div class="row items-center justify-between q-col-gutter-sm full-width q-py-sm">
-            <div class="col-12 col-sm">
-              <div class="row items-center q-gutter-sm quality">
+          <div class="row items-center no-wrap justify-between q-col-gutter-sm full-width q-py-sm">
+            <div>
+              <div class="row no-wrap items-center q-gutter-xs quality">
                 <q-btn :ripple="!$q.dark.isActive" v-for="q in filterQuality()" :key="q.value" :disable="disable" round
                   unelevated :class="['text-weight-bold', { 'active': _quality === q.value }]" :label="q.label"
                   @click="updateQuality(q.value as string)" />
               </div>
             </div>
-            <div class="col-12 col-sm row justify-end items-center q-gutter-md toggles">
+            <div class="row justify-end items-center q-gutter-xs toggles">
               <q-toggle left-label v-model="_hardcore" :disable="disable" color="secondary" :label="t('hardcore')" dense
                 @update:model-value="update" />
               <q-toggle left-label v-model="_ladder" :disable="disable" color="primary" :label="t('ladder')" dense
