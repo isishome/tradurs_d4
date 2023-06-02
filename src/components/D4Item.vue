@@ -250,12 +250,12 @@ defineExpose({ scrollEnd })
       </q-card-section>
       <q-card-section class="col" style="padding-top:0">
         <div class="attribute">
-          <q-tab-panels v-model="attribute" class="q-pa-xs bg-transparent col">
-            <q-tab-panel v-if="hasProperties" name="properties" class="q-gutter-y-xs no-padding">
+          <q-tab-panels v-model="attribute" class="q-pa-xs bg-transparent full-height">
+            <q-tab-panel v-if="hasProperties" name="properties" class="q-gutter-y-xs no-padding column">
               <div v-if="slots['add-property']">
                 <slot name="add-property" :wrap="editWrap"></slot>
               </div>
-              <div ref="propertyRef" class="col d4-scroll full-width">
+              <div ref="propertyRef" class="col d4-scroll">
                 <q-item v-show="loading" v-for="c in 2" :key="c" style="min-height:10px;padding:3px">
                   <q-item-section side class="q-pr-sm">
                     <q-skeleton type="circle" width="10px" height="10px" />
@@ -272,8 +272,8 @@ defineExpose({ scrollEnd })
                 </div>
               </div>
             </q-tab-panel>
-            <q-tab-panel v-if="hasAffixes" name="affixes" class="column q-gutter-y-xs no-padding">
-              <div v-if="slots['add-affix']" class="full-width">
+            <q-tab-panel v-if="hasAffixes" name="affixes" class="q-gutter-y-xs no-padding column">
+              <div v-if="slots['add-affix']">
                 <slot name="add-affix" :wrap="editWrap"></slot>
               </div>
               <div ref="affixRef" class="col d4-scroll">
@@ -287,14 +287,14 @@ defineExpose({ scrollEnd })
                     </q-item-label>
                   </q-item-section>
                 </q-item>
-                <div v-if="slots.affixes && !loading" class="list column q-gutter-y-sm">
+                <div v-if="slots.affixes && !loading" class="list q-gutter-y-xs">
                   <slot name="affixes">
                   </slot>
                 </div>
               </div>
             </q-tab-panel>
-            <q-tab-panel name="restrictions" class="column q-gutter-y-xs no-padding">
-              <div v-if="slots['add-restriction']" class="full-width">
+            <q-tab-panel name="restrictions" class="q-gutter-y-xs no-padding column">
+              <div v-if="slots['add-restriction']">
                 <slot name="add-restriction" :wrap="editWrap"></slot>
               </div>
               <div ref="restrictionRef" class="col d4-scroll">
@@ -308,7 +308,7 @@ defineExpose({ scrollEnd })
                     </q-item-label>
                   </q-item-section>
                 </q-item>
-                <div v-if="slots.restrictions && !loading" class="list column q-gutter-y-sm">
+                <div v-if="slots.restrictions && !loading" class="list q-gutter-y-xs">
                   <slot name="restrictions">
                   </slot>
                 </div>
