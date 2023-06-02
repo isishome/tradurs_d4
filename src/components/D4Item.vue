@@ -251,11 +251,11 @@ defineExpose({ scrollEnd })
       <q-card-section class="col column no-wrap" style="padding-top:0">
         <div class="attribute column">
           <q-tab-panels v-model="attribute" class="q-pa-xs bg-transparent col">
-            <q-tab-panel v-if="hasProperties" name="properties" class="column q-gutter-y-xs no-padding">
+            <q-tab-panel v-if="hasProperties" name="properties" class="column q-gutter-y-xs no-padding full-width">
               <div v-if="slots['add-property']" class="full-width">
                 <slot name="add-property" :wrap="editWrap"></slot>
               </div>
-              <div ref="propertyRef" class="col d4-scroll">
+              <div ref="propertyRef" class="col d4-scroll full-width">
                 <q-item v-show="loading" v-for="c in 2" :key="c" style="min-height:10px;padding:3px">
                   <q-item-section side class="q-pr-sm">
                     <q-skeleton type="circle" width="10px" height="10px" />
