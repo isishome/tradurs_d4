@@ -41,26 +41,24 @@ watch(() => props.data, (val) => {
 </script>
 
 <template>
-  <div class="row items-center" :class="{ 'justify-end': !editable }">
-    <div class="row no-wrap items-center q-gutter-xs" :class="{ disable }" :data-id="data.valueId">
-      <div class="row items-center q-gutter-x-xs">
-        <template v-for="comp, k in restrictionInfo" :key="k">
-          <template v-if="comp.type === 'text'">
-            <div v-for="(word, i) in (comp.value as string).split(/\s+/g).filter(w => w !== '')" :key="i">{{ word }}
-            </div>
-          </template>
-          <div v-else-if="!editable && comp.type === 'variable'">{{ comp.value }}</div>
-          <q-input v-else ref="ai" class="var" input-class="text-center text-caption no-padding" dense hide-bottom-space
-            hide-hint no-error-icon outlined v-model.number="comp.value" maxlength="6" debounce="500" :disable="disable"
-            :rules="[val => !disable && (parseFloat(val) % 1 !== 0 || parseInt(val) % 1 === 0) || '']"
-            @update:model-value="update" @focus="focus" />
+  <div class="row no-wrap items-baseline q-gutter-xs" :class="{ disable,'justify-end': !editable }" :data-id="data.valueId">
+    <div class="row items-center q-gutter-x-xs">
+      <template v-for="comp, k in restrictionInfo" :key="k">
+        <template v-if="comp.type === 'text'">
+          <div v-for="(word, i) in (comp.value as string).split(/\s+/g).filter(w => w !== '')" :key="i">{{ word }}
+          </div>
         </template>
-      </div>
+        <div v-else-if="!editable && comp.type === 'variable'">{{ comp.value }}</div>
+        <q-input v-else ref="ai" class="var" input-class="text-center text-caption no-padding" dense hide-bottom-space
+          hide-hint no-error-icon outlined v-model.number="comp.value" maxlength="6" debounce="500" :disable="disable"
+          :rules="[val => !disable && (parseFloat(val) % 1 !== 0 || parseInt(val) % 1 === 0) || '']"
+          @update:model-value="update" @focus="focus" />
+      </template>
+      <q-btn v-show="editable" :disable="disable" dense unelevated flat round size="xs" class="q-ml-sm" @click="remove">
+        <img v-show="data.action !== 8" class="icon" width="13" src="~assets/icons/close.svg" />
+        <img v-show="data.action === 8" class="icon flip-horizontal" width="13" src="~assets/icons/restore.svg" />
+      </q-btn>
     </div>
-    <q-btn v-show="editable" :disable="disable" dense unelevated flat round size="xs" class="q-ml-sm" @click="remove">
-      <img v-show="data.action !== 8" class="icon" width="13" src="~assets/icons/close.svg" />
-      <img v-show="data.action === 8" class="icon flip-horizontal" width="13" src="~assets/icons/restore.svg" />
-    </q-btn>
   </div>
 </template>
 <style scoped>

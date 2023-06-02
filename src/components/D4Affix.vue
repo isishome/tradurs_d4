@@ -44,32 +44,30 @@ watch(() => props.data, (val) => {
 </script>
 
 <template>
-  <div class="row items-center" :class="{ 'unique': affixType === 'unique', 'text-grey-6': affixType === 'socket' }">
-    <div class="row no-wrap items-baseline q-gutter-xs"
-      :class="{ disable, 'stress': ['legendary', 'unique'].includes(affixType) }" :data-id="data.valueId">
-      <div>
-        <q-icon class="icon"
-          :class="{ 'rotate-45': ['regular', 'offensive', 'defensive', 'utility'].includes(affixType) }" size="13px"
-          :name="`img:${icons[affixType as keyof typeof icons]}`" />
-      </div>
-      <div class="row items-center q-gutter-x-xs">
-        <template v-for="(comp, k) in affixInfo" :key="k">
-          <template v-if="comp.type === 'text'">
-            <div v-for="(word, i) in (comp.value as string).split(/\s+/g).filter(w => w !== '')" :key="i">{{ word }}
-            </div>
-          </template>
-          <div v-else-if="!editable && comp.type === 'variable'">{{ comp.value }}</div>
-          <q-input v-else ref="ai" class="var" input-class="text-center text-caption no-padding" dense hide-bottom-space
-            hide-hint no-error-icon outlined v-model.number="comp.value" maxlength="6" debounce="500" :disable="disable"
-            :rules="[val => !disable && (parseFloat(val) % 1 !== 0 || parseInt(val) % 1 === 0) || '']"
-            @update:model-value="update" @focus="focus" />
-        </template>
-      </div>
+  <div class="row no-wrap items-baseline q-gutter-xs"
+    :class="{ disable, 'stress': ['legendary', 'unique'].includes(affixType), 'text-grey-6': affixType === 'socket' }"
+    :data-id="data.valueId">
+    <div>
+      <q-icon class="icon" :class="{ 'rotate-45': ['regular', 'offensive', 'defensive', 'utility'].includes(affixType) }"
+        size="13px" :name="`img:${icons[affixType as keyof typeof icons]}`" />
     </div>
-    <q-btn v-show="editable" :disable="disable" dense unelevated flat round padding="0" class="q-ml-sm" @click="remove">
-      <img v-show="data.action !== 8" class="icon" width="13" src="~assets/icons/close.svg" />
-      <img v-show="data.action === 8" class="icon flip-horizontal" width="13" src="~assets/icons/restore.svg" />
-    </q-btn>
+    <div class="row items-center q-gutter-x-xs">
+      <template v-for="(comp, k) in affixInfo" :key="k">
+        <template v-if="comp.type === 'text'">
+          <div v-for="(word, i) in (comp.value as string).split(/\s+/g).filter(w => w !== '')" :key="i">{{ word }}
+          </div>
+        </template>
+        <div v-else-if="!editable && comp.type === 'variable'">{{ comp.value }}</div>
+        <q-input v-else ref="ai" class="var" input-class="text-center text-caption no-padding" dense hide-bottom-space
+          hide-hint no-error-icon outlined v-model.number="comp.value" maxlength="6" debounce="500" :disable="disable"
+          :rules="[val => !disable && (parseFloat(val) % 1 !== 0 || parseInt(val) % 1 === 0) || '']"
+          @update:model-value="update" @focus="focus" />
+      </template>
+      <q-btn v-show="editable" :disable="disable" dense unelevated flat round padding="0" class="q-ml-sm" @click="remove">
+        <img v-show="data.action !== 8" class="icon" width="13" src="~assets/icons/close.svg" />
+        <img v-show="data.action === 8" class="icon flip-horizontal" width="13" src="~assets/icons/restore.svg" />
+      </q-btn>
+    </div>
   </div>
 </template>
 <style scoped>
