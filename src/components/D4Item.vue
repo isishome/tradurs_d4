@@ -35,6 +35,10 @@ const slots = useSlots()
 const store = useItemStore()
 const { t } = useI18n({ useScope: 'global' })
 
+const imgPath = (path: string) => {
+  return new URL(path, import.meta.url).href
+}
+
 // variable
 const editWrap = ref<QCard | null>(null)
 const hasProperties = computed(() => findType(_type.value)?.hasProperties)
@@ -209,7 +213,8 @@ defineExpose({ scrollEnd })
                   <template #option="scope">
                     <q-item clickable @click="scope.toggleOption(scope.opt.value)">
                       <q-item-section avatar>
-                        <img height="36" :src="`src/assets/items/${_type}/${scope.opt.value}.webp`" />
+                        <!-- <img height="36" :src="`src/assets/items/${_type}/${scope.opt.value}.webp`" /> -->
+                        <img height="36" :src="imgPath(`/src/assets/items/${_type}/${scope.opt.value}.webp`)" />
                       </q-item-section>
                       <q-item-section>
                         <q-item-label class="ellipsis">{{ scope.opt.label }}</q-item-label>
