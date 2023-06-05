@@ -64,12 +64,4 @@ const copy = (battleTag: string) => {
   </div>
 </template>
 
-<style scoped>
-.avatar {
-  background-image: url('src/assets/avatar/avatar.webp');
-  background-repeat: no-repeat;
-  background-size: cover;
-  width: inherit;
-  height: inherit;
-}
-</style>
+<style scoped></style>

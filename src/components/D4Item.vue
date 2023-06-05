@@ -35,10 +35,6 @@ const slots = useSlots()
 const store = useItemStore()
 const { t } = useI18n({ useScope: 'global' })
 
-const imgPath = (path: string) => {
-  return (new URL(path, import.meta.url)).toString()
-}
-
 // variable
 const editWrap = ref<QCard | null>(null)
 const hasProperties = computed(() => findType(_type.value)?.hasProperties)
@@ -193,7 +189,7 @@ defineExpose({ scrollEnd })
                   <template #option="scope">
                     <q-item v-bind="scope.itemProps">
                       <q-item-section avatar>
-                        <img :src="`src/assets/items/rune/${scope.opt.value}.webp`" width="24" />
+                        <img :src="`/images/items/rune/${scope.opt.value}.webp`" width="24" />
                       </q-item-section>
                       <q-item-section>
                         <q-item-label>{{ scope.opt.label }}</q-item-label>
@@ -213,8 +209,7 @@ defineExpose({ scrollEnd })
                   <template #option="scope">
                     <q-item clickable @click="scope.toggleOption(scope.opt.value)">
                       <q-item-section avatar>
-                        <!-- <img height="36" :src="`src/assets/items/${_type}/${scope.opt.value}.webp`" /> -->
-                        <img height="36" :src="imgPath(`/src/assets/items/${_type}/${scope.opt.value}.webp`)" />
+                        <img height="36" :src="`/images/items/${_type}/${scope.opt.value}.webp`" />
                       </q-item-section>
                       <q-item-section>
                         <q-item-label class="ellipsis">{{ scope.opt.label }}</q-item-label>
@@ -246,7 +241,7 @@ defineExpose({ scrollEnd })
                     <template #option="scope">
                       <q-item clickable @click="scope.toggleOption(scope.opt.value)">
                         <q-item-section avatar>
-                          <img height="36" :src="`src/assets/items/${_type}/${_typeValue1}/${scope.opt.value}.webp`" />
+                          <img height="36" :src="`/images/items/${_type}/${_typeValue1}/${scope.opt.value}.webp`" />
                         </q-item-section>
                         <q-item-section>
                           <q-item-label class="ellipsis">{{ scope.opt.label }}</q-item-label>
@@ -258,7 +253,7 @@ defineExpose({ scrollEnd })
                 <div v-else>
                   <q-btn dense glossy outline padding="4px 8px" color="primary" :ripple="false"
                     class="no-hover rounded-borders" @click="showItemImages = true">
-                    <img height="32" :src="`src/assets/items/${_type}/${_typeValue1}/${_image}.webp`" />
+                    <img height="32" :src="`/images/items/${_type}/${_typeValue1}/${_image}.webp`" />
                     <D4Dialog v-model="showItemImages" :no-route-dismiss="false">
                       <template #top>
                         <q-card-section class="row justify-between items-center q-ml-md">
@@ -280,8 +275,7 @@ defineExpose({ scrollEnd })
                               <q-card flat bordered class="item-image-card"
                                 :class="{ 'bg-primary-cloud': idx === data.imageId }">
                                 <q-card-section class="text-center no-padding">
-                                  <q-img style="width:90%"
-                                    :src="`src/assets/items/${_type}/${_typeValue1}/${idx}.webp`" />
+                                  <q-img style="width:90%" :src="`/images/items/${_type}/${_typeValue1}/${idx}.webp`" />
                                 </q-card-section>
                               </q-card>
                             </div>
@@ -430,7 +424,7 @@ defineExpose({ scrollEnd })
     <div class="inner">
       <q-card-section class="relative-position">
         <q-img v-show="!loading"
-          :src="data.itemType === 'aspect' ? `/src/assets/items/${data.itemType}/${data.itemTypeValue1}.webp` : data.itemTypeValue1 === 'gem' ? `/src/assets/items/${data.itemType}/${data.itemTypeValue1}/${data.itemTypeValue2}.webp` : `/src/assets/items/${data.itemType}/${data.itemTypeValue1}/${data.imageId}.webp`"
+          :src="data.itemType === 'aspect' ? `/images/items/${data.itemType}/${data.itemTypeValue1}.webp` : data.itemTypeValue1 === 'gem' ? `/images/items/${data.itemType}/${data.itemTypeValue1}/${data.itemTypeValue2}.webp` : `/images/items/${data.itemType}/${data.itemTypeValue1}/${data.imageId}.webp`"
           class="item-image" />
         <div class="column justify-center items-end user-area" :class="{ 'q-gutter-xs': !$q.screen.lt.sm || loading }">
           <q-skeleton v-show="loading" width="50px" :height="$q.screen.lt.sm ? '16px' : '18px'" />
