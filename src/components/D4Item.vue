@@ -36,7 +36,7 @@ const store = useItemStore()
 const { t } = useI18n({ useScope: 'global' })
 
 const imgPath = (path: string) => {
-  return new URL(path, import.meta.url).href
+  return (new URL(path, import.meta.url)).toString()
 }
 
 // variable
