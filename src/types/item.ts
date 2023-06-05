@@ -38,8 +38,9 @@ export interface IItem {
   quantity: number,
   quality: string,
   itemType: string,
-  equipmentClass: string,
-  runeId: string,
+  itemTypeValue1: string,
+  itemTypeValue2: string,
+  imageId: number,
   power: number,
   upgrade: number,
   properties: Array<Property>,
@@ -70,7 +71,7 @@ export class Price implements IPrice {
   public loading = false
 
   constructor(currency?: string, currencyValue?: string | number | null, quantity?: number) {
-    this.currency = currency || 'rune'
+    this.currency = currency || 'gold'
     this.currencyValue = this.currency === 'rune' ? 'eld' : currencyValue || null
     this.quantity = quantity || 1
   }
@@ -85,8 +86,9 @@ export class Item implements IItem {
   public quantity = 1
   public quality = 'normal'
   public itemType = ''
-  public equipmentClass = ''
-  public runeId = ''
+  public itemTypeValue1 = ''
+  public itemTypeValue2 = ''
+  public imageId = 0
   public power = 0
   public upgrade = 0
   public properties: Array<Property> = []

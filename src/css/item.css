@@ -270,7 +270,7 @@
 .card-item.no-expanded::after {
   content: '';
   position: absolute;
-  top: 68%;
+  top: 80%;
   bottom: -16%;
   left: 0;
   right: 0;
@@ -327,7 +327,7 @@
   max-width: 16vw;
   position: absolute;
   top: 0;
-  right: 24%;
+  right: 26%;
   z-index: 2;
 }
 
@@ -339,7 +339,7 @@
 
   .item-image {
     top: 10%;
-    right: 30%;
+    right: 32%;
     max-width: 12vw;
   }
 }
@@ -428,4 +428,16 @@
   .avatar {
     font-size: 8px;
   }
+}
+
+.item-image-card {
+  background-color: var(--q-dark-page);
+}
+
+.body--light .item-image-card {
+  background-color: var(--q-light);
+}
+
+.bg-primary-cloud {
+  background-color: var(--q-primary-cloud) !important;
 }

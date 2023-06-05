@@ -4,34 +4,29 @@ import { QCard, useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
 
 import { useItemStore } from 'stores/item-store'
-import { Price } from 'src/types/item'
-import { checkName, focus } from 'src/common'
+import { Item, Price } from 'src/types/item'
+import { checkName } from 'src/common'
 import { icons } from 'src/common/icons'
 import { itemImgs } from 'src/common/items'
-import { runeImgs } from 'src/common/runes'
 
 import D4Price from 'components/D4Price.vue'
 import D4Counter from 'components/D4Counter.vue'
 import D4User from 'components/D4User.vue'
+import D4Dialog from 'components/D4Dialog.vue'
 
-const props = defineProps({
-  data: {
-    type: Object,
-    required: true
-  },
-  editable: {
-    type: Boolean,
-    default: false
-  },
-  loading: {
-    type: Boolean,
-    default: false
-  },
-  disable: {
-    type: Boolean,
-    default: false
-  }
+interface IProps {
+  data: Item,
+  editable?: boolean,
+  loading?: boolean,
+  disable?: boolean
+}
+
+const props = withDefaults(defineProps<IProps>(), {
+  editable: false,
+  loading: false,
+  disable: false
 })
+
 const emit = defineEmits(['update', 'apply'])
 
 // common variable
@@ -45,17 +40,22 @@ const editWrap = ref<QCard | null>(null)
 const hasProperties = computed(() => findType(_type.value)?.hasProperties)
 const hasAffixes = computed(() => findType(_type.value)?.hasAffixes)
 
+const filterClasses = store.filterClasses
+const filterRunesByType = store.filterRunesByType
+const filterGems = store.filterGems
+
 const _hardcore = ref<boolean>(props.data.hardcore)
 const _ladder = ref<boolean>(props.data.ladder)
 const _name = ref<string>(props.data.name)
 const _quantity = ref<number>(props.data.quantity || 1)
-const _quality = ref<string>(props.data.quality || 'regular')
-const _type = ref<string>(props.data.itemType || 'weapons')
-const runes = store.filterRunes
-const _rune = ref<string>(props.data.runeId || 'eld')
+const _quality = ref<string>(props.data.quality || 'normal')
+const _type = ref<string>(props.data.itemType || store.filterTypes()[0].value as string)
+const _typeValue1 = ref<string>(props.data.itemTypeValue1 || (_type.value === 'aspect' ? store.aspectCategories[0].value as string : filterClasses(_type.value)[0].value as string))
+const _typeValue2 = ref<string>(props.data.itemTypeValue2 || (_typeValue1.value === 'gem' ? filterGems()[0].value as string : ''))
+
+
 const _power = ref<number>(props.data.power)
 const _upgrade = ref<number>(props.data.upgrade)
-
 const findRuneType = store.findRuneType
 const filterTypes = store.filterTypes
 const upgradeLimit = computed(() => store.findQuality(props.data.quality)?.upgradeLimit)
@@ -64,9 +64,12 @@ const filterQuality = store.filterQuality
 const findStatus = store.findItemStatus
 const findRune = store.findRune
 const findType = store.findType
-const filterClasses = store.filterClasses
-const _class = ref<string | number | null>(props.data.equipmentClass || filterClasses(_type.value)?.[0]?.value || null)
-const _price = reactive<Price>(new Price((props.data.price && props.data.price.currency ? props.data.price.currency : 'offer'), (props.data.price && props.data.price.currencyValue ? props.data.price.currencyValue : null), (props.data.price && props.data.price.quantity ? props.data.price.quantity : null)))
+const findClass = store.findClass
+
+const filterAspectCategories = store.filterAspectCategories
+
+const _image = ref<number>(props.data.imageId)
+const _price = reactive<Price>(new Price((props.data.price && props.data.price.currency ? props.data.price.currency : 'offer'), (props.data.price && props.data.price.currencyValue ? props.data.price.currencyValue : null), (props.data.price && props.data.price.quantity ? props.data.price.quantity : undefined)))
 
 const attributes = computed(() => [
   { label: t('properties'), value: 'properties', hide: !hasProperties.value },
@@ -82,14 +85,19 @@ const updateQuality = (val: string) => {
 }
 
 const updateType = (val: string) => {
-  _name.value = val === 'rune' ? '' : _name.value
-  _class.value = filterClasses(val)?.[0]?.value || null
+  _typeValue1.value = val === 'aspect' ? store.aspectCategories[0].value as string : filterClasses(val)[0].value as string
   attribute.value = findType(val)?.hasProperties ? 'properties' : findType(val)?.hasAffixes ? 'affixes' : 'restrictions'
   update()
 }
 
+const updateTypeValue1 = (val: string) => {
+  _image.value = 0
+  _typeValue2.value = val === 'gem' ? filterGems()[0].value as string : ''
+  update()
+}
+
 const update = () => {
-  emit('update', { hardcore: _hardcore.value, ladder: _ladder.value, name: _name, quantity: _quantity.value, quality: _quality.value, itemType: _type.value, runeId: _rune.value, power: _power.value, upgrade: _upgrade.value, equipmentClass: _class.value, price: _price })
+  emit('update', { hardcore: _hardcore.value, ladder: _ladder.value, name: _name, quantity: _quantity.value, quality: _quality.value, itemType: _type.value, itemTypeValue1: _typeValue1.value, itemTypeValue2: _typeValue2.value, imageId: _image, power: _power.value, upgrade: _upgrade.value, price: _price })
 }
 
 const updatePrice = (price: Price) => {
@@ -124,7 +132,7 @@ const apply = () => {
 }
 
 // item images
-const itemImage = computed(() => props.data.itemType === 'aspect' ? itemImgs.aspect : props.data.itemType === 'rune' ? runeImgs[props.data.runeId as keyof typeof runeImgs] : itemImgs[props.data.equipmentClass as keyof typeof itemImgs])
+const showItemImages = ref<boolean>(false)
 
 // attribute tabs
 const attribute = ref<string>(hasProperties.value ? 'properties' : hasAffixes ? 'affixes' : 'restrictions')
@@ -169,25 +177,19 @@ defineExpose({ scrollEnd })
                   </template>
                 </q-select>
               </div>
-              <div class="col" v-show="filterClasses(data.itemType).length > 0">
-                <q-select v-model="_class" :disable="disable" behavior="menu" outlined dense no-error-icon
+              <!-- Item Type Value Place ----------------------------------------------------------------------------------->
+              <div class="col" v-if="_type === 'rune'">
+                <q-select v-model="_typeValue1" :disable="disable" behavior="menu" outlined dense no-error-icon
                   hide-bottom-space emit-value map-options transition-show="none" transition-hide="none"
-                  :label="t('item.selectClass')" :dropdown-icon="`img:${icons.dropdown}`"
-                  :options="filterClasses(data.itemType)" popup-content-class="d4-scroll" @update:model-value="update">
+                  :label="t('item.selectRune')" :options="filterRunesByType()" :dropdown-icon="`img:${icons.dropdown} `"
+                  popup-content-class="d4-scroll" @update:model-value="update">
                   <template #selected-item="scope">
                     <div class="ellipsis">{{ scope.opt.label }}</div>
                   </template>
-                </q-select>
-              </div>
-              <div class="col" v-show="data.itemType === 'rune'">
-                <q-select v-model="_rune" :disable="disable" behavior="menu" outlined dense no-error-icon
-                  hide-bottom-space emit-value map-options transition-show="none" transition-hide="none"
-                  :label="t('item.selectRune')" :options="runes()" :dropdown-icon="`img:${icons.dropdown}`"
-                  popup-content-class="d4-scroll" @update:model-value="update">
                   <template #option="scope">
                     <q-item v-bind="scope.itemProps">
                       <q-item-section avatar>
-                        <img :src="scope.opt.img" width="24" />
+                        <img :src="`src/assets/items/rune/${scope.opt.value}.webp`" width="24" />
                       </q-item-section>
                       <q-item-section>
                         <q-item-label>{{ scope.opt.label }}</q-item-label>
@@ -196,6 +198,96 @@ defineExpose({ scrollEnd })
                   </template>
                 </q-select>
               </div>
+              <div class="col" v-else-if="_type === 'aspect'">
+                <q-select v-model="_typeValue1" :disable="disable" behavior="menu" outlined dense no-error-icon
+                  hide-bottom-space emit-value map-options transition-show="none" transition-hide="none"
+                  :label="t('item.selectAspectCategory')" :dropdown-icon="`img:${icons.dropdown}`"
+                  :options="filterAspectCategories()" popup-content-class="d4-scroll" @update:model-value="update">
+                  <template #selected-item="scope">
+                    <div class="ellipsis">{{ scope.opt.label }}</div>
+                  </template>
+                  <template #option="scope">
+                    <q-item clickable @click="scope.toggleOption(scope.opt.value)">
+                      <q-item-section avatar>
+                        <img height="36" :src="`src/assets/items/${_type}/${scope.opt.value}.webp`" />
+                      </q-item-section>
+                      <q-item-section>
+                        <q-item-label class="ellipsis">{{ scope.opt.label }}</q-item-label>
+                      </q-item-section>
+                    </q-item>
+                  </template>
+                </q-select>
+              </div>
+              <template v-else>
+                <div class="col">
+                  <q-select v-model="_typeValue1" :disable="disable" behavior="menu" outlined dense no-error-icon
+                    hide-bottom-space emit-value map-options transition-show="none" transition-hide="none"
+                    :label="t('item.selectClass')" :dropdown-icon="`img:${icons.dropdown}`"
+                    :options="filterClasses(_type)" popup-content-class="d4-scroll"
+                    @update:model-value="updateTypeValue1">
+                    <template #selected-item="scope">
+                      <div class="ellipsis">{{ scope.opt.label }}</div>
+                    </template>
+                  </q-select>
+                </div>
+                <div class="col" v-if="_typeValue1 === 'gem'">
+                  <q-select v-model="_typeValue2" :disable="disable" behavior="menu" outlined dense no-error-icon
+                    hide-bottom-space emit-value map-options transition-show="none" transition-hide="none"
+                    :label="t('item.selectGem')" :dropdown-icon="`img:${icons.dropdown}`" :options="filterGems()"
+                    popup-content-class="d4-scroll" @update:model-value="update">
+                    <template #selected-item="scope">
+                      <div class="ellipsis">{{ scope.opt.label }}</div>
+                    </template>
+                    <template #option="scope">
+                      <q-item clickable @click="scope.toggleOption(scope.opt.value)">
+                        <q-item-section avatar>
+                          <img height="36" :src="`src/assets/items/${_type}/${_typeValue1}/${scope.opt.value}.webp`" />
+                        </q-item-section>
+                        <q-item-section>
+                          <q-item-label class="ellipsis">{{ scope.opt.label }}</q-item-label>
+                        </q-item-section>
+                      </q-item>
+                    </template>
+                  </q-select>
+                </div>
+                <div v-else>
+                  <q-btn dense glossy outline padding="4px 8px" color="primary" :ripple="false"
+                    class="no-hover rounded-borders" @click="showItemImages = true">
+                    <img height="32" :src="`src/assets/items/${_type}/${_typeValue1}/${_image}.webp`" />
+                    <D4Dialog v-model="showItemImages" :no-route-dismiss="false">
+                      <template #top>
+                        <q-card-section class="row justify-between items-center q-ml-md">
+                          <div class="name text-uppercase">{{ t('item.selectImage', {
+                            tv:
+                              findClass(data.itemTypeValue1)?.label || findType(data.itemType)?.label
+                          }) }}
+                          </div>
+                          <q-btn unelevated class="no-hover icon" :ripple="false">
+                            <img :src="icons.close" width="24" @click="showItemImages = false" />
+                          </q-btn>
+                        </q-card-section>
+                      </template>
+                      <template #middle>
+                        <q-card-section class="d4-scroll q-ma-lg" style="height:50vh">
+                          <div class="row q-col-gutter-md">
+                            <div v-for="i, idx in itemImgs[_type][_typeValue1 as string]" :key="idx"
+                              class="col-4 col-md-3 cursor-pointer" @click="_image = idx; update()" v-close-popup>
+                              <q-card flat bordered class="item-image-card"
+                                :class="{ 'bg-primary-cloud': idx === data.imageId }">
+                                <q-card-section class="text-center no-padding">
+                                  <q-img style="width:90%"
+                                    :src="`src/assets/items/${_type}/${_typeValue1}/${idx}.webp`" />
+                                </q-card-section>
+                              </q-card>
+                            </div>
+                          </div>
+                        </q-card-section>
+                      </template>
+                    </D4Dialog>
+                  </q-btn>
+                </div>
+              </template>
+              <!-- Item Type Value Place ----------------------------------------------------------------------------------->
               <D4Counter v-model="_quantity" :disable="disable" @update:model-value="update" />
             </div>
           </div>
@@ -220,8 +312,8 @@ defineExpose({ scrollEnd })
           </q-item-section>
         </q-item>
         <div v-show="!loading" class="row no-wrap items-baseline q-gutter-xs">
-          <q-icon class="icon rotate-45" size="13px" :name="`img:${icons.regular}`" />
-          <div>{{ (runes().find(r => r.value === data.runeId) || {}).attribute }}
+          <q-icon class="icon rotate-45" size="13px" :name="`img:${icons.standard} `" />
+          <div>{{ (filterRunesByType().find(r => r.value === data.itemTypeValue1) || {}).attribute }}
           </div>
         </div>
         <q-item v-show="loading" v-for="c in 2" :key="c" style="min-height:10px;padding:3px">
@@ -329,10 +421,12 @@ defineExpose({ scrollEnd })
     <slot name="more" :loading="loading"></slot>
   </q-card>
   <q-card v-else class="card-item non-selectable no-scroll full-height overflow-hidden"
-    :class="[data.expanded ? 'expanded' : 'no-expanded', data.quality, `status-${data.statusCode}`]">
+    :class="[data.expanded ? 'expanded' : 'no-expanded', data.quality, `status - ${data.statusCode} `]">
     <div class="inner">
       <q-card-section class="relative-position">
-        <q-img v-show="!loading" no-spinner :src="itemImage" class="item-image" />
+        <q-img v-show="!loading"
+          :src="data.itemType === 'aspect' ? `/src/assets/items/${data.itemType}/${data.itemTypeValue1}.webp` : data.itemTypeValue1 === 'gem' ? `/src/assets/items/${data.itemType}/${data.itemTypeValue1}/${data.itemTypeValue2}.webp` : `/src/assets/items/${data.itemType}/${data.itemTypeValue1}/${data.imageId}.webp`"
+          class="item-image" />
         <div class="column justify-center items-end user-area" :class="{ 'q-gutter-xs': !$q.screen.lt.sm || loading }">
           <q-skeleton v-show="loading" width="50px" :height="$q.screen.lt.sm ? '16px' : '18px'" />
           <div v-show="!loading">{{
@@ -355,8 +449,8 @@ defineExpose({ scrollEnd })
           <div style="width:70%">
             <div v-show="!loading" class="row items-center q-gutter-xs q-mb-xs">
               <div v-show="data.itemType === 'rune'" class="row items-center q-gutter-sm">
-                <div class="name">{{ (runes().find(r => r.value === data.runeId) || {}).label }}</div>
-                <div>{{ findRuneType(findRune(data.runeId)?.type)?.label }}
+                <div class="name">{{ (filterRunesByType().find(r => r.value === data.itemTypeValue1) || {}).label }}</div>
+                <div>{{ findRuneType(findRune(data.itemTypeValue1)?.type)?.label }}
                 </div>
               </div>
               <div v-show="data.itemType !== 'rune'" class="name stress ellipsis-2-lines">
@@ -371,8 +465,8 @@ defineExpose({ scrollEnd })
           <div v-show="loading">
             <q-skeleton width="100px" :height="$q.screen.lt.sm ? '16px' : '18px'" />
           </div>
-          <div v-show="!loading" class="stress" style="opacity:.6">{{ findQuality(data.quality)?.fullName }} {{
-            findType(data.itemType)?.label }}
+          <div v-show="!loading" class="stress" style="opacity:.6">{{ findQuality(data.quality)?.fullName }}
+            {{ findClass(data.itemTypeValue1)?.label || findType(data.itemType)?.label }}
           </div>
           <div v-show="data.power > 0">
             {{ t('item.power', { p: data.power }) }}
@@ -396,8 +490,8 @@ defineExpose({ scrollEnd })
             </q-item-section>
           </q-item>
           <div v-show="!loading" class="row no-wrap items-baseline q-gutter-xs">
-            <q-icon class="icon rotate-45" size="13px" :name="`img:${icons.regular}`" />
-            <div>{{ (runes().find(r => r.value === data.runeId) || {}).attribute }}
+            <q-icon class="icon rotate-45" size="13px" :name="`img:${icons.standard} `" />
+            <div>{{ (filterRunesByType().find(r => r.value === data.itemTypeValue1) || {}).attribute }}
             </div>
           </div>
         </div>

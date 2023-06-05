@@ -9,7 +9,7 @@ export default {
 
     is.clearSocket()
 
-    return is.getItems(currentRoute.params.itemid)
+    return is.getItems(1, currentRoute.params.itemid)
       .then((result: Array<Item>) => {
         if (result.length > 0) {
           result[0].expanded = true
@@ -111,7 +111,7 @@ const statusItem = (item: Item, done: Function) => {
 
 const updateOnly = (itemId: string) => {
   disable.value = true
-  is.getItems(itemId)
+  is.getItems(1, itemId)
     .then((result: Array<Item>) => {
       if (result.length > 0)
         is.detailItem.splice(0, 1, result[0])
@@ -130,7 +130,7 @@ const getItem = () => {
   tempItem.price.loading = true
   is.detailItem.splice(0, 1, tempItem)
 
-  is.getItems(props.itemid)
+  is.getItems(1, props.itemid)
     .then((result: Array<Item>) => {
       if (result.length > 0) {
         result[0].loading = false

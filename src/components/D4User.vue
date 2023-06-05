@@ -6,6 +6,8 @@ import { User } from 'src/types/user'
 import { clipboard } from 'src/common'
 import { icons } from 'src/common/icons'
 
+import D4Tooltip from 'components/D4Tooltip.vue'
+
 interface IProps {
   data: User,
   label: string,
@@ -47,9 +49,7 @@ const copy = (battleTag: string) => {
         {{ data.battleTag === '' ? label : data.battleTag }}
       </div>
       <q-icon class="icon" :name="`img:${icons.help}`" size="19px">
-        <q-tooltip v-if="!$q.platform.is.mobile"
-          :class="['q-pa-md', $q.dark.isActive ? 'bg-grey-4 text-grey-9' : 'bg-grey-9 text-grey-4']" anchor="center right"
-          self="center left" :offset="[10, 0]" transition-hide="jump-right" transition-show="jump-left">
+        <D4Tooltip>
           <div class="text-overline text-weight-bold">{{ t('user.temperature') }} : {{ data.temperature }}&#8451</div>
           <div class="break-keep text-caption" style="max-width:160px;">
             {{ t('user.sh1') }}
@@ -58,19 +58,7 @@ const copy = (battleTag: string) => {
             <span class="underline text-weight-bold">{{ t('user.sh4') }}</span>
             {{ t('user.sh5') }}
           </div>
-        </q-tooltip>
-        <q-popup-proxy v-else>
-          <div :class="['q-pa-md rounded-borders', $q.dark.isActive ? 'bg-grey-4 text-grey-9' : 'bg-grey-9 text-grey-4']">
-            <div class="text-overline text-weight-bold">{{ t('user.temperature') }} : {{ data.temperature }}&#8451</div>
-            <div class="break-keep text-caption" style="max-width:160px;">
-              {{ t('user.sh1') }}
-              <span class="underline text-weight-bold">{{ t('user.sh2') }}</span>
-              {{ t('user.sh3') }}
-              <span class="underline text-weight-bold">{{ t('user.sh4') }}</span>
-              {{ t('user.sh5') }}
-            </div>
-          </div>
-        </q-popup-proxy>
+        </D4Tooltip>
       </q-icon>
     </div>
   </div>

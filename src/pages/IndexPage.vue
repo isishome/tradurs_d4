@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useItemStore } from 'stores/item-store'
 import { useAccountStore } from 'stores/account-store'
 import { ref, computed, onMounted, watch } from 'vue'
@@ -10,9 +10,9 @@ import { scrollPos } from 'src/common'
 import { Item } from 'src/types/item'
 import { icons } from 'src/common/icons'
 import D4Items from 'components/D4Items.vue'
-import { sleep } from 'src/common'
 
 // init module
+const route = useRoute()
 const router = useRouter()
 const is = useItemStore()
 const as = useAccountStore()
@@ -28,11 +28,11 @@ const newItems = computed(() => is.socket.newItems)
 const newOffer = computed(() => is.socket.newOffer)
 const acceptedOffer = computed(() => is.socket.acceptedOffer)
 const complete = computed(() => is.socket.complete)
-
 const filter = computed(() => is.filter.request)
-
 const itemsRef = ref<typeof D4Items | null>(null)
 const items = ref<Array<Item>>([])
+const page = computed(() => route.query.page ? Number.parseInt(route.query.page.toString()) : 1)
+const more = computed(() => is.page.more)
 
 // insert or update item
 const upsertItem = (item: Item, done: Function) => {
@@ -118,7 +118,7 @@ const updateOnly = (itemId: string) => {
 
   if (findItem) {
     disable.value = true
-    is.getItems(itemId)
+    is.getItems(page.value, itemId)
       .then((result: Array<Item>) => {
         if (result.length > 0)
           Object.assign(findItem, result[0])
@@ -127,6 +127,10 @@ const updateOnly = (itemId: string) => {
         disable.value = false
       })
   }
+}
+
+const next = () => {
+  router.push({ name: 'tradeList', query: { page: page.value + 1 } })
 }
 
 const create = () => {
@@ -146,7 +150,7 @@ const getList = (filter?: any) => {
       return item
     })
 
-  is.getItems(undefined, filter)
+  is.getItems(page.value, undefined, filter)
     .then((result: Array<Item>) => {
       let i = 0
       while (i < items.value.length) {
@@ -183,6 +187,11 @@ const notify = (group: string, message: string, actionLabel: string, action: Fun
   })
 }
 
+watch(page, () => {
+  scrollPos()
+  getList(is.filter)
+})
+
 watch(newItems, (val: number) => {
   if (val > 0)
     notify('newItems', t('messages.newItems', val), t('btn.refresh'), () => {
@@ -210,8 +219,10 @@ watch(complete, (val: { itemName: string, itemId: string } | null) => {
 })
 
 watch(filter, (val, old) => {
-  if (Number.isInteger(val) && val !== old)
+  if (Number.isInteger(val) && val !== old) {
+    router.push({ name: 'tradeList', query: { page: 1 } })
     getList(is.filter)
+  }
 })
 
 onMounted(() => {
@@ -219,7 +230,11 @@ onMounted(() => {
 })
 </script>
 <template>
-  <D4Btn v-if="as.signed" round @click="create" class="sticky" color="var(--q-secondary)" :disable="disable" shadow>
+  <D4Btn v-if="more" round @click="next" class="sticky-first" color="var(--q-magic)" :disable="disable" shadow>
+    <img :src="icons.next" height="24" class="invert" />
+  </D4Btn>
+  <D4Btn v-if="as.signed" round @click="create" class="sticky-second" color="var(--q-secondary)" :disable="disable"
+    shadow>
     <img :src="icons.add" height="24" class="invert" />
   </D4Btn>
   <div>
@@ -231,7 +246,15 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.sticky {
+.sticky-first {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1;
+  transform: translateY(-100%);
+}
+
+.sticky-second {
   position: sticky;
   top: 90%;
   left: 100%;

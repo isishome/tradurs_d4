@@ -1,5 +1,8 @@
 export default {
   language: '언어',
+  decimal: {
+    style: 'decimal', minimumSignificantDigits: 3, maximumSignificantDigits: 5
+  },
   seo: {
     title: "{itemName}{pageName}디아블로® IV {'|'} 트레이더스",
     desc: '트레이더스에서 디아블로® IV에 사용하는 다양한 아이템을 거래해 보세요'
@@ -84,6 +87,9 @@ export default {
     selectType: '아이템 유형',
     selectClass: '장비 클래스',
     selectRune: '룬 선택',
+    selectAspectCategory: '위상 범주',
+    selectGem: '보석 선택',
+    selectImage: '{tv} 이미지 선택',
     name: '아이템 명',
     power: '아이템 위력 {p}',
     upgrade: '아이템 레벨: {u}/{ul}',

@@ -48,8 +48,8 @@ watch(() => props.data, (val) => {
     :class="{ disable, 'stress': ['legendary', 'unique'].includes(affixType), 'text-grey-6': affixType === 'socket' }"
     :data-id="data.valueId">
     <div>
-      <q-icon class="icon" :class="{ 'rotate-45': ['regular', 'offensive', 'defensive', 'utility'].includes(affixType) }"
-        size="13px" :name="`img:${icons[affixType as keyof typeof icons]}`" />
+      <q-icon class="icon" :class="{ 'rotate-45': ['standard'].includes(affixType) }" size="13px"
+        :name="`img:${icons[affixType as keyof typeof icons]}`" />
     </div>
     <div class="row items-center q-gutter-x-xs">
       <template v-for="(comp, k) in affixInfo" :key="k">

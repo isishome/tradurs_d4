@@ -9,6 +9,7 @@ import { icons } from 'src/common/icons'
 
 import D4User from 'components/D4User.vue'
 import D4Price from 'components/D4Price.vue'
+import D4Tooltip from 'components/D4Tooltip.vue'
 
 interface IProps {
   data: Offer,
@@ -118,10 +119,7 @@ const parsEvaluations = computed(() => props.owner ? as.filterEvaluations(props.
         <div>{{ status }}
         </div>
         <q-icon v-if="existsEvaluation" class="icon" :name="`img:${icons.evaluation}`" size="19px">
-          <q-tooltip v-if="!$q.platform.is.mobile"
-            :class="['q-pa-md', $q.dark.isActive ? 'bg-grey-4 text-grey-9' : 'bg-grey-9 text-grey-4']"
-            anchor="center right" self="center left" :offset="[10, 0]" transition-hide="jump-right"
-            transition-show="jump-left">
+          <D4Tooltip>
             <div class="text-overline text-weight-bold">
               {{ t('complete.evaluate') }}
             </div>
@@ -132,22 +130,7 @@ const parsEvaluations = computed(() => props.owner ? as.filterEvaluations(props.
                 </li>
               </ul>
             </div>
-          </q-tooltip>
-          <q-popup-proxy v-else>
-            <div
-              :class="['q-pa-md rounded-borders', $q.dark.isActive ? 'bg-grey-4 text-grey-9' : 'bg-grey-9 text-grey-4']">
-              <div class="text-overline text-weight-bold">
-                {{ t('complete.evaluate') }}
-              </div>
-              <div class="break-keep text-caption">
-                <ul class="evaluation">
-                  <li v-for="evaluation, idx of parsEvaluations" :key="idx">
-                    {{ evaluation.label }}
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </q-popup-proxy>
+          </D4Tooltip>
         </q-icon>
       </div>
     </q-item-section>

@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia'
 import { api } from 'boot/axios'
 import { i18n } from 'boot/i18n'
-import { runeImgs } from 'src/common/runes'
 import { Item, Offer } from 'src/types/item'
 import { sleep } from 'src/common'
 
@@ -18,7 +17,8 @@ export interface RuneType extends ILabel { }
 export interface Quality extends ILabel {
   fullName: string,
   upgradeLimit: number | null,
-  affixLimit: number | null
+  affixLimit: number | null,
+  hasAttributeTypes: Array<string>
 }
 
 export interface Rune extends ILabel {
@@ -26,6 +26,10 @@ export interface Rune extends ILabel {
   attribute: string,
   img: string
 }
+
+export interface AspectCategory extends ILabel { }
+
+export interface Gem extends ILabel { }
 
 export interface ItemType extends ILabel {
   attribute: string,
@@ -41,7 +45,7 @@ export interface EquipmentClass extends ILabel {
 
 export interface AttributeType extends ILabel {
   sort: number,
-  forAffixes: boolean
+  hasAttributes: Array<string>
 }
 
 export interface Property extends ILabel {
@@ -72,6 +76,8 @@ export const useItemStore = defineStore('item', {
     quality: [] as Array<Quality>,
     runeTypes: [] as Array<RuneType>,
     runes: [] as Array<Rune>,
+    aspectCategories: [] as Array<AspectCategory>,
+    gems: [] as Array<Gem>,
     types: [] as Array<ItemType>,
     classes: [] as Array<EquipmentClass>,
     attributeTypes: [] as Array<AttributeType>,
@@ -106,7 +112,11 @@ export const useItemStore = defineStore('item', {
       request: 0,
       loading: false
     },
-    detailItem: [] as Array<Item>
+    detailItem: [] as Array<Item>,
+    page: {
+      rows: 50 as number,
+      more: false as boolean
+    }
   }),
   getters: {
     findItemStatus: (state) => {
@@ -116,10 +126,13 @@ export const useItemStore = defineStore('item', {
       return (statusCode?: string): Status | undefined => state.offerStatus.find(s => s.value === statusCode && s.lang === i18n.global.locale.value)
     },
     findQuality: (state) => {
-      return (type?: string): Quality | undefined => type ? state.quality.find(q => q.value === type && q.lang === i18n.global.locale.value) : state.quality.find(q => q.lang === i18n.global.locale.value)
+      return (type?: string): Quality | undefined => state.quality.find(q => q.value === type && q.lang === i18n.global.locale.value)
     },
     filterQuality: (state) => {
       return (type?: string): Array<Quality> => type ? state.quality.filter(q => q.value === type && q.lang === i18n.global.locale.value) : state.quality.filter(q => q.lang === i18n.global.locale.value)
+    },
+    findClass: (state) => {
+      return (className?: string): EquipmentClass | undefined => state.classes.find(c => c.value === className && c.lang === i18n.global.locale.value)
     },
     filterClasses: (state) => {
       return (type?: string): Array<EquipmentClass> => type ? state.classes.filter(c => c.type === type && c.lang === i18n.global.locale.value) : state.classes.filter(c => c.lang === i18n.global.locale.value)
@@ -136,14 +149,20 @@ export const useItemStore = defineStore('item', {
     findRuneType: (state) => {
       return (type?: string): RuneType | undefined => state.runeTypes.find(rt => rt.value === type && rt.lang === i18n.global.locale.value)
     },
-    filterRunes: (state) => {
+    filterRunesByType: (state) => {
       return (type?: string): Array<Rune> => type ? state.runes.filter(r => r.type === type && r.lang === i18n.global.locale.value) : state.runes.filter(r => r.lang === i18n.global.locale.value)
     },
     findRune: (state) => {
       return (id: string): Rune | undefined => state.runes.find(r => r.value === id && r.lang === i18n.global.locale.value)
     },
+    filterAspectCategories: (state) => {
+      return (): Array<AspectCategory> => state.aspectCategories.filter(ac => ac.lang === i18n.global.locale.value)
+    },
+    filterGems: (state) => {
+      return (): Array<Gem> => state.gems.filter(g => g.lang === i18n.global.locale.value)
+    },
     filterAttributeTypes: (state) => {
-      return (attribute?: string): Array<AttributeType> => attribute === 'restrictions' ? [] : attribute !== 'affixes' ? state.attributeTypes.filter(at => !at.forAffixes && at.lang === i18n.global.locale.value) : state.attributeTypes.filter(at => at.lang === i18n.global.locale.value)
+      return (attribute?: string): Array<AttributeType> => attribute ? state.attributeTypes.filter(at => at.hasAttributes.includes(attribute) && at.lang === i18n.global.locale.value) : state.attributeTypes.filter(at => at.lang === i18n.global.locale.value)
     },
     filterProperties: (state) => {
       return (word?: string): Array<Property> => word ? state.properties.data.filter(p => p.label.toLowerCase().indexOf(word.toLowerCase()) !== -1) : state.properties.data
@@ -201,7 +220,9 @@ export const useItemStore = defineStore('item', {
               this.offerStatus = response.data.offerStatus
               this.quality = response.data.quality
               this.runeTypes = response.data.runeTypes
-              this.runes = response.data.runes.map((r: Rune) => ({ ...r, img: runeImgs[r.value as keyof typeof runeImgs] }))
+              this.runes = response.data.runes
+              this.aspectCategories = response.data.aspectCategories
+              this.gems = response.data.gems
               this.types = response.data.types
               this.classes = response.data.classes
               this.attributeTypes = response.data.attributeTypes
@@ -301,12 +322,12 @@ export const useItemStore = defineStore('item', {
           resolve()
       })
     },
-    getItems(itemId?: string | string[], filter?: any) {
+    getItems(page: number, itemId?: string | string[], filter?: any) {
       return new Promise<Array<Item>>((resolve, reject) => {
-        api.get('/d4/item', { params: { itemId: itemId, filter } })
+        api.get('/d4/item', { params: { page, rows: this.page.rows, itemId, filter } })
           .then(async (response) => {
-            if (filter)
-              await sleep(1000)
+            this.page.more = response.data.length > this.page.rows
+            response.data.splice(this.page.rows, 1)
             resolve(response.data)
           })
           .catch((e) => {

@@ -138,7 +138,7 @@ onUnmounted(() => {
             <img v-show="!$q.dark.isActive" src="~assets/logo_light.webp" height="48" />
           </q-btn>
           <q-tabs dense no-caps class="gt-sm q-px-md bg-transparent no-hover nav">
-            <q-route-tab :ripple="!$q.dark.isActive" :label="t('page.tradeList')" :to="{ name: 'tradeList' }" exact />
+            <q-route-tab :ripple="!$q.dark.isActive" :label="t('page.tradeList')" :to="{ name: 'tradeList' }" />
           </q-tabs>
         </div>
         <div class="lt-md col-lg-3 col-4 row justify-end q-gutter-sm">
@@ -170,8 +170,8 @@ onUnmounted(() => {
               <div class="q-py-xl"></div>
             </div>
             <!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5110777286519562"
-                                    data-ad-slot="8610177982" data-ad-format="auto" data-full-width-responsive="true"
-                                    :data-adtest="prod ? 'off' : 'on'" :key="key"></ins> -->
+                                        data-ad-slot="8610177982" data-ad-format="auto" data-full-width-responsive="true"
+                                        :data-adtest="prod ? 'off' : 'on'" :key="key"></ins> -->
             <div class="q-py-xl"></div>
             <q-separator />
             <div class="q-pt-lg">
@@ -188,8 +188,8 @@ onUnmounted(() => {
             <div class="full-height q-px-lg q-py-xl" :style="`width:280px;height:${asideHeight}`">
               <div :style="`position:sticky;top:${asideTop}`">
                 <!-- <ins class="adsbygoogle" style="display:inline-block;width:160px;height:600px"
-                                          data-ad-client="ca-pub-5110777286519562" data-ad-slot="7240136439" :data-adtest="prod ? 'off' : 'on'"
-                                          :key="key"></ins> -->
+                                              data-ad-client="ca-pub-5110777286519562" data-ad-slot="7240136439" :data-adtest="prod ? 'off' : 'on'"
+                                              :key="key"></ins> -->
               </div>
             </div>
           </div>

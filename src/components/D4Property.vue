@@ -43,9 +43,8 @@ watch(() => props.data, () => {
 <template>
   <div class="row no-wrap items-baseline q-gutter-xs" :class="{ disable }" :data-id="data.valueId">
     <div>
-      <q-icon class="icon"
-        :class="{ 'rotate-45': ['regular', 'offensive', 'defensive', 'utility', 'resistance'].includes(findProperty?.type as string) }"
-        size="13px" :name="`img:${icons[findProperty?.type as keyof typeof icons || 'regular']}`" />
+      <q-icon class="icon" :class="{ 'rotate-45': ['standard'].includes(findProperty?.type as string) }" size="13px"
+        :name="`img:${icons[findProperty?.type as keyof typeof icons || 'standard']}`" />
     </div>
     <div class="row items-center q-gutter-x-xs">
       <template v-for="(comp, k) in propertyInfo" :key="k">

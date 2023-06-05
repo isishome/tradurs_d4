@@ -1,5 +1,5 @@
 
-import regular from 'assets/attribute_types/regular.svg'
+import standard from 'assets/attribute_types/standard.svg'
 import legendary from 'assets/attribute_types/legendary.svg'
 import unique from 'assets/attribute_types/unique.svg'
 import socket from 'assets/attribute_types/socket.svg'
@@ -16,6 +16,7 @@ import list from 'assets/icons/list.svg'
 import language from 'assets/icons/language.svg'
 import refresh from 'assets/icons/restore.svg'
 import search from 'assets/icons/search.svg'
+import next from 'assets/icons/next.svg'
 
 import buy from 'assets/icons/buy.svg'
 import sell from 'assets/icons/sell.svg'
@@ -29,12 +30,10 @@ import dark from 'assets/icons/dark.svg'
 import login from 'assets/icons/login.svg'
 import logout from 'assets/icons/logout.svg'
 
+import photo from 'assets/icons/photo.svg'
+
 export const icons = {
-  regular,
-  offensive: regular,
-  defensive: regular,
-  resistance: regular,
-  utility: regular,
+  standard,
   legendary,
   unique,
   socket,
@@ -50,6 +49,7 @@ export const icons = {
   language,
   refresh,
   search,
+  next,
   buy,
   sell,
   help,
@@ -57,5 +57,6 @@ export const icons = {
   light,
   dark,
   login,
-  logout
+  logout,
+  photo
 }

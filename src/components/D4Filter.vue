@@ -20,7 +20,7 @@ const filterQuality = is.filterQuality
 const filterTypes = is.filterTypes
 const findType = is.findType
 const filterClasses = is.filterClasses
-const filterRunes = is.filterRunes
+const filterRunes = is.filterRunesByType
 const filterLoading = computed(() => is.filter.loading)
 
 const update = (quality?: Array<string>) => {
@@ -67,11 +67,11 @@ const update = (quality?: Array<string>) => {
           :options="filterQuality().map(fq => ({ ...fq, label: fq.fullName }))" type="checkbox"
           v-model="is.filter.quality" @update:model-value="update()" />
       </q-item-section>
-  </q-item>
+    </q-item>
   <q-item>
     <q-item-section>
       <q-item-label header>{{ t('item.selectType') }}</q-item-label>
-        <q-option-group size="xs" :disable="filterLoading" inline class="q-pl-sm" :options="filterTypes()" type="checkbox"
+      <q-option-group size="xs" :disable="filterLoading" inline class="q-pl-sm" :options="filterTypes()" type="checkbox"
           v-model="is.filter.itemTypes" @update:model-value="val => update(val)" />
       </q-item-section>
     </q-item>
@@ -81,7 +81,8 @@ const update = (quality?: Array<string>) => {
           :options="findType(itemType)?.value === 'rune' ? filterRunes() : filterClasses(itemType)"
           :label="`${findType(itemType)?.label} 종류`" :disable="filterLoading" outlined dense no-error-icon
           hide-bottom-space emit-value map-options multiple transition-show="none" transition-hide="none"
-          :dropdown-icon="`img:${icons.dropdown}`" popup-content-class="d4-scroll" @update:model-value="update()" />
+          :dropdown-icon="`img:${icons.dropdown}`" popup-content-class="d4-scroll" @update:model-value="update()">
+        </q-select>
       </q-item-section>
     </q-item>
     <q-item :inset-level=".2">
@@ -103,10 +104,10 @@ const update = (quality?: Array<string>) => {
       </q-btn>
     </q-item>
     <!-- <q-item>
-                                                      <q-item-section>
-                                                        {{ is.filter }}
-                                                      </q-item-section>
-                                                    </q-item> -->
+            <q-item-section>
+              {{ is.filter }}
+            </q-item-section>
+          </q-item> -->
   </q-list>
 </template>
 

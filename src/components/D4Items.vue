@@ -14,6 +14,7 @@ import D4Property from 'components/D4Property.vue'
 import D4Affix from 'components/D4Affix.vue'
 import D4Restriction from 'components/D4Restriction.vue'
 import D4Offer from 'components/D4Offer.vue'
+import D4Dialog from 'components/D4Dialog.vue'
 
 interface IProps {
   items: Array<Item>,
@@ -54,23 +55,26 @@ const editItem = (item: Item) => {
   activateShow.value = true
 }
 
-const updateItem = ({ hardcore, ladder, name, quantity, quality, itemType, runeId, power, upgrade, equipmentClass, price }: IItem): void => {
+const updateItem = ({ hardcore, ladder, name, quantity, quality, itemType, itemTypeValue1, itemTypeValue2, imageId, power, upgrade, price }: IItem): void => {
+  const changeTypeNotFirst = activatedItem.value.itemType && activatedItem.value.itemType !== itemType
+  activatedItem.value.itemType = itemType
   activatedItem.value.hardcore = hardcore
   activatedItem.value.ladder = ladder
   activatedItem.value.name = name
   activatedItem.value.quantity = quantity
   activatedItem.value.quality = quality
-  activatedItem.value.runeId = runeId
+  activatedItem.value.itemTypeValue1 = itemTypeValue1
+  activatedItem.value.itemTypeValue2 = itemTypeValue2
   activatedItem.value.power = power
   activatedItem.value.upgrade = upgrade
-  activatedItem.value.equipmentClass = equipmentClass
+  activatedItem.value.imageId = imageId
   activatedItem.value.price.currency = price.currency
   activatedItem.value.price.currencyValue = price.currencyValue
   activatedItem.value.price.quantity = price.quantity
 
-  if (activatedItem.value.itemType !== itemType) {
-    activatedItem.value.itemType = itemType
+  if (changeTypeNotFirst) {
     activatedItem.value.quantity = 1
+    activatedItem.value.imageId = 0
     activatedItem.value.properties.splice(0, activatedItem.value.properties.length)
     activatedItem.value.affixes.splice(0, activatedItem.value.affixes.length)
     activatedItem.value.restrictions.splice(0, activatedItem.value.restrictions.length)
@@ -150,7 +154,6 @@ const apply = () => {
 interface Add {
   show: boolean,
   category: string | null,
-  attributeTypes: Function,
   type: string,
   attribute: string,
   continuously: boolean,
@@ -161,18 +164,19 @@ interface Add {
 const refAttribute = ref<typeof QInput>()
 const add = reactive<Add>({
   show: false as boolean,
-  category: null as string | null,
-  attributeTypes: is.filterAttributeTypes,
-  type: 'regular',
+  category: null,
+  type: '',
   attribute: '',
   continuously: false,
   error: false,
   errorMessage: ''
 })
+const findQuality = computed(() => is.findQuality(activatedItem.value.quality)?.hasAttributeTypes)
+const filterAttributeTypes = computed(() => is.filterAttributeTypes(add.category as string).filter(at => findQuality.value?.includes(at.value as string)))
 
 const hideAdd = (): void => {
   add.category = null
-  add.type = 'regular'
+  add.type = ''
   add.attribute = ''
   add.error = false
   add.errorMessage = ''
@@ -253,6 +257,7 @@ const selectedProperty = (val: number): void => {
 
 const createProperty = (): void => {
   add.category = 'properties'
+  add.type = filterAttributeTypes.value?.[0].value as string
   add.show = true
 }
 
@@ -295,6 +300,7 @@ const selectedAffix = (val: number): void => {
 
 const createAffix = (): void => {
   add.category = 'affixes'
+  add.type = filterAttributeTypes.value?.[0].value as string
   add.show = true
 }
 
@@ -337,6 +343,7 @@ const selectedRestriction = (val: number): void => {
 
 const createRestriction = (): void => {
   add.category = 'restrictions'
+  add.type = filterAttributeTypes.value?.[0].value as string
   add.show = true
 }
 
@@ -479,11 +486,9 @@ const expanded = (item: Item) => {
 
 // Execute function if an item is visible (adsense)
 const visible = (isVisible: boolean, item: Item): void => {
-  //if (!isVisible)
-  //item.expanded = false
-  const findItem = document.querySelector(`div[data-itemid="${item.itemId}"]`) as HTMLDivElement
-  if (findItem && item.expanded)
-    findItem.style.height = isVisible ? '100%' : `${findItem.offsetHeight}px`
+  // const findItem = document.querySelector(`div[data-itemid="${item.itemId}"]`) as HTMLDivElement
+  // if (findItem && item.expanded)
+  //   findItem.style.height = isVisible ? '100%' : `${findItem.offsetHeight}px`
 }
 
 const create = () => {
@@ -503,10 +508,10 @@ defineExpose({ create, hideEditable, openOffers, hideOffers })
 <template>
   <div class="col-12" :style="`max-width:${width}px`">
     <div :class="$q.screen.lt.sm ? 'q-gutter-y-xl' : 'q-gutter-y-xxl'">
-      <q-intersection v-for="item, idx in (items as Array<Item | Advertise>)" :key="`item_${idx}`"
+      <q-intersection v-for="item, idx in (items as Array<Item | Advertise>)" :key="item.itemId"
         :data-itemid="item.itemId" class="item" :threshold="[0, 0.25, 0.5, 0.75, 1]"
         :style="item.expanded ? 'height:100%' : `height: ${height as number - ($q.screen.lt.sm ? 50 : 0)}px;`"
-        transition="fade" @visibility="isVisible => visible(isVisible, item)" ssr-prerender>
+        transition="fade" @visibility="isVisible => visible(isVisible, item)" ssr-prerender once>
         <div v-if="(item instanceof Advertise)" class="bg-grey" style="width:100%;height:500px"></div>
         <D4Item v-else :data="item" :loading="loading || item.loading">
           <template #top-right>
@@ -544,7 +549,7 @@ defineExpose({ create, hideEditable, openOffers, hideOffers })
     </div>
     <div v-show="items.length === 0" class="row justify-center items-center" style="height:40vh">{{ t('noItem') }}</div>
     <q-dialog v-model="activateShow" :maximized="$q.screen.lt.sm" persistent transition-show="none" transition-hide="none"
-      :no-route-dismiss="false" @hide="hideEditable">
+      :transition-duration="0" :no-route-dismiss="false" @hide="hideEditable">
       <D4Item ref="activatedRef" :data="activatedItem" editable :loading="activatedItem.loading" :disable="disable"
         @update="updateItem" @apply="apply">
         <template #add-property="props">
@@ -558,9 +563,8 @@ defineExpose({ create, hideEditable, openOffers, hideOffers })
               <template #option="scope">
                 <q-item v-bind="scope.itemProps">
                   <q-item-section side>
-                    <q-icon class="icon"
-                      :class="{ 'rotate-45': ['regular', 'offensive', 'defensive', 'utility', 'resistance'].includes(scope.opt.type as string) }"
-                      size="14px" :name="`img:${icons[scope.opt.type as keyof typeof icons || 'regular']}`" />
+                    <q-icon class="icon" :class="{ 'rotate-45': ['standard'].includes(scope.opt.type as string) }"
+                      size="14px" :name="`img:${icons[scope.opt.type as keyof typeof icons || 'standard']}`" />
                   </q-item-section>
                   <q-item-section>
                     <q-item-label>{{ scope.opt.label }}</q-item-label>
@@ -594,9 +598,8 @@ defineExpose({ create, hideEditable, openOffers, hideOffers })
               <template #option="scope">
                 <q-item v-bind="scope.itemProps">
                   <q-item-section side>
-                    <q-icon class="icon"
-                      :class="{ 'rotate-45': ['regular', 'offensive', 'defensive', 'utility', 'resistance'].includes(scope.opt.type as string) }"
-                      size="14px" :name="`img:${icons[scope.opt.type as keyof typeof icons || 'regular']}`" />
+                    <q-icon class="icon" :class="{ 'rotate-45': ['standard'].includes(scope.opt.type as string) }"
+                      size="14px" :name="`img:${icons[scope.opt.type as keyof typeof icons || 'standard']}`" />
                   </q-item-section>
                   <q-item-section>
                     <q-item-label>{{ scope.opt.label }}</q-item-label>
@@ -685,47 +688,48 @@ defineExpose({ create, hideEditable, openOffers, hideOffers })
         </template>
       </D4Item>
     </q-dialog>
-    <q-dialog v-model="add.show" @hide="hideAdd" :maximized="$q.screen.lt.sm" :persistent="disable" transition-show="none"
-      transition-hide="none" :no-route-dismiss="false">
-      <q-card class="card-item dialog normal">
-        <q-form class="inner column full-height" @submit="applyAdd">
-          <q-card-section>
-            <div class="q-py-lg q-pl-sm name text-uppercase">{{ t('attribute.add', { attr: t(add.category as string) }) }}
-            </div>
-          </q-card-section>
-          <q-separator />
-          <q-card-section :class="{ 'col': $q.screen.lt.sm }">
-            <div class="column q-gutter-y-sm">
-              <div class="row justify-between items-center no-wrap">
-                <q-option-group v-model="add.type" :options="add.attributeTypes(add.category)" :disable="disable"
-                  color="primary" size="xs" inline />
-                <div v-show="$q.screen.lt.sm" class="col-2 text-right">
-                  <D4Btn label="{ x }" :loading="loading" round :disable="disable" color="var(--q-light-normal)"
-                    @click="addAttrNum" />
-                </div>
-              </div>
-              <q-input autofocus ref="refAttribute" v-model="add.attribute" type="textarea"
-                :placeholder="t('attribute.placeholder')" :disable="disable" :error="add.error"
-                :error-message="add.errorMessage" outlined dense no-error-icon hide-hint
-                @keydown.exact.enter.prevent="applyAdd" />
-            </div>
-          </q-card-section>
-          <q-separator inset />
-          <q-card-section>
-            <div class="row justify-between items-center q-gutter-sm q-py-xs">
-              <q-checkbox size="xs" :disable="disable" v-model="add.continuously" :label="t('attribute.continuously')" />
-              <div>
-                <D4Btn :label="t('btn.cancel')" :loading="loading" :disable="disable" color="rgb(150,150,150)"
-                  @click="add.show = false" />
-                <D4Btn :label="t('btn.add')" :loading="loading" :progress="disable" type="submit" />
+    <D4Dialog v-model="add.show" :no-route-dismiss="false" :persistent="disable" @submit="applyAdd" @hide="hideAdd">
+      <template #top>
+        <q-card-section class="row items-center q-ml-md">
+          <div class="name text-uppercase">{{ t('attribute.add', { attr: t(add.category as string) })
+          }}
+          </div>
+        </q-card-section>
+      </template>
+      <template #middle>
+        <q-card-section :class="{ 'col': $q.screen.lt.sm }">
+          <div class="column q-gutter-y-sm">
+            <div class="row justify-between items-center no-wrap">
+              <q-option-group v-model="add.type" :options="filterAttributeTypes" :disable="disable" color="primary"
+                size="xs" inline />
+              <div v-show="$q.screen.lt.sm" class="text-right">
+                <D4Btn label="{ x }" :loading="loading" round :disable="disable" color="var(--q-light-normal)"
+                  @click="addAttrNum" />
               </div>
             </div>
-          </q-card-section>
-        </q-form>
-      </q-card>
-    </q-dialog>
+            <q-input autofocus ref="refAttribute" v-model="add.attribute" type="textarea"
+              :placeholder="t('attribute.placeholder')" :disable="disable" :error="add.error"
+              :error-message="add.errorMessage" outlined dense no-error-icon hide-hint
+              @keydown.exact.enter.prevent="applyAdd" />
+          </div>
+        </q-card-section>
+      </template>
+      <template #bottom>
+        <q-card-section>
+          <div class="row justify-between items-center q-py-xs">
+            <q-checkbox size="xs" :disable="disable" v-model="add.continuously" :label="t('attribute.continuously')" />
+            <div class="row items-center q-gutter-sm">
+              <D4Btn :label="t('btn.cancel')" :loading="loading" :disable="disable" color="rgb(150,150,150)"
+                @click="add.show = false" />
+              <D4Btn :label="t('btn.add')" :loading="loading" :progress="disable" type="submit" />
+            </div>
+          </div>
+        </q-card-section>
+      </template>
+    </D4Dialog>
     <q-dialog v-model="showOffers" @hide="hideOffers" :maximized="$q.screen.lt.sm" transition-show="none"
-      transition-hide="none" :persistent="disableOffers || progressOffer" :no-route-dismiss="false">
+      transition-hide="none" :transition-duration="0" :persistent="disableOffers || progressOffer"
+      :no-route-dismiss="false">
       <q-card class="card-item dialog offers no-scroll normal">
         <div class="inner column no-wrap" :style="$q.screen.lt.sm ? 'height:100%' : 'min-height:50vh;max-height:90vh'">
           <q-card-section class="row justify-end no-padding">

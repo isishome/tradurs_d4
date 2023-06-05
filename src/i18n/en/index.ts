@@ -1,5 +1,8 @@
 export default {
   language: 'Language',
+  decimal: {
+    style: 'decimal', minimumSignificantDigits: 3, maximumSignificantDigits: 5
+  },
   seo: {
     title: "{itemName}{pageName}Diablo® IV {'|'} Tradurs",
     desc: 'Trade various items used in Diablo® IV on the Tradurs'
@@ -85,6 +88,9 @@ export default {
     selectType: 'Item Type',
     selectClass: 'Equipment Class',
     selectRune: 'Select Rune',
+    selectAspectCategory: 'Select Aspect Category',
+    selectGem: 'Select Gem',
+    selectImage: 'Select {tv} Image',
     name: 'Item Name',
     power: '{p} Item Power',
     upgrade: 'Item Level: {u}/{ul}',

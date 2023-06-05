@@ -29,13 +29,13 @@ const emit = defineEmits(['update'])
 
 // common variable
 const store = useItemStore()
-const { t } = useI18n({ useScope: 'global' })
+const { t, n } = useI18n({ useScope: 'global' })
 
 // variable
 const loading = computed(() => props.data.loading || props.progress)
 const _price = reactive<Price>(new Price(props.data.currency, props.data.currencyValue, props.data.quantity))
 const findType = store.findType
-const runes = store.filterRunes
+const runes = store.filterRunesByType
 const currencies = store.currencies()
 
 if (!props.offer)
@@ -72,6 +72,9 @@ const updateCurrency = (val: string | null): void => {
         <q-select v-model="_price.currencyValue" :disable="disable" behavior="menu" outlined dense no-error-icon
           hide-bottom-space emit-value map-options popup-content-class="d4-scroll" transition-show="none"
           transition-hide="none" :options="runes()" :dropdown-icon="`img:${icons.dropdown}`" @update:model-value="update">
+          <template #selected-item="scope">
+            <div class="ellipsis">{{ scope.opt.label }}</div>
+          </template>
           <template #option="scope">
             <q-item v-bind="scope.itemProps">
               <q-item-section avatar>
@@ -86,8 +89,9 @@ const updateCurrency = (val: string | null): void => {
       </div>
       <div v-else-if="data.currency === 'gold'">
         <q-input :disable="disable" dense no-error-icon hide-bottom-space outlined v-model="_price.currencyValue"
-          mask="#############" debounce="500" @update:model-value="update" @focus="focus" input-class="text-right"
-          type="tel" :rules="[val => Number.isInteger(parseInt(val)) || '']" />
+          mask="#,###,###,###,###" maxlength="17" reverse-fill-mask unmasked-value debounce="500"
+          @update:model-value="update" @focus="focus" input-class="text-right" type="tel"
+          :rules="[val => Number.isInteger(parseInt(val)) || '']" />
       </div>
       <D4Counter v-if="!['offer', 'gold'].includes(data.currency)" v-model="_price.quantity" :disable="disable"
         @update:model-value="update" />
@@ -115,7 +119,9 @@ const updateCurrency = (val: string | null): void => {
         </template>
         <template v-else-if="data.currency === 'gold'">
           <img class="coin" :src="icons.price" width="18" />
-          <div class="q-ml-xs">{{ data.currencyValue }}</div>
+          <div class="q-ml-xs">{{ n(Number.parseFloat(data.currencyValue ? data.currencyValue.toString() : '0'),
+            'decimal')
+          }}</div>
         </template>
         <template v-else>
           <img :src="itemImgs[data.currency as keyof typeof itemImgs]" width="24" />
