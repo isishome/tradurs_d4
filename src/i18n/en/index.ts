@@ -100,7 +100,7 @@ export default {
     selectImage: 'Select {tv} Image',
     name: 'Item Name',
     power: '{p} Item Power',
-    upgrade: 'Item Level: {u}/{ul}',
+    upgrade: 'Upgrade: {u}/{ul}',
     gold: 'Gold',
     url: 'Item URL',
     favorites: 'Favorite Items'

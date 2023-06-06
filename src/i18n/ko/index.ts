@@ -99,7 +99,7 @@ export default {
     selectImage: '{tv} 이미지 선택',
     name: '아이템 명',
     power: '아이템 위력 {p}{u}',
-    upgrade: '아이템 레벨: {u}/{ul}',
+    upgrade: '업그레이드: {u}/{ul}',
     gold: '금화',
     url: '아이템 주소',
     favorites: '관심 아이템'
