@@ -568,7 +568,6 @@ defineExpose({ create, hideEditable, openOffers, hideOffers })
               @update:model-value="selectedProperty" @input-value="filterProperties">
               <template #option="scope">
                 <q-item v-bind="scope.itemProps">
-                  {{ scope }}
                   <q-item-section side>
                     <q-icon class="icon" :class="{ 'rotate-45': ['standard'].includes(scope.opt.type as string) }"
                       size="14px" :name="`img:${icons[scope.opt.type as keyof typeof icons || 'standard']}`" />
