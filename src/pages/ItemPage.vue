@@ -121,6 +121,14 @@ const updateOnly = (itemId: string) => {
     })
 }
 
+const favorite = (itemId: string, favorite: boolean) => {
+  is.favorite(itemId, favorite)
+    .then(() => {
+      if (is.detailItem.length > 0)
+        is.detailItem[0].favorite = favorite
+    })
+}
+
 const getItem = () => {
   is.clearSocket()
 
@@ -225,7 +233,8 @@ onUnmounted(() => {
   <div>
     <div class="row justify-center items-center">
       <D4Items ref="itemsRef" :items="is.detailItem" :loading="disable" @upsert-item="upsertItem"
-        @delete-item="deleteItem" @relist-item="relistItem" @status-item="statusItem" @update-only="updateOnly" />
+        @delete-item="deleteItem" @relist-item="relistItem" @status-item="statusItem" @update-only="updateOnly"
+        @favorite="favorite" />
     </div>
   </div>
 </template>

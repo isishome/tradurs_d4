@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useQuasar } from 'quasar'
+import { useAccountStore } from 'src/stores/account-store'
 import { useItemStore } from 'src/stores/item-store'
 import { useI18n } from 'vue-i18n'
 import { icons } from 'src/common/icons'
@@ -13,6 +14,7 @@ withDefaults(defineProps<IProps>(), {
 })
 
 const $q = useQuasar()
+const as = useAccountStore()
 const is = useItemStore()
 const { t } = useI18n({ useScope: 'global' })
 
@@ -25,9 +27,9 @@ const filterLoading = computed(() => is.filter.loading)
 
 const update = (quality?: Array<string>) => {
   if (quality)
-    Object.keys(is.filter.equipmentClasses).forEach((q: string) => {
+    Object.keys(is.filter.itemTypeValues1).forEach((q: string) => {
       if (!quality.includes(q))
-        delete is.filter.equipmentClasses[q]
+        delete is.filter.itemTypeValues1[q]
     })
 
   is.filter.request++
@@ -60,27 +62,34 @@ const update = (quality?: Array<string>) => {
         </div>
       </q-item-section>
     </q-item>
+    <q-item v-if="as.signed">
+      <q-item-section>
+        <q-item-label header>{{ t('filter.onlyForMe') }}</q-item-label>
+        <q-checkbox v-model="is.filter.favorite" class="q-pl-sm" size="xs" :label="t('item.favorites')"
+          @update:model-value="update()" />
+      </q-item-section>
+    </q-item>
     <q-item>
       <q-item-section>
         <q-item-label header>{{ t('item.quality') }}</q-item-label>
         <q-option-group size="xs" :disable="filterLoading" inline class="q-pl-sm"
           :options="filterQuality().map(fq => ({ ...fq, label: fq.fullName }))" type="checkbox"
           v-model="is.filter.quality" @update:model-value="update()" />
-      </q-item-section>
-    </q-item>
+    </q-item-section>
+  </q-item>
   <q-item>
     <q-item-section>
-      <q-item-label header>{{ t('item.selectType') }}</q-item-label>
-      <q-option-group size="xs" :disable="filterLoading" inline class="q-pl-sm" :options="filterTypes()" type="checkbox"
+        <q-item-label header>{{ t('item.selectType') }}</q-item-label>
+        <q-option-group size="xs" :disable="filterLoading" inline class="q-pl-sm" :options="filterTypes()" type="checkbox"
           v-model="is.filter.itemTypes" @update:model-value="val => update(val)" />
       </q-item-section>
     </q-item>
     <q-item :inset-level=".2" v-for="itemType in is.filter.itemTypes.filter(it => it !== 'aspect')" :key="itemType">
       <q-item-section>
-        <q-select v-model="is.filter.equipmentClasses[itemType]"
+        <q-select v-model="is.filter.itemTypeValues1[itemType]"
           :options="findType(itemType)?.value === 'rune' ? filterRunes() : filterClasses(itemType)"
-          :label="`${findType(itemType)?.label} 종류`" :disable="filterLoading" outlined dense no-error-icon
-          hide-bottom-space emit-value map-options multiple transition-show="none" transition-hide="none"
+          :label="`${findType(itemType)?.label} ${t('filter.type')}`" :disable="filterLoading" outlined dense
+          no-error-icon hide-bottom-space emit-value map-options multiple transition-show="none" transition-hide="none"
           :dropdown-icon="`img:${icons.dropdown}`" popup-content-class="d4-scroll" @update:model-value="update()">
         </q-select>
       </q-item-section>
@@ -104,10 +113,10 @@ const update = (quality?: Array<string>) => {
       </q-btn>
     </q-item>
     <!-- <q-item>
-            <q-item-section>
-              {{ is.filter }}
-            </q-item-section>
-          </q-item> -->
+                                                <q-item-section>
+                                                  {{ is.filter }}
+                                                </q-item-section>
+                                              </q-item> -->
   </q-list>
 </template>
 

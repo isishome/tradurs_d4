@@ -35,7 +35,7 @@ const copy = (battleTag: string) => {
   if (!allowCopy.value)
     return
 
-  clipboard(battleTag)
+  clipboard(battleTag, t('user.battleTag'))
 }
 </script>
 

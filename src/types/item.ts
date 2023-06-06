@@ -52,6 +52,7 @@ export interface IItem {
   user: User,
   offers: Array<Offer>,
   evaluations: Array<number>,
+  favorite: boolean,
   editable: boolean,
   action: number,
   loading: boolean,
@@ -100,6 +101,7 @@ export class Item implements IItem {
   public user: User = new User()
   public offers: Array<Offer> = []
   public evaluations: Array<number> = []
+  public favorite = false
   public editable = false
   public action = 0
   public loading = false

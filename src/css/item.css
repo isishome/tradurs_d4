@@ -75,11 +75,25 @@
   padding: 8px;
 }
 
+.name-place {
+  width: 60%;
+}
+
+.card-item .more-action {
+  top: 0;
+  right: 0;
+  visibility: hidden;
+}
+
+.card-item:hover .more-action {
+  visibility: visible;
+}
+
 .name {
   font-size: 18px;
   line-height: 24px;
   font-weight: 700;
-  word-break: keep-all;
+  word-break: break-all;
   max-width: 66%;
 }
 
@@ -118,6 +132,10 @@
 
   .card-item .q-card__section--vert {
     padding: 6px;
+  }
+
+  .card-item .more-action {
+    visibility: visible !important;
   }
 }
 

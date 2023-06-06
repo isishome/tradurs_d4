@@ -3,9 +3,10 @@ import { reactive, ref, computed, useSlots, nextTick, watch } from 'vue'
 import { QCard, useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
 
+import { useAccountStore } from 'stores/account-store'
 import { useItemStore } from 'stores/item-store'
 import { Item, Price } from 'src/types/item'
-import { checkName } from 'src/common'
+import { checkName, clipboard } from 'src/common'
 import { icons } from 'src/common/icons'
 import { itemImgs } from 'src/common/items'
 
@@ -27,11 +28,12 @@ const props = withDefaults(defineProps<IProps>(), {
   disable: false
 })
 
-const emit = defineEmits(['update', 'apply'])
+const emit = defineEmits(['update', 'apply', 'favorite'])
 
 // common variable
 const $q = useQuasar()
 const slots = useSlots()
+const as = useAccountStore()
 const store = useItemStore()
 const { t } = useI18n({ useScope: 'global' })
 
@@ -52,10 +54,10 @@ const _quality = ref<string>(props.data.quality || 'normal')
 const _type = ref<string>(props.data.itemType || store.filterTypes()[0].value as string)
 const _typeValue1 = ref<string>(props.data.itemTypeValue1 || (_type.value === 'aspect' ? store.aspectCategories[0].value as string : filterClasses(_type.value)[0].value as string))
 const _typeValue2 = ref<string>(props.data.itemTypeValue2 || (_typeValue1.value === 'gem' ? filterGems()[0].value as string : ''))
-
-
 const _power = ref<number>(props.data.power)
 const _upgrade = ref<number>(props.data.upgrade)
+const _favorite = ref<boolean>(props.data.favorite)
+
 const findRuneType = store.findRuneType
 const filterTypes = store.filterTypes
 const upgradeLimit = computed(() => store.findQuality(props.data.quality)?.upgradeLimit)
@@ -77,6 +79,10 @@ const attributes = computed(() => [
   { label: t('restrictions'), value: 'restrictions' }
 ].filter(a => !a.hide))
 
+const copy = () => {
+  clipboard(`${document.location.origin}/item/${props.data.itemId}`, t('item.url'))
+}
+
 const updateQuality = (val: string) => {
   _quality.value = val
   _power.value = 0
@@ -97,7 +103,7 @@ const updateTypeValue1 = (val: string) => {
 }
 
 const update = () => {
-  emit('update', { hardcore: _hardcore.value, ladder: _ladder.value, name: _name, quantity: _quantity.value, quality: _quality.value, itemType: _type.value, itemTypeValue1: _typeValue1.value, itemTypeValue2: _typeValue2.value, imageId: _image, power: _power.value, upgrade: _upgrade.value, price: _price })
+  emit('update', { hardcore: _hardcore.value, ladder: _ladder.value, name: _name, quantity: _quantity.value, quality: _quality.value, itemType: _type.value, itemTypeValue1: _typeValue1.value, itemTypeValue2: _typeValue2.value, imageId: _image, power: _power.value, upgrade: _upgrade.value, price: _price, favorite: _favorite })
 }
 
 const updatePrice = (price: Price) => {
@@ -445,8 +451,8 @@ defineExpose({ scrollEnd })
           <div v-show="loading">
             <q-skeleton width="150px" :height="$q.screen.lt.sm ? '16px' : '24px'" />
           </div>
-          <div style="width:70%">
-            <div v-show="!loading" class="row items-center q-gutter-xs q-mb-xs">
+          <div class="name-place">
+            <div v-show="!loading" class="row items-center q-gutter-xs q-mb-xs no-wrap">
               <div v-show="data.itemType === 'rune'" class="row items-center q-gutter-sm">
                 <div class="name">{{ (filterRunesByType().find(r => r.value === data.itemTypeValue1) || {}).label }}</div>
                 <div>{{ findRuneType(findRune(data.itemTypeValue1)?.type)?.label }}
@@ -459,6 +465,29 @@ defineExpose({ scrollEnd })
                 <div class="text-lowercase">x</div>
                 <div>{{ data.quantity }}</div>
               </div>
+              <div class="more-action">
+                <q-btn dense flat :ripple="false" class="no-hover" padding="0">
+                  <img class="icon" :src="icons.morevert" :width="$q.screen.lt.sm ? 16 : 20" />
+                  <q-menu auto-close :class="[$q.dark.isActive ? 'bg-grey-4' : 'bg-grey-9']">
+                    <q-item v-if="as.signed" :class="[$q.dark.isActive ? 'text-grey-9' : 'text-grey-4']"
+                      :dense="$q.screen.lt.sm" clickable @click="$emit('favorite', data.itemId, !data.favorite)">
+                      <q-item-section side>
+                        <img :class="{ 'invert': !$q.dark.isActive }"
+                          :src="data.favorite ? icons.unfavorite : icons.favorite" height="24" />
+                      </q-item-section>
+                      <q-item-section class="text-uppercase">{{ data.favorite ? t('btn.unfavorite') : t('btn.favorite')
+                      }}</q-item-section>
+                    </q-item>
+                    <q-item :class="[$q.dark.isActive ? 'text-grey-9' : 'text-grey-4']" :dense="$q.screen.lt.sm" clickable
+                      @click="copy">
+                      <q-item-section side>
+                        <img :class="{ 'invert': !$q.dark.isActive }" :src="icons.share" height="24" />
+                      </q-item-section>
+                      <q-item-section class="text-uppercase">{{ t('btn.share') }}</q-item-section>
+                    </q-item>
+                  </q-menu>
+                </q-btn>
+              </div>
             </div>
           </div>
           <div v-show="loading">
@@ -468,7 +497,7 @@ defineExpose({ scrollEnd })
             {{ findClass(data.itemTypeValue1)?.label || findType(data.itemType)?.label }}
           </div>
           <div v-show="data.power > 0">
-            {{ t('item.power', { p: data.power }) }}
+            {{ t('item.power', { p: data.power, u: data.upgrade ? ` + ${data.upgrade * 5}` : '' }) }}
           </div>
           <div v-show="data.upgrade > 0" class="stress">
             {{ t('item.upgrade', { u: data.upgrade, ul: upgradeLimit }) }}

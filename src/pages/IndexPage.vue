@@ -41,6 +41,7 @@ const upsertItem = (item: Item, done: Function) => {
   is[item.itemId !== '' ? 'updateItem' : 'addItem'](item)
     .then((response) => {
       Object.assign(item, response)
+      is.clearFilter()
       if (findIndex !== -1)
         items.value.splice(findIndex, 1, item)
       else
@@ -125,6 +126,17 @@ const updateOnly = (itemId: string) => {
       }).catch(() => {
       }).then(() => {
         disable.value = false
+      })
+  }
+}
+
+const favorite = (itemId: string, favorite: boolean) => {
+  const findItem = items.value.find((i) => i.itemId === itemId)
+
+  if (findItem) {
+    is.favorite(itemId, favorite)
+      .then(() => {
+        findItem.favorite = favorite
       })
   }
 }
@@ -240,7 +252,7 @@ onMounted(() => {
   <div>
     <div class="row justify-center items-center">
       <D4Items ref="itemsRef" :items="items" :loading="disable" @upsert-item="upsertItem" @delete-item="deleteItem"
-        @relist-item="relistItem" @status-item="statusItem" @update-only="updateOnly" />
+        @relist-item="relistItem" @status-item="statusItem" @update-only="updateOnly" @favorite="favorite" />
     </div>
   </div>
 </template>

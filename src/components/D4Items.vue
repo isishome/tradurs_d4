@@ -15,6 +15,7 @@ import D4Affix from 'components/D4Affix.vue'
 import D4Restriction from 'components/D4Restriction.vue'
 import D4Offer from 'components/D4Offer.vue'
 import D4Dialog from 'components/D4Dialog.vue'
+import { data } from 'browserslist'
 
 interface IProps {
   items: Array<Item>,
@@ -29,7 +30,7 @@ const props = withDefaults(defineProps<IProps>(), {
   loading: false
 })
 
-const emit = defineEmits(['upsert-item', 'delete-item', 'relist-item', 'status-item', 'update-only'])
+const emit = defineEmits(['upsert-item', 'delete-item', 'relist-item', 'status-item', 'update-only', 'favorite'])
 
 // init module
 const $q = useQuasar()
@@ -41,6 +42,11 @@ const { t } = useI18n({ useScope: 'global' })
 const requestProperties = computed<number>(() => is.properties.request)
 const requestAffixes = computed<number>(() => is.affixes.request)
 const requestRestrictions = computed<number>(() => is.restrictions.request)
+
+// about favorite item
+const favorite = (itemId: string, favorite: boolean) => {
+  emit('favorite', itemId, favorite)
+}
 
 // about editable item
 const activatedRef = ref<typeof D4Item | null>(null)
@@ -513,7 +519,7 @@ defineExpose({ create, hideEditable, openOffers, hideOffers })
         :style="item.expanded ? 'height:100%' : `height: ${height as number - ($q.screen.lt.sm ? 50 : 0)}px;`"
         transition="fade" @visibility="isVisible => visible(isVisible, item)" ssr-prerender once>
         <div v-if="(item instanceof Advertise)" class="bg-grey" style="width:100%;height:500px"></div>
-        <D4Item v-else :data="item" :loading="loading || item.loading">
+        <D4Item v-else :data="item" :loading="loading || item.loading" @favorite="favorite">
           <template #top-right>
           </template>
           <template v-if="requestProperties > 0" #properties>
@@ -539,9 +545,9 @@ defineExpose({ create, hideEditable, openOffers, hideOffers })
             </div>
           </template>
           <template #more="{ loading }">
-            <q-btn v-if="!item.expanded && !loading" flat text-color="black" class="more no-hover" padding="20px"
+            <q-btn v-if="!item.expanded && !loading" flat text-color="black" class="more no-hover" padding="10px"
               @click="expanded(item)">
-              <img class="icon" width="24" height="16" src="~assets/icons/more.svg" />
+              <img class="icon" :height="$q.screen.lt.sm ? 24 : 36" src="~assets/icons/more.svg" />
             </q-btn>
           </template>
         </D4Item>
@@ -562,6 +568,7 @@ defineExpose({ create, hideEditable, openOffers, hideOffers })
               @update:model-value="selectedProperty" @input-value="filterProperties">
               <template #option="scope">
                 <q-item v-bind="scope.itemProps">
+                  {{ scope }}
                   <q-item-section side>
                     <q-icon class="icon" :class="{ 'rotate-45': ['standard'].includes(scope.opt.type as string) }"
                       size="14px" :name="`img:${icons[scope.opt.type as keyof typeof icons || 'standard']}`" />
@@ -807,7 +814,7 @@ defineExpose({ create, hideEditable, openOffers, hideOffers })
 
 @media (max-width:600px) {
   .more {
-    padding: 8px !important;
+    padding: 4px !important;
   }
 }
 
@@ -820,7 +827,7 @@ defineExpose({ create, hideEditable, openOffers, hideOffers })
 }
 
 .more:not(.disabled):hover:deep(.icon) {
-  transform: translateY(30%);
+  transform: translateY(20%);
 }
 
 .offers:deep(.card-item) {

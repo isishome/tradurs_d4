@@ -19,6 +19,10 @@ export default {
     desc: '배틀 태그는 Tradurs 사용자 정보 페이지에서 언제나 수정 가능합니다',
     placeholder: '레비아탄#5112'
   },
+  filter: {
+    onlyForMe: '나만의 검색',
+    type: '종류'
+  },
   noItem: '거래 가능한 아이템이 없습니다',
   message: '메세지',
   hardcore: '하드코어',
@@ -72,7 +76,10 @@ export default {
     move: '이동',
     complete: '완료 처리',
     submit: '제출하기',
-    resetSearch: '검색 초기화'
+    resetSearch: '검색 초기화',
+    favorite: '관심 목록에 추가',
+    unfavorite: '관심 목록에서 삭제',
+    share: '공유'
   },
   attribute: {
     add: '{attr} 추가',
@@ -91,9 +98,11 @@ export default {
     selectGem: '보석 선택',
     selectImage: '{tv} 이미지 선택',
     name: '아이템 명',
-    power: '아이템 위력 {p}',
+    power: '아이템 위력 {p}{u}',
     upgrade: '아이템 레벨: {u}/{ul}',
-    gold: '금화'
+    gold: '금화',
+    url: '아이템 주소',
+    favorites: '관심 아이템'
   },
   price: {
     currency: '화폐 유형',

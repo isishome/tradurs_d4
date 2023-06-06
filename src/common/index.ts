@@ -59,14 +59,14 @@ export const scrollPos = (top?: number, behavior?: ScrollBehavior) => {
   })
 }
 
-export const clipboard = (text: string) => {
+export const clipboard = (text: string, msg: string) => {
   if (!text || text.trim() === '')
     return
 
   copyToClipboard(text)
     .then(() => {
       Notify.create({
-        message: i18n.global.t('messages.clipboard', { t: i18n.global.t('user.battleTag') })
+        message: i18n.global.t('messages.clipboard', { t: msg })
       })
     })
     .catch(() => {

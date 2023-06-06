@@ -63,8 +63,6 @@ export interface Restriction extends ILabel {
   sort?: number
 }
 
-const timeout = 0
-
 export const useItemStore = defineStore('item', {
   state: () => ({
     base: {
@@ -103,11 +101,13 @@ export const useItemStore = defineStore('item', {
       complete: null as { itemName: string, itemId: string } | null
     },
     filter: {
+      favorite: false as boolean,
       quality: [] as Array<string>,
       hardcore: null as boolean | null,
       ladder: null as boolean | null,
       itemTypes: [] as Array<string>,
-      equipmentClasses: {} as { [key: string]: Array<number> },
+      itemTypeValues1: {} as { [key: string]: Array<number> },
+      itemTypeValues2: {} as { [key: string]: Array<number> },
       name: '' as string,
       request: 0,
       loading: false
@@ -200,11 +200,13 @@ export const useItemStore = defineStore('item', {
       this.socket.complete = null
     },
     clearFilter() {
+      this.filter.favorite = false
       this.filter.quality = []
       this.filter.hardcore = null
       this.filter.ladder = null
       this.filter.itemTypes = []
-      this.filter.equipmentClasses = {}
+      this.filter.itemTypeValues1 = {}
+      this.filter.itemTypeValues2 = {}
       this.filter.name = ''
       this.filter.request = 0
       this.filter.loading = false
@@ -324,7 +326,7 @@ export const useItemStore = defineStore('item', {
     },
     getItems(page: number, itemId?: string | string[], filter?: any) {
       return new Promise<Array<Item>>((resolve, reject) => {
-        api.get('/d4/item', { params: { page, rows: this.page.rows, itemId, filter } })
+        api.post('/d4/item', { page, rows: this.page.rows, itemId, filter })
           .then(async (response) => {
             this.page.more = response.data.length > this.page.rows
             response.data.splice(this.page.rows, 1)
@@ -339,7 +341,6 @@ export const useItemStore = defineStore('item', {
       return new Promise<Property | Affix | Restriction>((resolve, reject) => {
         api.post('/d4/item/attribute', { category: category, attribute: attribute })
           .then(async (response) => {
-            await sleep(timeout)
             if (response.data.length) {
               attribute.value = response.data[0].value
               attribute.sort = response.data[0].sort
@@ -359,7 +360,6 @@ export const useItemStore = defineStore('item', {
       return new Promise<Item>((resolve, reject) => {
         api.post('/d4/item/add', { item })
           .then(async (response) => {
-            await sleep(timeout)
             resolve(response.data)
           })
           .catch((e) => {
@@ -371,7 +371,6 @@ export const useItemStore = defineStore('item', {
       return new Promise<Item>((resolve, reject) => {
         api.post('/d4/item/update', { item })
           .then(async (response) => {
-            await sleep(timeout)
             resolve(response.data)
           })
           .catch((e) => {
@@ -383,7 +382,6 @@ export const useItemStore = defineStore('item', {
       return new Promise<void>((resolve, reject) => {
         api.post('/d4/item/relist', { itemId: itemId })
           .then(async () => {
-            await sleep(timeout)
             resolve()
           })
           .catch((e) => {
@@ -395,7 +393,6 @@ export const useItemStore = defineStore('item', {
       return new Promise<void>((resolve, reject) => {
         api.post('/d4/item/delete', { itemId: itemId })
           .then(async () => {
-            await sleep(timeout)
             resolve()
           })
           .catch((e) => {
@@ -407,7 +404,6 @@ export const useItemStore = defineStore('item', {
       return new Promise<void>((resolve, reject) => {
         api.post('/d4/item/status', { itemId: itemId })
           .then(async () => {
-            await sleep(timeout)
             resolve()
           })
           .catch((e) => {
@@ -419,7 +415,6 @@ export const useItemStore = defineStore('item', {
       return new Promise<Array<Offer>>((resolve, reject) => {
         api.get('/d4/item/offer', { params: { itemId, offerId } })
           .then(async (response) => {
-            await sleep(timeout)
             resolve(response.data)
           })
           .catch((e) => {
@@ -431,7 +426,6 @@ export const useItemStore = defineStore('item', {
       return new Promise<Offer>((resolve, reject) => {
         api.post('/d4/item/offer/make', { offer })
           .then(async (response) => {
-            await sleep(timeout)
             resolve(response.data)
           })
           .catch((e) => {
@@ -443,7 +437,6 @@ export const useItemStore = defineStore('item', {
       return new Promise<void>((resolve, reject) => {
         api.post('/d4/item/offer/accept', { offerId })
           .then(async () => {
-            await sleep(timeout)
             resolve()
           })
           .catch((e) => {
@@ -455,7 +448,17 @@ export const useItemStore = defineStore('item', {
       return new Promise<void>((resolve, reject) => {
         api.post('/d4/item/evaluations/add', { itemId, evaluations })
           .then(async () => {
-            await sleep(timeout)
+            resolve()
+          })
+          .catch((e) => {
+            reject(e)
+          })
+      })
+    },
+    favorite(itemId: string, favorite: boolean) {
+      return new Promise<void>((resolve, reject) => {
+        api.post('/d4/item/favorite', { itemId, favorite })
+          .then(async () => {
             resolve()
           })
           .catch((e) => {

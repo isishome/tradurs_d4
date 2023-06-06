@@ -19,6 +19,10 @@ export default {
     desc: 'BattleTag™ can always be edited on the user information page of the Tradurs site',
     placeholder: 'leviathan#5112'
   },
+  filter: {
+    onlyForMe: 'Only For Me',
+    type: 'Type(s)'
+  },
   noItem: 'No items available for trade',
   trade: 'Trade',
   message: 'Message',
@@ -73,7 +77,10 @@ export default {
     move: 'Move',
     complete: 'Complete',
     submit: 'Submit',
-    resetSearch: 'Reset Filter'
+    resetSearch: 'Reset Filter',
+    favorite: 'Add to Favorites',
+    unfavorite: 'Remove to Favorites',
+    share: 'Share'
   },
   attribute: {
     add: 'Add {attr}',
@@ -94,7 +101,9 @@ export default {
     name: 'Item Name',
     power: '{p} Item Power',
     upgrade: 'Item Level: {u}/{ul}',
-    gold: 'Gold'
+    gold: 'Gold',
+    url: 'Item URL',
+    favorites: 'Favorite Items'
   },
   price: {
     currency: 'Currency',
@@ -102,7 +111,7 @@ export default {
     getOffer: 'Get An Offer'
   },
   offer: {
-    title: 'Offer',
+    title: 'Get An Offer',
     list: 'Offer List',
     accepted: 'Accepted',
     noOffer: 'No offers have been received'
