@@ -183,13 +183,13 @@ export const useItemStore = defineStore('item', {
       return (restrictId: number): Restriction | undefined => state.restrictions.data.find(r => r.value === restrictId)
     },
     matchProperties: (state) => {
-      return (attribute: string): boolean => attribute ? state.properties.data.filter(p => p.label.trim() === attribute).length > 0 : false
+      return (type: string, attribute: string): boolean => type && attribute ? state.properties.data.filter(p => p.type === type && p.label.trim() === attribute).length > 0 : false
     },
     matchAffixes: (state) => {
-      return (attribute: string): boolean => attribute ? state.affixes.data.filter(a => a.label.trim() === attribute).length > 0 : false
+      return (type: string, attribute: string): boolean => type && attribute ? state.affixes.data.filter(a => a.type === type && a.label.trim() === attribute).length > 0 : false
     },
     matchRestrictions: (state) => {
-      return (attribute: string): boolean => attribute ? state.restrictions.data.filter(r => r.label.trim() === attribute).length > 0 : false
+      return (type: string, attribute: string): boolean => type && attribute ? state.restrictions.data.filter(r => r.type === type && r.label.trim() === attribute).length > 0 : false
     }
   },
   actions: {

@@ -194,7 +194,7 @@ const applyAdd = (): void => {
     errorMessage = t('attribute.enter', { attr: t(add.category as string) })
   else if (!checkAttribute(add.attribute))
     errorMessage = t('attribute.invalid', { attr: t(add.category as string) })
-  else if ((add.category === 'properties' && is.matchProperties(add.attribute)) || (add.category === 'affixes' && is.matchAffixes(add.attribute)) || (add.category === 'restrictions' && is.matchRestrictions(add.attribute)))
+  else if ((add.category === 'properties' && is.matchProperties(add.type, add.attribute)) || (add.category === 'affixes' && is.matchAffixes(add.type, add.attribute)) || (add.category === 'restrictions' && is.matchRestrictions(add.type, add.attribute)))
     errorMessage = t('attribute.exists', { attr: t(add.category as string) })
 
   if (errorMessage !== '') {
@@ -278,6 +278,7 @@ const updateProperty = ({ valueId, propertyValues }: { valueId: string, property
 const removeProperty = ({ valueId }: { valueId: string }): void => {
   const findProperty = activatedItem.value.properties.find(p => p.valueId === valueId)
   if (findProperty) {
+
     findProperty.disable = findProperty.action !== 8
     findProperty.restore = findProperty.action !== 8 ? findProperty.action : undefined
     findProperty.action = findProperty.action !== 8 ? 8 : findProperty.restore
