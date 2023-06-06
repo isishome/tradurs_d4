@@ -3,7 +3,7 @@ import { copyToClipboard, Notify } from 'quasar'
 import { i18n } from "src/boot/i18n"
 
 export const checkName = (name: string) => {
-  return /^[0-9a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣\s,\.'"%\(\)\+\-\:]{4,}$/gi.test(name)
+  return /^[0-9a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣\s,\.'"%\(\)\+\-\:]{2,}$/gi.test(name)
 }
 
 export const checkAttribute = (attribute: string) => {
