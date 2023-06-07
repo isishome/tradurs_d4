@@ -505,8 +505,8 @@ defineExpose({ scrollEnd })
         </div>
       </q-card-section>
       <q-separator style="width:50%" />
-      <q-card-section class="col">
-        <div v-show="data.itemType === 'rune'" class="q-pa-sm">
+      <q-card-section v-show="loading || (!loading && (data.itemType === 'rune' || data.properties.length > 0))">
+        <div v-show="data.itemType === 'rune'" class="q-px-sm">
           <q-item v-show="loading" style="min-height:10px;padding:3px">
             <q-item-section side class="q-pr-sm">
               <q-skeleton type="circle" size="24px" />
@@ -523,7 +523,7 @@ defineExpose({ scrollEnd })
             </div>
           </div>
         </div>
-        <div v-show="loading || hasProperties" class="q-pa-sm">
+        <div class="q-px-sm">
           <q-item v-show="loading" v-for="c in 2" :key="c" style="min-height:10px;padding:3px">
             <q-item-section side class="q-pr-sm">
               <q-skeleton type="circle" width="10px" height="10px" />
@@ -541,8 +541,8 @@ defineExpose({ scrollEnd })
           </div>
         </div>
       </q-card-section>
-      <q-separator v-show="loading || (hasProperties && hasAffixes)" />
-      <q-card-section v-show="loading || hasAffixes">
+      <q-separator v-show="loading || (!loading && data.properties.length > 0 && data.affixes.length > 0)" />
+      <q-card-section v-show="loading || (!loading && data.affixes.length > 0)">
         <div class="q-px-sm">
           <q-item v-show="loading" v-for="c in 3" :key="c" style="min-height:10px;padding:3px">
             <q-item-section side class="q-pr-sm">
@@ -561,7 +561,7 @@ defineExpose({ scrollEnd })
           </div>
         </div>
       </q-card-section>
-      <q-card-section class="row justify-end">
+      <q-card-section v-show="loading || (!loading && data.restrictions.length > 0)" class="row justify-end">
         <div class="q-px-sm">
           <q-item v-show="loading" v-for="c in 3" :key="c" style="min-height:10px;padding:3px">
             <q-item-section>
@@ -576,7 +576,7 @@ defineExpose({ scrollEnd })
           </div>
         </div>
       </q-card-section>
-      <q-separator v-if="slots.actions" />
+      <q-separator v-show="slots.actions && (data.properties.length > 0 || data.affixes.length > 0)" />
       <q-card-section v-if="slots.actions">
         <slot v-if="!loading" name="actions"></slot>
       </q-card-section>
