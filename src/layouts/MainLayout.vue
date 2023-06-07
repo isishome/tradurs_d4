@@ -101,8 +101,8 @@ onUnmounted(() => {
     <q-drawer show-if-above bordered v-model="leftDrawerOpen" side="left" :behavior="screen.lt.md ? 'mobile' : 'desktop'"
       class="row justify-end no-scroll" :width="300">
       <q-list class="column full-height" style="width:300px">
-        <q-scroll-area class="col">
-          <D4Filter :disable="$route.name !== 'tradeList'" class="q-pa-lg" />
+      <q-scroll-area class="col">
+        <D4Filter :disable="$route.name !== 'tradeList'" class="q-pa-lg" />
         </q-scroll-area>
       </q-list>
     </q-drawer>
@@ -198,9 +198,9 @@ onUnmounted(() => {
               <RouterView />
               <div class="q-py-xl"></div>
             </div>
-            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5110777286519562"
-              data-ad-slot="8610177982" data-ad-format="auto" data-full-width-responsive="true"
-              :data-adtest="prod ? 'off' : 'on'" :key="key"></ins>
+            <!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5110777286519562"
+                    data-ad-slot="8610177982" data-ad-format="auto" data-full-width-responsive="true"
+                    :data-adtest="prod ? 'off' : 'on'" :key="key"></ins> -->
             <div class="q-py-xl"></div>
             <q-separator />
             <div class="q-pt-lg">
@@ -217,8 +217,8 @@ onUnmounted(() => {
             <div class="full-height q-px-lg q-py-xl" :style="`width:280px;height:${asideHeight}`">
               <div :style="`position:sticky;top:${asideTop}`">
                 <!-- <ins class="adsbygoogle" style="display:inline-block;width:160px;height:600px"
-                                                                                                                                                                                                                        data-ad-client="ca-pub-5110777286519562" data-ad-slot="7240136439" :data-adtest="prod ? 'off' : 'on'"
-                                                                                                                                                                                                                        :key="key"></ins> -->
+                    data-ad-client="ca-pub-5110777286519562" data-ad-slot="7240136439" :data-adtest="prod ? 'off' : 'on'"
+                    :key="key"></ins> -->
               </div>
             </div>
           </div>
