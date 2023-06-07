@@ -5,6 +5,7 @@ import { useQuasar, Screen, uid } from 'quasar'
 import { useI18n } from 'vue-i18n'
 
 import { useAccountStore } from 'stores/account-store'
+import { useItemStore } from 'stores/item-store'
 import { icons } from 'src/common/icons'
 
 import D4Filter from 'components/D4Filter.vue'
@@ -14,12 +15,14 @@ const prod: boolean = import.meta.env.PROD
 const route = useRoute()
 const router = useRouter()
 const $q = useQuasar()
-const accountStore = useAccountStore()
+const as = useAccountStore()
+const is = useItemStore()
 const { t, locale } = useI18n({ useScope: 'global' })
 
+const filterLoading = computed(() => is.filter.loading)
 const leftDrawerOpen = ref<boolean>(false)
 const rightDrawerOpen = ref<boolean>(false)
-const signed = computed<boolean | null>(() => accountStore.signed)
+const signed = computed<boolean | null>(() => as.signed)
 const screen = computed<Screen>(() => $q.screen)
 const offsetTop = ref<number>(0)
 const asideHeight = computed<string>(() => `calc(100vh - ${screen.value.gt.sm ? offsetTop.value : 0}px)`)
@@ -30,7 +33,7 @@ const myTweak = (offset: number): void => {
 }
 
 const sign = (): void => {
-  accountStore.sign().then((result: boolean) => {
+  as.sign().then((result: boolean) => {
     if (!result)
       router.go(0)
   })
@@ -43,6 +46,7 @@ const localeOptions = [
 
 const brLoc = localeOptions.map(lo => lo.value).includes($q.lang.getLocale()?.substring(0, 2) || '') ? $q.lang.getLocale()?.substring(0, 2) : 'ko'
 const setLang = (lang: string) => {
+  locale.value = lang
   $q.cookies.set('d4.lang', lang)
 }
 
@@ -57,6 +61,10 @@ const reload = () => {
   nextTick(() => {
     onWindowLoad()
   })
+}
+
+const search = () => {
+  is.filter.request++
 }
 
 watch(() => route.name, (val, old) => {
@@ -98,8 +106,8 @@ onUnmounted(() => {
         </q-scroll-area>
       </q-list>
     </q-drawer>
-  <q-drawer show-if-above bordered v-model="rightDrawerOpen" side="right" behavior="mobile"
-    class="row justify-start scroll" :width="300">
+    <q-drawer show-if-above bordered v-model="rightDrawerOpen" side="right" behavior="mobile"
+      class="row justify-start scroll" :width="300">
       <q-list class="column full-height" style="width:300px">
         <q-item class="row justify-end q-gutter-sm q-pa-lg">
           <q-select v-model="locale" :options="localeOptions" :label="t('language', 0, { locale: brLoc })" dense outlined
@@ -111,8 +119,8 @@ onUnmounted(() => {
           </q-btn>
           <q-btn round flat :ripple="!$q.dark.isActive" @click="sign">
             <img v-if="signed" class="icon" width="24" :src="icons.logout" />
-            <img v-else class="icon" width="24" :src="icons.login" />
-          </q-btn>
+          <img v-else class="icon" width="24" :src="icons.login" />
+        </q-btn>
         </q-item>
         <q-separator />
         <q-scroll-area class="col">
@@ -123,7 +131,7 @@ onUnmounted(() => {
     </q-drawer>
     <q-header :elevated="!$q.dark.isActive" class="q-py-sm header row justify-center">
       <q-toolbar class="toolbar">
-        <div class="col-lg-3 col-4 row items-center">
+        <div class="col-2 col-sm-3 row items-center">
           <q-btn class="gt-sm no-hover" dense flat padding="0" :ripple="!$q.dark.isActive" :to="{ path: '/' }">
             <img v-show="$q.dark.isActive" src="~assets/logo.webp" height="48" />
             <img v-show="!$q.dark.isActive" src="~assets/logo_light.webp" height="48" />
@@ -132,24 +140,45 @@ onUnmounted(() => {
             <img src="~assets/icons/filter.svg" class="icon" width="24" />
           </q-btn>
         </div>
-        <div class="col row justify-center">
-          <q-btn class="lt-md no-hover" dense flat padding="0" :ripple="!$q.dark.isActive" :to="{ path: '/' }">
-            <img v-show="$q.dark.isActive" src="~assets/logo.webp" height="48" />
-            <img v-show="!$q.dark.isActive" src="~assets/logo_light.webp" height="48" />
-          </q-btn>
-          <q-tabs dense no-caps class="gt-sm q-px-md bg-transparent no-hover nav">
-            <q-route-tab :ripple="!$q.dark.isActive" :label="t('page.tradeList')" :to="{ name: 'tradeList' }" />
-          </q-tabs>
+        <div class="col row justify-between" :class="{ 'justify-center': $q.screen.lt.md }">
+          <div class="col-12 col-md-6">
+            <q-input outlined dense v-model="is.filter.name" :label="t('item.name')"
+              :disable="filterLoading || $route.name !== 'tradeList'" @keyup.enter="search()">
+              <template v-if="$q.screen.lt.md" #prepend>
+                <q-icon>
+                  <img v-show="$q.dark.isActive" src="~assets/logo.webp" height="24" />
+                  <img v-show="!$q.dark.isActive" src="~assets/logo_light.webp" height="24" />
+                </q-icon>
+              </template>
+              <template #append>
+                <q-btn flat dense size="xs" :ripple="false" class="no-hover" :disable="filterLoading" @click="search()">
+                  <q-icon class="icon" :name="`img:${icons.search}`" size="xs" />
+                </q-btn>
+              </template>
+            </q-input>
+          </div>
+          <div>
+            <q-tabs dense no-caps class="gt-sm q-px-md bg-transparent no-hover nav">
+              <q-route-tab :ripple="!$q.dark.isActive" :label="t('page.tradeList')" :to="{ name: 'tradeList' }" />
+            </q-tabs>
+          </div>
         </div>
-        <div class="lt-md col-lg-3 col-4 row justify-end q-gutter-sm">
+        <div class="lt-md col-2 col-sm-3 row justify-end q-gutter-sm">
           <q-btn round flat :ripple="!$q.dark.isActive" @click="rightDrawerOpen = !rightDrawerOpen">
             <img class="icon" width="24" :src="icons.morevert" />
           </q-btn>
         </div>
-        <div class="gt-sm col-lg-3 col-4 row justify-end q-gutter-sm">
-          <q-select v-model="locale" :options="localeOptions" :label="t('language', 0, { locale: brLoc })" dense outlined
-            behavior="menu" emit-value map-options options-dense style="min-width: 150px"
-            :dropdown-icon="`img:${icons.dropdown}`" popup-content-class="d4-scroll" @update:model-value="setLang" />
+        <div class="gt-sm col-lg-3 col-4 row justify-end items-center q-gutter-sm">
+          <q-btn round flat :ripple="!$q.dark.isActive">
+            <img class="icon" width="24" :src="icons.language" />
+            <q-menu auto-close>
+              <q-list>
+                <q-item v-for="lang in localeOptions" :key="lang.value" clickable :active="lang.value === locale"
+                  @click="setLang(lang.value)">
+                  {{ lang.label }}</q-item>
+              </q-list>
+            </q-menu>
+          </q-btn>
           <q-btn round flat :ripple="!$q.dark.isActive" @click="setDark">
             <img v-show="$q.dark.isActive" class="icon" width="24" :src="icons.light" />
             <img v-show="!$q.dark.isActive" class="icon" width="24" :src="icons.dark" />
@@ -169,9 +198,9 @@ onUnmounted(() => {
               <RouterView />
               <div class="q-py-xl"></div>
             </div>
-            <!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5110777286519562"
-                                        data-ad-slot="8610177982" data-ad-format="auto" data-full-width-responsive="true"
-                                        :data-adtest="prod ? 'off' : 'on'" :key="key"></ins> -->
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5110777286519562"
+              data-ad-slot="8610177982" data-ad-format="auto" data-full-width-responsive="true"
+              :data-adtest="prod ? 'off' : 'on'" :key="key"></ins>
             <div class="q-py-xl"></div>
             <q-separator />
             <div class="q-pt-lg">
@@ -188,8 +217,8 @@ onUnmounted(() => {
             <div class="full-height q-px-lg q-py-xl" :style="`width:280px;height:${asideHeight}`">
               <div :style="`position:sticky;top:${asideTop}`">
                 <!-- <ins class="adsbygoogle" style="display:inline-block;width:160px;height:600px"
-                                              data-ad-client="ca-pub-5110777286519562" data-ad-slot="7240136439" :data-adtest="prod ? 'off' : 'on'"
-                                              :key="key"></ins> -->
+                                                                                                                                                                                                                        data-ad-client="ca-pub-5110777286519562" data-ad-slot="7240136439" :data-adtest="prod ? 'off' : 'on'"
+                                                                                                                                                                                                                        :key="key"></ins> -->
               </div>
             </div>
           </div>

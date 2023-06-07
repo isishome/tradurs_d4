@@ -108,6 +108,9 @@ export const useItemStore = defineStore('item', {
       itemTypes: [] as Array<string>,
       itemTypeValues1: {} as { [key: string]: Array<number> },
       itemTypeValues2: {} as { [key: string]: Array<number> },
+      properties: [] as Array<number>,
+      affixes: [] as Array<number>,
+      restrictions: [],
       name: '' as string,
       request: 0,
       loading: false
@@ -207,6 +210,9 @@ export const useItemStore = defineStore('item', {
       this.filter.itemTypes = []
       this.filter.itemTypeValues1 = {}
       this.filter.itemTypeValues2 = {}
+      this.filter.properties = []
+      this.filter.affixes = []
+      this.filter.restrictions = []
       this.filter.name = ''
       this.filter.request = 0
       this.filter.loading = false

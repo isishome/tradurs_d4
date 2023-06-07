@@ -21,7 +21,8 @@ export default {
   },
   filter: {
     onlyForMe: 'Only For Me',
-    type: 'Type(s)'
+    type: 'Type(s)',
+    advanced: 'Advanced Filter'
   },
   noItem: 'No items available for trade',
   trade: 'Trade',

@@ -599,9 +599,10 @@ defineExpose({ create, hideEditable, openOffers, hideOffers })
           <div class="row items-center q-gutter-sm">
             <q-select ref="affixRef" v-model="affixId" :disable="disable"
               :popup-content-style="{ 'height': `${props.wrap?.$el.clientHeight / 2}px` }" outlined dense no-error-icon
-              use-input hide-bottom-space emit-value map-options transition-show="none" transition-hide="none" class="col"
-              :label="t('searchOrSelect')" :options="affixOptions(affixNeedle)" :dropdown-icon="`img:${icons.dropdown}`"
-              popup-content-class="d4-scroll" @update:model-value="selectedAffix" @input-value="filterAffixes">
+              use-input hide-bottom-space hide-selected emit-value map-options transition-show="none"
+              transition-hide="none" class="col" :label="t('searchOrSelect')" :options="affixOptions(affixNeedle)"
+              :dropdown-icon="`img:${icons.dropdown}`" popup-content-class="d4-scroll" @update:model-value="selectedAffix"
+              @input-value="filterAffixes">
               <template #option="scope">
                 <q-item v-bind="scope.itemProps">
                   <q-item-section side>
@@ -634,10 +635,10 @@ defineExpose({ create, hideEditable, openOffers, hideOffers })
           <div class="row items-center q-gutter-sm">
             <q-select ref="restrictionRef" v-model="restrictId" :disable="disable"
               :popup-content-style="{ 'height': `${props.wrap?.$el.clientHeight / 2}px` }" outlined dense no-error-icon
-              use-input hide-bottom-space emit-value map-options transition-show="none" transition-hide="none" class="col"
-              :label="t('searchOrSelect')" :options="restrictionOptions(restrictionNeedle)"
-              :dropdown-icon="`img:${icons.dropdown}`" popup-content-class="d4-scroll"
-              @update:model-value="selectedRestriction" @input-value="filterRestrictions">
+              use-input hide-bottom-space hide-selected emit-value map-options transition-show="none"
+              transition-hide="none" class="col" :label="t('searchOrSelect')"
+              :options="restrictionOptions(restrictionNeedle)" :dropdown-icon="`img:${icons.dropdown}`"
+              popup-content-class="d4-scroll" @update:model-value="selectedRestriction" @input-value="filterRestrictions">
               <template #option="scope">
                 <q-item v-bind="scope.itemProps">
                   <q-item-section>

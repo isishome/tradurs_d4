@@ -21,7 +21,8 @@ export default {
   },
   filter: {
     onlyForMe: '나만의 검색',
-    type: '종류'
+    type: '종류',
+    advanced: '고급 필터'
   },
   noItem: '거래 가능한 아이템이 없습니다',
   message: '메세지',
