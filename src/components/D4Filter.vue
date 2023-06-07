@@ -172,7 +172,7 @@ const update = (quality?: Array<string>) => {
         </q-select>
       </q-item-section>
     </q-item>
-    <q-item>
+    <q-item :inset-level=".2">
       <q-item-section>
         <q-item-label header>{{ t('filter.advanced') }}</q-item-label>
         <div class="column q-gutter-md">
