@@ -564,9 +564,9 @@ defineExpose({ create, hideEditable, openOffers, hideOffers })
             <q-select ref="propertyRef" v-model="propertyId" :disable="disable"
               :popup-content-style="{ 'height': `${props.wrap?.$el.clientHeight / 2}px` }" outlined dense no-error-icon
               use-input hide-bottom-space hide-selected emit-value map-options transition-show="none"
-              transition-hide="none" class="col" :label="t('searchOrSelect')" :options="propertyOptions(propertyNeedle)"
-              :dropdown-icon="`img:${icons.dropdown}`" popup-content-class="d4-scroll"
-              @update:model-value="selectedProperty" @input-value="filterProperties">
+              transition-hide="none" :transition-duration="0" class="col" :label="t('searchOrSelect')"
+              :options="propertyOptions(propertyNeedle)" :dropdown-icon="`img:${icons.dropdown}`"
+              popup-content-class="d4-scroll" @update:model-value="selectedProperty" @input-value="filterProperties">
               <template #option="scope">
                 <q-item v-bind="scope.itemProps">
                   <q-item-section side>
@@ -600,9 +600,9 @@ defineExpose({ create, hideEditable, openOffers, hideOffers })
             <q-select ref="affixRef" v-model="affixId" :disable="disable"
               :popup-content-style="{ 'height': `${props.wrap?.$el.clientHeight / 2}px` }" outlined dense no-error-icon
               use-input hide-bottom-space hide-selected emit-value map-options transition-show="none"
-              transition-hide="none" class="col" :label="t('searchOrSelect')" :options="affixOptions(affixNeedle)"
-              :dropdown-icon="`img:${icons.dropdown}`" popup-content-class="d4-scroll" @update:model-value="selectedAffix"
-              @input-value="filterAffixes">
+              transition-hide="none" :transition-duration="0" class="col" :label="t('searchOrSelect')"
+              :options="affixOptions(affixNeedle)" :dropdown-icon="`img:${icons.dropdown}`"
+              popup-content-class="d4-scroll" @update:model-value="selectedAffix" @input-value="filterAffixes">
               <template #option="scope">
                 <q-item v-bind="scope.itemProps">
                   <q-item-section side>
@@ -636,7 +636,7 @@ defineExpose({ create, hideEditable, openOffers, hideOffers })
             <q-select ref="restrictionRef" v-model="restrictId" :disable="disable"
               :popup-content-style="{ 'height': `${props.wrap?.$el.clientHeight / 2}px` }" outlined dense no-error-icon
               use-input hide-bottom-space hide-selected emit-value map-options transition-show="none"
-              transition-hide="none" class="col" :label="t('searchOrSelect')"
+              transition-hide="none" :transition-duration="0" class="col" :label="t('searchOrSelect')"
               :options="restrictionOptions(restrictionNeedle)" :dropdown-icon="`img:${icons.dropdown}`"
               popup-content-class="d4-scroll" @update:model-value="selectedRestriction" @input-value="filterRestrictions">
               <template #option="scope">

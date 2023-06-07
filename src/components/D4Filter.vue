@@ -168,7 +168,8 @@ const update = (quality?: Array<string>) => {
           :options="findType(itemType)?.value === 'rune' ? filterRunes() : filterClasses(itemType)"
           :label="`${findType(itemType)?.label} ${t('filter.type')}`" :disable="filterLoading" outlined dense
           no-error-icon hide-bottom-space emit-value map-options multiple transition-show="none" transition-hide="none"
-          :dropdown-icon="`img:${icons.dropdown}`" popup-content-class="d4-scroll" @update:model-value="update()">
+          :transition-duration="0" :dropdown-icon="`img:${icons.dropdown}`" popup-content-class="d4-scroll"
+          @update:model-value="update()">
         </q-select>
       </q-item-section>
     </q-item>
@@ -179,9 +180,10 @@ const update = (quality?: Array<string>) => {
           <div style="width:200px">
             <q-select ref="propertyRef" v-model="is.filter.properties" :disable="disable" max-values="3" outlined dense
               no-error-icon use-input hide-bottom-space hide-selected emit-value map-options multiple
-              transition-show="none" transition-hide="none" :label="`${t('properties')} ${t('searchOrSelect')}`"
-              :options="propertyOptions(propertyNeedle)" :dropdown-icon="`img:${icons.dropdown}`"
-              popup-content-class="d4-scroll" @update:model-value="selectedProperty" @input-value="filterProperties">
+              transition-show="none" transition-hide="none" :transition-duration="0"
+              :label="`${t('properties')} ${t('searchOrSelect')}`" :options="propertyOptions(propertyNeedle)"
+              :dropdown-icon="`img:${icons.dropdown}`" popup-content-class="d4-scroll"
+              @update:model-value="selectedProperty" @input-value="filterProperties">
               <template #option="scope">
                 <q-item v-bind="scope.itemProps">
                   <q-item-section side>
@@ -216,9 +218,10 @@ const update = (quality?: Array<string>) => {
           <div style="width:200px">
             <q-select ref="affixRef" v-model="is.filter.affixes" :disable="disable" max-values="3" outlined dense
               no-error-icon use-input hide-bottom-space hide-selected emit-value map-options multiple
-              transition-show="none" transition-hide="none" :label="`${t('affixes')} ${t('searchOrSelect')}`"
-              :options="affixOptions(affixNeedle)" :dropdown-icon="`img:${icons.dropdown}`"
-              popup-content-class="d4-scroll" @update:model-value="selectedAffix" @input-value="filterAffixes">
+              transition-show="none" transition-hide="none" :transition-duration="0"
+              :label="`${t('affixes')} ${t('searchOrSelect')}`" :options="affixOptions(affixNeedle)"
+              :dropdown-icon="`img:${icons.dropdown}`" popup-content-class="d4-scroll" @update:model-value="selectedAffix"
+              @input-value="filterAffixes">
               <template #option="scope">
                 <q-item v-bind="scope.itemProps">
                   <q-item-section side>
@@ -253,9 +256,10 @@ const update = (quality?: Array<string>) => {
           <div style="width:200px">
             <q-select ref="restrictionRef" v-model="is.filter.restrictions" :disable="disable" max-values="3" outlined
               dense no-error-icon use-input hide-bottom-space hide-selected emit-value map-options multiple
-              transition-show="none" transition-hide="none" :label="`${t('restrictions')} ${t('searchOrSelect')}`"
-              :options="restrictionOptions(restrictionNeedle)" :dropdown-icon="`img:${icons.dropdown}`"
-              popup-content-class="d4-scroll" @update:model-value="selectedRestriction" @input-value="filterRestrictions">
+              transition-show="none" transition-hide="none" :transition-duration="0"
+              :label="`${t('restrictions')} ${t('searchOrSelect')}`" :options="restrictionOptions(restrictionNeedle)"
+              :dropdown-icon="`img:${icons.dropdown}`" popup-content-class="d4-scroll"
+              @update:model-value="selectedRestriction" @input-value="filterRestrictions">
               <template #option="scope">
                 <q-item v-bind="scope.itemProps">
                   <q-item-section>

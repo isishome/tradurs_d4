@@ -176,8 +176,8 @@ defineExpose({ scrollEnd })
               <div class="col">
                 <q-select v-model="_type" :disable="disable" behavior="menu" outlined dense no-error-icon
                   hide-bottom-space emit-value map-options transition-show="none" transition-hide="none"
-                  :label="t('item.selectType')" :dropdown-icon="`img:${icons.dropdown}`" :options="filterTypes()"
-                  popup-content-class="d4-scroll" @update:model-value="updateType">
+                  :transition-duration="0" :label="t('item.selectType')" :dropdown-icon="`img:${icons.dropdown}`"
+                  :options="filterTypes()" popup-content-class="d4-scroll" @update:model-value="updateType">
                   <template #selected-item="scope">
                     <div class="ellipsis">{{ scope.opt.label }}</div>
                   </template>
@@ -187,8 +187,8 @@ defineExpose({ scrollEnd })
               <div class="col" v-if="_type === 'rune'">
                 <q-select v-model="_typeValue1" :disable="disable" behavior="menu" outlined dense no-error-icon
                   hide-bottom-space emit-value map-options transition-show="none" transition-hide="none"
-                  :label="t('item.selectRune')" :options="filterRunesByType()" :dropdown-icon="`img:${icons.dropdown} `"
-                  popup-content-class="d4-scroll" @update:model-value="update">
+                  :transition-duration="0" :label="t('item.selectRune')" :options="filterRunesByType()"
+                  :dropdown-icon="`img:${icons.dropdown} `" popup-content-class="d4-scroll" @update:model-value="update">
                   <template #selected-item="scope">
                     <div class="ellipsis">{{ scope.opt.label }}</div>
                   </template>
@@ -207,8 +207,9 @@ defineExpose({ scrollEnd })
               <div class="col" v-else-if="_type === 'aspect'">
                 <q-select v-model="_typeValue1" :disable="disable" behavior="menu" outlined dense no-error-icon
                   hide-bottom-space emit-value map-options transition-show="none" transition-hide="none"
-                  :label="t('item.selectAspectCategory')" :dropdown-icon="`img:${icons.dropdown}`"
-                  :options="filterAspectCategories()" popup-content-class="d4-scroll" @update:model-value="update">
+                  :transition-duration="0" :label="t('item.selectAspectCategory')"
+                  :dropdown-icon="`img:${icons.dropdown}`" :options="filterAspectCategories()"
+                  popup-content-class="d4-scroll" @update:model-value="update">
                   <template #selected-item="scope">
                     <div class="ellipsis">{{ scope.opt.label }}</div>
                   </template>
@@ -228,7 +229,7 @@ defineExpose({ scrollEnd })
                 <div class="col">
                   <q-select v-model="_typeValue1" :disable="disable" behavior="menu" outlined dense no-error-icon
                     hide-bottom-space emit-value map-options transition-show="none" transition-hide="none"
-                    :label="t('item.selectClass')" :dropdown-icon="`img:${icons.dropdown}`"
+                    :transition-duration="0" :label="t('item.selectClass')" :dropdown-icon="`img:${icons.dropdown}`"
                     :options="filterClasses(_type)" popup-content-class="d4-scroll"
                     @update:model-value="updateTypeValue1">
                     <template #selected-item="scope">
@@ -239,8 +240,8 @@ defineExpose({ scrollEnd })
                 <div class="col" v-if="_typeValue1 === 'gem'">
                   <q-select v-model="_typeValue2" :disable="disable" behavior="menu" outlined dense no-error-icon
                     hide-bottom-space emit-value map-options transition-show="none" transition-hide="none"
-                    :label="t('item.selectGem')" :dropdown-icon="`img:${icons.dropdown}`" :options="filterGems()"
-                    popup-content-class="d4-scroll" @update:model-value="update">
+                    :transition-duration="0" :label="t('item.selectGem')" :dropdown-icon="`img:${icons.dropdown}`"
+                    :options="filterGems()" popup-content-class="d4-scroll" @update:model-value="update">
                     <template #selected-item="scope">
                       <div class="ellipsis">{{ scope.opt.label }}</div>
                     </template>
