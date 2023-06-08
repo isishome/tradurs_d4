@@ -7,6 +7,7 @@ import { useI18n } from 'vue-i18n'
 import { useAccountStore } from 'stores/account-store'
 import { useItemStore } from 'stores/item-store'
 import { icons } from 'src/common/icons'
+import { checkName } from 'src/common'
 
 import D4Filter from 'components/D4Filter.vue'
 
@@ -64,7 +65,8 @@ const reload = () => {
 }
 
 const search = () => {
-  is.filter.request++
+  if (checkName(is.filter.name))
+    is.filter.request++
 }
 
 watch(() => route.name, (val, old) => {
@@ -161,9 +163,9 @@ onUnmounted(() => {
     </q-drawer>
     <q-header :elevated="!$q.dark.isActive" class="q-py-sm header row justify-center">
       <q-toolbar class="toolbar">
-        <div class="col-4 col-lg-3 row items-center">
+      <div class="col-4 col-lg-3 row items-center">
         <q-btn class="gt-sm no-hover" dense flat padding="0" :ripple="!$q.dark.isActive" :to="{ path: '/' }">
-          <img v-show="$q.dark.isActive" src="~assets/logo.webp" height="48" />
+            <img v-show="$q.dark.isActive" src="~assets/logo.webp" height="48" />
             <img v-show="!$q.dark.isActive" src="~assets/logo_light.webp" height="48" />
           </q-btn>
           <q-btn flat round class="lt-md" :ripple="!$q.dark.isActive" @click="leftDrawerOpen = !leftDrawerOpen">
@@ -173,15 +175,16 @@ onUnmounted(() => {
         <div class="col row justify-between" :class="{ 'justify-center': $q.screen.lt.md }">
           <div class="col-12 col-md-6">
             <q-input outlined dense v-model="is.filter.name" :label="t('item.name')"
-              :disable="filterLoading || $route.name !== 'tradeList'" @keyup.enter="search()">
+              :disable="filterLoading || $route.name !== 'tradeList'" :rules="[val => checkName(val) || '']"
+              @keyup.enter="search()">
               <template v-if="$q.screen.lt.md" #prepend>
                 <q-icon>
                   <img v-show="$q.dark.isActive" src="~assets/logo.webp" height="24" />
                   <img v-show="!$q.dark.isActive" src="~assets/logo_light.webp" height="24" />
-                </q-icon>
-              </template>
-            <template #append>
-              <q-btn flat dense size="xs" :ripple="false" class="no-hover" :disable="filterLoading" @click="search()">
+              </q-icon>
+            </template>
+              <template #append>
+                <q-btn flat dense size="xs" :ripple="false" class="no-hover" :disable="filterLoading" @click="search()">
                   <q-icon class="icon" :name="`img:${icons.search}`" size="xs" />
                 </q-btn>
               </template>
@@ -260,8 +263,8 @@ onUnmounted(() => {
               <div class="q-py-xl"></div>
             </div>
             <!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5110777286519562"
-                      data-ad-slot="8610177982" data-ad-format="auto" data-full-width-responsive="true"
-                      :data-adtest="prod ? 'off' : 'on'" :key="key"></ins> -->
+                          data-ad-slot="8610177982" data-ad-format="auto" data-full-width-responsive="true"
+                          :data-adtest="prod ? 'off' : 'on'" :key="key"></ins> -->
             <div class="q-py-xl"></div>
             <q-separator />
             <div class="q-pt-lg">
@@ -278,8 +281,8 @@ onUnmounted(() => {
             <div class="full-height q-px-lg q-py-xl" :style="`width:280px;height:${asideHeight}`">
               <div :style="`position:sticky;top:${asideTop}`">
                 <!-- <ins class="adsbygoogle" style="display:inline-block;width:160px;height:600px"
-                      data-ad-client="ca-pub-5110777286519562" data-ad-slot="7240136439" :data-adtest="prod ? 'off' : 'on'"
-                      :key="key"></ins> -->
+                          data-ad-client="ca-pub-5110777286519562" data-ad-slot="7240136439" :data-adtest="prod ? 'off' : 'on'"
+                          :key="key"></ins> -->
               </div>
             </div>
           </div>
