@@ -64,8 +64,7 @@ const reload = () => {
   })
 }
 
-const name = computed(() => is.filter.name)
-const _name = ref<string>(name.value)
+const _name = ref<string>('')
 const search = () => {
   if (checkName(_name.value)) {
     is.filter.name = _name.value
@@ -82,8 +81,9 @@ watch(() => $q.screen.gt.sm, () => {
   rightDrawerOpen.value = false
 })
 
-watch(name, (val) => {
-  _name.value = val
+watch(() => is.filter.request, (val) => {
+  if (val === 0)
+    _name.value = ''
 })
 
 const onWindowLoad = () => {
@@ -271,8 +271,8 @@ onUnmounted(() => {
               <div class="q-py-xl"></div>
             </div>
             <!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5110777286519562"
-                                          data-ad-slot="8610177982" data-ad-format="auto" data-full-width-responsive="true"
-                                          :data-adtest="prod ? 'off' : 'on'" :key="key"></ins> -->
+                                                    data-ad-slot="8610177982" data-ad-format="auto" data-full-width-responsive="true"
+                                                    :data-adtest="prod ? 'off' : 'on'" :key="key"></ins> -->
             <div class="q-py-xl"></div>
             <q-separator />
             <div class="q-pt-lg">
@@ -289,8 +289,8 @@ onUnmounted(() => {
             <div class="full-height q-px-lg q-py-xl" :style="`width:280px;height:${asideHeight}`">
               <div :style="`position:sticky;top:${asideTop}`">
                 <!-- <ins class="adsbygoogle" style="display:inline-block;width:160px;height:600px"
-                                          data-ad-client="ca-pub-5110777286519562" data-ad-slot="7240136439" :data-adtest="prod ? 'off' : 'on'"
-                                          :key="key"></ins> -->
+                                                    data-ad-client="ca-pub-5110777286519562" data-ad-slot="7240136439" :data-adtest="prod ? 'off' : 'on'"
+                                                    :key="key"></ins> -->
               </div>
             </div>
           </div>
