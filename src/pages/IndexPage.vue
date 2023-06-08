@@ -44,8 +44,10 @@ const upsertItem = (item: Item, done: Function) => {
       is.clearFilter()
       if (findIndex !== -1)
         items.value.splice(findIndex, 1, item)
-      else
+      else {
+        as.info.yolk--
         items.value.unshift(item)
+      }
 
       itemsRef.value?.hideEditable()
 
@@ -85,6 +87,7 @@ const relistItem = (item: Item, done: Function) => {
     is.relistItem(item.itemId)
       .then(() => {
         const relistItem = items.value.splice(findIndex, 1)
+        as.info.yolk--
         items.value.unshift(...relistItem)
         itemsRef.value?.hideEditable()
         scrollPos()

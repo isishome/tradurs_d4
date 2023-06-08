@@ -101,8 +101,8 @@ onUnmounted(() => {
     <q-drawer show-if-above bordered v-model="leftDrawerOpen" side="left" :behavior="screen.lt.md ? 'mobile' : 'desktop'"
       class="row justify-end no-scroll" :width="300">
       <q-list class="column full-height" style="width:300px">
-      <q-scroll-area class="col">
-        <D4Filter :disable="$route.name !== 'tradeList'" class="q-pa-lg" />
+        <q-scroll-area class="col">
+          <D4Filter :disable="$route.name !== 'tradeList'" class="q-pa-lg" />
         </q-scroll-area>
       </q-list>
     </q-drawer>
@@ -119,8 +119,8 @@ onUnmounted(() => {
           </q-btn>
           <q-btn round flat :ripple="!$q.dark.isActive" @click="sign">
             <img v-if="signed" class="icon" width="24" :src="icons.logout" />
-          <img v-else class="icon" width="24" :src="icons.login" />
-        </q-btn>
+            <img v-else class="icon" width="24" :src="icons.login" />
+          </q-btn>
         </q-item>
         <q-separator />
         <q-scroll-area class="col">
@@ -131,9 +131,9 @@ onUnmounted(() => {
     </q-drawer>
     <q-header :elevated="!$q.dark.isActive" class="q-py-sm header row justify-center">
       <q-toolbar class="toolbar">
-        <div class="col-2 col-sm-3 row items-center">
-          <q-btn class="gt-sm no-hover" dense flat padding="0" :ripple="!$q.dark.isActive" :to="{ path: '/' }">
-            <img v-show="$q.dark.isActive" src="~assets/logo.webp" height="48" />
+        <div class="col-4 col-lg-3 row items-center">
+        <q-btn class="gt-sm no-hover" dense flat padding="0" :ripple="!$q.dark.isActive" :to="{ path: '/' }">
+          <img v-show="$q.dark.isActive" src="~assets/logo.webp" height="48" />
             <img v-show="!$q.dark.isActive" src="~assets/logo_light.webp" height="48" />
           </q-btn>
           <q-btn flat round class="lt-md" :ripple="!$q.dark.isActive" @click="leftDrawerOpen = !leftDrawerOpen">
@@ -150,8 +150,8 @@ onUnmounted(() => {
                   <img v-show="!$q.dark.isActive" src="~assets/logo_light.webp" height="24" />
                 </q-icon>
               </template>
-              <template #append>
-                <q-btn flat dense size="xs" :ripple="false" class="no-hover" :disable="filterLoading" @click="search()">
+            <template #append>
+              <q-btn flat dense size="xs" :ripple="false" class="no-hover" :disable="filterLoading" @click="search()">
                   <q-icon class="icon" :name="`img:${icons.search}`" size="xs" />
                 </q-btn>
               </template>
@@ -168,11 +168,12 @@ onUnmounted(() => {
             <img class="icon" width="24" :src="icons.morevert" />
           </q-btn>
         </div>
-        <div class="gt-sm col-lg-3 col-4 row justify-end items-center q-gutter-sm">
+        <div class="gt-sm col-4 col-lg-3 row justify-end items-center q-gutter-sm">
           <q-btn round flat :ripple="!$q.dark.isActive">
             <img class="icon" width="24" :src="icons.language" />
-            <q-menu auto-close>
-              <q-list>
+            <q-menu auto-close class="no-shadow" anchor="bottom end" self="top end" transition-show="none"
+              transition-hide="none" :transition-duration="0">
+              <q-list bordered class="rounded-borders">
                 <q-item v-for="lang in localeOptions" :key="lang.value" clickable :active="lang.value === locale"
                   @click="setLang(lang.value)">
                   {{ lang.label }}</q-item>
@@ -183,9 +184,39 @@ onUnmounted(() => {
             <img v-show="$q.dark.isActive" class="icon" width="24" :src="icons.light" />
             <img v-show="!$q.dark.isActive" class="icon" width="24" :src="icons.dark" />
           </q-btn>
-          <q-btn round flat :ripple="!$q.dark.isActive" @click="sign">
-            <img v-if="signed" class="icon" width="24" :src="icons.logout" />
-            <img v-else class="icon" width="24" :src="icons.login" />
+          <q-btn v-if="signed" round flat :ripple="!$q.dark.isActive">
+            <img class="icon" width="24" :src="icons.user" />
+            <q-menu class="no-shadow" anchor="bottom end" self="top end" transition-show="none" transition-hide="none"
+              :transition-duration="0">
+              <q-list bordered separator class="rounded-borders">
+                <q-item>
+                  <q-card flat>
+                    <q-card-section class="text-center text-subtitle1 text-weight-bold q-pa-sm">
+                      {{ as.info.battleTag }}
+                    </q-card-section>
+                    <q-item dense>
+                      <q-item-section side>
+                        <img width="24" src="~assets/tradurs.svg" />
+                      </q-item-section>
+                      <q-item-section>
+                        <q-item-label>{{ as.info.yolk }}</q-item-label>
+                      </q-item-section>
+                    </q-item>
+                  </q-card>
+                </q-item>
+                <q-item @click="sign" clickable v-close-popup>
+                  <q-item-section side>
+                    <img class="icon" width="24" :src="icons.logout" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>{{ t('user.signout') }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
+          </q-btn>
+          <q-btn v-else round flat :ripple="!$q.dark.isActive" @click="sign">
+            <img class="icon" width="24" :src="icons.login" />
           </q-btn>
         </div>
       </q-toolbar>
@@ -199,8 +230,8 @@ onUnmounted(() => {
               <div class="q-py-xl"></div>
             </div>
             <!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5110777286519562"
-                    data-ad-slot="8610177982" data-ad-format="auto" data-full-width-responsive="true"
-                    :data-adtest="prod ? 'off' : 'on'" :key="key"></ins> -->
+                                                                                                                                                                                                  data-ad-slot="8610177982" data-ad-format="auto" data-full-width-responsive="true"
+                                                                                                                                                                                                  :data-adtest="prod ? 'off' : 'on'" :key="key"></ins> -->
             <div class="q-py-xl"></div>
             <q-separator />
             <div class="q-pt-lg">
@@ -217,8 +248,8 @@ onUnmounted(() => {
             <div class="full-height q-px-lg q-py-xl" :style="`width:280px;height:${asideHeight}`">
               <div :style="`position:sticky;top:${asideTop}`">
                 <!-- <ins class="adsbygoogle" style="display:inline-block;width:160px;height:600px"
-                    data-ad-client="ca-pub-5110777286519562" data-ad-slot="7240136439" :data-adtest="prod ? 'off' : 'on'"
-                    :key="key"></ins> -->
+                                                                                                                                                                                                  data-ad-client="ca-pub-5110777286519562" data-ad-slot="7240136439" :data-adtest="prod ? 'off' : 'on'"
+                                                                                                                                                                                                  :key="key"></ins> -->
               </div>
             </div>
           </div>

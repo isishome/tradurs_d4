@@ -469,7 +469,8 @@ defineExpose({ scrollEnd })
               <div class="more-action">
                 <q-btn dense flat :ripple="false" class="no-hover" padding="0">
                   <img class="icon" :src="icons.morevert" :width="$q.screen.lt.sm ? 16 : 20" />
-                  <q-menu auto-close :class="[$q.dark.isActive ? 'bg-grey-4' : 'bg-grey-9']">
+                  <q-menu auto-close class="no-shadow" transition-show="none" transition-hide="none"
+                    :transition-duration="0" :class="[$q.dark.isActive ? 'bg-grey-4' : 'bg-grey-9']">
                     <q-item v-if="as.signed" :class="[$q.dark.isActive ? 'text-grey-9' : 'text-grey-4']"
                       :dense="$q.screen.lt.sm" clickable @click="$emit('favorite', data.itemId, !data.favorite)">
                       <q-item-section side>
@@ -577,7 +578,9 @@ defineExpose({ scrollEnd })
           </div>
         </div>
       </q-card-section>
-      <q-separator v-show="slots.actions && (data.properties.length > 0 || data.affixes.length > 0)" />
+      <q-card-section v-show="!loading && data.properties.length === 0 && data.affixes.length === 0"
+        class="q-my-lg"></q-card-section>
+      <q-separator v-show="slots.actions" />
       <q-card-section v-if="slots.actions">
         <slot v-if="!loading" name="actions"></slot>
       </q-card-section>

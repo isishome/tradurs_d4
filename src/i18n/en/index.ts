@@ -32,6 +32,7 @@ export default {
   seller: 'Seller',
   offerer: 'Offerer',
   user: {
+    signout: 'Sign out',
     battleTag: 'BattleTag™',
     temperature: 'Manner Temperature',
     sh1: 'BattleTags will not be displayed if the trade is ',

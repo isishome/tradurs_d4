@@ -31,6 +31,7 @@ export default {
   seller: '판매자',
   offerer: '제안자',
   user: {
+    signout: '로그아웃',
     battleTag: 'BattleTag™',
     temperature: '매너 온도',
     sh1: '거래가 ',

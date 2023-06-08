@@ -32,6 +32,7 @@ import dark from 'assets/icons/dark.svg'
 
 import login from 'assets/icons/login.svg'
 import logout from 'assets/icons/logout.svg'
+import user from 'assets/icons/user.svg'
 
 import photo from 'assets/icons/photo.svg'
 
@@ -64,5 +65,6 @@ export const icons = {
   dark,
   login,
   logout,
+  user,
   photo
 }

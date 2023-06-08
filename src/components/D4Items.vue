@@ -431,6 +431,7 @@ const makingOffer = (offer: Offer) => {
     .then((response) => {
       Object.assign(offer, response)
       const findOffer = offers.value.find(o => o.offerId === offer.offerId)
+      as.info.yolk--
       if (findOffer)
         Object.assign(findOffer, offer)
       else
@@ -533,7 +534,7 @@ defineExpose({ create, hideEditable, openOffers, hideOffers })
             <D4Restriction v-for="restriction in item.restrictions" :key="restriction.valueId" :data="restriction" />
           </template>
           <template #actions>
-            <div class="row justify-between items-center q-px-md" :class="{ 'q-pt-lg': !$q.screen.lt.sm }">
+            <div v-show="item.expanded" class="row justify-between items-center q-pt-lg">
               <div>
                 <D4Btn v-if="item.authorized && item.statusCode !== '001'" :label="t('btn.edit')"
                   color="var(--q-secondary)" :loading="loading || item.loading" @click="editItem(item)" />
@@ -670,19 +671,22 @@ defineExpose({ create, hideEditable, openOffers, hideOffers })
               <D4Btn v-if="activatedItem.itemId" :label="t('btn.moreActions')" :loading="activatedItem.loading"
                 :disable="disable" color="var(--q-secondary)">
                 <q-icon class="q-ml-xs invert" size="sm" :name="`img:${icons.dropdown}`" />
-                <q-menu fit anchor="bottom middle" self="top middle" auto-close>
-                  <q-item :disable="activatedItem.statusCode !== '000'" clickable @click="relistItem">
-                    <q-item-section class="text-uppercase">{{ t('btn.relist') }}</q-item-section>
-                  </q-item>
-                  <q-item :disable="!['000', '002'].includes(activatedItem.statusCode)" clickable @click="statusItem">
-                    <q-item-section class="text-uppercase">{{ activatedItem.statusCode === '002' ? t('btn.resume') :
-                      t('btn.suspend')
-                    }}</q-item-section>
-                  </q-item>
-                  <q-item clickable @click="deleteConfirm">
-                    <q-item-section class="text-uppercase text-negative text-weight-bold">{{ t('btn.delete')
-                    }}</q-item-section>
-                  </q-item>
+                <q-menu fit anchor="bottom middle" self="top middle" auto-close class="no-shadow" transition-show="none"
+                  transition-hide="none" :transition-duration="0">
+                  <q-list bordered class="rounded-borders">
+                    <q-item :disable="activatedItem.statusCode !== '000'" clickable @click="relistItem">
+                      <q-item-section class="text-uppercase">{{ t('btn.relist') }}</q-item-section>
+                    </q-item>
+                    <q-item :disable="!['000', '002'].includes(activatedItem.statusCode)" clickable @click="statusItem">
+                      <q-item-section class="text-uppercase">{{ activatedItem.statusCode === '002' ? t('btn.resume') :
+                        t('btn.suspend')
+                      }}</q-item-section>
+                    </q-item>
+                    <q-item clickable @click="deleteConfirm">
+                      <q-item-section class="text-uppercase text-negative text-weight-bold">{{ t('btn.delete')
+                      }}</q-item-section>
+                    </q-item>
+                  </q-list>
                 </q-menu>
               </D4Btn>
             </div>

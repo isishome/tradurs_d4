@@ -2,6 +2,7 @@
 import { useGlobalStore } from 'src/stores/global-store'
 import { useItemStore } from 'stores/item-store'
 
+
 export default {
   preFetch({ store, currentRoute }) {
     const is = useItemStore(store)
@@ -26,6 +27,7 @@ import { useRouter } from 'vue-router'
 import { ref, computed, watch, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useQuasar } from 'quasar'
+import { useAccountStore } from 'stores/account-store'
 import { Item } from 'src/types/item'
 
 import { icons } from 'src/common/icons'
@@ -41,6 +43,7 @@ const { t } = useI18n({ useScope: 'global' })
 const $q = useQuasar()
 const is = useItemStore()
 const gs = useGlobalStore()
+const as = useAccountStore()
 
 // loading variable
 const disable = ref(false)
@@ -86,6 +89,7 @@ const relistItem = (item: Item, done: Function) => {
   disable.value = true
   is.relistItem(item.itemId)
     .then(() => {
+      as.info.yolk--
       router.push({ name: 'tradeList' })
     })
     .catch(() => {
