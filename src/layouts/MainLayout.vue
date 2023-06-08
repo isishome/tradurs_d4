@@ -81,6 +81,10 @@ watch(() => $q.screen.gt.sm, () => {
   rightDrawerOpen.value = false
 })
 
+watch(() => is.filter.name, (val) => {
+  _name.value = val
+})
+
 const onWindowLoad = () => {
   const adsbygoogle = window.adsbygoogle || []
   adsbygoogle.push({})
@@ -159,12 +163,12 @@ onUnmounted(() => {
         </q-item>
         <q-separator />
         <q-scroll-area class="col">
-          <q-item>
-          </q-item>
+        <q-item>
+        </q-item>
         </q-scroll-area>
       </q-list>
-  </q-drawer>
-  <q-header :elevated="!$q.dark.isActive" class="q-py-sm header row justify-center">
+    </q-drawer>
+    <q-header :elevated="!$q.dark.isActive" class="q-py-sm header row justify-center">
       <q-toolbar class="toolbar">
         <div class="col-4 col-lg-3 row items-center">
           <q-btn class="gt-sm no-hover" dense flat padding="0" :ripple="!$q.dark.isActive" :to="{ path: '/' }">
@@ -177,12 +181,12 @@ onUnmounted(() => {
         </div>
         <div class="col row justify-between" :class="{ 'justify-center': $q.screen.lt.md }">
           <div class="col-12 col-md-6">
-            <q-input outlined dense no-error-icon v-model="_name" :label="t('item.name')"
-              :disable="filterLoading || $route.name !== 'tradeList'" :rules="[val => checkName(val) || '']"
+          <q-input outlined dense no-error-icon v-model="_name" :label="t('item.name')"
+            :disable="filterLoading || $route.name !== 'tradeList'" :rules="[val => checkName(val) || '']"
               @keyup.enter="search()">
               <template v-if="$q.screen.lt.md" #prepend>
-              <q-icon>
-                <img v-show="$q.dark.isActive" src="~assets/logo.webp" height="24" />
+                <q-icon>
+                  <img v-show="$q.dark.isActive" src="~assets/logo.webp" height="24" />
                   <img v-show="!$q.dark.isActive" src="~assets/logo_light.webp" height="24" />
                 </q-icon>
               </template>
@@ -266,8 +270,8 @@ onUnmounted(() => {
               <div class="q-py-xl"></div>
             </div>
             <!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5110777286519562"
-                                  data-ad-slot="8610177982" data-ad-format="auto" data-full-width-responsive="true"
-                                  :data-adtest="prod ? 'off' : 'on'" :key="key"></ins> -->
+                                    data-ad-slot="8610177982" data-ad-format="auto" data-full-width-responsive="true"
+                                    :data-adtest="prod ? 'off' : 'on'" :key="key"></ins> -->
             <div class="q-py-xl"></div>
             <q-separator />
             <div class="q-pt-lg">
@@ -284,8 +288,8 @@ onUnmounted(() => {
             <div class="full-height q-px-lg q-py-xl" :style="`width:280px;height:${asideHeight}`">
               <div :style="`position:sticky;top:${asideTop}`">
                 <!-- <ins class="adsbygoogle" style="display:inline-block;width:160px;height:600px"
-                                  data-ad-client="ca-pub-5110777286519562" data-ad-slot="7240136439" :data-adtest="prod ? 'off' : 'on'"
-                                  :key="key"></ins> -->
+                                    data-ad-client="ca-pub-5110777286519562" data-ad-slot="7240136439" :data-adtest="prod ? 'off' : 'on'"
+                                    :key="key"></ins> -->
               </div>
             </div>
           </div>
