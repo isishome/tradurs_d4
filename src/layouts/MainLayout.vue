@@ -117,9 +117,39 @@ onUnmounted(() => {
             <img v-show="$q.dark.isActive" class="icon" width="24" :src="icons.light" />
             <img v-show="!$q.dark.isActive" class="icon" width="24" :src="icons.dark" />
           </q-btn>
-          <q-btn round flat :ripple="!$q.dark.isActive" @click="sign">
-            <img v-if="signed" class="icon" width="24" :src="icons.logout" />
-            <img v-else class="icon" width="24" :src="icons.login" />
+          <q-btn v-if="signed" round flat :ripple="!$q.dark.isActive">
+            <img class="icon" width="24" :src="icons.user" />
+            <q-menu class="no-shadow" anchor="bottom end" self="top end" transition-show="none" transition-hide="none"
+              :transition-duration="0">
+              <q-list bordered separator class="rounded-borders">
+                <q-item>
+                  <q-card flat>
+                    <q-card-section class="text-center text-subtitle1 text-weight-bold q-pa-sm">
+                      {{ as.info.battleTag }}
+                    </q-card-section>
+                    <q-item dense>
+                      <q-item-section side>
+                        <img width="24" src="~assets/tradurs.svg" />
+                      </q-item-section>
+                      <q-item-section>
+                        <q-item-label>{{ as.info.yolk }}</q-item-label>
+                      </q-item-section>
+                    </q-item>
+                  </q-card>
+                </q-item>
+                <q-item @click="sign" clickable v-close-popup>
+                  <q-item-section side>
+                    <img class="icon" width="24" :src="icons.logout" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>{{ t('user.signout') }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
+          </q-btn>
+          <q-btn v-else round flat :ripple="!$q.dark.isActive" @click="sign">
+            <img class="icon" width="24" :src="icons.login" />
           </q-btn>
         </q-item>
         <q-separator />
@@ -230,8 +260,8 @@ onUnmounted(() => {
               <div class="q-py-xl"></div>
             </div>
             <!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5110777286519562"
-                                                                                                                                                                                                  data-ad-slot="8610177982" data-ad-format="auto" data-full-width-responsive="true"
-                                                                                                                                                                                                  :data-adtest="prod ? 'off' : 'on'" :key="key"></ins> -->
+                      data-ad-slot="8610177982" data-ad-format="auto" data-full-width-responsive="true"
+                      :data-adtest="prod ? 'off' : 'on'" :key="key"></ins> -->
             <div class="q-py-xl"></div>
             <q-separator />
             <div class="q-pt-lg">
@@ -248,8 +278,8 @@ onUnmounted(() => {
             <div class="full-height q-px-lg q-py-xl" :style="`width:280px;height:${asideHeight}`">
               <div :style="`position:sticky;top:${asideTop}`">
                 <!-- <ins class="adsbygoogle" style="display:inline-block;width:160px;height:600px"
-                                                                                                                                                                                                  data-ad-client="ca-pub-5110777286519562" data-ad-slot="7240136439" :data-adtest="prod ? 'off' : 'on'"
-                                                                                                                                                                                                  :key="key"></ins> -->
+                      data-ad-client="ca-pub-5110777286519562" data-ad-slot="7240136439" :data-adtest="prod ? 'off' : 'on'"
+                      :key="key"></ins> -->
               </div>
             </div>
           </div>
