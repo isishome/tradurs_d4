@@ -445,7 +445,7 @@ defineExpose({ scrollEnd })
             :authorized="data.authorized" />
         </div>
         <div class="column items-start q-pa-sm relative-position" :class="{ 'q-gutter-xs': !$q.screen.lt.sm || loading }">
-          <div v-show="!loading" class="avatar row justify-end items-center">
+          <div v-show="!loading" class="hardcore-ladder row justify-end items-center">
             <div class="text-secondary">{{ data.hardcore ? '&#10074;' : '' }}</div>
             <div class="text-primary">{{ data.ladder ? '&#10074;' : '' }}</div>
           </div>

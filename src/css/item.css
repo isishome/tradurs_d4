@@ -288,7 +288,7 @@
 .card-item.no-expanded::after {
   content: '';
   position: absolute;
-  top: 86%;
+  top: 82%;
   bottom: -16%;
   left: 0;
   right: 0;
@@ -307,10 +307,6 @@
 }
 
 @media (max-width:600px) {
-  .card-item.no-expanded::after {
-    top: 68%;
-  }
-
   .card-item .inner {
     padding: 6px;
   }
@@ -431,6 +427,21 @@
 .authorized {
   color: var(--q-primary);
   font-weight: 700;
+}
+
+.hardcore-ladder {
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-size: 12px;
+  width: 18px;
+  transform: translate(-70%, 60%);
+}
+
+@media (max-width:600px) {
+  .hardcore-ladder {
+    font-size: 8px;
+  }
 }
 
 .item-image-card {
