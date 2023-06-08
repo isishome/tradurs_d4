@@ -34,6 +34,7 @@ export default {
   user: {
     signout: 'Sign out',
     battleTag: 'BattleTag™',
+    yolk: 'Yolk',
     temperature: 'Manner Temperature',
     sh1: 'BattleTags will not be displayed if the trade is ',
     sh2: 'not completed',

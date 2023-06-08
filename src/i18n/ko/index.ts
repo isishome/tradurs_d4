@@ -33,6 +33,7 @@ export default {
   user: {
     signout: '로그아웃',
     battleTag: 'BattleTag™',
+    yolk: '노른자',
     temperature: '매너 온도',
     sh1: '거래가 ',
     sh2: '완료',

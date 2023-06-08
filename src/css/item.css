@@ -288,12 +288,12 @@
 .card-item.no-expanded::after {
   content: '';
   position: absolute;
-  top: 80%;
+  top: 86%;
   bottom: -16%;
   left: 0;
   right: 0;
   border-radius: 2px;
-  filter: blur(16px);
+  filter: blur(10px);
   transform: scale(200%, 200%);
   background-color: var(--q-light);
 }
@@ -431,21 +431,6 @@
 .authorized {
   color: var(--q-primary);
   font-weight: 700;
-}
-
-.avatar {
-  position: absolute;
-  left: 0;
-  top: 0;
-  font-size: 12px;
-  width: 18px;
-  transform: translate(-70%, 60%);
-}
-
-@media (max-width:600px) {
-  .avatar {
-    font-size: 8px;
-  }
 }
 
 .item-image-card {

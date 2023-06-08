@@ -129,31 +129,41 @@ onUnmounted(() => {
           </q-btn>
           <q-btn v-if="signed" round flat :ripple="!$q.dark.isActive">
             <img class="icon" width="24" :src="icons.user" />
-            <q-menu class="no-shadow" anchor="bottom end" self="top end" transition-show="none" transition-hide="none"
+            <q-menu anchor="bottom end" self="top end" transition-show="none" transition-hide="none"
               :transition-duration="0">
-              <q-list bordered separator class="rounded-borders">
-                <q-item>
-                  <q-card flat>
-                    <q-card-section class="text-center text-subtitle1 text-weight-bold q-pa-sm">
-                      {{ as.info.battleTag }}
-                    </q-card-section>
-                    <q-item dense>
-                      <q-item-section side>
-                        <img width="24" src="~assets/tradurs.svg" />
-                      </q-item-section>
-                      <q-item-section>
-                        <q-item-label>{{ as.info.yolk }}</q-item-label>
-                      </q-item-section>
-                    </q-item>
-                  </q-card>
-                </q-item>
-                <q-item @click="sign" clickable v-close-popup>
-                  <q-item-section side>
-                    <img class="icon" width="24" :src="icons.logout" />
-                  </q-item-section>
+              <q-list :bordered="$q.dark.isActive" class="rounded-borders relative-position">
+                <q-item class="bg-primary text-dark" style="padding-bottom:30px">
                   <q-item-section>
-                    <q-item-label>{{ t('user.signout') }}</q-item-label>
+                    <q-item-label class="text-center text-subtitle1 text-weight-bold">{{ as.info.battleTag
+                    }}</q-item-label>
                   </q-item-section>
+                </q-item>
+                <q-item class="avatar">
+                  <q-item-section>
+                    <q-avatar>
+                      <img src="https://cdn.quasar.dev/img/boy-avatar.png">
+                    </q-avatar>
+                  </q-item-section>
+                </q-item>
+                <q-item class="row items-center justify-between" style="padding-top:30px">
+                  <div class="col text-center">
+                    <div class="text-caption ellipsis">
+                      <!-- <img width="24" src="~assets/tradurs.svg" /> -->
+                      {{ t('user.yolk') }}
+                    </div>
+                    <div class="text-weight-bold text-amber-10 text-body2">{{ as.info.yolk }}</div>
+                  </div>
+                  <div class="col text-center">
+                    <div class="text-caption ellipsis">
+                      <!-- <img width="24" src="~assets/tradurs.svg" /> -->
+                      {{ t('user.temperature') }}
+                    </div>
+                    <div class="text-weight-bold text-body2">{{ as.info.temperature }}&#8451</div>
+                  </div>
+                </q-item>
+                <q-separator />
+                <q-item class="q-pa-md row justify-center">
+                  <q-btn rounded color="secondary" :label="t('user.signout')" @click="sign" v-close-popup />
                 </q-item>
               </q-list>
             </q-menu>
@@ -163,8 +173,8 @@ onUnmounted(() => {
           </q-btn>
         </q-item>
         <q-separator />
-      <q-scroll-area class="col">
-        <q-item>
+        <q-scroll-area class="col">
+          <q-item>
           </q-item>
         </q-scroll-area>
       </q-list>
@@ -173,16 +183,16 @@ onUnmounted(() => {
       <q-toolbar class="toolbar">
         <div class="col-4 col-lg-3 row items-center">
           <q-btn class="gt-sm no-hover" dense flat padding="0" :ripple="!$q.dark.isActive" :to="{ path: '/' }">
-            <img v-show="$q.dark.isActive" src="~assets/logo.webp" height="48" />
-            <img v-show="!$q.dark.isActive" src="~assets/logo_light.webp" height="48" />
+          <img v-show="$q.dark.isActive" src="~assets/logo.webp" height="48" />
+          <img v-show="!$q.dark.isActive" src="~assets/logo_light.webp" height="48" />
           </q-btn>
           <q-btn flat round class="lt-md" :ripple="!$q.dark.isActive" @click="leftDrawerOpen = !leftDrawerOpen">
             <img src="~assets/icons/filter.svg" class="icon" width="24" />
           </q-btn>
         </div>
         <div class="col row justify-between" :class="{ 'justify-center': $q.screen.lt.md }">
-        <div class="col-12 col-md-6">
-          <q-input outlined dense no-error-icon v-model="_name" :label="t('item.name')"
+          <div class="col-12 col-md-6">
+            <q-input outlined dense no-error-icon v-model="_name" :label="t('item.name')"
               :disable="filterLoading || $route.name !== 'tradeList'" :rules="[val => checkName(val) || '']"
               @keyup.enter="search()">
               <template v-if="$q.screen.lt.md" #prepend>
@@ -191,8 +201,8 @@ onUnmounted(() => {
                   <img v-show="!$q.dark.isActive" src="~assets/logo_light.webp" height="24" />
                 </q-icon>
               </template>
-              <template #append>
-                <q-btn flat dense size="xs" :ripple="false" class="no-hover" :disable="filterLoading" @click="search()">
+            <template #append>
+              <q-btn flat dense size="xs" :ripple="false" class="no-hover" :disable="filterLoading" @click="search()">
                   <q-icon class="icon" :name="`img:${icons.search}`" size="xs" />
                 </q-btn>
               </template>
@@ -227,31 +237,41 @@ onUnmounted(() => {
           </q-btn>
           <q-btn v-if="signed" round flat :ripple="!$q.dark.isActive">
             <img class="icon" width="24" :src="icons.user" />
-            <q-menu class="no-shadow" anchor="bottom end" self="top end" transition-show="none" transition-hide="none"
-              :transition-duration="0">
-              <q-list bordered separator class="rounded-borders">
-                <q-item>
-                  <q-card flat>
-                    <q-card-section class="text-center text-subtitle1 text-weight-bold q-pa-sm">
-                      {{ as.info.battleTag }}
-                    </q-card-section>
-                    <q-item dense>
-                      <q-item-section side>
-                        <img width="24" src="~assets/tradurs.svg" />
-                      </q-item-section>
-                      <q-item-section>
-                        <q-item-label>{{ as.info.yolk }}</q-item-label>
-                      </q-item-section>
-                    </q-item>
-                  </q-card>
-                </q-item>
-                <q-item @click="sign" clickable v-close-popup>
-                  <q-item-section side>
-                    <img class="icon" width="24" :src="icons.logout" />
-                  </q-item-section>
+            <q-menu anchor="bottom end" self="top end" transition-show="none" transition-hide="none"
+              :transition-duration="0" style="min-width:280px">
+              <q-list :bordered="$q.dark.isActive" class="rounded-borders relative-position">
+                <q-item class="bg-primary text-dark" style="padding-bottom:30px">
                   <q-item-section>
-                    <q-item-label>{{ t('user.signout') }}</q-item-label>
+                    <q-item-label class="text-center text-subtitle1 text-weight-bold">{{ as.info.battleTag
+                    }}</q-item-label>
                   </q-item-section>
+                </q-item>
+                <q-item class="avatar">
+                  <q-item-section>
+                    <q-avatar>
+                      <img src="https://cdn.quasar.dev/img/boy-avatar.png">
+                    </q-avatar>
+                  </q-item-section>
+                </q-item>
+                <q-item class="row items-center justify-between" style="padding-top:30px">
+                  <div class="col text-center">
+                    <div class="text-caption ellipsis">
+                      <!-- <img width="24" src="~assets/tradurs.svg" /> -->
+                      {{ t('user.yolk') }}
+                    </div>
+                    <div class="text-weight-bold text-amber-10 text-body2">{{ as.info.yolk }}</div>
+                  </div>
+                  <div class="col text-center">
+                    <div class="text-caption ellipsis">
+                      <!-- <img width="24" src="~assets/tradurs.svg" /> -->
+                      {{ t('user.temperature') }}
+                    </div>
+                    <div class="text-weight-bold text-body2">{{ as.info.temperature }}&#8451</div>
+                  </div>
+                </q-item>
+                <q-separator />
+                <q-item class="q-pa-md row justify-center">
+                  <q-btn rounded color="secondary" :label="t('user.signout')" @click="sign" v-close-popup />
                 </q-item>
               </q-list>
             </q-menu>
@@ -271,8 +291,8 @@ onUnmounted(() => {
               <div class="q-py-xl"></div>
             </div>
             <!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5110777286519562"
-                                                    data-ad-slot="8610177982" data-ad-format="auto" data-full-width-responsive="true"
-                                                    :data-adtest="prod ? 'off' : 'on'" :key="key"></ins> -->
+                                                                                                                                                                                                                                                                                                                                                          data-ad-slot="8610177982" data-ad-format="auto" data-full-width-responsive="true"
+                                                                                                                                                                                                                                                                                                                                                          :data-adtest="prod ? 'off' : 'on'" :key="key"></ins> -->
             <div class="q-py-xl"></div>
             <q-separator />
             <div class="q-pt-lg">
@@ -289,8 +309,8 @@ onUnmounted(() => {
             <div class="full-height q-px-lg q-py-xl" :style="`width:280px;height:${asideHeight}`">
               <div :style="`position:sticky;top:${asideTop}`">
                 <!-- <ins class="adsbygoogle" style="display:inline-block;width:160px;height:600px"
-                                                    data-ad-client="ca-pub-5110777286519562" data-ad-slot="7240136439" :data-adtest="prod ? 'off' : 'on'"
-                                                    :key="key"></ins> -->
+                                                                                                                                                                                                                                                                                                                                                          data-ad-client="ca-pub-5110777286519562" data-ad-slot="7240136439" :data-adtest="prod ? 'off' : 'on'"
+                                                                                                                                                                                                                                                                                                                                                          :key="key"></ins> -->
               </div>
             </div>
           </div>
@@ -356,5 +376,20 @@ ins::after {
 .view {
   position: relative;
   min-height: 40vh;
+}
+
+.avatar {
+  padding: 0;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.avatar:deep(.q-avatar) {
+  box-shadow: 0 0 0 3px var(--q-dark);
+}
+
+.body--light .avatar:deep(.q-avatar) {
+  box-shadow: 0 0 0 3px var(--q-light-page);
 }
 </style>
