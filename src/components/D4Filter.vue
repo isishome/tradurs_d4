@@ -119,7 +119,7 @@ const update = (quality?: Array<string>) => {
     <q-item :inset-level=".2" dense>
       <q-item-section>
         <div class="row items-center q-gutter-sm">
-          <q-checkbox size="xs" :disable="filterLoading" v-model="is.filter.hardcore" :label="t('hardcore')"
+          <q-checkbox size="xs" :disable="filterLoading" v-model="is.filter.hardcore" :label="t('item.hardcore')"
             @update:model-value="update()" />
           <q-btn dense round flat size="xs" :ripple="false" class="no-hover" :disable="filterLoading"
             @click="is.filter.hardcore = null; update()">
@@ -131,13 +131,19 @@ const update = (quality?: Array<string>) => {
     <q-item :inset-level=".2" dense>
       <q-item-section>
         <div class="row items-center q-gutter-sm">
-          <q-checkbox size="xs" :disable="filterLoading" v-model="is.filter.ladder" :label="t('ladder')"
+          <q-checkbox size="xs" :disable="filterLoading" v-model="is.filter.ladder" :label="t('item.ladder')"
             @update:model-value="update()" />
           <q-btn dense round flat size="xs" :ripple="false" class="no-hover" :disable="filterLoading"
             @click="is.filter.ladder = null; update()">
             <q-icon class="icon" :name="`img:${icons.close}`" />
           </q-btn>
         </div>
+      </q-item-section>
+    </q-item>
+    <q-item :inset-level=".2" dense>
+      <q-item-section>
+        <q-checkbox size="xs" :disable="filterLoading" v-model="is.filter.available" :label="t('item.available')"
+          @update:model-value="update()" />
       </q-item-section>
     </q-item>
     <q-item v-if="as.signed">

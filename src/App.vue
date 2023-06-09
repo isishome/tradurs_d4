@@ -57,12 +57,12 @@ useMeta(() => {
       ogDescription: { property: 'og:description', content: descReactive.value },
       ogUrl: { property: 'og:url', content: 'https://d4.tradurs.com' },
       ogType: { property: 'og:type', content: 'website' },
-      ogImage: { property: 'og:image', content: 'https://d4.tradurs.com/images/icon.png' },
+      ogImage: { property: 'og:image', content: 'https://d4.tradurs.com/images/og.png' },
       twitterCard: { name: 'twitter:card', content: 'summary' },
       twitterTitle: { name: 'twitter:title', content: titleReactive.value },
       twitterDescription: { name: 'twitter:description', content: descReactive.value },
       twitterUrl: { name: 'twitter:url', content: 'https://d4.tradurs.com' },
-      twitterImage: { name: 'twitter:image', content: 'https://d4.tradurs.com/images/icon.png' }
+      twitterImage: { name: 'twitter:image', content: 'https://d4.tradurs.com/images/og.png' }
     }
   }
 })

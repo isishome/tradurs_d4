@@ -26,8 +26,6 @@ export default {
   },
   noItem: '거래 가능한 아이템이 없습니다',
   message: '메세지',
-  hardcore: '하드코어',
-  ladder: '래더',
   seller: '판매자',
   offerer: '제안자',
   user: {
@@ -37,7 +35,7 @@ export default {
     temperature: '매너 온도',
     sh1: '거래가 ',
     sh2: '완료',
-    sh3: '되지 않거나 사용자와 거래가 ',
+    sh3: '되지 않거나 판매자와 거래가 ',
     sh4: '진행 중이 아닌 경우',
     sh5: ' 배틀태그가 노출되지 않습니다'
   },
@@ -93,6 +91,9 @@ export default {
     continuously: '연속 추가'
   },
   item: {
+    hardcore: '하드코어',
+    ladder: '래더',
+    available: '거래가능만 보기',
     quality: '아이템 등급',
     selectType: '아이템 유형',
     selectClass: '장비 클래스',

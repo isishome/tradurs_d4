@@ -27,8 +27,7 @@ export default {
   noItem: 'No items available for trade',
   trade: 'Trade',
   message: 'Message',
-  hardcore: 'Hardcore',
-  ladder: 'Ladder',
+
   seller: 'Seller',
   offerer: 'Offerer',
   user: {
@@ -38,7 +37,7 @@ export default {
     temperature: 'Manner Temperature',
     sh1: 'BattleTags will not be displayed if the trade is ',
     sh2: 'not completed',
-    sh3: ' or the trade with the user is ',
+    sh3: ' or the trade with the seller is ',
     sh4: 'not in progress',
     sh5: ''
   },
@@ -94,6 +93,9 @@ export default {
     continuously: 'Add continuously'
   },
   item: {
+    hardcore: 'Hardcore',
+    ladder: 'Ladder',
+    available: 'Show only tradable',
     quality: 'Item Quality',
     selectType: 'Item Type',
     selectClass: 'Equipment Class',

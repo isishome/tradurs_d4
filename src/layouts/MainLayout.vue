@@ -151,7 +151,7 @@ onUnmounted(() => {
                       <!-- <img width="24" src="~assets/tradurs.svg" /> -->
                       {{ t('user.yolk') }}
                     </div>
-                    <div class="text-weight-bold text-amber-10 text-body2">{{ as.info.yolk }}</div>
+                    <div class="text-weight-bold text-amber-8 text-body2">{{ as.info.yolk }}</div>
                   </div>
                   <div class="col text-center">
                     <div class="text-caption ellipsis">
@@ -259,7 +259,7 @@ onUnmounted(() => {
                       <!-- <img width="24" src="~assets/tradurs.svg" /> -->
                       {{ t('user.yolk') }}
                     </div>
-                    <div class="text-weight-bold text-amber-10 text-body2">{{ as.info.yolk }}</div>
+                    <div class="text-weight-bold text-amber-8 text-body2">{{ as.info.yolk }}</div>
                   </div>
                   <div class="col text-center">
                     <div class="text-caption ellipsis">
@@ -291,8 +291,8 @@ onUnmounted(() => {
               <div class="q-py-xl"></div>
             </div>
             <!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5110777286519562"
-                                                                                                                                                                                                                                                                                                                                                                        data-ad-slot="8610177982" data-ad-format="auto" data-full-width-responsive="true"
-                                                                                                                                                                                                                                                                                                                                                                        :data-adtest="prod ? 'off' : 'on'" :key="key"></ins> -->
+                                                                                                                                                                                                                                                                                                                                                                                data-ad-slot="8610177982" data-ad-format="auto" data-full-width-responsive="true"
+                                                                                                                                                                                                                                                                                                                                                                                :data-adtest="prod ? 'off' : 'on'" :key="key"></ins> -->
             <div class="q-py-xl"></div>
             <q-separator />
             <div class="q-pt-lg">
@@ -309,8 +309,8 @@ onUnmounted(() => {
             <div class="full-height q-px-lg q-py-xl" :style="`width:280px;height:${asideHeight}`">
               <div :style="`position:sticky;top:${asideTop}`">
                 <!-- <ins class="adsbygoogle" style="display:inline-block;width:160px;height:600px"
-                                                                                                                                                                                                                                                                                                                                                                        data-ad-client="ca-pub-5110777286519562" data-ad-slot="7240136439" :data-adtest="prod ? 'off' : 'on'"
-                                                                                                                                                                                                                                                                                                                                                                        :key="key"></ins> -->
+                                                                                                                                                                                                                                                                                                                                                                                data-ad-client="ca-pub-5110777286519562" data-ad-slot="7240136439" :data-adtest="prod ? 'off' : 'on'"
+                                                                                                                                                                                                                                                                                                                                                                                :key="key"></ins> -->
               </div>
             </div>
           </div>
