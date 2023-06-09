@@ -1,6 +1,6 @@
 {
-    "name": "",
-    "short_name": "",
+    "name": "Diablo\u00aeIV Tradurs ",
+    "short_name": "Diablo\u00aeIV Tradurs ",
     "icons": [
         {
             "src": "/android-chrome-96x96.png",
@@ -8,7 +8,8 @@
             "type": "image/png"
         }
     ],
-    "theme_color": "#ffffff",
-    "background_color": "#ffffff",
+    "theme_color": "#000000",
+    "background_color": "#000000",
+    "start_url": "https://d4.tradurs.com",
     "display": "standalone"
 }
