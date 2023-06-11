@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
+import { AxiosInstance } from 'axios'
+import { ref, computed, watch, onMounted, onUnmounted, nextTick, inject } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useQuasar, Screen, uid } from 'quasar'
 import { useI18n } from 'vue-i18n'
@@ -13,6 +14,7 @@ import D4Filter from 'components/D4Filter.vue'
 
 const prod: boolean = import.meta.env.PROD
 
+const api = inject('axios') as AxiosInstance
 const route = useRoute()
 const router = useRouter()
 const $q = useQuasar()
@@ -49,6 +51,7 @@ const brLoc = localeOptions.map(lo => lo.value).includes($q.lang.getLocale()?.su
 const setLang = (lang: string) => {
   locale.value = lang
   $q.cookies.set('d4.lang', lang)
+  api.defaults.headers.common['Accept-Language'] = lang
 }
 
 const setDark = () => {
@@ -180,11 +183,11 @@ onUnmounted(() => {
       </q-list>
     </q-drawer>
     <q-header :elevated="!$q.dark.isActive" class="q-py-sm header row justify-center">
-      <q-toolbar class="toolbar">
-        <div class="col-2 col-lg-3 row items-center">
+    <q-toolbar class="toolbar">
+      <div class="col-2 col-lg-3 row items-center">
           <q-btn class="gt-sm no-hover" dense flat padding="0" :ripple="!$q.dark.isActive" :to="{ path: '/' }">
-          <img v-show="$q.dark.isActive" src="~assets/logo.webp" height="48" />
-          <img v-show="!$q.dark.isActive" src="~assets/logo_light.webp" height="48" />
+            <img v-show="$q.dark.isActive" src="~assets/logo.webp" height="48" />
+            <img v-show="!$q.dark.isActive" src="~assets/logo_light.webp" height="48" />
           </q-btn>
           <q-btn flat round class="lt-md" :ripple="!$q.dark.isActive" @click="leftDrawerOpen = !leftDrawerOpen">
             <img src="~assets/icons/filter.svg" class="icon" width="24" />
@@ -198,11 +201,11 @@ onUnmounted(() => {
               <template v-if="$q.screen.lt.md" #prepend>
                 <q-icon>
                   <img v-show="$q.dark.isActive" src="~assets/logo.webp" height="24" />
-                  <img v-show="!$q.dark.isActive" src="~assets/logo_light.webp" height="24" />
-                </q-icon>
+                <img v-show="!$q.dark.isActive" src="~assets/logo_light.webp" height="24" />
+              </q-icon>
               </template>
-            <template #append>
-              <q-btn flat dense size="xs" :ripple="false" class="no-hover" :disable="filterLoading" @click="search()">
+              <template #append>
+                <q-btn flat dense size="xs" :ripple="false" class="no-hover" :disable="filterLoading" @click="search()">
                   <q-icon class="icon" :name="`img:${icons.search}`" size="xs" />
                 </q-btn>
               </template>
@@ -291,8 +294,8 @@ onUnmounted(() => {
               <div class="q-py-xl"></div>
             </div>
             <!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5110777286519562"
-                                                                                                                                                                                                                                                                                                                                                                                data-ad-slot="8610177982" data-ad-format="auto" data-full-width-responsive="true"
-                                                                                                                                                                                                                                                                                                                                                                                :data-adtest="prod ? 'off' : 'on'" :key="key"></ins> -->
+                                                                                                                                                                                                                                                                                                                                                                                          data-ad-slot="8610177982" data-ad-format="auto" data-full-width-responsive="true"
+                                                                                                                                                                                                                                                                                                                                                                                          :data-adtest="prod ? 'off' : 'on'" :key="key"></ins> -->
             <div class="q-py-xl"></div>
             <q-separator />
             <div class="q-pt-lg">
@@ -309,8 +312,8 @@ onUnmounted(() => {
             <div class="full-height q-px-lg q-py-xl" :style="`width:280px;height:${asideHeight}`">
               <div :style="`position:sticky;top:${asideTop}`">
                 <!-- <ins class="adsbygoogle" style="display:inline-block;width:160px;height:600px"
-                                                                                                                                                                                                                                                                                                                                                                                data-ad-client="ca-pub-5110777286519562" data-ad-slot="7240136439" :data-adtest="prod ? 'off' : 'on'"
-                                                                                                                                                                                                                                                                                                                                                                                :key="key"></ins> -->
+                                                                                                                                                                                                                                                                                                                                                                                          data-ad-client="ca-pub-5110777286519562" data-ad-slot="7240136439" :data-adtest="prod ? 'off' : 'on'"
+                                                                                                                                                                                                                                                                                                                                                                                          :key="key"></ins> -->
               </div>
             </div>
           </div>
