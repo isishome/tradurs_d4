@@ -9,12 +9,12 @@ export const messages = {
 export const numberFormats = {
   'ko': {
     decimal: {
-      style: 'decimal', minimumSignificantDigits: 3, maximumSignificantDigits: 5
+      style: 'decimal'
     }
   },
   'en': {
     decimal: {
-      style: 'decimal', minimumSignificantDigits: 3, maximumSignificantDigits: 5
+      style: 'decimal'
     }
   }
 }
