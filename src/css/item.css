@@ -155,12 +155,20 @@
   color: var(--q-unique);
 }
 
-.body--dark .card-item.legendary .stress .icon {
+.card-item.legendary .stress .icon {
   filter: var(--q-filter-legendary) !important;
 }
 
-.body--dark .card-item.unique .stress .icon {
+.card-item.unique .stress .icon {
   filter: var(--q-filter-unique) !important;
+}
+
+.card-item .stress .figure {
+  color: rgb(163, 163, 234);
+}
+
+.body--light .card-item .stress .figure {
+  color: rgb(123, 123, 234);
 }
 
 .body--dark .card-item.magic .unique {

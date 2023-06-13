@@ -57,7 +57,7 @@ watch(() => props.data, (val) => {
           <div v-for="(word, i) in (comp.value as string).split(/\s+/g).filter(w => w !== '')" :key="i">{{ word }}
           </div>
         </template>
-        <div v-else-if="!editable && comp.type === 'variable'">{{ comp.value }}</div>
+        <div v-else-if="!editable && comp.type === 'variable'" class="figure">{{ comp.value }}</div>
         <q-input v-else ref="ai" class="var" input-class="text-center text-caption no-padding" dense hide-bottom-space
           hide-hint no-error-icon outlined v-model.number="comp.value" maxlength="6" debounce="500" :disable="disable"
           :rules="[val => !disable && (parseFloat(val) % 1 !== 0 || parseInt(val) % 1 === 0) || '']"
