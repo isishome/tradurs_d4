@@ -118,9 +118,9 @@ export const useAccountStore = defineStore('account', {
           })
       })
     },
-    readMessage(msgId: number) {
+    readMessage(msgIds: Array<number>) {
       return new Promise<void>((resolve) => {
-        api.post('/account/messages/read', { msgId })
+        api.post('/account/messages/read', { msgIds })
           .then(() => {
             resolve()
           })

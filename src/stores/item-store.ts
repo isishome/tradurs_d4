@@ -106,6 +106,8 @@ export const useItemStore = defineStore('item', {
       hardcore: null as boolean | null,
       ladder: null as boolean | null,
       available: false as boolean | null,
+      mine: false as boolean | null,
+      offer: false as boolean | null,
       itemTypes: [] as Array<string>,
       itemTypeValues1: {} as { [key: string]: Array<number> },
       itemTypeValues2: {} as { [key: string]: Array<number> },

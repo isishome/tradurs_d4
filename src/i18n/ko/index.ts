@@ -23,7 +23,9 @@ export default {
   filter: {
     onlyForMe: '나만의 검색',
     type: '종류',
-    advanced: '고급 필터'
+    advanced: '고급 필터',
+    mine: '내 아이템',
+    offer: '제안 요청 아이템'
   },
   noItem: '거래 가능한 아이템이 없습니다',
   seller: '판매자',
@@ -83,7 +85,8 @@ export default {
     unfavorite: '관심 목록에서 삭제',
     copy: '템플릿 복사',
     share: '공유',
-    gotoItem: '아이템 바로가기'
+    gotoItem: '아이템 바로가기',
+    markRead: '읽음으로 표시'
   },
   attribute: {
     add: '{attr} 추가',

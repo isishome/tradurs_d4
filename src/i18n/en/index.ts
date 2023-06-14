@@ -23,7 +23,9 @@ export default {
   filter: {
     onlyForMe: 'Only For Me',
     type: 'Type(s)',
-    advanced: 'Advanced Filter'
+    advanced: 'Advanced Filter',
+    mine: 'My Items',
+    offer: 'My Offerd Items'
   },
   noItem: 'No items available for trade',
   trade: 'Trade',
@@ -84,7 +86,8 @@ export default {
     unfavorite: 'Remove to Favorites',
     copy: 'Copy Template',
     share: 'Share',
-    gotoItem: 'Go to item'
+    gotoItem: 'Go to item',
+    markRead: 'Mark messages as read'
   },
   attribute: {
     add: 'Add {attr}',

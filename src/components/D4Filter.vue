@@ -149,8 +149,12 @@ const update = (quality?: Array<string>) => {
     <q-item v-if="as.signed">
       <q-item-section>
         <q-item-label header>{{ t('filter.onlyForMe') }}</q-item-label>
-        <q-checkbox v-model="is.filter.favorite" class="q-pl-sm" size="xs" :label="t('item.favorites')"
+        <q-checkbox size="xs" class="q-pl-sm" :disable="filterLoading" v-model="is.filter.mine" :label="t('filter.mine')"
           @update:model-value="update()" />
+        <q-checkbox size="xs" class="q-pl-sm" :disable="filterLoading" v-model="is.filter.offer"
+          :label="t('filter.offer')" @update:model-value="update()" />
+        <q-checkbox :disable="filterLoading" v-model="is.filter.favorite" class="q-pl-sm" size="xs"
+          :label="t('item.favorites')" @update:model-value="update()" />
       </q-item-section>
     </q-item>
     <q-item>
@@ -179,124 +183,126 @@ const update = (quality?: Array<string>) => {
         </q-select>
       </q-item-section>
     </q-item>
-    <q-item :inset-level=".2">
+    <q-item>
       <q-item-section>
         <q-item-label header>{{ t('filter.advanced') }}</q-item-label>
-        <div class="column q-gutter-md">
-          <div style="width:200px">
-            <q-select ref="propertyRef" v-model="is.filter.properties" :disable="disable" max-values="3" outlined dense
-              no-error-icon use-input hide-bottom-space hide-selected emit-value map-options multiple
-              transition-show="none" transition-hide="none" :transition-duration="0"
-              :label="`${t('properties')} ${t('searchOrSelect')}`" :options="propertyOptions(propertyNeedle)"
-              :dropdown-icon="`img:${icons.dropdown}`" popup-content-class="d4-scroll"
-              @update:model-value="selectedProperty" @input-value="filterProperties">
-              <template #option="scope">
-                <q-item v-bind="scope.itemProps">
-                  <q-item-section side>
-                    <q-icon class="icon" :class="{ 'rotate-45': ['standard'].includes(scope.opt.type as string) }"
-                      size="14px" :name="`img:${icons[scope.opt.type as keyof typeof icons || 'standard']}`" />
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label>{{ scope.opt.label }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </template>
-              <template #no-option>
-                <q-item>
-                  <q-item-section class="text-grey">
-                    {{ t('noMessage', { attr: t('properties') }) }}
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
-            <div bordered class="q-mt-xs q-pl-sm rounded-borders column q-gutter-xs text-caption full-width">
-              <div v-for="pid in is.filter.properties" :key="`${pid}`" class="row items-center no-wrap full-width">
-                <div class="ellipsis">
-                  {{ findProperty(pid as number)?.label }}
+        <q-item-label class="q-px-md">
+          <div class="column q-gutter-md">
+            <div style="width:200px">
+              <q-select ref="propertyRef" v-model="is.filter.properties" :disable="disable" max-values="3" outlined dense
+                no-error-icon use-input hide-bottom-space hide-selected emit-value map-options multiple
+                transition-show="none" transition-hide="none" :transition-duration="0"
+                :label="`${t('properties')} ${t('searchOrSelect')}`" :options="propertyOptions(propertyNeedle)"
+                :dropdown-icon="`img:${icons.dropdown}`" popup-content-class="d4-scroll"
+                @update:model-value="selectedProperty" @input-value="filterProperties">
+                <template #option="scope">
+                  <q-item v-bind="scope.itemProps">
+                    <q-item-section side>
+                      <q-icon class="icon" :class="{ 'rotate-45': ['standard'].includes(scope.opt.type as string) }"
+                        size="14px" :name="`img:${icons[scope.opt.type as keyof typeof icons || 'standard']}`" />
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>{{ scope.opt.label }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </template>
+                <template #no-option>
+                  <q-item>
+                    <q-item-section class="text-grey">
+                      {{ t('noMessage', { attr: t('properties') }) }}
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
+              <div bordered class="q-mt-xs q-pl-sm rounded-borders column q-gutter-xs text-caption full-width">
+                <div v-for="pid in is.filter.properties" :key="`${pid}`" class="row items-center no-wrap full-width">
+                  <div class="ellipsis">
+                    {{ findProperty(pid as number)?.label }}
+                  </div>
+                  <q-btn :disable="disable" dense unelevated flat round size="xs" :tabindex="-1" class="q-ml-sm"
+                    @click="removeProperty(pid)">
+                    <img class="icon" width="13" src="~assets/icons/close.svg" />
+                  </q-btn>
                 </div>
-                <q-btn :disable="disable" dense unelevated flat round size="xs" :tabindex="-1" class="q-ml-sm"
-                  @click="removeProperty(pid)">
-                  <img class="icon" width="13" src="~assets/icons/close.svg" />
-                </q-btn>
+              </div>
+            </div>
+            <div style="width:200px">
+              <q-select ref="affixRef" v-model="is.filter.affixes" :disable="disable" max-values="3" outlined dense
+                no-error-icon use-input hide-bottom-space hide-selected emit-value map-options multiple
+                transition-show="none" transition-hide="none" :transition-duration="0"
+                :label="`${t('affixes')} ${t('searchOrSelect')}`" :options="affixOptions(affixNeedle)"
+                :dropdown-icon="`img:${icons.dropdown}`" popup-content-class="d4-scroll"
+                @update:model-value="selectedAffix" @input-value="filterAffixes">
+                <template #option="scope">
+                  <q-item v-bind="scope.itemProps">
+                    <q-item-section side>
+                      <q-icon class="icon" :class="{ 'rotate-45': ['standard'].includes(scope.opt.type as string) }"
+                        size="14px" :name="`img:${icons[scope.opt.type as keyof typeof icons || 'standard']}`" />
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>{{ scope.opt.label }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </template>
+                <template #no-option>
+                  <q-item>
+                    <q-item-section class="text-grey">
+                      {{ t('noMessage', { attr: t('affixes') }) }}
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
+              <div bordered class="q-mt-xs q-pl-sm rounded-borders column q-gutter-xs text-caption full-width">
+                <div v-for="aid in is.filter.affixes" :key="`${aid}`" class="row items-center no-wrap full-width">
+                  <div class="ellipsis">
+                    {{ findAffix(aid as number)?.label }}
+                  </div>
+                  <q-btn :disable="disable" dense unelevated flat round size="xs" :tabindex="-1" class="q-ml-sm"
+                    @click="removeAffix(aid)">
+                    <img class="icon" width="13" src="~assets/icons/close.svg" />
+                  </q-btn>
+                </div>
+              </div>
+            </div>
+            <div style="width:200px">
+              <q-select ref="restrictionRef" v-model="is.filter.restrictions" :disable="disable" max-values="3" outlined
+                dense no-error-icon use-input hide-bottom-space hide-selected emit-value map-options multiple
+                transition-show="none" transition-hide="none" :transition-duration="0"
+                :label="`${t('restrictions')} ${t('searchOrSelect')}`" :options="restrictionOptions(restrictionNeedle)"
+                :dropdown-icon="`img:${icons.dropdown}`" popup-content-class="d4-scroll"
+                @update:model-value="selectedRestriction" @input-value="filterRestrictions">
+                <template #option="scope">
+                  <q-item v-bind="scope.itemProps">
+                    <q-item-section>
+                      <q-item-label>{{ scope.opt.label }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </template>
+                <template #no-option>
+                  <q-item>
+                    <q-item-section class="text-grey">
+                      {{ t('noMessage', { attr: t('restrictions') }) }}
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
+              <div bordered class="q-mt-xs q-pl-sm rounded-borders column q-gutter-xs text-caption full-width">
+                <div v-for="rid in is.filter.restrictions" :key="`${rid}`" class="row items-center no-wrap full-width">
+                  <div class="ellipsis">
+                    {{ findRestriction(rid as number)?.label }}
+                  </div>
+                  <q-btn :disable="disable" dense unelevated flat round size="xs" :tabindex="-1" class="q-ml-sm"
+                    @click="removeRestriction(rid)">
+                    <img class="icon" width="13" src="~assets/icons/close.svg" />
+                  </q-btn>
+                </div>
               </div>
             </div>
           </div>
-          <div style="width:200px">
-            <q-select ref="affixRef" v-model="is.filter.affixes" :disable="disable" max-values="3" outlined dense
-              no-error-icon use-input hide-bottom-space hide-selected emit-value map-options multiple
-              transition-show="none" transition-hide="none" :transition-duration="0"
-              :label="`${t('affixes')} ${t('searchOrSelect')}`" :options="affixOptions(affixNeedle)"
-              :dropdown-icon="`img:${icons.dropdown}`" popup-content-class="d4-scroll" @update:model-value="selectedAffix"
-              @input-value="filterAffixes">
-              <template #option="scope">
-                <q-item v-bind="scope.itemProps">
-                  <q-item-section side>
-                    <q-icon class="icon" :class="{ 'rotate-45': ['standard'].includes(scope.opt.type as string) }"
-                      size="14px" :name="`img:${icons[scope.opt.type as keyof typeof icons || 'standard']}`" />
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label>{{ scope.opt.label }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </template>
-              <template #no-option>
-                <q-item>
-                  <q-item-section class="text-grey">
-                    {{ t('noMessage', { attr: t('affixes') }) }}
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
-            <div bordered class="q-mt-xs q-pl-sm rounded-borders column q-gutter-xs text-caption full-width">
-              <div v-for="aid in is.filter.affixes" :key="`${aid}`" class="row items-center no-wrap full-width">
-                <div class="ellipsis">
-                  {{ findAffix(aid as number)?.label }}
-                </div>
-                <q-btn :disable="disable" dense unelevated flat round size="xs" :tabindex="-1" class="q-ml-sm"
-                  @click="removeAffix(aid)">
-                  <img class="icon" width="13" src="~assets/icons/close.svg" />
-                </q-btn>
-              </div>
-            </div>
-          </div>
-          <div style="width:200px">
-            <q-select ref="restrictionRef" v-model="is.filter.restrictions" :disable="disable" max-values="3" outlined
-              dense no-error-icon use-input hide-bottom-space hide-selected emit-value map-options multiple
-              transition-show="none" transition-hide="none" :transition-duration="0"
-              :label="`${t('restrictions')} ${t('searchOrSelect')}`" :options="restrictionOptions(restrictionNeedle)"
-              :dropdown-icon="`img:${icons.dropdown}`" popup-content-class="d4-scroll"
-              @update:model-value="selectedRestriction" @input-value="filterRestrictions">
-              <template #option="scope">
-                <q-item v-bind="scope.itemProps">
-                  <q-item-section>
-                    <q-item-label>{{ scope.opt.label }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </template>
-              <template #no-option>
-                <q-item>
-                  <q-item-section class="text-grey">
-                    {{ t('noMessage', { attr: t('restrictions') }) }}
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
-            <div bordered class="q-mt-xs q-pl-sm rounded-borders column q-gutter-xs text-caption full-width">
-              <div v-for="rid in is.filter.restrictions" :key="`${rid}`" class="row items-center no-wrap full-width">
-                <div class="ellipsis">
-                  {{ findRestriction(rid as number)?.label }}
-                </div>
-                <q-btn :disable="disable" dense unelevated flat round size="xs" :tabindex="-1" class="q-ml-sm"
-                  @click="removeRestriction(rid)">
-                  <img class="icon" width="13" src="~assets/icons/close.svg" />
-                </q-btn>
-              </div>
-            </div>
-          </div>
-        </div>
+        </q-item-label>
       </q-item-section>
     </q-item>
-    <q-item :inset-level=".2" class="q-mt-xl">
+    <q-item :inset-level=".3" class="q-mt-xl">
       <q-btn outline size="md" :ripple="false" class="no-hover" :disable="filterLoading" @click="is.clearFilter">
         <div class="row items-center q-gutter-xs">
           <div>{{ t('btn.resetSearch') }}</div>

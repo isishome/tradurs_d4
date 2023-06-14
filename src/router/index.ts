@@ -84,6 +84,12 @@ export default route(function ({ store }/* { store, ssrContext } */) {
   Router.beforeEach(async (to) => {
     const as = useAccountStore(store)
     const is = useItemStore(store)
+    const requireAuth = to.matched.find(route => route.meta.requireAuth)
+
+    if (requireAuth && !as.info.id)
+      return {
+        path: '/'
+      }
 
     if (as.info.id && !as.socket)
       initSocket(as, is)

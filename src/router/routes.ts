@@ -16,7 +16,14 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/ItemPage.vue'),
         props: true
       },
-      { name: 'messages', path: 'messages', component: () => import('pages/MessagesPage.vue') }
+      {
+        name: 'messages',
+        path: 'messages',
+        component: () => import('pages/MessagesPage.vue'),
+        meta: {
+          requireAuth: true
+        }
+      }
     ]
   },
 
