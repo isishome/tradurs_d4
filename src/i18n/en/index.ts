@@ -146,7 +146,8 @@ export default {
     complete: 'Item trade completed ({in})',
     title000: 'A new offer has arrived',
     title001: 'Offer has been Accepted',
-    title002: 'Item trade completed'
+    title002: 'Item trade completed',
+    noData: 'No messages'
 
   },
   notFound: {

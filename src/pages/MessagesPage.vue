@@ -81,6 +81,11 @@ as.getMessages()
           </div>
         </q-slide-transition>
       </template>
+      <q-item>
+        <q-item-section>
+          <q-item-label class="row justify-center q-pt-md q-pb-xl">{{ t('messages.noData') }}</q-item-label>
+        </q-item-section>
+      </q-item>
     </q-list>
   </div>
 </template>

@@ -10,7 +10,7 @@ export default {
   page: {
     tradeList: '거래 목록',
     itemInfo: '아이템 정보',
-    messages: '메세지',
+    messages: '메시지',
     pnf: '페이지를 찾을 수 없습니다'
   },
   battlenet: {
@@ -145,7 +145,8 @@ export default {
     complete: '아이템 거래가 완료되었습니다 ({in})',
     title000: '새 제안 요청이 도착했습니다',
     title001: '제안이 수락되었습니다',
-    title002: '아이템 거래가 완료되었습니다'
+    title002: '아이템 거래가 완료되었습니다',
+    noData: '수신된 메시지가 없습니다'
   },
   notFound: {
     gotoMain: '메인 페이지로'
