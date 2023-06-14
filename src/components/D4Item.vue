@@ -28,7 +28,7 @@ const props = withDefaults(defineProps<IProps>(), {
   disable: false
 })
 
-const emit = defineEmits(['update', 'apply', 'favorite'])
+const emit = defineEmits(['update', 'apply', 'copy', 'favorite'])
 
 // common variable
 const $q = useQuasar()
@@ -477,15 +477,22 @@ defineExpose({ scrollEnd })
                         <img :class="{ 'invert': !$q.dark.isActive }"
                           :src="data.favorite ? icons.unfavorite : icons.favorite" height="24" />
                       </q-item-section>
-                      <q-item-section class="text-uppercase">{{ data.favorite ? t('btn.unfavorite') : t('btn.favorite')
+                      <q-item-section>{{ data.favorite ? t('btn.unfavorite') : t('btn.favorite')
                       }}</q-item-section>
+                    </q-item>
+                    <q-item v-if="as.signed" :class="[$q.dark.isActive ? 'text-grey-9' : 'text-grey-4']"
+                      :dense="$q.screen.lt.sm" clickable @click="$emit('copy', data.itemId)">
+                      <q-item-section side>
+                        <img :class="{ 'invert': !$q.dark.isActive }" :src="icons.copy" height="24" />
+                      </q-item-section>
+                      <q-item-section>{{ t('btn.copy') }}</q-item-section>
                     </q-item>
                     <q-item :class="[$q.dark.isActive ? 'text-grey-9' : 'text-grey-4']" :dense="$q.screen.lt.sm" clickable
                       @click="copy">
                       <q-item-section side>
                         <img :class="{ 'invert': !$q.dark.isActive }" :src="icons.share" height="24" />
                       </q-item-section>
-                      <q-item-section class="text-uppercase">{{ t('btn.share') }}</q-item-section>
+                      <q-item-section>{{ t('btn.share') }}</q-item-section>
                     </q-item>
                   </q-menu>
                 </q-btn>

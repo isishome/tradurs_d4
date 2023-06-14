@@ -10,6 +10,7 @@ export default {
   page: {
     tradeList: '거래 목록',
     itemInfo: '아이템 정보',
+    messages: '메세지',
     pnf: '페이지를 찾을 수 없습니다'
   },
   battlenet: {
@@ -25,7 +26,6 @@ export default {
     advanced: '고급 필터'
   },
   noItem: '거래 가능한 아이템이 없습니다',
-  message: '메세지',
   seller: '판매자',
   offerer: '제안자',
   user: {
@@ -33,6 +33,7 @@ export default {
     battleTag: 'BattleTag™',
     yolk: '노른자',
     temperature: '매너 온도',
+    notify: '알림 표시',
     sh1: '거래가 ',
     sh2: '완료',
     sh3: '되지 않거나 판매자와 거래가 ',
@@ -80,7 +81,9 @@ export default {
     resetSearch: '검색 초기화',
     favorite: '관심 목록에 추가',
     unfavorite: '관심 목록에서 삭제',
-    share: '공유'
+    copy: '템플릿 복사',
+    share: '공유',
+    gotoItem: '아이템 바로가기'
   },
   attribute: {
     add: '{attr} 추가',
@@ -134,11 +137,15 @@ export default {
     evaluate: '상대는 나를 이렇게 평가했어요'
   },
   messages: {
+    title: '메세지 리스트',
     newItems: '새로운 아이템이 등록되었습니다 ({n})',
-    newOffer: '내 아이템에 새 제안이 등록되었습니다',
-    acceptedOffer: '내 제안이 수락되었습니다 ({in})',
+    newOffer: '새 제안 요청이 도착했습니다',
+    acceptedOffer: '제안이 수락되었습니다 ({in})',
     clipboard: '{t}가 클립보드로 복사되었습니다',
-    complete: '아이템 거래가 완료되었습니다 ({in})'
+    complete: '아이템 거래가 완료되었습니다 ({in})',
+    title000: '새 제안 요청이 도착했습니다',
+    title001: '제안이 수락되었습니다',
+    title002: '아이템 거래가 완료되었습니다'
   },
   notFound: {
     gotoMain: '메인 페이지로'

@@ -16,9 +16,11 @@ import list from 'assets/icons/list.svg'
 import language from 'assets/icons/language.svg'
 import refresh from 'assets/icons/restore.svg'
 import search from 'assets/icons/search.svg'
+import prev from 'assets/icons/prev.svg'
 import next from 'assets/icons/next.svg'
 import favorite from 'assets/icons/favorite.svg'
 import unfavorite from 'assets/icons/unfavorite.svg'
+import copy from 'assets/icons/copy.svg'
 import share from 'assets/icons/share.svg'
 
 import buy from 'assets/icons/buy.svg'
@@ -53,9 +55,11 @@ export const icons = {
   language,
   refresh,
   search,
+  prev,
   next,
   favorite,
   unfavorite,
+  copy,
   share,
   buy,
   sell,

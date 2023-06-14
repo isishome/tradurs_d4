@@ -2,7 +2,7 @@
 import { useRoute, useRouter } from 'vue-router'
 import { useItemStore } from 'stores/item-store'
 import { useAccountStore } from 'stores/account-store'
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useQuasar } from 'quasar'
 import { scrollPos } from 'src/common'
@@ -32,6 +32,7 @@ const filter = computed(() => is.filter.request)
 const itemsRef = ref<typeof D4Items | null>(null)
 const items = ref<Array<Item>>([])
 const page = computed(() => route.query.page ? Number.parseInt(route.query.page.toString()) : 1)
+const over = computed(() => is.page.over)
 const more = computed(() => is.page.more)
 
 // insert or update item
@@ -46,7 +47,11 @@ const upsertItem = (item: Item, done: Function) => {
         items.value.splice(findIndex, 1, item)
       else {
         as.info.yolk--
-        items.value.unshift(item)
+        is.clearFilter()
+        if (page.value !== 1)
+          router.push({ name: 'tradeList', query: { page: 1 } })
+        else
+          getList(is.filter)
       }
 
       itemsRef.value?.hideEditable()
@@ -133,6 +138,13 @@ const updateOnly = (itemId: string) => {
   }
 }
 
+const copy = (itemId: string) => {
+  const findItem = items.value.find((i) => i.itemId === itemId)
+
+  if (findItem)
+    itemsRef.value?.copyItem(findItem)
+}
+
 const favorite = (itemId: string, favorite: boolean) => {
   const findItem = items.value.find((i) => i.itemId === itemId)
 
@@ -144,12 +156,16 @@ const favorite = (itemId: string, favorite: boolean) => {
   }
 }
 
+const prev = () => {
+  router.push({ name: 'tradeList', query: { page: page.value - 1 } })
+}
+
 const next = () => {
   router.push({ name: 'tradeList', query: { page: page.value + 1 } })
 }
 
-const create = () => {
-  itemsRef.value?.create()
+const create = (item?: Item) => {
+  itemsRef.value?.create(item)
 }
 
 const getList = (filter?: any) => {
@@ -212,6 +228,7 @@ watch(newItems, (val: number) => {
     notify('newItems', t('messages.newItems', val), t('btn.refresh'), () => {
       itemsRef.value?.hideEditable()
       itemsRef.value?.hideOffers()
+      as.position = { left: 0, top: 0 }
       getList()
     })
 })
@@ -243,11 +260,20 @@ watch(filter, (val, old) => {
 onMounted(() => {
   getList()
 })
+
+onUnmounted(() => {
+  is.clearFilter()
+})
 </script>
 <template>
-  <D4Btn v-if="more" round @click="next" class="sticky-first" color="var(--q-magic)" :disable="disable" shadow>
-    <img :src="icons.next" height="24" class="invert" />
-  </D4Btn>
+  <div class="row q-gutter-xs items-center sticky-first">
+    <D4Btn round @click="prev" color="var(--q-magic)" :disable="!over || disable" shadow>
+      <img :src="icons.prev" height="24" class="invert" />
+    </D4Btn>
+    <D4Btn round @click="next" color="var(--q-magic)" :disable="!more || disable" shadow>
+      <img :src="icons.next" height="24" class="invert" />
+    </D4Btn>
+  </div>
   <D4Btn v-if="as.signed" round @click="create" class="sticky-second" color="var(--q-secondary)" :disable="disable"
     shadow>
     <img :src="icons.add" height="24" class="invert" />
@@ -255,7 +281,7 @@ onMounted(() => {
   <div>
     <div class="row justify-center items-center">
       <D4Items ref="itemsRef" :items="items" :loading="disable" @upsert-item="upsertItem" @delete-item="deleteItem"
-        @relist-item="relistItem" @status-item="statusItem" @update-only="updateOnly" @favorite="favorite" />
+        @relist-item="relistItem" @status-item="statusItem" @update-only="updateOnly" @copy="copy" @favorite="favorite" />
     </div>
   </div>
 </template>

@@ -24,7 +24,7 @@ export default {
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import { ref, computed, watch, onUnmounted } from 'vue'
+import { ref, computed, watch, onUnmounted, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useQuasar } from 'quasar'
 import { useAccountStore } from 'stores/account-store'
@@ -59,9 +59,16 @@ const itemsRef = ref<typeof D4Items | null>(null)
 const upsertItem = (item: Item, done: Function) => {
   disable.value = true
 
-  is.updateItem(item)
+  is[item.itemId !== '' ? 'updateItem' : 'addItem'](item)
     .then((response) => {
-      is.detailItem.splice(0, 1, response)
+      if (item.itemId !== '')
+        is.detailItem.splice(0, 1, response)
+      else {
+        as.info.yolk--
+        is.clearFilter()
+        router.push({ name: 'tradeList', query: { page: 1 } })
+      }
+
       Object.assign(item, response)
       itemsRef.value?.hideEditable()
 
@@ -125,6 +132,10 @@ const updateOnly = (itemId: string) => {
     })
 }
 
+const copy = (itemId: string) => {
+  if (itemId === is.detailItem[0].itemId)
+    itemsRef.value?.copyItem(is.detailItem[0])
+}
 const favorite = (itemId: string, favorite: boolean) => {
   is.favorite(itemId, favorite)
     .then(() => {
@@ -224,6 +235,13 @@ watch(complete, (val: { itemName: string, itemId: string } | null) => {
     })
 })
 
+onMounted(() => {
+  if (history.state.offers) {
+    itemsRef.value?.openOffers(props.itemid)
+    history.state.offers = false
+  }
+})
+
 onUnmounted(() => {
   gs.itemName = null
   is.detailItem.splice(0, 1)
@@ -238,7 +256,7 @@ onUnmounted(() => {
     <div class="row justify-center items-center">
       <D4Items ref="itemsRef" :items="is.detailItem" :loading="disable" @upsert-item="upsertItem"
         @delete-item="deleteItem" @relist-item="relistItem" @status-item="statusItem" @update-only="updateOnly"
-        @favorite="favorite" />
+        @copy="copy" @favorite="favorite" />
     </div>
   </div>
 </template>

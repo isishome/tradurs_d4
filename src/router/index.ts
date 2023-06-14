@@ -3,10 +3,8 @@ import { createMemoryHistory, createRouter, createWebHashHistory, createWebHisto
 import routes from './routes'
 import { useAccountStore } from 'src/stores/account-store'
 import { useItemStore } from 'src/stores/item-store'
-import { useGlobalStore } from 'src/stores/global-store'
 import { Notify } from 'quasar'
 import { Manager } from 'socket.io-client'
-import { i18n } from 'src/boot/i18n'
 
 /*
  * If not building with SSR mode, you can
@@ -36,23 +34,27 @@ const initSocket = (as: any, is: any) => {
   })
 
   as.socket.on('newItems', () => {
-    is.socket.newItems++
+    if (as.info.notify)
+      is.socket.newItems++
   })
 
   as.socket.on('newOffer', (itemId: string) => {
-    is.socket.newOffer = itemId
+    if (as.info.notify)
+      is.socket.newOffer = itemId
   })
 
   as.socket.on('acceptedOffer', (data: { itemName: string, itemId: string }) => {
-    is.socket.acceptedOffer = data
+    if (as.info.notify)
+      is.socket.acceptedOffer = data
   })
 
   as.socket.on('complete', (data: { itemName: string, itemId: string }) => {
-    is.socket.complete = data
+    if (as.info.notify)
+      is.socket.complete = data
   })
 
-  as.socket.on('badge', () => {
-    as.badge = true
+  as.socket.on('newMessages', () => {
+    as.newMessages = true
   })
 }
 

@@ -6,7 +6,8 @@ import { useI18n } from 'vue-i18n'
 import { useAccountStore } from 'stores/account-store'
 import { useItemStore, type Property, type Affix, type Restriction } from 'stores/item-store'
 import { checkAttribute, scrollPos } from 'src/common'
-import { Item, Advertise, Offer, type IItem } from 'src/types/item'
+import { Item, Advertise, Offer, type IItem, Price } from 'src/types/item'
+import { User } from 'src/types/user'
 import { icons } from 'src/common/icons'
 
 import D4Item from 'components/D4Item.vue'
@@ -15,7 +16,7 @@ import D4Affix from 'components/D4Affix.vue'
 import D4Restriction from 'components/D4Restriction.vue'
 import D4Offer from 'components/D4Offer.vue'
 import D4Dialog from 'components/D4Dialog.vue'
-import { data } from 'browserslist'
+
 
 interface IProps {
   items: Array<Item>,
@@ -30,7 +31,7 @@ const props = withDefaults(defineProps<IProps>(), {
   loading: false
 })
 
-const emit = defineEmits(['upsert-item', 'delete-item', 'relist-item', 'status-item', 'update-only', 'favorite'])
+const emit = defineEmits(['upsert-item', 'delete-item', 'relist-item', 'status-item', 'update-only', 'copy', 'favorite'])
 
 // init module
 const $q = useQuasar()
@@ -42,6 +43,11 @@ const { t } = useI18n({ useScope: 'global' })
 const requestProperties = computed<number>(() => is.properties.request)
 const requestAffixes = computed<number>(() => is.affixes.request)
 const requestRestrictions = computed<number>(() => is.restrictions.request)
+
+// about copy item
+const copy = (itemId: string) => {
+  emit('copy', itemId)
+}
 
 // about favorite item
 const favorite = (itemId: string, favorite: boolean) => {
@@ -57,6 +63,21 @@ const editItem = (item: Item) => {
   const clone = JSON.parse(JSON.stringify(item))
   Object.assign(new Item, clone)
   Object.setPrototypeOf(clone, Item.prototype)
+  activatedItem.value = clone
+  activateShow.value = true
+}
+
+const copyItem = (item: Item) => {
+  const clone = JSON.parse(JSON.stringify(item))
+  Object.assign(new Item, clone)
+  Object.setPrototypeOf(clone, Item.prototype)
+  clone.itemId = ''
+  clone.statusCode = '000'
+  clone.user = new User()
+  clone.price = new Price()
+  clone.affixes = clone.affixes.map((a: Affix) => ({ ...a, valueId: uid(), action: 2 }))
+  clone.properties = clone.properties.map((p: Property) => ({ ...p, valueId: uid(), action: 2 }))
+  clone.restrictions = clone.restrictions.map((r: Restriction) => ({ ...r, valueId: uid(), action: 2 }))
   activatedItem.value = clone
   activateShow.value = true
 }
@@ -510,7 +531,7 @@ const openOffers = (itemId: string) => {
     openMakingOffer(findItem)
 }
 
-defineExpose({ create, hideEditable, openOffers, hideOffers })
+defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
 </script>
 
 <template>
@@ -521,7 +542,7 @@ defineExpose({ create, hideEditable, openOffers, hideOffers })
         :style="item.expanded ? 'height:100%' : `height: ${height as number - ($q.screen.lt.sm ? 50 : 0)}px;`"
         transition="fade" @visibility="isVisible => visible(isVisible, item)" ssr-prerender once>
         <div v-if="(item instanceof Advertise)" class="bg-grey" style="width:100%;height:500px"></div>
-        <D4Item v-else :data="item" :loading="loading || item.loading" @favorite="favorite">
+        <D4Item v-else :data="item" :loading="loading || item.loading" @favorite="favorite" @copy="copy">
           <template #top-right>
           </template>
           <template v-if="requestProperties > 0" #properties>

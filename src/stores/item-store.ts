@@ -119,6 +119,7 @@ export const useItemStore = defineStore('item', {
     detailItem: [] as Array<Item>,
     page: {
       rows: 50 as number,
+      over: false as boolean,
       more: false as boolean
     }
   }),
@@ -336,6 +337,7 @@ export const useItemStore = defineStore('item', {
       return new Promise<Array<Item>>((resolve, reject) => {
         api.post('/d4/item', { page, rows: this.page.rows, itemId, filter })
           .then(async (response) => {
+            this.page.over = page > 1
             this.page.more = response.data.length > this.page.rows
             response.data.splice(this.page.rows, 1)
             resolve(response.data)

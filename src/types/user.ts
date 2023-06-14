@@ -3,7 +3,8 @@ export interface IUser {
   yolk: number,
   avatar: number,
   battleTag?: string,
-  temperature: number
+  temperature: number,
+  notify: boolean
 }
 
 export class User implements IUser {
@@ -12,6 +13,7 @@ export class User implements IUser {
   public avatar = 0
   public battleTag = ''
   public temperature = 0
+  public notify = true
   public loading = false
   constructor(id?: string) {
     this.id = id || null

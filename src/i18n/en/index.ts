@@ -10,6 +10,7 @@ export default {
   page: {
     tradeList: 'Trade List',
     itemInfo: 'Item Information',
+    messages: 'Messages',
     pnf: 'Page not found'
   },
   battlenet: {
@@ -26,8 +27,6 @@ export default {
   },
   noItem: 'No items available for trade',
   trade: 'Trade',
-  message: 'Message',
-
   seller: 'Seller',
   offerer: 'Offerer',
   user: {
@@ -35,6 +34,7 @@ export default {
     battleTag: 'BattleTag™',
     yolk: 'Yolk',
     temperature: 'Manner Temperature',
+    notify: 'Show Notification',
     sh1: 'BattleTags will not be displayed if the trade is ',
     sh2: 'not completed',
     sh3: ' or the trade with the seller is ',
@@ -82,7 +82,9 @@ export default {
     resetSearch: 'Reset Filter',
     favorite: 'Add to Favorites',
     unfavorite: 'Remove to Favorites',
-    share: 'Share'
+    copy: 'Copy Template',
+    share: 'Share',
+    gotoItem: 'Go to item'
   },
   attribute: {
     add: 'Add {attr}',
@@ -136,11 +138,16 @@ export default {
     evaluate: 'Trading partner evaluated you as below'
   },
   messages: {
+    title: 'Message List',
     newItems: 'A new item has been registered ({n})',
-    newOffer: 'A new offer has been added to my Items',
-    acceptedOffer: 'my offer has been accepted ({in})',
+    newOffer: 'A new offer has arrived',
+    acceptedOffer: 'Offer has been accepted ({in})',
     clipboard: 'The {t} has been copied to the clipboard',
-    complete: 'Item trade completed ({in})'
+    complete: 'Item trade completed ({in})',
+    title000: 'A new offer has arrived',
+    title001: 'Offer has been Accepted',
+    title002: 'Item trade completed'
+
   },
   notFound: {
     gotoMain: 'Go to main page'

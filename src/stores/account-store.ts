@@ -16,7 +16,7 @@ export const useAccountStore = defineStore('account', {
     info: {} as User,
     position: { left: 0, top: 0 },
     socket: null as Socket | null,
-    badge: false as boolean,
+    newMessages: false as boolean,
     evaluations: {
       data: [] as Array<IEvaluation>,
       loading: false as boolean,
@@ -59,7 +59,7 @@ export const useAccountStore = defineStore('account', {
             this.signed = false
             this.info = {} as User
             this.socket = null
-            this.badge = false
+            this.newMessages = false
             resolve(false)
           })
       })
@@ -94,6 +94,33 @@ export const useAccountStore = defineStore('account', {
       return new Promise<void>(async (resolve) => {
         await sleep(timeout)
         api.post('/battlenet/tag/update', { battleTag })
+          .then(() => {
+            resolve()
+          })
+      })
+    },
+    notify(notify: boolean) {
+      return new Promise<void>((resolve, reject) => {
+        api.post('/account/notify', { notify })
+          .then(async () => {
+            resolve()
+          })
+          .catch((e) => {
+            reject(e)
+          })
+      })
+    },
+    getMessages() {
+      return new Promise<void>((resolve) => {
+        api.get('/account/messages')
+          .then((response) => {
+            resolve(response.data)
+          })
+      })
+    },
+    readMessage(msgId: number) {
+      return new Promise<void>((resolve) => {
+        api.post('/account/messages/read', { msgId })
           .then(() => {
             resolve()
           })
