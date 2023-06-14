@@ -94,7 +94,6 @@
   line-height: 24px;
   font-weight: 700;
   word-break: break-all;
-  max-width: 66%;
 }
 
 .price {
@@ -115,11 +114,10 @@
   .name {
     font-size: 14px;
     line-height: 18px;
-    max-width: 60%;
   }
 
   .price {
-    font-size: 14px;
+    font-size: 12px;
   }
 
   .info {
@@ -127,7 +125,7 @@
   }
 
   .card-item {
-    font-size: 12px;
+    font-size: 10px;
   }
 
   .card-item .q-card__section--vert {
