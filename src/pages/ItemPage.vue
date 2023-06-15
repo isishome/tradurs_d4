@@ -250,7 +250,7 @@ onUnmounted(() => {
 
 <template>
   <D4Btn round :to="{ name: 'tradeList' }" class="sticky" color="var(--q-light-normal)" shadow>
-    <img :src="icons.list" height="20" class="invert" alt="icon_list" />
+    <img :src="icons.list" width="20" height="20" class="invert" alt="icon_list" />
   </D4Btn>
   <div>
     <div class="row justify-center items-center">

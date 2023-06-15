@@ -221,7 +221,7 @@ const update = (quality?: Array<string>) => {
                   </div>
                   <q-btn :disable="disable" dense unelevated flat round aria-label="Tradurs Close Button" size="xs"
                     :tabindex="-1" class="q-ml-sm" @click="removeProperty(pid)">
-                    <img class="icon" width="13" :src="icons.close" alt="icon_close" />
+                    <img class="icon" width="13" height="13" :src="icons.close" alt="icon_close" />
                   </q-btn>
                 </div>
               </div>
@@ -259,7 +259,7 @@ const update = (quality?: Array<string>) => {
                   </div>
                   <q-btn :disable="disable" dense unelevated flat round aria-label="Tradurs Close Button" size="xs"
                     :tabindex="-1" class="q-ml-sm" @click="removeAffix(aid)">
-                    <img class="icon" width="13" :src="icons.close" alt="icon_close" />
+                    <img class="icon" width="13" height="13" :src="icons.close" alt="icon_close" />
                   </q-btn>
                 </div>
               </div>
@@ -293,7 +293,7 @@ const update = (quality?: Array<string>) => {
                   </div>
                   <q-btn :disable="disable" dense unelevated flat round aria-label="Tradurs Close Button" size="xs"
                     :tabindex="-1" class="q-ml-sm" @click="removeRestriction(rid)">
-                    <img class="icon" width="13" :src="icons.close" alt="icon_close" />
+                    <img class="icon" width="13" height="13" :src="icons.close" alt="icon_close" />
                   </q-btn>
                 </div>
               </div>

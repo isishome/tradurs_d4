@@ -196,7 +196,8 @@ defineExpose({ scrollEnd })
                   <template #option="scope">
                     <q-item v-bind="scope.itemProps">
                       <q-item-section avatar>
-                        <img :src="`/images/items/rune/${scope.opt.value}.webp`" width="24" alt="Tradurs Rune Image" />
+                        <img :src="`/images/items/rune/${scope.opt.value}.webp`" width="24" height="24"
+                          alt="Tradurs Rune Image" />
                       </q-item-section>
                       <q-item-section>
                         <q-item-label>{{ scope.opt.label }}</q-item-label>
@@ -274,7 +275,8 @@ defineExpose({ scrollEnd })
                           }) }}
                           </div>
                           <q-btn unelevated aria-label="Tradurs Close Button" class="no-hover icon" :ripple="false">
-                            <img :src="icons.close" width="24" @click="showItemImages = false" alt="icon_close" />
+                            <img :src="icons.close" width="24" height="24" @click="showItemImages = false"
+                              alt="icon_close" />
                           </q-btn>
                         </q-card-section>
                       </template>
@@ -473,14 +475,16 @@ defineExpose({ scrollEnd })
               </div>
               <div class="more-action">
                 <q-btn dense flat aria-label="Tradurs More Button" :ripple="false" class="no-hover" padding="0">
-                  <img class="icon" :src="icons.morevert" :width="$q.screen.lt.sm ? 16 : 20" alt="icon_more" />
+                  <img class="icon" :src="icons.morevert" :width="$q.screen.lt.sm ? 16 : 20"
+                    :height="$q.screen.lt.sm ? 16 : 20" alt="icon_more" />
                   <q-menu auto-close class="no-shadow" transition-show="none" transition-hide="none"
                     :transition-duration="0" :class="[$q.dark.isActive ? 'bg-grey-4' : 'bg-grey-9']">
                     <q-item v-if="as.signed" :class="[$q.dark.isActive ? 'text-grey-9' : 'text-grey-4']"
                       :dense="$q.screen.lt.sm" clickable @click="$emit('favorite', data.itemId, !data.favorite)">
                       <q-item-section side>
                         <img :class="{ 'invert': !$q.dark.isActive }"
-                          :src="data.favorite ? icons.unfavorite : icons.favorite" height="24" alt="icon_favorite" />
+                          :src="data.favorite ? icons.unfavorite : icons.favorite" width="24" height="24"
+                          alt="icon_favorite" />
                       </q-item-section>
                       <q-item-section>{{ data.favorite ? t('btn.unfavorite') : t('btn.favorite')
                       }}</q-item-section>
@@ -488,14 +492,16 @@ defineExpose({ scrollEnd })
                     <q-item v-if="as.signed" :class="[$q.dark.isActive ? 'text-grey-9' : 'text-grey-4']"
                       :dense="$q.screen.lt.sm" clickable @click="$emit('copy', data.itemId)">
                       <q-item-section side>
-                        <img :class="{ 'invert': !$q.dark.isActive }" :src="icons.copy" height="24" alt="icon_copy" />
+                        <img :class="{ 'invert': !$q.dark.isActive }" :src="icons.copy" width="24" height="24"
+                          alt="icon_copy" />
                       </q-item-section>
                       <q-item-section>{{ t('btn.copy') }}</q-item-section>
                     </q-item>
                     <q-item :class="[$q.dark.isActive ? 'text-grey-9' : 'text-grey-4']" :dense="$q.screen.lt.sm" clickable
                       @click="copy">
                       <q-item-section side>
-                        <img :class="{ 'invert': !$q.dark.isActive }" :src="icons.share" height="24" alt="icon_share" />
+                        <img :class="{ 'invert': !$q.dark.isActive }" :src="icons.share" width="24" height="24"
+                          alt="icon_share" />
                       </q-item-section>
                       <q-item-section>{{ t('btn.share') }}</q-item-section>
                     </q-item>

@@ -268,15 +268,15 @@ onUnmounted(() => {
 <template>
   <div class="row q-gutter-xs items-center sticky-first">
     <D4Btn round @click="prev" color="var(--q-magic)" :disable="!over || disable" shadow>
-      <img :src="icons.prev" height="24" class="invert" alt="icon_prev" />
+      <img :src="icons.prev" width="24" height="24" class="invert" alt="icon_prev" />
     </D4Btn>
     <D4Btn round @click="next" color="var(--q-magic)" :disable="!more || disable" shadow>
-      <img :src="icons.next" height="24" class="invert" alt="icon_next" />
+      <img :src="icons.next" width="24" height="24" class="invert" alt="icon_next" />
     </D4Btn>
   </div>
   <D4Btn v-if="as.signed" round @click="create" class="sticky-second" color="var(--q-secondary)" :disable="disable"
     shadow>
-    <img :src="icons.add" height="24" class="invert" alt="icon_add" />
+    <img :src="icons.add" width="24" height="24" class="invert" alt="icon_add" />
   </D4Btn>
   <div>
     <div class="row justify-center items-center">

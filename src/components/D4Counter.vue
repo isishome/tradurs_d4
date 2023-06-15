@@ -71,7 +71,7 @@ watch(() => props.modelValue, (val: number) => {
   <div class="no-wrap row items-center">
     <q-btn v-show="!$q.screen.lt.sm && !noButton" size="sm" flat dense round aria-label="Tradurs Remove Button"
       :disable="disable || parseInt(_quantity.toString()) < (allowZero ? 1 : 2)" @click="counting('dec')">
-      <img class="icon" width="17" :src="icons.remove" alt="icon_remove" />
+      <img class="icon" width="17" height="17" :src="icons.remove" alt="icon_remove" />
     </q-btn>
     <q-input v-model="_quantity" :label="label || t('price.quantity')" :style="`max-width:${maxWidth}`"
       input-class="text-center" :disable="disable" dense hide-bottom-space hide-hint no-error-icon outlined type="tel"
@@ -80,7 +80,7 @@ watch(() => props.modelValue, (val: number) => {
       @focus="focus" />
     <q-btn v-show="!$q.screen.lt.sm && !noButton" size="sm" flat dense round aria-label="Tradurs Add Button"
       :disable="disable || parseInt(_quantity.toString()) > (max - 1)" @click="counting('inc')">
-      <img class="icon" width="17" :src="icons.add" alt="icon_add" />
+      <img class="icon" width="17" height="17" :src="icons.add" alt="icon_add" />
     </q-btn>
   </div>
 </template>

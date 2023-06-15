@@ -79,7 +79,7 @@ const updateCurrency = (val: string | null): void => {
           <template #option="scope">
             <q-item v-bind="scope.itemProps">
               <q-item-section avatar>
-                <img :src="scope.opt.img" width="24" alt="Tradurs Rune Image" />
+                <img :src="scope.opt.img" width="24" height="24" alt="Tradurs Rune Image" />
               </q-item-section>
               <q-item-section>
                 <q-item-label>{{ scope.opt.label }}</q-item-label>
@@ -115,18 +115,20 @@ const updateCurrency = (val: string | null): void => {
       </div>
       <div v-else class="row items-center q-gutter-xs">
         <template v-if="data.currency === 'rune'">
-          <img :src="(runes().find(r => r.value === data.currencyValue) || {}).img" width="24" alt="Tradurs Rune Image" />
+          <img :src="(runes().find(r => r.value === data.currencyValue) || {}).img" width="24" height="24"
+            alt="Tradurs Rune Image" />
           <div class="q-ml-xs">{{ (runes().find(r => r.value === data.currencyValue) || {}).label }}</div>
         </template>
         <template v-else-if="data.currency === 'gold'">
-          <img class="coin" :src="icons.price" width="18" alt="icon_price" />
+          <img class="coin" :src="icons.price" width="18" height="18" alt="icon_price" />
           <div class="q-ml-xs">{{ n(Number.parseFloat(data.currencyValue ? data.currencyValue.toString() :
             '0'),
             'decimal')
           }}</div>
         </template>
         <template v-else>
-          <img :src="itemImgs[data.currency as keyof typeof itemImgs]" width="24" alt="Tradurs Currency Image" />
+          <img :src="itemImgs[data.currency as keyof typeof itemImgs]" width="24" height="24"
+            alt="Tradurs Currency Image" />
           <div>{{ findType(data.currency)?.label }}</div>
         </template>
         <template v-if="data.currency !== 'gold'">

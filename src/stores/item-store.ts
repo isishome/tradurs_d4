@@ -120,7 +120,7 @@ export const useItemStore = defineStore('item', {
     },
     detailItem: [] as Array<Item>,
     page: {
-      rows: 50 as number,
+      rows: 30 as number,
       over: false as boolean,
       more: false as boolean
     }

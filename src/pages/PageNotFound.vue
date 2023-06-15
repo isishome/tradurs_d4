@@ -11,7 +11,7 @@ const { t } = useI18n({ useScope: 'global' })
 <template>
   <div class="absolute-center column items-center q-gutter-sm full-width">
     <div class="row justify-center items-center q-gutter-sm">
-      <img class="logo" :src="$q.dark.isActive ? Logo : LogoLight" width="48" alt="Tradurs Logo Image" />
+      <img class="logo" :src="$q.dark.isActive ? Logo : LogoLight" width="48" height="48" alt="Tradurs Logo Image" />
       <div class="letter text-secondary">Tradurs</div>
     </div>
     <div class="text-h6">{{ t('page.pnf') }}

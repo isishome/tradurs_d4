@@ -135,23 +135,23 @@ onUnmounted(() => {
             behavior="menu" emit-value map-options options-dense style="min-width: 150px"
             :dropdown-icon="`img:${icons.dropdown}`" popup-content-class="d4-scroll" @update:model-value="setLang" />
           <q-btn round flat aria-label="Tradurs Theme Button" :ripple="!$q.dark.isActive" @click="setDark">
-            <img v-show="$q.dark.isActive" class="icon" width="24" :src="icons.light" alt="icon_light" />
-            <img v-show="!$q.dark.isActive" class="icon" width="24" :src="icons.dark" alt="icon_dark" />
+            <img v-show="$q.dark.isActive" class="icon" width="24" height="24" :src="icons.light" alt="icon_light" />
+            <img v-show="!$q.dark.isActive" class="icon" width="24" height="24" :src="icons.dark" alt="icon_dark" />
           </q-btn>
           <q-btn v-if="signed" round flat aria-label="Tradurs User Info Button" :ripple="!$q.dark.isActive">
-            <img class="icon" width="24" :src="icons.user" alt="icon_user" />
+            <img class="icon" width="24" height="24" :src="icons.user" alt="icon_user" />
             <q-menu anchor="bottom end" self="top end" transition-show="none" transition-hide="none"
               :transition-duration="0" style="min-width:260px">
               <D4User :data="as.info" info>
                 <template #actions>
-                <q-btn rounded aria-label="Tradurs Signout Button" color="secondary" :label="t('user.signout')"
-                  @click="sign" v-close-popup />
-                </template>
-              </D4User>
+                  <q-btn rounded aria-label="Tradurs Signout Button" color="secondary" :label="t('user.signout')"
+                    @click="sign" v-close-popup />
+              </template>
+            </D4User>
             </q-menu>
           </q-btn>
           <q-btn v-else round flat aria-label="Tradurs Login Button" :ripple="!$q.dark.isActive" @click="sign">
-            <img class="icon" width="24" :src="icons.login" alt="icon_login" />
+            <img class="icon" width="24" height="24" :src="icons.login" alt="icon_login" />
           </q-btn>
         </q-item>
         <q-separator />
@@ -162,10 +162,10 @@ onUnmounted(() => {
                 {{ t('page.tradeList') }}
               </q-item-label>
             </q-item-section>
-        </q-item>
-        <q-item v-if="as.signed" v-ripple clickable :to="{ name: 'messages' }" exact>
-            <q-item-section>
-              <q-item-label>
+          </q-item>
+          <q-item v-if="as.signed" v-ripple clickable :to="{ name: 'messages' }" exact>
+          <q-item-section>
+            <q-item-label>
                 {{ t('page.messages') }}
               </q-item-label>
             </q-item-section>
@@ -178,12 +178,13 @@ onUnmounted(() => {
         <div class="col-2 col-lg-3 row items-center">
           <q-btn class="gt-sm no-hover" dense flat aria-label="Tradurs Home Button" padding="0"
             :ripple="!$q.dark.isActive" @click="main">
-            <img v-show="$q.dark.isActive" src="~assets/logo.webp" height="48" alt="Tradurs Logo Image" />
-            <img v-show="!$q.dark.isActive" src="~assets/logo_light.webp" height="48" alt="Tradurs Light Logo Image" />
+            <img v-show="$q.dark.isActive" src="~assets/logo.webp" width="48" height="48" alt="Tradurs Logo Image" />
+            <img v-show="!$q.dark.isActive" src="~assets/logo_light.webp" width="48" height="48"
+              alt="Tradurs Light Logo Image" />
           </q-btn>
           <q-btn flat round aria-label="Tradurs Filter Button" class="lt-md" :ripple="!$q.dark.isActive"
             @click="leftDrawerOpen = !leftDrawerOpen">
-            <img :src="icons.filter" class="icon" width="24" alt="icon_filter" />
+            <img :src="icons.filter" class="icon" width="24" height="24" alt="icon_filter" />
           </q-btn>
         </div>
         <div class="col row items-center justify-between" :class="{ 'justify-center': $q.screen.lt.md }">
@@ -193,8 +194,9 @@ onUnmounted(() => {
               @keyup.enter="search()">
               <template v-if="$q.screen.lt.md" #prepend>
                 <q-icon>
-                  <img v-show="$q.dark.isActive" src="~assets/logo.webp" height="24" alt="Tradurs Logo Image" />
-                  <img v-show="!$q.dark.isActive" src="~assets/logo_light.webp" height="24"
+                  <img v-show="$q.dark.isActive" src="~assets/logo.webp" width="24" height="24"
+                    alt="Tradurs Logo Image" />
+                  <img v-show="!$q.dark.isActive" src="~assets/logo_light.webp" width="24" height="24"
                     alt="Tradurs Light Logo Image" />
                 </q-icon>
               </template>
@@ -217,12 +219,12 @@ onUnmounted(() => {
         <div class="lt-md col-2 col-sm-3 row justify-end q-gutter-sm">
           <q-btn round flat aria-label="Tradurs Morevert Button" :ripple="!$q.dark.isActive"
             @click="rightDrawerOpen = !rightDrawerOpen">
-            <img class="icon" width="24" :src="icons.morevert" alt="icon_morevert" />
+            <img class="icon" width="24" height="24" :src="icons.morevert" alt="icon_morevert" />
           </q-btn>
         </div>
         <div class="gt-sm col-4 col-lg-3 row justify-end items-center q-gutter-sm">
           <q-btn round flat aria-label="Tradurs Language Button" :ripple="!$q.dark.isActive">
-            <img class="icon" width="24" :src="icons.language" alt="icon_language" />
+            <img class="icon" width="24" height="24" :src="icons.language" alt="icon_language" />
             <q-menu auto-close class="no-shadow" anchor="bottom end" self="top end" transition-show="none"
               transition-hide="none" :transition-duration="0">
               <q-list bordered class="rounded-borders">
@@ -233,11 +235,11 @@ onUnmounted(() => {
             </q-menu>
           </q-btn>
           <q-btn round flat aria-label="Tradurs Theme Button" :ripple="!$q.dark.isActive" @click="setDark">
-            <img v-show="$q.dark.isActive" class="icon" width="24" :src="icons.light" alt="icon_light" />
-            <img v-show="!$q.dark.isActive" class="icon" width="24" :src="icons.dark" alt="icon_dark" />
+            <img v-show="$q.dark.isActive" class="icon" width="24" height="24" :src="icons.light" alt="icon_light" />
+            <img v-show="!$q.dark.isActive" class="icon" width="24" height="24" :src="icons.dark" alt="icon_dark" />
           </q-btn>
           <q-btn v-if="signed" round flat aria-label="Tradurs User Info Button" :ripple="!$q.dark.isActive">
-            <img class="icon" width="24" :src="icons.user" alt="icon_user" />
+            <img class="icon" width="24" height="24" :src="icons.user" alt="icon_user" />
             <q-menu anchor="bottom end" self="top end" transition-show="none" transition-hide="none"
               :transition-duration="0" style="min-width:280px">
               <D4User :data="as.info" info>
@@ -249,7 +251,7 @@ onUnmounted(() => {
             </q-menu>
           </q-btn>
           <q-btn v-else round flat aria-label="Tradurs Login Button" :ripple="!$q.dark.isActive" @click="sign">
-            <img class="icon" width="24" :src="icons.login" alt="icon_login" />
+            <img class="icon" width="24" height="24" :src="icons.login" alt="icon_login" />
           </q-btn>
         </div>
       </q-toolbar>
@@ -263,8 +265,8 @@ onUnmounted(() => {
               <div class="q-py-xl"></div>
             </div>
             <!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5110777286519562"
-                                                                                                                                                                                                                                                data-ad-slot="8610177982" data-ad-format="auto" data-full-width-responsive="true"
-                                                                                                                                                                                                                                                :data-adtest="prod ? 'off' : 'on'" :key="key"></ins> -->
+                                                                                                                                                                                                                                                                        data-ad-slot="8610177982" data-ad-format="auto" data-full-width-responsive="true"
+                                                                                                                                                                                                                                                                        :data-adtest="prod ? 'off' : 'on'" :key="key"></ins> -->
             <div class="q-py-xl"></div>
             <q-separator />
             <div class="q-pt-lg">
@@ -281,8 +283,8 @@ onUnmounted(() => {
             <div class="full-height q-px-lg q-py-xl" :style="`width:280px;height:${asideHeight}`">
               <div :style="`position:sticky;top:${asideTop}`">
                 <!-- <ins class="adsbygoogle" style="display:inline-block;width:160px;height:600px"
-                                                                                                                                                                                                                                                data-ad-client="ca-pub-5110777286519562" data-ad-slot="7240136439" :data-adtest="prod ? 'off' : 'on'"
-                                                                                                                                                                                                                                                :key="key"></ins> -->
+                                                                                                                                                                                                                                                                        data-ad-client="ca-pub-5110777286519562" data-ad-slot="7240136439" :data-adtest="prod ? 'off' : 'on'"
+                                                                                                                                                                                                                                                                        :key="key"></ins> -->
               </div>
             </div>
           </div>

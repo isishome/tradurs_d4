@@ -68,14 +68,14 @@ const notify = () => {
     <q-item class="avatar">
       <q-item-section>
         <q-avatar>
-          <img src="~/assets/avatar/boy-avatar.png" alt="Tradurs Avatar Image">
+          <img src="~/assets/avatar/boy-avatar.png" width="48" height="48" alt="Tradurs Avatar Image">
         </q-avatar>
       </q-item-section>
     </q-item>
     <q-item class="row items-center justify-between" style="padding-top:30px">
       <div class="col text-center">
         <div class="text-caption ellipsis">
-          <!-- <img width="24" src="~assets/tradurs.svg" alt="Tradurs Logo" /> -->
+          <!-- <img width="24" height="24" src="~assets/tradurs.svg" alt="Tradurs Logo" /> -->
           {{ t('user.yolk') }}
         </div>
         <div class="text-weight-bold text-amber-8 text-body2">{{ data.yolk }}</div>
@@ -83,7 +83,7 @@ const notify = () => {
       <q-separator vertical inset />
       <div class="col text-center">
         <div class="text-caption ellipsis">
-          <!-- <img width="24" src="~assets/tradurs.svg" alt="Tradurs Logo" /> -->
+          <!-- <img width="24" height="24" src="~assets/tradurs.svg" alt="Tradurs Logo" /> -->
           {{ t('user.temperature') }}
         </div>
         <div class="text-weight-bold text-body2">{{ data.temperature }}&#8451</div>
