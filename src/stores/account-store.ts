@@ -29,9 +29,9 @@ export const useAccountStore = defineStore('account', {
     }
   },
   actions: {
-    async checkSign() {
+    async checkSign(forced?: boolean) {
       return new Promise<void>((resolve, reject) => {
-        if (this.signed === null) {
+        if (this.signed === null || forced) {
           api.get('/account/signed')
             .then((response) => {
               this.info = response.data

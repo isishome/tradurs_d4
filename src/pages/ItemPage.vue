@@ -64,7 +64,7 @@ const upsertItem = (item: Item, done: Function) => {
       if (item.itemId !== '')
         is.detailItem.splice(0, 1, response)
       else {
-        as.info.yolk--
+        as.checkSign(true)
         is.clearFilter()
         router.push({ name: 'tradeList', query: { page: 1 } })
       }
@@ -96,7 +96,7 @@ const relistItem = (item: Item, done: Function) => {
   disable.value = true
   is.relistItem(item.itemId)
     .then(() => {
-      as.info.yolk--
+      as.checkSign(true)
       router.push({ name: 'tradeList' })
     })
     .catch(() => {

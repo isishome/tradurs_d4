@@ -46,7 +46,7 @@ const upsertItem = (item: Item, done: Function) => {
       if (findIndex !== -1)
         items.value.splice(findIndex, 1, item)
       else {
-        as.info.yolk--
+        as.checkSign(true)
         is.clearFilter()
         if (page.value !== 1)
           router.push({ name: 'tradeList', query: { page: 1 } })
@@ -92,7 +92,7 @@ const relistItem = (item: Item, done: Function) => {
     is.relistItem(item.itemId)
       .then(() => {
         const relistItem = items.value.splice(findIndex, 1)
-        as.info.yolk--
+        as.checkSign(true)
         items.value.unshift(...relistItem)
         itemsRef.value?.hideEditable()
         scrollPos()

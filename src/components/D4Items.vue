@@ -452,7 +452,8 @@ const makingOffer = (offer: Offer) => {
     .then((response) => {
       Object.assign(offer, response)
       const findOffer = offers.value.find(o => o.offerId === offer.offerId)
-      as.info.yolk--
+      as.checkSign(true)
+
       if (findOffer)
         Object.assign(findOffer, offer)
       else
