@@ -17,7 +17,7 @@ export default {
     title: 'BattleTag™ 입력',
     msg1: '',
     msg2: '의 정상적인 서비스 이용을 위해 Battle.net 에서 사용하는 BattleTag™를 입력해야 합니다.',
-    desc: '배틀 태그는 Tradurs 사용자 정보 페이지에서 언제나 수정 가능합니다',
+    desc: '배틀태그는 Tradurs 사용자 정보 페이지에서 언제나 수정 가능합니다',
     placeholder: '레비아탄#5112'
   },
   filter: {
