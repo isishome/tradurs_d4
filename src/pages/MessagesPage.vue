@@ -62,7 +62,8 @@ as.getMessages()
         </q-item-section>
         <q-item-section></q-item-section>
         <q-item-section side>
-          <q-btn no-caps push :disable="disable" unelevated color="grey-8" :label="t('btn.markRead')" @click="reads" />
+          <q-btn no-caps push :disable="disable" unelevated aria-label="Tradurs Read Button" color="grey-8"
+            :label="t('btn.markRead')" @click="reads" />
         </q-item-section>
       </q-item>
       <template v-for="message in messages" :key="message.msgId">
@@ -91,7 +92,7 @@ as.getMessages()
           <div v-show="message.show">
             <q-item class="q-pa-lg row justify-center items-center" style="background-color: var(--q-cloud);">
               <q-item-label>
-                <q-btn no-caps unelevated color="primary"
+                <q-btn no-caps unelevated aria-label="Tradurs Go Item Button" color="primary"
                   :to="{ name: 'itemInfo', params: { itemid: message.msgValue }, state: { offers: true } }">
                   {{ t('btn.gotoItem') }}
                 </q-btn>

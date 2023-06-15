@@ -55,7 +55,7 @@ const click = () => {
       :width="`${label ? label.length * textWidth + padding : 0}px`" :height="`${textHeight}px`"
       class="btn all-pointer-events" :class="{ round }" />
     <div v-show="!loading" class="btn-wrap" :class="{ 'frame': !round }">
-      <button :type="type" class="btn row items-center no-wrap all-pointer-events"
+      <button :type="type" aria-label="Tradurs Button" class="btn row items-center no-wrap all-pointer-events"
         :class="[{ round }, shadow ? `shadow-depth-${shadowDepth}` : '', props.progress ? 'progress' : 'cursor-pointer']"
         :style="`${bg}${tc}`" @click="click">
         <div class="label relative-position">

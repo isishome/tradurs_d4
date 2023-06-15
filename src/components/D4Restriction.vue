@@ -3,6 +3,7 @@ import { ref, computed, watch } from 'vue'
 import { QInput } from 'quasar'
 import { useItemStore, type Restriction } from 'stores/item-store'
 import { parse, focus } from 'src/common'
+import { icons } from 'src/common/icons'
 
 const props = defineProps({
   data: {
@@ -55,10 +56,10 @@ watch(() => props.data, (val) => {
           :rules="[val => !disable && (parseFloat(val) % 1 !== 0 || parseInt(val) % 1 === 0) || '']"
           @update:model-value="update" @focus="focus" />
       </template>
-      <q-btn v-show="editable" :disable="disable" dense unelevated flat round size="xs" :tabindex="-1" class="q-ml-sm"
-        @click="remove">
-        <img v-show="data.action !== 8" class="icon" width="13" src="~assets/icons/close.svg" />
-        <img v-show="data.action === 8" class="icon flip-horizontal" width="13" src="~assets/icons/restore.svg" />
+      <q-btn v-show="editable" :disable="disable" dense unelevated flat round aria-label="Tradurs Remove/Restore Button"
+        size="xs" :tabindex="-1" class="q-ml-sm" @click="remove">
+        <img v-show="data.action !== 8" class="icon" width="13" :src="icons.close" alt="icon_close" />
+        <img v-show="data.action === 8" class="icon flip-horizontal" width="13" :src="icons.refresh" alt="icon_restore" />
       </q-btn>
     </div>
   </div>

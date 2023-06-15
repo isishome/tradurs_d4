@@ -22,11 +22,13 @@ import favorite from 'assets/icons/favorite.svg'
 import unfavorite from 'assets/icons/unfavorite.svg'
 import copy from 'assets/icons/copy.svg'
 import share from 'assets/icons/share.svg'
+import filter from 'assets/icons/filter.svg'
 
 import buy from 'assets/icons/buy.svg'
 import sell from 'assets/icons/sell.svg'
 
 import help from 'assets/icons/help.svg'
+import more from 'assets/icons/more.svg'
 import morevert from 'assets/icons/morevert.svg'
 
 import light from 'assets/icons/light.svg'
@@ -61,9 +63,11 @@ export const icons = {
   unfavorite,
   copy,
   share,
+  filter,
   buy,
   sell,
   help,
+  more,
   morevert,
   light,
   dark,

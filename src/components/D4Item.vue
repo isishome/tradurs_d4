@@ -160,7 +160,8 @@ defineExpose({ scrollEnd })
             <div>
               <div class="row no-wrap items-center q-gutter-xs quality">
                 <q-btn :ripple="!$q.dark.isActive" v-for="q in filterQuality()" :key="q.value" :disable="disable" round
-                  unelevated :class="['text-weight-bold', { 'active': _quality === q.value }]" :label="q.label"
+                  unelevated aria-label="Tradurs Quality Button"
+                  :class="['text-weight-bold', { 'active': _quality === q.value }]" :label="q.label"
                   @click="updateQuality(q.value as string)" />
               </div>
             </div>
@@ -195,7 +196,7 @@ defineExpose({ scrollEnd })
                   <template #option="scope">
                     <q-item v-bind="scope.itemProps">
                       <q-item-section avatar>
-                        <img :src="`/images/items/rune/${scope.opt.value}.webp`" width="24" />
+                        <img :src="`/images/items/rune/${scope.opt.value}.webp`" width="24" alt="Tradurs Rune Image" />
                       </q-item-section>
                       <q-item-section>
                         <q-item-label>{{ scope.opt.label }}</q-item-label>
@@ -216,7 +217,8 @@ defineExpose({ scrollEnd })
                   <template #option="scope">
                     <q-item clickable @click="scope.toggleOption(scope.opt.value)">
                       <q-item-section avatar>
-                        <img height="36" :src="`/images/items/${_type}/${scope.opt.value}.webp`" />
+                        <img height="36" :src="`/images/items/${_type}/${scope.opt.value}.webp`"
+                          alt="Tradurs Aspect Image" />
                       </q-item-section>
                       <q-item-section>
                         <q-item-label class="ellipsis">{{ scope.opt.label }}</q-item-label>
@@ -248,7 +250,8 @@ defineExpose({ scrollEnd })
                     <template #option="scope">
                       <q-item clickable @click="scope.toggleOption(scope.opt.value)">
                         <q-item-section avatar>
-                          <img height="36" :src="`/images/items/${_type}/${_typeValue1}/${scope.opt.value}.webp`" />
+                          <img height="36" :src="`/images/items/${_type}/${_typeValue1}/${scope.opt.value}.webp`"
+                            alt="Tradurs Gem Image" />
                         </q-item-section>
                         <q-item-section>
                           <q-item-label class="ellipsis">{{ scope.opt.label }}</q-item-label>
@@ -258,9 +261,10 @@ defineExpose({ scrollEnd })
                   </q-select>
                 </div>
                 <div v-else>
-                  <q-btn dense glossy outline padding="4px 8px" color="primary" :ripple="false"
-                    class="no-hover rounded-borders" @click="showItemImages = true">
-                    <img height="32" :src="`/images/items/${_type}/${_typeValue1}/${_image}.webp`" />
+                  <q-btn dense glossy outline aria-label="Tradurs Thumbnail Button" padding="4px 8px" color="primary"
+                    :ripple="false" class="no-hover rounded-borders" @click="showItemImages = true">
+                    <img height="32" :src="`/images/items/${_type}/${_typeValue1}/${_image}.webp`"
+                      alt="Tradurs Item Thumbnail Image" />
                     <D4Dialog v-model="showItemImages" :no-route-dismiss="false">
                       <template #top>
                         <q-card-section class="row justify-between items-center q-ml-md">
@@ -269,8 +273,8 @@ defineExpose({ scrollEnd })
                               findClass(data.itemTypeValue1)?.label || findType(data.itemType)?.label
                           }) }}
                           </div>
-                          <q-btn unelevated class="no-hover icon" :ripple="false">
-                            <img :src="icons.close" width="24" @click="showItemImages = false" />
+                          <q-btn unelevated aria-label="Tradurs Close Button" class="no-hover icon" :ripple="false">
+                            <img :src="icons.close" width="24" @click="showItemImages = false" alt="icon_close" />
                           </q-btn>
                         </q-card-section>
                       </template>
@@ -282,7 +286,8 @@ defineExpose({ scrollEnd })
                               <q-card flat bordered class="item-image-card"
                                 :class="{ 'bg-primary-cloud': idx === data.imageId }">
                                 <q-card-section class="text-center no-padding">
-                                  <q-img style="width:90%" :src="`/images/items/${_type}/${_typeValue1}/${idx}.webp`" />
+                                  <q-img style="width:90%" :src="`/images/items/${_type}/${_typeValue1}/${idx}.webp`"
+                                    alt="Tradurs Item Image" />
                                 </q-card-section>
                               </q-card>
                             </div>
@@ -342,7 +347,7 @@ defineExpose({ scrollEnd })
       </q-card-section>
       <q-separator />
       <q-card-section class="tab row justify-end items-center">
-        <q-btn-toggle v-model="attribute" square flat no-caps :ripple="false"
+        <q-btn-toggle v-model="attribute" square flat no-caps aria-label="Tradurs Attribute Button" :ripple="false"
           :color="$q.dark.isActive ? 'grey-5' : 'grey-8'" :padding="$q.screen.lt.sm ? '8px 8px' : ''"
           :size="$q.screen.lt.sm ? '12px' : ''" toggle-color="transparent toggle" :options="attributes" />
       </q-card-section>
@@ -432,7 +437,7 @@ defineExpose({ scrollEnd })
       <q-card-section class="relative-position">
         <q-img v-show="!loading"
           :src="data.itemType === 'aspect' ? `/images/items/${data.itemType}/${data.itemTypeValue1}.webp` : data.itemTypeValue1 === 'gem' ? `/images/items/${data.itemType}/${data.itemTypeValue1}/${data.itemTypeValue2}.webp` : `/images/items/${data.itemType}/${data.itemTypeValue1}/${data.imageId}.webp`"
-          class="item-image" />
+          class="item-image" alt="Tradurs Item Image" />
         <div class="column justify-center items-end user-area" :class="{ 'q-gutter-xs': !$q.screen.lt.sm || loading }">
           <q-skeleton v-show="loading" width="50px" :height="$q.screen.lt.sm ? '16px' : '18px'" />
           <div v-show="!loading">{{
@@ -467,15 +472,15 @@ defineExpose({ scrollEnd })
                 <div>{{ data.quantity }}</div>
               </div>
               <div class="more-action">
-                <q-btn dense flat :ripple="false" class="no-hover" padding="0">
-                  <img class="icon" :src="icons.morevert" :width="$q.screen.lt.sm ? 16 : 20" />
+                <q-btn dense flat aria-label="Tradurs More Button" :ripple="false" class="no-hover" padding="0">
+                  <img class="icon" :src="icons.morevert" :width="$q.screen.lt.sm ? 16 : 20" alt="icon_more" />
                   <q-menu auto-close class="no-shadow" transition-show="none" transition-hide="none"
                     :transition-duration="0" :class="[$q.dark.isActive ? 'bg-grey-4' : 'bg-grey-9']">
                     <q-item v-if="as.signed" :class="[$q.dark.isActive ? 'text-grey-9' : 'text-grey-4']"
                       :dense="$q.screen.lt.sm" clickable @click="$emit('favorite', data.itemId, !data.favorite)">
                       <q-item-section side>
                         <img :class="{ 'invert': !$q.dark.isActive }"
-                          :src="data.favorite ? icons.unfavorite : icons.favorite" height="24" />
+                          :src="data.favorite ? icons.unfavorite : icons.favorite" height="24" alt="icon_favorite" />
                       </q-item-section>
                       <q-item-section>{{ data.favorite ? t('btn.unfavorite') : t('btn.favorite')
                       }}</q-item-section>
@@ -483,14 +488,14 @@ defineExpose({ scrollEnd })
                     <q-item v-if="as.signed" :class="[$q.dark.isActive ? 'text-grey-9' : 'text-grey-4']"
                       :dense="$q.screen.lt.sm" clickable @click="$emit('copy', data.itemId)">
                       <q-item-section side>
-                        <img :class="{ 'invert': !$q.dark.isActive }" :src="icons.copy" height="24" />
+                        <img :class="{ 'invert': !$q.dark.isActive }" :src="icons.copy" height="24" alt="icon_copy" />
                       </q-item-section>
                       <q-item-section>{{ t('btn.copy') }}</q-item-section>
                     </q-item>
                     <q-item :class="[$q.dark.isActive ? 'text-grey-9' : 'text-grey-4']" :dense="$q.screen.lt.sm" clickable
                       @click="copy">
                       <q-item-section side>
-                        <img :class="{ 'invert': !$q.dark.isActive }" :src="icons.share" height="24" />
+                        <img :class="{ 'invert': !$q.dark.isActive }" :src="icons.share" height="24" alt="icon_share" />
                       </q-item-section>
                       <q-item-section>{{ t('btn.share') }}</q-item-section>
                     </q-item>

@@ -568,9 +568,9 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
             </div>
           </template>
           <template #more="{ loading }">
-            <q-btn v-if="!item.expanded && !loading" flat text-color="black" class="more no-hover" padding="10px"
-              @click="expanded(item)">
-              <img class="icon" :height="$q.screen.lt.sm ? 24 : 36" src="~assets/icons/more.svg" />
+            <q-btn v-if="!item.expanded && !loading" flat aria-label="Tradurs More Button" text-color="black"
+              class="more no-hover" padding="10px" @click="expanded(item)">
+              <img class="icon" :height="$q.screen.lt.sm ? 24 : 36" :src="icons.more" alt="icon_more" />
             </q-btn>
           </template>
         </D4Item>
@@ -608,8 +608,9 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                 </q-item>
               </template>
             </q-select>
-            <q-btn size="sm" :disable="disable" unelevated flat dense round @click="createProperty">
-              <img class="icon" width="24" src="~assets/icons/add.svg" />
+            <q-btn size="sm" :disable="disable" unelevated flat dense round aria-label="Tradurs Add Button"
+              @click="createProperty">
+              <img class="icon" width="24" :src="icons.add" alt="icon_add" />
             </q-btn>
           </div>
         </template>
@@ -644,8 +645,9 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                 </q-item>
               </template>
             </q-select>
-            <q-btn size="sm" :disable="disable" unelevated flat dense round @click="createAffix">
-              <img class="icon" width="24" src="~assets/icons/add.svg" />
+            <q-btn size="sm" :disable="disable" unelevated flat dense round aria-label="Tradurs Add Button"
+              @click="createAffix">
+              <img class="icon" width="24" :src="icons.add" alt="icon_add" />
             </q-btn>
           </div>
         </template>
@@ -676,8 +678,9 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                 </q-item>
               </template>
             </q-select>
-            <q-btn size="sm" :disable="disable" unelevated flat dense round @click="createRestriction">
-              <img class="icon" width="24" src="~assets/icons/add.svg" />
+            <q-btn size="sm" :disable="disable" unelevated flat dense round aria-label="Tradurs Add Button"
+              @click="createRestriction">
+              <img class="icon" width="24" :src="icons.add" alt="icon_add" />
             </q-btn>
           </div>
         </template>
@@ -766,8 +769,8 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
       <q-card class="card-item dialog offers no-scroll normal">
         <div class="inner column no-wrap" :style="$q.screen.lt.sm ? 'height:100%' : 'min-height:50vh;max-height:90vh'">
           <q-card-section class="row justify-end no-padding">
-            <q-btn unelevated class="no-hover icon" :ripple="false">
-              <img :src="icons.close" width="24" @click="showOffers = false" />
+            <q-btn unelevated aria-label="Tradurs Close Button" class="no-hover icon" :ripple="false">
+              <img :src="icons.close" width="24" @click="showOffers = false" alt="icon_close" />
             </q-btn>
           </q-card-section>
           <q-card-section class="col d4-scroll">

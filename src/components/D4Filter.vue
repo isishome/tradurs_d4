@@ -121,8 +121,8 @@ const update = (quality?: Array<string>) => {
         <div class="row items-center q-gutter-sm">
           <q-checkbox size="xs" :disable="filterLoading" v-model="is.filter.hardcore" :label="t('item.hardcore')"
             @update:model-value="update()" />
-          <q-btn dense round flat size="xs" :ripple="false" class="no-hover" :disable="filterLoading"
-            @click="is.filter.hardcore = null; update()">
+          <q-btn dense round flat aria-label="Tradurs Close Button" size="xs" :ripple="false" class="no-hover"
+            :disable="filterLoading" @click="is.filter.hardcore = null; update()">
             <q-icon class="icon" :name="`img:${icons.close}`" />
           </q-btn>
         </div>
@@ -133,8 +133,8 @@ const update = (quality?: Array<string>) => {
         <div class="row items-center q-gutter-sm">
           <q-checkbox size="xs" :disable="filterLoading" v-model="is.filter.ladder" :label="t('item.ladder')"
             @update:model-value="update()" />
-          <q-btn dense round flat size="xs" :ripple="false" class="no-hover" :disable="filterLoading"
-            @click="is.filter.ladder = null; update()">
+          <q-btn dense round flat aria-label="Tradurs Close Button" size="xs" :ripple="false" class="no-hover"
+            :disable="filterLoading" @click="is.filter.ladder = null; update()">
             <q-icon class="icon" :name="`img:${icons.close}`" />
           </q-btn>
         </div>
@@ -219,9 +219,9 @@ const update = (quality?: Array<string>) => {
                   <div class="ellipsis">
                     {{ findProperty(pid as number)?.label }}
                   </div>
-                  <q-btn :disable="disable" dense unelevated flat round size="xs" :tabindex="-1" class="q-ml-sm"
-                    @click="removeProperty(pid)">
-                    <img class="icon" width="13" src="~assets/icons/close.svg" />
+                  <q-btn :disable="disable" dense unelevated flat round aria-label="Tradurs Close Button" size="xs"
+                    :tabindex="-1" class="q-ml-sm" @click="removeProperty(pid)">
+                    <img class="icon" width="13" :src="icons.close" alt="icon_close" />
                   </q-btn>
                 </div>
               </div>
@@ -257,9 +257,9 @@ const update = (quality?: Array<string>) => {
                   <div class="ellipsis">
                     {{ findAffix(aid as number)?.label }}
                   </div>
-                  <q-btn :disable="disable" dense unelevated flat round size="xs" :tabindex="-1" class="q-ml-sm"
-                    @click="removeAffix(aid)">
-                    <img class="icon" width="13" src="~assets/icons/close.svg" />
+                  <q-btn :disable="disable" dense unelevated flat round aria-label="Tradurs Close Button" size="xs"
+                    :tabindex="-1" class="q-ml-sm" @click="removeAffix(aid)">
+                    <img class="icon" width="13" :src="icons.close" alt="icon_close" />
                   </q-btn>
                 </div>
               </div>
@@ -291,9 +291,9 @@ const update = (quality?: Array<string>) => {
                   <div class="ellipsis">
                     {{ findRestriction(rid as number)?.label }}
                   </div>
-                  <q-btn :disable="disable" dense unelevated flat round size="xs" :tabindex="-1" class="q-ml-sm"
-                    @click="removeRestriction(rid)">
-                    <img class="icon" width="13" src="~assets/icons/close.svg" />
+                  <q-btn :disable="disable" dense unelevated flat round aria-label="Tradurs Close Button" size="xs"
+                    :tabindex="-1" class="q-ml-sm" @click="removeRestriction(rid)">
+                    <img class="icon" width="13" :src="icons.close" alt="icon_close" />
                   </q-btn>
                 </div>
               </div>
@@ -303,7 +303,8 @@ const update = (quality?: Array<string>) => {
       </q-item-section>
     </q-item>
     <q-item :inset-level=".3" class="q-mt-xl">
-      <q-btn outline size="md" :ripple="false" class="no-hover" :disable="filterLoading" @click="is.clearFilter">
+      <q-btn outline aria-label="Tradurs Refresh Button" size="md" :ripple="false" class="no-hover"
+        :disable="filterLoading" @click="is.clearFilter">
         <div class="row items-center q-gutter-xs">
           <div>{{ t('btn.resetSearch') }}</div>
           <q-icon class="icon" :name="`img:${icons.refresh}`" size="xs" />
