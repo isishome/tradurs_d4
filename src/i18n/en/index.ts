@@ -11,6 +11,7 @@ export default {
     tradeList: 'Trade List',
     itemInfo: 'Item Information',
     messages: 'Messages',
+    test: 'Test',
     pnf: 'Page not found'
   },
   battlenet: {

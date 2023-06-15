@@ -95,7 +95,8 @@ module.exports = configure(function (/* ctx */) {
       config: {
         dark: true,
         notify: {
-          position: 'top'
+          position: 'top',
+          classes: 'notify'
         }
       },
 

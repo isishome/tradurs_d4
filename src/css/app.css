@@ -193,3 +193,21 @@ body.body--dark {
 .allow-copy:hover {
   text-decoration: underline;
 }
+
+.notify {
+  background-color: #e0e0e0 !important;
+  color: #424242 !important;
+}
+
+.notify .q-notification__actions {
+  color: #424242 !important;
+}
+
+.body--light .notify {
+  background-color: #424242 !important;
+  color: #e0e0e0 !important;
+}
+
+.body--light .notify .q-notification__actions {
+  color: #e0e0e0 !important;
+}

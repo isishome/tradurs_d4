@@ -11,6 +11,7 @@ export default {
     tradeList: '거래 목록',
     itemInfo: '아이템 정보',
     messages: '메시지',
+    test: '테스트',
     pnf: '페이지를 찾을 수 없습니다'
   },
   battlenet: {

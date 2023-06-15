@@ -85,11 +85,13 @@ export default route(function ({ store }/* { store, ssrContext } */) {
     const as = useAccountStore(store)
     const is = useItemStore(store)
     const requireAuth = to.matched.find(route => route.meta.requireAuth)
+    const onlyTest = to.matched.find(route => route.meta.onlyTest)
 
     if (requireAuth && !as.info.id)
-      return {
-        path: '/'
-      }
+      return { path: '/' }
+
+    if (onlyTest && import.meta.env.PROD)
+      return { name: 'pnf' }
 
     if (as.info.id && !as.socket)
       initSocket(as, is)
