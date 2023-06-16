@@ -120,6 +120,10 @@ const click = () => {
   padding: inherit !important;
 }
 
+.round {
+  padding: 10px !important;
+}
+
 @media (max-width:600px) {
   .btn {
     padding: 4px 10px;
@@ -128,6 +132,10 @@ const click = () => {
   .body--dark .frame::after {
     border-image-width: 2px !important;
     border-image-slice: 10 !important;
+  }
+
+  .round {
+    padding: 6px !important;
   }
 }
 
@@ -194,10 +202,6 @@ const click = () => {
   border-image-width: 30px;
   pointer-events: none;
   filter: invert(50%);
-}
-
-.round {
-  padding: 10px !important;
 }
 
 .body--light .shadow-depth-5 {
