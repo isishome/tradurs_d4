@@ -76,13 +76,12 @@ const search = () => {
   }
 }
 
+const page = computed(() => route.query.page ? Number.parseInt(route.query.page.toString()) : 1)
 const main = () => {
-  as.position = { left: 0, top: 0 }
-
-  if (route.name === 'tradeList')
+  if (route.name === 'tradeList' && page.value === 1)
     router.go(0)
   else
-    router.push({ name: 'tradeList' })
+    router.push({ name: 'tradeList', query: { page: 1 } })
 }
 
 watch(() => route.name, (val, old) => {
@@ -146,9 +145,9 @@ onUnmounted(() => {
               :transition-duration="0" style="min-width:260px">
               <D4User :data="as.info" info>
                 <template #actions>
-                <q-btn rounded aria-label="Tradurs Signout Button" color="secondary" :label="t('user.signout')"
+                  <q-btn rounded aria-label="Tradurs Signout Button" color="secondary" :label="t('user.signout')"
                   @click="sign" v-close-popup />
-                </template>
+              </template>
               </D4User>
             </q-menu>
           </q-btn>
@@ -164,9 +163,9 @@ onUnmounted(() => {
                 {{ t('page.tradeList') }}
               </q-item-label>
             </q-item-section>
-        </q-item>
+          </q-item>
         <q-item v-if="as.signed" v-ripple clickable :to="{ name: 'messages' }" exact>
-            <q-item-section>
+          <q-item-section>
               <q-item-label>
                 {{ t('page.messages') }}
               </q-item-label>
@@ -267,8 +266,8 @@ onUnmounted(() => {
               <div class="q-py-xl"></div>
             </div>
             <!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5110777286519562"
-                                                                                                                                                                                                                                                                                        data-ad-slot="8610177982" data-ad-format="auto" data-full-width-responsive="true"
-                                                                                                                                                                                                                                                                                        :data-adtest="prod ? 'off' : 'on'" :key="key"></ins> -->
+                                                                                                                                                                                                                                                                                                                data-ad-slot="8610177982" data-ad-format="auto" data-full-width-responsive="true"
+                                                                                                                                                                                                                                                                                                                :data-adtest="prod ? 'off' : 'on'" :key="key"></ins> -->
             <div class="q-py-xl"></div>
             <q-separator />
             <div class="q-pt-lg">
@@ -285,8 +284,8 @@ onUnmounted(() => {
             <div class="full-height q-px-lg q-py-xl" :style="`width:280px;height:${asideHeight}`">
               <div :style="`position:sticky;top:${asideTop}`">
                 <!-- <ins class="adsbygoogle" style="display:inline-block;width:160px;height:600px"
-                                                                                                                                                                                                                                                                                        data-ad-client="ca-pub-5110777286519562" data-ad-slot="7240136439" :data-adtest="prod ? 'off' : 'on'"
-                                                                                                                                                                                                                                                                                        :key="key"></ins> -->
+                                                                                                                                                                                                                                                                                                                data-ad-client="ca-pub-5110777286519562" data-ad-slot="7240136439" :data-adtest="prod ? 'off' : 'on'"
+                                                                                                                                                                                                                                                                                                                :key="key"></ins> -->
               </div>
             </div>
           </div>

@@ -258,6 +258,7 @@ watch(filter, (val, old) => {
 })
 
 onMounted(() => {
+  as.position = { top: 0, left: 0 }
   getList()
 })
 
