@@ -129,7 +129,7 @@
   }
 
   .card-item {
-    font-size: 10px;
+    font-size: 12px;
   }
 
   .card-item .q-card__section--vert {
@@ -450,7 +450,7 @@
 
 @media (max-width:600px) {
   .hardcore-ladder {
-    font-size: 8px;
+    line-height: 15px;
   }
 }
 

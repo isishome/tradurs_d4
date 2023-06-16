@@ -199,7 +199,7 @@ body.body--dark {
   color: #424242 !important;
 }
 
-.notify .q-notification__actions {
+.notify .q-btn {
   color: #424242 !important;
 }
 
@@ -208,6 +208,6 @@ body.body--dark {
   color: #e0e0e0 !important;
 }
 
-.body--light .notify .q-notification__actions {
+.body--light .notify .q-btn {
   color: #e0e0e0 !important;
 }

@@ -53,6 +53,7 @@ export default boot(({ app, ssrContext, store }) => {
       Notify.create({
         icon: `img:${icons.alert}`,
         color: 'negative',
+        classes: '',
         message: message,
         timeout: 3000
       })
