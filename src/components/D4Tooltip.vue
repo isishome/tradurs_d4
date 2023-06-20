@@ -1,12 +1,58 @@
 <script setup lang="ts">
 import { useQuasar } from 'quasar'
 
+interface IProps {
+  anchor?: 'top left'
+  | 'top middle'
+  | 'top right'
+  | 'top start'
+  | 'top end'
+  | 'center left'
+  | 'center middle'
+  | 'center right'
+  | 'center start'
+  | 'center end'
+  | 'bottom left'
+  | 'bottom middle'
+  | 'bottom right'
+  | 'bottom start'
+  | 'bottom end'
+  | undefined,
+  self?: 'top left'
+  | 'top middle'
+  | 'top right'
+  | 'top start'
+  | 'top end'
+  | 'center left'
+  | 'center middle'
+  | 'center right'
+  | 'center start'
+  | 'center end'
+  | 'bottom left'
+  | 'bottom middle'
+  | 'bottom right'
+  | 'bottom start'
+  | 'bottom end'
+  | undefined,
+  transitionHide?: string | undefined,
+  transitionShow?: string | undefined,
+  offset?: [number, number]
+}
+
+withDefaults(defineProps<IProps>(), {
+  anchor: 'center right',
+  self: 'center left',
+  transitionHide: 'jump-right',
+  transitionShow: 'jump-left',
+  offset: () => [10, 10]
+})
+
 const $q = useQuasar()
 </script>
 <template>
   <q-tooltip v-if="!$q.platform.is.mobile"
-    :class="['q-pa-md', $q.dark.isActive ? 'bg-grey-4 text-grey-9' : 'bg-grey-9 text-grey-4']" anchor="center right"
-    self="center left" :offset="[10, 0]" transition-hide="jump-right" transition-show="jump-left">
+    :class="['q-pa-md', $q.dark.isActive ? 'bg-grey-4 text-grey-9' : 'bg-grey-9 text-grey-4']" :anchor="anchor"
+    :self="self" :offset="offset" :transition-hide="transitionHide" :transition-show="transitionShow">
     <slot name="default">
     </slot>
   </q-tooltip>

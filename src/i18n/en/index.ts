@@ -156,5 +156,6 @@ export default {
   },
   notFound: {
     gotoMain: 'Go to main page'
-  }
+  },
+  contactUs: 'Contact US'
 }

@@ -154,5 +154,6 @@ export default {
   },
   notFound: {
     gotoMain: '메인 페이지로'
-  }
+  },
+  contactUs: '문의하기'
 }

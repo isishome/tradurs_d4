@@ -12,6 +12,7 @@ import { checkName } from 'src/common'
 
 import D4Filter from 'components/D4Filter.vue'
 import D4User from 'components/D4User.vue'
+import D4Tooltip from 'components/D4Tooltip.vue'
 
 const prod: boolean = import.meta.env.PROD
 
@@ -224,6 +225,16 @@ onUnmounted(() => {
           </q-btn>
         </div>
         <div class="gt-sm col-4 col-lg-3 row justify-end items-center q-gutter-sm">
+          <q-btn round flat aria-label="Tradurs Support Button" :ripple="!$q.dark.isActive" type="a"
+            href="mailto:serasomething@gmail.com">
+            <img class="icon" width="24" height="24" :src="icons.help" alt="icon_support" />
+            <D4Tooltip anchor="bottom middle" self="top middle" transition-show="jump-down" transition-hide="jump-up"
+              :offset="[0, 14]">
+              <div class="text-caption break-keep" style="max-width:200px">
+                {{ t('contactUs') }}
+              </div>
+            </D4Tooltip>
+          </q-btn>
           <q-btn round flat aria-label="Tradurs Language Button" :ripple="!$q.dark.isActive">
             <img class="icon" width="24" height="24" :src="icons.language" alt="icon_language" />
             <q-menu auto-close class="no-shadow" anchor="bottom end" self="top end" transition-show="none"
