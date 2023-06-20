@@ -132,10 +132,20 @@ onUnmounted(() => {
     <q-drawer show-if-above bordered v-model="rightDrawerOpen" side="right" behavior="mobile"
       class="row justify-start scroll" :width="300">
       <q-list class="column full-height" style="width:300px">
-        <q-item class="row justify-end q-gutter-sm q-pa-lg">
+        <q-item class="row justify-end q-gutter-xs q-py-lg">
           <q-select v-model="locale" :options="localeOptions" :label="t('language', 0, { locale: brLoc })" dense outlined
-            behavior="menu" emit-value map-options options-dense style="min-width: 150px"
+            behavior="menu" emit-value map-options options-dense style="min-width: 120px"
             :dropdown-icon="`img:${icons.dropdown}`" popup-content-class="d4-scroll" @update:model-value="setLang" />
+          <q-btn round flat aria-label="Tradurs Support Button" :ripple="!$q.dark.isActive" type="a"
+            href="mailto:serasomething@gmail.com">
+            <img class="icon" width="24" height="24" :src="icons.help" alt="icon_support" />
+            <D4Tooltip anchor="bottom middle" self="top middle" transition-show="jump-down" transition-hide="jump-up"
+              :offset="[0, 14]">
+              <div class="text-caption break-keep" style="max-width:200px">
+                {{ t('contactUs') }}
+              </div>
+            </D4Tooltip>
+          </q-btn>
           <q-btn round flat aria-label="Tradurs Theme Button" :ripple="!$q.dark.isActive" @click="setDark">
             <img v-show="$q.dark.isActive" class="icon" width="24" height="24" :src="icons.light" alt="icon_light" />
             <img v-show="!$q.dark.isActive" class="icon" width="24" height="24" :src="icons.dark" alt="icon_dark" />
@@ -224,7 +234,7 @@ onUnmounted(() => {
             <img class="icon" width="24" height="24" :src="icons.morevert" alt="icon_morevert" />
           </q-btn>
         </div>
-        <div class="gt-sm col-4 col-lg-3 row justify-end items-center q-gutter-sm">
+        <div class="gt-sm col-4 col-lg-3 row justify-end items-center q-gutter-xs">
           <q-btn round flat aria-label="Tradurs Support Button" :ripple="!$q.dark.isActive" type="a"
             href="mailto:serasomething@gmail.com">
             <img class="icon" width="24" height="24" :src="icons.help" alt="icon_support" />
