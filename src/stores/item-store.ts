@@ -1,8 +1,10 @@
 import { defineStore } from 'pinia'
 import { api } from 'boot/axios'
 import { i18n } from 'boot/i18n'
+import { createWorker, ImageLike } from 'tesseract.js'
 import { Item, Offer } from 'src/types/item'
 import { sleep } from 'src/common'
+
 
 export interface ILabel {
   value: number | string,
@@ -477,6 +479,22 @@ export const useItemStore = defineStore('item', {
             reject(e)
           })
       })
+    },
+    async recognize(image: ImageLike) {
+      const worker = await createWorker({
+        logger: m => console.log(m)
+      })
+
+
+      await worker.loadLanguage('eng+kor')
+      await worker.initialize('eng+kor')
+      await worker.setParameters({
+        preserve_interword_spaces: '1'
+      })
+      const { data: { text } } = await worker.recognize(image)
+      await worker.terminate()
+      const parsedText = text.replace(/[^0-9가-힣\%\+\s\/\.\[\]\-\,\:\n]/gi, '')
+      return parsedText
     }
   }
 })

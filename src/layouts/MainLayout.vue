@@ -146,8 +146,8 @@ onUnmounted(() => {
               <D4User :data="as.info" info>
                 <template #actions>
                   <q-btn rounded aria-label="Tradurs Signout Button" color="secondary" :label="t('user.signout')"
-                  @click="sign" v-close-popup />
-              </template>
+                    @click="sign" v-close-popup />
+                </template>
               </D4User>
             </q-menu>
           </q-btn>
@@ -164,8 +164,8 @@ onUnmounted(() => {
               </q-item-label>
             </q-item-section>
           </q-item>
-        <q-item v-if="as.signed" v-ripple clickable :to="{ name: 'messages' }" exact>
-          <q-item-section>
+          <q-item v-if="as.signed" v-ripple clickable :to="{ name: 'messages' }" exact>
+            <q-item-section>
               <q-item-label>
                 {{ t('page.messages') }}
               </q-item-label>
