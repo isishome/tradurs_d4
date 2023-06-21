@@ -85,7 +85,7 @@ export class Item implements IItem {
   public statusCode = '000'
   public name = ''
   public quantity = 1
-  public quality = 'normal'
+  public quality = 'rare'
   public itemType = ''
   public itemTypeValue1 = ''
   public itemTypeValue2 = ''

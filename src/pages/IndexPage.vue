@@ -175,6 +175,7 @@ const getList = (filter?: any) => {
   items.value =
     Array.from({ length: 3 }, () => {
       const item = new Item()
+      item.quality = 'normal'
       item.loading = true
       item.user.loading = true
       item.price.loading = true

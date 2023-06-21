@@ -180,7 +180,7 @@ export const useItemStore = defineStore('item', {
       return (word?: string): Array<Affix> => word ? state.affixes.data.filter(a => a.label.toLowerCase().indexOf(word.toLowerCase()) !== -1) : state.affixes.data
     },
     filterRestrictions: (state) => {
-      return (word?: string): Array<Restriction> => word ? state.restrictions.data.filter(a => a.label.toLowerCase().indexOf(word.toLowerCase()) !== -1) : state.restrictions.data
+      return (word?: string): Array<Restriction> => word ? state.restrictions.data.filter(r => r.label.toLowerCase().indexOf(word.toLowerCase()) !== -1) : state.restrictions.data
     },
     findProperty: (state) => {
       return (propertyId: number): Property | undefined => state.properties.data.find(p => p.value === propertyId)

@@ -26,7 +26,11 @@ export default {
     type: 'Type(s)',
     advanced: 'Advanced Filter',
     mine: 'My Items',
-    offer: 'My Offerd Items'
+    offer: 'My Offerd Items',
+    description: {
+      advanced: 'When using advanced filters, distinguish between \'Characteristics\' and \'Affixes\'',
+      advanced2: 'Occasionally, sellers may incorrectly enter \'Characteristics\' and \'Affixes\', so consider filtering'
+    }
   },
   noItem: 'No items available for trade',
   trade: 'Trade',

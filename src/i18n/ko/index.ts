@@ -26,7 +26,11 @@ export default {
     type: '종류',
     advanced: '고급 필터',
     mine: '내 아이템',
-    offer: '제안 요청 아이템'
+    offer: '제안 요청 아이템',
+    description: {
+      advanced: '고급 필터 사용 시 \'고유 특성\'과 \'옵션\'을 구분해서 사용하세요',
+      advanced2: '간혹 판매자가 \'고유 특성\'과 \'옵션\'을 잘못 입력하는 경우가 있으니 고려하여 필터 하세요'
+    }
   },
   noItem: '거래 가능한 아이템이 없습니다',
   seller: '판매자',

@@ -79,6 +79,7 @@ const send = () => {
               $q.notify({
                 icon: `img:${icons.check}`,
                 color: 'positive',
+                classes: '',
                 message: t('contact.success')
               })
               contact.show = false
@@ -168,13 +169,12 @@ onUnmounted(() => {
           <q-select v-model="locale" :options="localeOptions" :label="t('language', 0, { locale: brLoc })" dense outlined
             behavior="menu" emit-value map-options options-dense style="min-width: 120px"
             :dropdown-icon="`img:${icons.dropdown}`" popup-content-class="d4-scroll" @update:model-value="setLang" />
-          <q-btn round flat aria-label="Tradurs Support Button" :ripple="!$q.dark.isActive" type="a"
-            href="mailto:serasomething@gmail.com">
+          <q-btn round flat aria-label="Tradurs Support Button" :ripple="!$q.dark.isActive" @click="contact.show = true">
             <img class="icon" width="24" height="24" :src="icons.help" alt="icon_support" />
             <D4Tooltip anchor="bottom middle" self="top middle" transition-show="jump-down" transition-hide="jump-up"
-              :offset="[0, 10]" desktop>
+              :offset="[0, 10]" behavior="desktop">
               <div class="text-caption break-keep" style="max-width:200px">
-                {{ t('contactUs') }}
+                {{ t('contact.title') }}
               </div>
             </D4Tooltip>
           </q-btn>
@@ -353,7 +353,7 @@ onUnmounted(() => {
     </template>
     <template #middle>
       <div class="q-pa-md">
-        <q-input outlined dense no-error-icon hide-bottom-space :autofocus="$q.platform.is.desktop" rows="20"
+        <q-input outlined dense no-error-icon hide-bottom-space :autofocus="$q.platform.is.desktop" rows="10"
           type="textarea" input-class="d4-scroll" :label="t('contact.contents')" v-model="contact.contents"
           :rules="[val => val && val.length > 10 || '']" maxlength="500">
           <template #counter>

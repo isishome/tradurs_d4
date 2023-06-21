@@ -5,6 +5,10 @@ import { useAccountStore } from 'src/stores/account-store'
 import { useItemStore } from 'src/stores/item-store'
 import { useI18n } from 'vue-i18n'
 import { icons } from 'src/common/icons'
+import NotifyEn from 'assets/filter/notify_en.webp'
+import NotifyKo from 'assets/filter/notify_ko.webp'
+
+import D4Tooltip from 'components/D4Tooltip.vue'
 
 interface IProps {
   disable?: boolean
@@ -16,7 +20,7 @@ withDefaults(defineProps<IProps>(), {
 const $q = useQuasar()
 const as = useAccountStore()
 const is = useItemStore()
-const { t } = useI18n({ useScope: 'global' })
+const { t, locale } = useI18n({ useScope: 'global' })
 
 const filterQuality = is.filterQuality
 const filterTypes = is.filterTypes
@@ -185,7 +189,23 @@ const update = (quality?: Array<string>) => {
     </q-item>
     <q-item>
       <q-item-section>
-        <q-item-label header>{{ t('filter.advanced') }}</q-item-label>
+        <q-item-label header class="row items-center q-gutter-xs">
+          <div>
+            {{ t('filter.advanced') }}
+          </div>
+          <q-icon class="icon" :name="`img:${icons.help}`" size="19px">
+            <D4Tooltip>
+              <div style="max-width:200px">
+                <div class="text-subtitle2 text-weight-bold">{{ t('filter.description.advanced') }} </div>
+                <div class="text-center full-width">
+                  <img class="q-py-lg" :src="locale === 'ko' ? NotifyKo : NotifyEn" width="200" />
+                </div>
+                <div class="text-caption text-weight-bold">{{ t('filter.description.advanced2') }}
+                </div>
+              </div>
+            </D4Tooltip>
+          </q-icon>
+        </q-item-label>
         <q-item-label class="q-px-md">
           <div class="column q-gutter-md">
             <div style="width:200px">
