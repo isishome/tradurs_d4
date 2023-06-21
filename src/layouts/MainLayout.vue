@@ -1,17 +1,19 @@
 <script setup lang="ts">
 import { AxiosInstance } from 'axios'
-import { ref, computed, watch, onMounted, onUnmounted, nextTick, inject } from 'vue'
+import { ref, computed, reactive, watch, onMounted, onUnmounted, nextTick, inject } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useQuasar, Screen, uid } from 'quasar'
 import { useI18n } from 'vue-i18n'
 
 import { useAccountStore } from 'stores/account-store'
 import { useItemStore } from 'stores/item-store'
+import { useGlobalStore } from 'stores/global-store'
 import { icons } from 'src/common/icons'
 import { checkName } from 'src/common'
 
 import D4Filter from 'components/D4Filter.vue'
 import D4User from 'components/D4User.vue'
+import D4Dialog from 'components/D4Dialog.vue'
 import D4Tooltip from 'components/D4Tooltip.vue'
 
 const prod: boolean = import.meta.env.PROD
@@ -22,6 +24,7 @@ const router = useRouter()
 const $q = useQuasar()
 const as = useAccountStore()
 const is = useItemStore()
+const gs = useGlobalStore()
 const { t, locale } = useI18n({ useScope: 'global' })
 
 const filterLoading = computed(() => is.filter.loading)
@@ -59,6 +62,35 @@ const setLang = (lang: string) => {
 const setDark = () => {
   $q.dark.set(!$q.dark.isActive)
   $q.cookies.set('d4.dark', $q.dark.isActive.toString())
+}
+
+const contact = reactive<{ show: boolean, contents: string | null, disable: boolean }>({
+  show: false,
+  contents: null,
+  disable: false
+})
+const send = () => {
+  if (window?.grecaptcha) {
+    window.grecaptcha.ready(() => {
+      window.grecaptcha.execute('6Lf38rYmAAAAAB-ET1oihMUkcDumRascvVHOyGmg', { action: 'submit' })
+        .then((token: string) => {
+          gs.contactUs(token, contact.contents)
+            .then(() => {
+              $q.notify({
+                icon: `img:${icons.check}`,
+                color: 'positive',
+                message: t('contact.success')
+              })
+              contact.show = false
+            })
+        })
+    })
+  }
+}
+
+const close = () => {
+  contact.contents = null
+  contact.disable = false
 }
 
 const key = ref(uid())
@@ -140,7 +172,7 @@ onUnmounted(() => {
             href="mailto:serasomething@gmail.com">
             <img class="icon" width="24" height="24" :src="icons.help" alt="icon_support" />
             <D4Tooltip anchor="bottom middle" self="top middle" transition-show="jump-down" transition-hide="jump-up"
-              :offset="[0, 14]">
+              :offset="[0, 10]" desktop>
               <div class="text-caption break-keep" style="max-width:200px">
                 {{ t('contactUs') }}
               </div>
@@ -235,13 +267,12 @@ onUnmounted(() => {
           </q-btn>
         </div>
         <div class="gt-sm col-4 col-lg-3 row justify-end items-center q-gutter-xs">
-          <q-btn round flat aria-label="Tradurs Support Button" :ripple="!$q.dark.isActive" type="a"
-            href="mailto:serasomething@gmail.com">
+          <q-btn round flat aria-label="Tradurs Support Button" :ripple="!$q.dark.isActive" @click="contact.show = true">
             <img class="icon" width="24" height="24" :src="icons.help" alt="icon_support" />
             <D4Tooltip anchor="bottom middle" self="top middle" transition-show="jump-down" transition-hide="jump-up"
-              :offset="[0, 14]">
+              :offset="[0, 10]" behavior="desktop">
               <div class="text-caption break-keep" style="max-width:200px">
-                {{ t('contactUs') }}
+                {{ t('contact.title') }}
               </div>
             </D4Tooltip>
           </q-btn>
@@ -287,8 +318,8 @@ onUnmounted(() => {
               <div class="q-py-xl"></div>
             </div>
             <!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5110777286519562"
-                                                                                                                                                                                                                                                                                                                data-ad-slot="8610177982" data-ad-format="auto" data-full-width-responsive="true"
-                                                                                                                                                                                                                                                                                                                :data-adtest="prod ? 'off' : 'on'" :key="key"></ins> -->
+              data-ad-slot="8610177982" data-ad-format="auto" data-full-width-responsive="true"
+              :data-adtest="prod ? 'off' : 'on'" :key="key"></ins> -->
             <div class="q-py-xl"></div>
             <q-separator />
             <div class="q-pt-lg">
@@ -305,8 +336,8 @@ onUnmounted(() => {
             <div class="full-height q-px-lg q-py-xl" :style="`width:280px;height:${asideHeight}`">
               <div :style="`position:sticky;top:${asideTop}`">
                 <!-- <ins class="adsbygoogle" style="display:inline-block;width:160px;height:600px"
-                                                                                                                                                                                                                                                                                                                data-ad-client="ca-pub-5110777286519562" data-ad-slot="7240136439" :data-adtest="prod ? 'off' : 'on'"
-                                                                                                                                                                                                                                                                                                                :key="key"></ins> -->
+                  data-ad-client="ca-pub-5110777286519562" data-ad-slot="7240136439" :data-adtest="prod ? 'off' : 'on'"
+                  :key="key"></ins> -->
               </div>
             </div>
           </div>
@@ -314,6 +345,31 @@ onUnmounted(() => {
       </q-page>
     </q-page-container>
   </q-layout>
+  <D4Dialog v-model="contact.show" @submit="send" @hide="close">
+    <template #top>
+      <div class="q-pa-md text-h6">
+        {{ t('contact.title') }}
+      </div>
+    </template>
+    <template #middle>
+      <div class="q-pa-md">
+        <q-input outlined dense no-error-icon hide-bottom-space :autofocus="$q.platform.is.desktop" rows="20"
+          type="textarea" input-class="d4-scroll" :label="t('contact.contents')" v-model="contact.contents"
+          :rules="[val => val && val.length > 10 || '']" maxlength="500">
+          <template #counter>
+            {{ contact.contents ? contact.contents.length : 0 }} / 500
+          </template>
+        </q-input>
+      </div>
+    </template>
+    <template #bottom>
+      <div class="row justify-end q-pa-md q-gutter-sm">
+        <D4Btn :label="t('btn.cancel')" :disable="contact.disable" color="rgb(150,150,150)"
+          @click="contact.show = false" />
+        <D4Btn :label="t('contact.send')" type="submit" />
+      </div>
+    </template>
+  </D4Dialog>
 </template>
 <style scoped>
 .header {

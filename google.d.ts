@@ -2,6 +2,7 @@ export { };
 
 declare global {
   interface Window {
-      adsbygoogle: any
+    adsbygoogle: any,
+    grecaptcha: any
   }
 }

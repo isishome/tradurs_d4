@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { api } from 'boot/axios'
 import { i18n } from 'src/boot/i18n'
 
 export const useGlobalStore = defineStore('global', {
@@ -11,7 +12,13 @@ export const useGlobalStore = defineStore('global', {
     },
   },
   actions: {
-    defaultAct: (param: string) => {
+    contactUs(token: string, contents: string | null) {
+      return new Promise<void>(async (resolve) => {
+        api.post('/d4/contact', { token, contents })
+          .then(() => {
+            resolve()
+          })
+      })
     }
   }
 })

@@ -155,5 +155,10 @@ export default {
   notFound: {
     gotoMain: '메인 페이지로'
   },
-  contactUs: '문의하기'
+  contact: {
+    title: '이메일 문의',
+    contents: '문의 내용',
+    send: '문의하기',
+    success: '문의 내용이 정상적으로 접수되었습니다'
+  }
 }

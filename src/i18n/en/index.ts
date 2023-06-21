@@ -157,5 +157,10 @@ export default {
   notFound: {
     gotoMain: 'Go to main page'
   },
-  contactUs: 'Contact US'
+  contact: {
+    title: 'Contact us by email',
+    contents: 'Content of inquiry',
+    send: 'Send',
+    success: 'Your inquiry was successfully received'
+  }
 }

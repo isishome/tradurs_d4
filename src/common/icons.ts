@@ -4,6 +4,7 @@ import legendary from 'assets/attribute_types/legendary.svg'
 import unique from 'assets/attribute_types/unique.svg'
 import socket from 'assets/attribute_types/socket.svg'
 
+import check from 'assets/icons/check.svg'
 import remove from 'assets/icons/remove.svg'
 import add from 'assets/icons/add.svg'
 import price from 'assets/icons/price.svg'
@@ -45,6 +46,7 @@ export const icons = {
   legendary,
   unique,
   socket,
+  check,
   remove,
   add,
   price,

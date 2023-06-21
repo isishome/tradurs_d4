@@ -36,7 +36,8 @@ interface IProps {
   | undefined,
   transitionHide?: string | undefined,
   transitionShow?: string | undefined,
-  offset?: [number, number]
+  offset?: [number, number],
+  behavior?: 'desktop' | 'mobile' | 'auto'
 }
 
 withDefaults(defineProps<IProps>(), {
@@ -44,19 +45,20 @@ withDefaults(defineProps<IProps>(), {
   self: 'center left',
   transitionHide: 'jump-right',
   transitionShow: 'jump-left',
-  offset: () => [10, 10]
+  offset: () => [10, 10],
+  behavior: 'auto'
 })
 
 const $q = useQuasar()
 </script>
 <template>
-  <q-tooltip v-if="!$q.platform.is.mobile"
+  <q-tooltip v-if="!$q.platform.is.mobile || behavior === 'desktop'"
     :class="['q-pa-md', $q.dark.isActive ? 'bg-grey-4 text-grey-9' : 'bg-grey-9 text-grey-4']" :anchor="anchor"
     :self="self" :offset="offset" :transition-hide="transitionHide" :transition-show="transitionShow">
     <slot name="default">
     </slot>
   </q-tooltip>
-  <q-popup-proxy v-else>
+  <q-popup-proxy v-else-if="behavior === 'mobile'">
     <div :class="['q-pa-md rounded-borders', $q.dark.isActive ? 'bg-grey-4 text-grey-9' : 'bg-grey-9 text-grey-4']">
       <slot name="default">
       </slot>

@@ -6,12 +6,6 @@ import { User } from 'src/types/user'
 import { i18n } from './i18n'
 import { icons } from 'src/common/icons'
 
-declare module '@vue/runtime-core' {
-  interface ComponentCustomProperties {
-    $axios: AxiosInstance
-  }
-}
-
 let api: AxiosInstance
 
 export default boot(({ app, ssrContext, store }) => {

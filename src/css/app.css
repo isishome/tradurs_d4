@@ -138,6 +138,7 @@ body.body--dark {
 }
 
 .d4-scroll {
+  resize: none !important;
   overflow-y: auto;
   min-height: 30px !important;
 }
@@ -210,4 +211,8 @@ body.body--dark {
 
 .body--light .notify .q-btn {
   color: #e0e0e0 !important;
+}
+
+.grecaptcha-badge {
+  visibility: hidden;
 }
