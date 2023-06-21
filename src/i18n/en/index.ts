@@ -132,7 +132,8 @@ export default {
     list: 'Offer List',
     accepted: 'Accepted',
     noOffer: 'No offers have been received',
-    updateOffer: 'The offer has been updated'
+    updateOffer: 'The offer has been updated',
+    retractOffer: 'The offer has been retracted'
   },
   accept: {
     title: 'Accept Offer',

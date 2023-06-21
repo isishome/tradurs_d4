@@ -501,6 +501,12 @@ const retractOffer = (offer: Offer) => {
   disableOffers.value = true
   is.retractOffer(offer.offerId)
     .then(() => {
+      $q.notify({
+        icon: `img:${icons.check}`,
+        color: 'positive',
+        classes: '',
+        message: t('offer.retractOffer')
+      })
       emit('update-only', offer.itemId)
       showOffers.value = false
     })

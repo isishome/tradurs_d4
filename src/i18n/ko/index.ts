@@ -131,7 +131,8 @@ export default {
     list: '제안 목록',
     accepted: '수락됨',
     noOffer: '받은 제안 내역이 없습니다',
-    updateOffer: '제안 내용이 수정되었습니다'
+    updateOffer: '제안 내용이 수정되었습니다',
+    retractOffer: '제안 철회되었습니다'
   },
   accept: {
     title: '제안 수락',
