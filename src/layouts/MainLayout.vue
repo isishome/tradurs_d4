@@ -70,6 +70,7 @@ const contact = reactive<{ show: boolean, contents: string | null, disable: bool
   disable: false
 })
 const send = () => {
+  contact.disable = true
   if (window?.grecaptcha) {
     window.grecaptcha.ready(() => {
       window.grecaptcha.execute('6Lf38rYmAAAAAB-ET1oihMUkcDumRascvVHOyGmg', { action: 'submit' })
@@ -84,9 +85,19 @@ const send = () => {
               })
               contact.show = false
             })
+            .catch(() => { })
+            .then(() => {
+              contact.disable = false
+            })
+        })
+        .catch(() => { })
+        .then(() => {
+          contact.disable = false
         })
     })
   }
+  else
+    contact.disable = false
 }
 
 const close = () => {
@@ -354,7 +365,7 @@ onUnmounted(() => {
       </q-page>
     </q-page-container>
   </q-layout>
-  <D4Dialog v-model="contact.show" @submit="send" @hide="close">
+  <D4Dialog v-model="contact.show" @submit="send" @hide="close" :persistent="contact.disable">
     <template #top>
       <div class="q-pa-md text-h6">
         {{ t('contact.title') }}
@@ -362,9 +373,10 @@ onUnmounted(() => {
     </template>
     <template #middle>
       <div class="q-pa-md">
-        <q-input outlined dense no-error-icon hide-bottom-space :autofocus="$q.platform.is.desktop" rows="10"
-          type="textarea" input-class="d4-scroll" :label="t('contact.contents')" v-model="contact.contents"
-          :rules="[val => val && val.length > 10 || '']" maxlength="500">
+        <q-input outlined dense no-error-icon hide-bottom-space :disable="contact.disable"
+          :autofocus="$q.platform.is.desktop" rows="10" type="textarea" input-class="d4-scroll"
+          :label="t('contact.contents')" v-model="contact.contents" :rules="[val => val && val.length > 10 || '']"
+          maxlength="500">
           <template #counter>
             {{ contact.contents ? contact.contents.length : 0 }} / 500
           </template>
@@ -375,7 +387,7 @@ onUnmounted(() => {
       <div class="row justify-end q-pa-md q-gutter-sm">
         <D4Btn :label="t('btn.cancel')" :disable="contact.disable" color="rgb(150,150,150)"
           @click="contact.show = false" />
-        <D4Btn :label="t('contact.send')" type="submit" />
+        <D4Btn :label="t('contact.send')" :loading="contact.disable" type="submit" />
       </div>
     </template>
   </D4Dialog>
