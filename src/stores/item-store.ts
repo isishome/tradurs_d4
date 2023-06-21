@@ -108,6 +108,7 @@ export const useItemStore = defineStore('item', {
       hardcore: null as boolean | null,
       ladder: null as boolean | null,
       available: false as boolean | null,
+      onlyCurrency: false as boolean | null,
       mine: false as boolean | null,
       offer: false as boolean | null,
       itemTypes: [] as Array<string>,
@@ -214,6 +215,7 @@ export const useItemStore = defineStore('item', {
       this.filter.hardcore = null
       this.filter.ladder = null
       this.filter.available = false
+      this.filter.onlyCurrency = false
       this.filter.itemTypes = []
       this.filter.itemTypeValues1 = {}
       this.filter.itemTypeValues2 = {}

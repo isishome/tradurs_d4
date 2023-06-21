@@ -109,6 +109,13 @@ const search = () => {
     is.filter.request++
   }
 }
+const clear = () => {
+  _name.value = ''
+  if (is.filter.name !== '') {
+    is.filter.name = _name.value
+    is.filter.request++
+  }
+}
 
 const page = computed(() => route.query.page ? Number.parseInt(route.query.page.toString()) : 1)
 const main = () => {
@@ -232,7 +239,7 @@ onUnmounted(() => {
           </q-btn>
         </div>
         <div class="col row items-center justify-between" :class="{ 'justify-center': $q.screen.lt.md }">
-          <div class="col-12 col-md-6">
+          <div class="col-12 col-md-6 row items-center q-gutter-xs">
             <q-input outlined dense no-error-icon hide-bottom-space v-model="_name" :label="t('item.name')"
               :disable="filterLoading || $route.name !== 'tradeList'" :rules="[val => checkName(val) || '']"
               @keyup.enter="search()">
@@ -245,10 +252,12 @@ onUnmounted(() => {
                 </q-icon>
               </template>
               <template #append>
-                <q-btn flat dense aria-label="Tradurs Search Button" size="xs" :ripple="false" class="no-hover"
-                  :disable="filterLoading" @click="search()">
-                  <q-icon class="icon" :name="`img:${icons.search}`" size="xs" />
-                </q-btn>
+                <div style="width:24px">
+                  <q-btn v-show="_name && _name !== ''" flat dense aria-label="Tradurs Clear Button" size="xs"
+                    :ripple="false" class="no-hover" :disable="filterLoading" @click="clear">
+                    <q-icon class="icon" :name="`img:${icons.close}`" size="xs" />
+                  </q-btn>
+                </div>
               </template>
             </q-input>
           </div>

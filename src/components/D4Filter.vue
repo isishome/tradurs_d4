@@ -150,6 +150,12 @@ const update = (quality?: Array<string>) => {
           @update:model-value="update()" />
       </q-item-section>
     </q-item>
+    <q-item :inset-level=".2" dense>
+      <q-item-section>
+        <q-checkbox size="xs" :disable="filterLoading" v-model="is.filter.onlyCurrency" :label="t('item.onlyCurrency')"
+          @update:model-value="update()" />
+      </q-item-section>
+    </q-item>
     <q-item v-if="as.signed">
       <q-item-section>
         <q-item-label header>{{ t('filter.onlyForMe') }}</q-item-label>

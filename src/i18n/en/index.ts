@@ -106,6 +106,7 @@ export default {
     hardcore: 'Hardcore',
     ladder: 'Ladder',
     available: 'Show only tradable',
+    onlyCurrency: 'Show only priced',
     quality: 'Item Quality',
     selectType: 'Item Type',
     selectClass: 'Equipment Class',
