@@ -92,7 +92,8 @@ export default {
     copy: 'Copy Template',
     share: 'Share',
     gotoItem: 'Go to item',
-    markRead: 'Mark messages as read'
+    markRead: 'Mark messages as read',
+    retractOffer: 'Retract Offer'
   },
   attribute: {
     add: 'Add {attr}',
@@ -130,7 +131,8 @@ export default {
     title: 'Get An Offer',
     list: 'Offer List',
     accepted: 'Accepted',
-    noOffer: 'No offers have been received'
+    noOffer: 'No offers have been received',
+    updateOffer: 'The offer has been updated'
   },
   accept: {
     title: 'Accept Offer',
@@ -140,6 +142,10 @@ export default {
     msg4: 'of accepting the offer, the transaction will be ',
     msg5: 'automatically processed as complete',
     msg6: '.'
+  },
+  retract: {
+    title: 'Retract Offer',
+    msg: 'Would you like to retract the offer?'
   },
   complete: {
     title: 'Manner Evaluation',

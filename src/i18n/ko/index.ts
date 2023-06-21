@@ -91,7 +91,8 @@ export default {
     copy: '템플릿 복사',
     share: '공유',
     gotoItem: '아이템 바로가기',
-    markRead: '읽음으로 표시'
+    markRead: '읽음으로 표시',
+    retractOffer: '제안 철회'
   },
   attribute: {
     add: '{attr} 추가',
@@ -129,7 +130,8 @@ export default {
     title: '가격 제안',
     list: '제안 목록',
     accepted: '수락됨',
-    noOffer: '받은 제안 내역이 없습니다'
+    noOffer: '받은 제안 내역이 없습니다',
+    updateOffer: '제안 내용이 수정되었습니다'
   },
   accept: {
     title: '제안 수락',
@@ -139,6 +141,10 @@ export default {
     msg4: '해당 거래는 ',
     msg5: '자동으로 완료 처리',
     msg6: '됩니다.'
+  },
+  retract: {
+    title: '제안 철회',
+    msg: '제안을 철회 하시겠습니까?'
   },
   complete: {
     title: '매너 평가',

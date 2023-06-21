@@ -460,6 +460,17 @@ export const useItemStore = defineStore('item', {
           })
       })
     },
+    retractOffer(offerId: string) {
+      return new Promise<void>((resolve, reject) => {
+        api.post('/d4/item/offer/retract', { offerId })
+          .then(async () => {
+            resolve()
+          })
+          .catch((e) => {
+            reject(e)
+          })
+      })
+    },
     addEvaluations(itemId: string, evaluations: Array<number>) {
       return new Promise<void>((resolve, reject) => {
         api.post('/d4/item/evaluations/add', { itemId, evaluations })

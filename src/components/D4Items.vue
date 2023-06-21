@@ -444,20 +444,26 @@ const openMakingOffer = (item: Item): void => {
     })
 }
 
-const isMakingOffer = computed(() => !offerItem.value?.authorized && as.signed && offerItem.value?.statusCode === '000' && !offers.value.find(o => o.user.battleTag === as.info.battleTag))
+const isMakingOffer = computed(() => !offerItem.value?.authorized && as.signed && offerItem.value?.statusCode === '000')
 const makingOffer = (offer: Offer) => {
   progressOffer.value = true
 
   is.makeOffer(offer)
     .then((response) => {
-      Object.assign(offer, response)
-      const findOffer = offers.value.find(o => o.offerId === offer.offerId)
+      const findOffer = offers.value.find(o => o.offerId === response.offerId)
       as.checkSign(true)
 
-      if (findOffer)
-        Object.assign(findOffer, offer)
+      if (findOffer) {
+        Object.assign(findOffer, response)
+        $q.notify({
+          icon: `img:${icons.check}`,
+          color: 'positive',
+          classes: '',
+          message: t('offer.updateOffer')
+        })
+      }
       else
-        offers.value.unshift(offer)
+        offers.value.unshift(response)
 
       progressOffer.value = false
     })
@@ -476,6 +482,7 @@ const acceptOffer = (offer: Offer) => {
 
           if (findOffer && offerItem.value && response.length > 0) {
             Object.assign(findOffer, response[0])
+            offers.value.forEach(o => o.itemStatusCode = findOffer.itemStatusCode)
             emit('update-only', findOffer.itemId)
           }
 
@@ -486,6 +493,19 @@ const acceptOffer = (offer: Offer) => {
         })
     })
     .catch(() => {
+      disableOffers.value = false
+    })
+}
+
+const retractOffer = (offer: Offer) => {
+  disableOffers.value = true
+  is.retractOffer(offer.offerId)
+    .then(() => {
+      emit('update-only', offer.itemId)
+      showOffers.value = false
+    })
+    .catch(() => { })
+    .then(() => {
       disableOffers.value = false
     })
 }
@@ -785,7 +805,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                     <div class="inner">
                       <D4Offer class="offer" :data="offer" :owner="offerItem?.authorized"
                         :evaluations="offerItem?.evaluations" :disable="disableOffers" @accept-offer="acceptOffer"
-                        @complete="complete" />
+                        @retract-offer="retractOffer" @complete="complete" />
                     </div>
                   </q-card>
                 </q-intersection>

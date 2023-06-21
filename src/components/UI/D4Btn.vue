@@ -15,7 +15,8 @@ interface IProps {
   to?: RouteLocationRaw,
   loading?: boolean,
   disable?: boolean,
-  progress?: boolean
+  progress?: boolean,
+  noCaps?: boolean
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -23,7 +24,8 @@ const props = withDefaults(defineProps<IProps>(), {
   shadowDepth: 5,
   loading: false,
   disable: false,
-  progress: false
+  progress: false,
+  noCaps: false
 })
 
 const emit = defineEmits(['click'])
@@ -62,7 +64,7 @@ const click = () => {
           <div v-show="progress" class="fit absolute-center" :style="`z-index: 1;`">
             <q-spinner />
           </div>
-          <div class="text-uppercase" :class="{ 'text-transparent': progress }">
+          <div :class="{ 'text-transparent': progress, 'text-uppercase': !noCaps }">
             {{ label }}
           </div>
         </div>

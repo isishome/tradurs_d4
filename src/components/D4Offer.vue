@@ -28,7 +28,7 @@ const props = withDefaults(defineProps<IProps>(), {
   evaluations: () => []
 })
 
-const emit = defineEmits(['make-offer', 'accept-offer', 'complete'])
+const emit = defineEmits(['make-offer', 'accept-offer', 'retract-offer', 'complete'])
 
 const { t } = useI18n({ useScope: 'global' })
 const $q = useQuasar()
@@ -63,6 +63,22 @@ const acceptOffer = () => {
   })
 }
 
+const retractOffer = () => {
+  $q.dialog({
+    title: t('retract.title'),
+    message: t('retract.msg'),
+    html: true,
+    persistent: true,
+    cancel: { label: t('btn.cancel'), color: 'grey', outline: true },
+    ok: { label: t('btn.retractOffer'), color: 'primary', unelevated: true, class: 'text-weight-bold invert-icon' },
+    transitionShow: 'none',
+    transitionHide: 'none',
+    class: 'q-pa-sm'
+  }).onOk(() => {
+    emit('retract-offer', props.data)
+  })
+}
+
 const complete = () => {
   $q.dialog({
     title: t('complete.title'),
@@ -86,8 +102,9 @@ const complete = () => {
 }
 
 const isAcceptable = computed(() => props.data.itemStatusCode === '000' && props.owner)
+const isRetractable = computed(() => props.data.itemStatusCode === '000' && props.data.statusCode === '000' && props.data.authorized)
 const isTradeable = computed(() => props.data.statusCode === '003' && ((props.data.itemStatusCode === '003' && props.owner && props.evaluations.length === 0) || (props.data.authorized && props.data.evaluations.length === 0)))
-const existsEvaluation = computed(() => props.evaluations.length > 0 || props.data.evaluations.length > 0)
+const existsEvaluation = computed(() => (props.evaluations.length > 0 || props.data.evaluations.length > 0) && props.data.statusCode === '001')
 const status = computed(() => is.findOfferStatus(props.data.statusCode)?.label)
 const parsEvaluations = computed(() => props.owner ? as.filterEvaluations(props.data.evaluations) : props.data.authorized ? as.filterEvaluations(props.evaluations) : [])
 
@@ -111,9 +128,11 @@ const parsEvaluations = computed(() => props.owner ? as.filterEvaluations(props.
       </q-item-label>
     </q-item-section>
     <q-item-section side>
-      <D4Btn v-if="isAcceptable" :label="t('btn.accept')" color="var(--q-secondary)" :loading="data.loading"
+      <D4Btn v-if="isAcceptable" no-caps :label="t('btn.accept')" color="var(--q-secondary)" :loading="data.loading"
         :disable="disable" :progress="progress" @click="acceptOffer" />
-      <D4Btn v-else-if="isTradeable" :label="t('btn.complete')" color="var(--q-primary)" :loading="data.loading"
+      <D4Btn v-else-if="isRetractable" no-caps :label="t('btn.retractOffer')" color="var(--q-secondary)"
+        :loading="data.loading" :disable="disable" :progress="progress" @click="retractOffer" />
+      <D4Btn v-else-if="isTradeable" no-caps :label="t('btn.complete')" color="var(--q-primary)" :loading="data.loading"
         :disable="disable" :progress="progress" @click="complete" />
       <div v-else class="row items-start q-col-gutter-xs">
         <div>{{ status }}
