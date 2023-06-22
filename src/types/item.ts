@@ -43,6 +43,7 @@ export interface IItem {
   imageId: number,
   power: number,
   upgrade: number,
+  level: number,
   properties: Array<Property>,
   affixes: Array<Affix>,
   restrictions: Array<Restriction>,
@@ -92,6 +93,7 @@ export class Item implements IItem {
   public imageId = 0
   public power = 0
   public upgrade = 0
+  public level = 0
   public properties: Array<Property> = []
   public affixes: Array<Affix> = []
   public restrictions: Array<Restriction> = []

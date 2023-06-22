@@ -57,6 +57,7 @@ const acceptOffer = () => {
     ok: { label: t('btn.accept'), color: 'primary', unelevated: true, class: 'text-weight-bold invert-icon' },
     transitionShow: 'none',
     transitionHide: 'none',
+    noRouteDismiss: true,
     class: 'q-pa-sm'
   }).onOk(() => {
     emit('accept-offer', props.data)
@@ -73,6 +74,7 @@ const retractOffer = () => {
     ok: { label: t('btn.retractOffer'), color: 'primary', unelevated: true, class: 'text-weight-bold invert-icon' },
     transitionShow: 'none',
     transitionHide: 'none',
+    noRouteDismiss: true,
     class: 'q-pa-sm'
   }).onOk(() => {
     emit('retract-offer', props.data)
@@ -87,7 +89,6 @@ const complete = () => {
       color: 'primary',
       type: 'checkbox',
       model: [],
-      // inline: true
       items: as.filterEvaluations()
     },
     persistent: true,
@@ -95,6 +96,7 @@ const complete = () => {
     ok: { label: t('btn.submit'), color: 'primary', unelevated: true, class: 'text-weight-bold invert-icon' },
     transitionShow: 'none',
     transitionHide: 'none',
+    noRouteDismiss: true,
     class: 'q-pa-sm'
   }).onOk((data) => {
     emit('complete', data)

@@ -56,6 +56,7 @@ const _typeValue1 = ref<string>(props.data.itemTypeValue1 || (_type.value === 'a
 const _typeValue2 = ref<string>(props.data.itemTypeValue2 || (_typeValue1.value === 'gem' ? filterGems()[0].value as string : ''))
 const _power = ref<number>(props.data.power)
 const _upgrade = ref<number>(props.data.upgrade)
+const _level = ref<number | null>(props.data.level === 0 ? null : props.data.level)
 const _favorite = ref<boolean>(props.data.favorite)
 
 const findRuneType = store.findRuneType
@@ -103,7 +104,7 @@ const updateTypeValue1 = (val: string) => {
 }
 
 const update = () => {
-  emit('update', { hardcore: _hardcore.value, ladder: _ladder.value, name: _name, quantity: _quantity.value, quality: _quality.value, itemType: _type.value, itemTypeValue1: _typeValue1.value, itemTypeValue2: _typeValue2.value, imageId: _image, power: _power.value, upgrade: _upgrade.value, price: _price, favorite: _favorite })
+  emit('update', { hardcore: _hardcore.value, ladder: _ladder.value, name: _name, quantity: _quantity.value, quality: _quality.value, itemType: _type.value, itemTypeValue1: _typeValue1.value, itemTypeValue2: _typeValue2.value, imageId: _image, power: _power.value, upgrade: _upgrade.value, level: _level.value, price: _price, favorite: _favorite })
 }
 
 const updatePrice = (price: Price) => {
@@ -341,11 +342,15 @@ defineExpose({ scrollEnd })
         </q-item>
       </q-card-section>
       <q-separator />
-      <q-card-section class="row justify-start items-center q-gutter-sm">
-        <D4Counter v-model="_power" :label="t('item.power')" :max="9999" max-width="110px" allow-zero no-button
-          :disable="disable" @update:model-value="update" />
-        <D4Counter v-if="upgradeLimit" v-model="_upgrade" :label="t('item.upgrade', { u: _upgrade, ul: upgradeLimit })"
-          max-width="110px" :max="upgradeLimit" allow-zero :disable="disable" @update:model-value="update" />
+      <q-card-section class="row justify-between items-center q-col-gutter-x-sm">
+        <div class="row items-center q-gutter-x-sm">
+          <D4Counter v-model="_power" :label="t('item.power')" :max="9999" max-width="110px" allow-zero no-button
+            :disable="disable" @update:model-value="update" />
+          <D4Counter v-if="upgradeLimit" v-model="_upgrade" :label="t('item.upgrade', { u: _upgrade, ul: upgradeLimit })"
+            max-width="110px" :max="upgradeLimit" allow-zero :disable="disable" @update:model-value="update" />
+        </div>
+        <D4Counter v-model="_level" class="col row justify-end" :label="t('item.level')" max-width="110px" :max="999"
+          allow-null no-button :disable="disable" @update:model-value="update" />
       </q-card-section>
       <q-separator />
       <q-card-section class="tab row justify-end items-center">
@@ -581,7 +586,9 @@ defineExpose({ scrollEnd })
           </div>
         </div>
       </q-card-section>
-      <q-card-section v-show="loading || (!loading && data.restrictions.length > 0)" class="row justify-end">
+      <q-card-section v-show="!loading && data.properties.length === 0 && data.affixes.length === 0"
+        class="q-my-lg"></q-card-section>
+      <q-card-section class="row justify-end">
         <div class="q-px-sm">
           <q-item v-show="loading" v-for="c in 3" :key="c" style="min-height:10px;padding:3px">
             <q-item-section>
@@ -590,14 +597,15 @@ defineExpose({ scrollEnd })
               </q-item-label>
             </q-item-section>
           </q-item>
-          <div v-if="slots.restrictions && !loading" class="column" :class="{ 'q-gutter-y-xs': !$q.screen.lt.sm }">
-            <slot name="restrictions">
+          <div class="column" :class="{ 'q-gutter-y-xs': !$q.screen.lt.sm }">
+            <div class="text-right q-pt-sm">
+              {{ t('item.level') }}: {{ data.level }}
+            </div>
+            <slot v-if="slots.restrictions && !loading && data.restrictions.length > 0" name="restrictions">
             </slot>
           </div>
         </div>
       </q-card-section>
-      <q-card-section v-show="!loading && data.properties.length === 0 && data.affixes.length === 0"
-        class="q-my-lg"></q-card-section>
       <q-separator v-show="slots.actions" />
       <q-card-section v-if="slots.actions">
         <slot v-if="!loading" name="actions"></slot>

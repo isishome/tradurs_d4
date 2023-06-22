@@ -120,12 +120,16 @@ const statusItem = (item: Item, done: Function) => {
     })
 }
 
-const updateOnly = (itemId: string) => {
+const updateOnly = (itemId: string, cb?: Function) => {
   disable.value = true
   is.getItems(1, itemId)
     .then((result: Array<Item>) => {
       if (result.length > 0)
         is.detailItem.splice(0, 1, result[0])
+
+      if (cb)
+        cb()
+
     }).catch(() => {
     }).then(() => {
       disable.value = false
@@ -227,8 +231,9 @@ watch(complete, (val: { itemName: string, itemId: string } | null) => {
   if (val)
     notify('', t('messages.complete', { in: val.itemName }), t('btn.move'), () => {
       if (props.itemid === val.itemId) {
-        getItem()
-        itemsRef.value?.openOffers(props.itemid)
+        updateOnly(props.itemid, () => {
+          itemsRef.value?.openOffers(props.itemid)
+        })
       }
       else
         router.push({ name: 'itemInfo', params: { itemid: val.itemId }, state: { offers: true } })

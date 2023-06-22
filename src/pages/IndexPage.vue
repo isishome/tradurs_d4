@@ -173,7 +173,7 @@ const getList = (filter?: any) => {
   is.filter.loading = true
 
   items.value =
-    Array.from({ length: 3 }, () => {
+    Array.from({ length: 5 }, () => {
       const item = new Item()
       item.quality = 'normal'
       item.loading = true

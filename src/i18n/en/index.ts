@@ -118,6 +118,7 @@ export default {
     name: 'Item Name',
     power: '{p} Item Power',
     upgrade: 'Upgrade: {u}/{ul}',
+    level: 'Requires Level',
     gold: 'Gold',
     url: 'Item URL',
     favorites: 'Favorite Items'
@@ -132,8 +133,10 @@ export default {
     list: 'Offer List',
     accepted: 'Accepted',
     noOffer: 'No offers have been received',
+    acceptOffer: 'The offer has been accepted',
     updateOffer: 'The offer has been updated',
-    retractOffer: 'The offer has been retracted'
+    retractOffer: 'The offer has been retracted',
+    complete: 'Item trade completed'
   },
   accept: {
     title: 'Accept Offer',

@@ -117,6 +117,7 @@ export default {
     name: '아이템 명',
     power: '아이템 위력 {p}{u}',
     upgrade: '업그레이드: {u}/{ul}',
+    level: '요구 레벨',
     gold: '금화',
     url: '아이템 주소',
     favorites: '관심 아이템'
@@ -131,8 +132,10 @@ export default {
     list: '제안 목록',
     accepted: '수락됨',
     noOffer: '받은 제안 내역이 없습니다',
+    acceptOffer: '제안이 수락되었습니다',
     updateOffer: '제안 내용이 수정되었습니다',
-    retractOffer: '제안 철회되었습니다'
+    retractOffer: '제안이 철회되었습니다',
+    complete: '아이템 거래가 완료되었습니다'
   },
   accept: {
     title: '제안 수락',

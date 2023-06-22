@@ -5,35 +5,25 @@ import { useI18n } from 'vue-i18n'
 import { icons } from 'src/common/icons'
 import { focus } from 'src/common'
 
-const props = defineProps({
-  modelValue: {
-    type: Number,
-    default: 1
-  },
-  label: {
-    type: String,
-    default: null
-  },
-  maxWidth: {
-    type: String,
-    default: '50px'
-  },
-  max: {
-    type: Number,
-    default: 999
-  },
-  allowZero: {
-    type: Boolean,
-    default: false
-  },
-  noButton: {
-    type: Boolean,
-    default: false
-  },
-  disable: {
-    type: Boolean,
-    default: false
-  }
+interface IProps {
+  modelValue: number | null,
+  label?: string | null,
+  maxWidth?: string,
+  max?: number,
+  allowZero?: boolean,
+  allowNull?: boolean,
+  noButton?: boolean,
+  disable?: boolean
+}
+
+const props = withDefaults(defineProps<IProps>(), {
+  label: null,
+  maxWidth: '50px',
+  max: 999,
+  allowZero: false,
+  allowNull: false,
+  noButton: false,
+  disable: false
 })
 
 const emit = defineEmits(['update:modelValue'])
@@ -43,12 +33,14 @@ const $q = useQuasar()
 const { t } = useI18n({ useScope: 'global' })
 
 // variable
-const _quantity = ref<number>(props.modelValue || (props.allowZero ? 0 : 1))
+const _quantity = ref<number | null>(props.modelValue || (props.allowZero ? 0 : props.allowNull ? null : 1))
 
 // methods
 const counting = (stat: string): void => {
-  _quantity.value = _quantity.value + (stat === 'inc' ? 1 : -1) as number
-  emit('update:modelValue', _quantity.value)
+  if (typeof (_quantity.value) === 'number') {
+    _quantity.value = _quantity.value + (stat === 'inc' ? 1 : -1) as number
+    emit('update:modelValue', _quantity.value)
+  }
 }
 
 const update = (val: string | number | null) => {
@@ -62,7 +54,7 @@ const update = (val: string | number | null) => {
   })
 }
 
-watch(() => props.modelValue, (val: number) => {
+watch(() => props.modelValue, (val: number | null) => {
   _quantity.value = val
 })
 </script>
@@ -70,7 +62,8 @@ watch(() => props.modelValue, (val: number) => {
 <template>
   <div class="no-wrap row items-center">
     <q-btn v-show="!$q.screen.lt.sm && !noButton" size="sm" flat dense round aria-label="Tradurs Remove Button"
-      :disable="disable || parseInt(_quantity.toString()) < (allowZero ? 1 : 2)" @click="counting('dec')">
+      :disable="disable || (!allowNull && parseInt((_quantity || '0').toString()) < (allowZero ? 1 : 2))"
+      @click="counting('dec')">
       <img class="icon" width="17" height="17" :src="icons.remove" alt="icon_remove" />
     </q-btn>
     <q-input v-model="_quantity" :label="label || t('price.quantity')" :style="`max-width:${maxWidth}`"
@@ -79,7 +72,7 @@ watch(() => props.modelValue, (val: number) => {
       :rules="[(val: number) => (Number.isInteger(val) && (allowZero || val !== 0)) || '']" @update:model-value="update"
       @focus="focus" />
     <q-btn v-show="!$q.screen.lt.sm && !noButton" size="sm" flat dense round aria-label="Tradurs Add Button"
-      :disable="disable || parseInt(_quantity.toString()) > (max - 1)" @click="counting('inc')">
+      :disable="disable || (!allowNull && parseInt((_quantity || '0').toString()) > (max - 1))" @click="counting('inc')">
       <img class="icon" width="17" height="17" :src="icons.add" alt="icon_add" />
     </q-btn>
   </div>

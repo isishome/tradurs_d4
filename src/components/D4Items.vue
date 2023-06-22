@@ -82,7 +82,7 @@ const copyItem = (item: Item) => {
   activateShow.value = true
 }
 
-const updateItem = ({ hardcore, ladder, name, quantity, quality, itemType, itemTypeValue1, itemTypeValue2, imageId, power, upgrade, price }: IItem): void => {
+const updateItem = ({ hardcore, ladder, name, quantity, quality, itemType, itemTypeValue1, itemTypeValue2, imageId, power, upgrade, level, price }: IItem): void => {
   const changeTypeNotFirst = activatedItem.value.itemType && activatedItem.value.itemType !== itemType
   activatedItem.value.itemType = itemType
   activatedItem.value.hardcore = hardcore
@@ -94,6 +94,7 @@ const updateItem = ({ hardcore, ladder, name, quantity, quality, itemType, itemT
   activatedItem.value.itemTypeValue2 = itemTypeValue2
   activatedItem.value.power = power
   activatedItem.value.upgrade = upgrade
+  activatedItem.value.level = level
   activatedItem.value.imageId = imageId
   activatedItem.value.price.currency = price.currency
   activatedItem.value.price.currencyValue = price.currencyValue
@@ -130,6 +131,7 @@ const deleteConfirm = () => {
     ok: { label: t('deleteItem.title'), color: 'negative', unelevated: true, class: 'text-weight-bold invert-icon' },
     transitionShow: 'none',
     transitionHide: 'none',
+    noRouteDismiss: true,
     class: 'q-pa-sm'
   }).onOk(() => {
     disable.value = true
@@ -146,6 +148,7 @@ const relistItem = () => {
     ok: { label: t('relistItem.title'), color: 'primary', unelevated: true, class: 'text-weight-bold invert-icon' },
     transitionShow: 'none',
     transitionHide: 'none',
+    noRouteDismiss: true,
     class: 'q-pa-sm'
   }).onOk(() => {
     disable.value = true
@@ -164,6 +167,7 @@ const statusItem = () => {
     ok: { label: title, color: 'primary', unelevated: true, class: 'text-weight-bold invert-icon' },
     transitionShow: 'none',
     transitionHide: 'none',
+    noRouteDismiss: true,
     class: 'q-pa-sm'
   }).onOk(() => {
     disable.value = true
@@ -420,8 +424,10 @@ const openMakingOffer = (item: Item): void => {
   offerItem.value = item
   makeOffer.value.itemId = item.itemId
   makeOffer.value.user = as.info
+
   if (item.price.currency !== 'offer')
     makeOffer.value.price = item.price
+
   showOffers.value = true
 
   is.getOffers(item.itemId)
@@ -454,7 +460,6 @@ const makingOffer = (offer: Offer) => {
       as.checkSign(true)
 
       if (findOffer) {
-        Object.assign(findOffer, response)
         $q.notify({
           icon: `img:${icons.check}`,
           color: 'positive',
@@ -462,13 +467,12 @@ const makingOffer = (offer: Offer) => {
           message: t('offer.updateOffer')
         })
       }
-      else
-        offers.value.unshift(response)
-
-      progressOffer.value = false
     })
-    .catch(() => {
+    .catch(() => { })
+    .then(() => {
       progressOffer.value = false
+      emit('update-only', offerItem.value?.itemId)
+      openMakingOffer(offerItem.value as Item)
     })
 }
 
@@ -476,24 +480,20 @@ const acceptOffer = (offer: Offer) => {
   disableOffers.value = true
   is.acceptOffer(offer.offerId)
     .then(() => {
-      is.getOffers(offer.itemId, offer.offerId)
-        .then((response) => {
-          const findOffer = offers.value.find(o => o.offerId === offer.offerId)
-
-          if (findOffer && offerItem.value && response.length > 0) {
-            Object.assign(findOffer, response[0])
-            offers.value.forEach(o => o.itemStatusCode = findOffer.itemStatusCode)
-            emit('update-only', findOffer.itemId)
-          }
-
-          disableOffers.value = false
-        })
-        .catch(() => {
-          disableOffers.value = false
-        })
+      $q.notify({
+        icon: `img:${icons.check}`,
+        color: 'positive',
+        classes: '',
+        message: t('offer.acceptOffer')
+      })
     })
-    .catch(() => {
+    .catch(() => { })
+    .then(() => {
       disableOffers.value = false
+      emit('update-only', offerItem.value?.itemId)
+      const findItem = props.items.find(i => i.itemId === offerItem.value?.itemId)
+      if (findItem)
+        openMakingOffer(findItem)
     })
 }
 
@@ -507,12 +507,14 @@ const retractOffer = (offer: Offer) => {
         classes: '',
         message: t('offer.retractOffer')
       })
-      emit('update-only', offer.itemId)
-      showOffers.value = false
     })
     .catch(() => { })
     .then(() => {
       disableOffers.value = false
+      emit('update-only', offerItem.value?.itemId)
+      const findItem = props.items.find(i => i.itemId === offerItem.value?.itemId)
+      if (findItem)
+        openMakingOffer(findItem)
     })
 }
 
@@ -520,13 +522,20 @@ const complete = (evaluations: Array<number>) => {
   disableOffers.value = true
   is.addEvaluations(offerItem.value?.itemId as string, evaluations)
     .then(() => {
-      if (offerItem.value)
-        emit('update-only', offerItem.value.itemId)
-      showOffers.value = false
+      $q.notify({
+        icon: `img:${icons.check}`,
+        color: 'positive',
+        classes: '',
+        message: t('offer.complete')
+      })
     })
     .catch(() => { })
     .then(() => {
       disableOffers.value = false
+      emit('update-only', offerItem.value?.itemId)
+      const findItem = props.items.find(i => i.itemId === offerItem.value?.itemId)
+      if (findItem)
+        openMakingOffer(findItem)
     })
 }
 
@@ -552,7 +561,7 @@ const create = () => {
 }
 
 const openOffers = (itemId: string) => {
-  const findItem = props.items.find(i => i.itemId.toString() === itemId)
+  const findItem = props.items.find(i => i.itemId === itemId)
 
   if (findItem)
     openMakingOffer(findItem)
@@ -795,7 +804,10 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
       transition-hide="none" :transition-duration="0" :persistent="disableOffers || progressOffer"
       :no-route-dismiss="false">
       <template #top>
-        <q-card-section class="row justify-end">
+        <q-card-section class="row items-center justify-between">
+          <div class="text-h6 q-pl-sm">
+            {{ t('offer.list') }}
+          </div>
           <q-btn unelevated aria-label="Tradurs Close Button" class="no-hover icon" :ripple="false">
             <img :src="icons.close" width="24" height="24" @click="showOffers = false" alt="icon_close" />
           </q-btn>
