@@ -449,9 +449,9 @@ export const useItemStore = defineStore('item', {
           })
       })
     },
-    acceptOffer(offerId: string) {
+    acceptOffer(offer: Offer) {
       return new Promise<void>((resolve, reject) => {
-        api.post('/d4/item/offer/accept', { offerId })
+        api.post('/d4/item/offer/accept', { offer })
           .then(async () => {
             resolve()
           })

@@ -42,7 +42,6 @@ const upsertItem = (item: Item, done: Function) => {
   is[item.itemId !== '' ? 'updateItem' : 'addItem'](item)
     .then((response) => {
       Object.assign(item, response)
-      is.clearFilter()
       if (findIndex !== -1)
         items.value.splice(findIndex, 1, item)
       else {
@@ -122,7 +121,7 @@ const statusItem = (item: Item, done: Function) => {
   }
 }
 
-const updateOnly = (itemId: string) => {
+const updateOnly = (itemId: string, cb?: Function) => {
   const findItem = items.value.find((i) => i.itemId === itemId)
 
   if (findItem) {
@@ -131,6 +130,10 @@ const updateOnly = (itemId: string) => {
       .then((result: Array<Item>) => {
         if (result.length > 0)
           Object.assign(findItem, result[0])
+
+        if (cb)
+          cb(findItem)
+
       }).catch(() => {
       }).then(() => {
         disable.value = false

@@ -128,7 +128,7 @@ const updateOnly = (itemId: string, cb?: Function) => {
         is.detailItem.splice(0, 1, result[0])
 
       if (cb)
-        cb()
+        cb(is.detailItem[0])
 
     }).catch(() => {
     }).then(() => {

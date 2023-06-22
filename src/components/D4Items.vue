@@ -471,14 +471,15 @@ const makingOffer = (offer: Offer) => {
     .catch(() => { })
     .then(() => {
       progressOffer.value = false
-      emit('update-only', offerItem.value?.itemId)
-      openMakingOffer(offerItem.value as Item)
+      emit('update-only', offerItem.value?.itemId, (updatedItem: Item) => {
+        openMakingOffer(updatedItem)
+      })
     })
 }
 
 const acceptOffer = (offer: Offer) => {
   disableOffers.value = true
-  is.acceptOffer(offer.offerId)
+  is.acceptOffer(offer)
     .then(() => {
       $q.notify({
         icon: `img:${icons.check}`,
@@ -490,10 +491,9 @@ const acceptOffer = (offer: Offer) => {
     .catch(() => { })
     .then(() => {
       disableOffers.value = false
-      emit('update-only', offerItem.value?.itemId)
-      const findItem = props.items.find(i => i.itemId === offerItem.value?.itemId)
-      if (findItem)
-        openMakingOffer(findItem)
+      emit('update-only', offerItem.value?.itemId, (updatedItem: Item) => {
+        openMakingOffer(updatedItem)
+      })
     })
 }
 
@@ -511,10 +511,9 @@ const retractOffer = (offer: Offer) => {
     .catch(() => { })
     .then(() => {
       disableOffers.value = false
-      emit('update-only', offerItem.value?.itemId)
-      const findItem = props.items.find(i => i.itemId === offerItem.value?.itemId)
-      if (findItem)
-        openMakingOffer(findItem)
+      emit('update-only', offerItem.value?.itemId, (updatedItem: Item) => {
+        openMakingOffer(updatedItem)
+      })
     })
 }
 
@@ -522,6 +521,8 @@ const complete = (evaluations: Array<number>) => {
   disableOffers.value = true
   is.addEvaluations(offerItem.value?.itemId as string, evaluations)
     .then(() => {
+      as.checkSign(true)
+
       $q.notify({
         icon: `img:${icons.check}`,
         color: 'positive',
@@ -532,10 +533,9 @@ const complete = (evaluations: Array<number>) => {
     .catch(() => { })
     .then(() => {
       disableOffers.value = false
-      emit('update-only', offerItem.value?.itemId)
-      const findItem = props.items.find(i => i.itemId === offerItem.value?.itemId)
-      if (findItem)
-        openMakingOffer(findItem)
+      emit('update-only', offerItem.value?.itemId, (updatedItem: Item) => {
+        openMakingOffer(updatedItem)
+      })
     })
 }
 
