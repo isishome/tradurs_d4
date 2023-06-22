@@ -40,11 +40,21 @@ const myTweak = (offset: number): void => {
   offsetTop.value = offset || 0
 }
 
-const sign = (): void => {
+const info = () => {
+  const tradurs: string = import.meta.env.VITE_APP_TRADURS
+  document.location.href = `${tradurs}/info`
+}
+
+const progressSign = ref<boolean>(false)
+const sign = () => {
+  progressSign.value = true
   as.sign().then((result: boolean) => {
     if (!result)
       router.go(0)
-  })
+  }).catch(() => { })
+    .then(() => {
+      progressSign.value = false
+    })
 }
 
 const localeOptions = [
@@ -206,8 +216,10 @@ onUnmounted(() => {
               :transition-duration="0" style="min-width:260px">
               <D4User :data="as.info" info>
                 <template #actions>
-                  <q-btn rounded aria-label="Tradurs Signout Button" color="secondary" :label="t('user.signout')"
-                    @click="sign" v-close-popup />
+                  <q-btn no-caps unelevated :disable="progressSign" aria-label="Tradurs Info Button" color="grey-9"
+                    :label="t('user.info')" @click="info" v-close-popup />
+                  <q-btn no-caps unelevated :loading="progressSign" aria-label="Tradurs Signout Button" color="secondary"
+                    :label="t('user.signout')" @click="sign" v-close-popup />
                 </template>
               </D4User>
             </q-menu>
@@ -237,7 +249,7 @@ onUnmounted(() => {
     </q-drawer>
     <q-header :elevated="!$q.dark.isActive" class="q-py-sm header row justify-center">
       <q-toolbar class="toolbar">
-        <div class="col-2 col-lg-3 row items-center">
+        <div class="col-1 col-md-3 row items-center">
           <q-btn class="gt-sm no-hover" dense flat aria-label="Tradurs Home Button" padding="0"
             :ripple="!$q.dark.isActive" @click="main">
             <img v-show="$q.dark.isActive" src="~assets/logo.webp" width="48" height="48" alt="Tradurs Logo Image" />
@@ -249,19 +261,16 @@ onUnmounted(() => {
             <img :src="icons.filter" class="icon" width="24" height="24" alt="icon_filter" />
           </q-btn>
         </div>
-        <div class="col row items-center justify-between" :class="{ 'justify-center': $q.screen.lt.md }">
-          <div class="col-12 col-md-6 row items-center q-gutter-xs">
-            <q-input outlined dense no-error-icon hide-bottom-space v-model="_name" :label="t('item.name')"
+        <div class="col row items-center" :class="$q.screen.lt.md ? 'justify-center' : 'justify-between'">
+          <div class="col-9 col-md-6 row no-wrap items-center q-gutter-md">
+            <q-btn v-if="$q.screen.lt.md" flat padding="0" :ripple="false" @click="main">
+              <img v-show="$q.dark.isActive" src="~assets/logo.webp" width="36" height="36" alt="Tradurs Logo Image" />
+              <img v-show="!$q.dark.isActive" src="~assets/logo_light.webp" width="36" height="36"
+                alt="Tradurs Light Logo Image" />
+            </q-btn>
+            <q-input outlined dense no-error-icon hide-bottom-space class="col" v-model="_name" :label="t('item.name')"
               :disable="filterLoading || $route.name !== 'tradeList'" :rules="[val => checkName(val) || '']"
               @keyup.enter="search()">
-              <template v-if="$q.screen.lt.md" #prepend>
-                <q-icon>
-                  <img v-show="$q.dark.isActive" src="~assets/logo.webp" width="24" height="24"
-                    alt="Tradurs Logo Image" />
-                  <img v-show="!$q.dark.isActive" src="~assets/logo_light.webp" width="24" height="24"
-                    alt="Tradurs Light Logo Image" />
-                </q-icon>
-              </template>
               <template #append>
                 <div style="width:24px">
                   <q-btn v-show="_name && _name !== ''" flat dense aria-label="Tradurs Clear Button" size="xs"
@@ -280,7 +289,7 @@ onUnmounted(() => {
             </q-tabs>
           </div>
         </div>
-        <div class="lt-md col-2 col-sm-3 row justify-end q-gutter-sm">
+        <div class="lt-md col-1 col-sm-3 row justify-end q-gutter-sm">
           <q-btn round flat aria-label="Tradurs Morevert Button" :ripple="!$q.dark.isActive"
             @click="rightDrawerOpen = !rightDrawerOpen">
             <img class="icon" width="24" height="24" :src="icons.morevert" alt="icon_morevert" />
@@ -317,8 +326,10 @@ onUnmounted(() => {
               :transition-duration="0" style="min-width:280px">
               <D4User :data="as.info" info>
                 <template #actions>
-                  <q-btn rounded aria-label="Tradurs Signout Button" color="secondary" :label="t('user.signout')"
-                    @click="sign" v-close-popup />
+                  <q-btn no-caps unelevated :disable="progressSign" aria-label="Tradurs Info Button" color="grey-9"
+                    :label="t('user.info')" @click="info" v-close-popup />
+                  <q-btn no-caps unelevated :loading="progressSign" aria-label="Tradurs Signout Button" color="secondary"
+                    :label="t('user.signout')" @click="sign" v-close-popup />
                 </template>
               </D4User>
             </q-menu>

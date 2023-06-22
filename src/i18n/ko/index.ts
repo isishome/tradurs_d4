@@ -37,6 +37,7 @@ export default {
   offerer: '제안자',
   user: {
     signout: '로그아웃',
+    info: '정보 변경',
     battleTag: 'BattleTag™',
     yolk: '노른자',
     temperature: '매너 온도',

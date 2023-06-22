@@ -38,6 +38,7 @@ export default {
   offerer: 'Offerer',
   user: {
     signout: 'Sign out',
+    info: 'Change Info',
     battleTag: 'BattleTag™',
     yolk: 'Yolk',
     temperature: 'Manner Temperature',
