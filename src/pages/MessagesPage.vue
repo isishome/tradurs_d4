@@ -78,7 +78,8 @@ as.getMessages()
             </q-avatar>
           </q-item-section>
           <q-item-section>
-            <q-item-label class="text-weight-bold" lines="1">{{ message.itemName }}</q-item-label>
+            <q-item-label class="text-weight-bold" lines="1">{{ message.msgType === '999' ? 'Tradurs' : message.itemName
+            }}</q-item-label>
             <q-item-label caption lines="2">{{ t(`messages.title${message.msgType}`) }}</q-item-label>
           </q-item-section>
           <q-item-section side top>
@@ -92,7 +93,8 @@ as.getMessages()
           <div v-show="message.show">
             <q-item class="q-pa-lg row justify-center items-center" style="background-color: var(--q-cloud);">
               <q-item-label>
-                <q-btn no-caps unelevated aria-label="Tradurs Go Item Button" color="primary"
+                <div v-if="message.msgType === '999'" v-html="message.msgValue.replace(/\n/g, '<br />')"></div>
+                <q-btn v-else no-caps unelevated aria-label="Tradurs Go Item Button" color="primary"
                   :to="{ name: 'itemInfo', params: { itemid: message.msgValue }, state: { offers: true } }">
                   {{ t('btn.gotoItem') }}
                 </q-btn>

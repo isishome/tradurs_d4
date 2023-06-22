@@ -167,6 +167,7 @@ export default {
     title000: 'A new offer has arrived',
     title001: 'Offer has been Accepted',
     title002: 'Item trade completed',
+    title999: 'We\'re happy to answer your questions',
     noData: 'No messages'
 
   },
