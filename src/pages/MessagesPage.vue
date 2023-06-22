@@ -93,7 +93,8 @@ as.getMessages()
           <div v-show="message.show">
             <q-item class="q-pa-lg row justify-center items-center" style="background-color: var(--q-cloud);">
               <q-item-label>
-                <div v-if="message.msgType === '999'" v-html="message.msgValue.replace(/\n/g, '<br />')"></div>
+                <div v-if="message.msgType === '999'" style="line-height: 1.6;"
+                  v-html="message.msgValue.replace(/\n/g, '<br />')"></div>
                 <q-btn v-else no-caps unelevated aria-label="Tradurs Go Item Button" color="primary"
                   :to="{ name: 'itemInfo', params: { itemid: message.msgValue }, state: { offers: true } }">
                   {{ t('btn.gotoItem') }}
