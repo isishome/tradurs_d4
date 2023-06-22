@@ -96,7 +96,7 @@ onMounted(() => {
         <div class="q-px-lg q-py-md">
           <q-input autofocus v-model="battleTag" label="BattleTag™" :placeholder="t('battlenet.placeholder')" fill-mask
             :disable="loading"
-            :rules="[val => val && (/^([ㄱ-ㅎㅏ-ㅣ가-힣]{1}[ㄱ-ㅎㅏ-ㅣ가-힣0-9]{1,7}#[0-9]{4,}|[a-zA-Z]{1}[a-zA-Z0-9]{2,11}#[0-9]{4,})$/g).test(val) || '']"
+            :rules="[val => val && (/^([가-힣ぁ-ゔァ-ヴー々〆〤一-龥]{1}[가-힣ぁ-ゔァ-ヴー々〆〤一-龥0-9]{1,7}#[0-9]{4,}|[a-zA-Z]{1}[a-zA-Z0-9]{2,11}#[0-9]{4,})$/g).test(val) || '']"
             outlined no-error-icon hide-hint maxlength="24" />
         </div>
       </q-card-section>
