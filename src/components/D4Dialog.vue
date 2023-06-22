@@ -27,7 +27,7 @@ watch(() => props.modelValue, (val) => {
     transition-hide="none" :transition-duration="0" :no-route-dismiss="noRouteDismiss"
     @update:model-value="emit('update:modelValue', show)">
     <q-card class="card-item dialog normal overflow-hidden">
-      <q-form class="inner column" @submit="emit('submit')">
+      <q-form class="inner column" :class="{ 'full-height': maximized }" @submit="emit('submit')">
         <slot v-if="$slots.top" name="top">
         </slot>
         <q-separator v-if="$slots.top" />

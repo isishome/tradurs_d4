@@ -791,45 +791,44 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
         </q-card-section>
       </template>
     </D4Dialog>
-    <q-dialog v-model="showOffers" @hide="hideOffers" :maximized="$q.screen.lt.sm" transition-show="none"
+    <D4Dialog v-model="showOffers" @hide="hideOffers" :maximized="$q.screen.lt.sm" transition-show="none"
       transition-hide="none" :transition-duration="0" :persistent="disableOffers || progressOffer"
       :no-route-dismiss="false">
-      <q-card class="card-item dialog offers no-scroll normal">
-        <div class="inner column no-wrap" :style="$q.screen.lt.sm ? 'height:100%' : 'min-height:50vh;max-height:90vh'">
-          <q-card-section class="row justify-end no-padding">
-            <q-btn unelevated aria-label="Tradurs Close Button" class="no-hover icon" :ripple="false">
-              <img :src="icons.close" width="24" height="24" @click="showOffers = false" alt="icon_close" />
-            </q-btn>
-          </q-card-section>
-          <q-card-section class="col d4-scroll">
-            <div class="q-pb-xl full-height">
-              <div class="row items-center q-col-gutter-lg">
-                <q-intersection v-for="offer, idx in (offers as Array<Offer>)" :key="`offers_${idx}`"
-                  class="col-12 col-sm-6" transition="fade" once>
-                  <q-card flat bordered class="card-item expanded"
-                    :class="{ 'unique': offer.statusCode === '003', 'set': offer.statusCode === '001' }">
-                    <div class="inner">
-                      <D4Offer class="offer" :data="offer" :owner="offerItem?.authorized"
-                        :evaluations="offerItem?.evaluations" :disable="disableOffers" @accept-offer="acceptOffer"
-                        @retract-offer="retractOffer" @complete="complete" />
-                    </div>
-                  </q-card>
-                </q-intersection>
-              </div>
-              <div v-show="offers.length === 0" class="absolute-center">{{
-                t('offer.noOffer') }}</div>
+      <template #top>
+        <q-card-section class="row justify-end">
+          <q-btn unelevated aria-label="Tradurs Close Button" class="no-hover icon" :ripple="false">
+            <img :src="icons.close" width="24" height="24" @click="showOffers = false" alt="icon_close" />
+          </q-btn>
+        </q-card-section>
+      </template>
+      <template #middle>
+        <q-card-section class="col d4-scroll"
+          :style="$q.screen.lt.sm ? 'height:100%' : 'min-height:40vh !important;max-height:80vh !important'">
+          <div class="q-pb-xl full-height">
+            <div class="row items-center q-col-gutter-lg">
+              <q-intersection v-for="offer, idx in (offers as Array<Offer>)" :key="`offers_${idx}`"
+                class="col-12 col-sm-6" transition="fade" once>
+                <q-card flat bordered class="card-item expanded"
+                  :class="{ 'unique': offer.statusCode === '003', 'set': offer.statusCode === '001', 'magic': offer.authorized }">
+                  <div class="inner">
+                    <D4Offer class="offer" :data="offer" :owner="offerItem?.authorized"
+                      :evaluations="offerItem?.evaluations" :disable="disableOffers" @accept-offer="acceptOffer"
+                      @retract-offer="retractOffer" @complete="complete" />
+                  </div>
+                </q-card>
+              </q-intersection>
             </div>
-          </q-card-section>
-          <template v-if="isMakingOffer">
-            <q-separator />
-            <q-card-section>
-              <D4Offer :data="makeOffer" make :disable="disableOffers" :progress="progressOffer"
-                @make-offer="makingOffer" />
-            </q-card-section>
-          </template>
-        </div>
-      </q-card>
-    </q-dialog>
+            <div v-show="offers.length === 0" class="absolute-center">{{
+              t('offer.noOffer') }}</div>
+          </div>
+        </q-card-section>
+      </template>
+      <template v-if="isMakingOffer" #bottom>
+        <q-card-section>
+          <D4Offer :data="makeOffer" make :disable="disableOffers" :progress="progressOffer" @make-offer="makingOffer" />
+        </q-card-section>
+      </template>
+    </D4Dialog>
   </div>
 </template>
 <style scoped>
@@ -885,31 +884,6 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
 
 .more:not(.disabled):hover:deep(.icon) {
   transform: translateY(20%);
-}
-
-.offers:deep(.card-item) {
-  border-image: none;
-}
-
-.offers:deep(.card-item::before) {
-  content: none;
-}
-
-.body--dark .offers:deep(.card-item) {
-  border: none;
-}
-
-.body--light .offers:deep(.card-item) {
-  background-color: var(--q-light);
-}
-
-
-.body--dark .offers:deep(>div) {
-  background: none;
-}
-
-.body--light .offers::before {
-  background-color: var(--q-light-page);
 }
 
 .offer {

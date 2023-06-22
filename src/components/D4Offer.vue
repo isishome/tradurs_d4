@@ -127,7 +127,10 @@ const parsEvaluations = computed(() => props.owner ? as.filterEvaluations(props.
         <D4User :data="data.user" :label="t('offerer')" :disable="disable" :authorized="data.authorized" />
       </q-item-label>
     </q-item-section>
-    <q-item-section side>
+    <q-item-section v-show="data.loading" side>
+      <q-skeleton width="100px" :height="$q.screen.lt.sm ? '24px' : '36px'" />
+    </q-item-section>
+    <q-item-section v-show="!data.loading" side>
       <D4Btn v-if="isAcceptable" no-caps :label="t('btn.accept')" color="var(--q-secondary)" :loading="data.loading"
         :disable="disable" :progress="progress" @click="acceptOffer" />
       <D4Btn v-else-if="isRetractable" no-caps :label="t('btn.retractOffer')" color="var(--q-secondary)"
