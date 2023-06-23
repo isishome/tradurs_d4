@@ -662,10 +662,10 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                 </q-item>
               </template>
             </q-select>
-            <q-btn size="sm" :disable="disable" unelevated flat dense round aria-label="Tradurs Add Button"
+            <!-- <q-btn size="sm" :disable="disable" unelevated flat dense round aria-label="Tradurs Add Button"
               @click="createProperty">
               <img class="icon" width="24" height="24" :src="icons.add" alt="icon_add" />
-            </q-btn>
+            </q-btn> -->
           </div>
         </template>
         <template #properties>
