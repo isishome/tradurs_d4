@@ -67,6 +67,24 @@ useMeta(() => {
   }
 })
 
+const notify = $q.cookies.has('d4.notify')
+if (!notify) {
+  $q.notify({
+    classes: '',
+    progress: true,
+    multiLine: true,
+    position: 'center',
+    timeout: 100000,
+    message: t('notice.message'),
+    html: true,
+    actions: [
+      {
+        label: t('notice.close'), noCaps: true, color: 'white', handler: () => { $q.cookies.set('d4.notify', 'confirm') }
+      }
+    ]
+  })
+}
+
 onMounted(() => {
   view.value = true
 })
