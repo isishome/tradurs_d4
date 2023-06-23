@@ -263,8 +263,8 @@ defineExpose({ scrollEnd })
                   </q-select>
                 </div>
                 <div v-else>
-                  <q-btn dense glossy outline aria-label="Tradurs Thumbnail Button" padding="4px 8px" color="primary"
-                    :ripple="false" class="no-hover rounded-borders" @click="showItemImages = true">
+                  <q-btn dense glossy outline aria-label="Tradurs Thumbnail Button" :disable="disable" padding="4px 8px"
+                    color="primary" :ripple="false" class="no-hover rounded-borders" @click="showItemImages = true">
                     <img height="32" :src="`/images/items/${_type}/${_typeValue1}/${_image}.webp`"
                       alt="Tradurs Item Thumbnail Image" />
                     <D4Dialog v-model="showItemImages" :no-route-dismiss="false">
@@ -354,8 +354,8 @@ defineExpose({ scrollEnd })
       </q-card-section>
       <q-separator />
       <q-card-section class="tab row justify-end items-center">
-        <q-btn-toggle v-model="attribute" square flat no-caps aria-label="Tradurs Attribute Button" :ripple="false"
-          :color="$q.dark.isActive ? 'grey-5' : 'grey-8'" :padding="$q.screen.lt.sm ? '8px 8px' : ''"
+        <q-btn-toggle v-model="attribute" :disable="disable" square flat no-caps aria-label="Tradurs Attribute Button"
+          :ripple="false" :color="$q.dark.isActive ? 'grey-5' : 'grey-8'" :padding="$q.screen.lt.sm ? '8px 8px' : ''"
           :size="$q.screen.lt.sm ? '12px' : ''" toggle-color="transparent toggle" :options="attributes" />
       </q-card-section>
       <q-card-section class="col" style="padding-top:0">

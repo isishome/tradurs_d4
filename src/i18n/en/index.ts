@@ -94,7 +94,8 @@ export default {
     share: 'Share',
     gotoItem: 'Go to item',
     markRead: 'Mark messages as read',
-    retractOffer: 'Retract Offer'
+    retractOffer: 'Retract Offer',
+    imageAnalysis: 'Analysis'
   },
   attribute: {
     add: 'Add {attr}',
@@ -133,7 +134,7 @@ export default {
     title: 'Get An Offer',
     list: 'Offer List',
     accepted: 'Accepted',
-    noOffer: 'No offers have been received',
+    noOffer: 'No offers have been made',
     acceptOffer: 'The offer has been accepted',
     updateOffer: 'The offer has been updated',
     retractOffer: 'The offer has been retracted',
@@ -169,7 +170,6 @@ export default {
     title002: 'Item trade completed',
     title999: 'We\'re happy to answer your questions',
     noData: 'No messages'
-
   },
   notFound: {
     gotoMain: 'Go to main page'

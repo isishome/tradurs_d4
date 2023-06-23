@@ -5,7 +5,6 @@ import { createWorker, ImageLike } from 'tesseract.js'
 import { Item, Offer } from 'src/types/item'
 import { sleep } from 'src/common'
 
-
 export interface ILabel {
   value: number | string,
   label: string,
@@ -31,7 +30,10 @@ export interface Rune extends ILabel {
 
 export interface AspectCategory extends ILabel { }
 
-export interface Gem extends ILabel { }
+export interface Gem extends ILabel {
+  quality: string,
+  qualityName: string
+}
 
 export interface ItemType extends ILabel {
   attribute: string,
@@ -494,10 +496,7 @@ export const useItemStore = defineStore('item', {
       })
     },
     async recognize(image: ImageLike) {
-      const worker = await createWorker({
-        logger: m => console.log(m)
-      })
-
+      const worker = await createWorker()
 
       await worker.loadLanguage('eng+kor')
       await worker.initialize('eng+kor')
@@ -506,7 +505,7 @@ export const useItemStore = defineStore('item', {
       })
       const { data: { text } } = await worker.recognize(image)
       await worker.terminate()
-      const parsedText = text.replace(/[^0-9가-힣\%\+\s\/\.\[\]\-\,\:\n]/gi, '')
+      const parsedText = text.replace(/[^0-9가-힣\/\%\+\.\[\]\-\,\:\n ]/gi, '').replace(/[ ]{2,}/gi, ' ')
       return parsedText
     }
   }

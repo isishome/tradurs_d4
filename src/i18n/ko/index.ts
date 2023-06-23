@@ -93,7 +93,8 @@ export default {
     share: '공유',
     gotoItem: '아이템 바로가기',
     markRead: '읽음으로 표시',
-    retractOffer: '제안 철회'
+    retractOffer: '제안 철회',
+    imageAnalysis: '이미지 분석'
   },
   attribute: {
     add: '{attr} 추가',
@@ -132,7 +133,7 @@ export default {
     title: '가격 제안',
     list: '제안 목록',
     accepted: '수락됨',
-    noOffer: '받은 제안 내역이 없습니다',
+    noOffer: '제안 내역이 없습니다',
     acceptOffer: '제안이 수락되었습니다',
     updateOffer: '제안 내용이 수정되었습니다',
     retractOffer: '제안이 철회되었습니다',

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, reactive, nextTick } from 'vue'
+import { ref, computed, reactive, nextTick, defineAsyncComponent } from 'vue'
 import { useQuasar, QInput, QSelect, uid } from 'quasar'
 import { useI18n } from 'vue-i18n'
 
@@ -16,7 +16,6 @@ import D4Affix from 'components/D4Affix.vue'
 import D4Restriction from 'components/D4Restriction.vue'
 import D4Offer from 'components/D4Offer.vue'
 import D4Dialog from 'components/D4Dialog.vue'
-
 
 interface IProps {
   items: Array<Item>,
@@ -38,6 +37,9 @@ const $q = useQuasar()
 const as = useAccountStore()
 const is = useItemStore()
 const { t } = useI18n({ useScope: 'global' })
+
+// lazy loading components
+const D4Analysis = defineAsyncComponent(() => import('components/D4Analysis.vue'))
 
 // common variable
 const requestProperties = computed<number>(() => is.properties.request)
@@ -549,6 +551,21 @@ const expanded = (item: Item) => {
   }
 }
 
+// analysis
+const startAnalyze = () => {
+  disable.value = true
+
+}
+
+const endAnalyze = (item: Item) => {
+  disable.value = false
+}
+
+const failedAnalyze = (msg: string) => {
+  disable.value = false
+  alert(msg)
+}
+
 // Execute function if an item is visible (adsense)
 const visible = (isVisible: boolean, item: Item): void => {
   // const findItem = document.querySelector(`div[data-itemid="${item.itemId}"]`) as HTMLDivElement
@@ -750,8 +767,10 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                   </q-list>
                 </q-menu>
               </D4Btn>
+              <!-- <D4Analysis ref="analysis" :loading="activatedItem.loading" :disable="disable" @start="startAnalyze"
+                @end="endAnalyze" @failed="failedAnalyze" /> -->
             </div>
-            <div class="row items-center q-gutter-sm">
+            <div class="row justify-between items-center q-gutter-sm">
               <D4Btn :label="t('btn.cancel')" :loading="activatedItem.loading" :disable="disable" color="rgb(150,150,150)"
                 @click="activateShow = false" />
               <D4Btn :label="t('btn.apply')" :loading="activatedItem.loading" :disable="disable" :progress="progress"
