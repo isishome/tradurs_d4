@@ -180,7 +180,7 @@ export default {
     success: '문의 내용이 정상적으로 접수되었습니다'
   },
   notice: {
-    message: `<div style="max-width:400px;line-height:2" class="break-keep"><div class='text-h6 q-pb-md'>공지사항</div><p class="text-body1">현재 작업 중인 이미지 분석을 통한 <span class='text-amber-10 text-weight-bold'>아이템 정보 자동 적용 기능</span>의 원활한 진행을 위해 옵션에 입력되어야 할 고유 특성은 옵션으로 강제 이동 처리되고 오타 등으로 잘못 추가된 <u>고유 특성 정보는 삭제될 예정</u>입니다. 이점 유의해서 아이템 등록을 해주시기 바랍니다. <br/><br/> 감사합니다.</p></div>`,
+    message: `<div style="width:400px;max-width:90vw;line-height:2" class="break-keep"><div class='text-h6 q-pb-md'>공지사항</div><p class="text-body1">현재 작업 중인 이미지 분석을 통한 <span class='text-amber-10 text-weight-bold'>아이템 정보 자동 적용 기능</span>의 원활한 진행을 위해 옵션에 입력되어야 할 고유 특성은 옵션으로 강제 이동 처리되고 오타 등으로 잘못 추가된 <u>고유 특성 정보는 삭제될 예정</u>입니다. 이점 유의해서 아이템 등록을 해주시기 바랍니다. <br/><br/> 감사합니다.</p></div>`,
     close: '24시간 동안 열지 않기'
   }
 }

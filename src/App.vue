@@ -79,7 +79,7 @@ if (!notify) {
     html: true,
     actions: [
       {
-        label: t('notice.close'), noCaps: true, color: 'white', handler: () => { $q.cookies.set('d4.notify', 'confirm') }
+        label: t('notice.close'), noCaps: true, color: 'white', handler: () => { $q.cookies.set('d4.notify', 'confirm', { expires: 1 }) }
       }
     ]
   })
