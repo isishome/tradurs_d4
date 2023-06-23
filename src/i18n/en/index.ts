@@ -181,7 +181,7 @@ export default {
     success: 'Your inquiry was successfully received'
   },
   notice: {
-    message: `<div style="width:400px;max-width:90vw;line-height:2" class="break-keep"><div class='text-h6 q-pb-md'>Notice</div><p class="text-body1"><span class='text-amber-10 text-weight-bold'>To ensure that the automatic application of item information</span> through image analysis, which we are currently working on, runs smoothly, the unique attributes that should be entered in the options will be moved to the options, and <u>the characteristics attributes that were added in error, such as by typo, will be deleted</u>. Please note the benefits and register the item.<br/><br/>Thank you.</p></div>`,
+    message: `<div style="width:400px;max-width:80vw;line-height:2" class="break-keep"><div class='text-h6 q-pb-md'>Notice</div><p class="text-body1"><span class='text-amber-10 text-weight-bold'>To ensure that the automatic application of item information</span> through image analysis, which we are currently working on, runs smoothly, the unique attributes that should be entered in the options will be moved to the options, and <u>the characteristics attributes that were added in error, such as by typo, will be deleted</u>. Please note the benefits and register the item.<br/><br/>Thank you.</p></div>`,
     close: 'Do not open for 24 hours'
   }
 }
