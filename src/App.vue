@@ -68,7 +68,7 @@ useMeta(() => {
 })
 
 const notify = $q.cookies.has('d4.notify')
-if (!notify) {
+if (as.signed && !notify) {
   $q.notify({
     classes: '',
     progress: true,

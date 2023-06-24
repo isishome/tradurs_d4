@@ -39,8 +39,6 @@ const { t } = useI18n({ useScope: 'global' })
 
 // variable
 const editWrap = ref<QCard | null>(null)
-const hasProperties = computed(() => findType(_type.value)?.hasProperties)
-const hasAffixes = computed(() => findType(_type.value)?.hasAffixes)
 
 const filterClasses = store.filterClasses
 const filterRunesByType = store.filterRunesByType
@@ -68,15 +66,16 @@ const findStatus = store.findItemStatus
 const findRune = store.findRune
 const findType = store.findType
 const findClass = store.findClass
-
 const filterAspectCategories = store.filterAspectCategories
+
+const hasProperties = computed(() => findClass(_typeValue1.value)?.properties.length !== 0)
 
 const _image = ref<number>(props.data.imageId)
 const _price = reactive<Price>(new Price((props.data.price && props.data.price.currency ? props.data.price.currency : 'offer'), (props.data.price && props.data.price.currencyValue ? props.data.price.currencyValue : null), (props.data.price && props.data.price.quantity ? props.data.price.quantity : undefined)))
 
 const attributes = computed(() => [
   { label: t('properties'), value: 'properties', hide: !hasProperties.value },
-  { label: t('affixes'), value: 'affixes', hide: !hasAffixes.value },
+  { label: t('affixes'), value: 'affixes' },
   { label: t('restrictions'), value: 'restrictions' }
 ].filter(a => !a.hide))
 
@@ -93,12 +92,12 @@ const updateQuality = (val: string) => {
 
 const updateType = (val: string) => {
   _typeValue1.value = val === 'aspect' ? store.aspectCategories[0].value as string : filterClasses(val)[0].value as string
-  attribute.value = findType(val)?.hasProperties ? 'properties' : findType(val)?.hasAffixes ? 'affixes' : 'restrictions'
   update()
 }
 
 const updateTypeValue1 = (val: string) => {
   _image.value = 0
+  attribute.value = findClass(val)?.properties.length !== 0 ? 'properties' : 'affixes'
   _typeValue2.value = val === 'gem' ? filterGems()[0].value as string : ''
   update()
 }
@@ -142,7 +141,7 @@ const apply = () => {
 const showItemImages = ref<boolean>(false)
 
 // attribute tabs
-const attribute = ref<string>(hasProperties.value ? 'properties' : hasAffixes ? 'affixes' : 'restrictions')
+const attribute = ref<string>(hasProperties.value ? 'properties' : 'affixes')
 
 watch(() => props.data.quantity, (val: number) => {
   _quantity.value = val
@@ -382,7 +381,7 @@ defineExpose({ scrollEnd })
                 </div>
               </div>
             </q-tab-panel>
-            <q-tab-panel v-if="hasAffixes" name="affixes" class="q-gutter-y-xs no-padding column">
+            <q-tab-panel name="affixes" class="q-gutter-y-xs no-padding column">
               <div v-if="slots['add-affix']">
                 <slot name="add-affix" :wrap="editWrap"></slot>
               </div>
@@ -427,7 +426,7 @@ defineExpose({ scrollEnd })
           </q-tab-panels>
         </div>
       </q-card-section>
-      <q-separator v-if="!hasProperties && !hasAffixes" />
+      <q-separator v-if="!hasProperties" />
       <q-card-section>
         <D4Price :data="data.price" :editable="editable" :disable="disable" :progress="loading" @update="updatePrice" />
       </q-card-section>

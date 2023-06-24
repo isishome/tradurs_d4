@@ -288,12 +288,6 @@ const selectedProperty = (val: number): void => {
   }
 }
 
-const createProperty = (): void => {
-  add.category = 'properties'
-  add.type = filterAttributeTypes.value?.[0].value as string
-  add.show = true
-}
-
 const updateProperty = ({ valueId, propertyValues }: { valueId: string, propertyValues: Array<number> }): void => {
   const findProperty = activatedItem.value.properties.find(p => p.valueId === valueId)
   if (findProperty) {
@@ -662,10 +656,6 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                 </q-item>
               </template>
             </q-select>
-            <!-- <q-btn size="sm" :disable="disable" unelevated flat dense round aria-label="Tradurs Add Button"
-              @click="createProperty">
-              <img class="icon" width="24" height="24" :src="icons.add" alt="icon_add" />
-            </q-btn> -->
           </div>
         </template>
         <template #properties>

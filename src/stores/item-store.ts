@@ -37,14 +37,13 @@ export interface Gem extends ILabel {
 
 export interface ItemType extends ILabel {
   attribute: string,
-  hasProperties: boolean,
-  hasAffixes: boolean,
   isCurrency: boolean,
   onlyCurrency: boolean
 }
 
 export interface EquipmentClass extends ILabel {
-  type: string
+  type: string,
+  properties: number[]
 }
 
 export interface AttributeType extends ILabel {
@@ -177,7 +176,7 @@ export const useItemStore = defineStore('item', {
       return (attribute?: string): Array<AttributeType> => attribute ? state.attributeTypes.filter(at => at.hasAttributes.includes(attribute) && at.lang === i18n.global.locale.value) : state.attributeTypes.filter(at => at.lang === i18n.global.locale.value)
     },
     filterProperties: (state) => {
-      return (word?: string): Array<Property> => word ? state.properties.data.filter(p => p.label.toLowerCase().indexOf(word.toLowerCase()) !== -1) : state.properties.data
+      return (word?: string): Array<Property> => word ? state.properties.data.filter(p => p.label.toLowerCase().indexOf(word.toLowerCase()) !== -1 && p.lang === i18n.global.locale.value) : state.properties.data.filter(p => p.lang === i18n.global.locale.value)
     },
     filterAffixes: (state) => {
       return (word?: string): Array<Affix> => word ? state.affixes.data.filter(a => a.label.toLowerCase().indexOf(word.toLowerCase()) !== -1) : state.affixes.data
