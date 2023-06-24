@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
-import type { Property } from 'stores/item-store'
+import { computed } from 'vue'
 import { useItemStore } from 'stores/item-store'
 import { icons } from 'src/common/icons'
 import { parse, focus } from 'src/common'
@@ -22,11 +21,10 @@ const props = defineProps({
 
 const emit = defineEmits(['update', 'remove'])
 
-const store = useItemStore()
+const is = useItemStore()
 
-const properties = computed<Array<Property>>(() => store.properties.data)
-const findProperty = properties.value.find(p => p.value === props.data.propertyId)
-const propertyInfo = ref(parse(findProperty?.label, props.data.propertyValues))
+const findProperty = is.findProperty
+const propertyInfo = computed(() => parse(findProperty(props.data.propertyId)?.label, props.data.propertyValues))
 const update = (): void => {
   emit('update', { valueId: props.data.valueId, propertyValues: propertyInfo.value.filter(i => i.type === 'variable').map(i => parseFloat(i.value.toString())) })
 }
@@ -34,17 +32,13 @@ const update = (): void => {
 const remove = () => {
   emit('remove', { valueId: props.data.valueId })
 }
-
-watch(() => props.data, () => {
-  propertyInfo.value = parse(findProperty?.label, props.data.propertyValues)
-})
 </script>
 
 <template>
   <div class="row no-wrap items-baseline q-gutter-xs" :class="{ disable }" :data-id="data.valueId">
     <div>
-      <q-icon class="icon" :class="{ 'rotate-45': ['standard'].includes(findProperty?.type as string) }" size="13px"
-        :name="`img:${icons[findProperty?.type as keyof typeof icons || 'standard']}`" />
+      <q-icon class="icon" :class="{ 'rotate-45': ['standard'].includes(findProperty(data.propertyId)?.type as string) }"
+        size="13px" :name="`img:${icons[findProperty(data.propertyId)?.type as keyof typeof icons || 'standard']}`" />
     </div>
     <div class="row items-center q-gutter-x-xs">
       <template v-for="(comp, k) in propertyInfo" :key="k">

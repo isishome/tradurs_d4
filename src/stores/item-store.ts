@@ -53,7 +53,8 @@ export interface AttributeType extends ILabel {
 
 export interface Property extends ILabel {
   type: string,
-  sort?: number
+  sort?: number,
+  lang: string
 }
 
 export interface Affix extends ILabel {
@@ -185,7 +186,7 @@ export const useItemStore = defineStore('item', {
       return (word?: string): Array<Restriction> => word ? state.restrictions.data.filter(r => r.label.toLowerCase().indexOf(word.toLowerCase()) !== -1) : state.restrictions.data
     },
     findProperty: (state) => {
-      return (propertyId: number): Property | undefined => state.properties.data.find(p => p.value === propertyId)
+      return (propertyId: number): Property | undefined => state.properties.data.find(p => p.value === propertyId && p.lang === i18n.global.locale.value)
     },
     findAffix: (state) => {
       return (affixId: number): Affix | undefined => state.affixes.data.find(a => a.value === affixId)
