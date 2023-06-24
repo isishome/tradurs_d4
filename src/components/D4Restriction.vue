@@ -22,11 +22,10 @@ const props = defineProps({
 
 const emit = defineEmits(['update', 'remove'])
 
-const store = useItemStore()
+const is = useItemStore()
 
-const restrictions = computed<Array<Restriction>>(() => store.restrictions.data)
-const findRestriction = restrictions.value.find(r => r.value === props.data.restrictId)
-const restrictionInfo = ref(parse(findRestriction?.label, props.data.restrictValues))
+const findRestriction = computed(() => is.findRestriction(props.data.restrictId))
+const restrictionInfo = computed(() => parse(findRestriction.value?.label, props.data.restrictValues))
 
 const update = (): void => {
   emit('update', { valueId: props.data.valueId, restrictValues: restrictionInfo.value.filter(i => i.type === 'variable').map(i => parseFloat(i.value.toString())) })
@@ -35,10 +34,6 @@ const update = (): void => {
 const remove = (): void => {
   emit('remove', { valueId: props.data.valueId })
 }
-
-watch(() => props.data, (val) => {
-  restrictionInfo.value = parse(findRestriction?.label, val.restrictValues)
-})
 </script>
 
 <template>
