@@ -175,6 +175,8 @@ export default {
     nameNotFound: 'Item name information not found',
     requireNotFound: 'Item requires level information not found'
   },
+  max: 'Max',
+  min: 'Min',
   messages: {
     title: 'Message List',
     newItems: 'A new item has been registered ({n})',

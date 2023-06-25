@@ -174,6 +174,8 @@ export default {
     nameNotFound: '아이템 명 정보를 찾지 못했습니다',
     requireNotFound: '아이템 요구 레벨 정보를 찾지 못했습니다'
   },
+  max: '최대',
+  min: '최소',
   messages: {
     title: '메세지 리스트',
     newItems: '새로운 아이템이 등록되었습니다 ({n})',

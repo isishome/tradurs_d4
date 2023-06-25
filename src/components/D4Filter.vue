@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { useQuasar, QSelect } from 'quasar'
+import { QSelect } from 'quasar'
 import { useAccountStore } from 'src/stores/account-store'
 import { useItemStore } from 'src/stores/item-store'
 import { useI18n } from 'vue-i18n'
 import { icons } from 'src/common/icons'
+import { focus } from 'src/common'
 import NotifyEn from 'assets/filter/notify_en.webp'
 import NotifyKo from 'assets/filter/notify_ko.webp'
 
@@ -17,7 +18,6 @@ withDefaults(defineProps<IProps>(), {
   disable: false
 })
 
-const $q = useQuasar()
 const as = useAccountStore()
 const is = useItemStore()
 const { t, locale } = useI18n({ useScope: 'global' })
@@ -119,8 +119,8 @@ const update = (quality?: Array<string>) => {
 </script>
 
 <template>
-  <q-list :class="{ 'disable': disable || filterLoading }">
-    <q-item :inset-level=".2" dense>
+  <q-list dense :class="{ 'disable': disable || filterLoading }">
+    <q-item :inset-level=".2">
       <q-item-section>
         <div class="row items-center q-gutter-sm">
           <q-checkbox size="xs" :disable="filterLoading" v-model="is.filter.hardcore" :label="t('item.hardcore')"
@@ -132,7 +132,7 @@ const update = (quality?: Array<string>) => {
         </div>
       </q-item-section>
     </q-item>
-    <q-item :inset-level=".2" dense>
+    <q-item :inset-level=".2">
       <q-item-section>
         <div class="row items-center q-gutter-sm">
           <q-checkbox size="xs" :disable="filterLoading" v-model="is.filter.ladder" :label="t('item.ladder')"
@@ -144,13 +144,13 @@ const update = (quality?: Array<string>) => {
         </div>
       </q-item-section>
     </q-item>
-    <q-item :inset-level=".2" dense>
+    <q-item :inset-level=".2">
       <q-item-section>
         <q-checkbox size="xs" :disable="filterLoading" v-model="is.filter.available" :label="t('item.available')"
           @update:model-value="update()" />
       </q-item-section>
     </q-item>
-    <q-item :inset-level=".2" dense>
+    <q-item :inset-level=".2">
       <q-item-section>
         <q-checkbox size="xs" :disable="filterLoading" v-model="is.filter.onlyCurrency" :label="t('item.onlyCurrency')"
           @update:model-value="update()" />
@@ -169,6 +169,20 @@ const update = (quality?: Array<string>) => {
     </q-item>
     <q-item>
       <q-item-section>
+        <q-item-label header>{{ t('item.level') }}</q-item-label>
+        <div class="row justify-center no-wrap q-col-gutter-sm items-center q-px-sm">
+          <q-input :disable="filterLoading" v-model.number="is.filter.level[0]" dense no-error-icon hide-bottom-space
+            outlined debounce="500" input-class="text-right" class="col" :label="t('min')" type="tel" mask="###"
+            @update:model-value="update()" @focus="focus" />
+          <div>-</div>
+          <q-input :disable="filterLoading" v-model.number="is.filter.level[1]" dense no-error-icon hide-bottom-space
+            outlined debounce="500" input-class="text-right" class="col" :label="t('max')" type="tel" mask="###"
+            @update:model-value="update()" @focus="focus" />
+        </div>
+      </q-item-section>
+    </q-item>
+    <q-item>
+      <q-item-section>
         <q-item-label header>{{ t('item.quality') }}</q-item-label>
         <q-option-group size="xs" :disable="filterLoading" inline class="q-pl-sm"
           :options="filterQuality().map(fq => ({ ...fq, label: fq.fullName }))" type="checkbox"
@@ -182,7 +196,7 @@ const update = (quality?: Array<string>) => {
           v-model="is.filter.itemTypes" @update:model-value="val => update(val)" />
       </q-item-section>
     </q-item>
-    <q-item :inset-level=".2" v-for="itemType in is.filter.itemTypes.filter(it => it !== 'aspect')" :key="itemType">
+    <q-item :inset-level=".2" v-for=" itemType  in  is.filter.itemTypes.filter(it => it !== 'aspect') " :key="itemType">
       <q-item-section>
         <q-select v-model="is.filter.itemTypeValues1[itemType]"
           :options="findType(itemType)?.value === 'rune' ? filterRunes() : filterClasses(itemType)"
@@ -241,7 +255,7 @@ const update = (quality?: Array<string>) => {
                 </template>
               </q-select>
               <div bordered class="q-mt-xs q-pl-sm rounded-borders column q-gutter-xs text-caption full-width">
-                <div v-for="pid in is.filter.properties" :key="`${pid}`" class="row items-center no-wrap full-width">
+                <div v-for=" pid  in  is.filter.properties " :key="`${pid}`" class="row items-center no-wrap full-width">
                   <div class="ellipsis">
                     {{ findProperty(pid as number)?.label }}
                   </div>
@@ -279,7 +293,7 @@ const update = (quality?: Array<string>) => {
                 </template>
               </q-select>
               <div bordered class="q-mt-xs q-pl-sm rounded-borders column q-gutter-xs text-caption full-width">
-                <div v-for="aid in is.filter.affixes" :key="`${aid}`" class="row items-center no-wrap full-width">
+                <div v-for=" aid  in  is.filter.affixes " :key="`${aid}`" class="row items-center no-wrap full-width">
                   <div class="ellipsis">
                     {{ findAffix(aid as number)?.label }}
                   </div>
@@ -313,7 +327,8 @@ const update = (quality?: Array<string>) => {
                 </template>
               </q-select>
               <div bordered class="q-mt-xs q-pl-sm rounded-borders column q-gutter-xs text-caption full-width">
-                <div v-for="rid in is.filter.restrictions" :key="`${rid}`" class="row items-center no-wrap full-width">
+                <div v-for=" rid  in  is.filter.restrictions " :key="`${rid}`"
+                  class="row items-center no-wrap full-width">
                   <div class="ellipsis">
                     {{ findRestriction(rid as number)?.label }}
                   </div>
