@@ -213,15 +213,21 @@ const checkProperties = (textStr: string) => {
   const findClass = is.findClass(item.itemTypeValue1)
 
   if (findClass) {
-    findClass.properties.forEach((cp: number) => {
-      const matchProperty = textStr.match(new RegExp(is.findProperty(cp)?.label.replace(/[\+ ]/g, '').replace(/\{x\}/g, '[0-9.]{1,}') as string, 'i'))
-      const matchValues = matchProperty?.[0].match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv))
+    try {
+      findClass.properties.forEach((cp: number) => {
+        const matchProperty = textStr.match(new RegExp(is.findProperty(cp)?.label.replace(/[\+ ]/g, '').replace(/\{x\}/g, '[0-9.]{1,}') as string, 'i'))
+        const matchValues = matchProperty?.[0].match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv))
 
-      if (matchProperty && matchValues && item.properties.filter(p => p.propertyId === cp).length === 0) {
-        item.properties.push({ valueId: uid(), propertyId: cp, propertyValues: matchValues, action: 2 })
-        textStr = textStr.replace(matchProperty[0], '')
-      }
-    })
+        if (matchProperty && matchValues && item.properties.filter(p => p.propertyId === cp).length === 0) {
+          item.properties.push({ valueId: uid(), propertyId: cp, propertyValues: matchValues, action: 2 })
+          textStr = textStr.replace(matchProperty[0], '')
+        }
+      })
+    }
+    catch (e) {
+      console.log(e)
+      return failedScan(t('analyze.failedAnalyze'))
+    }
   }
 
   setTimeout(() => {
@@ -233,16 +239,22 @@ const checkProperties = (textStr: string) => {
 const checkAffixes = (textStr: string) => {
   currentCheck.value = 'affixes'
 
-  for (const affix of is.affixes.data) {
-    const matchAffix = textStr.match(new RegExp(affix.label.replace(/(\[[0-9.\%\- ]{1,}\])|[\+ ]/g, '').replace(/\{x\}/g, '[0-9.]{1,}') as string, 'i'))
+  try {
+    for (const affix of is.affixes.data) {
+      const matchAffix = textStr.match(new RegExp(affix.label.replace(/(\[[0-9.\%\- ]{1,}\])|[\+ ]/g, '').replace(/[\%\[\]\+]/g, '').replace(/\{x\}/g, '[0-9.]{1,}') as string, 'i'))
 
-    matchAffix?.forEach((ma: string) => {
-      const matchValues = ma.match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv))
-      if (matchValues) {
-        item.affixes.push({ valueId: uid(), affixId: affix.value as number, affixValues: matchValues, action: 2 })
-        textStr = textStr.replace(ma, '')
-      }
-    })
+      matchAffix?.forEach((ma: string) => {
+        const matchValues = ma.match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv))
+        if (matchValues) {
+          item.affixes.push({ valueId: uid(), affixId: affix.value as number, affixValues: matchValues, action: 2 })
+          textStr = textStr.replace(ma, '')
+        }
+      })
+    }
+  }
+  catch (e) {
+    console.log(e)
+    return failedScan(t('analyze.failedAnalyze'))
   }
 
   setTimeout(() => {
@@ -254,16 +266,22 @@ const checkAffixes = (textStr: string) => {
 const checkRestrictions = () => {
   currentCheck.value = 'restrictions'
 
-  for (const restriction of is.restrictions.data) {
-    const matchRestriction = restrictionsPhase.match(new RegExp(restriction.label.replace(/(\[[0-9.\%\- ]{1,}\])|[\+ ]/g, '').replace(/\{x\}/g, '[0-9.]{1,}') as string, 'i'))
+  try {
+    for (const restriction of is.restrictions.data) {
+      const matchRestriction = restrictionsPhase.match(new RegExp(restriction.label.replace(/(\[[0-9.\%\- ]{1,}\])|[\+ ]/g, '').replace(/[\%\[\]\+]/g, '').replace(/\{x\}/g, '[0-9.]{1,}') as string, 'i'))
 
-    matchRestriction?.forEach((mr: string) => {
-      const matchValues = mr.match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv))
-      if (matchValues) {
-        item.restrictions.push({ valueId: uid(), restrictId: restriction.value as number, restrictValues: matchValues, action: 2 })
-        restrictionsPhase = restrictionsPhase.replace(mr, '')
-      }
-    })
+      matchRestriction?.forEach((mr: string) => {
+        const matchValues = mr.match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv))
+        if (matchValues) {
+          item.restrictions.push({ valueId: uid(), restrictId: restriction.value as number, restrictValues: matchValues, action: 2 })
+          restrictionsPhase = restrictionsPhase.replace(mr, '')
+        }
+      })
+    }
+  }
+  catch (e) {
+    console.log(e)
+    return failedScan(t('analyze.failedAnalyze'))
   }
 
   setTimeout(() => {

@@ -818,7 +818,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
     <D4Dialog v-model="add.show" :no-route-dismiss="false" :persistent="disable" @submit="applyAdd" @hide="hideAdd">
       <template #top>
         <q-card-section class="row items-center q-ml-md">
-          <div class="name text-uppercase">{{ t('attribute.add', { attr: t(add.category as string) })
+          <div class="name text-uppercase">{{ t('attribute.register', { attr: t(add.category as string) })
           }}
           </div>
         </q-card-section>

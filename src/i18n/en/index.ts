@@ -98,7 +98,7 @@ export default {
     imageAnalysis: 'Analysis'
   },
   attribute: {
-    add: 'Add {attr}',
+    register: 'Register {attr}',
     placeholder: "+{'{'}x{'}'}% Increased Attack Speed for {'{'}x{'}'} Seconds After Dodging an Attack",
     enter: 'Please enter the {attr}',
     invalid: 'Invalid {attr} format',

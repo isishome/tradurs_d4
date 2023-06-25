@@ -97,7 +97,7 @@ export default {
     imageAnalysis: '이미지 분석'
   },
   attribute: {
-    add: '{attr} 추가',
+    register: '{attr} 등록',
     placeholder: "공격 회피 후 {'{'}x{'}'}초 동안  +{'{'}x{'}'} 공격 속도 증가",
     enter: '{attr}을 입력해 주세요',
     invalid: '잘못된 형식의 {attr} 입니다',
