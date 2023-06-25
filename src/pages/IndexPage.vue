@@ -297,7 +297,7 @@ onUnmounted(() => {
   top: 100%;
   left: 0;
   z-index: 1;
-  transform: translateY(-100%);
+  transform: translateY(-91%);
 }
 
 .sticky-second {
