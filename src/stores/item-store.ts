@@ -113,7 +113,8 @@ export const useItemStore = defineStore('item', {
       onlyCurrency: false as boolean | null,
       mine: false as boolean | null,
       offer: false as boolean | null,
-      level: [0, 100] as [number, number],
+      power: [0, 9999] as [number, number],
+      level: [0, 999] as [number, number],
       itemTypes: [] as Array<string>,
       itemTypeValues1: {} as { [key: string]: Array<number> },
       itemTypeValues2: {} as { [key: string]: Array<number> },
@@ -222,7 +223,10 @@ export const useItemStore = defineStore('item', {
       this.filter.ladder = null
       this.filter.available = false
       this.filter.onlyCurrency = false
-      this.filter.level = [0, 100]
+      this.filter.mine = false
+      this.filter.offer = false
+      this.filter.power = [0, 9999]
+      this.filter.level = [0, 999]
       this.filter.itemTypes = []
       this.filter.itemTypeValues1 = {}
       this.filter.itemTypeValues2 = {}
@@ -350,6 +354,7 @@ export const useItemStore = defineStore('item', {
       return new Promise<Array<Item>>((resolve, reject) => {
         api.post('/d4/item', { page, rows: this.page.rows, itemId, filter })
           .then(async (response) => {
+            await sleep(1000)
             this.page.over = page > 1
             this.page.more = response.data.length > this.page.rows
             response.data.splice(this.page.rows, 1)

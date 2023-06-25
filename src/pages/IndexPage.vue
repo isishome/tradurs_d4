@@ -176,7 +176,7 @@ const getList = (filter?: any) => {
   is.filter.loading = true
 
   items.value =
-    Array.from({ length: 5 }, () => {
+    Array.from({ length: 3 }, () => {
       const item = new Item()
       item.quality = 'normal'
       item.loading = true
@@ -272,10 +272,10 @@ onUnmounted(() => {
 </script>
 <template>
   <div class="row q-gutter-xs items-center sticky-first">
-    <D4Btn round @click="prev" color="var(--q-magic)" :disable="!over || disable" shadow>
+    <D4Btn round @click="prev" color="var(--q-magic)" :disable="!over || disable" :shadow="!$q.dark.isActive">
       <img :src="icons.prev" width="24" height="24" class="invert" alt="icon_prev" />
     </D4Btn>
-    <D4Btn round @click="next" color="var(--q-magic)" :disable="!more || disable" shadow>
+    <D4Btn round @click="next" color="var(--q-magic)" :disable="!more || disable" :shadow="!$q.dark.isActive">
       <img :src="icons.next" width="24" height="24" class="invert" alt="icon_next" />
     </D4Btn>
   </div>

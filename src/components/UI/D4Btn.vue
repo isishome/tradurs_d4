@@ -206,12 +206,20 @@ const click = () => {
   filter: invert(50%);
 }
 
+.body--dark .shadow-depth-5 {
+  box-shadow: rgb(0, 0, 0) 0 0 60px 60px;
+}
+
+.body--dark .shadow-depth-1 {
+  box-shadow: rgb(0, 0, 0) 0 0 12px 12px;
+}
+
 .body--light .shadow-depth-5 {
-  box-shadow: rgb(38, 57, 77) 0px 20px 30px 0;
+  box-shadow: rgb(38, 57, 77) 0 20px 30px 0;
 }
 
 .body--light .shadow-depth-1 {
-  box-shadow: rgb(38, 57, 77) 0px 4px 6px 0;
+  box-shadow: rgb(38, 57, 77) 0 4px 6px 0;
 }
 
 .body--dark .round::after {

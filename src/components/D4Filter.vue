@@ -10,6 +10,7 @@ import NotifyEn from 'assets/filter/notify_en.webp'
 import NotifyKo from 'assets/filter/notify_ko.webp'
 
 import D4Tooltip from 'components/D4Tooltip.vue'
+import D4Counter from 'components/D4Counter.vue'
 
 interface IProps {
   disable?: boolean
@@ -119,7 +120,7 @@ const update = (quality?: Array<string>) => {
 </script>
 
 <template>
-  <q-list dense :class="{ 'disable': disable || filterLoading }">
+  <q-list dense class="filter" :class="{ 'disable': disable || filterLoading }">
     <q-item :inset-level=".2">
       <q-item-section>
         <div class="row items-center q-gutter-sm">
@@ -169,15 +170,25 @@ const update = (quality?: Array<string>) => {
     </q-item>
     <q-item>
       <q-item-section>
+        <q-item-label header>{{ t('item.power') }}</q-item-label>
+        <div class="row justify-center no-wrap q-col-gutter-sm items-center q-px-sm">
+          <D4Counter v-model="is.filter.power[0]" :label="t('min')" :max="1000" allow-zero no-button
+            :disable="filterLoading" @update:model-value="update()" max-width="100%" />
+          <div>-</div>
+          <D4Counter v-model="is.filter.power[1]" :label="t('max')" :max="1000" allow-zero no-button
+            :disable="filterLoading" @update:model-value="update()" max-width="100%" />
+        </div>
+      </q-item-section>
+    </q-item>
+    <q-item>
+      <q-item-section>
         <q-item-label header>{{ t('item.level') }}</q-item-label>
         <div class="row justify-center no-wrap q-col-gutter-sm items-center q-px-sm">
-          <q-input :disable="filterLoading" v-model.number="is.filter.level[0]" dense no-error-icon hide-bottom-space
-            outlined debounce="500" input-class="text-right" class="col" :label="t('min')" type="tel" mask="###"
-            @update:model-value="update()" @focus="focus" />
+          <D4Counter v-model="is.filter.level[0]" :label="t('min')" :max="100" allow-zero no-button
+            :disable="filterLoading" @update:model-value="update()" max-width="100%" />
           <div>-</div>
-          <q-input :disable="filterLoading" v-model.number="is.filter.level[1]" dense no-error-icon hide-bottom-space
-            outlined debounce="500" input-class="text-right" class="col" :label="t('max')" type="tel" mask="###"
-            @update:model-value="update()" @focus="focus" />
+          <D4Counter v-model="is.filter.level[1]" :label="t('max')" :max="100" allow-zero no-button
+            :disable="filterLoading" @update:model-value="update()" max-width="100%" />
         </div>
       </q-item-section>
     </q-item>
@@ -196,7 +207,7 @@ const update = (quality?: Array<string>) => {
           v-model="is.filter.itemTypes" @update:model-value="val => update(val)" />
       </q-item-section>
     </q-item>
-    <q-item :inset-level=".2" v-for=" itemType  in  is.filter.itemTypes.filter(it => it !== 'aspect') " :key="itemType">
+    <q-item :inset-level=".2" v-for=" itemType in is.filter.itemTypes.filter(it => it !== 'aspect') " :key="itemType">
       <q-item-section>
         <q-select v-model="is.filter.itemTypeValues1[itemType]"
           :options="findType(itemType)?.value === 'rune' ? filterRunes() : filterClasses(itemType)"
@@ -255,7 +266,7 @@ const update = (quality?: Array<string>) => {
                 </template>
               </q-select>
               <div bordered class="q-mt-xs q-pl-sm rounded-borders column q-gutter-xs text-caption full-width">
-                <div v-for=" pid  in  is.filter.properties " :key="`${pid}`" class="row items-center no-wrap full-width">
+                <div v-for=" pid in is.filter.properties " :key="`${pid}`" class="row items-center no-wrap full-width">
                   <div class="ellipsis">
                     {{ findProperty(pid as number)?.label }}
                   </div>
@@ -293,7 +304,7 @@ const update = (quality?: Array<string>) => {
                 </template>
               </q-select>
               <div bordered class="q-mt-xs q-pl-sm rounded-borders column q-gutter-xs text-caption full-width">
-                <div v-for=" aid  in  is.filter.affixes " :key="`${aid}`" class="row items-center no-wrap full-width">
+                <div v-for=" aid in is.filter.affixes " :key="`${aid}`" class="row items-center no-wrap full-width">
                   <div class="ellipsis">
                     {{ findAffix(aid as number)?.label }}
                   </div>
@@ -327,8 +338,7 @@ const update = (quality?: Array<string>) => {
                 </template>
               </q-select>
               <div bordered class="q-mt-xs q-pl-sm rounded-borders column q-gutter-xs text-caption full-width">
-                <div v-for=" rid  in  is.filter.restrictions " :key="`${rid}`"
-                  class="row items-center no-wrap full-width">
+                <div v-for=" rid in is.filter.restrictions " :key="`${rid}`" class="row items-center no-wrap full-width">
                   <div class="ellipsis">
                     {{ findRestriction(rid as number)?.label }}
                   </div>
@@ -352,6 +362,7 @@ const update = (quality?: Array<string>) => {
         </div>
       </q-btn>
     </q-item>
+    <q-item></q-item>
   </q-list>
 </template>
 
@@ -365,5 +376,10 @@ const update = (quality?: Array<string>) => {
 .disable:deep(*) {
   pointer-events: none;
   cursor: not-allowed !important;
+}
+
+.filter:deep(.q-item__label--header) {
+  padding-bottom: 8px;
+  color: var(--q-primary);
 }
 </style>

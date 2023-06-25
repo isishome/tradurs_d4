@@ -66,8 +66,8 @@ watch(() => props.modelValue, (val: number | null) => {
       @click="counting('dec')">
       <img class="icon" width="17" height="17" :src="icons.remove" alt="icon_remove" />
     </q-btn>
-    <q-input v-model="_quantity" :label="label || t('price.quantity')" :style="`max-width:${maxWidth}`"
-      input-class="text-center" :disable="disable" dense hide-bottom-space hide-hint no-error-icon outlined type="tel"
+    <q-input v-model.number="_quantity" :label="label || t('price.quantity')" :style="`max-width:${maxWidth}`"
+      input-class="text-center" :disable="disable" dense hide-bottom-space hide-hint no-error-icon outlined
       :maxlength="max.toString().length" :mask="''.padStart(max.toString().length, '#')" debounce="500"
       :rules="[(val: number) => (Number.isInteger(val) && (allowZero || val !== 0)) || '']" @update:model-value="update"
       @focus="focus" />

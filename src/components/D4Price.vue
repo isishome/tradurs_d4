@@ -89,9 +89,9 @@ const updateCurrency = (val: string | null): void => {
         </q-select>
       </div>
       <div v-else-if="data.currency === 'gold'">
-        <q-input :disable="disable" dense no-error-icon hide-bottom-space outlined v-model="_price.currencyValue"
+        <q-input :disable="disable" dense no-error-icon hide-bottom-space outlined v-model.number="_price.currencyValue"
           mask="#,###,###,###,###" maxlength="17" reverse-fill-mask unmasked-value debounce="500"
-          @update:model-value="update" @focus="focus" input-class="text-right" type="tel"
+          @update:model-value="update" @focus="focus" input-class="text-right"
           :rules="[val => Number.isInteger(parseInt(val)) || '']" />
       </div>
       <D4Counter v-if="!['offer', 'gold'].includes(data.currency)" v-model="_price.quantity" :disable="disable"
