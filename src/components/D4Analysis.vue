@@ -234,7 +234,7 @@ const checkAffixes = (textStr: string) => {
   currentCheck.value = 'affixes'
 
   for (const affix of is.affixes.data) {
-    const matchAffix = textStr.match(new RegExp(affix.label.replace(/(\[)([0-9.]{1,})(\s\-\s)([0-9.]{1,})(\])/g, '').replace(/[\+ ]/g, '').replace(/\{x\}/g, '[0-9.]{1,}') as string, 'i'))
+    const matchAffix = textStr.match(new RegExp(affix.label.replace(/\[[0-9.]{1,}\-[0-9.]{1,}\]/g, '').replace(/[\+ ]/g, '').replace(/\{x\}/g, '[0-9.]{1,}') as string, 'i'))
 
     matchAffix?.forEach((ma: string) => {
       const matchValues = ma.match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv))
@@ -255,7 +255,7 @@ const checkRestrictions = () => {
   currentCheck.value = 'restrictions'
 
   for (const restriction of is.restrictions.data) {
-    const matchRestriction = restrictionsPhase.match(new RegExp(restriction.label.replace(/(\[)([0-9.]{1,})(\s\-\s)([0-9.]{1,})(\])/g, '').replace(/[\+ ]/g, '').replace(/\{x\}/g, '[0-9.]{1,}') as string, 'i'))
+    const matchRestriction = restrictionsPhase.match(new RegExp(restriction.label.replace(/\[[0-9.]{1,}\-[0-9.]{1,}\]/g, '').replace(/[\+ ]/g, '').replace(/\{x\}/g, '[0-9.]{1,}') as string, 'i'))
 
     matchRestriction?.forEach((mr: string) => {
       const matchValues = mr.match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv))
