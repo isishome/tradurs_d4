@@ -12,6 +12,7 @@ import { type ILabel, useItemStore } from 'src/stores/item-store'
 import { Item } from 'src/types/item'
 
 import D4Dialog from 'components/D4Dialog.vue'
+import { type } from 'os'
 
 interface IProps {
   loading?: boolean,
@@ -41,8 +42,6 @@ const checkList: ILabel[] = [
   { value: 'aggregate', label: t('analyze.aggregateItemInfo') }
 ]
 const currentCheck = ref<string | number | null>(checkList[0].value)
-
-const lang = `가-힣ぁ-ゔァ-ヴー々〆〤一-龥a-zA-Z`
 
 let plainText: string
 const item = new Item('')
@@ -107,12 +106,15 @@ const checkInfo = (textArray: string[]) => {
     return failedScan(t('analyze.qualityNotFound'))
 
   const qualityPhase = textArray[indexQuality].split(/\s/gi)
+
   let typeValueIndex = -1
   for (let i = 0; i < qualityPhase.length; i++) {
-    const findQualityIndex = is.quality.findIndex(q => qualityPhase[i].indexOf(q.fullName.toLowerCase()) !== -1)
+    const findQualityIndex = is.quality.findIndex(q => qualityPhase[i].toLowerCase().indexOf(q.fullName.toLowerCase()) !== -1)
+
     if (findQualityIndex !== -1) {
-      typeValueIndex = i + 1
+      typeValueIndex = i
       item.quality = is.quality[findQualityIndex].value as string
+      qualityPhase[i].replace(is.quality[findQualityIndex].fullName.toLowerCase(), '')
       break
     }
   }
@@ -121,7 +123,7 @@ const checkInfo = (textArray: string[]) => {
   if (typeValueIndex === -1)
     return failedScan(t('analyze.typeNotFound'))
 
-  const typeValue = qualityPhase.splice(typeValueIndex, qualityPhase.length).join(' ').replace(new RegExp(`[^${lang} ]`, 'gi'), '').trim()
+  const typeValue = qualityPhase.splice(typeValueIndex, qualityPhase.length).join(' ').replace(new RegExp(`[^${is.analyze.lang} ]`, 'gi'), '').trim()
 
   if (!typeValue || typeValue === '')
     return failedScan(t('analyze.typeNotFound'))
@@ -155,7 +157,7 @@ const checkInfo = (textArray: string[]) => {
     return failedScan(t('analyze.typeValueNotFound'))
 
   // check item name
-  const name = textArray.splice(0, indexQuality).join(' ').replace(new RegExp(`[^${lang} ]`, 'gi'), '').trim()
+  const name = textArray.splice(0, indexQuality).join(' ').replace(new RegExp(`[^${is.analyze.lang} ]`, 'gi'), '').trim()
 
   if (name === '')
     return failedScan(t('analyze.nameNotFound'))

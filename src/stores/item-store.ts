@@ -128,6 +128,9 @@ export const useItemStore = defineStore('item', {
       rows: 30 as number,
       over: false as boolean,
       more: false as boolean
+    },
+    analyze: {
+      lang: `가-힣ぁ-ゔァ-ヴー々〆〤一-龥a-zA-Z`
     }
   }),
   getters: {
@@ -505,7 +508,7 @@ export const useItemStore = defineStore('item', {
       })
       const { data: { text } } = await worker.recognize(image)
       await worker.terminate()
-      const parsedText = text.replace(/[^0-9가-힣\/\%\+\.\[\]\-\,\:\n ]/gi, '').replace(/[ ]{2,}/gi, ' ')
+      const parsedText = text.replace(new RegExp(`[^0-9${this.analyze.lang}\/\%\+\.\[\]\-\,\:\n ]`, 'gi'), '').replace(/[ ]{2,}/gi, ' ')
       return parsedText
     }
   }
