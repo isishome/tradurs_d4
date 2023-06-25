@@ -61,6 +61,16 @@ const activatedRef = ref<typeof D4Item | null>(null)
 const activateShow = ref<boolean>(false)
 const activatedItem = ref<Item>(new Item(''))
 
+const setDefaultProperties = () => {
+  const findClass = is.findClass(activatedItem.value.itemTypeValue1)
+
+  if (findClass) {
+    findClass.properties.forEach(p => {
+      selectedProperty(p)
+    })
+  }
+}
+
 const editItem = (item: Item) => {
   const clone = JSON.parse(JSON.stringify(item))
   Object.assign(new Item, clone)
@@ -86,6 +96,7 @@ const copyItem = (item: Item) => {
 
 const updateItem = ({ hardcore, ladder, name, quantity, quality, itemType, itemTypeValue1, itemTypeValue2, imageId, power, upgrade, level, price }: IItem): void => {
   const changeTypeNotFirst = activatedItem.value.itemType && activatedItem.value.itemType !== itemType
+  const changeTypeValue1NotFirst = activatedItem.value.itemTypeValue1 && activatedItem.value.itemTypeValue1 !== itemTypeValue1
   activatedItem.value.itemType = itemType
   activatedItem.value.hardcore = hardcore
   activatedItem.value.ladder = ladder
@@ -108,7 +119,17 @@ const updateItem = ({ hardcore, ladder, name, quantity, quality, itemType, itemT
     activatedItem.value.properties.splice(0, activatedItem.value.properties.length)
     activatedItem.value.affixes.splice(0, activatedItem.value.affixes.length)
     activatedItem.value.restrictions.splice(0, activatedItem.value.restrictions.length)
-    activatedItem.value.action = 16
+    const actions = new Set(activatedItem.value.actions)
+    actions.add(16)
+    activatedItem.value.actions = Array.from(actions)
+  }
+
+  if (changeTypeValue1NotFirst) {
+    activatedItem.value.properties.splice(0, activatedItem.value.properties.length)
+    const actions = new Set(activatedItem.value.actions)
+    actions.add(32)
+    activatedItem.value.actions = Array.from(actions)
+    setDefaultProperties()
   }
 }
 
@@ -180,6 +201,17 @@ const statusItem = () => {
 const apply = () => {
   disable.value = true
   progress.value = true
+  // check attribute
+  activatedItem.value.properties.forEach(p => {
+    p.action = is.findProperty(p.propertyId)?.label.match(/\{x\}/g) && p.propertyValues.reduce((pv: number, cv: number) => pv + cv, 0) === 0 ? 8 : p.action
+  })
+  activatedItem.value.affixes.forEach(a => {
+    a.action = is.findAffix(a.affixId)?.label.match(/\{x\}/g) && a.affixValues.reduce((pv: number, cv: number) => pv + cv, 0) === 0 ? 8 : a.action
+  })
+  activatedItem.value.restrictions.forEach(r => {
+    r.action = is.findRestriction(r.restrictId)?.label.match(/\{x\}/g) && r.restrictValues.reduce((pv: number, cv: number) => pv + cv, 0) === 0 ? 8 : r.action
+  })
+
   emit('upsert-item', activatedItem.value, done)
 }
 
@@ -546,18 +578,28 @@ const expanded = (item: Item) => {
 }
 
 // analysis
+const analyzeKey = ref<number>(0)
 const startAnalyze = () => {
   disable.value = true
-
 }
 
 const endAnalyze = (item: Item) => {
   disable.value = false
+  item.itemId = activatedItem.value.itemId
+  item.authorized = activatedItem.value.authorized
+  activatedItem.value = item
+  analyzeKey.value++
 }
 
 const failedAnalyze = (msg: string) => {
   disable.value = false
-  alert(msg)
+  $q.notify({
+    icon: `img:${icons.alert}`,
+    color: 'negative',
+    classes: '',
+    message: msg,
+    timeout: 2000
+  })
 }
 
 // Execute function if an item is visible (adsense)
@@ -568,6 +610,9 @@ const visible = (isVisible: boolean, item: Item): void => {
 }
 
 const create = () => {
+  activatedItem.value.itemType = 'weapon'
+  activatedItem.value.itemTypeValue1 = 'axe'
+  setDefaultProperties()
   activateShow.value = true
 }
 
@@ -627,8 +672,8 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
     <div v-show="items.length === 0" class="row justify-center items-center" style="height:40vh">{{ t('noItem') }}</div>
     <q-dialog v-model="activateShow" :maximized="$q.screen.lt.sm" persistent transition-show="none" transition-hide="none"
       :transition-duration="0" :no-route-dismiss="false" @hide="hideEditable">
-      <D4Item ref="activatedRef" :data="activatedItem" editable :loading="activatedItem.loading" :disable="disable"
-        @update="updateItem" @apply="apply">
+      <D4Item ref="activatedRef" :data="activatedItem" :key="analyzeKey" editable :loading="activatedItem.loading"
+        :disable="disable" @update="updateItem" @apply="apply">
         <template #add-property="props">
           <div class="row items-center q-gutter-sm">
             <q-select ref="propertyRef" v-model="propertyId" :disable="disable"
@@ -742,7 +787,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                 <q-menu fit anchor="bottom middle" self="top middle" auto-close class="no-shadow" transition-show="none"
                   transition-hide="none" :transition-duration="0">
                   <q-list bordered class="rounded-borders">
-                    <q-item :disable="activatedItem.statusCode !== '000'" clickable @click="relistItem">
+                    <q-item :disable="activatedItem.statusCode !== '000'" clickable @click="relistItem">authorized
                       <q-item-section class="text-uppercase">{{ t('btn.relist') }}</q-item-section>
                     </q-item>
                     <q-item :disable="!['000', '002'].includes(activatedItem.statusCode)" clickable @click="statusItem">
@@ -757,8 +802,8 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                   </q-list>
                 </q-menu>
               </D4Btn>
-              <!-- <D4Analysis ref="analysis" :loading="activatedItem.loading" :disable="disable" @start="startAnalyze"
-                @end="endAnalyze" @failed="failedAnalyze" /> -->
+              <D4Analysis ref="analysis" :loading="activatedItem.loading" :disable="disable" @start="startAnalyze"
+                @end="endAnalyze" @failed="failedAnalyze" />
             </div>
             <div class="row justify-between items-center q-gutter-sm">
               <D4Btn :label="t('btn.cancel')" :loading="activatedItem.loading" :disable="disable" color="rgb(150,150,150)"

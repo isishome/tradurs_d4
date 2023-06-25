@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { computed } from 'vue'
 import { QInput } from 'quasar'
-import { useItemStore, type Restriction } from 'stores/item-store'
+import { useItemStore } from 'stores/item-store'
 import { parse, focus } from 'src/common'
 import { icons } from 'src/common/icons'
 

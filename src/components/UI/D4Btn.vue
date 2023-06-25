@@ -25,7 +25,7 @@ const props = withDefaults(defineProps<IProps>(), {
   loading: false,
   disable: false,
   progress: false,
-  noCaps: false
+  noCaps: true
 })
 
 const emit = defineEmits(['click'])

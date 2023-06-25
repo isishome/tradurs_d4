@@ -5,11 +5,11 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue'
-import { QFile } from 'quasar'
+import { reactive, ref } from 'vue'
+import { QFile, uid } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { type ILabel, useItemStore } from 'src/stores/item-store'
-import { Item, type Property, type Affix, type Restriction } from 'src/types/item'
+import { Item } from 'src/types/item'
 
 import D4Dialog from 'components/D4Dialog.vue'
 
@@ -18,7 +18,7 @@ interface IProps {
   disable?: boolean
 }
 
-const props = withDefaults(defineProps<IProps>(), {
+withDefaults(defineProps<IProps>(), {
   loading: false,
   disable: false
 })
@@ -28,47 +28,44 @@ const emit = defineEmits(['start', 'end', 'failed'])
 const is = useItemStore()
 const { t } = useI18n({ useScope: 'global' })
 
+const timeout = 1000
 const showProgress = ref<boolean>(false)
 const checkedItem = reactive<string[]>([])
 const checkList: ILabel[] = [
-  { value: 'analyze', label: '이미지 분석 중' },
-  { value: 'text', label: '텍스트 정렬 중' },
-  { value: 'info', label: '아이템 기본 정보 체크' },
-  { value: 'properties', label: '아이템 고유 특성 체크' },
-  { value: 'affixes', label: '아이템 옵션 체크' },
-  { value: 'restrictions', label: '아이템 제약 조건 체크' },
-  { value: 'aggregate', label: '아이템 정보 취합 중' }
+  { value: 'analyze', label: t('analyze.analyzingImage') },
+  { value: 'text', label: t('analyze.aligningText') },
+  { value: 'info', label: t('analyze.checkBasicInfo') },
+  { value: 'properties', label: t('analyze.checkCharacteristics') },
+  { value: 'affixes', label: t('analyze.checkAffixes') },
+  { value: 'restrictions', label: t('analyze.checkRestrictions') },
+  { value: 'aggregate', label: t('analyze.aggregateItemInfo') }
 ]
 const currentCheck = ref<string | number | null>(checkList[0].value)
 
 const lang = `가-힣ぁ-ゔァ-ヴー々〆〤一-龥a-zA-Z`
 
 let plainText: string
-const item = new Item()
-const properties: Array<Property> = []
-const affixes: Array<Affix> = []
-const restrictions: Array<Restriction> = []
-let restrictionsArea: string[]
+const item = new Item('')
+let restrictionsPhase: string
 
-const img = ref<HTMLDivElement>()
 const fileRef = ref<QFile>()
 const file = ref()
 
+const beforeHide = () => {
+  file.value = undefined
+  checkedItem.splice(0, checkedItem.length)
+  currentCheck.value = null
+}
+
 const endScan = () => {
   setTimeout(() => {
-    file.value = undefined
-    Object.assign(checkedItem, [])
-    currentCheck.value = null
     showProgress.value = false
 
     emit('end', item)
-  }, 1000)
+  }, timeout)
 }
 
 const failedScan = (msg: string) => {
-  file.value = undefined
-  Object.assign(checkedItem, [])
-  currentCheck.value = null
   showProgress.value = false
 
   emit('failed', msg)
@@ -81,8 +78,6 @@ const checkText = () => {
   const notTradable = `계정 귀속|고유 장착|거래 불가|account bound|unique equipped|not tradable`
   const textArray = plainText.split(/\n/g).map(a => a.trim())
 
-  console.log(textArray)
-
   // check priceText
   const indexPriceText = textArray.findIndex(ta => (new RegExp(priceText, 'gi')).test(ta))
 
@@ -93,12 +88,12 @@ const checkText = () => {
   const findNotTradable = textArray.filter(ta => (new RegExp(notTradable, 'gi')).test(ta))
 
   if (findNotTradable.length > 0)
-    return failedScan('거래 불가능한 아이템입니다')
+    return failedScan(t('analyze.nonTradable'))
 
   setTimeout(() => {
     checkedItem.push('text')
     checkInfo(textArray)
-  }, 1000)
+  }, timeout)
 }
 
 const checkInfo = (textArray: string[]) => {
@@ -109,7 +104,7 @@ const checkInfo = (textArray: string[]) => {
   const indexQuality = textArray.findIndex(ta => (new RegExp(qualityText, 'gi')).test(ta))
 
   if (indexQuality === -1)
-    return failedScan('아이템 품질 정보를 찾지 못했습니다')
+    return failedScan(t('analyze.qualityNotFound'))
 
   const qualityPhase = textArray[indexQuality].split(/\s/gi)
   let typeValueIndex = -1
@@ -124,12 +119,12 @@ const checkInfo = (textArray: string[]) => {
 
   // check typevalue
   if (typeValueIndex === -1)
-    return failedScan('아이템 유형 정보를 찾지 못했습니다')
+    return failedScan(t('analyze.typeNotFound'))
 
   const typeValue = qualityPhase.splice(typeValueIndex, qualityPhase.length).join(' ').replace(new RegExp(`[^${lang} ]`, 'gi'), '').trim()
 
   if (!typeValue || typeValue === '')
-    return failedScan('아이템 유형 정보를 찾지 못했습니다')
+    return failedScan(t('analyze.typeNotFound'))
 
   // check class
   const findClass = is.classes.find(c => typeValue.toLowerCase().indexOf(c.label.toLowerCase()) !== -1)
@@ -157,16 +152,15 @@ const checkInfo = (textArray: string[]) => {
   }
 
   if (item.itemTypeValue1 === '')
-    return failedScan('아이템 정보를 찾지 못했습니다')
+    return failedScan(t('analyze.typeValueNotFound'))
 
   // check item name
   const name = textArray.splice(0, indexQuality).join(' ').replace(new RegExp(`[^${lang} ]`, 'gi'), '').trim()
 
   if (name === '')
-    return failedScan('아이템 명 정보를 찾지 못했습니다')
+    return failedScan(t('analyze.nameNotFound'))
 
   item.name = name
-  textArray.splice(0, indexQuality)
 
   // check item power
   const powerText = `아이템 위력|item power`
@@ -177,7 +171,7 @@ const checkInfo = (textArray: string[]) => {
     if (!isNaN(parseFloat(numPhase)))
       item.power = parseFloat(numPhase)
 
-    textArray.splice(0, indexPower)
+    textArray.splice(0, indexPower + 1)
   }
 
   // check item upgrades
@@ -189,7 +183,7 @@ const checkInfo = (textArray: string[]) => {
     if (!isNaN(parseFloat(numPhase)))
       item.upgrade = parseFloat(numPhase)
 
-    textArray.splice(0, indexUpgrades)
+    textArray.splice(0, indexUpgrades + 1)
   }
 
   // check item Requires Level
@@ -197,45 +191,85 @@ const checkInfo = (textArray: string[]) => {
   const indexRequires = textArray.findIndex(ta => (new RegExp(requiresText, 'gi')).test(ta))
 
   if (indexRequires === -1)
-    return failedScan('아이템 요구 레벨 정보를 찾지 못했습니다')
+    return failedScan(t('analyze.requireNotFound'))
 
   const levelPhase = textArray[indexRequires].replace(/[^0-9]/gi, '')
   if (!isNaN(parseFloat(levelPhase)))
     item.level = parseFloat(levelPhase)
 
-  restrictionsArea = textArray.splice(indexRequires, textArray.length)
+  restrictionsPhase = textArray.splice(indexRequires, textArray.length).join('').replace(/[\+ ]/g, '').replace(/([0-9.]{1,})(\,)([0-9.]{1,})/g, '$1$3').replace(/(\[)([0-9.]{1,})(\s\-\s)([0-9.]{1,})(\])/g, '$1$2-$4$5')
+
+  let textStr = textArray.join('').replace(/[\+ ]/g, '').replace(/([0-9.]{1,})(\,)([0-9.]{1,})/g, '$1$3').replace(/(\[)([0-9.]{1,})(\s\-\s)([0-9.]{1,})(\])/g, '$1$2-$4$5')
 
   setTimeout(() => {
     checkedItem.push('info')
-    checkProperties(textArray)
-  }, 1000)
+    checkProperties(textStr)
+  }, timeout)
 }
 
-const checkProperties = (textArray: string[]) => {
+const checkProperties = (textStr: string) => {
   currentCheck.value = 'properties'
 
+  const findClass = is.findClass(item.itemTypeValue1)
 
+  if (findClass) {
+    findClass.properties.forEach((cp: number) => {
+      const matchProperty = textStr.match(new RegExp(is.findProperty(cp)?.label.replace(/[\+ ]/g, '').replace(/\{x\}/g, '[0-9.]{1,}') as string, 'i'))
+      const matchValues = matchProperty?.[0].match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv))
+
+      if (matchProperty && matchValues && item.properties.filter(p => p.propertyId === cp).length === 0) {
+        item.properties.push({ valueId: uid(), propertyId: cp, propertyValues: matchValues, action: 2 })
+        textStr = textStr.replace(matchProperty[0], '')
+      }
+    })
+  }
 
   setTimeout(() => {
     checkedItem.push('properties')
-    checkAffixes()
-  }, 2000)
+    checkAffixes(textStr)
+  }, timeout)
 }
 
-const checkAffixes = () => {
+const checkAffixes = (textStr: string) => {
   currentCheck.value = 'affixes'
+
+  for (const affix of is.affixes.data) {
+    const matchAffix = textStr.match(new RegExp(affix.label.replace(/[\+ ]/g, '').replace(/\{x\}/g, '[0-9.]{1,}') as string, 'i'))
+
+    matchAffix?.forEach((ma: string) => {
+      const matchValues = ma.match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv))
+      if (matchValues) {
+        item.affixes.push({ valueId: uid(), affixId: affix.value as number, affixValues: matchValues, action: 2 })
+        textStr = textStr.replace(ma, '')
+      }
+    })
+  }
+
   setTimeout(() => {
     checkedItem.push('affixes')
     checkRestrictions()
-  }, 2000)
+  }, timeout)
 }
 
 const checkRestrictions = () => {
   currentCheck.value = 'restrictions'
+
+  for (const restriction of is.restrictions.data) {
+    const matchRestriction = restrictionsPhase.match(new RegExp(restriction.label.replace(/[\+ ]/g, '').replace(/\{x\}/g, '[0-9.]{1,}') as string, 'i'))
+
+    matchRestriction?.forEach((mr: string) => {
+      const matchValues = mr.match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv))
+      if (matchValues) {
+        item.restrictions.push({ valueId: uid(), restrictId: restriction.value as number, restrictValues: matchValues, action: 2 })
+        restrictionsPhase = restrictionsPhase.replace(mr, '')
+      }
+    })
+  }
+
   setTimeout(() => {
     checkedItem.push('restrictions')
     aggregate()
-  }, 2000)
+  }, timeout)
 }
 
 const aggregate = () => {
@@ -243,78 +277,7 @@ const aggregate = () => {
   setTimeout(() => {
     checkedItem.push('aggregate')
     endScan()
-  }, 2000)
-}
-
-const tempScan = (files: File) => {
-  currentCheck.value = 'analyze'
-  showProgress.value = true
-  // plainText = ` 음흉한 달개                    
-  // 선조 희귀 활                    /
-  // . 아이템 위력 751             /      
-  //  1,895 초당 공격력
-  // 적중당 공격력 [,378 - 2,068]
-  // .   초당 공격 횟수 110 빠른 무기
-  //  원거리에 있는 적에게 주는 피해
-  // +40.0% [40.0]%
-  //      취약 피해 +47.0% [33.0 - 47.0%
-  //  근거리에 있는 적에게 주는 피해
-  //        +45.0% [33.0 - 47.0]%
-  //   감속 적에게 주는 피해 +38.0%
-  // [33.0 - 47.0]%
-  //  멍해짐 적에게 주는 피해 +34.0%
-  // [33.0 - 47.0]%
-  // 빈홈
-
-  //  빈 홈
-
-  // 요구 레벨: 75
-  // ,                                     도이
-  // 판매가: 30,167 
-  //                           내구도: 100/100
-  // 크 획득                               
-  // 00+ 뜨 링크`
-
-  plainText = `
- 톱니의 고리 속
-선조 전설 반지 
-
-아이템 위력 726+25 
- 업그레이드: 5/5
- 번개 저항 33.9% [33.9]% [
- 암흑 저항 33.9% [33.9]%
- 뼈 기술의 극대화 피해 +26.2% 
-: [21.0 - 31.5]%
- 물리 피해 +11.3% [10.5 - 21.0]% 
- 극대화 확률 +4.5% [2.7 - 7.51%
- 취약 피해 +27.8% [24.8 - 35.3]% 
- 각인: 골화 정수 핵심 지속 효과가 50
-을 초과하는 정수 1당 뼈 기술의 극대
-화 피해를 1%[+]만큼, 최대 40%[+] 
-[30 - 40]%까지 증가시킴니다. 강령
-술사 전용 [
-떫방어도 +250
-요구 레벨: 76 
-판매가: 49,021 
- 빼 장착 해제 ]
-000+ 2`
-
-  //   plainText = `달인희 중심선          
-  // 선조 희귀 반지                   내
-  // 아이템 위력 764+25
-  //   업그레이드: 55
-  //   화염 저항 35.0% [35.0]%         
-  //  암흑 저항 35.0% [35.0]%
-  //  취약 피해 +33.7% [24.8 - 35.3]%
-  //  극대화 확륭 +7.5% [2.7 - 7.5]%
-  //  극대화 피해 +29.2% [21.0 - 31.5]%
-  //  기절 적에게 주는 피해 +30.0%
-  // [24.8 - 35.2]%
-  //  홈
-
-  // 요구 레벨: 97
-  // 판매가: 24,666`
-  checkText()
+  }, timeout)
 }
 
 const scan = (files: File) => {
@@ -335,7 +298,6 @@ const scan = (files: File) => {
       if (ctx) {
         ctx.filter = 'contrast(160%)'
         ctx.drawImage(image, 0, 0)
-        //img.value?.appendChild(canvas)
         is.recognize(canvas)
           .then((text) => {
             plainText = text
@@ -343,11 +305,11 @@ const scan = (files: File) => {
             checkText()
           })
           .catch(() => {
-            failedScan('이미지 분석이 실패했습니다')
+            failedScan(t('analyze.failedAnalyze'))
           })
       }
       else
-        failedScan('이미지 분석이 실패했습니다')
+        failedScan(t('analyze.failedAnalyze'))
     }
   }
 }
@@ -357,7 +319,14 @@ const scan = (files: File) => {
     <D4Btn :label="t('btn.imageAnalysis')" :loading="loading" :disable="disable" color="var(--q-light-magic)"
       @click="fileRef?.pickFiles" v-bind="$attrs" />
     <q-file v-show="false" ref="fileRef" outlined v-model="file" accept="image/*" @update:model-value="scan" />
-    <D4Dialog v-model="showProgress" persistent>
+    <D4Dialog v-model="showProgress" persistent width="400px" max-width="80vw" @before-hide="beforeHide">
+      <template #top>
+        <q-card-section>
+          <div class="text-h6 q-px-sm text-center">
+            {{ t('analyze.title') }}
+          </div>
+        </q-card-section>
+      </template>
       <template #middle>
         <div class="q-pa-lg">
           <q-option-group v-model="checkedItem" disable :options="checkList" color="primary" class="check-item" size="xs"
@@ -373,7 +342,6 @@ const scan = (files: File) => {
       </template>
     </D4Dialog>
   </div>
-  <!-- <div ref="img"></div> -->
 </template>
 <style scoped>
 .check-item:deep(.checked) {

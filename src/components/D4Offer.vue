@@ -133,11 +133,11 @@ const parsEvaluations = computed(() => props.owner ? as.filterEvaluations(props.
       <q-skeleton width="100px" :height="$q.screen.lt.sm ? '24px' : '36px'" />
     </q-item-section>
     <q-item-section v-show="!data.loading" side>
-      <D4Btn v-if="isAcceptable" no-caps :label="t('btn.accept')" color="var(--q-secondary)" :loading="data.loading"
+      <D4Btn v-if="isAcceptable" :label="t('btn.accept')" color="var(--q-secondary)" :loading="data.loading"
         :disable="disable" :progress="progress" @click="acceptOffer" />
-      <D4Btn v-else-if="isRetractable" no-caps :label="t('btn.retractOffer')" color="var(--q-secondary)"
-        :loading="data.loading" :disable="disable" :progress="progress" @click="retractOffer" />
-      <D4Btn v-else-if="isTradeable" no-caps :label="t('btn.complete')" color="var(--q-primary)" :loading="data.loading"
+      <D4Btn v-else-if="isRetractable" :label="t('btn.retractOffer')" color="var(--q-secondary)" :loading="data.loading"
+        :disable="disable" :progress="progress" @click="retractOffer" />
+      <D4Btn v-else-if="isTradeable" :label="t('btn.complete')" color="var(--q-primary)" :loading="data.loading"
         :disable="disable" :progress="progress" @click="complete" />
       <div v-else class="row items-start q-col-gutter-xs">
         <div>{{ status }}

@@ -158,6 +158,23 @@ export default {
     message: 'How was the manner of trading partner?',
     evaluate: 'Trading partner evaluated you as below'
   },
+  analyze: {
+    title: 'Analyzing item image',
+    failedAnalyze: 'Failed to analyze image',
+    analyzingImage: 'Analyzing an image',
+    aligningText: 'Aligning text',
+    checkBasicInfo: 'Check item basic information',
+    checkCharacteristics: 'Check item characteristics',
+    checkAffixes: 'Check item affixes',
+    checkRestrictions: 'Check item restrictions',
+    aggregateItemInfo: 'Aggregating item information',
+    nonTradable: 'This is a non-tradable item',
+    qualityNotFound: 'Item quality information not found',
+    typeNotFound: 'Item type information not found',
+    typeValueNotFound: 'Item type value information not found',
+    nameNotFound: 'Item name information not found',
+    requireNotFound: 'Item requires level information not found'
+  },
   messages: {
     title: 'Message List',
     newItems: 'A new item has been registered ({n})',

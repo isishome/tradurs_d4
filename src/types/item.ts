@@ -55,7 +55,7 @@ export interface IItem {
   evaluations: Array<number>,
   favorite: boolean,
   editable: boolean,
-  action: number,
+  actions: Array<number>,
   loading: boolean,
   expanded: boolean
 }
@@ -105,7 +105,7 @@ export class Item implements IItem {
   public evaluations: Array<number> = []
   public favorite = false
   public editable = false
-  public action = 0
+  public actions: Array<number> = []
   public loading = false
   public expanded = false
 

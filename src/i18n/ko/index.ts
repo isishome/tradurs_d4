@@ -157,6 +157,23 @@ export default {
     message: '거래를 진행 한 상대는 어떠셨나요?',
     evaluate: '상대는 나를 이렇게 평가했어요'
   },
+  analyze: {
+    title: '아이템 이미지 분석',
+    failedAnalyze: '이미지 분석이 실패했습니다',
+    analyzingImage: '이미지 분석 중',
+    aligningText: '텍스트 정렬 중',
+    checkBasicInfo: '아이템 기본 정보 체크',
+    checkCharacteristics: '아이템 고유 특성 체크',
+    checkAffixes: '아이템 옵션 체크',
+    checkRestrictions: '아이템 제약 조건 체크',
+    aggregateItemInfo: '아이템 정보 취합 중',
+    nonTradable: '거래 불가능한 아이템입니다',
+    qualityNotFound: '아이템 품질 정보를 찾지 못했습니다',
+    typeNotFound: '아이템 유형 정보를 찾지 못했습니다',
+    typeValueNotFound: '아이템 유형 값 정보를 찾지 못했습니다',
+    nameNotFound: '아이템 명 정보를 찾지 못했습니다',
+    requireNotFound: '아이템 요구 레벨 정보를 찾지 못했습니다'
+  },
   messages: {
     title: '메세지 리스트',
     newItems: '새로운 아이템이 등록되었습니다 ({n})',
