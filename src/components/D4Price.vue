@@ -121,10 +121,8 @@ const updateCurrency = (val: string | null): void => {
         </template>
         <template v-else-if="data.currency === 'gold'">
           <img class="coin" :src="icons.price" width="18" height="18" alt="icon_price" />
-          <div class="q-ml-xs">{{ n(Number.parseFloat(data.currencyValue ? data.currencyValue.toString() :
-            '0'),
-            'decimal')
-          }}</div>
+          <div class="q-ml-xs">
+            {{ n(Number.parseFloat(data.currencyValue ? data.currencyValue.toString() : '0'), 'decimal') }}</div>
         </template>
         <template v-else>
           <img :src="itemImgs[data.currency as keyof typeof itemImgs]" width="24" height="24"

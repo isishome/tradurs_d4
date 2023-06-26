@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { QSelect } from 'quasar'
+import { QSelect, useQuasar } from 'quasar'
 import { useAccountStore } from 'src/stores/account-store'
 import { useItemStore } from 'src/stores/item-store'
 import { useI18n } from 'vue-i18n'
@@ -18,6 +18,7 @@ withDefaults(defineProps<IProps>(), {
   disable: false
 })
 
+const $q = useQuasar()
 const as = useAccountStore()
 const is = useItemStore()
 const { t, locale } = useI18n({ useScope: 'global' })
@@ -31,6 +32,10 @@ const filterLoading = computed(() => is.filter.loading)
 const findProperty = computed(() => is.findProperty)
 const findAffix = computed(() => is.findAffix)
 const findRestriction = computed(() => is.findRestriction)
+
+// init filter
+if ($q.localStorage.has('d4.filter'))
+  is.filter = JSON.parse($q.localStorage.getItem('d4.filter') as string)
 
 // about property
 const propertyRef = ref<QSelect | null>(null)
@@ -107,12 +112,27 @@ const removeRestriction = (val: number): void => {
   }
 }
 
+const stored = () => {
+  if (is.filter.fixed)
+    $q.localStorage.set('d4.filter', JSON.stringify(is.filter))
+  else
+    $q.localStorage.remove('d4.filter')
+}
+
+const fixed = (val: boolean) => {
+  is.filter.fixed = val
+  stored()
+}
+
 const update = (quality?: Array<string>) => {
-  if (quality)
+  if (quality) {
     Object.keys(is.filter.itemTypeValues1).forEach((q: string) => {
       if (!quality.includes(q))
         delete is.filter.itemTypeValues1[q]
     })
+  }
+
+  stored()
 
   is.filter.request++
 }
@@ -349,9 +369,23 @@ const update = (quality?: Array<string>) => {
         </q-item-label>
       </q-item-section>
     </q-item>
-    <q-item :inset-level=".3" class="q-mt-xl">
+    <q-item :disable="filterLoading" :inset-level=".2" class="q-mt-md">
+      <q-item-section>
+        <div class="row items-center q-gutter-sm">
+          <q-checkbox size="xs" v-model="is.filter.fixed" :label="t('filter.fixed')" @update:model-value="fixed" />
+          <q-icon class="icon" :name="`img:${icons.help}`" size="19px">
+            <D4Tooltip>
+              <div style="max-width:200px" class="text-caption break-keep">
+                {{ t('filter.fixedDescription') }}
+              </div>
+            </D4Tooltip>
+          </q-icon>
+        </div>
+      </q-item-section>
+    </q-item>
+    <q-item :disable="filterLoading" :inset-level=".3" class="q-mt-md">
       <q-btn outline aria-label="Tradurs Refresh Button" size="md" :ripple="false" class="no-hover"
-        :disable="filterLoading" @click="is.clearFilter">
+        :disable="filterLoading" @click="is.clearFilter(true)">
         <div class="row items-center q-gutter-xs">
           <div>{{ t('btn.resetSearch') }}</div>
           <q-icon class="icon" :name="`img:${icons.refresh}`" size="xs" />

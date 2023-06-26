@@ -12,7 +12,6 @@ import { type ILabel, useItemStore } from 'src/stores/item-store'
 import { Item } from 'src/types/item'
 
 import D4Dialog from 'components/D4Dialog.vue'
-import { type } from 'os'
 
 interface IProps {
   loading?: boolean,

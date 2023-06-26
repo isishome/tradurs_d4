@@ -120,10 +120,11 @@ export const useItemStore = defineStore('item', {
       itemTypeValues2: {} as { [key: string]: Array<number> },
       properties: [] as Array<number>,
       affixes: [] as Array<number>,
-      restrictions: [],
+      restrictions: [] as Array<number>,
       name: '' as string,
-      request: 0,
-      loading: false
+      request: 0 as number,
+      loading: false as boolean,
+      fixed: false as boolean
     },
     detailItem: [] as Array<Item>,
     page: {
@@ -216,26 +217,28 @@ export const useItemStore = defineStore('item', {
       this.socket.acceptedOffer = null
       this.socket.complete = null
     },
-    clearFilter() {
-      this.filter.favorite = false
-      this.filter.quality = []
-      this.filter.hardcore = null
-      this.filter.ladder = null
-      this.filter.available = false
-      this.filter.onlyCurrency = false
-      this.filter.mine = false
-      this.filter.offer = false
-      this.filter.power = [0, 9999]
-      this.filter.level = [0, 999]
-      this.filter.itemTypes = []
-      this.filter.itemTypeValues1 = {}
-      this.filter.itemTypeValues2 = {}
-      this.filter.properties = []
-      this.filter.affixes = []
-      this.filter.restrictions = []
-      this.filter.name = ''
-      this.filter.request = 0
-      this.filter.loading = false
+    clearFilter(isForced: boolean = false) {
+      if (isForced || !this.filter.fixed) {
+        this.filter.favorite = false
+        this.filter.quality = []
+        this.filter.hardcore = null
+        this.filter.ladder = null
+        this.filter.available = false
+        this.filter.onlyCurrency = false
+        this.filter.mine = false
+        this.filter.offer = false
+        this.filter.power = [0, 9999]
+        this.filter.level = [0, 999]
+        this.filter.itemTypes = []
+        this.filter.itemTypeValues1 = {}
+        this.filter.itemTypeValues2 = {}
+        this.filter.properties = []
+        this.filter.affixes = []
+        this.filter.restrictions = []
+        this.filter.name = ''
+        this.filter.request = 0
+        this.filter.loading = false
+      }
     },
     getBase() {
       return new Promise<void>((resolve, reject) => {
