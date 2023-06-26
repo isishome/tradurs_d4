@@ -74,7 +74,7 @@ const checkText = () => {
   currentCheck.value = 'text'
 
   const priceText = `판매가|sell value`
-  const notTradable = `계정 귀속|고유 장착|거래 불가|account bound|unique equipped|not tradable`
+  const notTradable = `계정 귀속|거래 불가|account bound|not tradable`
   const textArray = plainText.split(/\n/g).map(a => a.trim())
 
   // check priceText
