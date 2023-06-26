@@ -271,7 +271,17 @@ onUnmounted(() => {
 })
 </script>
 <template>
-  <div class="row q-gutter-xs items-center sticky-first">
+  <div>
+    <div class="row justify-center items-center">
+      <D4Items ref="itemsRef" :items="items" :loading="disable" @upsert-item="upsertItem" @delete-item="deleteItem"
+        @relist-item="relistItem" @status-item="statusItem" @update-only="updateOnly" @copy="copy" @favorite="favorite" />
+    </div>
+  </div>
+  <div class="q-py-lg"></div>
+  <D4Btn v-if="as.signed" round @click="create" class="sticky-btn" color="var(--q-secondary)" :disable="disable" shadow>
+    <img :src="icons.add" width="24" height="24" class="invert" alt="icon_add" />
+  </D4Btn>
+  <div class="row q-gutter-xs items-center paging">
     <D4Btn round @click="prev" color="var(--q-magic)" :disable="!over || disable" :shadow="!$q.dark.isActive">
       <img :src="icons.prev" width="24" height="24" class="invert" alt="icon_prev" />
     </D4Btn>
@@ -279,31 +289,24 @@ onUnmounted(() => {
       <img :src="icons.next" width="24" height="24" class="invert" alt="icon_next" />
     </D4Btn>
   </div>
-  <D4Btn v-if="as.signed" round @click="create" class="sticky-second" color="var(--q-secondary)" :disable="disable"
-    shadow>
-    <img :src="icons.add" width="24" height="24" class="invert" alt="icon_add" />
-  </D4Btn>
-  <div>
-    <div class="row justify-center items-center">
-      <D4Items ref="itemsRef" :items="items" :loading="disable" @upsert-item="upsertItem" @delete-item="deleteItem"
-        @relist-item="relistItem" @status-item="statusItem" @update-only="updateOnly" @copy="copy" @favorite="favorite" />
-    </div>
-  </div>
 </template>
 
 <style scoped>
-.sticky-first {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  z-index: 1;
-  transform: translateY(-91%);
-}
-
-.sticky-second {
+.sticky-btn {
   position: sticky;
-  top: 90%;
+  bottom: 8%;
   left: 100%;
   z-index: 1;
+}
+
+@media (max-width:600px) {
+  .sticky-btn {
+    bottom: 10px;
+  }
+}
+
+
+.paging {
+  transform: translateY(-90%);
 }
 </style>

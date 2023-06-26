@@ -346,12 +346,11 @@ onUnmounted(() => {
           <div :class="screen.lt.sm ? 'q-pa-sm' : 'q-pa-xl'" :style="screen.lt.sm ? 'width:100%' : 'width:830px'">
             <div class="view">
               <RouterView />
-              <div class="q-py-xl"></div>
+              <div class="q-py-md"></div>
             </div>
             <!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5110777286519562"
               data-ad-slot="8610177982" data-ad-format="auto" data-full-width-responsive="true"
               :data-adtest="prod ? 'off' : 'on'" :key="key"></ins> -->
-            <div class="q-py-xl"></div>
             <q-separator />
             <div class="q-pt-lg">
               <div class="row justify-center items-center q-gutter-xs text-caption bottom">

@@ -5,7 +5,6 @@ import { useAccountStore } from 'src/stores/account-store'
 import { useItemStore } from 'src/stores/item-store'
 import { useI18n } from 'vue-i18n'
 import { icons } from 'src/common/icons'
-import { focus } from 'src/common'
 import NotifyEn from 'assets/filter/notify_en.webp'
 import NotifyKo from 'assets/filter/notify_ko.webp'
 
@@ -121,81 +120,78 @@ const update = (quality?: Array<string>) => {
 
 <template>
   <q-list dense class="filter" :class="{ 'disable': disable || filterLoading }">
-    <q-item :inset-level=".2">
+    <q-item :disable="filterLoading" :inset-level=".2">
       <q-item-section>
         <div class="row items-center q-gutter-sm">
-          <q-checkbox size="xs" :disable="filterLoading" v-model="is.filter.hardcore" :label="t('item.hardcore')"
-            @update:model-value="update()" />
+          <q-checkbox size="xs" v-model="is.filter.hardcore" :label="t('item.hardcore')" @update:model-value="update()" />
           <q-btn dense round flat aria-label="Tradurs Close Button" size="xs" :ripple="false" class="no-hover"
-            :disable="filterLoading" @click="is.filter.hardcore = null; update()">
+            @click="is.filter.hardcore = null; update()">
             <q-icon class="icon" :name="`img:${icons.close}`" />
           </q-btn>
         </div>
       </q-item-section>
     </q-item>
-    <q-item :inset-level=".2">
+    <q-item :disable="filterLoading" :inset-level=".2">
       <q-item-section>
         <div class="row items-center q-gutter-sm">
-          <q-checkbox size="xs" :disable="filterLoading" v-model="is.filter.ladder" :label="t('item.ladder')"
-            @update:model-value="update()" />
+          <q-checkbox size="xs" v-model="is.filter.ladder" :label="t('item.ladder')" @update:model-value="update()" />
           <q-btn dense round flat aria-label="Tradurs Close Button" size="xs" :ripple="false" class="no-hover"
-            :disable="filterLoading" @click="is.filter.ladder = null; update()">
+            @click="is.filter.ladder = null; update()">
             <q-icon class="icon" :name="`img:${icons.close}`" />
           </q-btn>
         </div>
       </q-item-section>
     </q-item>
-    <q-item :inset-level=".2">
+    <q-item :disable="filterLoading" :inset-level=".2">
       <q-item-section>
-        <q-checkbox size="xs" :disable="filterLoading" v-model="is.filter.available" :label="t('item.available')"
-          @update:model-value="update()" />
+        <q-checkbox size="xs" v-model="is.filter.available" :label="t('item.available')" @update:model-value="update()" />
       </q-item-section>
     </q-item>
     <q-item :inset-level=".2">
       <q-item-section>
-        <q-checkbox size="xs" :disable="filterLoading" v-model="is.filter.onlyCurrency" :label="t('item.onlyCurrency')"
+        <q-checkbox size="xs" v-model="is.filter.onlyCurrency" :label="t('item.onlyCurrency')"
           @update:model-value="update()" />
       </q-item-section>
     </q-item>
-    <q-item v-if="as.signed">
+    <q-item :disable="filterLoading" v-if="as.signed">
       <q-item-section>
         <q-item-label header>{{ t('filter.onlyForMe') }}</q-item-label>
-        <q-checkbox size="xs" class="q-pl-sm" :disable="filterLoading" v-model="is.filter.mine" :label="t('filter.mine')"
+        <q-checkbox size="xs" class="q-pl-sm" v-model="is.filter.mine" :label="t('filter.mine')"
           @update:model-value="update()" />
-        <q-checkbox size="xs" class="q-pl-sm" :disable="filterLoading" v-model="is.filter.offer"
-          :label="t('filter.offer')" @update:model-value="update()" />
-        <q-checkbox :disable="filterLoading" v-model="is.filter.favorite" class="q-pl-sm" size="xs"
-          :label="t('item.favorites')" @update:model-value="update()" />
+        <q-checkbox size="xs" class="q-pl-sm" v-model="is.filter.offer" :label="t('filter.offer')"
+          @update:model-value="update()" />
+        <q-checkbox v-model="is.filter.favorite" class="q-pl-sm" size="xs" :label="t('item.favorites')"
+          @update:model-value="update()" />
       </q-item-section>
     </q-item>
-    <q-item>
+    <q-item :disable="filterLoading">
       <q-item-section>
         <q-item-label header>{{ t('item.power') }}</q-item-label>
         <div class="row justify-center no-wrap q-col-gutter-sm items-center q-px-sm">
-          <D4Counter v-model="is.filter.power[0]" :label="t('min')" :max="1000" allow-zero no-button
-            :disable="filterLoading" @update:model-value="update()" max-width="100%" />
+          <D4Counter v-model="is.filter.power[0]" :label="t('min')" :max="9999" allow-zero no-button
+            @update:model-value="update()" max-width="100%" />
           <div>-</div>
-          <D4Counter v-model="is.filter.power[1]" :label="t('max')" :max="1000" allow-zero no-button
-            :disable="filterLoading" @update:model-value="update()" max-width="100%" />
+          <D4Counter v-model="is.filter.power[1]" :label="t('max')" :max="9999" allow-zero no-button
+            @update:model-value="update()" max-width="100%" />
         </div>
       </q-item-section>
     </q-item>
-    <q-item>
+    <q-item :disable="filterLoading">
       <q-item-section>
         <q-item-label header>{{ t('item.level') }}</q-item-label>
         <div class="row justify-center no-wrap q-col-gutter-sm items-center q-px-sm">
-          <D4Counter v-model="is.filter.level[0]" :label="t('min')" :max="100" allow-zero no-button
-            :disable="filterLoading" @update:model-value="update()" max-width="100%" />
+          <D4Counter v-model="is.filter.level[0]" :label="t('min')" :max="999" allow-zero no-button
+            @update:model-value="update()" max-width="100%" />
           <div>-</div>
-          <D4Counter v-model="is.filter.level[1]" :label="t('max')" :max="100" allow-zero no-button
-            :disable="filterLoading" @update:model-value="update()" max-width="100%" />
+          <D4Counter v-model="is.filter.level[1]" :label="t('max')" :max="999" allow-zero no-button
+            @update:model-value="update()" max-width="100%" />
         </div>
       </q-item-section>
     </q-item>
-    <q-item>
+    <q-item :disable="filterLoading">
       <q-item-section>
         <q-item-label header>{{ t('item.quality') }}</q-item-label>
-        <q-option-group size="xs" :disable="filterLoading" inline class="q-pl-sm"
+        <q-option-group size="xs" inline class="q-pl-sm"
           :options="filterQuality().map(fq => ({ ...fq, label: fq.fullName }))" type="checkbox"
           v-model="is.filter.quality" @update:model-value="update()" />
       </q-item-section>
@@ -203,18 +199,18 @@ const update = (quality?: Array<string>) => {
     <q-item>
       <q-item-section>
         <q-item-label header>{{ t('item.selectType') }}</q-item-label>
-        <q-option-group size="xs" :disable="filterLoading" inline class="q-pl-sm" :options="filterTypes()" type="checkbox"
+        <q-option-group size="xs" inline class="q-pl-sm" :options="filterTypes()" type="checkbox"
           v-model="is.filter.itemTypes" @update:model-value="val => update(val)" />
       </q-item-section>
     </q-item>
-    <q-item :inset-level=".2" v-for=" itemType in is.filter.itemTypes.filter(it => it !== 'aspect') " :key="itemType">
+    <q-item :disable="filterLoading" :inset-level=".2"
+      v-for=" itemType in is.filter.itemTypes.filter(it => it !== 'aspect') " :key="itemType">
       <q-item-section>
         <q-select v-model="is.filter.itemTypeValues1[itemType]"
           :options="findType(itemType)?.value === 'rune' ? filterRunes() : filterClasses(itemType)"
-          :label="`${findType(itemType)?.label} ${t('filter.type')}`" :disable="filterLoading" outlined dense
-          no-error-icon hide-bottom-space emit-value map-options multiple transition-show="none" transition-hide="none"
-          :transition-duration="0" :dropdown-icon="`img:${icons.dropdown}`" popup-content-class="d4-scroll"
-          @update:model-value="update()">
+          :label="`${findType(itemType)?.label} ${t('filter.type')}`" outlined dense no-error-icon hide-bottom-space
+          emit-value map-options multiple transition-show="none" transition-hide="none" :transition-duration="0"
+          :dropdown-icon="`img:${icons.dropdown}`" popup-content-class="d4-scroll" @update:model-value="update()">
         </q-select>
       </q-item-section>
     </q-item>
@@ -240,8 +236,8 @@ const update = (quality?: Array<string>) => {
         <q-item-label class="q-px-md">
           <div class="column q-gutter-md">
             <div style="width:200px">
-              <q-select ref="propertyRef" v-model="is.filter.properties" :disable="disable" max-values="3" outlined dense
-                no-error-icon use-input hide-bottom-space hide-selected emit-value map-options multiple
+              <q-select ref="propertyRef" v-model="is.filter.properties" :disable="filterLoading" max-values="3" outlined
+                dense no-error-icon use-input hide-bottom-space hide-selected emit-value map-options multiple
                 transition-show="none" transition-hide="none" :transition-duration="0"
                 :label="`${t('properties')} ${t('searchOrSelect')}`" :options="propertyOptions(propertyNeedle)"
                 :dropdown-icon="`img:${icons.dropdown}`" popup-content-class="d4-scroll"
@@ -270,7 +266,7 @@ const update = (quality?: Array<string>) => {
                   <div class="ellipsis">
                     {{ findProperty(pid as number)?.label }}
                   </div>
-                  <q-btn :disable="disable" dense unelevated flat round aria-label="Tradurs Close Button" size="xs"
+                  <q-btn :disable="filterLoading" dense unelevated flat round aria-label="Tradurs Close Button" size="xs"
                     :tabindex="-1" class="q-ml-sm" @click="removeProperty(pid)">
                     <img class="icon" width="13" height="13" :src="icons.close" alt="icon_close" />
                   </q-btn>
@@ -278,7 +274,7 @@ const update = (quality?: Array<string>) => {
               </div>
             </div>
             <div style="width:200px">
-              <q-select ref="affixRef" v-model="is.filter.affixes" :disable="disable" max-values="3" outlined dense
+              <q-select ref="affixRef" v-model="is.filter.affixes" :disable="filterLoading" max-values="3" outlined dense
                 no-error-icon use-input hide-bottom-space hide-selected emit-value map-options multiple
                 transition-show="none" transition-hide="none" :transition-duration="0"
                 :label="`${t('affixes')} ${t('searchOrSelect')}`" :options="affixOptions(affixNeedle)"
@@ -308,7 +304,7 @@ const update = (quality?: Array<string>) => {
                   <div class="ellipsis">
                     {{ findAffix(aid as number)?.label }}
                   </div>
-                  <q-btn :disable="disable" dense unelevated flat round aria-label="Tradurs Close Button" size="xs"
+                  <q-btn :disable="filterLoading" dense unelevated flat round aria-label="Tradurs Close Button" size="xs"
                     :tabindex="-1" class="q-ml-sm" @click="removeAffix(aid)">
                     <img class="icon" width="13" height="13" :src="icons.close" alt="icon_close" />
                   </q-btn>
@@ -316,8 +312,8 @@ const update = (quality?: Array<string>) => {
               </div>
             </div>
             <div style="width:200px">
-              <q-select ref="restrictionRef" v-model="is.filter.restrictions" :disable="disable" max-values="3" outlined
-                dense no-error-icon use-input hide-bottom-space hide-selected emit-value map-options multiple
+              <q-select ref="restrictionRef" v-model="is.filter.restrictions" :disable="filterLoading" max-values="3"
+                outlined dense no-error-icon use-input hide-bottom-space hide-selected emit-value map-options multiple
                 transition-show="none" transition-hide="none" :transition-duration="0"
                 :label="`${t('restrictions')} ${t('searchOrSelect')}`" :options="restrictionOptions(restrictionNeedle)"
                 :dropdown-icon="`img:${icons.dropdown}`" popup-content-class="d4-scroll"
@@ -342,7 +338,7 @@ const update = (quality?: Array<string>) => {
                   <div class="ellipsis">
                     {{ findRestriction(rid as number)?.label }}
                   </div>
-                  <q-btn :disable="disable" dense unelevated flat round aria-label="Tradurs Close Button" size="xs"
+                  <q-btn :disable="filterLoading" dense unelevated flat round aria-label="Tradurs Close Button" size="xs"
                     :tabindex="-1" class="q-ml-sm" @click="removeRestriction(rid)">
                     <img class="icon" width="13" height="13" :src="icons.close" alt="icon_close" />
                   </q-btn>

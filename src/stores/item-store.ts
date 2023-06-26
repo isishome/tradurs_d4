@@ -354,7 +354,7 @@ export const useItemStore = defineStore('item', {
       return new Promise<Array<Item>>((resolve, reject) => {
         api.post('/d4/item', { page, rows: this.page.rows, itemId, filter })
           .then(async (response) => {
-            await sleep(1000)
+            await sleep(500)
             this.page.over = page > 1
             this.page.more = response.data.length > this.page.rows
             response.data.splice(this.page.rows, 1)
