@@ -232,6 +232,7 @@ watch(newItems, (val: number) => {
     notify('newItems', t('messages.newItems', val), t('btn.refresh'), () => {
       itemsRef.value?.hideEditable()
       itemsRef.value?.hideOffers()
+      is.clearFilter()
       as.position = { left: 0, top: 0 }
       getList()
     })
