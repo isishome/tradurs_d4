@@ -281,6 +281,7 @@ onUnmounted(() => {
   <D4Btn v-if="as.signed" round @click="create" class="sticky-btn" color="var(--q-secondary)" :disable="disable" shadow>
     <img :src="icons.add" width="24" height="24" class="invert" alt="icon_add" />
   </D4Btn>
+  <D4Btn v-else style="visibility: hidden;" />
   <div class="row q-gutter-xs items-center paging">
     <D4Btn round @click="prev" color="var(--q-magic)" :disable="!over || disable" :shadow="!$q.dark.isActive">
       <img :src="icons.prev" width="24" height="24" class="invert" alt="icon_prev" />
