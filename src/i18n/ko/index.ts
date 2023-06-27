@@ -96,6 +96,8 @@ export default {
     gotoItem: '아이템 바로가기',
     markRead: '읽음으로 표시',
     retractOffer: '제안 철회',
+    turnDownOffer: '제안 거절',
+    turnDown: '거절',
     imageAnalysis: '이미지 분석'
   },
   attribute: {
@@ -139,6 +141,7 @@ export default {
     acceptOffer: '제안이 수락되었습니다',
     updateOffer: '제안 내용이 수정되었습니다',
     retractOffer: '제안이 철회되었습니다',
+    turnDownOffer: '제안을 거절했습니다',
     complete: '아이템 거래가 완료되었습니다'
   },
   accept: {
@@ -153,6 +156,10 @@ export default {
   retract: {
     title: '제안 철회',
     msg: '제안을 철회 하시겠습니까?'
+  },
+  turnDown: {
+    title: '제안 거절',
+    msg: '제안을 거절 하시겠습니까?'
   },
   complete: {
     title: '매너 평가',
@@ -181,13 +188,17 @@ export default {
   messages: {
     title: '메세지 리스트',
     newItems: '새로운 아이템이 등록되었습니다 ({n})',
-    newOffer: '새 제안 요청이 도착했습니다',
-    acceptedOffer: '제안이 수락되었습니다 ({in})',
+    newOffer: '(새) 제안 요청이 도착했습니다',
+    acceptedOffer: '제안이 수락되었습니다',
+    retractedOffer: '제안이 철회되었습니다',
+    turnedDownOffer: '제안이 거절되었습니다',
     clipboard: '{t}가 클립보드로 복사되었습니다',
     complete: '아이템 거래가 완료되었습니다 ({in})',
-    title000: '새 제안 요청이 도착했습니다',
+    title000: '(새) 제안 요청이 도착했습니다',
     title001: '제안이 수락되었습니다',
     title002: '아이템 거래가 완료되었습니다',
+    title003: '제안이 철회되었습니다',
+    title004: '제안을 거절했습니다',
     title999: '문의하신 내용 답변드립니다',
     noData: '수신된 메시지가 없습니다'
   },

@@ -1,6 +1,6 @@
 <script lang="ts">
 import { useGlobalStore } from 'src/stores/global-store'
-import { useItemStore } from 'stores/item-store'
+import { useItemStore, type OfferInfo } from 'stores/item-store'
 
 
 export default {
@@ -26,9 +26,9 @@ export default {
 import { useRouter } from 'vue-router'
 import { ref, computed, watch, onUnmounted, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useQuasar } from 'quasar'
+import { useQuasar, uid } from 'quasar'
 import { useAccountStore } from 'stores/account-store'
-import { Item } from 'src/types/item'
+import { Item, IPrice } from 'src/types/item'
 
 import { icons } from 'src/common/icons'
 import D4Items from 'components/D4Items.vue'
@@ -39,7 +39,7 @@ const props = defineProps<{
 
 // init module
 const router = useRouter()
-const { t } = useI18n({ useScope: 'global' })
+const { t, n } = useI18n({ useScope: 'global' })
 const $q = useQuasar()
 const is = useItemStore()
 const gs = useGlobalStore()
@@ -50,6 +50,8 @@ const disable = ref(false)
 const newItems = computed(() => is.socket.newItems)
 const newOffer = computed(() => is.socket.newOffer)
 const acceptedOffer = computed(() => is.socket.acceptedOffer)
+const retractedOffer = computed(() => is.socket.retractedOffer)
+const turnedDownOffer = computed(() => is.socket.turnedDownOffer)
 const complete = computed(() => is.socket.complete)
 
 // variable
@@ -181,12 +183,15 @@ const getItem = () => {
     })
 }
 
-const notify = (group: string, message: string, actionLabel: string, action: Function) => {
+const notify = (group: string, message: string, caption: string, actionLabel: string, action: Function) => {
+  const genGroup = group === '' ? uid() : group
+
   $q.notify({
-    group,
+    group: genGroup,
     progress: true,
     multiLine: true,
     message,
+    caption,
     actions: [
       {
         label: actionLabel, color: 'white', handler: () => { action() }
@@ -202,34 +207,70 @@ watch(() => props.itemid, (val, old) => {
 
 watch(newItems, (val: number) => {
   if (val > 0)
-    notify('newItems', t('messages.newItems', val), t('btn.refresh'), () => {
+    notify('newItems', t('messages.newItems', val), '', t('btn.refresh'), () => {
       router.push({ name: 'tradeList' })
     })
 })
 
-watch(newOffer, (val: string | null) => {
-  if (val)
-    notify('', t('messages.newOffer'), t('btn.move'), () => {
-      if (props.itemid === val)
-        itemsRef.value?.openOffers(props.itemid)
-      else
-        router.push({ name: 'itemInfo', params: { itemid: val }, state: { offers: true } })
-    })
+watch(acceptedOffer, (val: OfferInfo | null) => {
+  if (val) {
+    const offerPrice: IPrice = JSON.parse(val.price || '{}')
+    notify(uid(), t('messages.acceptedOffer', { in: val.itemName }), `[${val.itemName}] ${offerPrice.currency === 'gold' ? t('item.gold') : ''} : ${n(Number.parseFloat(offerPrice.currencyValue as string), 'decimal')}`, t('btn.move'), () => { router.push({ name: 'itemInfo', params: { itemid: val.itemId }, state: { offers: true } }) })
+  }
 })
 
-watch(acceptedOffer, (val: { itemName: string, itemId: string } | null) => {
-  if (val)
-    notify('', t('messages.acceptedOffer', { in: val.itemName }), t('btn.move'), () => {
+
+watch(newOffer, (val: OfferInfo | null) => {
+  if (val) {
+    const offerPrice: IPrice = JSON.parse(val.price || '{}')
+    notify('', t('messages.newOffer'), `[${val.itemName}] ${offerPrice.currency === 'gold' ? t('item.gold') : ''} : ${n(Number.parseFloat(offerPrice.currencyValue as string), 'decimal')}`, t('btn.move'), () => {
       if (props.itemid === val.itemId)
         itemsRef.value?.openOffers(props.itemid)
       else
         router.push({ name: 'itemInfo', params: { itemid: val.itemId }, state: { offers: true } })
     })
+  }
+})
+
+watch(acceptedOffer, (val: OfferInfo | null) => {
+  if (val) {
+    const offerPrice: IPrice = JSON.parse(val.price || '{}')
+    notify('', t('messages.acceptedOffer'), `[${val.itemName}] ${offerPrice.currency === 'gold' ? t('item.gold') : ''} : ${n(Number.parseFloat(offerPrice.currencyValue as string), 'decimal')}`, t('btn.move'), () => {
+      if (props.itemid === val.itemId)
+        itemsRef.value?.openOffers(props.itemid)
+      else
+        router.push({ name: 'itemInfo', params: { itemid: val.itemId }, state: { offers: true } })
+    })
+  }
+})
+
+watch(retractedOffer, (val: OfferInfo | null) => {
+  if (val) {
+    const offerPrice: IPrice = JSON.parse(val.price || '{}')
+    notify('', t('messages.retractedOffer'), `[${val.itemName}] ${offerPrice.currency === 'gold' ? t('item.gold') : ''} : ${n(Number.parseFloat(offerPrice.currencyValue as string), 'decimal')}`, t('btn.move'), () => {
+      if (props.itemid === val.itemId)
+        itemsRef.value?.openOffers(props.itemid)
+      else
+        router.push({ name: 'itemInfo', params: { itemid: val.itemId }, state: { offers: true } })
+    })
+  }
+})
+
+watch(turnedDownOffer, (val: OfferInfo | null) => {
+  if (val) {
+    const offerPrice: IPrice = JSON.parse(val.price || '{}')
+    notify('', t('messages.turnedDownOffer'), `[${val.itemName}] ${offerPrice.currency === 'gold' ? t('item.gold') : ''} : ${n(Number.parseFloat(offerPrice.currencyValue as string), 'decimal')}`, t('btn.move'), () => {
+      if (props.itemid === val.itemId)
+        itemsRef.value?.openOffers(props.itemid)
+      else
+        router.push({ name: 'itemInfo', params: { itemid: val.itemId }, state: { offers: true } })
+    })
+  }
 })
 
 watch(complete, (val: { itemName: string, itemId: string } | null) => {
   if (val)
-    notify('', t('messages.complete', { in: val.itemName }), t('btn.move'), () => {
+    notify('', t('messages.complete', { in: val.itemName }), '', t('btn.move'), () => {
       if (props.itemid === val.itemId) {
         updateOnly(props.itemid, () => {
           itemsRef.value?.openOffers(props.itemid)

@@ -545,6 +545,26 @@ const retractOffer = (offer: Offer) => {
     })
 }
 
+const turnDownOffer = (offer: Offer) => {
+  disableOffers.value = true
+  is.turnDownOffer(offer.offerId)
+    .then(() => {
+      $q.notify({
+        icon: `img:${icons.check}`,
+        color: 'positive',
+        classes: '',
+        message: t('offer.turnDownOffer')
+      })
+    })
+    .catch(() => { })
+    .then(() => {
+      disableOffers.value = false
+      emit('update-only', offerItem.value?.itemId, (updatedItem: Item) => {
+        openMakingOffer(updatedItem)
+      })
+    })
+}
+
 const complete = (evaluations: Array<number>) => {
   disableOffers.value = true
   is.addEvaluations(offerItem.value?.itemId as string, evaluations)
@@ -879,7 +899,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                   <div class="inner">
                     <D4Offer class="offer" :data="offer" :owner="offerItem?.authorized"
                       :evaluations="offerItem?.evaluations" :disable="disableOffers" @accept-offer="acceptOffer"
-                      @retract-offer="retractOffer" @complete="complete" />
+                      @retract-offer="retractOffer" @turndown-offer="turnDownOffer" @complete="complete" />
                   </div>
                 </q-card>
               </q-intersection>

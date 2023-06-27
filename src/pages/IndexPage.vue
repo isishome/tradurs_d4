@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
-import { useItemStore } from 'stores/item-store'
+import { useItemStore, type OfferInfo } from 'stores/item-store'
 import { useAccountStore } from 'stores/account-store'
 import { ref, computed, onMounted, watch, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useQuasar } from 'quasar'
+import { useQuasar, uid } from 'quasar'
 import { scrollPos } from 'src/common'
 
-import { Item } from 'src/types/item'
+import { Item, IPrice } from 'src/types/item'
 import { icons } from 'src/common/icons'
 import D4Items from 'components/D4Items.vue'
 
@@ -16,7 +16,7 @@ const route = useRoute()
 const router = useRouter()
 const is = useItemStore()
 const as = useAccountStore()
-const { t } = useI18n({ useScope: 'global' })
+const { t, n } = useI18n({ useScope: 'global' })
 const $q = useQuasar()
 
 // loading variable
@@ -27,6 +27,8 @@ const position = computed(() => as.position)
 const newItems = computed(() => is.socket.newItems)
 const newOffer = computed(() => is.socket.newOffer)
 const acceptedOffer = computed(() => is.socket.acceptedOffer)
+const retractedOffer = computed(() => is.socket.retractedOffer)
+const turnedDownOffer = computed(() => is.socket.turnedDownOffer)
 const complete = computed(() => is.socket.complete)
 const filter = computed(() => is.filter.request)
 const itemsRef = ref<typeof D4Items | null>(null)
@@ -208,12 +210,15 @@ const getList = (filter?: any) => {
     })
 }
 
-const notify = (group: string, message: string, actionLabel: string, action: Function) => {
+const notify = (group: string, message: string, caption: string, actionLabel: string, action: Function) => {
+  const genGroup = group === '' ? uid() : group
+
   $q.notify({
-    group,
+    group: genGroup,
     progress: true,
     multiLine: true,
     message,
+    caption,
     actions: [
       {
         label: actionLabel, color: 'white', handler: () => { action() }
@@ -229,7 +234,7 @@ watch(page, () => {
 
 watch(newItems, (val: number) => {
   if (val > 0)
-    notify('newItems', t('messages.newItems', val), t('btn.refresh'), () => {
+    notify('newItems', t('messages.newItems', val), '', t('btn.refresh'), () => {
       itemsRef.value?.hideEditable()
       itemsRef.value?.hideOffers()
       is.clearFilter()
@@ -238,21 +243,39 @@ watch(newItems, (val: number) => {
     })
 })
 
-watch(newOffer, (val: string | null) => {
-  if (val)
-    notify('', t('messages.newOffer'), t('btn.move'), () => {
-      router.push({ name: 'itemInfo', params: { itemid: val }, state: { offers: true } })
+watch(newOffer, (val: OfferInfo | null) => {
+  if (val) {
+    const offerPrice: IPrice = JSON.parse(val.price || '{}')
+    notify('', t('messages.newOffer'), `[${val.itemName}] ${offerPrice.currency === 'gold' ? t('item.gold') : ''} : ${n(Number.parseFloat(offerPrice.currencyValue as string), 'decimal')}`, t('btn.move'), () => {
+      router.push({ name: 'itemInfo', params: { itemid: val.itemId }, state: { offers: true } })
     })
+  }
 })
 
-watch(acceptedOffer, (val: { itemName: string, itemId: string } | null) => {
-  if (val)
-    notify('', t('messages.acceptedOffer', { in: val.itemName }), t('btn.move'), () => { router.push({ name: 'itemInfo', params: { itemid: val.itemId }, state: { offers: true } }) })
+watch(acceptedOffer, (val: OfferInfo | null) => {
+  if (val) {
+    const offerPrice: IPrice = JSON.parse(val.price || '{}')
+    notify('', t('messages.acceptedOffer', { in: val.itemName }), `[${val.itemName}] ${offerPrice.currency === 'gold' ? t('item.gold') : ''} : ${n(Number.parseFloat(offerPrice.currencyValue as string), 'decimal')}`, t('btn.move'), () => { router.push({ name: 'itemInfo', params: { itemid: val.itemId }, state: { offers: true } }) })
+  }
 })
 
-watch(complete, (val: { itemName: string, itemId: string } | null) => {
+watch(retractedOffer, (val: OfferInfo | null) => {
+  if (val) {
+    const offerPrice: IPrice = JSON.parse(val.price || '{}')
+    notify('', t('messages.retractedOffer', { in: val.itemName }), `[${val.itemName}] ${offerPrice.currency === 'gold' ? t('item.gold') : ''} : ${n(Number.parseFloat(offerPrice.currencyValue as string), 'decimal')}`, t('btn.move'), () => { router.push({ name: 'itemInfo', params: { itemid: val.itemId }, state: { offers: true } }) })
+  }
+})
+
+watch(turnedDownOffer, (val: OfferInfo | null) => {
+  if (val) {
+    const offerPrice: IPrice = JSON.parse(val.price || '{}')
+    notify('', t('messages.turnedDownOffer', { in: val.itemName }), `[${val.itemName}] ${offerPrice.currency === 'gold' ? t('item.gold') : ''} : ${n(Number.parseFloat(offerPrice.currencyValue as string), 'decimal')}`, t('btn.move'), () => { router.push({ name: 'itemInfo', params: { itemid: val.itemId }, state: { offers: true } }) })
+  }
+})
+
+watch(complete, (val: OfferInfo | null) => {
   if (val)
-    notify('', t('messages.complete', { in: val.itemName }), t('btn.move'), () => { router.push({ name: 'itemInfo', params: { itemid: val.itemId }, state: { offers: true } }) })
+    notify('', t('messages.complete', { in: val.itemName }), '', t('btn.move'), () => { router.push({ name: 'itemInfo', params: { itemid: val.itemId }, state: { offers: true } }) })
 })
 
 watch(filter, (val, old) => {

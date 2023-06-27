@@ -67,6 +67,8 @@ export interface Restriction extends ILabel {
   sort?: number
 }
 
+export type OfferInfo = { itemName: string, itemId: string, price?: string }
+
 export const useItemStore = defineStore('item', {
   state: () => ({
     base: {
@@ -100,9 +102,11 @@ export const useItemStore = defineStore('item', {
     },
     socket: {
       newItems: 0,
-      newOffer: null as string | null,
-      acceptedOffer: null as { itemName: string, itemId: string } | null,
-      complete: null as { itemName: string, itemId: string } | null
+      newOffer: null as OfferInfo | null,
+      acceptedOffer: null as OfferInfo | null,
+      retractedOffer: null as OfferInfo | null,
+      turnedDownOffer: null as OfferInfo | null,
+      complete: null as OfferInfo | null
     },
     filter: {
       favorite: false as boolean,
@@ -215,6 +219,8 @@ export const useItemStore = defineStore('item', {
       this.socket.newItems = 0
       this.socket.newOffer = null
       this.socket.acceptedOffer = null
+      this.socket.retractedOffer = null
+      this.socket.turnedDownOffer = null
       this.socket.complete = null
     },
     clearFilter(isForced: boolean = false) {
@@ -478,6 +484,17 @@ export const useItemStore = defineStore('item', {
     retractOffer(offerId: string) {
       return new Promise<void>((resolve, reject) => {
         api.post('/d4/item/offer/retract', { offerId })
+          .then(async () => {
+            resolve()
+          })
+          .catch((e) => {
+            reject(e)
+          })
+      })
+    },
+    turnDownOffer(offerId: string) {
+      return new Promise<void>((resolve, reject) => {
+        api.post('/d4/item/offer/turndown', { offerId })
           .then(async () => {
             resolve()
           })

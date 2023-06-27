@@ -97,6 +97,8 @@ export default {
     gotoItem: 'Go to item',
     markRead: 'Mark messages as read',
     retractOffer: 'Retract Offer',
+    turnDownOffer: 'Turn Down Offer',
+    turnDown: 'Turn Down',
     imageAnalysis: 'Analysis'
   },
   attribute: {
@@ -140,6 +142,7 @@ export default {
     acceptOffer: 'The offer has been accepted',
     updateOffer: 'The offer has been updated',
     retractOffer: 'The offer has been retracted',
+    turnDownOffer: 'The offer has been turned down',
     complete: 'Item trade completed'
   },
   accept: {
@@ -154,6 +157,10 @@ export default {
   retract: {
     title: 'Retract Offer',
     msg: 'Would you like to retract the offer?'
+  },
+  turnDown: {
+    title: 'Turn Down Offer',
+    msg: 'Would you like to turn down the offer?'
   },
   complete: {
     title: 'Manner Evaluation',
@@ -182,13 +189,17 @@ export default {
   messages: {
     title: 'Message List',
     newItems: 'A new item has been registered ({n})',
-    newOffer: 'A new offer has arrived',
-    acceptedOffer: 'Offer has been accepted ({in})',
+    newOffer: 'A (new) offer has arrived',
+    acceptedOffer: 'Offer has been accepted',
+    retractedOffer: 'Offer has been retracted',
+    turnedDownOffer: 'Offer has been turned down',
     clipboard: 'The {t} has been copied to the clipboard',
     complete: 'Item trade completed ({in})',
-    title000: 'A new offer has arrived',
-    title001: 'Offer has been Accepted',
+    title000: 'A (new) offer has arrived',
+    title001: 'Offer has been accepted',
     title002: 'Item trade completed',
+    title003: 'Offer has been retracted',
+    title004: 'Turned down your offer',
     title999: 'We\'re happy to answer your questions',
     noData: 'No messages'
   },

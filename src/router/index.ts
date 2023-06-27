@@ -2,7 +2,7 @@ import { route } from 'quasar/wrappers'
 import { createMemoryHistory, createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
 import routes from './routes'
 import { useAccountStore } from 'src/stores/account-store'
-import { useItemStore } from 'src/stores/item-store'
+import { useItemStore, type OfferInfo } from 'src/stores/item-store'
 import { Notify } from 'quasar'
 import { Manager } from 'socket.io-client'
 
@@ -38,19 +38,29 @@ const initSocket = (as: any, is: any) => {
       is.socket.newItems++
   })
 
-  as.socket.on('newOffer', (itemId: string) => {
+  as.socket.on('newOffer', (offerInfo: OfferInfo) => {
     if (as.info.notify)
-      is.socket.newOffer = itemId
+      is.socket.newOffer = offerInfo
   })
 
-  as.socket.on('acceptedOffer', (data: { itemName: string, itemId: string }) => {
+  as.socket.on('acceptedOffer', (offerInfo: OfferInfo) => {
     if (as.info.notify)
-      is.socket.acceptedOffer = data
+      is.socket.acceptedOffer = offerInfo
   })
 
-  as.socket.on('complete', (data: { itemName: string, itemId: string }) => {
+  as.socket.on('retractedOffer', (offerInfo: OfferInfo) => {
     if (as.info.notify)
-      is.socket.complete = data
+      is.socket.retractedOffer = offerInfo
+  })
+
+  as.socket.on('turnedDownOffer', (offerInfo: OfferInfo) => {
+    if (as.info.notify)
+      is.socket.turnedDownOffer = offerInfo
+  })
+
+  as.socket.on('complete', (offerInfo: OfferInfo) => {
+    if (as.info.notify)
+      is.socket.complete = offerInfo
   })
 
   as.socket.on('newMessages', () => {
