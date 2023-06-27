@@ -22,6 +22,8 @@ export default {
     placeholder: '레비아탄#5112'
   },
   filter: {
+    onlyCurrency: '가격 명시만 보기',
+    status: '아이템 상태',
     onlyForMe: '나만의 검색',
     type: '종류',
     advanced: '고급 필터',
@@ -111,8 +113,7 @@ export default {
   item: {
     hardcore: '하드코어',
     ladder: '래더',
-    available: '거래 가능만 보기',
-    onlyCurrency: '가격 명시만 보기',
+
     quality: '아이템 등급',
     selectType: '아이템 유형',
     selectClass: '장비 클래스',

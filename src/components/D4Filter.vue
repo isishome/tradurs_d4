@@ -162,15 +162,18 @@ const update = (quality?: Array<string>) => {
         </div>
       </q-item-section>
     </q-item>
-    <q-item :disable="filterLoading" :inset-level=".2">
-      <q-item-section>
-        <q-checkbox size="xs" v-model="is.filter.available" :label="t('item.available')" @update:model-value="update()" />
-      </q-item-section>
-    </q-item>
     <q-item :inset-level=".2">
       <q-item-section>
-        <q-checkbox size="xs" v-model="is.filter.onlyCurrency" :label="t('item.onlyCurrency')"
+        <q-checkbox size="xs" v-model="is.filter.onlyCurrency" :label="t('filter.onlyCurrency')"
           @update:model-value="update()" />
+      </q-item-section>
+    </q-item>
+    <q-item :inset-level=".3">
+      <q-item-section class="q-pt-md q-pr-md select-wrap">
+        <q-select v-model="is.filter.status" :disable="filterLoading" outlined dense no-error-icon hide-bottom-space
+          emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0" behavior="menu"
+          :label="t('filter.status')" :options="is.filterItemStatus()" :dropdown-icon="`img:${icons.dropdown}`"
+          popup-content-class="d4-scroll" @update:model-value="update()" />
       </q-item-section>
     </q-item>
     <q-item :disable="filterLoading" v-if="as.signed">
@@ -187,7 +190,7 @@ const update = (quality?: Array<string>) => {
     <q-item :disable="filterLoading">
       <q-item-section>
         <q-item-label header>{{ t('item.power') }}</q-item-label>
-        <div class="row justify-center no-wrap q-col-gutter-sm items-center q-px-sm">
+        <div class="row justify-center no-wrap q-col-gutter-sm items-center q-px-md">
           <D4Counter v-model="is.filter.power[0]" :label="t('min')" :max="9999" allow-zero no-button
             @update:model-value="update()" max-width="100%" />
           <div>-</div>
@@ -199,7 +202,7 @@ const update = (quality?: Array<string>) => {
     <q-item :disable="filterLoading">
       <q-item-section>
         <q-item-label header>{{ t('item.level') }}</q-item-label>
-        <div class="row justify-center no-wrap q-col-gutter-sm items-center q-px-sm">
+        <div class="row justify-center no-wrap q-col-gutter-sm items-center q-px-md">
           <D4Counter v-model="is.filter.level[0]" :label="t('min')" :max="999" allow-zero no-button
             @update:model-value="update()" max-width="100%" />
           <div>-</div>
@@ -255,7 +258,7 @@ const update = (quality?: Array<string>) => {
         </q-item-label>
         <q-item-label class="q-px-md">
           <div class="column q-gutter-md">
-            <div style="width:200px">
+            <div class="select-wrap">
               <q-select ref="propertyRef" v-model="is.filter.properties" :disable="filterLoading" max-values="3" outlined
                 dense no-error-icon use-input hide-bottom-space hide-selected emit-value map-options multiple
                 transition-show="none" transition-hide="none" :transition-duration="0"
@@ -269,7 +272,7 @@ const update = (quality?: Array<string>) => {
                         size="14px" :name="`img:${icons[scope.opt.type as keyof typeof icons || 'standard']}`" />
                     </q-item-section>
                     <q-item-section>
-                      <q-item-label>{{ scope.opt.label }}</q-item-label>
+                      <q-item-label lines="3">{{ scope.opt.label }}</q-item-label>
                     </q-item-section>
                   </q-item>
                 </template>
@@ -293,7 +296,7 @@ const update = (quality?: Array<string>) => {
                 </div>
               </div>
             </div>
-            <div style="width:200px">
+            <div class="select-wrap">
               <q-select ref="affixRef" v-model="is.filter.affixes" :disable="filterLoading" max-values="3" outlined dense
                 no-error-icon use-input hide-bottom-space hide-selected emit-value map-options multiple
                 transition-show="none" transition-hide="none" :transition-duration="0"
@@ -331,7 +334,7 @@ const update = (quality?: Array<string>) => {
                 </div>
               </div>
             </div>
-            <div style="width:200px">
+            <div class="select-wrap">
               <q-select ref="restrictionRef" v-model="is.filter.restrictions" :disable="filterLoading" max-values="3"
                 outlined dense no-error-icon use-input hide-bottom-space hide-selected emit-value map-options multiple
                 transition-show="none" transition-hide="none" :transition-duration="0"
@@ -411,5 +414,9 @@ const update = (quality?: Array<string>) => {
 .filter:deep(.q-item__label--header) {
   padding-bottom: 8px;
   color: var(--q-primary);
+}
+
+.select-wrap {
+  width: 200px;
 }
 </style>

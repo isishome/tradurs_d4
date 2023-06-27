@@ -186,7 +186,7 @@ onUnmounted(() => {
       class="row justify-end no-scroll" :width="300">
       <q-list class="column full-height" style="width:300px">
         <q-scroll-area class="col">
-          <D4Filter :disable="$route.name !== 'tradeList'" class="q-pl-lg q-pt-lg" />
+          <D4Filter :disable="$route.name !== 'tradeList'" class="q-px-md q-pt-lg" />
         </q-scroll-area>
       </q-list>
     </q-drawer>

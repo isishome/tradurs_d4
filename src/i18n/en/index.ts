@@ -22,6 +22,8 @@ export default {
     placeholder: 'leviathan#5112'
   },
   filter: {
+    onlyCurrency: 'Show only priced',
+    status: 'Item Status',
     onlyForMe: 'Only For Me',
     type: 'Type(s)',
     advanced: 'Advanced Filter',
@@ -112,8 +114,7 @@ export default {
   item: {
     hardcore: 'Hardcore',
     ladder: 'Ladder',
-    available: 'Show only tradable',
-    onlyCurrency: 'Show only priced',
+
     quality: 'Item Quality',
     selectType: 'Item Type',
     selectClass: 'Equipment Class',

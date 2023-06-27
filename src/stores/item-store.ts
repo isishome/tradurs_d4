@@ -113,8 +113,8 @@ export const useItemStore = defineStore('item', {
       quality: [] as Array<string>,
       hardcore: null as boolean | null,
       ladder: null as boolean | null,
-      available: false as boolean | null,
       onlyCurrency: false as boolean | null,
+      status: null as string | null,
       mine: false as boolean | null,
       offer: false as boolean | null,
       power: [0, 9999] as [number, number],
@@ -143,6 +143,9 @@ export const useItemStore = defineStore('item', {
   getters: {
     findItemStatus: (state) => {
       return (statusCode?: string): Status | undefined => state.itemStatus.find(s => s.value === statusCode && s.lang === i18n.global.locale.value)
+    },
+    filterItemStatus: (state) => {
+      return (): Array<Status> => state.itemStatus.filter(s => s.lang === i18n.global.locale.value)
     },
     findOfferStatus: (state) => {
       return (statusCode?: string): Status | undefined => state.offerStatus.find(s => s.value === statusCode && s.lang === i18n.global.locale.value)
@@ -229,8 +232,8 @@ export const useItemStore = defineStore('item', {
         this.filter.quality = []
         this.filter.hardcore = null
         this.filter.ladder = null
-        this.filter.available = false
         this.filter.onlyCurrency = false
+        this.filter.status = null
         this.filter.mine = false
         this.filter.offer = false
         this.filter.power = [0, 9999]
