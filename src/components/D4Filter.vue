@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { QSelect, useQuasar } from 'quasar'
 import { useAccountStore } from 'src/stores/account-store'
 import { useItemStore } from 'src/stores/item-store'
@@ -136,6 +136,11 @@ const update = (quality?: Array<string>) => {
 
   is.filter.request++
 }
+
+onMounted(() => {
+  if (is.filter.fixed)
+    is.filter.request++
+})
 </script>
 
 <template>
