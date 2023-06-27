@@ -264,7 +264,7 @@ watch(filter, (val, old) => {
 
 onMounted(() => {
   as.position = { top: 0, left: 0 }
-  getList()
+  getList(is.filter.fixed ? is.filter : undefined)
 })
 
 onUnmounted(() => {
