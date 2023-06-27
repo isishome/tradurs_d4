@@ -212,14 +212,6 @@ watch(newItems, (val: number) => {
     })
 })
 
-watch(acceptedOffer, (val: OfferInfo | null) => {
-  if (val) {
-    const offerPrice: IPrice = JSON.parse(val.price || '{}')
-    notify(uid(), t('messages.acceptedOffer', { in: val.itemName }), `[${val.itemName}] ${offerPrice.currency === 'gold' ? t('item.gold') : ''} : ${n(Number.parseFloat(offerPrice.currencyValue as string), 'decimal')}`, t('btn.move'), () => { router.push({ name: 'itemInfo', params: { itemid: val.itemId }, state: { offers: true } }) })
-  }
-})
-
-
 watch(newOffer, (val: OfferInfo | null) => {
   if (val) {
     const offerPrice: IPrice = JSON.parse(val.price || '{}')
@@ -295,9 +287,6 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <D4Btn round :to="{ name: 'tradeList' }" class="sticky" color="var(--q-light-normal)" shadow>
-    <img :src="icons.list" width="20" height="20" class="invert" alt="icon_list" />
-  </D4Btn>
   <div>
     <div class="row justify-center items-center">
       <D4Items ref="itemsRef" :items="is.detailItem" :loading="disable" @upsert-item="upsertItem"
@@ -305,13 +294,23 @@ onUnmounted(() => {
         @copy="copy" @favorite="favorite" />
     </div>
   </div>
+  <div class="q-py-lg"></div>
+  <D4Btn round :to="{ name: 'tradeList' }" class="sticky-btn" color="var(--q-light-normal)" shadow>
+    <img :src="icons.list" width="20" height="20" class="invert" alt="icon_list" />
+  </D4Btn>
 </template>
 
 <style scoped>
-.sticky {
+.sticky-btn {
   position: sticky;
-  top: 90%;
+  bottom: 8%;
   left: 100%;
   z-index: 1;
+}
+
+@media (max-width:600px) {
+  .sticky-btn {
+    bottom: 10px;
+  }
 }
 </style>

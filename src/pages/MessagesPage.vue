@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useQuasar, date } from 'quasar'
+import { date } from 'quasar'
 import { ref, reactive, computed } from 'vue'
 import { useAccountStore } from 'src/stores/account-store'
 import { useI18n } from 'vue-i18n'
@@ -8,16 +8,19 @@ interface Message {
   msgId: number,
   msgType: string,
   msgValue: string,
+  itemId: number,
+  itemName: string,
+  currency: string,
+  currencyValue: string,
   regDate: string,
   readYn: boolean,
-  itemName: string,
+  quantity: number,
   show: boolean,
   selected: boolean
 }
 
-const $q = useQuasar()
 const as = useAccountStore()
-const { t } = useI18n({ useScope: 'global' })
+const { t, n } = useI18n({ useScope: 'global' })
 
 const messages = reactive<Array<Message>>([])
 const selected = ref<boolean>(false)
@@ -81,6 +84,8 @@ as.getMessages()
             <q-item-label class="text-weight-bold" lines="1">{{ message.msgType === '999' ? 'Tradurs' : message.itemName
             }}</q-item-label>
             <q-item-label caption lines="2">{{ t(`messages.title${message.msgType}`) }}</q-item-label>
+            <q-item-label caption lines="2" v-if="message.currency === 'gold'">{{ `${t('item.gold')} :
+                          ${n(Number.parseFloat(message.currencyValue as string))}` }}</q-item-label>
           </q-item-section>
           <q-item-section side top>
             <q-item-label lines="2">
@@ -93,10 +98,13 @@ as.getMessages()
           <div v-show="message.show">
             <q-item class="q-pa-lg row justify-center items-center" style="background-color: var(--q-cloud);">
               <q-item-label>
-                <div v-if="message.msgType === '999'" style="line-height: 1.6;"
+                <div v-if="message.msgType === '900'" style="line-height: 1.6;">{{
+                  message.msgValue }}
+                </div>
+                <div v-else-if="message.msgType === '999'" style="line-height: 1.6;"
                   v-html="message.msgValue.replace(/\n/g, '<br />')"></div>
                 <q-btn v-else no-caps unelevated aria-label="Tradurs Go Item Button" color="primary"
-                  :to="{ name: 'itemInfo', params: { itemid: message.msgValue }, state: { offers: true } }">
+                  :to="{ name: 'itemInfo', params: { itemid: message.itemId }, state: { offers: true } }">
                   {{ t('btn.gotoItem') }}
                 </q-btn>
               </q-item-label>

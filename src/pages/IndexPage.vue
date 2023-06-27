@@ -330,7 +330,6 @@ onUnmounted(() => {
   }
 }
 
-
 .paging {
   transform: translateY(-90%);
 }
