@@ -41,6 +41,10 @@ export default boot(({ app, ssrContext, store }) => {
         ]
       })
     }
+    else if (status === 403) {
+      const url = `${import.meta.env.VITE_APP_TRADURS}/info`
+      document.location.href = url
+    }
     else {
       const message = error.response && error.response.data || error.message
 
