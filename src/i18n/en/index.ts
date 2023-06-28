@@ -30,7 +30,7 @@ export default {
     mine: 'My Items',
     offer: 'My Offerd Items',
     fixed: 'Fixed Filter',
-    fixedDescription: 'The filter information is saved to local storage. Please note that depending on the filters set, you may not be able to see newly registered items, etc.',
+    fixedDescription: 'The filter information is saved to local storage. Please note that this may cause mistakes such as not seeing newly registered items based on the set filter.',
     description: {
       advanced: 'When using advanced filters, distinguish between \'Characteristics\' and \'Affixes\'',
       advanced2: 'Occasionally, sellers may incorrectly enter \'Characteristics\' and \'Affixes\', so consider filtering'

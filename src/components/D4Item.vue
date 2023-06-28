@@ -49,12 +49,12 @@ const _ladder = ref<boolean>(props.data.ladder)
 const _name = ref<string>(props.data.name)
 const _quantity = ref<number>(props.data.quantity || 1)
 let remainDate = ref<number>(date.getDateDiff(props.data.endDate, new Date, 'seconds'))
-const day = 60 * 60 * 24
 const hour = 60 * 60
 const minute = 60
-const remainHours = computed(() => Math.floor(remainDate.value / hour).toString().padStart(2, '0'))
-const remainMinutes = computed(() => Math.floor(remainDate.value % hour / minute).toString().padStart(2, '0'))
-const remainSeconds = computed(() => Math.floor(remainDate.value % hour % minute).toString().padStart(2, '0'))
+const remainHours = computed(() => Math.floor(Math.max(remainDate.value / hour, 0)).toString().padStart(2, '0'))
+const remainMinutes = computed(() => Math.floor(Math.max(remainDate.value % hour / minute, 0)).toString().padStart(2, '0'))
+const remainSeconds = computed(() => Math.floor(Math.max(remainDate.value % hour % minute, 0)).toString().padStart(2, '0'))
+const remainColor = computed(() => remainDate.value < hour ? `text-red-6` : '')
 const remainInterval = setInterval(() => {
   remainDate.value--
 }, 1000)
@@ -461,9 +461,10 @@ defineExpose({ scrollEnd })
         <div class="column justify-center items-end user-area" :class="{ 'q-gutter-xs': !$q.screen.lt.sm || loading }">
           <q-skeleton v-show="loading" width="50px" :height="$q.screen.lt.sm ? '16px' : '18px'" />
           <div v-show="!loading" class="row items-center q-gutter-x-sm">
-            <div v-if="['000', '002'].includes(data.statusCode)" class="text-red-8 text-caption">{{ remainHours }}:{{
-              remainMinutes
-            }}:{{
+            <div v-if="['000', '002'].includes(data.statusCode)" class="text-caption" :class="remainColor">{{
+              remainHours }}:{{
+    remainMinutes
+  }}:{{
   remainSeconds }}</div>
             <div>{{
               findStatus(data.statusCode)?.label }}</div>
