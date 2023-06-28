@@ -208,9 +208,9 @@ export default {
     gotoMain: '메인 페이지로'
   },
   contact: {
-    title: '이메일 문의',
+    title: '문의 하기',
     contents: '문의 내용',
-    send: '문의하기',
+    send: '전송',
     success: '문의 내용이 정상적으로 접수되었습니다'
   },
   notice: {

@@ -365,9 +365,9 @@ onUnmounted(() => {
           <div class="gt-md col">
             <div class="full-height q-px-lg q-py-xl" :style="`width:280px;height:${asideHeight}`">
               <div :style="`position:sticky;top:${asideTop}`">
-                <!-- <ins class="adsbygoogle" style="display:inline-block;width:160px;height:600px"
-                  data-ad-client="ca-pub-5110777286519562" data-ad-slot="7240136439" :data-adtest="prod ? 'off' : 'on'"
-                  :key="key"></ins> -->
+                <ins class="adsbygoogle" style="display:inline-block;width:160px;height:600px"
+                  data-ad-client="ca-pub-5110777286519562" data-ad-slot="6751896285" :data-adtest="prod ? 'off' : 'on'"
+                  :key="key"></ins>
               </div>
             </div>
           </div>

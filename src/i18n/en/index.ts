@@ -209,7 +209,7 @@ export default {
     gotoMain: 'Go to main page'
   },
   contact: {
-    title: 'Contact us by email',
+    title: 'Contact US',
     contents: 'Content of inquiry',
     send: 'Send',
     success: 'Your inquiry was successfully received'

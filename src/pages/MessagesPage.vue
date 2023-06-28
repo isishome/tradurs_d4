@@ -75,7 +75,7 @@ as.getMessages()
           <q-item-section side @click.stop>
             <q-checkbox size="xs" color="grey-10" v-model="message.selected" :disable="message.readYn" />
           </q-item-section>
-          <q-item-section avatar>
+          <q-item-section avatar v-show="!$q.screen.lt.sm">
             <q-avatar size="md" color="grey-4 text-dark">
               D4
             </q-avatar>
@@ -89,7 +89,7 @@ as.getMessages()
                           ${n(Number.parseFloat(message.currencyValue as string))}` }}</q-item-label>
           </q-item-section>
           <q-item-section side top>
-            <q-item-label lines="2">
+            <q-item-label lines="2" style="max-width:60px" class="text-right">
               {{ date.isSameDate(message.regDate, Date.now(), 'date') ? date.formatDate(message.regDate, 'HH:mm') :
                 date.formatDate(message.regDate, 'YY.MM.DD HH:mm') }}
             </q-item-label>
@@ -142,7 +142,7 @@ as.getMessages()
 }
 
 .text-area {
-  line-height: 1;
-  white-space: pre;
+  line-height: 1.6;
+  white-space: pre-wrap;
 }
 </style>
