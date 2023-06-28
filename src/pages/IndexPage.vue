@@ -241,8 +241,10 @@ watch(newItems, (val: number) => {
       itemsRef.value?.hideEditable()
       itemsRef.value?.hideOffers()
       is.clearFilter()
-      as.position = { left: 0, top: 0 }
-      getList()
+      if (page.value !== 1)
+        router.push({ name: 'tradeList', query: { page: 1 } })
+      else
+        getList(is.filter)
     })
 })
 
