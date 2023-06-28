@@ -48,6 +48,7 @@ export interface IItem {
   affixes: Array<Affix>,
   restrictions: Array<Restriction>,
   price: Price,
+  endDate: Date,
   relistCount: number,
   authorized: boolean,
   user: User,
@@ -98,6 +99,7 @@ export class Item implements IItem {
   public affixes: Array<Affix> = []
   public restrictions: Array<Restriction> = []
   public price: Price = new Price()
+  public endDate = new Date()
   public relistCount = 0
   public authorized = false
   public user: User = new User()

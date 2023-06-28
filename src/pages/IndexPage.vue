@@ -92,12 +92,15 @@ const relistItem = (item: Item, done: Function) => {
     disable.value = true
     is.relistItem(item.itemId)
       .then(() => {
-        const relistItem = items.value.splice(findIndex, 1)
         as.checkSign(true)
-        items.value.unshift(...relistItem)
         itemsRef.value?.hideEditable()
         scrollPos()
         disable.value = false
+
+        if (page.value !== 1)
+          router.push({ name: 'tradeList', query: { page: 1 } })
+        else
+          getList(is.filter)
       })
       .catch(() => {
         done()

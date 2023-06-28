@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { reactive, ref, computed, useSlots, nextTick, watch } from 'vue'
-import { QCard, useQuasar } from 'quasar'
+import { reactive, ref, computed, useSlots, nextTick, watch, onUnmounted } from 'vue'
+import { QCard, useQuasar, date } from 'quasar'
 import { useI18n } from 'vue-i18n'
 
 import { useAccountStore } from 'stores/account-store'
@@ -48,6 +48,16 @@ const _hardcore = ref<boolean>(props.data.hardcore)
 const _ladder = ref<boolean>(props.data.ladder)
 const _name = ref<string>(props.data.name)
 const _quantity = ref<number>(props.data.quantity || 1)
+let remainDate = ref<number>(date.getDateDiff(props.data.endDate, new Date, 'seconds'))
+const day = 60 * 60 * 24
+const hour = 60 * 60
+const minute = 60
+const remainHours = computed(() => Math.floor(remainDate.value / hour).toString().padStart(2, '0'))
+const remainMinutes = computed(() => Math.floor(remainDate.value % hour / minute).toString().padStart(2, '0'))
+const remainSeconds = computed(() => Math.floor(remainDate.value % hour % minute).toString().padStart(2, '0'))
+const remainInterval = setInterval(() => {
+  remainDate.value--
+}, 1000)
 const _quality = ref<string>(props.data.quality || 'rare')
 const _type = ref<string>(props.data.itemType || store.filterTypes()[0].value as string)
 const _typeValue1 = ref<string>(props.data.itemTypeValue1 || (_type.value === 'aspect' ? store.aspectCategories[0].value as string : filterClasses(_type.value)[0].value as string))
@@ -145,6 +155,10 @@ const attribute = ref<string>(hasProperties.value ? 'properties' : 'affixes')
 
 watch(() => props.data.quantity, (val: number) => {
   _quantity.value = val
+})
+
+onUnmounted(() => {
+  clearInterval(remainInterval)
 })
 
 defineExpose({ scrollEnd })
@@ -446,11 +460,18 @@ defineExpose({ scrollEnd })
           class="item-image" alt="Tradurs Item Image" />
         <div class="column justify-center items-end user-area" :class="{ 'q-gutter-xs': !$q.screen.lt.sm || loading }">
           <q-skeleton v-show="loading" width="50px" :height="$q.screen.lt.sm ? '16px' : '18px'" />
-          <div v-show="!loading">{{
-            findStatus(data.statusCode)?.label }}</div>
+          <div v-show="!loading" class="row items-center q-gutter-x-sm">
+            <div v-if="['000', '002'].includes(data.statusCode)" class="text-red-8 text-caption">{{ remainHours }}:{{
+              remainMinutes
+            }}:{{
+  remainSeconds }}</div>
+            <div>{{
+              findStatus(data.statusCode)?.label }}</div>
+          </div>
           <div v-if="slots['top-right']">
             <slot name="top-right"></slot>
           </div>
+
           <D4Price :data="data.price" :progress="loading" />
           <D4User :data="data.user" :label="t('seller')" :disable="disable" :progress="loading"
             :authorized="data.authorized" />
@@ -477,6 +498,7 @@ defineExpose({ scrollEnd })
                 <div class="text-lowercase">x</div>
                 <div>{{ data.quantity }}</div>
               </div>
+
               <div class="more-action">
                 <q-btn dense flat aria-label="Tradurs More Button" :ripple="false" class="no-hover" padding="0">
                   <img class="icon" :src="icons.morevert" :width="$q.screen.lt.sm ? 16 : 20"

@@ -809,7 +809,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                 <q-menu fit anchor="bottom middle" self="top middle" auto-close class="no-shadow" transition-show="none"
                   transition-hide="none" :transition-duration="0">
                   <q-list bordered class="rounded-borders">
-                    <q-item :disable="activatedItem.statusCode !== '000'" clickable @click="relistItem">authorized
+                    <q-item :disable="activatedItem.statusCode !== '000'" clickable @click="relistItem">
                       <q-item-section class="text-uppercase">{{ t('btn.relist') }}</q-item-section>
                     </q-item>
                     <q-item :disable="!['000', '002'].includes(activatedItem.statusCode)" clickable @click="statusItem">

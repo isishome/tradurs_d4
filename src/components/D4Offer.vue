@@ -103,9 +103,9 @@ const complete = () => {
     title: t('complete.title'),
     message: t('complete.message'),
     options: {
-      color: 'primary',
       type: 'checkbox',
       model: [],
+      size: 'sm',
       items: as.filterEvaluations()
     },
     persistent: true,
@@ -114,7 +114,7 @@ const complete = () => {
     transitionShow: 'none',
     transitionHide: 'none',
     noRouteDismiss: true,
-    class: 'q-pa-sm'
+    class: 'q-pa-sm evaluations'
   }).onOk((data) => {
     emit('complete', data)
   })

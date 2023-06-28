@@ -6,7 +6,9 @@ import { Socket } from 'socket.io-client'
 import { type ILabel } from 'src/stores/item-store'
 import { sleep } from 'src/common'
 
-export interface IEvaluation extends ILabel { }
+export interface IEvaluation extends ILabel {
+  type: string
+}
 
 const timeout = 0
 
@@ -25,7 +27,7 @@ export const useAccountStore = defineStore('account', {
   }),
   getters: {
     filterEvaluations: (state) => {
-      return (ids?: Array<number>) => ids ? state.evaluations.data.filter(e => ids.includes(Number(e.value)) && e.lang === i18n.global.locale.value) : state.evaluations.data.filter(e => e.lang === i18n.global.locale.value)
+      return (ids?: Array<number>) => ids ? state.evaluations.data.filter(e => ids.includes(Number(e.value)) && e.lang === i18n.global.locale.value) : state.evaluations.data.filter(e => e.lang === i18n.global.locale.value).map(e => ({ ...e, keepColor: e.type === '001', color: e.type === '001' ? 'negative' : 'primary' }))
     }
   },
   actions: {
