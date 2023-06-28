@@ -460,6 +460,7 @@ const openMakingOffer = (item: Item): void => {
 
   is.getOffers(item.itemId)
     .then((resultOffers: Array<Offer>) => {
+
       let i = 0
       while (i < offers.value.length) {
         const offer = resultOffers.shift()
@@ -471,6 +472,7 @@ const openMakingOffer = (item: Item): void => {
           break
         }
       }
+      offers.value.push(...resultOffers)
     })
     .catch(() => { })
     .then(() => {
@@ -892,7 +894,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
           :style="$q.screen.lt.sm ? 'height:100%' : 'min-height:40vh !important;max-height:80vh !important'">
           <div class="q-pb-xl full-height">
             <div class="row items-center q-col-gutter-lg">
-              <q-intersection v-for="(offer, idx) in (offers as Array<Offer>)" :key="`offers_${idx}`"
+              <q-intersection v-for="offer, idx in  (offers as Array<Offer>) " :key="`offers_${idx}`"
                 class="col-12 col-sm-6" transition="fade" once>
                 <q-card flat bordered class="card-item expanded"
                   :class="{ 'unique': offer.statusCode === '003', 'set': offer.statusCode === '001', 'magic': offer.authorized }">
