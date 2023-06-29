@@ -28,6 +28,8 @@ const router = useRouter()
 const as = useAccountStore()
 const { t, n } = useI18n({ useScope: 'global' })
 
+as.newMessages = false
+
 const messages = reactive<Array<Message>>([])
 const selected = ref<boolean>(false)
 const disable = computed(() => messages.filter(m => !m.readYn).length === 0)
@@ -35,8 +37,11 @@ const loading = ref<boolean>(true)
 const page = computed(() => route.query.page ? Number.parseInt(route.query.page.toString()) : 1)
 const over = computed(() => as.messagePage.over)
 const more = computed(() => as.messagePage.more)
+const newMessages = computed(() => as.newMessages)
 
 const getList = () => {
+  as.newMessages = false
+  selected.value = false
   messages.splice(0, messages.length)
   loading.value = true
   as.getMessages(page.value)
@@ -72,6 +77,13 @@ const reads = () => {
   }
 }
 
+const refresh = () => {
+  if (page.value !== 1)
+    router.push({ name: 'messages' })
+  else
+    getList()
+}
+
 const prev = () => {
   router.push({ name: 'messages', query: page.value > 2 ? { page: page.value - 1 } : {} })
 }
@@ -91,14 +103,26 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="q-pa-md q-gutter-md">
+  <div class="q-pa-md q-gutter-y-md">
     <q-list bordered class="rounded-borders">
       <q-item>
         <q-item-section side>
-          <q-checkbox size="xs" color="grey-10" v-model="selected" :disable="disable"
+          <q-checkbox size="xs" color="grey-secondary" v-model="selected" :disable="disable"
             @update:model-value="val => messages.filter(m => !m.readYn).forEach(m => m.selected = val)" />
         </q-item-section>
-        <q-item-section></q-item-section>
+        <q-item-section>
+          <div>
+            <q-btn outline v-show="newMessages" no-caps push :disable="disable" unelevated
+              aria-label="Tradurs Refresh Button" @click="refresh">
+              <div class="row items-center q-gutter-x-sm">
+                <img :src="icons.refresh" width="18" height="18" class="icon" alt="icon_prev" @click="prev" />
+                <div>
+                  {{ t('btn.newMessages') }}
+                </div>
+              </div>
+            </q-btn>
+          </div>
+        </q-item-section>
         <q-item-section side>
           <q-btn no-caps push :disable="disable" unelevated aria-label="Tradurs Read Button" color="grey-8"
             :label="t('btn.markRead')" @click="reads" />
@@ -182,13 +206,16 @@ onMounted(() => {
         </q-item-section>
       </q-item>
     </q-list>
-    <div class="row justify-end items-center q-gutter-x-lg q-px-sm">
-      <q-btn flat dense round padding="0" :disable="!over || loading" :shadow="!$q.dark.isActive">
-        <img :src="icons.prev" width="36" height="36" class="icon" alt="icon_prev" @click="prev" />
-      </q-btn>
-      <q-btn flat dense round padding="0" :disable="!more || loading" :shadow="!$q.dark.isActive" @click="next">
-        <img :src="icons.next" width="36" height="36" class="icon" alt="icon_next" />
-      </q-btn>
+    <div class="row justify-between q-px-sm paging">
+      <div>{{ t('message.page', { page }) }}</div>
+      <div class="row justify-end items-center q-gutter-x-md">
+        <q-btn flat dense round padding="0" :disable="!over || loading" :shadow="!$q.dark.isActive">
+          <img :src="icons.prev" width="24" height="24" class="icon" alt="icon_prev" @click="prev" />
+        </q-btn>
+        <q-btn flat dense round padding="0" :disable="!more || loading" :shadow="!$q.dark.isActive" @click="next">
+          <img :src="icons.next" width="24" height="24" class="icon" alt="icon_next" />
+        </q-btn>
+      </div>
     </div>
     <div class="q-py-md"></div>
   </div>
@@ -216,5 +243,9 @@ onMounted(() => {
 .text-area {
   line-height: 1.6;
   white-space: pre-wrap;
+}
+
+.paging:deep(.q-btn.disabled) {
+  opacity: .2 !important;
 }
 </style>

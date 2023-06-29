@@ -31,6 +31,7 @@ const filterLoading = computed(() => is.filter.loading)
 const leftDrawerOpen = ref<boolean>(false)
 const rightDrawerOpen = ref<boolean>(false)
 const signed = computed<boolean | null>(() => as.signed)
+const newMessages = computed<boolean>(() => route.name !== 'messages' && as.newMessages)
 const screen = computed<Screen>(() => $q.screen)
 const offsetTop = ref<number>(0)
 const asideHeight = computed<string>(() => `calc(100vh - ${screen.value.gt.sm ? offsetTop.value : 0}px)`)
@@ -281,10 +282,10 @@ onUnmounted(() => {
             </q-input>
           </div>
           <div>
-            <q-tabs dense no-caps class="gt-sm q-px-md bg-transparent no-hover nav">
+            <q-tabs dense no-caps narrow-indicator class="gt-sm q-px-md bg-transparent no-hover nav">
               <q-route-tab :ripple="!$q.dark.isActive" :label="t('page.tradeList')" :to="{ name: 'tradeList' }" />
               <q-route-tab v-if="as.signed" :ripple="!$q.dark.isActive" :label="t('page.messages')"
-                :to="{ name: 'messages' }" />
+                class="relative-position" :to="{ name: 'messages' }" :alert="newMessages ? 'red' : 'transparent'" />
             </q-tabs>
           </div>
         </div>
@@ -454,6 +455,10 @@ ins::after {
 .nav,
 .nav:deep(.q-tab) {
   transition: none !important;
+}
+
+.nav:deep(.q-tab__alert) {
+  top: 3px;
 }
 
 .view {

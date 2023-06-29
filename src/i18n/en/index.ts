@@ -105,7 +105,8 @@ export default {
     retractOffer: 'Retract Offer',
     turnDownOffer: 'Turn Down Offer',
     turnDown: 'Turn Down',
-    imageAnalysis: 'Analysis'
+    imageAnalysis: 'Analysis',
+    newMessages: 'You have a new message'
   },
   attribute: {
     register: 'Register {attr}',
@@ -221,5 +222,8 @@ export default {
   notice: {
     message: `<div style="width:400px;max-width:80vw;line-height:2" class="break-keep"><div class='text-h6 q-pb-md'>We apologize</div><p class="text-body1">We experienced a  <span class='text-amber-10 text-weight-bold'>problem with our database server</span> around 5pm today, which <u>resulted in the loss of all data.</u> We apologize for the inconvenience, but you will need to re-sign up to use the site normally. Once again, we apologize for the inconvenience.</div>`,
     close: 'Do not open for 24 hours'
+  },
+  message: {
+    page: 'Page {page}'
   }
 }

@@ -39,32 +39,33 @@ const initSocket = (as: any, is: any) => {
   })
 
   as.socket.on('newOffer', (offerInfo: OfferInfo) => {
+    as.newMessages = true
     if (as.info.notifyPrivate)
       is.socket.newOffer = offerInfo
   })
 
   as.socket.on('acceptedOffer', (offerInfo: OfferInfo) => {
+    as.newMessages = true
     if (as.info.notifyPrivate)
       is.socket.acceptedOffer = offerInfo
   })
 
   as.socket.on('retractedOffer', (offerInfo: OfferInfo) => {
+    as.newMessages = true
     if (as.info.notifyPrivate)
       is.socket.retractedOffer = offerInfo
   })
 
   as.socket.on('turnedDownOffer', (offerInfo: OfferInfo) => {
+    as.newMessages = true
     if (as.info.notifyPrivate)
       is.socket.turnedDownOffer = offerInfo
   })
 
   as.socket.on('complete', (offerInfo: OfferInfo) => {
+    as.newMessages = true
     if (as.info.notifyPrivate)
       is.socket.complete = offerInfo
-  })
-
-  as.socket.on('newMessages', () => {
-    as.newMessages = true
   })
 }
 

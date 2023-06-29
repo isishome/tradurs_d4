@@ -104,7 +104,8 @@ export default {
     retractOffer: '제안 철회',
     turnDownOffer: '제안 거절',
     turnDown: '거절',
-    imageAnalysis: '이미지 분석'
+    imageAnalysis: '이미지 분석',
+    newMessages: '새 메시지가 있습니다'
   },
   attribute: {
     register: '{attr} 등록',
@@ -220,5 +221,8 @@ export default {
   notice: {
     message: `<div style="width:400px;max-width:80vw;line-height:2" class="break-keep"><div class='text-h6 q-pb-md'>사과 말씀드립니다.</div><p class="text-body1">금일 오후 5시경 <span class='text-amber-10 text-weight-bold'>데이터베이스 서버에 문제가 발생하여</span> <u>모든 데이터가 유실돼 버리는 문제가 발생했습니다.</u>  사이트 이용을 위해 번거로우시겠지만 재 가입하셔야  정상적으로 사이트 이용이 가능합니다. 다시 한번 이용에 불편을 드려 죄송합니다.</div>`,
     close: '24시간 동안 열지 않기'
+  },
+  message: {
+    page: '페이지 {page}'
   }
 }

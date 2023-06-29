@@ -181,7 +181,7 @@ const getList = (filter?: any) => {
   is.filter.loading = true
 
   items.value =
-    Array.from({ length: 3 }, () => {
+    Array.from({ length: is.itemPage.rows }, () => {
       const item = new Item()
       item.quality = 'normal'
       item.loading = true
@@ -315,10 +315,10 @@ defineExpose({ getList })
   </D4Btn>
   <D4Btn v-else style="visibility: hidden;" />
   <div class="row q-gutter-xs items-center paging">
-    <D4Btn round @click="prev" color="var(--q-magic)" :disable="!over || disable" :shadow="!$q.dark.isActive">
+    <D4Btn round @click="prev" color="var(--q-light-magic)" :disable="!over || disable" :shadow="!$q.dark.isActive">
       <img :src="icons.prev" width="24" height="24" class="invert" alt="icon_prev" />
     </D4Btn>
-    <D4Btn round @click="next" color="var(--q-magic)" :disable="!more || disable" :shadow="!$q.dark.isActive">
+    <D4Btn round @click="next" color="var(--q-light-magic)" :disable="!more || disable" :shadow="!$q.dark.isActive">
       <img :src="icons.next" width="24" height="24" class="invert" alt="icon_next" />
     </D4Btn>
   </div>
