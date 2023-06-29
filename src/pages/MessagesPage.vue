@@ -103,7 +103,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="q-pa-md q-gutter-y-md">
+  <div class="q-px-md q-gutter-y-md">
     <q-list bordered class="rounded-borders">
       <q-item>
         <q-item-section side>

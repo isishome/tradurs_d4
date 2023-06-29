@@ -229,26 +229,57 @@ onUnmounted(() => {
           </q-btn>
         </q-item>
         <q-separator />
-        <q-scroll-area class="col q-pa-md text-body2 page">
-          <q-item v-ripple clickable :to="{ name: 'tradeList' }" exact active-class="active">
-            <q-item-section>
-              <q-item-label>
-                {{ t('page.tradeList') }}
-              </q-item-label>
-            </q-item-section>
-          </q-item>
-          <q-item v-if="as.signed" v-ripple clickable :to="{ name: 'messages' }" exact active-class="active">
-
-            <q-item-section>
-              <q-item-label>
-                {{ t('page.messages') }}
-              </q-item-label>
-            </q-item-section>
-            <q-item-section v-show="newMessages" side>
-              <q-badge rounded color="secondary"></q-badge>
-            </q-item-section>
-          </q-item>
+        <q-scroll-area class="col text-body2 page">
+          <q-list class="q-pa-md">
+            <q-item v-ripple clickable :to="{ name: 'tradeList' }" exact active-class="active">
+              <q-item-section>
+                <q-item-label>
+                  {{ t('page.tradeList') }}
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item v-if="as.signed" v-ripple clickable :to="{ name: 'messages' }" exact active-class="active">
+              <q-item-section>
+                <q-item-label>
+                  {{ t('page.messages') }}
+                </q-item-label>
+              </q-item-section>
+              <q-item-section v-show="newMessages" side>
+                <q-badge rounded color="secondary"></q-badge>
+              </q-item-section>
+            </q-item>
+          </q-list>
           <q-separator />
+          <q-list class="q-px-md q-py-xl text-overline" dense>
+            <q-item clickable tag="a" href="https://diablo4.cc" target="_blank" rel="noopener noreferrer">
+              <q-item-section>
+                <q-item-label>
+                  Diablo.cc
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item clickable tag="a" href="https://d4armory.fly.dev/map" target="_blank" rel="noopener noreferrer">
+              <q-item-section>
+                <q-item-label>
+                  D4 Armory
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item clickable tag="a" href="https://d4builds.gg/build-planner" target="_blank" rel="noopener noreferrer">
+              <q-item-section>
+                <q-item-label>
+                  D4Builds.gg
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item clickable tag="a" href="https://maxroll.gg/d4" target="_blank" rel="noopener noreferrer">
+              <q-item-section>
+                <q-item-label>
+                  maxroll Diablo IV
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
         </q-scroll-area>
       </q-list>
     </q-drawer>
