@@ -143,7 +143,7 @@ const main = () => {
   if (route.name === 'tradeList' && page.value === 1)
     router.go(0)
   else
-    router.push({ name: 'tradeList', query: { page: 1 } })
+    router.push({ name: 'tradeList' })
 }
 
 watch(() => route.name, (val, old) => {

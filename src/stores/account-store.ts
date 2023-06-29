@@ -23,7 +23,12 @@ export const useAccountStore = defineStore('account', {
       data: [] as Array<IEvaluation>,
       loading: false as boolean,
       request: 0 as number
-    }
+    },
+    messagePage: {
+      rows: 6 as number,
+      over: false as boolean,
+      more: false as boolean
+    },
   }),
   getters: {
     filterEvaluations: (state) => {
@@ -112,10 +117,14 @@ export const useAccountStore = defineStore('account', {
           })
       })
     },
-    getMessages() {
+    getMessages(page: number) {
       return new Promise<void>((resolve) => {
-        api.get('/account/messages')
-          .then((response) => {
+        api.post('/account/messages', { page, rows: this.messagePage.rows })
+          .then(async (response) => {
+            await sleep(500)
+            this.messagePage.over = page > 1
+            this.messagePage.more = response.data.length > this.messagePage.rows
+            response.data.splice(this.messagePage.rows, 1)
             resolve(response.data)
           })
       })

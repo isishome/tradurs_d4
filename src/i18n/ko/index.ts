@@ -218,7 +218,7 @@ export default {
     success: '문의 내용이 정상적으로 접수되었습니다'
   },
   notice: {
-    message: `<div style="width:400px;max-width:80vw;line-height:2" class="break-keep"><div class='text-h6 q-pb-md'>공지사항</div><p class="text-body1">현재 작업 중인 이미지 분석을 통한 <span class='text-amber-10 text-weight-bold'>아이템 정보 자동 적용 기능</span>의 원활한 진행을 위해 옵션에 입력되어야 할 고유 특성은 옵션으로 강제 이동 처리되고 오타 등으로 잘못 추가된 <u>고유 특성 정보는 삭제될 예정</u>입니다. 이점 유의해서 아이템 등록을 해주시기 바랍니다. <br/><br/> 감사합니다.</p></div>`,
+    message: `<div style="width:400px;max-width:80vw;line-height:2" class="break-keep"><div class='text-h6 q-pb-md'>사과 말씀드립니다.</div><p class="text-body1">금일 오후 5시경 <span class='text-amber-10 text-weight-bold'>데이터베이스 서버에 문제가 발생하여</span> <u>모든 데이터가 유실돼 버리는 문제가 발생했습니다.</u>  사이트 이용을 위해 번거로우시겠지만 재 가입하셔야  정상적으로 사이트 이용이 가능합니다. 다시 한번 이용에 불편을 드려 죄송합니다.</div>`,
     close: '24시간 동안 열지 않기'
   }
 }

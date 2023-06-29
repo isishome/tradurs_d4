@@ -68,7 +68,7 @@ const upsertItem = (item: Item, done: Function) => {
       else {
         as.checkSign(true)
         is.clearFilter()
-        router.push({ name: 'tradeList', query: { page: 1 } })
+        router.push({ name: 'tradeList' })
       }
 
       Object.assign(item, response)

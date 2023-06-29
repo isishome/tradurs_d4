@@ -34,8 +34,8 @@ const filter = computed(() => is.filter.request)
 const itemsRef = ref<typeof D4Items | null>(null)
 const items = ref<Array<Item>>([])
 const page = computed(() => route.query.page ? Number.parseInt(route.query.page.toString()) : 1)
-const over = computed(() => is.page.over)
-const more = computed(() => is.page.more)
+const over = computed(() => is.itemPage.over)
+const more = computed(() => is.itemPage.more)
 
 // insert or update item
 const upsertItem = (item: Item, done: Function) => {
@@ -50,7 +50,7 @@ const upsertItem = (item: Item, done: Function) => {
         as.checkSign(true)
         is.clearFilter()
         if (page.value !== 1)
-          router.push({ name: 'tradeList', query: { page: 1 } })
+          router.push({ name: 'tradeList' })
         else
           getList(is.filter)
       }
@@ -98,7 +98,7 @@ const relistItem = (item: Item, done: Function) => {
         disable.value = false
 
         if (page.value !== 1)
-          router.push({ name: 'tradeList', query: { page: 1 } })
+          router.push({ name: 'tradeList' })
         else
           getList(is.filter)
       })
@@ -165,7 +165,7 @@ const favorite = (itemId: string, favorite: boolean) => {
 }
 
 const prev = () => {
-  router.push({ name: 'tradeList', query: { page: page.value - 1 } })
+  router.push({ name: 'tradeList', query: page.value > 2 ? { page: page.value - 1 } : {} })
 }
 
 const next = () => {
@@ -242,7 +242,7 @@ watch(newItems, (val: number) => {
       itemsRef.value?.hideOffers()
       is.clearFilter()
       if (page.value !== 1)
-        router.push({ name: 'tradeList', query: { page: 1 } })
+        router.push({ name: 'tradeList' })
       else
         getList(is.filter)
     })
@@ -285,7 +285,7 @@ watch(complete, (val: OfferInfo | null) => {
 
 watch(filter, (val, old) => {
   if (Number.isInteger(val) && val !== old) {
-    router.push({ name: 'tradeList', query: { page: 1 } })
+    router.push({ name: 'tradeList' })
     getList(is.filter)
   }
 })
@@ -298,6 +298,8 @@ onMounted(() => {
 onUnmounted(() => {
   is.clearFilter()
 })
+
+defineExpose({ getList })
 </script>
 <template>
   <div class="q-py-lg"></div>

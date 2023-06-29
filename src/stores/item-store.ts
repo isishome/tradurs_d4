@@ -131,7 +131,7 @@ export const useItemStore = defineStore('item', {
       fixed: false as boolean
     },
     detailItem: [] as Array<Item>,
-    page: {
+    itemPage: {
       rows: 30 as number,
       over: false as boolean,
       more: false as boolean
@@ -364,12 +364,12 @@ export const useItemStore = defineStore('item', {
     },
     getItems(page: number, itemId?: string | string[], filter?: any) {
       return new Promise<Array<Item>>((resolve, reject) => {
-        api.post('/d4/item', { page, rows: this.page.rows, itemId, filter })
+        api.post('/d4/item', { page, rows: this.itemPage.rows, itemId, filter })
           .then(async (response) => {
             await sleep(500)
-            this.page.over = page > 1
-            this.page.more = response.data.length > this.page.rows
-            response.data.splice(this.page.rows, 1)
+            this.itemPage.over = page > 1
+            this.itemPage.more = response.data.length > this.itemPage.rows
+            response.data.splice(this.itemPage.rows, 1)
             resolve(response.data)
           })
           .catch((e) => {
