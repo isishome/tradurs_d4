@@ -25,7 +25,7 @@ interface IProps {
 }
 
 const props = withDefaults(defineProps<IProps>(), {
-  width: '700',
+  width: '728',
   height: '200',
   loading: false
 })

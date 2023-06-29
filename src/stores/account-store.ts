@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { api } from 'boot/axios'
 import { i18n } from 'boot/i18n'
-import { User } from 'src/types/user'
+import { User, type INotify } from 'src/types/user'
 import { Socket } from 'socket.io-client'
 import { type ILabel } from 'src/stores/item-store'
 import { sleep } from 'src/common'
@@ -101,9 +101,9 @@ export const useAccountStore = defineStore('account', {
           })
       })
     },
-    notify(notify: boolean) {
+    notify(notify: INotify) {
       return new Promise<void>((resolve, reject) => {
-        api.post('/account/notify', { notify })
+        api.post('/account/notify', notify)
           .then(async () => {
             resolve()
           })

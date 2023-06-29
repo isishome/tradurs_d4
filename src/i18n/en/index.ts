@@ -46,7 +46,11 @@ export default {
     battleTag: 'BattleTag™',
     yolk: 'Yolk',
     temperature: 'Manner Temperature',
-    notify: 'Show Notification',
+    notify: {
+      title: 'Notify',
+      new: 'New Item',
+      private: 'Private'
+    },
     sh1: 'BattleTags will not be displayed if the trade is ',
     sh2: 'not completed',
     sh3: ' or the trade with the seller is ',

@@ -1,10 +1,14 @@
-export interface IUser {
+export interface INotify {
+  notifyNew: boolean,
+  notifyPrivate: boolean
+}
+
+export interface IUser extends INotify {
   id: string | null,
   yolk: number,
   avatar: number,
   battleTag?: string,
-  temperature: number,
-  notify: boolean
+  temperature: number
 }
 
 export class User implements IUser {
@@ -13,7 +17,8 @@ export class User implements IUser {
   public avatar = 0
   public battleTag = ''
   public temperature = 0
-  public notify = true
+  public notifyNew = true
+  public notifyPrivate = true
   public loading = false
   constructor(id?: string) {
     this.id = id || null

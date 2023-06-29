@@ -344,12 +344,13 @@ onUnmounted(() => {
         <div class="row justify-center">
           <div :class="screen.lt.sm ? 'q-pa-sm' : 'q-pa-xl'" :style="screen.lt.sm ? 'width:100%' : 'width:830px'">
             <div class="view">
+              <div class="row justify-center">
+                <!-- <ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px"
+                  data-ad-client="ca-pub-5110777286519562" data-ad-slot="6751896285" :data-adtest="prod ? 'off' : 'on'"
+                  :key="key"></ins> -->
+              </div>
               <RouterView />
-              <div class="q-py-md"></div>
             </div>
-            <!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5110777286519562"
-              data-ad-slot="8610177982" data-ad-format="auto" data-full-width-responsive="true"
-              :data-adtest="prod ? 'off' : 'on'" :key="key"></ins> -->
             <q-separator />
             <div class="q-pt-lg">
               <div class="row justify-center items-center q-gutter-xs text-caption bottom">
@@ -428,7 +429,7 @@ ins {
   box-shadow: 0 0 0 1px rgba(255, 255, 255, .05);
   background-color: rgba(255, 255, 255, .05);
   position: relative;
-  min-height: 200px;
+  min-height: 50px;
 }
 
 .body--light ins {

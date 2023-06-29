@@ -300,6 +300,7 @@ onUnmounted(() => {
 })
 </script>
 <template>
+  <div class="q-py-lg"></div>
   <div>
     <div class="row justify-center items-center">
       <D4Items ref="itemsRef" :items="items" :loading="disable" @upsert-item="upsertItem" @delete-item="deleteItem"

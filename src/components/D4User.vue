@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, reactive } from 'vue'
 import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
-import { User } from 'src/types/user'
+import { User, type INotify } from 'src/types/user'
 import { clipboard } from 'src/common'
 import { icons } from 'src/common/icons'
 import { useAccountStore } from 'src/stores/account-store'
@@ -35,7 +35,10 @@ const as = useAccountStore()
 
 const loading = computed(() => props.data.loading || props.progress)
 const allowCopy = computed(() => !props.authorized && props.data.battleTag !== '')
-const _notify = ref<boolean>(props.data.notify)
+const _notify = reactive<INotify>({
+  notifyNew: props.data.notifyNew,
+  notifyPrivate: props.data.notifyPrivate
+})
 
 const copy = (battleTag: string) => {
   if (!allowCopy.value)
@@ -44,13 +47,25 @@ const copy = (battleTag: string) => {
   clipboard(battleTag, t('user.battleTag'))
 }
 
-const notify = () => {
-  as.notify(_notify.value)
+const notifyNew = () => {
+  as.notify(_notify)
     .then(() => {
-      as.info.notify = _notify.value
+      as.info.notifyNew = _notify.notifyNew
+      as.info.notifyPrivate = _notify.notifyPrivate
     })
     .catch(() => {
-      _notify.value = !_notify.value
+      _notify.notifyNew = !_notify.notifyNew
+    })
+}
+
+const notifyPrivate = () => {
+  as.notify(_notify)
+    .then(() => {
+      as.info.notifyNew = _notify.notifyNew
+      as.info.notifyPrivate = _notify.notifyPrivate
+    })
+    .catch(() => {
+      _notify.notifyPrivate = !_notify.notifyPrivate
     })
 }
 </script>
@@ -90,9 +105,12 @@ const notify = () => {
       </div>
     </q-item>
     <q-separator />
-    <q-item class="row justify-center items-center">
-      <q-toggle left-label v-model="_notify" :disable="disable" color="secondary" :label="t('user.notify')" dense
-        @update:model-value="notify" />
+    <div class="q-pt-sm text-center">{{ t('user.notify.title') }}</div>
+    <q-item class="row justify-center items-center q-gutter-md">
+      <q-toggle left-label v-model="_notify.notifyNew" :disable="disable" color="secondary" :label="t('user.notify.new')"
+        dense @update:model-value="notifyNew" />
+      <q-toggle left-label v-model="_notify.notifyPrivate" :disable="disable" color="secondary"
+        :label="t('user.notify.private')" dense @update:model-value="notifyPrivate" />
     </q-item>
     <q-separator />
     <q-item v-if="$slots.actions" class="q-pa-md row justify-center q-gutter-md">

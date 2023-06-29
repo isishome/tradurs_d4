@@ -45,7 +45,11 @@ export default {
     battleTag: 'BattleTag™',
     yolk: '노른자',
     temperature: '매너 온도',
-    notify: '알림 표시',
+    notify: {
+      title: '알림',
+      new: '새 아이템',
+      private: '개인'
+    },
     sh1: '거래가 ',
     sh2: '완료',
     sh3: '되지 않거나 판매자와 거래가 ',
