@@ -505,7 +505,8 @@ defineExpose({ scrollEnd })
                   <img class="icon" :src="icons.morevert" :width="$q.screen.lt.sm ? 16 : 20"
                     :height="$q.screen.lt.sm ? 16 : 20" alt="icon_more" />
                   <q-menu auto-close class="no-shadow" transition-show="none" transition-hide="none"
-                    :transition-duration="0" :class="[$q.dark.isActive ? 'bg-grey-4' : 'bg-grey-9']">
+                    :transition-duration="0" anchor="top end" self="bottom start"
+                    :class="[$q.dark.isActive ? 'bg-grey-4' : 'bg-grey-9']">
                     <q-item v-if="as.signed" :class="[$q.dark.isActive ? 'text-grey-9' : 'text-grey-4']"
                       :dense="$q.screen.lt.sm" clickable @click="$emit('favorite', data.itemId, !data.favorite)">
                       <q-item-section side>

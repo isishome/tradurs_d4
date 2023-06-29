@@ -248,8 +248,8 @@ onUnmounted(() => {
     </q-drawer>
     <q-header :elevated="!$q.dark.isActive" class="q-py-sm header row justify-center">
       <q-toolbar class="toolbar">
-        <div class="col-1 col-md-3 row items-center">
-          <q-btn class="gt-sm no-hover" dense flat aria-label="Tradurs Home Button" padding="0"
+        <div class="row items-center" :style="$q.screen.gt.sm ? 'min-width:300px' : ''">
+          <q-btn class="gt-sm no-hover q-ml-lg" dense flat aria-label="Tradurs Home Button" padding="0"
             :ripple="!$q.dark.isActive" @click="main">
             <img v-show="$q.dark.isActive" src="~assets/logo.webp" width="48" height="48" alt="Tradurs Logo Image" />
             <img v-show="!$q.dark.isActive" src="~assets/logo_light.webp" width="48" height="48"
@@ -288,13 +288,13 @@ onUnmounted(() => {
             </q-tabs>
           </div>
         </div>
-        <div class="lt-md col-1 col-sm-3 row justify-end q-gutter-sm">
+        <div class="lt-md col-1 col-md-3 row justify-end q-gutter-sm">
           <q-btn round flat aria-label="Tradurs Morevert Button" :ripple="!$q.dark.isActive"
             @click="rightDrawerOpen = !rightDrawerOpen">
             <img class="icon" width="24" height="24" :src="icons.morevert" alt="icon_morevert" />
           </q-btn>
         </div>
-        <div class="gt-sm col-4 col-lg-3 row justify-end items-center q-gutter-xs">
+        <div class="gt-sm col-3 col-lg-3 row justify-end items-center q-gutter-xs">
           <q-btn round flat aria-label="Tradurs Support Button" :ripple="!$q.dark.isActive" @click="contact.show = true">
             <img class="icon" width="24" height="24" :src="icons.help" alt="icon_support" />
             <D4Tooltip anchor="bottom middle" self="top middle" transition-show="jump-down" transition-hide="jump-up"
