@@ -111,23 +111,28 @@ onMounted(() => {
             @update:model-value="val => messages.filter(m => !m.readYn).forEach(m => m.selected = val)" />
         </q-item-section>
         <q-item-section>
-          <div>
-            <q-btn outline v-show="newMessages" no-caps push :disable="disable" unelevated
-              aria-label="Tradurs Refresh Button" @click="refresh">
-              <div class="row items-center q-gutter-x-sm">
-                <img :src="icons.refresh" width="18" height="18" class="icon" alt="icon_prev" @click="prev" />
-                <div>
-                  {{ t('btn.newMessages') }}
-                </div>
-              </div>
-            </q-btn>
-          </div>
         </q-item-section>
         <q-item-section side>
           <q-btn no-caps push :disable="disable" unelevated aria-label="Tradurs Read Button" color="grey-8"
             :label="t('btn.markRead')" @click="reads" />
         </q-item-section>
       </q-item>
+      <q-slide-transition>
+        <div v-show="newMessages" class="text-center">
+          <q-separator />
+          <div class="q-py-md">
+            <q-btn color="secondary" v-show="newMessages" no-caps :disable="disable" unelevated padding="6px"
+              class="text-caption" aria-label="Tradurs Refresh Button" @click="refresh">
+              <div class="row items-center q-gutter-x-sm">
+                <img :src="icons.refresh" width="18" height="18" class="invert" alt="icon_prev" @click="prev" />
+                <div>
+                  {{ t('btn.newMessages') }}
+                </div>
+              </div>
+            </q-btn>
+          </div>
+        </div>
+      </q-slide-transition>
       <template v-for="message in messages" :key="message.msgId">
         <q-separator />
         <q-item clickable v-ripple @click="read(message)" :class="['q-py-lg', { 'read': message.readYn }]">

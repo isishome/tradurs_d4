@@ -229,21 +229,26 @@ onUnmounted(() => {
           </q-btn>
         </q-item>
         <q-separator />
-        <q-scroll-area class="col q-pa-md text-body2">
-          <q-item v-ripple clickable :to="{ name: 'tradeList' }" exact>
+        <q-scroll-area class="col q-pa-md text-body2 page">
+          <q-item v-ripple clickable :to="{ name: 'tradeList' }" exact active-class="active">
             <q-item-section>
               <q-item-label>
                 {{ t('page.tradeList') }}
               </q-item-label>
             </q-item-section>
           </q-item>
-          <q-item v-if="as.signed" v-ripple clickable :to="{ name: 'messages' }" exact>
+          <q-item v-if="as.signed" v-ripple clickable :to="{ name: 'messages' }" exact active-class="active">
+
             <q-item-section>
               <q-item-label>
                 {{ t('page.messages') }}
               </q-item-label>
             </q-item-section>
+            <q-item-section v-show="newMessages" side>
+              <q-badge rounded color="secondary"></q-badge>
+            </q-item-section>
           </q-item>
+          <q-separator />
         </q-scroll-area>
       </q-list>
     </q-drawer>
@@ -285,7 +290,7 @@ onUnmounted(() => {
             <q-tabs dense no-caps narrow-indicator class="gt-sm q-px-md bg-transparent no-hover nav">
               <q-route-tab :ripple="!$q.dark.isActive" :label="t('page.tradeList')" :to="{ name: 'tradeList' }" />
               <q-route-tab v-if="as.signed" :ripple="!$q.dark.isActive" :label="t('page.messages')"
-                class="relative-position" :to="{ name: 'messages' }" :alert="newMessages ? 'red' : 'transparent'" />
+                class="relative-position" :to="{ name: 'messages' }" :alert="newMessages ? 'secondary' : 'transparent'" />
             </q-tabs>
           </div>
         </div>
@@ -365,10 +370,23 @@ onUnmounted(() => {
           </div>
           <div class="gt-md col">
             <div class="full-height q-px-lg q-py-xl" :style="`width:280px;height:${asideHeight}`">
-              <div :style="`position:sticky;top:${asideTop}`">
+              <div :style="`position:sticky;top:${asideTop}`" class="column">
                 <ins class="adsbygoogle" style="display:inline-block;width:160px;height:600px"
                   data-ad-client="ca-pub-5110777286519562" data-ad-slot="6751896285" :data-adtest="prod ? 'off' : 'on'"
                   :key="key"></ins>
+                <div class="q-mt-xl">
+                  <div class="column items-start text-grey-7">
+                    <q-btn flat no-caps padding="0" :ripple="false" class="text-overline no-hover" type="a"
+                      href="https://diablo4.cc" label="Diablo.cc" target="_blank" rel="noopener noreferrer" />
+                    <q-btn flat no-caps padding="0" :ripple="false" class="text-overline no-hover" type="a"
+                      href="https://d4armory.fly.dev/map" label="D4 Armory" target="_blank" rel="noopener noreferrer" />
+                    <q-btn flat no-caps padding="0" :ripple="false" class="text-overline no-hover" type="a"
+                      href="https://d4builds.gg/build-planner" label="D4Builds.gg" target="_blank"
+                      rel="noopener noreferrer" />
+                    <q-btn flat no-caps padding="0" :ripple="false" class="text-overline no-hover" type="a"
+                      href="https://maxroll.gg/d4" label="maxroll Diablo IV" target="_blank" rel="noopener noreferrer" />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -464,5 +482,13 @@ ins::after {
 .view {
   position: relative;
   min-height: 40vh;
+}
+
+.page:deep(.q-item__label) {
+  opacity: .4;
+}
+
+.page:deep(.active .q-item__label) {
+  opacity: 1;
 }
 </style>
