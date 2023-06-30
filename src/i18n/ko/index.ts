@@ -11,6 +11,7 @@ export default {
     tradeList: '거래 목록',
     itemInfo: '아이템 정보',
     messages: '메시지',
+    support: '도움말',
     test: '테스트',
     pnf: '페이지를 찾을 수 없습니다'
   },
@@ -30,7 +31,7 @@ export default {
     mine: '내 아이템',
     offer: '제안 요청 아이템',
     fixed: '필터 고정',
-    fixedDescription: '필터 정보가 로컬 스토리지에 저장됩니다. 설정된 필터에 따라 새로 등록된 아이템이 나오지 않는 등의 착오가 발생할 수 있으니 이점 주의하세요.',
+    fixedDescription: '필터 정보가 로컬 스토리지에 저장됩니다. 설정된 필터에 따라 아이템 노출에 대한 착오 등이 생길 수 있으니 이점 주의하세요.',
     description: {
       advanced: '고급 필터 사용 시 \'고유 특성\'과 \'옵션\'을 구분해서 사용하세요',
       advanced2: '간혹 판매자가 \'고유 특성\'과 \'옵션\'을 잘못 입력하는 경우가 있으니 고려하여 필터 하세요'
@@ -105,7 +106,8 @@ export default {
     turnDownOffer: '제안 거절',
     turnDown: '거절',
     imageAnalysis: '이미지 분석',
-    newMessages: '새 메시지가 있습니다'
+    newMessages: '새 메시지가 있습니다',
+    register: '등록'
   },
   attribute: {
     register: '{attr} 등록',
@@ -224,5 +226,87 @@ export default {
   },
   message: {
     page: '페이지 {page}'
-  }
+  },
+  support: [
+    {
+      id: '001',
+      question: '회원가입은 어떻게 하나요?',
+      answer: [
+        { type: 'image', contents: '01_login' },
+        { type: 'text', contents: '1. 우측 상단에 로그인 버튼을 클릭합니다.' },
+        { type: 'image', contents: '01_mobile' },
+        { type: 'text', contents: '1.1. 모바일 환경에서는 우측 상단에 더 보기 아이콘을 클릭하시고 로그인 버튼을 클릭합니다.' },
+        { type: 'image', contents: '02_join' },
+        { type: 'text', contents: '2. 소셜 로그인을 이용하거나 \'트레이더스가 처음이신가요?\' 링크를 클릭하여 가입 페이지로 이동합니다. (소셜 로그인을 최초 사용하는 경우에도 가입 프로세스는 진행하셔야 합니다.)' },
+        { type: 'image', contents: '03_join' },
+        { type: 'text', contents: '3. 이메일 인증 절차가 필요하기 때문에 실제 사용하는 이메일 주소를 사용하여 가입을 진행하셔야 합니다.' },
+        { type: 'image', contents: '04_join' },
+        { type: 'text', contents: '4. 소셜 로그인을 통한 가입의 경우 임의 비밀번호가 자동 입력됩니다. 원하는 비밀번호를 입력해서 가입하셔도 됩니다.' },
+        { type: 'image', contents: '05_verify' },
+        { type: 'text', contents: '5. 이메일 전송이 성공하면 이미지와 같은 알림이 표시됩니다. 인증을 24시간 내로 완료하지 않은 경우 해당 계정은 자동으로 삭제됩니다.' },
+        { type: 'image', contents: '06_verify' },
+        { type: 'text', contents: '6. 가입하실 때 사용하신 이메일의 메일함으로 이동하면 위와 같은 인증 메일을 확인할 수 있습니다.\n(메일이 보이지 않는 경우 스팸메일함을 확인해 보세요.)' },
+        { type: 'image', contents: '07_verify' },
+        { type: 'text', contents: '7. 계정 인증이 성공하면 이미지와 같은 알림이 표시됩니다.' },
+        { type: 'image', contents: '08_battletag' },
+        { type: 'text', contents: '8. 로그인 후 트레이더스 디아블로® IV 페이지로 이동하면 배틀태그 입력 화면이 나타납니다. (정상적인 사용을 위해 사용 중인 배틀태그를 입력하시면 됩니다.)' }
+      ]
+    },
+    {
+      id: '002',
+      question: '아이템은 어떻게 거래하나요?',
+      answer: [
+        { type: 'image', contents: '01_register' },
+        { type: 'text', contents: '1. 우측 하단에 + 아이콘을 클릭합니다' },
+        { type: 'image', contents: '02_register' },
+        { type: 'text', contents: '2. 아이템 입력창이 열립니다.\n좌측 상단부터 순서대로,\n1: 아이템 품질, 2: 하드코어와 레더 여부, 3: 아이템 유형, 4: 장비 클래스, 5: 아이템 이미지, 6: 아이템 수량, 7: 아이템 명, 8: 아이템 위력, 9: 업그레이드, 10: 요구 레벨, 11: 고유 특성과 옵션 및 제약 조건, 12 거래 금액, 13: 이미지 분석, 14 버튼 영역입니다.' },
+        { type: 'image', contents: '03_quality' },
+        { type: 'text', contents: '3. 아이템 품질을 선택합니다.' },
+        { type: 'image', contents: '0301_quality' },
+        { type: 'text', contents: '3.1. 아이템 품질에 따라 카드 색상이 변경됩니다.' },
+        { type: 'image', contents: '04_hardcore_ladder' },
+        { type: 'text', contents: '4. 하드코어와 래더 여부를 선택합니다.\n기본적으로 하드코어는 비 활성 레더는 활성 상태입니다.' },
+        { type: 'image', contents: '0401_hardcore_ladder' },
+        { type: 'text', contents: '4.1. 등록이 완료되면 아이템 카드에 있는 아이템 명 좌측 플래그로 하드코어와 래더 여부를 확인할 수 있습니다.' },
+        { type: 'image', contents: '05_base' },
+        { type: 'text', contents: '5. 아이템 유형과 장비 클래스, 아이템 이미지, 수량을 입력해 줍니다.' },
+        { type: 'image', contents: '06_image' },
+        { type: 'text', contents: '6. 아이템 이미지 버튼을 클릭하면 이미지를 선택할 수 있는 팝업창이 열립니다.\n(*아이템 이미지 리스트에 없는 이미지가 있을 수 있습니다.)' },
+        { type: 'image', contents: '07_base' },
+        { type: 'text', contents: '7. 아이템 명과 아이템 위력, 업그레이드, 요구 레벨을 입력해 줍니다.\n아이템 명과 요구 레벨은 *필수 입력 필드입니다.\n아이템 위력과 업그레이드 필드는 입력하지 않으면 아이템 카드에 표시되지 않습니다.' },
+        { type: 'image', contents: '08_attribute' },
+        { type: 'text', contents: '8. 이제 고유 특성과 옵션, 제약 조건을 입력해 보겠습니다.\n우측 상단에 입력하고자 하는 탭을 선택하세요.\n\n먼저 고유 특성입니다.\n고유 특성은 아이템이 갖는 고유한 속성입니다. 상단의 장비 클래스를 선택하면 해당 클래스가 가질 수 있는 모든 고유 특성이 자동적으로 리스트업 됩니다.' },
+        { type: 'image', contents: '09_attribute' },
+        { type: 'text', contents: '9. 부가적으로 추가하길 원하는 고유 특성이 있을 경우 선택 상자를 클릭해 원하는 특성을 선택하거나,' },
+        { type: 'image', contents: '10_attribute' },
+        { type: 'text', contents: '10. 검색어를 직접 입력해 필터 된 특성을 추가할 수 있습니다.\n옵션과 제약 조건도 같은 방법으로 입력하면 됩니다. 하지만 옵션과 제약 조건이 고유 특성과 다른 점은 존재하지 않거나 잘못 입력된 속성을 직접 등록할 수 있다는 점입니다.' },
+        { type: 'image', contents: '11_attribute' },
+        { type: 'text', contents: '11. 선택 상자 우측에 + 아이콘을 클릭하면 새 속성 등록 창이 열립니다.' },
+        { type: 'image', contents: '12_attribute' },
+        { type: 'text', contents: '12. 보통은 표준을 사용하고, 빈 홈에 보석 등을 장착한 경우 홈을 선택해 줍니다.\n입력하려는 옵션이 \'빠른 이동 속도 +10\'인 경우 \'빠른 이동 속도 +{x}\'라고 입력 후 등록해 주면 됩니다.' },
+        { type: 'image', contents: '13_attribute' },
+        { type: 'text', contents: '13. 추가된 속성에 {x}라고 기입한 부분은 입력 필드가 됩니다.' },
+        { type: 'image', contents: '14_price' },
+        { type: 'text', contents: '14. 이제 판매할 아이템의 가격을 책정합니다.\n화폐 항목은 현재 제안받기 / 금화만이 가능합니다. 구매자가 금액을 제안하기를 원하는 경우 \'제안받기\'를 선택하시면 됩니다.' },
+        { type: 'image', contents: '15_item' },
+        { type: 'text', contents: '15. 적용을 눌러 아이템 등록을 완료합니다. 방금 등록한 아이템이 카드 형태로 표시됩니다.' },
+        { type: 'image', contents: '16_finish' },
+        { type: 'text', contents: '16. 카드 우측 상단 아이템 상태 좌측에 판매 종료까지 남은 시간이 표시됩니다.\n기본적으로 판매 기간은 3일(72시간)이며 연장이 필요 한 경우 아이템 좌측 하단의 \'수정하기\'를 클릭하고' },
+        { type: 'image', contents: '17_relist' },
+        { type: 'text', contents: '17. 수정 창 좌측 하단에 추가 작업 > 끌어올림을 선택하면 아이템이 최 상단으로 끌어올려짐과 동시에 판매 기간이 갱신됩니다.' },
+        { type: 'image', contents: '18_analyze' },
+        { type: 'text', contents: '18. 최근 추가된 기능인 이미지 분석은 수기로 아이템을 등록하는 번거로움을 개선하고자 작업되었으며, 아이템 등록이나 수정 창의 좌측 하단에 있는 \'이미지 분석\'을 클릭하여 잘 재단된 아이템 이미지를 선택해 주기만 하면 됩니다.' },
+        { type: 'image', contents: '19_analyze' },
+        { type: 'text', contents: '아이템 이미지 분석 화면\n\n19. 하드코어, 레더, 아이템 수량, 가격을 제외한 값들이 정상적으로 분석이 완료되었다면 아이템 정보가 자동으로 입력됩니다.\n(일정 해상도 이상의 잘 재단된 아이템 이미지일수록 높은 인식 결과를 얻을 수 있습니다.)' }
+      ]
+    },
+    {
+      id: '003',
+      question: 'yolk는 무엇인가요?',
+      answer: [
+        { type: 'image', contents: '01_yolk' },
+        { type: 'text', contents: '우측 상단 사용자 아이콘\n(모바일 더보기 아이콘 > 사용자 아이콘)\n을 클릭하면 현재 보유한 노른자 개수를 확인할 수 있습니다.\n\n2023-07-01 현재,\n\n가입 시 30개의 노른자(yolk)가 부여됩니다.\n\n로그인 시 하루 10개의 노른자가 부여됩니다.\n\n판매되거나 사용자가 나눌 수 없습니다.\n\n아이템 등록, 끌어올림, 제안 등록 시 1개씩 소모되며,\n\n아이템 거래가 정상적으로 완료되면 회수됩니다.\n\n이는 무분별한 아이템 등록이나 \n제안 요청을 막고자 함이며 앞으로 사용 개수나 부여 개수는 변경될 수 있습니다.' },
+      ]
+    }
+  ]
 }

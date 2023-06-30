@@ -1,20 +1,17 @@
 <script setup lang="ts">
 import { AxiosInstance } from 'axios'
-import { ref, computed, reactive, watch, onMounted, onUnmounted, nextTick, inject } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted, nextTick, inject } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useQuasar, Screen, uid } from 'quasar'
 import { useI18n } from 'vue-i18n'
 
 import { useAccountStore } from 'stores/account-store'
 import { useItemStore } from 'stores/item-store'
-import { useGlobalStore } from 'stores/global-store'
 import { icons } from 'src/common/icons'
 import { checkName } from 'src/common'
 
 import D4Filter from 'components/D4Filter.vue'
 import D4User from 'components/D4User.vue'
-import D4Dialog from 'components/D4Dialog.vue'
-import D4Tooltip from 'components/D4Tooltip.vue'
 
 const prod: boolean = import.meta.env.PROD
 
@@ -24,7 +21,6 @@ const router = useRouter()
 const $q = useQuasar()
 const as = useAccountStore()
 const is = useItemStore()
-const gs = useGlobalStore()
 const { t, locale } = useI18n({ useScope: 'global' })
 
 const filterLoading = computed(() => is.filter.loading)
@@ -73,47 +69,6 @@ const setLang = (lang: string) => {
 const setDark = () => {
   $q.dark.set(!$q.dark.isActive)
   $q.cookies.set('d4.dark', $q.dark.isActive.toString())
-}
-
-const contact = reactive<{ show: boolean, contents: string | null, disable: boolean }>({
-  show: false,
-  contents: null,
-  disable: false
-})
-const send = () => {
-  contact.disable = true
-  if (window?.grecaptcha) {
-    window.grecaptcha.ready(() => {
-      window.grecaptcha.execute('6Lf38rYmAAAAAB-ET1oihMUkcDumRascvVHOyGmg', { action: 'submit' })
-        .then((token: string) => {
-          gs.contactUs(token, contact.contents)
-            .then(() => {
-              $q.notify({
-                icon: `img:${icons.check}`,
-                color: 'positive',
-                classes: '',
-                message: t('contact.success')
-              })
-              contact.show = false
-            })
-            .catch(() => { })
-            .then(() => {
-              contact.disable = false
-            })
-        })
-        .catch(() => { })
-        .then(() => {
-          contact.disable = false
-        })
-    })
-  }
-  else
-    contact.disable = false
-}
-
-const close = () => {
-  contact.contents = null
-  contact.disable = false
 }
 
 const key = ref(uid())
@@ -197,14 +152,9 @@ onUnmounted(() => {
           <q-select v-model="locale" :options="localeOptions" :label="t('language', 0, { locale: brLoc })" dense outlined
             behavior="menu" emit-value map-options options-dense style="min-width: 120px"
             :dropdown-icon="`img:${icons.dropdown}`" popup-content-class="d4-scroll" @update:model-value="setLang" />
-          <q-btn round flat aria-label="Tradurs Support Button" :ripple="!$q.dark.isActive" @click="contact.show = true">
+          <q-btn round dense flat aria-label="Tradurs Support Button" :ripple="!$q.dark.isActive"
+            :to="{ name: 'support' }">
             <img class="icon" width="24" height="24" :src="icons.help" alt="icon_support" />
-            <D4Tooltip anchor="bottom middle" self="top middle" transition-show="jump-down" transition-hide="jump-up"
-              :offset="[0, 10]" behavior="desktop">
-              <div class="text-caption break-keep" style="max-width:200px">
-                {{ t('contact.title') }}
-              </div>
-            </D4Tooltip>
           </q-btn>
           <q-btn round flat aria-label="Tradurs Theme Button" :ripple="!$q.dark.isActive" @click="setDark">
             <img v-show="$q.dark.isActive" class="icon" width="24" height="24" :src="icons.light" alt="icon_light" />
@@ -250,7 +200,7 @@ onUnmounted(() => {
             </q-item>
           </q-list>
           <q-separator />
-          <q-list class="q-mx-lg q-py-xl text-overline useful" dense>
+          <q-list class="q-mx-sm q-py-xl text-overline useful" dense>
             <q-item clickable class="no-margin" tag="a" href="https://diablo4.cc" target="_blank"
               rel="noopener noreferrer">
               <q-item-section>
@@ -322,10 +272,11 @@ onUnmounted(() => {
             </q-input>
           </div>
           <div>
-            <q-tabs dense no-caps narrow-indicator class="gt-sm q-px-md bg-transparent no-hover nav">
-              <q-route-tab :ripple="!$q.dark.isActive" :label="t('page.tradeList')" :to="{ name: 'tradeList' }" />
+            <q-tabs dense no-caps narrow-indicator class="gt-sm q-px-sm bg-transparent no-hover nav">
+              <q-route-tab :ripple="!$q.dark.isActive" :label="t('page.tradeList')" :to="{ name: 'tradeList' }" exact />
               <q-route-tab v-if="as.signed" :ripple="!$q.dark.isActive" :label="t('page.messages')"
-                class="relative-position" :to="{ name: 'messages' }" :alert="newMessages ? 'secondary' : 'transparent'" />
+                class="relative-position" :to="{ name: 'messages' }" :alert="newMessages ? 'secondary' : 'transparent'"
+                exact />
             </q-tabs>
           </div>
         </div>
@@ -335,17 +286,12 @@ onUnmounted(() => {
             <img class="icon" width="24" height="24" :src="icons.morevert" alt="icon_morevert" />
           </q-btn>
         </div>
-        <div class="gt-sm col-3 col-lg-3 row justify-end items-center q-gutter-xs">
-          <q-btn round flat aria-label="Tradurs Support Button" :ripple="!$q.dark.isActive" @click="contact.show = true">
+        <div class="gt-sm col-3 row justify-end items-center q-gutter-xs">
+          <q-btn round dense flat aria-label="Tradurs Support Button" :ripple="!$q.dark.isActive"
+            :to="{ name: 'support' }">
             <img class="icon" width="24" height="24" :src="icons.help" alt="icon_support" />
-            <D4Tooltip anchor="bottom middle" self="top middle" transition-show="jump-down" transition-hide="jump-up"
-              :offset="[0, 10]" behavior="desktop">
-              <div class="text-caption break-keep" style="max-width:200px">
-                {{ t('contact.title') }}
-              </div>
-            </D4Tooltip>
           </q-btn>
-          <q-btn round flat aria-label="Tradurs Language Button" :ripple="!$q.dark.isActive">
+          <q-btn round dense flat aria-label="Tradurs Language Button" :ripple="!$q.dark.isActive">
             <img class="icon" width="24" height="24" :src="icons.language" alt="icon_language" />
             <q-menu auto-close class="no-shadow" anchor="bottom end" self="top end" transition-show="none"
               transition-hide="none" :transition-duration="0">
@@ -356,7 +302,7 @@ onUnmounted(() => {
               </q-list>
             </q-menu>
           </q-btn>
-          <q-btn round flat aria-label="Tradurs Theme Button" :ripple="!$q.dark.isActive" @click="setDark">
+          <q-btn round dense flat aria-label="Tradurs Theme Button" :ripple="!$q.dark.isActive" @click="setDark">
             <img v-show="$q.dark.isActive" class="icon" width="24" height="24" :src="icons.light" alt="icon_light" />
             <img v-show="!$q.dark.isActive" class="icon" width="24" height="24" :src="icons.dark" alt="icon_dark" />
           </q-btn>
@@ -374,7 +320,7 @@ onUnmounted(() => {
               </D4User>
             </q-menu>
           </q-btn>
-          <q-btn v-else round flat aria-label="Tradurs Login Button" :ripple="!$q.dark.isActive" @click="sign">
+          <q-btn v-else round dense flat aria-label="Tradurs Login Button" :ripple="!$q.dark.isActive" @click="sign">
             <img class="icon" width="24" height="24" :src="icons.login" alt="icon_login" />
           </q-btn>
         </div>
@@ -429,32 +375,6 @@ onUnmounted(() => {
       </q-page>
     </q-page-container>
   </q-layout>
-  <D4Dialog v-model="contact.show" @submit="send" @hide="close" :persistent="contact.disable">
-    <template #top>
-      <div class="q-pa-md text-h6">
-        {{ t('contact.title') }}
-      </div>
-    </template>
-    <template #middle>
-      <div class="q-pa-md">
-        <q-input outlined dense no-error-icon hide-bottom-space :disable="contact.disable"
-          :autofocus="$q.platform.is.desktop" rows="10" type="textarea" input-class="d4-scroll"
-          :label="t('contact.contents')" v-model="contact.contents" :rules="[val => val && val.length > 10 || '']"
-          maxlength="500">
-          <template #counter>
-            {{ contact.contents ? contact.contents.length : 0 }} / 500
-          </template>
-        </q-input>
-      </div>
-    </template>
-    <template #bottom>
-      <div class="row justify-end q-pa-md q-gutter-sm">
-        <D4Btn :label="t('btn.cancel')" :disable="contact.disable" color="rgb(150,150,150)"
-          @click="contact.show = false" />
-        <D4Btn :label="t('contact.send')" :loading="contact.disable" type="submit" />
-      </div>
-    </template>
-  </D4Dialog>
 </template>
 <style scoped>
 .header {

@@ -11,6 +11,7 @@ export default {
     tradeList: 'Trade List',
     itemInfo: 'Item Information',
     messages: 'Messages',
+    support: 'Help',
     test: 'Test',
     pnf: 'Page not found'
   },
@@ -30,7 +31,7 @@ export default {
     mine: 'My Items',
     offer: 'My Offerd Items',
     fixed: 'Fixed Filter',
-    fixedDescription: 'The filter information is saved to local storage. Please note that this may cause mistakes such as not seeing newly registered items based on the set filter.',
+    fixedDescription: 'The filter information is saved to local storage. Be aware of this, as it can lead to mistakes in item visibility depending on the filters set.',
     description: {
       advanced: 'When using advanced filters, distinguish between \'Characteristics\' and \'Affixes\'',
       advanced2: 'Occasionally, sellers may incorrectly enter \'Characteristics\' and \'Affixes\', so consider filtering'
@@ -106,7 +107,8 @@ export default {
     turnDownOffer: 'Turn Down Offer',
     turnDown: 'Turn Down',
     imageAnalysis: 'Analysis',
-    newMessages: 'You have a new message'
+    newMessages: 'You have a new message',
+    register: 'Register'
   },
   attribute: {
     register: 'Register {attr}',
@@ -225,5 +227,8 @@ export default {
   },
   message: {
     page: 'Page {page}'
-  }
+  },
+  support: [
+    { question: 'How do I sign up?', description: [''] }
+  ]
 }

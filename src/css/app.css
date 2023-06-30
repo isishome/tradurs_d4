@@ -218,7 +218,6 @@ body.body--dark {
 }
 
 .useful {
-  padding-left: 8px;
   color: currentColor;
 }
 
@@ -233,4 +232,8 @@ body.body--dark {
 
 .useful a:hover {
   opacity: 1;
+}
+
+.max-width {
+  max-width: 728px;
 }

@@ -870,7 +870,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
             <div class="row items-center q-gutter-sm">
               <D4Btn :label="t('btn.cancel')" :loading="loading" :disable="disable" color="rgb(150,150,150)"
                 @click="add.show = false" />
-              <D4Btn :label="t('btn.add')" :loading="loading" :progress="disable" type="submit" />
+              <D4Btn :label="t('btn.register')" :loading="loading" :progress="disable" type="submit" />
             </div>
           </div>
         </q-card-section>
