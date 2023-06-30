@@ -229,6 +229,85 @@ export default {
     page: 'Page {page}'
   },
   support: [
-    { question: 'How do I sign up?', description: [''] }
+    {
+      id: '001',
+      question: 'How do I sign up?',
+      answer: [
+        { type: 'image', contents: '01_login' },
+        { type: 'text', contents: '1. Click the Sign in button in the upper right corner..' },
+        { type: 'image', contents: '01_mobile' },
+        { type: 'text', contents: '1.1. On mobile, click the More icon in the top right corner and click the Sign In button.' },
+        { type: 'image', contents: '02_join' },
+        { type: 'text', contents: '2. Use your social login or click the "New to Tradurs?" link to go to the signup page. (If this is your first time using Social Login, you\'ll still need to go through the signup process.)' },
+        { type: 'image', contents: '03_join' },
+        { type: 'text', contents: '3. Because of the email verification process, you\'ll need to sign up using the email address you actually use.' },
+        { type: 'image', contents: '04_join' },
+        { type: 'text', contents: '4. If you sign up via social login, a random password will be auto-populated. You can also sign up by entering a password of your choice.' },
+        { type: 'image', contents: '05_verify' },
+        { type: 'text', contents: '5. If the email is successful, you\'ll see a notification like the one in the image. If verification is not completed within 24 hours, the account is automatically deleted.' },
+        { type: 'image', contents: '06_verify' },
+        { type: 'text', contents: '6. Go to the inbox of the email you used to sign up and you\'ll see a verification email like the one above.\n(If you don\'t see the mail, check your spam folder.)' },
+        { type: 'image', contents: '07_verify' },
+        { type: 'text', contents: '7. If your account is successfully verified, you\'ll see a notification like the one in the image.' },
+        { type: 'image', contents: '08_battletag' },
+        { type: 'text', contents: '8. After logging in and navigating to the Tradurs Diablo® IV page, you will be prompted to enter your battle tag. (For normal use, enter the battle tag you are using.)' }
+      ]
+    },
+    {
+      id: '002',
+      question: 'How do I trade items?',
+      answer: [
+        { type: 'image', contents: '01_register' },
+        { type: 'text', contents: '1. Click the + icon in the bottom right corner' },
+        { type: 'image', contents: '02_register' },
+        { type: 'text', contents: '2. The item input window opens.\nIn order from the top left,\n 1: Item quality, 2: Hardcore or Leather, 3: Item type, 4: Equipment class, 5: Item image, 6: Item quantity, 7: Item name, 8: Item power, 9: Upgrade, 10: Required level, 11: Unique traits and options and constraints, 12: Trade amount, 13: Image analysis, 14: Button area.' },
+        { type: 'image', contents: '03_quality' },
+        { type: 'text', contents: '3. Select an item quality.' },
+        { type: 'image', contents: '0301_quality' },
+        { type: 'text', contents: '3.1. The card color changes based on the quality of the item.' },
+        { type: 'image', contents: '04_hardcore_ladder' },
+        { type: 'text', contents: '4. Select whether to use hardcore and ladder.\nBy default, Hardcore is inactive and Ladder is active.' },
+        { type: 'image', contents: '0401_hardcore_ladder' },
+        { type: 'text', contents: '4.1. Once registered, you can tell if an item is hardcore or laddered by the flag to the left of the item name on the item card.' },
+        { type: 'image', contents: '05_base' },
+        { type: 'text', contents: '5. Enter the item type and equipment class, item image, and quantity.' },
+        { type: 'image', contents: '06_image' },
+        { type: 'text', contents: '6. Clicking the Item image button will open a popup window where you can select an image.\n(*You may have an image that is not in the list of item images.)' },
+        { type: 'image', contents: '07_base' },
+        { type: 'text', contents: '7. Enter the name of the item and its power, upgrade, and required level.\nThe item name and required level are *required fields.\nThe Item Power and Upgrade fields are not displayed on the item card unless they are filled in.' },
+        { type: 'image', contents: '08_attribute' },
+        { type: 'text', contents: '8. Now let\'s enter the unique attributes, options, and constraints:\nSelect the tab you want to enter in the top right corner:\nFirst, the unique attributes:\nA unique attribute is a unique property that an item has. If you select an equipment class at the top, it will automatically list all the unique attributes that that class can have.' },
+        { type: 'image', contents: '09_attribute' },
+        { type: 'text', contents: '9. If there are additional unique attributes you would like to add, click the select box to select the desired attribute, or' },
+        { type: 'image', contents: '10_attribute' },
+        { type: 'text', contents: '10. You can add filtered attributes by typing a search term directly.\nOptions and constraints can be entered in the same way. However, the difference between options and constraints and unique attributes is that you can register non-existent or incorrectly entered attributes directly.' },
+        { type: 'image', contents: '11_attribute' },
+        { type: 'text', contents: '11. Click the + icon to the right of the selection box to open a new attribute registration window.' },
+        { type: 'image', contents: '12_attribute' },
+        { type: 'text', contents: '12. Usually use standard, and select groove if you have jewelry or something on an empty groove.\nIf the option you want to enter is \'Fast Movement Speed +10\', you can enter \'Fast Movement Speed +{x}\' and register it.' },
+        { type: 'image', contents: '13_attribute' },
+        { type: 'text', contents: '13. The part where you write {x} in the added attribute becomes an input field.' },
+        { type: 'image', contents: '14_price' },
+        { type: 'text', contents: '14. Now set a price for the item you want to sell:\nMoney items are currently only available for take offers/gold coins. If you want buyers to offer an amount, you can select \'Get an offer\'.' },
+        { type: 'image', contents: '15_item' },
+        { type: 'text', contents: '15. Press Apply to finalize the item registration. The item you just registered is displayed in the form of a card.' },
+        { type: 'image', contents: '16_finish' },
+        { type: 'text', contents: '16. On the top right of the card, to the left of the item status, you will see the time remaining until the sale ends.\nBy default, the sale period is 3 days (72 hours), if you need to extend it, click \'Edit\' on the bottom left of the item.' },
+        { type: 'image', contents: '17_relist' },
+        { type: 'text', contents: '17. In the bottom left of the edit window, select More actions > Pull to move the item to the top and renew the sale period.' },
+        { type: 'image', contents: '18_analyze' },
+        { type: 'text', contents: '18. The recently added feature, Analyze image, was created to improve the hassle of manually listing items, simply click \'Analyze image\' in the bottom left corner of the item listing or editing window and select a well-cut image of the item.' },
+        { type: 'image', contents: '19_analyze' },
+        { type: 'text', contents: 'Item image analysis screen\n\n19. If the values except hardcore, leather, item quantity, and price are analyzed normally, the item information will be entered automatically.\n(A well-cut item image with a certain resolution or higher will achieve higher recognition results.)' }
+      ]
+    },
+    {
+      id: '003',
+      question: 'What is yolk?',
+      answer: [
+        { type: 'image', contents: '01_yolk' },
+        { type: 'text', contents: 'Top-right user icon\n(Mobile More icon > User icon)\nto see how many yolks you currently have.\n\nAs of July 1, 2023,\n\nYou are granted 30 yolks when you sign up.\n\nYou are granted 10 yolks per day upon login.\n\nIt cannot be sold or shared between users.\n\nOne is consumed when listing, relisting, or offering an item,\n\nand is redeemed when the item trade is successfully completed.\n\nThis is to discourage frivolous item registrations or\nrequests for suggestions, and the number of uses or grants may change in the future.' },
+      ]
+    }
   ]
 }
