@@ -72,8 +72,8 @@ const failedScan = (msg: string) => {
 const checkText = () => {
   currentCheck.value = 'text'
 
-  const priceText = `판매가|sell value`
-  const notTradable = `계정 귀속|거래 불가|account bound|not tradable`
+  const priceText = `판매가|sell.*value`
+  const notTradable = `계정.*귀속|거래.*불가|account.*bound|not.*tradable`
   const textArray = plainText.split(/\n/g).map(a => a.trim())
 
   // check priceText
@@ -98,8 +98,8 @@ const checkInfo = (textArray: string[]) => {
   currentCheck.value = 'info'
 
   // check quality
-  const qualityText = is.quality.map(q => q.fullName).join('|')
-  const indexQuality = textArray.findIndex(ta => (new RegExp(qualityText, 'gi')).test(ta))
+  const qualityText = is.quality.map(q => q.fullName.replace(/[ ]/g, '')).join('|')
+  const indexQuality = textArray.findIndex(ta => (new RegExp(qualityText, 'gi')).test(ta.replace(/[ ]/g, '')))
 
   if (indexQuality === -1)
     return failedScan(t('analyze.qualityNotFound'))
@@ -164,7 +164,7 @@ const checkInfo = (textArray: string[]) => {
   item.name = name
 
   // check item power
-  const powerText = `아이템 위력|item power`
+  const powerText = `아이템.*위력|item.*power`
   const indexPower = textArray.findIndex(ta => (new RegExp(powerText, 'gi')).test(ta))
 
   if (indexPower !== -1) {
@@ -188,7 +188,7 @@ const checkInfo = (textArray: string[]) => {
   }
 
   // check item Requires Level
-  const requiresText = `요구 레벨|requires level`
+  const requiresText = `요구.*레벨|requires.*level`
   const indexRequires = textArray.findIndex(ta => (new RegExp(requiresText, 'gi')).test(ta))
 
   if (indexRequires === -1)
@@ -208,6 +208,10 @@ const checkInfo = (textArray: string[]) => {
   }, timeout)
 }
 
+const attrToRegex = (property: string | undefined) => {
+  return property?.replace(/\{x\}/g, '#').replace(new RegExp(`[^${is.analyze.lang}#]`, 'g'), '').replace(/#/g, '[0-9.]{1,}')
+}
+
 const checkProperties = (textStr: string) => {
   currentCheck.value = 'properties'
 
@@ -216,7 +220,7 @@ const checkProperties = (textStr: string) => {
   if (findClass) {
     try {
       findClass.properties.forEach((cp: number) => {
-        const matchProperty = textStr.match(new RegExp(is.findProperty(cp)?.label.replace(/[\+ ]/g, '').replace(/\{x\}/g, '[0-9.]{1,}') as string, 'i'))
+        const matchProperty = textStr.match(new RegExp(attrToRegex(is.findProperty(cp)?.label) as string, 'i'))
         const matchValues = matchProperty?.[0].match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv))
 
         if (matchProperty && matchValues && item.properties.filter(p => p.propertyId === cp).length === 0) {
@@ -242,7 +246,7 @@ const checkAffixes = (textStr: string) => {
 
   try {
     for (const affix of is.affixes.data) {
-      const matchAffix = textStr.match(new RegExp(affix.label.replace(/(\[[0-9.\%\- ]{1,}\])|[\+ ]/g, '').replace(/[\%\[\]\+]/g, '').replace(/\{x\}/g, '[0-9.]{1,}') as string, 'i'))
+      const matchAffix = textStr.match(new RegExp(attrToRegex(affix.label) as string, 'i'))
 
       matchAffix?.forEach((ma: string) => {
         const matchValues = ma.match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv))
@@ -269,7 +273,7 @@ const checkRestrictions = () => {
 
   try {
     for (const restriction of is.restrictions.data) {
-      const matchRestriction = restrictionsPhase.match(new RegExp(restriction.label.replace(/(\[[0-9.\%\- ]{1,}\])|[\+ ]/g, '').replace(/[\%\[\]\+]/g, '').replace(/\{x\}/g, '[0-9.]{1,}') as string, 'i'))
+      const matchRestriction = restrictionsPhase.match(new RegExp(attrToRegex(restriction.label) as string, 'i'))
 
       matchRestriction?.forEach((mr: string) => {
         const matchValues = mr.match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv))

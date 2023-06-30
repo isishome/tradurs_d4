@@ -51,6 +51,7 @@ const getList = () => {
     .catch(() => { })
     .then(() => {
       loading.value = false
+      scrollPos()
     })
 }
 
@@ -93,7 +94,6 @@ const next = () => {
 }
 
 watch(page, () => {
-  scrollPos()
   getList()
 })
 

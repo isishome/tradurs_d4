@@ -216,3 +216,21 @@ body.body--dark {
 .grecaptcha-badge {
   visibility: hidden;
 }
+
+.useful {
+  padding-left: 8px;
+  color: currentColor;
+}
+
+.useful a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  border-radius: 0;
+  line-height: 1rem;
+  margin-bottom: 10px;
+  opacity: .5;
+}
+
+.useful a:hover {
+  opacity: 1;
+}

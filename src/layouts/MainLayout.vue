@@ -229,8 +229,8 @@ onUnmounted(() => {
           </q-btn>
         </q-item>
         <q-separator />
-        <q-scroll-area class="col text-body2 page">
-          <q-list class="q-pa-md">
+        <q-scroll-area class="col text-body2">
+          <q-list class="q-pa-md page">
             <q-item v-ripple clickable :to="{ name: 'tradeList' }" exact active-class="active">
               <q-item-section>
                 <q-item-label>
@@ -250,29 +250,33 @@ onUnmounted(() => {
             </q-item>
           </q-list>
           <q-separator />
-          <q-list class="q-px-md q-py-xl text-overline" dense>
-            <q-item clickable tag="a" href="https://diablo4.cc" target="_blank" rel="noopener noreferrer">
+          <q-list class="q-mx-lg q-py-xl text-overline useful" dense>
+            <q-item clickable class="no-margin" tag="a" href="https://diablo4.cc" target="_blank"
+              rel="noopener noreferrer">
               <q-item-section>
                 <q-item-label>
                   Diablo.cc
                 </q-item-label>
               </q-item-section>
             </q-item>
-            <q-item clickable tag="a" href="https://d4armory.fly.dev/map" target="_blank" rel="noopener noreferrer">
+            <q-item clickable class="no-margin" tag="a" href="https://d4armory.fly.dev/map" target="_blank"
+              rel="noopener noreferrer">
               <q-item-section>
                 <q-item-label>
                   D4 Armory
                 </q-item-label>
               </q-item-section>
             </q-item>
-            <q-item clickable tag="a" href="https://d4builds.gg/build-planner" target="_blank" rel="noopener noreferrer">
+            <q-item clickable class="no-margin" tag="a" href="https://d4builds.gg/build-planner" target="_blank"
+              rel="noopener noreferrer">
               <q-item-section>
                 <q-item-label>
                   D4Builds.gg
                 </q-item-label>
               </q-item-section>
             </q-item>
-            <q-item clickable tag="a" href="https://maxroll.gg/d4" target="_blank" rel="noopener noreferrer">
+            <q-item clickable class="no-margin" tag="a" href="https://maxroll.gg/d4" target="_blank"
+              rel="noopener noreferrer">
               <q-item-section>
                 <q-item-label>
                   maxroll Diablo IV
@@ -406,7 +410,7 @@ onUnmounted(() => {
                   data-ad-client="ca-pub-5110777286519562" data-ad-slot="6751896285" :data-adtest="prod ? 'off' : 'on'"
                   :key="key"></ins>
                 <div class="q-mt-xl">
-                  <div class="column items-start text-grey-7">
+                  <div class="column items-start useful">
                     <q-btn flat no-caps padding="0" :ripple="false" class="text-overline no-hover" type="a"
                       href="https://diablo4.cc" label="Diablo.cc" target="_blank" rel="noopener noreferrer" />
                     <q-btn flat no-caps padding="0" :ripple="false" class="text-overline no-hover" type="a"
