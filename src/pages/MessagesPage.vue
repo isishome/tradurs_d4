@@ -177,7 +177,7 @@ onMounted(() => {
           </div>
         </q-slide-transition>
       </template>
-      <template v-if="loading" v-for="c in as.messagePage.rows" :key="c">
+      <template v-if="loading" v-for="c in messages.length || as.messagePage.rows" :key="c">
         <q-separator />
         <q-item class="q-py-md">
           <q-item-section side>
@@ -214,15 +214,16 @@ onMounted(() => {
     <div class="row justify-between q-px-sm paging">
       <div>{{ t('message.page', { page }) }}</div>
       <div class="row justify-end items-center q-gutter-x-md">
-        <q-btn flat dense round padding="0" :disable="!over || loading" :shadow="!$q.dark.isActive">
+        <q-btn flat dense round padding="0" aria-label="Tradurs Prev Button" :disable="!over || loading"
+          :shadow="!$q.dark.isActive">
           <img :src="icons.prev" width="24" height="24" class="icon" alt="icon_prev" @click="prev" />
         </q-btn>
-        <q-btn flat dense round padding="0" :disable="!more || loading" :shadow="!$q.dark.isActive" @click="next">
+        <q-btn flat dense round padding="0" aria-label="Tradurs Next Button" :disable="!more || loading"
+          :shadow="!$q.dark.isActive" @click="next">
           <img :src="icons.next" width="24" height="24" class="icon" alt="icon_next" />
         </q-btn>
       </div>
     </div>
-    <div class="q-py-md"></div>
   </div>
 </template>
 

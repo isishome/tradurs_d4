@@ -200,7 +200,7 @@ onUnmounted(() => {
             </q-item>
           </q-list>
           <q-separator />
-          <q-list class="q-mx-sm q-py-xl text-overline useful" dense>
+          <q-list class="q-mx-md q-py-xl text-overline useful" dense>
             <q-item clickable class="no-margin" tag="a" href="https://diablo4.cc" target="_blank"
               rel="noopener noreferrer">
               <q-item-section>
@@ -331,13 +331,14 @@ onUnmounted(() => {
         <div class="row justify-center">
           <div :class="screen.lt.sm ? 'q-pa-sm' : 'q-pa-xl'" :style="screen.lt.sm ? 'width:100%' : 'width:830px'">
             <div class="view">
-              <div class="row justify-center">
-                <!-- <ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px"
-                  data-ad-client="ca-pub-5110777286519562" data-ad-slot="6751896285" :data-adtest="prod ? 'off' : 'on'"
-                  :key="key"></ins> -->
+              <div class="row justify-center q-mb-md">
+                <ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px"
+                  data-ad-client="ca-pub-5110777286519562" data-ad-slot="7137983054" :data-adtest="prod ? 'off' : 'on'"
+                  :key="key"></ins>
               </div>
               <RouterView />
             </div>
+            <div class="q-py-xl"></div>
             <q-separator />
             <div class="q-pt-lg">
               <div class="row justify-center items-center q-gutter-xs text-caption bottom">

@@ -181,7 +181,7 @@ const getList = (filter?: any) => {
   is.filter.loading = true
 
   items.value =
-    Array.from({ length: is.itemPage.rows }, () => {
+    Array.from({ length: items.value.length || is.itemPage.rows }, () => {
       const item = new Item()
       item.quality = 'normal'
       item.loading = true
@@ -315,7 +315,7 @@ defineExpose({ getList })
         @relist-item="relistItem" @status-item="statusItem" @update-only="updateOnly" @copy="copy" @favorite="favorite" />
     </div>
   </div>
-  <div class="q-py-lg"></div>
+  <div class="q-pt-xl"></div>
   <D4Btn v-if="as.signed" round @click="create" class="sticky-btn" color="var(--q-secondary)" :disable="disable" shadow>
     <img :src="icons.add" width="24" height="24" class="invert" alt="icon_add" />
   </D4Btn>
@@ -345,6 +345,7 @@ defineExpose({ getList })
 }
 
 .paging {
+  position: absolute;
   transform: translateY(-90%);
 }
 </style>

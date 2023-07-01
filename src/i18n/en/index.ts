@@ -217,6 +217,7 @@ export default {
   },
   contact: {
     title: 'Contact US',
+    question: 'Do you need any other help?',
     contents: 'Content of inquiry',
     send: 'Send',
     success: 'Your inquiry was successfully received'
@@ -255,11 +256,11 @@ export default {
     },
     {
       id: '002',
-      question: 'How do I trade items?',
+      question: 'How do I list an items?',
       answer: [
-        { type: 'image', contents: '01_register' },
+        { type: 'image', contents: '01_start' },
         { type: 'text', contents: '1. Click the + icon in the bottom right corner' },
-        { type: 'image', contents: '02_register' },
+        { type: 'image', contents: '02_description' },
         { type: 'text', contents: '2. The item input window opens.\nIn order from the top left,\n 1: Item quality, 2: Hardcore or Leather, 3: Item type, 4: Equipment class, 5: Item image, 6: Item quantity, 7: Item name, 8: Item power, 9: Upgrade, 10: Required level, 11: Unique traits and options and constraints, 12: Trade amount, 13: Image analysis, 14: Button area.' },
         { type: 'image', contents: '03_quality' },
         { type: 'text', contents: '3. Select an item quality.' },
@@ -272,7 +273,7 @@ export default {
         { type: 'image', contents: '05_base' },
         { type: 'text', contents: '5. Enter the item type and equipment class, item image, and quantity.' },
         { type: 'image', contents: '06_image' },
-        { type: 'text', contents: '6. Clicking the Item image button will open a popup window where you can select an image.\n(*You may have an image that is not in the list of item images.)' },
+        { type: 'text', contents: '6. Clicking the Item image button opens an image picker from which you can select an image.\n(*You may have an image that is not in the list of item images.)' },
         { type: 'image', contents: '07_base' },
         { type: 'text', contents: '7. Enter the name of the item and its power, upgrade, and required level.\nThe item name and required level are *required fields.\nThe Item Power and Upgrade fields are not displayed on the item card unless they are filled in.' },
         { type: 'image', contents: '08_attribute' },
@@ -303,7 +304,55 @@ export default {
     },
     {
       id: '003',
-      question: 'What is yolk?',
+      question: 'How do I trade items?',
+      answer: [
+        { type: 'text', contents: '\n\n\nHere are the buyer (dark theme) and seller (light theme) screens.' },
+        { type: 'image', contents: '01_make_offer' },
+        { type: 'text', contents: '1. The buyer finds the item they want and clicks the \'Make Offer\' button.' },
+        { type: 'image', contents: '02_make_offer' },
+        { type: 'text', contents: '2. Make an offer for the desired purchase price.' },
+        { type: 'image', contents: '03_accept_offer' },
+        { type: 'text', contents: '3. The seller will be notified that you have made an offer.' },
+        { type: 'image', contents: '04_accept_offer' },
+        { type: 'text', contents: '4. The incoming offers are displayed in a card.\nIf you don\'t like the offer price, click \'Turn Down\'.' },
+        { type: 'image', contents: '05_turndown_offer' },
+        { type: 'text', contents: '5. You will see a confirmation window asking you to turn down the offer.\nIf you turn down the offer,' },
+        { type: 'image', contents: '06_turndown_offer' },
+        { type: 'text', contents: '6. The buyer who requested the offer will be notified that the offer has been turned down.' },
+        { type: 'image', contents: '07_turndown_offer' },
+        { type: 'text', contents: '7. Click the Go link and the status of the offer card will be updated to \'Offer turned down\' - you can *re-offer* at the new price if they still want to buy.' },
+        { type: 'image', contents: '08_remake_offer' },
+        { type: 'text', contents: '8. The offer is requested again with a new price.\nThe buyer can also retract the offer *if no deal is in progress*.' },
+        { type: 'image', contents: '09_retract_offer' },
+        { type: 'text', contents: '9. You will see a confirmation window asking if you want to retract the offer.\nIf you do, the seller will be notified that the offer has been retracted.' },
+        { type: 'image', contents: '04_accept_offer' },
+        { type: 'text', contents: '10.1. Let\'s go back to number 4 and accept the offer.\n Click the \'Accept\' button.' },
+        { type: 'image', contents: '10_accept_offer' },
+        { type: 'text', contents: '10.2. You will see a confirmation window asking you to accept the offer.\n If you accept the offer,' },
+        { type: 'image', contents: '11_proceed_trade' },
+        { type: 'text', contents: '11. The buyer will be notified of the offer acceptance, and the offer card will change to \'Trade in progress\' (completion screen) when they click the go link.' },
+        { type: 'image', contents: '12_proceed_trade' },
+        {
+          type: 'text', contents: '12. The seller\'s offer card will also change to \'Trade in progress\'. nNow the buyer\'s battle tag will be displayed.nClick to copy the battle tag to the clipboard.'
+        },
+        { type: 'image', contents: '13_proceed_trade' },
+        { type: 'text', contents: '13. The buyer will also see the seller\'s battle tag on the item card.\nClick to copy the battle tag to the clipboard.\nYou will now proceed to trade the item via each other\'s battle tag.\nWhen the item status changes to \'Trade in progress\', you have *24 hours to complete the trade.\nAfter 24 hours, the item will automatically change to \'Trade complete\' status.\n' },
+        { type: 'image', contents: '1401_evaluation' },
+        { type: 'image', contents: '1402_evaluation' },
+        {
+          type: 'text', contents: '14. Now the seller and buyer can leave a manners rating for each other\'s transaction by clicking the Done button.\n\n*Even if the other party doesn\'t contact you or doesn\'t make a sale or purchase, \n\n*you must still complete the transaction to collect your yolk.'
+        },
+        { type: 'image', contents: '15_evaluation' },
+        {
+          type: 'text', contents: '15. When you\'re done with each other, you can see the manners evaluation that the other person left.'
+        },
+        { type: 'image', contents: '16_copy' },
+        { type: 'text', contents: '16. If the transaction is canceled, you can easily re-register the item using the \'Copy Template\' function located on the item card > right side of the item name > More icon.' },
+      ]
+    },
+    {
+      id: '004',
+      question: 'What is \'yolk\'?',
       answer: [
         { type: 'image', contents: '01_yolk' },
         { type: 'text', contents: 'Top-right user icon\n(Mobile More icon > User icon)\nto see how many yolks you currently have.\n\nAs of July 1, 2023,\n\nYou are granted 30 yolks when you sign up.\n\nYou are granted 10 yolks per day upon login.\n\nIt cannot be sold or shared between users.\n\nOne is consumed when listing, relisting, or offering an item,\n\nand is redeemed when the item trade is successfully completed.\n\nThis is to discourage frivolous item registrations or\nrequests for suggestions, and the number of uses or grants may change in the future.' },
