@@ -116,6 +116,8 @@ watch(() => is.filter.request, (val) => {
     _name.value = ''
 })
 
+const size = computed(() => $q.screen.width < 728 ? 'width:320px;height:100px;' : 'width:728px;height:90px;')
+
 const onWindowLoad = () => {
   const adsbygoogle = window.adsbygoogle || []
   adsbygoogle.push({})
@@ -334,10 +336,9 @@ onUnmounted(() => {
         <div class="row justify-center">
           <div :class="screen.lt.sm ? 'q-pa-sm' : 'q-pa-xl'" :style="screen.lt.sm ? 'width:100%' : 'width:830px'">
             <div class="view">
-              <div class="row justify-center q-mb-md">
-                <ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px"
-                  data-ad-client="ca-pub-5110777286519562" data-ad-slot="7137983054" :data-adtest="prod ? 'off' : 'on'"
-                  :key="key"></ins>
+              <div class="row justify-center" :class="$q.screen.width < 728 ? 'q-mb-sm' : 'q-mb-md'">
+                <ins class="adsbygoogle" :style="`display:inline-block;${size}`" data-ad-client="ca-pub-5110777286519562"
+                  data-ad-slot="7137983054" :data-adtest="prod ? 'off' : 'on'" :key="key"></ins>
               </div>
               <RouterView />
             </div>
