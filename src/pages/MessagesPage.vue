@@ -103,7 +103,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="max-width q-gutter-y-md">
+  <div class="max-width">
     <q-list bordered class="rounded-borders">
       <q-item>
         <q-item-section side>
@@ -211,7 +211,7 @@ onMounted(() => {
         </q-item-section>
       </q-item>
     </q-list>
-    <div class="row justify-between q-px-sm paging">
+    <div class="row justify-between q-mt-md q-px-sm paging">
       <div>{{ t('message.page', { page }) }}</div>
       <div class="row justify-end items-center q-gutter-x-md">
         <q-btn flat dense round padding="0" aria-label="Tradurs Prev Button" :disable="!over || loading"
