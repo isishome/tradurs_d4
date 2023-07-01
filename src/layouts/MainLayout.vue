@@ -119,6 +119,7 @@ watch(() => is.filter.request, (val) => {
 const onWindowLoad = () => {
   const adsbygoogle = window.adsbygoogle || []
   adsbygoogle.push({})
+  adsbygoogle.push({})
 }
 
 onMounted(() => {
