@@ -149,35 +149,37 @@ onUnmounted(() => {
     <q-drawer show-if-above bordered v-model="rightDrawerOpen" side="right" behavior="mobile"
       class="row justify-start scroll" :width="300">
       <q-list class="column full-height" style="width:300px">
-        <q-item class="row justify-end q-gutter-xs q-py-lg">
+        <q-item class="row justify-between q-gutter-xs q-py-lg">
           <q-select v-model="locale" :options="localeOptions" :label="t('language', 0, { locale: brLoc })" dense outlined
             behavior="menu" emit-value map-options options-dense style="min-width: 120px"
             :dropdown-icon="`img:${icons.dropdown}`" popup-content-class="d4-scroll" @update:model-value="setLang" />
-          <q-btn round dense flat aria-label="Tradurs Support Button" :ripple="!$q.dark.isActive"
-            :to="{ name: 'support' }">
-            <img class="icon" width="24" height="24" :src="icons.help" alt="icon_support" />
-          </q-btn>
-          <q-btn round flat aria-label="Tradurs Theme Button" :ripple="!$q.dark.isActive" @click="setDark">
-            <img v-show="$q.dark.isActive" class="icon" width="24" height="24" :src="icons.light" alt="icon_light" />
-            <img v-show="!$q.dark.isActive" class="icon" width="24" height="24" :src="icons.dark" alt="icon_dark" />
-          </q-btn>
-          <q-btn v-if="signed" round flat aria-label="Tradurs User Info Button" :ripple="!$q.dark.isActive">
-            <img class="icon" width="24" height="24" :src="icons.user" alt="icon_user" />
-            <q-menu anchor="bottom end" self="top end" transition-show="none" transition-hide="none"
-              :transition-duration="0" style="min-width:260px">
-              <D4User :data="as.info" info>
-                <template #actions>
-                  <q-btn no-caps unelevated :disable="progressSign" aria-label="Tradurs Info Button" color="grey-9"
-                    :label="t('user.info')" @click="info" v-close-popup />
-                  <q-btn no-caps unelevated :loading="progressSign" aria-label="Tradurs Signout Button" color="secondary"
-                    :label="t('user.signout')" @click="sign" v-close-popup />
-                </template>
-              </D4User>
-            </q-menu>
-          </q-btn>
-          <q-btn v-else round flat aria-label="Tradurs Login Button" :ripple="!$q.dark.isActive" @click="sign">
-            <img class="icon" width="24" height="24" :src="icons.login" alt="icon_login" />
-          </q-btn>
+          <div>
+            <q-btn round dense flat aria-label="Tradurs Support Button" :ripple="!$q.dark.isActive"
+              :to="{ name: 'support' }">
+              <img class="icon" width="24" height="24" :src="icons.help" alt="icon_support" />
+            </q-btn>
+            <q-btn round flat aria-label="Tradurs Theme Button" :ripple="!$q.dark.isActive" @click="setDark">
+              <img v-show="$q.dark.isActive" class="icon" width="24" height="24" :src="icons.light" alt="icon_light" />
+              <img v-show="!$q.dark.isActive" class="icon" width="24" height="24" :src="icons.dark" alt="icon_dark" />
+            </q-btn>
+            <q-btn v-if="signed" round flat aria-label="Tradurs User Info Button" :ripple="!$q.dark.isActive">
+              <img class="icon" width="24" height="24" :src="icons.user" alt="icon_user" />
+              <q-menu anchor="bottom end" self="top end" transition-show="none" transition-hide="none"
+                :transition-duration="0" style="min-width:260px">
+                <D4User :data="as.info" info>
+                  <template #actions>
+                    <q-btn no-caps unelevated :disable="progressSign" aria-label="Tradurs Info Button" color="grey-9"
+                      :label="t('user.info')" @click="info" v-close-popup />
+                    <q-btn no-caps unelevated :loading="progressSign" aria-label="Tradurs Signout Button"
+                      color="secondary" :label="t('user.signout')" @click="sign" v-close-popup />
+                  </template>
+                </D4User>
+              </q-menu>
+            </q-btn>
+            <q-btn v-else round flat aria-label="Tradurs Login Button" :ripple="!$q.dark.isActive" @click="sign">
+              <img class="icon" width="24" height="24" :src="icons.login" alt="icon_login" />
+            </q-btn>
+          </div>
         </q-item>
         <q-separator />
         <q-scroll-area class="col text-body2">
