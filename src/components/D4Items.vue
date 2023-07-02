@@ -6,7 +6,7 @@ import { useI18n } from 'vue-i18n'
 import { useAccountStore } from 'stores/account-store'
 import { useItemStore, type Property, type Affix, type Restriction } from 'stores/item-store'
 import { checkAttribute, scrollPos } from 'src/common'
-import { Item, Advertise, Offer, type IItem, Price } from 'src/types/item'
+import { Item, Advertise, Offer, type AffixValue, type IItem, Price } from 'src/types/item'
 import { User } from 'src/types/user'
 import { icons } from 'src/common/icons'
 
@@ -206,7 +206,7 @@ const apply = () => {
     p.action = is.findProperty(p.propertyId)?.label.match(/\{x\}/g) && p.propertyValues.reduce((pv: number, cv: number) => pv + cv, 0) === 0 ? 8 : p.action
   })
   activatedItem.value.affixes.forEach(a => {
-    a.action = is.findAffix(a.affixId)?.label.match(/\{x\}/g) && a.affixValues.reduce((pv: number, cv: number) => pv + cv, 0) === 0 ? 8 : a.action
+    a.action = is.findAffix(a.affixId)?.label.match(/\{x\}/g) && a.affixValues.map((av: AffixValue) => av.value).reduce((pv: number, cv: number) => pv + cv, 0) === 0 ? 8 : a.action
   })
   activatedItem.value.restrictions.forEach(r => {
     r.action = is.findRestriction(r.restrictId)?.label.match(/\{x\}/g) && r.restrictValues.reduce((pv: number, cv: number) => pv + cv, 0) === 0 ? 8 : r.action
@@ -352,7 +352,13 @@ const filterAffixes = (val: string): void => {
 const selectedAffix = (val: number): void => {
   const tempId = uid()
   const tempValues = is.findAffix(val)?.label
-  activatedItem.value.affixes.push({ valueId: tempId, affixId: val, affixValues: Array.from({ length: (tempValues?.match(/\{x\}/gi) || []).length }, () => 0), action: 2 })
+  const valuesLen = (tempValues?.match(/\{x\}/gi) || []).length
+  activatedItem.value.affixes.push({
+    valueId: tempId, affixId: val, affixValues: Array.from({ length: valuesLen }, () => {
+      const tempRangeId = uid()
+      return { valueRangeId: tempRangeId, value: 0, min: 0, max: 0 }
+    }), action: 2
+  })
   affixId.value = null
   affixNeedle.value = undefined
   activatedRef.value?.scrollEnd('affixes', tempId)
@@ -364,7 +370,7 @@ const createAffix = (): void => {
   add.show = true
 }
 
-const updateAffix = ({ valueId, affixValues }: { valueId: string, affixValues: Array<number> }): void => {
+const updateAffix = ({ valueId, affixValues }: { valueId: string, affixValues: Array<AffixValue> }): void => {
   const findAffix = activatedItem.value.affixes.find(a => a.valueId === valueId)
   if (findAffix) {
     findAffix.action = findAffix.action !== 2 ? 4 : 2

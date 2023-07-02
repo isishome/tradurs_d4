@@ -8,8 +8,8 @@ export default {
 import { reactive, ref } from 'vue'
 import { QFile, uid } from 'quasar'
 import { useI18n } from 'vue-i18n'
-import { type ILabel, useItemStore } from 'src/stores/item-store'
-import { Item } from 'src/types/item'
+import { type ILabel, type Affix as IAffix, useItemStore } from 'src/stores/item-store'
+import { Affix, AffixValue, Item } from 'src/types/item'
 
 import D4Dialog from 'components/D4Dialog.vue'
 
@@ -201,6 +201,7 @@ const checkInfo = (textArray: string[]) => {
   restrictionsPhase = textArray.splice(indexRequires, textArray.length).join('').replace(/[\+ ]/g, '').replace(/([0-9.]{1,})(\,)([0-9.]{1,})/g, '$1$3').replace(/(\[)([0-9.]{1,})(\s\-\s)([0-9.]{1,})(\])/g, '$1$2-$4$5')
 
   let textStr = textArray.join('').replace(/[\+ ]/g, '').replace(/([0-9.]{1,})(\,)([0-9.]{1,})/g, '$1$3').replace(/(\[)([0-9.]{1,})(\s\-\s)([0-9.]{1,})(\])/g, '$1$2-$4$5')
+  //let textStr = textArray.join('').replace(/[\+ ]/g, '').replace(/([0-9.]{1,})(\,)([0-9.]{1,})/g, '$1$3').replace(/(\[)([0-9.]{1,})([^\-\[]*\-[^\-\[]*)([0-9.]{1,})([1\]]{1})/g, '$1$2-$4$5')
 
   setTimeout(() => {
     checkedItem.push('info')
@@ -208,8 +209,12 @@ const checkInfo = (textArray: string[]) => {
   }, timeout)
 }
 
-const attrToRegex = (property: string | undefined) => {
-  return property?.replace(/\{x\}/g, '#').replace(new RegExp(`[^${is.analyze.lang}#]`, 'g'), '').replace(/#/g, '[0-9.]{1,}')
+const removeUnnecessary = (attr: string | undefined) => {
+  return attr?.replace(new RegExp(`[^${is.analyze.lang}0-9\\,\\.\\-#\\[\\]]`, 'g'), '')
+}
+
+const attrToRegex = (attr: string | undefined) => {
+  return removeUnnecessary(attr?.replace(/\{x\}/g, '#'))?.replace(/\[/g, '\\[').replace(/\]/g, '\\]').replace(/\-/g, '\\-').replace(/#/g, '[0-9.]{1,}')
 }
 
 const checkProperties = (textStr: string) => {
@@ -220,7 +225,7 @@ const checkProperties = (textStr: string) => {
   if (findClass) {
     try {
       findClass.properties.forEach((cp: number) => {
-        const matchProperty = textStr.match(new RegExp(attrToRegex(is.findProperty(cp)?.label) as string, 'i'))
+        const matchProperty = removeUnnecessary(textStr)?.match(new RegExp(attrToRegex(is.findProperty(cp)?.label) as string, 'i'))
         const matchValues = matchProperty?.[0].match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv))
 
         if (matchProperty && matchValues && item.properties.filter(p => p.propertyId === cp).length === 0) {
@@ -245,13 +250,20 @@ const checkAffixes = (textStr: string) => {
   currentCheck.value = 'affixes'
 
   try {
-    for (const affix of is.affixes.data) {
+    const affixData: Array<IAffix> = JSON.parse(JSON.stringify(is.affixes.data)).sort((a: IAffix, b: IAffix) => { return b.label.length - a.label.length })
+
+    for (const affix of affixData) {
       const matchAffix = textStr.match(new RegExp(attrToRegex(affix.label) as string, 'i'))
 
       matchAffix?.forEach((ma: string) => {
+        const matchMinMax = textStr.substring(textStr.indexOf(ma), textStr.length).match(/[1\[]{1}[0-9.]{1,}[^\-\[]*\-[^\-\[]*[0-9.]{1,}[1\]]{1}/)?.map(mmm => mmm.replace(/1$/, '').replace(/[^0-9.-]/g, '').split(/\-/).map(mm => !isNaN(parseFloat(mm)) ? parseFloat(mm) : 0))
         const matchValues = ma.match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv))
         if (matchValues) {
-          item.affixes.push({ valueId: uid(), affixId: affix.value as number, affixValues: matchValues, action: 2 })
+          const a: Affix = { valueId: uid(), affixId: affix.value as number, affixValues: [], action: 2 }
+          matchValues.forEach((mv: number) => {
+            a.affixValues.push({ valueRangeId: uid(), value: mv, min: matchMinMax?.[0]?.[0] as number, max: matchMinMax?.[0]?.[1] as number })
+          })
+          item.affixes.push(a)
           textStr = textStr.replace(ma, '')
         }
       })

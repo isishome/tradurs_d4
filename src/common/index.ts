@@ -1,6 +1,7 @@
 import { nextTick } from "vue"
 import { copyToClipboard, Notify } from 'quasar'
 import { i18n } from "src/boot/i18n"
+import { AffixValue } from "src/types/item"
 
 export const checkName = (name: string) => {
   return /^[0-9a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣\s,\.'"%\(\)\+\-\:]{2,}$/gi.test(name)
@@ -37,20 +38,32 @@ export const sleep = (ms: number) => {
   })
 }
 
-interface Attribute {
+export interface Attribute {
   type: string,
   value: number | string
 }
 
-export const parse = (label: string | undefined, value?: Array<number>): Array<Attribute> => {
+export const parse = (label: string | undefined, values?: Array<number> | Array<AffixValue>): Array<Attribute> => {
   if (label)
     return label.split(/\{x\}/g).reduce((p: Array<Attribute>, c, i) => {
+      const isAffix = Array.isArray(values) && typeof (values[i]) === 'object'
+      const isOther = Array.isArray(values) && typeof (values[i]) === 'number'
       p.push({ type: 'text', value: c })
-      p.push({ type: 'variable', value: value ? (value[i] || 0) : 0 })
+      p.push({ type: 'variable', value: isAffix ? (values[i] as AffixValue).value : isOther ? (values[i] as number) || 0 : 0 })
+      p.push({ type: 'min', value: isAffix ? (values[i] as AffixValue).min : 0 })
+      p.push({ type: 'max', value: isAffix ? (values[i] as AffixValue).max : 0 })
       return p
-    }, []).slice(0, -1)
+    }, []).slice(0, -3)
   else
     return []
+}
+
+export const splitArray = (arr: Array<number>, chunkSize: number) => {
+  const res = []
+  while (arr.length > 0) {
+    res.push(arr.splice(0, chunkSize))
+  }
+  return res
 }
 
 export const scrollPos = (top?: number, behavior?: ScrollBehavior) => {

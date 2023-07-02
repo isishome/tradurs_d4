@@ -46,8 +46,8 @@ const remove = (): void => {
           </div>
         </template>
         <div v-else-if="!editable && comp.type === 'variable'">{{ comp.value }}</div>
-        <q-input v-else ref="ai" class="var" input-class="text-center text-caption no-padding" dense hide-bottom-space
-          hide-hint no-error-icon outlined v-model.number="comp.value" maxlength="6" debounce="500" :disable="disable"
+        <q-input v-else class="var" input-class="text-center text-caption no-padding" dense hide-bottom-space hide-hint
+          no-error-icon outlined v-model.number="comp.value" maxlength="6" debounce="500" :disable="disable"
           :rules="[val => !disable && (parseFloat(val) % 1 !== 0 || parseInt(val) % 1 === 0) || '']"
           @update:model-value="update" @focus="focus" />
       </template>

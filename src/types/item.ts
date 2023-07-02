@@ -2,7 +2,7 @@ import { uid } from 'quasar'
 import { User } from './user'
 
 export interface Attribute {
-  valueId?: string,
+  valueId?: number | string,
   action?: number,
   disable?: boolean,
   restore?: number
@@ -13,9 +13,16 @@ export interface Property extends Attribute {
   propertyValues: Array<number>
 }
 
+export interface AffixValue {
+  valueRangeId: number | string,
+  value: number,
+  min: number,
+  max: number
+}
+
 export interface Affix extends Attribute {
   affixId: number,
-  affixValues: Array<number>
+  affixValues: Array<AffixValue>
 }
 
 export interface Restriction extends Attribute {

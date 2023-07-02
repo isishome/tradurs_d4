@@ -40,6 +40,7 @@ import logout from 'assets/icons/logout.svg'
 import user from 'assets/icons/user.svg'
 
 import photo from 'assets/icons/photo.svg'
+import online from 'assets/icons/online.svg'
 
 export const icons = {
   standard,
@@ -76,5 +77,6 @@ export const icons = {
   login,
   logout,
   user,
-  photo
+  photo,
+  online
 }

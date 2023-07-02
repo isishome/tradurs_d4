@@ -47,9 +47,9 @@ const remove = () => {
           </div>
         </template>
         <div v-else-if="!editable && comp.type === 'variable'">{{ comp.value }}</div>
-        <q-input v-else class="var" input-class="text-center text-caption no-padding" dense hide-bottom-space hide-hint
-          no-error-icon outlined v-model.number="comp.value" maxlength="6" debounce="500" :disable="disable"
-          :rules="[val => !disable && (parseFloat(val) % 1 !== 0 || parseInt(val) % 1 === 0) || '']"
+        <q-input v-else-if="comp.type === 'variable'" class="var" input-class="text-center text-caption no-padding" dense
+          hide-bottom-space hide-hint no-error-icon outlined v-model.number="comp.value" maxlength="6" debounce="500"
+          :disable="disable" :rules="[val => !disable && (parseFloat(val) % 1 !== 0 || parseInt(val) % 1 === 0) || '']"
           @update:model-value="update" @focus="focus" />
       </template>
       <q-btn v-show="editable" :disable="disable" dense unelevated flat round aria-label="Tradurs Remove/Restore Button"

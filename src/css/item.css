@@ -339,6 +339,26 @@
   margin: 0;
 }
 
+.minmax-text {
+  color: rgba(200, 220, 255, .8);
+}
+
+.body--light .minmax-text {
+  color: rgba(0, 0, 220, .6);
+}
+
+.minmax {
+  opacity: .8;
+}
+
+.minmax .q-field__control::before {
+  background-color: rgba(60, 60, 100, 1);
+}
+
+.body--light .minmax .q-field__control::before {
+  background-color: rgba(45, 0, 150, .2);
+}
+
 .user-area {
   position: absolute;
   top: 16px;

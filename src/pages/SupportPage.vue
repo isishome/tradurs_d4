@@ -75,7 +75,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <q-list bordered class="max-width rounded-borders">
+  <q-list bordered class="rounded-borders">
     <template v-for="s, idx in  (support as Array<Support>) " :key="idx">
       <q-separator v-show="idx !== 0" />
       <q-expansion-item v-model="s.show" :class="{ 'no-hover': s.show }" :expand-icon="`img:${icons.dropdown}`"

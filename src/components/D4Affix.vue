@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { QInput } from 'quasar'
+import { QInput, uid } from 'quasar'
 import { useItemStore } from 'stores/item-store'
 import { icons } from 'src/common/icons'
-import { parse, focus } from 'src/common'
+import { type Attribute, parse, splitArray, focus } from 'src/common'
+import { AffixValue } from 'src/types/item'
 
 const props = defineProps({
   data: {
@@ -28,7 +29,13 @@ const findAffix = computed(() => is.findAffix(props.data.affixId))
 const affixInfo = computed(() => parse(findAffix.value?.label, props.data.affixValues))
 
 const update = (): void => {
-  emit('update', { valueId: props.data.valueId, affixValues: affixInfo.value.filter(i => i.type === 'variable').map(i => parseFloat(i.value.toString())) })
+  const av: { valueId: number, affixValues: Array<AffixValue> } = { valueId: props.data.valueId, affixValues: [] }
+  const minmax = splitArray(affixInfo.value.filter(i => i.type === 'min' || i.type === 'max').map(i => i.value as number), 2)
+  affixInfo.value.filter(i => i.type === 'variable').forEach((attr: Attribute, idx: number) => {
+    av.affixValues.push({ valueRangeId: uid(), value: attr.value as number, min: minmax[idx][0] as number, max: minmax[idx][1] as number })
+  })
+
+  emit('update', av)
 }
 
 const remove = (): void => {
@@ -50,11 +57,31 @@ const remove = (): void => {
           <div v-for="(word, i) in (comp.value as string).split(/\s+/g).filter(w => w !== '')" :key="i">{{ word }}
           </div>
         </template>
-        <div v-else-if="!editable && comp.type === 'variable'" class="figure">{{ comp.value }}</div>
-        <q-input v-else ref="ai" class="var" input-class="text-center text-caption no-padding" dense hide-bottom-space
-          hide-hint no-error-icon outlined v-model.number="comp.value" maxlength="6" debounce="500" :disable="disable"
-          :rules="[val => !disable && (parseFloat(val) % 1 !== 0 || parseInt(val) % 1 === 0) || '']"
-          @update:model-value="update" @focus="focus" />
+        <template v-if="!editable">
+          <div v-if="comp.type === 'variable'" class="figure">{{ comp.value }}</div>
+          <div v-if="comp.type === 'min'" class="minmax-text">[{{ comp.value }} - {{ affixInfo[k + 1].value }}]</div>
+        </template>
+        <template v-else>
+          <q-input v-if="comp.type === 'variable'" class="var" input-class="text-center text-caption no-padding" dense
+            hide-bottom-space hide-hint no-error-icon outlined v-model.number="(comp.value as number)" maxlength="6"
+            debounce="500" :disable="disable"
+            :rules="[val => !disable && (parseFloat(val) % 1 !== 0 || parseInt(val) % 1 === 0) || '']"
+            @update:model-value="update" @focus="focus" />
+          <div v-else-if="comp.type === 'min'" class="minmax row items-center q-gutter-x-xs">
+            <div>[</div>
+            <q-input class="var" tabindex="-1" input-class="text-center text-caption no-padding" dense hide-bottom-space
+              hide-hint no-error-icon outlined v-model.number="comp.value" maxlength="6" debounce="500" :disable="disable"
+              :rules="[val => !disable && (parseFloat(val) % 1 !== 0 || parseInt(val) % 1 === 0) || '']"
+              @update:model-value="update" @focus="focus" />
+            <div>-</div>
+            <q-input class="var" tabindex="-1" input-class="text-center text-caption no-padding" dense hide-bottom-space
+              hide-hint no-error-icon outlined v-model.number="affixInfo[k + 1].value" maxlength="6" debounce="500"
+              :disable="disable"
+              :rules="[val => !disable && (parseFloat(val) % 1 !== 0 || parseInt(val) % 1 === 0) || '']"
+              @update:model-value="update" @focus="focus" />
+            <div>]</div>
+          </div>
+        </template>
       </template>
       <q-btn v-show="editable" :disable="disable" dense unelevated flat round aria-label="Tradurs Editable Button"
         size="xs" :tabindex="-1" class="q-ml-sm" @click="remove">

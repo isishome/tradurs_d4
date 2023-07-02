@@ -121,6 +121,7 @@ const notifyPrivate = () => {
   <div v-else>
     <q-skeleton v-show="loading" width="100px" :height="$q.screen.lt.sm ? '16px' : '18px'" />
     <div v-show="!loading" class="row items-center q-gutter-xs">
+      <img v-show="data.online" :src="icons.online" class="online" alt="Tradurs Online Status Icon" />
       <div :class="{ 'authorized': authorized, 'allow-copy': allowCopy }" @click="copy(data.battleTag)">
         {{ data.battleTag === '' ? label : data.battleTag }}
       </div>
@@ -154,5 +155,12 @@ const notifyPrivate = () => {
 
 .body--light .avatar:deep(.q-avatar) {
   box-shadow: 0 0 0 3px var(--q-light-page);
+}
+
+.online {
+  width: 10px;
+  height: 10px;
+  margin: 0 -4px 0 0;
+  filter: invert(39%) sepia(100%) saturate(1473%) hue-rotate(89deg) brightness(110%) contrast(110%);
 }
 </style>
