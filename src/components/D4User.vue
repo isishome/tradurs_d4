@@ -4,7 +4,6 @@ import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { User, type INotify } from 'src/types/user'
 import { clipboard } from 'src/common'
-import { icons } from 'src/common/icons'
 import { useAccountStore } from 'src/stores/account-store'
 
 import D4Tooltip from 'components/D4Tooltip.vue'
@@ -119,11 +118,11 @@ const notifyPrivate = () => {
   <div v-else>
     <q-skeleton v-show="loading" width="100px" :height="$q.screen.lt.sm ? '16px' : '18px'" />
     <div v-show="!loading" class="row items-center q-gutter-xs">
-      <img v-show="data.online" :src="icons.online" class="online" alt="Tradurs Online Status Icon" />
+      <img v-show="data.online" src="/images/icons/online.svg" class="online" alt="Tradurs Online Status Icon" />
       <div :class="{ 'authorized': authorized, 'allow-copy': allowCopy }" @click="copy(data.battleTag)">
         {{ data.battleTag === '' ? label : data.battleTag }}
       </div>
-      <q-icon class="icon" :name="`img:${icons.help}`" size="19px">
+      <q-icon class="icon" name="img:/images/icons/help.svg" size="19px">
         <D4Tooltip>
           <div class="text-overline text-weight-bold">{{ t('user.temperature') }} : {{ data.temperature }}&#8451</div>
           <div class="break-keep text-caption" style="max-width:160px;">

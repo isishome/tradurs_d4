@@ -5,7 +5,6 @@ import { useQuasar } from 'quasar'
 import { Offer, type Price } from 'src/types/item'
 import { useAccountStore } from 'src/stores/account-store'
 import { useItemStore } from 'src/stores/item-store'
-import { icons } from 'src/common/icons'
 
 import D4User from 'components/D4User.vue'
 import D4Price from 'components/D4Price.vue'
@@ -167,7 +166,7 @@ const parsEvaluations = computed(() => props.owner ? as.filterEvaluations(props.
           <div v-else class="row items-start q-col-gutter-xs">
             <div>{{ status }}
             </div>
-            <q-icon v-if="existsEvaluation" class="icon" :name="`img:${icons.evaluation}`" size="19px">
+            <q-icon v-if="existsEvaluation" class="icon" name="img:/images/icons/evaluation.svg" size="19px">
               <D4Tooltip>
                 <div class="text-overline text-weight-bold">
                   {{ t('complete.evaluate') }}

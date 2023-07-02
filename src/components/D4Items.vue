@@ -8,7 +8,6 @@ import { useItemStore, type Property, type Affix, type Restriction } from 'store
 import { checkAttribute, scrollPos } from 'src/common'
 import { Item, Advertise, Offer, type AffixValue, type IItem, Price } from 'src/types/item'
 import { User } from 'src/types/user'
-import { icons } from 'src/common/icons'
 
 import D4Item from 'components/D4Item.vue'
 import D4Property from 'components/D4Property.vue'
@@ -497,7 +496,7 @@ const makingOffer = (offer: Offer) => {
 
       if (findOffer) {
         $q.notify({
-          icon: `img:${icons.check}`,
+          icon: 'img:/images/icons/check.svg',
           color: 'positive',
           classes: '',
           message: t('offer.updateOffer')
@@ -518,7 +517,7 @@ const acceptOffer = (offer: Offer) => {
   is.acceptOffer(offer)
     .then(() => {
       $q.notify({
-        icon: `img:${icons.check}`,
+        icon: 'img:/images/icons/check.svg',
         color: 'positive',
         classes: '',
         message: t('offer.acceptOffer')
@@ -538,7 +537,7 @@ const retractOffer = (offer: Offer) => {
   is.retractOffer(offer.offerId)
     .then(() => {
       $q.notify({
-        icon: `img:${icons.check}`,
+        icon: 'img:/images/icons/check.svg',
         color: 'positive',
         classes: '',
         message: t('offer.retractOffer')
@@ -558,7 +557,7 @@ const turnDownOffer = (offer: Offer) => {
   is.turnDownOffer(offer.offerId)
     .then(() => {
       $q.notify({
-        icon: `img:${icons.check}`,
+        icon: 'img:/images/icons/check.svg',
         color: 'positive',
         classes: '',
         message: t('offer.turnDownOffer')
@@ -580,7 +579,7 @@ const complete = (evaluations: Array<number>) => {
       as.checkSign(true)
 
       $q.notify({
-        icon: `img:${icons.check}`,
+        icon: 'img:/images/icons/check.svg',
         color: 'positive',
         classes: '',
         message: t('offer.complete')
@@ -622,7 +621,7 @@ const endAnalyze = (item: Item) => {
 const failedAnalyze = (msg: string) => {
   disable.value = false
   $q.notify({
-    icon: `img:${icons.alert}`,
+    icon: 'img:/images/icons/alert.svg',
     color: 'negative',
     classes: '',
     message: msg,
@@ -690,8 +689,8 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
           <template #more="{ loading }">
             <q-btn v-if="!item.expanded && !loading" flat aria-label="Tradurs More Button" text-color="black"
               class="more no-hover" padding="10px" @click="expanded(item)">
-              <img class="icon" :width="$q.screen.lt.sm ? 24 : 36" :height="$q.screen.lt.sm ? 24 : 36" :src="icons.more"
-                alt="icon_more" />
+              <img class="icon" :width="$q.screen.lt.sm ? 24 : 36" :height="$q.screen.lt.sm ? 24 : 36"
+                src="/images/icons/more.svg" alt="icon_more" />
             </q-btn>
           </template>
         </D4Item>
@@ -708,13 +707,13 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
               :popup-content-style="{ 'height': `${props.wrap?.$el.clientHeight / 2}px` }" outlined dense no-error-icon
               use-input hide-bottom-space hide-selected emit-value map-options transition-show="none"
               transition-hide="none" :transition-duration="0" class="col" :label="t('searchOrSelect')"
-              :options="propertyOptions(propertyNeedle)" :dropdown-icon="`img:${icons.dropdown}`"
+              :options="propertyOptions(propertyNeedle)" dropdown-icon="img:/images/icons/dropdown.svg"
               popup-content-class="d4-scroll" @update:model-value="selectedProperty" @input-value="filterProperties">
               <template #option="scope">
                 <q-item v-bind="scope.itemProps">
                   <q-item-section side>
                     <q-icon class="icon" :class="{ 'rotate-45': ['standard'].includes(scope.opt.type as string) }"
-                      size="14px" :name="`img:${icons[scope.opt.type as keyof typeof icons || 'standard']}`" />
+                      size="14px" :name="`img:/images/attribute_types/${scope.opt.type || 'standard'}.svg`" />
                   </q-item-section>
                   <q-item-section>
                     <q-item-label>{{ scope.opt.label }}</q-item-label>
@@ -741,13 +740,13 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
               :popup-content-style="{ 'height': `${props.wrap?.$el.clientHeight / 2}px` }" outlined dense no-error-icon
               use-input hide-bottom-space hide-selected emit-value map-options transition-show="none"
               transition-hide="none" :transition-duration="0" class="col" :label="t('searchOrSelect')"
-              :options="affixOptions(affixNeedle)" :dropdown-icon="`img:${icons.dropdown}`"
+              :options="affixOptions(affixNeedle)" dropdown-icon="img:/images/icons/dropdown.svg"
               popup-content-class="d4-scroll" @update:model-value="selectedAffix" @input-value="filterAffixes">
               <template #option="scope">
                 <q-item v-bind="scope.itemProps">
                   <q-item-section side>
                     <q-icon class="icon" :class="{ 'rotate-45': ['standard'].includes(scope.opt.type as string) }"
-                      size="14px" :name="`img:${icons[scope.opt.type as keyof typeof icons || 'standard']}`" />
+                      size="14px" :name="`img:/images/attribute_types/${scope.opt.type || 'standard'}.svg`" />
                   </q-item-section>
                   <q-item-section>
                     <q-item-label>{{ scope.opt.label }}</q-item-label>
@@ -764,7 +763,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
             </q-select>
             <q-btn size="sm" :disable="disable" unelevated flat dense round aria-label="Tradurs Add Button"
               @click="createAffix">
-              <img class="icon" width="24" height="24" :src="icons.add" alt="icon_add" />
+              <img class="icon" width="24" height="24" src="/images/icons/add.svg" alt="icon_add" />
             </q-btn>
           </div>
         </template>
@@ -778,7 +777,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
               :popup-content-style="{ 'height': `${props.wrap?.$el.clientHeight / 2}px` }" outlined dense no-error-icon
               use-input hide-bottom-space hide-selected emit-value map-options transition-show="none"
               transition-hide="none" :transition-duration="0" class="col" :label="t('searchOrSelect')"
-              :options="restrictionOptions(restrictionNeedle)" :dropdown-icon="`img:${icons.dropdown}`"
+              :options="restrictionOptions(restrictionNeedle)" dropdown-icon="img:/images/icons/dropdown.svg"
               popup-content-class="d4-scroll" @update:model-value="selectedRestriction" @input-value="filterRestrictions">
               <template #option="scope">
                 <q-item v-bind="scope.itemProps">
@@ -797,7 +796,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
             </q-select>
             <q-btn size="sm" :disable="disable" unelevated flat dense round aria-label="Tradurs Add Button"
               @click="createRestriction">
-              <img class="icon" width="24" height="24" :src="icons.add" alt="icon_add" />
+              <img class="icon" width="24" height="24" src="/images/icons/add.svg" alt="icon_add" />
             </q-btn>
           </div>
         </template>
@@ -811,7 +810,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
             <div class="row items-center q-gutter-sm">
               <D4Btn v-if="activatedItem.itemId" :label="t('btn.moreActions')" :loading="activatedItem.loading"
                 :disable="disable" color="var(--q-secondary)">
-                <q-icon class="q-ml-xs invert" size="sm" :name="`img:${icons.dropdown}`" />
+                <q-icon class="q-ml-xs invert" size="sm" name="img:/images/icons/dropdown.svg" />
                 <q-menu fit anchor="bottom middle" self="top middle" auto-close class="no-shadow" transition-show="none"
                   transition-hide="none" :transition-duration="0">
                   <q-list bordered class="rounded-borders">
@@ -891,7 +890,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
             {{ t('offer.list') }}
           </div>
           <q-btn unelevated aria-label="Tradurs Close Button" class="no-hover icon" :ripple="false">
-            <img :src="icons.close" width="24" height="24" @click="showOffers = false" alt="icon_close" />
+            <img src="/images/icons/close.svg" width="24" height="24" @click="showOffers = false" alt="icon_close" />
           </q-btn>
         </q-card-section>
       </template>

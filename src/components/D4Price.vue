@@ -4,7 +4,6 @@ import { useItemStore } from 'stores/item-store'
 import { useI18n } from 'vue-i18n'
 
 import { Price } from 'src/types/item'
-import { icons } from 'src/common/icons'
 import { itemImgs } from 'src/common/items'
 import { focus } from 'src/common'
 
@@ -56,12 +55,12 @@ const updateCurrency = (val: string | null): void => {
   <div v-if="editable">
     <div class="row justify-end items-center no-wrap q-gutter-sm">
       <div v-show="!$q.screen.lt.sm">
-        <q-icon class="coin" size="18px" :name="`img:${icons.price}`" />
+        <q-icon class="coin" size="18px" name="img:/images/icons/price.svg" />
       </div>
       <div>
         <q-select v-model="_price.currency" :disable="disable" behavior="menu" outlined dense no-error-icon
           hide-bottom-space emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0"
-          :label="t('price.currency')" :dropdown-icon="`img:${icons.dropdown}`" :options="currencies"
+          :label="t('price.currency')" dropdown-icon="img:/images/icons/dropdown.svg" :options="currencies"
           popup-content-class="d4-scroll" @update:model-value="updateCurrency">
           <template #selected-item="scope">
             <div class="ellipsis">{{ scope.opt.label }}</div>
@@ -71,8 +70,8 @@ const updateCurrency = (val: string | null): void => {
       <div v-if="data.currency === 'rune'" class="col">
         <q-select v-model="_price.currencyValue" :disable="disable" behavior="menu" outlined dense no-error-icon
           hide-bottom-space emit-value map-options popup-content-class="d4-scroll" transition-show="none"
-          transition-hide="none" :transition-duration="0" :options="runes()" :dropdown-icon="`img:${icons.dropdown}`"
-          @update:model-value="update">
+          transition-hide="none" :transition-duration="0" :options="runes()"
+          dropdown-icon="img:/images/icons/dropdown.svg" @update:model-value="update">
           <template #selected-item="scope">
             <div class="ellipsis">{{ scope.opt.label }}</div>
           </template>
@@ -120,7 +119,7 @@ const updateCurrency = (val: string | null): void => {
           <div class="q-ml-xs">{{ (runes().find(r => r.value === data.currencyValue) || {}).label }}</div>
         </template>
         <template v-else-if="data.currency === 'gold'">
-          <img class="coin" :src="icons.price" width="18" height="18" alt="icon_price" />
+          <img class="coin" src="/images/icons/price.svg" width="18" height="18" alt="icon_price" />
           <div class="q-ml-xs">
             {{ n(Number.parseFloat(data.currencyValue ? data.currencyValue.toString() : '0'), 'decimal') }}</div>
         </template>

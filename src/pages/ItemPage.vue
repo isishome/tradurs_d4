@@ -30,7 +30,6 @@ import { useQuasar, uid } from 'quasar'
 import { useAccountStore } from 'stores/account-store'
 import { Item, IPrice } from 'src/types/item'
 
-import { icons } from 'src/common/icons'
 import D4Items from 'components/D4Items.vue'
 
 const props = defineProps<{
@@ -296,7 +295,7 @@ onUnmounted(() => {
   </div>
   <div class="q-py-lg"></div>
   <D4Btn round :to="{ name: 'tradeList' }" class="sticky-btn" color="var(--q-light-normal)" shadow>
-    <img :src="icons.list" width="20" height="20" class="invert" alt="icon_list" />
+    <img src="/images/icons/list.svg" width="20" height="20" class="invert" alt="icon_list" />
   </D4Btn>
 </template>
 

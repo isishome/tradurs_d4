@@ -2,7 +2,6 @@
 import { ref, watch, nextTick } from 'vue'
 import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
-import { icons } from 'src/common/icons'
 import { focus } from 'src/common'
 
 interface IProps {
@@ -64,7 +63,7 @@ watch(() => props.modelValue, (val: number | null) => {
     <q-btn v-show="!$q.screen.lt.sm && !noButton" size="sm" flat dense round aria-label="Tradurs Remove Button"
       :disable="disable || (!allowNull && parseInt((_quantity || '0').toString()) < (allowZero ? 1 : 2))"
       @click="counting('dec')">
-      <img class="icon" width="17" height="17" :src="icons.remove" alt="icon_remove" />
+      <img class="icon" width="17" height="17" src="/images/icons/remove.svg" alt="icon_remove" />
     </q-btn>
     <q-input v-model.number="_quantity" :label="label || t('price.quantity')" :style="`max-width:${maxWidth}`"
       input-class="text-center" :disable="disable" dense hide-bottom-space hide-hint no-error-icon outlined
@@ -73,7 +72,7 @@ watch(() => props.modelValue, (val: number | null) => {
       @focus="focus" />
     <q-btn v-show="!$q.screen.lt.sm && !noButton" size="sm" flat dense round aria-label="Tradurs Add Button"
       :disable="disable || (!allowNull && parseInt((_quantity || '0').toString()) > (max - 1))" @click="counting('inc')">
-      <img class="icon" width="17" height="17" :src="icons.add" alt="icon_add" />
+      <img class="icon" width="17" height="17" src="/images/icons/add.svg" alt="icon_add" />
     </q-btn>
   </div>
 </template>

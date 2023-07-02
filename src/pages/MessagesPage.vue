@@ -5,7 +5,6 @@ import { useRoute, useRouter } from 'vue-router'
 import { useAccountStore } from 'src/stores/account-store'
 import { useI18n } from 'vue-i18n'
 import { scrollPos } from 'src/common'
-import { icons } from 'src/common/icons'
 
 interface Message {
   msgId: number,
@@ -124,7 +123,8 @@ onMounted(() => {
             <q-btn color="secondary" v-show="newMessages" no-caps :disable="disable" unelevated padding="6px"
               class="text-caption" aria-label="Tradurs Refresh Button" @click="refresh">
               <div class="row items-center q-gutter-x-sm">
-                <img :src="icons.refresh" width="18" height="18" class="invert" alt="icon_prev" @click="prev" />
+                <img src="/images/icons/restore.svg" width="18" height="18" class="invert" alt="icon_prev"
+                  @click="prev" />
                 <div>
                   {{ t('btn.newMessages') }}
                 </div>
@@ -216,11 +216,11 @@ onMounted(() => {
       <div class="row justify-end items-center q-gutter-x-md">
         <q-btn flat dense round padding="0" aria-label="Tradurs Prev Button" :disable="!over || loading"
           :shadow="!$q.dark.isActive">
-          <img :src="icons.prev" width="24" height="24" class="icon" alt="icon_prev" @click="prev" />
+          <img src="/images/icons/prev.svg" width="24" height="24" class="icon" alt="icon_prev" @click="prev" />
         </q-btn>
         <q-btn flat dense round padding="0" aria-label="Tradurs Next Button" :disable="!more || loading"
           :shadow="!$q.dark.isActive" @click="next">
-          <img :src="icons.next" width="24" height="24" class="icon" alt="icon_next" />
+          <img src="/images/icons/next.svg" width="24" height="24" class="icon" alt="icon_next" />
         </q-btn>
       </div>
     </div>

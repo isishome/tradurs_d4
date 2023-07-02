@@ -3,7 +3,6 @@ import { useQuasar } from 'quasar'
 import { reactive, onUnmounted, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useGlobalStore } from 'stores/global-store'
-import { icons } from 'src/common/icons'
 
 import D4Dialog from 'components/D4Dialog.vue'
 
@@ -41,7 +40,7 @@ const send = () => {
           gs.contactUs(token, contact.contents)
             .then(() => {
               $q.notify({
-                icon: `img:${icons.check}`,
+                icon: 'img:/images/icons/check.svg',
                 color: 'positive',
                 classes: '',
                 message: t('contact.success')
@@ -79,7 +78,7 @@ onUnmounted(() => {
   <q-list bordered class="rounded-borders">
     <template v-for="s, idx in  (support as Array<Support>) " :key="idx">
       <q-separator v-show="idx !== 0" />
-      <q-expansion-item v-model="s.show" :class="{ 'no-hover': s.show }" :expand-icon="`img:${icons.dropdown}`"
+      <q-expansion-item v-model="s.show" :class="{ 'no-hover': s.show }" expand-icon="img:/images/icons/dropdown.svg"
         :label="s.question">
         <q-item class="row justify-center items-center" :class="$q.screen.lt.sm ? 'q-px-md' : 'q-px-xl'"
           style="background-color: var(--q-cloud);">
@@ -97,8 +96,8 @@ onUnmounted(() => {
       </q-expansion-item>
     </template>
     <q-separator />
-    <q-expansion-item v-model="contact.show" :class="{ 'no-hover': contact.show }" :expand-icon="`img:${icons.dropdown}`"
-      :label="t('contact.question')">
+    <q-expansion-item v-model="contact.show" :class="{ 'no-hover': contact.show }"
+      expand-icon="img:/images/icons/dropdown.svg" :label="t('contact.question')">
       <q-item class="row justify-center items-center q-py-xl" style="background-color: var(--q-cloud);">
         <q-btn no-caps class="text-center" color="secondary" aria-label="Tradurs Contact Us Button" push
           :label="t('contact.title')" @click="contact.open = true" />

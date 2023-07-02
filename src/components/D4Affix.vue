@@ -2,7 +2,6 @@
 import { computed } from 'vue'
 import { QInput, uid } from 'quasar'
 import { useItemStore } from 'stores/item-store'
-import { icons } from 'src/common/icons'
 import { type Attribute, parseAffix, splitArray, focus } from 'src/common'
 import { AffixValue } from 'src/types/item'
 
@@ -49,7 +48,7 @@ const remove = (): void => {
     :data-id="data.valueId">
     <div>
       <q-icon class="icon" :class="{ 'rotate-45': ['standard'].includes(findAffix?.type as string) }" size="13px"
-        :name="`img:${icons[findAffix?.type as keyof typeof icons]}`" />
+        :name="`img:/images/attribute_types/${findAffix?.type}.svg`" />
     </div>
     <div class="row items-center q-gutter-x-xs">
       <template v-for="(comp, k) in affixInfo" :key="k">
@@ -85,8 +84,10 @@ const remove = (): void => {
       </template>
       <q-btn v-show="editable" :disable="disable" dense unelevated flat round aria-label="Tradurs Editable Button"
         size="xs" :tabindex="-1" class="q-ml-sm" @click="remove">
-        <img v-show="data.action !== 8" class="icon" width="13" height="13" :src="icons.close" alt="icon_close" />
-        <img v-show="data.action === 8" class="icon flip-horizontal" width="13" :src="icons.refresh" alt="icon_restore" />
+        <img v-show="data.action !== 8" class="icon" width="13" height="13" src="/images/icons/close.svg"
+          alt="icon_close" />
+        <img v-show="data.action === 8" class="icon flip-horizontal" width="13" src="/images/icons/restore.svg"
+          alt="icon_restore" />
       </q-btn>
     </div>
   </div>

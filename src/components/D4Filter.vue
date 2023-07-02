@@ -4,7 +4,6 @@ import { QSelect, useQuasar } from 'quasar'
 import { useAccountStore } from 'src/stores/account-store'
 import { useItemStore } from 'src/stores/item-store'
 import { useI18n } from 'vue-i18n'
-import { icons } from 'src/common/icons'
 import NotifyEn from '/images/filter/notify_en.webp'
 import NotifyKo from '/images/filter/notify_ko.webp'
 
@@ -146,7 +145,7 @@ const update = (quality?: Array<string>) => {
           <q-checkbox size="xs" v-model="is.filter.hardcore" :label="t('item.hardcore')" @update:model-value="update()" />
           <q-btn dense round flat aria-label="Tradurs Close Button" size="xs" :ripple="false" class="no-hover"
             @click="is.filter.hardcore = null; update()">
-            <q-icon class="icon" :name="`img:${icons.close}`" />
+            <q-icon class="icon" name="img:/images/icons/close.svg" />
           </q-btn>
         </div>
       </q-item-section>
@@ -157,7 +156,7 @@ const update = (quality?: Array<string>) => {
           <q-checkbox size="xs" v-model="is.filter.ladder" :label="t('item.ladder')" @update:model-value="update()" />
           <q-btn dense round flat aria-label="Tradurs Close Button" size="xs" :ripple="false" class="no-hover"
             @click="is.filter.ladder = null; update()">
-            <q-icon class="icon" :name="`img:${icons.close}`" />
+            <q-icon class="icon" name="img:/images/icons/close.svg" />
           </q-btn>
         </div>
       </q-item-section>
@@ -172,7 +171,7 @@ const update = (quality?: Array<string>) => {
       <q-item-section class="q-pt-md q-pr-md select-wrap">
         <q-select v-model="is.filter.status" :disable="filterLoading" outlined dense no-error-icon hide-bottom-space
           emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0" behavior="menu"
-          :label="t('filter.status')" :options="is.filterItemStatus()" :dropdown-icon="`img:${icons.dropdown}`"
+          :label="t('filter.status')" :options="is.filterItemStatus()" dropdown-icon="img:/images/icons/dropdown.svg"
           popup-content-class="d4-scroll" @update:model-value="update()" />
       </q-item-section>
     </q-item>
@@ -233,7 +232,7 @@ const update = (quality?: Array<string>) => {
           :options="findType(itemType)?.value === 'rune' ? filterRunes() : filterClasses(itemType)"
           :label="`${findType(itemType)?.label} ${t('filter.type')}`" outlined dense no-error-icon hide-bottom-space
           emit-value map-options multiple transition-show="none" transition-hide="none" :transition-duration="0"
-          :dropdown-icon="`img:${icons.dropdown}`" popup-content-class="d4-scroll" @update:model-value="update()">
+          dropdown-icon="img:/images/icons/dropdown.svg" popup-content-class="d4-scroll" @update:model-value="update()">
         </q-select>
       </q-item-section>
     </q-item>
@@ -243,7 +242,7 @@ const update = (quality?: Array<string>) => {
           <div>
             {{ t('filter.advanced') }}
           </div>
-          <q-icon class="icon" :name="`img:${icons.help}`" size="19px">
+          <q-icon class="icon" name="img:/images/icons/help.svg" size="19px">
             <D4Tooltip>
               <div style="max-width:200px">
                 <div class="text-subtitle2 text-weight-bold">{{ t('filter.description.advanced') }} </div>
@@ -263,13 +262,13 @@ const update = (quality?: Array<string>) => {
                 dense no-error-icon use-input hide-bottom-space hide-selected emit-value map-options multiple
                 transition-show="none" transition-hide="none" :transition-duration="0"
                 :label="`${t('properties')} ${t('searchOrSelect')}`" :options="propertyOptions(propertyNeedle)"
-                :dropdown-icon="`img:${icons.dropdown}`" popup-content-class="d4-scroll"
+                dropdown-icon="img:/images/icons/dropdown.svg" popup-content-class="d4-scroll"
                 @update:model-value="selectedProperty" @input-value="filterProperties">
                 <template #option="scope">
                   <q-item v-bind="scope.itemProps">
                     <q-item-section side>
                       <q-icon class="icon" :class="{ 'rotate-45': ['standard'].includes(scope.opt.type as string) }"
-                        size="14px" :name="`img:${icons[scope.opt.type as keyof typeof icons || 'standard']}`" />
+                        size="14px" :name="`img:/images/attribute_types/${scope.opt.type || 'standard'}.svg`" />
                     </q-item-section>
                     <q-item-section>
                       <q-item-label lines="3">{{ scope.opt.label }}</q-item-label>
@@ -291,7 +290,7 @@ const update = (quality?: Array<string>) => {
                   </div>
                   <q-btn :disable="filterLoading" dense unelevated flat round aria-label="Tradurs Close Button" size="xs"
                     :tabindex="-1" class="q-ml-sm" @click="removeProperty(pid)">
-                    <img class="icon" width="13" height="13" :src="icons.close" alt="icon_close" />
+                    <img class="icon" width="13" height="13" src="/images/icons/close.svg" alt="icon_close" />
                   </q-btn>
                 </div>
               </div>
@@ -301,13 +300,13 @@ const update = (quality?: Array<string>) => {
                 no-error-icon use-input hide-bottom-space hide-selected emit-value map-options multiple
                 transition-show="none" transition-hide="none" :transition-duration="0"
                 :label="`${t('affixes')} ${t('searchOrSelect')}`" :options="affixOptions(affixNeedle)"
-                :dropdown-icon="`img:${icons.dropdown}`" popup-content-class="d4-scroll"
+                dropdown-icon="img:/images/icons/dropdown.svg" popup-content-class="d4-scroll"
                 @update:model-value="selectedAffix" @input-value="filterAffixes">
                 <template #option="scope">
                   <q-item v-bind="scope.itemProps">
                     <q-item-section side>
                       <q-icon class="icon" :class="{ 'rotate-45': ['standard'].includes(scope.opt.type as string) }"
-                        size="14px" :name="`img:${icons[scope.opt.type as keyof typeof icons || 'standard']}`" />
+                        size="14px" :name="`img:/images/attribute_types/${scope.opt.type || 'standard'}.svg`" />
                     </q-item-section>
                     <q-item-section>
                       <q-item-label>{{ scope.opt.label }}</q-item-label>
@@ -329,7 +328,7 @@ const update = (quality?: Array<string>) => {
                   </div>
                   <q-btn :disable="filterLoading" dense unelevated flat round aria-label="Tradurs Close Button" size="xs"
                     :tabindex="-1" class="q-ml-sm" @click="removeAffix(aid)">
-                    <img class="icon" width="13" height="13" :src="icons.close" alt="icon_close" />
+                    <img class="icon" width="13" height="13" src="/images/icons/close.svg" alt="icon_close" />
                   </q-btn>
                 </div>
               </div>
@@ -339,7 +338,7 @@ const update = (quality?: Array<string>) => {
                 outlined dense no-error-icon use-input hide-bottom-space hide-selected emit-value map-options multiple
                 transition-show="none" transition-hide="none" :transition-duration="0"
                 :label="`${t('restrictions')} ${t('searchOrSelect')}`" :options="restrictionOptions(restrictionNeedle)"
-                :dropdown-icon="`img:${icons.dropdown}`" popup-content-class="d4-scroll"
+                dropdown-icon="img:/images/icons/dropdown.svg" popup-content-class="d4-scroll"
                 @update:model-value="selectedRestriction" @input-value="filterRestrictions">
                 <template #option="scope">
                   <q-item v-bind="scope.itemProps">
@@ -363,7 +362,7 @@ const update = (quality?: Array<string>) => {
                   </div>
                   <q-btn :disable="filterLoading" dense unelevated flat round aria-label="Tradurs Close Button" size="xs"
                     :tabindex="-1" class="q-ml-sm" @click="removeRestriction(rid)">
-                    <img class="icon" width="13" height="13" :src="icons.close" alt="icon_close" />
+                    <img class="icon" width="13" height="13" src="/images/icons/close.svg" alt="icon_close" />
                   </q-btn>
                 </div>
               </div>
@@ -376,7 +375,7 @@ const update = (quality?: Array<string>) => {
       <q-item-section>
         <div class="row items-center q-gutter-sm">
           <q-checkbox size="xs" v-model="is.filter.fixed" :label="t('filter.fixed')" @update:model-value="fixed" />
-          <q-icon class="icon" :name="`img:${icons.help}`" size="19px">
+          <q-icon class="icon" name="img:/images/icons/help.svg" size="19px">
             <D4Tooltip>
               <div style="max-width:200px" class="text-caption break-keep">
                 {{ t('filter.fixedDescription') }}
@@ -391,7 +390,7 @@ const update = (quality?: Array<string>) => {
         :disable="filterLoading" @click="is.clearFilter(true)">
         <div class="row items-center q-gutter-xs">
           <div>{{ t('btn.resetSearch') }}</div>
-          <q-icon class="icon" :name="`img:${icons.refresh}`" size="xs" />
+          <q-icon class="icon" name="img:/images/icons/restore.svg" size="xs" />
         </div>
       </q-btn>
     </q-item>

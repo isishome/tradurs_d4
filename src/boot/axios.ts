@@ -4,7 +4,6 @@ import { Notify, Cookies, Quasar } from 'quasar'
 import { useAccountStore } from 'stores/account-store'
 import { User } from 'src/types/user'
 import { i18n } from './i18n'
-import { icons } from 'src/common/icons'
 
 let api: AxiosInstance
 
@@ -26,7 +25,7 @@ export default boot(({ app, ssrContext, store }) => {
       const url = `${import.meta.env.VITE_APP_TRADURS}/sign?redirect=${encodeURIComponent(document.location.href)}`
       Notify.create({
         progress: true,
-        icon: `img:${icons.alert}`,
+        icon: 'img:/images/icons/alert.svg',
         classes: 'no-invert',
         color: 'warning',
         textColor: 'dark',
@@ -49,7 +48,7 @@ export default boot(({ app, ssrContext, store }) => {
       const message = error.response && error.response.data || error.message
 
       Notify.create({
-        icon: `img:${icons.alert}`,
+        icon: 'img:/images/icons/alert.svg',
         color: 'negative',
         classes: '',
         message: message,

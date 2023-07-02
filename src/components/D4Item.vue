@@ -7,7 +7,6 @@ import { useAccountStore } from 'stores/account-store'
 import { useItemStore } from 'stores/item-store'
 import { Item, Price } from 'src/types/item'
 import { checkName, clipboard } from 'src/common'
-import { icons } from 'src/common/icons'
 import { itemImgs } from 'src/common/items'
 
 import D4Price from 'components/D4Price.vue'
@@ -191,7 +190,7 @@ defineExpose({ scrollEnd })
               <div class="col">
                 <q-select v-model="_type" :disable="disable" behavior="menu" outlined dense no-error-icon
                   hide-bottom-space emit-value map-options transition-show="none" transition-hide="none"
-                  :transition-duration="0" :label="t('item.selectType')" :dropdown-icon="`img:${icons.dropdown}`"
+                  :transition-duration="0" :label="t('item.selectType')" dropdown-icon="img:/images/icons/dropdown.svg"
                   :options="filterTypes()" popup-content-class="d4-scroll" @update:model-value="updateType">
                   <template #selected-item="scope">
                     <div class="ellipsis">{{ scope.opt.label }}</div>
@@ -203,7 +202,8 @@ defineExpose({ scrollEnd })
                 <q-select v-model="_typeValue1" :disable="disable" behavior="menu" outlined dense no-error-icon
                   hide-bottom-space emit-value map-options transition-show="none" transition-hide="none"
                   :transition-duration="0" :label="t('item.selectRune')" :options="filterRunesByType()"
-                  :dropdown-icon="`img:${icons.dropdown} `" popup-content-class="d4-scroll" @update:model-value="update">
+                  dropdown-icon="img:/images/icons/dropdown.svg " popup-content-class="d4-scroll"
+                  @update:model-value="update">
                   <template #selected-item="scope">
                     <div class="ellipsis">{{ scope.opt.label }}</div>
                   </template>
@@ -224,7 +224,7 @@ defineExpose({ scrollEnd })
                 <q-select v-model="_typeValue1" :disable="disable" behavior="menu" outlined dense no-error-icon
                   hide-bottom-space emit-value map-options transition-show="none" transition-hide="none"
                   :transition-duration="0" :label="t('item.selectAspectCategory')"
-                  :dropdown-icon="`img:${icons.dropdown}`" :options="filterAspectCategories()"
+                  dropdown-icon="img:/images/icons/dropdown.svg" :options="filterAspectCategories()"
                   popup-content-class="d4-scroll" @update:model-value="update">
                   <template #selected-item="scope">
                     <div class="ellipsis">{{ scope.opt.label }}</div>
@@ -246,7 +246,7 @@ defineExpose({ scrollEnd })
                 <div class="col">
                   <q-select v-model="_typeValue1" :disable="disable" behavior="menu" outlined dense no-error-icon
                     hide-bottom-space emit-value map-options transition-show="none" transition-hide="none"
-                    :transition-duration="0" :label="t('item.selectClass')" :dropdown-icon="`img:${icons.dropdown}`"
+                    :transition-duration="0" :label="t('item.selectClass')" dropdown-icon="img:/images/icons/dropdown.svg"
                     :options="filterClasses(_type)" popup-content-class="d4-scroll"
                     @update:model-value="updateTypeValue1">
                     <template #selected-item="scope">
@@ -257,7 +257,7 @@ defineExpose({ scrollEnd })
                 <div class="col" v-if="_typeValue1 === 'gem'">
                   <q-select v-model="_typeValue2" :disable="disable" behavior="menu" outlined dense no-error-icon
                     hide-bottom-space emit-value map-options transition-show="none" transition-hide="none"
-                    :transition-duration="0" :label="t('item.selectGem')" :dropdown-icon="`img:${icons.dropdown}`"
+                    :transition-duration="0" :label="t('item.selectGem')" dropdown-icon="img:/images/icons/dropdown.svg"
                     :options="filterGems()" popup-content-class="d4-scroll" @update:model-value="update">
                     <template #selected-item="scope">
                       <div class="ellipsis">{{ scope.opt.label }}</div>
@@ -289,7 +289,7 @@ defineExpose({ scrollEnd })
                           }) }}
                           </div>
                           <q-btn unelevated aria-label="Tradurs Close Button" class="no-hover icon" :ripple="false">
-                            <img :src="icons.close" width="24" height="24" @click="showItemImages = false"
+                            <img src="/images/icons/close.svg" width="24" height="24" @click="showItemImages = false"
                               alt="icon_close" />
                           </q-btn>
                         </q-card-section>
@@ -339,7 +339,7 @@ defineExpose({ scrollEnd })
           </q-item-section>
         </q-item>
         <div v-show="!loading" class="row no-wrap items-baseline q-gutter-xs">
-          <q-icon class="icon rotate-45" size="13px" :name="`img:${icons.standard} `" />
+          <q-icon class="icon rotate-45" size="13px" name="img:/images/attribute_types/standard.svg" />
           <div>{{ (filterRunesByType().find(r => r.value === data.itemTypeValue1) || {}).attribute }}
           </div>
         </div>
@@ -502,7 +502,7 @@ defineExpose({ scrollEnd })
 
               <div class="more-action">
                 <q-btn dense flat aria-label="Tradurs More Button" :ripple="false" class="no-hover" padding="0">
-                  <img class="icon" :src="icons.morevert" :width="$q.screen.lt.sm ? 16 : 20"
+                  <img class="icon" src="/images/icons/morevert.svg" :width="$q.screen.lt.sm ? 16 : 20"
                     :height="$q.screen.lt.sm ? 16 : 20" alt="icon_more" />
                   <q-menu auto-close class="no-shadow" transition-show="none" transition-hide="none"
                     :transition-duration="0" anchor="top end" self="bottom start"
@@ -511,8 +511,8 @@ defineExpose({ scrollEnd })
                       :dense="$q.screen.lt.sm" clickable @click="$emit('favorite', data.itemId, !data.favorite)">
                       <q-item-section side>
                         <img :class="{ 'invert': !$q.dark.isActive }"
-                          :src="data.favorite ? icons.unfavorite : icons.favorite" width="24" height="24"
-                          alt="icon_favorite" />
+                          :src="data.favorite ? '/images/icons/unfavorite.svg' : '/images/icons/favorite.svg'" width="24"
+                          height="24" alt="icon_favorite" />
                       </q-item-section>
                       <q-item-section>{{ data.favorite ? t('btn.unfavorite') : t('btn.favorite')
                       }}</q-item-section>
@@ -520,7 +520,7 @@ defineExpose({ scrollEnd })
                     <q-item v-if="as.signed" :class="[$q.dark.isActive ? 'text-grey-9' : 'text-grey-4']"
                       :dense="$q.screen.lt.sm" clickable @click="$emit('copy', data.itemId)">
                       <q-item-section side>
-                        <img :class="{ 'invert': !$q.dark.isActive }" :src="icons.copy" width="24" height="24"
+                        <img :class="{ 'invert': !$q.dark.isActive }" src="/images/icons/copy.svg" width="24" height="24"
                           alt="icon_copy" />
                       </q-item-section>
                       <q-item-section>{{ t('btn.copy') }}</q-item-section>
@@ -528,7 +528,7 @@ defineExpose({ scrollEnd })
                     <q-item :class="[$q.dark.isActive ? 'text-grey-9' : 'text-grey-4']" :dense="$q.screen.lt.sm" clickable
                       @click="copy">
                       <q-item-section side>
-                        <img :class="{ 'invert': !$q.dark.isActive }" :src="icons.share" width="24" height="24"
+                        <img :class="{ 'invert': !$q.dark.isActive }" src="/images/icons/share.svg" width="24" height="24"
                           alt="icon_share" />
                       </q-item-section>
                       <q-item-section>{{ t('btn.share') }}</q-item-section>
@@ -566,7 +566,7 @@ defineExpose({ scrollEnd })
             </q-item-section>
           </q-item>
           <div v-show="!loading" class="row no-wrap items-baseline q-gutter-xs">
-            <q-icon class="icon rotate-45" size="13px" :name="`img:${icons.standard} `" />
+            <q-icon class="icon rotate-45" size="13px" name="img:/images/attribute_types/standard.svg" />
             <div>{{ (filterRunesByType().find(r => r.value === data.itemTypeValue1) || {}).attribute }}
             </div>
           </div>

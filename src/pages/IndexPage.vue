@@ -8,7 +8,6 @@ import { useQuasar, uid } from 'quasar'
 import { scrollPos } from 'src/common'
 
 import { Item, IPrice } from 'src/types/item'
-import { icons } from 'src/common/icons'
 import D4Items from 'components/D4Items.vue'
 
 // init module
@@ -317,15 +316,15 @@ defineExpose({ getList })
   </div>
   <div class="q-pt-xl"></div>
   <D4Btn v-if="as.signed" round @click="create" class="sticky-btn" color="var(--q-secondary)" :disable="disable" shadow>
-    <img :src="icons.add" width="24" height="24" class="invert" alt="icon_add" />
+    <img src="/images/icons/add.svg" width="24" height="24" class="invert" alt="icon_add" />
   </D4Btn>
   <D4Btn v-else style="visibility: hidden;" />
   <div class="row q-gutter-xs items-center paging">
     <D4Btn round @click="prev" color="var(--q-light-magic)" :disable="!over || disable" :shadow="!$q.dark.isActive">
-      <img :src="icons.prev" width="24" height="24" class="invert" alt="icon_prev" />
+      <img src="/images/icons/prev.svg" width="24" height="24" class="invert" alt="icon_prev" />
     </D4Btn>
     <D4Btn round @click="next" color="var(--q-light-magic)" :disable="!more || disable" :shadow="!$q.dark.isActive">
-      <img :src="icons.next" width="24" height="24" class="invert" alt="icon_next" />
+      <img src="/images/icons/next.svg" width="24" height="24" class="invert" alt="icon_next" />
     </D4Btn>
   </div>
 </template>
