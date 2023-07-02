@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { QInput, uid } from 'quasar'
 import { useItemStore } from 'stores/item-store'
 import { icons } from 'src/common/icons'
-import { type Attribute, parse, splitArray, focus } from 'src/common'
+import { type Attribute, parseAffix, splitArray, focus } from 'src/common'
 import { AffixValue } from 'src/types/item'
 
 const props = defineProps({
@@ -26,7 +26,7 @@ const emit = defineEmits(['update', 'remove'])
 const is = useItemStore()
 
 const findAffix = computed(() => is.findAffix(props.data.affixId))
-const affixInfo = computed(() => parse(findAffix.value?.label, props.data.affixValues))
+const affixInfo = computed(() => parseAffix(findAffix.value?.label, props.data.affixValues))
 
 const update = (): void => {
   const av: { valueId: number, affixValues: Array<AffixValue> } = { valueId: props.data.valueId, affixValues: [] }

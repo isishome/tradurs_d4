@@ -43,14 +43,24 @@ export interface Attribute {
   value: number | string
 }
 
-export const parse = (label: string | undefined, values?: Array<number> | Array<AffixValue>): Array<Attribute> => {
+export const parse = (label: string | undefined, values?: Array<number>): Array<Attribute> => {
   if (label)
     return label.split(/\{x\}/g).reduce((p: Array<Attribute>, c, i) => {
-      const v: number | AffixValue = values && typeof (values?.[i]) === 'object' ? (values?.[i] as AffixValue) : values && typeof (values?.[i]) === 'number' ? values?.[i] as number : 0
       p.push({ type: 'text', value: c })
-      p.push({ type: 'variable', value: typeof (v) === 'number' ? v : v.value })
-      p.push({ type: 'min', value: typeof (v) === 'number' ? 0 : v.min })
-      p.push({ type: 'max', value: typeof (v) === 'number' ? 0 : v.max })
+      p.push({ type: 'variable', value: values ? (values[i] || 0) : 0 })
+      return p
+    }, []).slice(0, -1)
+  else
+    return []
+}
+
+export const parseAffix = (label: string | undefined, values?: Array<AffixValue>): Array<Attribute> => {
+  if (label)
+    return label.split(/\{x\}/g).reduce((p: Array<Attribute>, c, i) => {
+      p.push({ type: 'text', value: c })
+      p.push({ type: 'variable', value: values ? (values[i]?.value || 0) : 0 })
+      p.push({ type: 'min', value: values ? (values[i]?.min || 0) : 0 })
+      p.push({ type: 'max', value: values ? (values[i]?.max || 0) : 0 })
       return p
     }, []).slice(0, -3)
   else
