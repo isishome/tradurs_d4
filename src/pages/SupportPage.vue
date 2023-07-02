@@ -5,6 +5,7 @@ import { useI18n } from 'vue-i18n'
 import { useGlobalStore } from 'stores/global-store'
 
 import D4Dialog from 'components/D4Dialog.vue'
+import { nextTick } from 'process'
 
 interface Answer {
   type: string,
@@ -23,7 +24,6 @@ const { t, tm } = useI18n({ useScope: 'global' })
 const gs = useGlobalStore()
 
 const support = computed(() => tm('support') as Array<Support>)
-support.value[1].show = true
 const contact = reactive<{ show: boolean, open: boolean, contents: string | null, disable: boolean }>({
   show: true,
   open: false,
@@ -45,15 +45,10 @@ const send = () => {
                 classes: '',
                 message: t('contact.success')
               })
-              contact.show = false
-            })
-            .catch(() => { })
-            .then(() => {
-              contact.disable = false
+              contact.open = false
             })
         })
-        .catch(() => { })
-        .then(() => {
+        .catch(() => {
           contact.disable = false
         })
     })
@@ -85,7 +80,7 @@ onUnmounted(() => {
           <q-item-label>
             <q-intersection v-for="a, aIdx in s.answer" :key="aIdx" transition="fade" class="answer text-center"
               ssr-prerender once>
-              <img v-if="a.type === 'image'" :src="`images/help/${s.id}/${a.contents}.png`" />
+              <img v-if="a.type === 'image'" :src="`images/help/${s.id}/${a.contents}.webp`" />
               <div v-else-if="a.type === 'text'" class="text-area">
                 {{ a.contents }}
               </div>
