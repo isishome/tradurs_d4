@@ -4,9 +4,6 @@
     "baseUrl": ".",
     "strict": true,
     "noImplicitAny": true,
-    "strictNullChecks": true,
-    "types": [
-      "vite/client"
-    ]
+    "strictNullChecks": true
   }
 }

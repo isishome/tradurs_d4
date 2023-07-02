@@ -83,7 +83,7 @@ const notifyPrivate = () => {
     <q-item class="avatar">
       <q-item-section>
         <q-avatar>
-          <img src="~/assets/avatar/boy-avatar.png" width="48" height="48" alt="Tradurs Avatar Image">
+          <img src="/images/avatar/boy-avatar.png" width="48" height="48" alt="Tradurs Avatar Image">
         </q-avatar>
       </q-item-section>
     </q-item>

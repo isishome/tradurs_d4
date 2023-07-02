@@ -181,7 +181,7 @@ const click = () => {
   right: 0;
   border-style: solid;
   border-image-width: 9px;
-  border-image: url(assets/frames/outer.webp) 30;
+  border-image: url('/images/frames/outer.webp') 30;
   filter: brightness(160%);
   pointer-events: none;
 }
@@ -200,7 +200,7 @@ const click = () => {
   left: 4px;
   right: 4px;
   border-style: solid;
-  border-image: url(assets/frames/inner.webp) 36;
+  border-image: url('/images/frames/inner.webp') 36;
   border-image-width: 30px;
   pointer-events: none;
   filter: invert(50%);
