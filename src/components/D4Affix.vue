@@ -58,7 +58,9 @@ const remove = (): void => {
         </template>
         <template v-if="!editable">
           <div v-if="comp.type === 'variable'" class="figure">{{ comp.value }}</div>
-          <div v-if="comp.type === 'min'" class="minmax-text">[{{ comp.value }} - {{ affixInfo[k + 1].value }}]</div>
+          <div v-if="comp.type === 'min' && Number(comp.value) + Number(affixInfo[k + 1].value) > 0" class="minmax-text">
+            [{{ comp.value }}
+            - {{ affixInfo[k + 1].value }}]</div>
         </template>
         <template v-else>
           <q-input v-if="comp.type === 'variable'" class="var" input-class="text-center text-caption no-padding" dense
