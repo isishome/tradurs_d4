@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import { useQuasar } from 'quasar'
-import Logo from '~assets/logo.webp'
-import LogoLight from '~assets/logo_light.webp'
+import Logo from 'assets/logo.webp'
+import LogoLight from 'assets/logo_light.webp'
 
 const $q = useQuasar()
 const { t } = useI18n({ useScope: 'global' })

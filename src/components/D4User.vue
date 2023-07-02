@@ -90,7 +90,6 @@ const notifyPrivate = () => {
     <q-item class="row items-center justify-between no-padding">
       <div class="col text-center q-pa-md">
         <div class="text-caption row justify-center items-center" style="height:50px">
-          <!-- <img width="24" height="24" src="~assets/tradurs.svg" alt="Tradurs Logo" /> -->
           {{ t('user.yolk') }}
         </div>
         <div class="text-weight-bold text-amber-8 text-body2">{{ data.yolk }}</div>
@@ -98,7 +97,6 @@ const notifyPrivate = () => {
       <q-separator vertical inset />
       <div class="col text-center q-pa-md">
         <div class="text-caption  row justify-center items-center" style="height:50px">
-          <!-- <img width="24" height="24" src="~assets/tradurs.svg" alt="Tradurs Logo" /> -->
           {{ t('user.temperature') }}
         </div>
         <div class="text-weight-bold text-body2">{{ data.temperature }}&#8451</div>
