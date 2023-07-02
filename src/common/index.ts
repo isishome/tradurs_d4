@@ -46,12 +46,11 @@ export interface Attribute {
 export const parse = (label: string | undefined, values?: Array<number> | Array<AffixValue>): Array<Attribute> => {
   if (label)
     return label.split(/\{x\}/g).reduce((p: Array<Attribute>, c, i) => {
-      const isAffix = Array.isArray(values) && typeof (values[i]) === 'object'
-      const isOther = Array.isArray(values) && typeof (values[i]) === 'number'
+      const v: number | AffixValue = values && typeof (values?.[i]) === 'object' ? (values?.[i] as AffixValue) : values && typeof (values?.[i]) === 'number' ? values?.[i] as number : 0
       p.push({ type: 'text', value: c })
-      p.push({ type: 'variable', value: isAffix ? (values[i] as AffixValue).value : isOther ? (values[i] as number) || 0 : 0 })
-      p.push({ type: 'min', value: isAffix ? (values[i] as AffixValue).min : 0 })
-      p.push({ type: 'max', value: isAffix ? (values[i] as AffixValue).max : 0 })
+      p.push({ type: 'variable', value: typeof (v) === 'number' ? v : v.value })
+      p.push({ type: 'min', value: typeof (v) === 'number' ? 0 : v.min })
+      p.push({ type: 'max', value: typeof (v) === 'number' ? 0 : v.max })
       return p
     }, []).slice(0, -3)
   else
