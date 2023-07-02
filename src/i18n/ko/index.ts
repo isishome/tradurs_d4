@@ -286,7 +286,7 @@ export default {
         { type: 'image', contents: '12_attribute' },
         { type: 'text', contents: '12. 보통은 표준을 사용하고, 빈 홈에 보석 등을 장착한 경우 홈을 선택해 줍니다.\n입력하려는 옵션이 \'빠른 이동 속도 +10\'인 경우 \'빠른 이동 속도 +{x}\'라고 입력 후 등록해 주면 됩니다.' },
         { type: 'image', contents: '13_attribute' },
-        { type: 'text', contents: '13. 추가된 속성에 {x}라고 기입한 부분은 입력 필드가 됩니다.' },
+        { type: 'text', contents: '13. 추가된 속성에 {x}라고 기입한 부분은 입력 필드가 됩니다.\n입력 필드 우측에 해당 수치의 최소, 최댓값을 입력하는 필드도 자동으로 표시됩니다.' },
         { type: 'image', contents: '14_price' },
         { type: 'text', contents: '14. 이제 판매할 아이템의 가격을 책정합니다.\n화폐 항목은 현재 제안받기 / 금화만이 가능합니다. 구매자가 금액을 제안하기를 원하는 경우 \'제안받기\'를 선택하시면 됩니다.' },
         { type: 'image', contents: '15_item' },

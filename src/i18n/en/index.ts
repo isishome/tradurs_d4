@@ -287,7 +287,7 @@ export default {
         { type: 'image', contents: '12_attribute' },
         { type: 'text', contents: '12. Usually use standard, and select groove if you have jewelry or something on an empty groove.\nIf the option you want to enter is \'Fast Movement Speed +10\', you can enter \'Fast Movement Speed +{x}\' and register it.' },
         { type: 'image', contents: '13_attribute' },
-        { type: 'text', contents: '13. The part where you write {x} in the added attribute becomes an input field.' },
+        { type: 'text', contents: '13. The part where you write {x} in the added attribute becomes an input field.\nTo the right of the input field, fields for entering the minimum and maximum values of that number are also automatically displayed.' },
         { type: 'image', contents: '14_price' },
         { type: 'text', contents: '14. Now set a price for the item you want to sell:\nMoney items are currently only available for take offers/gold coins. If you want buyers to offer an amount, you can select \'Get an offer\'.' },
         { type: 'image', contents: '15_item' },

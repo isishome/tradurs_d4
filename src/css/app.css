@@ -224,7 +224,7 @@ body.body--dark {
 
 .useful a {
   text-decoration: underline;
-  text-underline-offset: 2px;
+  text-underline-offset: 3px;
   border-radius: 0;
   line-height: 1rem;
   margin-bottom: 10px;

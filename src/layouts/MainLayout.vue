@@ -424,6 +424,7 @@ ins::after {
   z-index: -1;
   transform: translate(-50%, -50%);
   color: var(--q-light);
+  opacity: .2;
 }
 
 .body--light ins::after {

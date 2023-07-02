@@ -20,10 +20,11 @@ interface Support {
 }
 
 const $q = useQuasar()
-const { t, tm, rt } = useI18n({ useScope: 'global' })
+const { t, tm } = useI18n({ useScope: 'global' })
 const gs = useGlobalStore()
 
 const support = computed(() => tm('support') as Array<Support>)
+support.value[1].show = true
 const contact = reactive<{ show: boolean, open: boolean, contents: string | null, disable: boolean }>({
   show: true,
   open: false,
