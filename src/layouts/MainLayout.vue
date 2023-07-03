@@ -121,6 +121,7 @@ const onWindowLoad = () => {
   const adsbygoogle = window.adsbygoogle || []
   adsbygoogle.push({})
   adsbygoogle.push({})
+  adsbygoogle.push({})
 }
 
 onMounted(() => {
