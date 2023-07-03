@@ -184,6 +184,7 @@ const update = (quality?: Array<string>) => {
     </q-item>
     <q-item :disable="filterLoading" v-if="as.signed">
       <q-item-section>
+        <q-item-label header>{{ t('filter.onlyForMe') }}</q-item-label>
         <q-checkbox size="xs" class="q-pl-sm" v-model="is.filter.mine" :label="t('filter.mine')"
           @update:model-value="mine" />
         <q-slide-transition>

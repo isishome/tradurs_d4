@@ -5,6 +5,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useQuasar, Screen, uid } from 'quasar'
 import { useI18n } from 'vue-i18n'
 
+import { useGlobalStore } from 'src/stores/global-store'
 import { useAccountStore } from 'stores/account-store'
 import { useItemStore } from 'stores/item-store'
 import { checkName } from 'src/common'
@@ -18,6 +19,7 @@ const api = inject('axios') as AxiosInstance
 const route = useRoute()
 const router = useRouter()
 const $q = useQuasar()
+const gs = useGlobalStore()
 const as = useAccountStore()
 const is = useItemStore()
 const { t, locale } = useI18n({ useScope: 'global' })
@@ -102,6 +104,11 @@ const main = () => {
 }
 
 watch(() => route.name, (val, old) => {
+  if (val && val !== old)
+    reload()
+})
+
+watch(() => gs.refresh, (val, old) => {
   if (val && val !== old)
     reload()
 })

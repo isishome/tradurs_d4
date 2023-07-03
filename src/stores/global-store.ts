@@ -4,7 +4,8 @@ import { i18n } from 'src/boot/i18n'
 
 export const useGlobalStore = defineStore('global', {
   state: () => ({
-    itemName: null as string | null
+    itemName: null as string | null,
+    refresh: 0 as number
   }),
   getters: {
     getTitle: (state) => {

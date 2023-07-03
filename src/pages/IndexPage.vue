@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
+import { useGlobalStore } from 'src/stores/global-store'
 import { useItemStore, type OfferInfo } from 'stores/item-store'
 import { useAccountStore } from 'stores/account-store'
 import { ref, computed, onMounted, watch, onUnmounted } from 'vue'
@@ -13,6 +14,7 @@ import D4Items from 'components/D4Items.vue'
 // init module
 const route = useRoute()
 const router = useRouter()
+const gs = useGlobalStore()
 const is = useItemStore()
 const as = useAccountStore()
 const { t, n } = useI18n({ useScope: 'global' })
@@ -164,10 +166,12 @@ const favorite = (itemId: string, favorite: boolean) => {
 }
 
 const prev = () => {
+  gs.refresh++
   router.push({ name: 'tradeList', query: page.value > 2 ? { page: page.value - 1 } : {} })
 }
 
 const next = () => {
+  gs.refresh++
   router.push({ name: 'tradeList', query: { page: page.value + 1 } })
 }
 
