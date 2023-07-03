@@ -128,7 +128,7 @@ const onWindowLoad = () => {
   const adsbygoogle = window.adsbygoogle || []
   adsbygoogle.push({})
   adsbygoogle.push({})
-  adsbygoogle.push({})
+  //adsbygoogle.push({})
 }
 
 onMounted(() => {
@@ -355,9 +355,9 @@ onUnmounted(() => {
               <RouterView />
             </div>
             <div class="q-py-xl"></div>
-            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5110777286519562"
+            <!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5110777286519562"
               data-ad-slot="6163086381" data-ad-format="auto" data-full-width-responsive="true"
-              :data-adtest="prod ? 'off' : 'on'" :key="key"></ins>
+              :data-adtest="prod ? 'off' : 'on'" :key="key"></ins> -->
             <q-separator />
             <div class="q-pt-lg">
               <div class="row justify-center items-center q-gutter-xs text-caption bottom">
