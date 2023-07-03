@@ -29,7 +29,8 @@ export default {
     type: 'Type(s)',
     advanced: 'Advanced Filter',
     mine: 'My Items',
-    offer: 'My Offerd Items',
+    offered: 'Have been offered',
+    offer: 'Have made an offer',
     fixed: 'Fixed Filter',
     fixedDescription: 'The filter information is saved to local storage. Be aware of this, as it can lead to mistakes in item visibility depending on the filters set.',
     description: {
