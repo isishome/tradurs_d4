@@ -111,6 +111,13 @@ const removeRestriction = (val: number): void => {
   }
 }
 
+const mine = () => {
+  if (!is.filter.mine)
+    is.filter.offered = false
+
+  update()
+}
+
 const stored = () => {
   if (is.filter.fixed)
     $q.localStorage.set('d4.filter', JSON.stringify(is.filter))
@@ -177,9 +184,15 @@ const update = (quality?: Array<string>) => {
     </q-item>
     <q-item :disable="filterLoading" v-if="as.signed">
       <q-item-section>
-        <q-item-label header>{{ t('filter.onlyForMe') }}</q-item-label>
         <q-checkbox size="xs" class="q-pl-sm" v-model="is.filter.mine" :label="t('filter.mine')"
-          @update:model-value="update()" />
+          @update:model-value="mine" />
+        <q-slide-transition>
+          <div v-show="is.filter.mine" class="q-pl-lg row items-center q-gutter-xs">
+            <div class="tree"></div>
+            <q-checkbox size="xs" class="text-caption" v-model="is.filter.offered" :label="t('filter.offered')"
+              @update:model-value="update()" />
+          </div>
+        </q-slide-transition>
         <q-checkbox size="xs" class="q-pl-sm" v-model="is.filter.offer" :label="t('filter.offer')"
           @update:model-value="update()" />
         <q-checkbox v-model="is.filter.favorite" class="q-pl-sm" size="xs" :label="t('item.favorites')"
@@ -417,5 +430,13 @@ const update = (quality?: Array<string>) => {
 
 .select-wrap {
   width: 200px;
+}
+
+.tree {
+  width: 10px;
+  height: 10px;
+  border-bottom: 1px solid currentColor;
+  border-left: 1px solid currentColor;
+  transform: translateY(-50%);
 }
 </style>

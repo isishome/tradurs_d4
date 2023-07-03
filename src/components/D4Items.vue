@@ -817,26 +817,28 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                     <q-item :disable="activatedItem.statusCode !== '000'" clickable @click="relistItem">
                       <q-item-section class="text-uppercase">{{ t('btn.relist') }}</q-item-section>
                     </q-item>
-                    <q-item :disable="!['000', '002'].includes(activatedItem.statusCode)" clickable @click="statusItem">
+                    <q-item
+                      :disable="!['000', '002'].includes(activatedItem.statusCode) || activatedItem.offers > 0 || disable"
+                      clickable @click="statusItem">
                       <q-item-section class="text-uppercase">{{ activatedItem.statusCode === '002' ? t('btn.resume') :
                         t('btn.suspend')
                       }}</q-item-section>
                     </q-item>
-                    <q-item clickable @click="deleteConfirm">
+                    <q-item clickable :disable="activatedItem.offers > 0 || disable" @click="deleteConfirm">
                       <q-item-section class="text-uppercase text-negative text-weight-bold">{{ t('btn.delete')
                       }}</q-item-section>
                     </q-item>
                   </q-list>
                 </q-menu>
               </D4Btn>
-              <D4Analysis ref="analysis" :loading="activatedItem.loading" :disable="disable" @start="startAnalyze"
-                @end="endAnalyze" @failed="failedAnalyze" />
+              <D4Analysis ref="analysis" :loading="activatedItem.loading" :disable="activatedItem.offers > 0 || disable"
+                @start="startAnalyze" @end="endAnalyze" @failed="failedAnalyze" />
             </div>
             <div class="row justify-between items-center q-gutter-sm">
               <D4Btn :label="t('btn.cancel')" :loading="activatedItem.loading" :disable="disable" color="rgb(150,150,150)"
                 @click="activateShow = false" />
-              <D4Btn :label="t('btn.apply')" :loading="activatedItem.loading" :disable="disable" :progress="progress"
-                type="submit" />
+              <D4Btn :label="t('btn.apply')" :loading="activatedItem.loading"
+                :disable="activatedItem.offers > 0 || disable" :progress="progress" type="submit" />
             </div>
           </div>
         </template>

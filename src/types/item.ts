@@ -59,7 +59,7 @@ export interface IItem {
   relistCount: number,
   authorized: boolean,
   user: User,
-  offers: Array<Offer>,
+  offers: number,
   evaluations: Array<number>,
   favorite: boolean,
   editable: boolean,
@@ -110,7 +110,7 @@ export class Item implements IItem {
   public relistCount = 0
   public authorized = false
   public user: User = new User()
-  public offers: Array<Offer> = []
+  public offers = 0
   public evaluations: Array<number> = []
   public favorite = false
   public editable = false

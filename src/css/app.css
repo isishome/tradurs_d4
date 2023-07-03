@@ -63,7 +63,8 @@ body.body--dark {
 .body--dark .icon,
 .body--dark .q-select__dropdown-icon img,
 .body--dark .q-expansion-item__toggle-icon img,
-.q-notification:not(.no-invert) .q-icon img {
+.q-notification:not(.no-invert) .q-icon img,
+.body--dark .q-tree__arrow img {
   filter: invert(100%) !important;
 }
 

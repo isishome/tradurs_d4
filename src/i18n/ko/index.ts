@@ -29,6 +29,7 @@ export default {
     type: '종류',
     advanced: '고급 필터',
     mine: '내 아이템',
+    offered: '제안 받은 아이템',
     offer: '제안 요청 아이템',
     fixed: '필터 고정',
     fixedDescription: '필터 정보가 로컬 스토리지에 저장됩니다. 설정된 필터에 따라 아이템 노출에 대한 착오 등이 생길 수 있으니 이점 주의하세요.',

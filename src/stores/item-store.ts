@@ -116,6 +116,7 @@ export const useItemStore = defineStore('item', {
       onlyCurrency: false as boolean | null,
       status: null as string | null,
       mine: false as boolean | null,
+      offered: false as boolean | null,
       offer: false as boolean | null,
       power: [0, 9999] as [number, number],
       level: [0, 999] as [number, number],
@@ -132,7 +133,7 @@ export const useItemStore = defineStore('item', {
     },
     detailItem: [] as Array<Item>,
     itemPage: {
-      rows: 30 as number,
+      rows: 20 as number,
       over: false as boolean,
       more: false as boolean
     },
@@ -235,6 +236,7 @@ export const useItemStore = defineStore('item', {
         this.filter.onlyCurrency = false
         this.filter.status = null
         this.filter.mine = false
+        this.filter.offered = false
         this.filter.offer = false
         this.filter.power = [0, 9999]
         this.filter.level = [0, 999]

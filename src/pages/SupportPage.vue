@@ -5,7 +5,6 @@ import { useI18n } from 'vue-i18n'
 import { useGlobalStore } from 'stores/global-store'
 
 import D4Dialog from 'components/D4Dialog.vue'
-import { nextTick } from 'process'
 
 interface Answer {
   type: string,
@@ -18,6 +17,10 @@ interface Support {
   answer: Array<Answer>,
   show: boolean
 }
+
+const props = defineProps<{
+  supportid: string
+}>()
 
 const $q = useQuasar()
 const { t, tm } = useI18n({ useScope: 'global' })
@@ -79,8 +82,8 @@ onUnmounted(() => {
           style="background-color: var(--q-cloud);">
           <q-item-label>
             <q-intersection v-for="a, aIdx in s.answer" :key="aIdx" transition="fade" class="answer text-center"
-              ssr-prerender once>
-              <img v-if="a.type === 'image'" :src="`images/help/${s.id}/${a.contents}.webp`" />
+              :class="a.type" ssr-prerender once>
+              <img v-if="a.type === 'image'" :src="`/images/help/${s.id}/${a.contents}.webp`" />
               <div v-else-if="a.type === 'text'" class="text-area">
                 {{ a.contents }}
               </div>
@@ -127,8 +130,12 @@ onUnmounted(() => {
   </D4Dialog>
 </template>
 <style scoped>
-.answer:deep(img) {
-  min-height: 10px;
+.answer.text {
+  min-height: 22px;
+}
+
+.answer.image {
+  min-height: 60px;
 }
 
 .answer:deep(.text-area) {
