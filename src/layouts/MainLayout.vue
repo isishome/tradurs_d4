@@ -76,7 +76,9 @@ const key = ref(uid())
 const reload = () => {
   key.value = uid()
   nextTick(() => {
-    onWindowLoad()
+    setTimeout(() => {
+      onWindowLoad()
+    }, 0)
   })
 }
 
@@ -359,7 +361,7 @@ onUnmounted(() => {
             <div class="view max-width">
               <div class="row justify-center" :class="$q.screen.width < 728 ? 'q-mb-sm' : 'q-mb-md'">
                 <ins class="adsbygoogle" :style="`display:inline-block;${size}`" data-ad-client="ca-pub-5110777286519562"
-                  data-ad-slot="7137983054" :data-adtest="prod ? 'off' : 'on'" :key="key"></ins>
+                  data-ad-slot="7137983054" :data-adtest="prod ? 'off' : 'on'" :key="`top-${key}`"></ins>
               </div>
               <RouterView />
             </div>
@@ -383,7 +385,7 @@ onUnmounted(() => {
               <div :style="`position:sticky;top:${asideTop}`" class="column">
                 <ins class="adsbygoogle" style="display:inline-block;width:160px;height:600px"
                   data-ad-client="ca-pub-5110777286519562" data-ad-slot="6751896285" :data-adtest="prod ? 'off' : 'on'"
-                  :key="key"></ins>
+                  :key="`right-${key}`"></ins>
                 <div class="q-mt-xl">
                   <div class="column items-start useful">
                     <q-btn flat no-caps padding="0" :ripple="false" class="text-overline no-hover" type="a"
