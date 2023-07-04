@@ -112,7 +112,7 @@ is.getAwards()
           {{ ranker?.ranking }}. {{ ranker?.battleTag }} - {{ ranker?.items }}{{ t('awards.mostSold.unit') }}
         </div>
       </template>
-      <template v-if="awards.mostSold.length > 0" #desc>
+      <template #desc>
         {{ t('awards.mostSold.desc') }}
       </template>
     </D4Award>
@@ -125,6 +125,12 @@ is.getAwards()
       </template>
       <template #battleTag>
         1. {{ awards.mostPurchased[0]?.battleTag }}
+      </template>
+      <template #etc>
+        <div class="text-overline etc" v-for="ranker, idx in awards.mostPurchased.slice(1, awards.mostPurchased.length)"
+          :key="idx">
+          {{ ranker?.ranking }}. {{ ranker?.battleTag }} - {{ ranker?.items }}{{ t('awards.mostPurchased.unit') }}
+        </div>
       </template>
       <template #desc>
         {{ t('awards.mostPurchased.desc') }}
