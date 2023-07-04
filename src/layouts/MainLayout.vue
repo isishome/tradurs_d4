@@ -213,6 +213,13 @@ onUnmounted(() => {
                 <q-badge rounded color="secondary"></q-badge>
               </q-item-section>
             </q-item>
+            <q-item v-ripple clickable :to="{ name: 'awards' }" exact active-class="active">
+              <q-item-section>
+                <q-item-label>
+                  {{ t('page.awards') }}
+                </q-item-label>
+              </q-item-section>
+            </q-item>
           </q-list>
           <q-separator />
           <q-list class="q-mx-md q-py-xl text-overline useful" dense>
@@ -292,6 +299,7 @@ onUnmounted(() => {
               <q-route-tab v-if="as.signed" :ripple="!$q.dark.isActive" :label="t('page.messages')"
                 class="relative-position" :to="{ name: 'messages' }" :alert="newMessages ? 'secondary' : 'transparent'"
                 exact />
+              <q-route-tab :ripple="!$q.dark.isActive" :label="t('page.awards')" :to="{ name: 'awards' }" exact />
             </q-tabs>
           </div>
         </div>

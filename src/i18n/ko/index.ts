@@ -11,6 +11,7 @@ export default {
     tradeList: '거래 목록',
     itemInfo: '아이템 정보',
     messages: '메시지',
+    awards: '어워즈',
     support: '도움말',
     test: '테스트',
     pnf: '페이지를 찾을 수 없습니다'
@@ -151,7 +152,8 @@ export default {
     updateOffer: '제안 내용이 수정되었습니다',
     retractOffer: '제안이 철회되었습니다',
     turnDownOffer: '제안을 거절했습니다',
-    complete: '아이템 거래가 완료되었습니다'
+    complete: '아이템 거래가 완료되었습니다',
+    noManners: '상대방이 남긴 매너 평가 항목이 없습니다'
   },
   accept: {
     title: '제안 수락',
@@ -352,5 +354,26 @@ export default {
         { type: 'text', contents: '우측 상단 사용자 아이콘\n(모바일 더보기 아이콘 > 사용자 아이콘)\n을 클릭하면 현재 보유한 노른자 개수를 확인할 수 있습니다.\n\n2023-07-01 현재,\n\n가입 시 30개의 노른자(yolk)가 부여됩니다.\n\n로그인 시 하루 10개의 노른자가 부여됩니다.\n\n판매되거나 사용자 사이에 나눠 가질 수 없습니다.\n\n아이템 등록, 끌어올림, 제안 등록 시 1개씩 소모되며,\n\n아이템 거래가 정상적으로 완료되면 회수됩니다.\n\n이는 무분별한 아이템 등록이나 \n제안 요청을 막고자 함이며 앞으로 사용 개수나 부여 개수는 변경될 수 있습니다.' },
       ]
     }
-  ]
+  ],
+  awards: {
+    highPriced: {
+      category: '지난 한 주간 높은 가격 판매 순위',
+      desc: ''
+    },
+    bestManners: {
+      category: '지난 한 주간 베스트 매너 순위',
+      desc: ''
+    },
+    mostSold: {
+      category: '지난 한 주간 최다 판매 순위',
+      unit: '개',
+      desc: ''
+    },
+    mostPurchased: {
+      category: '지난 한 주간 최다 구매 순위',
+      unit: '개',
+      desc: ''
+    },
+    noData: '수상 내역이 없습니다'
+  }
 }

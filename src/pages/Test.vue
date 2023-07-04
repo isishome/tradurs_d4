@@ -1,39 +1,69 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useItemStore } from 'src/stores/item-store'
+import { defineAsyncComponent } from 'vue'
+import { useI18n } from 'vue-i18n'
 
-const is = useItemStore()
-const img = ref<HTMLDivElement>()
-const file = ref()
-const result = ref()
-const scan = (files: File) => {
-  const canvas = document.createElement('canvas')
-  const ctx = canvas.getContext('2d')
-  const fr = new FileReader()
-  fr.readAsDataURL(files)
+const D4Award = defineAsyncComponent(() => import('components/D4Award.vue'))
 
-  fr.onload = () => {
-    const image = new Image()
-    image.src = fr.result as string
-    image.onload = () => {
-      canvas.width = image.width
-      canvas.height = image.height
-      if (ctx) {
-        ctx.filter = 'contrast(200%)'
-        ctx.drawImage(image, 0, 0)
-        //img.value?.appendChild(canvas)
-        is.recognize(canvas)
-          .then((text) => {
-            result.value = text
-          })
-      }
-    }
+const { t } = useI18n({ useScope: 'global' })
+
+const awards = {
+  bestManners: {
+    temperature: 20,
+    battleTag: '숨겨진오징어#38709'
+  },
+  mostSold: {
+    count: 10,
+    battleTag: '강남스타일#33323'
+  },
+  mostPurchased: {
+    count: 50,
+    battleTag: '바람#324239'
   }
 }
 </script>
 <template>
-  <q-file v-show="false" outlined v-model="file" accept="image/*" @update:model-value="scan" />
-  <!-- <br>
-  <div ref="img"></div>
-  <q-input outlined rows="20" type="textarea" v-model="result" /> -->
+  <div class="column items-center">
+    <D4Award v-if="awards.bestManners">
+      <template #category>
+        {{ t('awards.bestManners.category') }}
+      </template>
+      <template #detail>
+        {{ awards.bestManners.temperature }}&#8451
+      </template>
+      <template #battleTag>
+        {{ awards.bestManners.battleTag }}
+      </template>
+      <template #desc>
+        {{ t('awards.bestManners.desc') }}
+      </template>
+    </D4Award>
+    <D4Award v-if="awards.mostSold">
+      <template #category>
+        {{ t('awards.mostSold.category') }}
+      </template>
+      <template #detail>
+        {{ awards.mostSold.count }}{{ t('awards.mostSold.unit') }}
+      </template>
+      <template #battleTag>
+        {{ awards.mostSold.battleTag }}
+      </template>
+      <template #desc>
+        {{ t('awards.mostSold.desc') }}
+      </template>
+    </D4Award>
+    <D4Award v-if="awards.mostPurchased">
+      <template #category>
+        {{ t('awards.mostPurchased.category') }}
+      </template>
+      <template #detail>
+        {{ awards.mostPurchased.count }}{{ t('awards.mostPurchased.unit') }}
+      </template>
+      <template #battleTag>
+        {{ awards.mostPurchased.battleTag }}
+      </template>
+      <template #desc>
+        {{ t('awards.mostPurchased.desc') }}
+      </template>
+    </D4Award>
+  </div>
 </template>

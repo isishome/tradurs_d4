@@ -173,9 +173,11 @@ const parsEvaluations = computed(() => props.owner ? as.filterEvaluations(props.
                 </div>
                 <div class="break-keep text-caption">
                   <ul class="evaluation">
-                    <li v-for="evaluation, idx of parsEvaluations" :key="idx">
+                    <li v-for="evaluation, idx of parsEvaluations" :key="idx"
+                      :class="{ 'text-negative': evaluation.type === '001' }">
                       {{ evaluation.label }}
                     </li>
+                    <li v-show="parsEvaluations.length === 0">{{ t('offer.noManners') }}</li>
                   </ul>
                 </div>
               </D4Tooltip>

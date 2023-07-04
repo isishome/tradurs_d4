@@ -67,6 +67,26 @@ export interface Restriction extends ILabel {
   sort?: number
 }
 
+export interface Award {
+  ranking: number,
+  temperature?: number,
+  items?: number,
+  itemName?: string,
+  itemType?: string,
+  itemTypeValue1?: string,
+  itemTypeValue2?: string,
+  imageId?: number,
+  price?: string | number | null,
+  battleTag: string
+}
+
+export interface Awards {
+  highPriced: Array<Award>,
+  bestManners: Array<Award>,
+  mostSold: Array<Award>,
+  mostPurchased: Array<Award>
+}
+
 export type OfferInfo = { itemName: string, itemId: string, price?: string }
 
 export const useItemStore = defineStore('item', {
@@ -524,6 +544,18 @@ export const useItemStore = defineStore('item', {
         api.post('/d4/item/favorite', { itemId, favorite })
           .then(async () => {
             resolve()
+          })
+          .catch((e) => {
+            reject(e)
+          })
+      })
+    },
+    getAwards() {
+      return new Promise<Awards>((resolve, reject) => {
+        api.get('/d4/awards')
+          .then(async (response) => {
+            await sleep(500)
+            resolve(response.data)
           })
           .catch((e) => {
             reject(e)

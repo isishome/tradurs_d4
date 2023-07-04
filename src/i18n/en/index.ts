@@ -11,6 +11,7 @@ export default {
     tradeList: 'Trade List',
     itemInfo: 'Item Information',
     messages: 'Messages',
+    awards: 'Awards',
     support: 'Help',
     test: 'Test',
     pnf: 'Page not found'
@@ -152,7 +153,8 @@ export default {
     updateOffer: 'The offer has been updated',
     retractOffer: 'The offer has been retracted',
     turnDownOffer: 'The offer has been turned down',
-    complete: 'Item trade completed'
+    complete: 'Item trade completed',
+    noManners: 'There are no manners evaluations left by the trade partner'
   },
   accept: {
     title: 'Accept Offer',
@@ -359,5 +361,26 @@ export default {
         { type: 'text', contents: 'Top-right user icon\n(Mobile More icon > User icon)\nto see how many yolks you currently have.\n\nAs of July 1, 2023,\n\nYou are granted 30 yolks when you sign up.\n\nYou are granted 10 yolks per day upon login.\n\nIt cannot be sold or shared between users.\n\nOne is consumed when listing, relisting, or offering an item,\n\nand is redeemed when the item trade is successfully completed.\n\nThis is to discourage frivolous item registrations or\nrequests for suggestions, and the number of uses or grants may change in the future.' },
       ]
     }
-  ]
+  ],
+  awards: {
+    highPriced: {
+      category: 'High-priced sales over the past week',
+      desc: ''
+    },
+    bestManners: {
+      category: 'Best manners for the past week',
+      desc: ''
+    },
+    mostSold: {
+      category: 'Most sold in the past week',
+      unit: '',
+      desc: ''
+    },
+    mostPurchased: {
+      category: 'Most purchased in the past week',
+      unit: '',
+      desc: ''
+    },
+    noData: 'No awards'
+  }
 }
