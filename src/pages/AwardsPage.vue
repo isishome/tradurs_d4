@@ -151,6 +151,11 @@ is.getAwards()
 
 .etc:nth-child(2) {
   font-size: 11px;
+  opacity: .3;
+}
+
+.etc:nth-child(3) {
+  font-size: 11px;
   opacity: .2;
 }
 </style>

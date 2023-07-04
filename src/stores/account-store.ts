@@ -121,7 +121,6 @@ export const useAccountStore = defineStore('account', {
       return new Promise<void>((resolve) => {
         api.post('/account/messages', { page, rows: this.messagePage.rows })
           .then(async (response) => {
-            await sleep(500)
             this.messagePage.over = page > 1
             this.messagePage.more = response.data.length > this.messagePage.rows
             response.data.splice(this.messagePage.rows, 1)

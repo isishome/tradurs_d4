@@ -41,7 +41,7 @@ withDefaults(defineProps<IProps>(), {
         <slot name="item-name"></slot>
       </div>
       <q-avatar size="200px" color="white" class="egg" :style="`--tradurs-logo-image:url('${image}');`">
-        <q-avatar color="amber-8" text-color="white" size="140px">
+        <q-avatar color="amber-8" text-color="white" size="120px">
           <div class="text-h5 text-weight-bold">
             <slot name="detail"></slot>
           </div>
@@ -88,9 +88,9 @@ withDefaults(defineProps<IProps>(), {
   height: 100%;
   opacity: .6;
   background-image: url('/images/award/laurel.webp');
-  background-size: 320px;
+  background-size: 280px;
   background-repeat: no-repeat;
-  background-position: 50% 130px;
+  background-position: 50% 140px;
   filter: invert(77%) sepia(77%) saturate(1453%) hue-rotate(360deg) brightness(104%) contrast(104%);
 }
 
@@ -119,7 +119,7 @@ withDefaults(defineProps<IProps>(), {
 
 .award:deep(.item-name) {
   position: absolute;
-  top: -26px;
+  top: -36px;
   z-index: 2;
 }
 

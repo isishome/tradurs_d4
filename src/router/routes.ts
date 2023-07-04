@@ -27,7 +27,10 @@ const routes: RouteRecordRaw[] = [
       {
         name: 'awards',
         path: 'awards',
-        component: () => import('pages/AwardsPage.vue')
+        component: () => import('pages/AwardsPage.vue'),
+        meta: {
+          requireAuth: true
+        }
       },
       {
         name: 'support',
