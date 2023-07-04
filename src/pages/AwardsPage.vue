@@ -68,10 +68,8 @@ is.getAwards()
       <template #etc>
         <div class="text-overline etc" v-for="ranker, idx in awards.highPriced.slice(1, awards.highPriced.length)"
           :key="idx">
-          {{ ranker?.ranking }}. {{ ranker?.battleTag }} - [{{ ranker?.itemName }}] {{ n(Number.parseFloat(ranker?.price
-                    as string),
-            'decimal')
-          }}
+          {{ ranker?.ranking }}. {{ ranker?.battleTag }} - [{{ ranker?.itemName }}]
+          {{ n(Number.parseFloat(ranker?.price as string), 'decimal') }}
         </div>
       </template>
       <template #desc>
