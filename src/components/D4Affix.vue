@@ -70,13 +70,13 @@ const remove = (): void => {
             @update:model-value="update" @focus="focus" />
           <div v-else-if="comp.type === 'min'" class="minmax row items-center q-gutter-x-xs">
             <div>[</div>
-            <q-input class="var" tabindex="-1" input-class="text-center text-caption no-padding" dense hide-bottom-space
-              hide-hint no-error-icon outlined v-model.number="comp.value" maxlength="6" debounce="500" :disable="disable"
+            <q-input class="var" input-class="text-center text-caption no-padding" dense hide-bottom-space hide-hint
+              no-error-icon outlined v-model.number="comp.value" maxlength="6" debounce="500" :disable="disable"
               :rules="[val => !disable && (parseFloat(val) % 1 !== 0 || parseInt(val) % 1 === 0) || '']"
               @update:model-value="update" @focus="focus" />
             <div>-</div>
-            <q-input class="var" tabindex="-1" input-class="text-center text-caption no-padding" dense hide-bottom-space
-              hide-hint no-error-icon outlined v-model.number="affixInfo[k + 1].value" maxlength="6" debounce="500"
+            <q-input class="var" input-class="text-center text-caption no-padding" dense hide-bottom-space hide-hint
+              no-error-icon outlined v-model.number="affixInfo[k + 1].value" maxlength="6" debounce="500"
               :disable="disable"
               :rules="[val => !disable && (parseFloat(val) % 1 !== 0 || parseInt(val) % 1 === 0) || '']"
               @update:model-value="update" @focus="focus" />
