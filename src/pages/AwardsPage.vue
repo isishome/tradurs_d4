@@ -59,7 +59,7 @@ is.getAwards()
       </template>
       <template #detail>
         <div class="text-h6 text-center text-weight-bold">
-          {{ n(awards.highPriced[0]?.price as number, 'decimal') }}
+          {{ n(Number.parseFloat(awards.highPriced[0]?.price as string), 'decimal') }}
         </div>
       </template>
       <template #battleTag>
@@ -68,7 +68,8 @@ is.getAwards()
       <template #etc>
         <div class="text-overline etc" v-for="ranker, idx in awards.highPriced.slice(1, awards.highPriced.length)"
           :key="idx">
-          {{ ranker?.ranking }}. {{ ranker?.battleTag }} - [{{ ranker?.itemName }}] {{ n(ranker?.price as number,
+          {{ ranker?.ranking }}. {{ ranker?.battleTag }} - [{{ ranker?.itemName }}] {{ n(Number.parseFloat(ranker?.price
+                    as string),
             'decimal')
           }}
         </div>
