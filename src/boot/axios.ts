@@ -42,7 +42,21 @@ export default boot(({ app, ssrContext, store }) => {
     }
     else if (status === 403) {
       const url = `${import.meta.env.VITE_APP_TRADURS}/info`
-      document.location.href = url
+      Notify.create({
+        icon: 'img:/images/icons/alert.svg',
+        color: 'negative',
+        multiLine: true,
+        classes: '',
+        message: error.response && error.response.data || error.message,
+        timeout: 3000,
+        actions: [
+          {
+            label: i18n.global.t('btn.move'), color: 'white', handler: () => {
+              document.location.href = url
+            }
+          }
+        ]
+      })
     }
     else {
       const message = error.response && error.response.data || error.message
