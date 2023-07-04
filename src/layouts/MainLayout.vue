@@ -76,9 +76,7 @@ const key = ref(uid())
 const reload = () => {
   key.value = uid()
   nextTick(() => {
-    setTimeout(() => {
-      onWindowLoad()
-    }, 0)
+    onWindowLoad()
   })
 }
 
@@ -138,9 +136,7 @@ onMounted(() => {
     window.addEventListener('load', onWindowLoad)
   else {
     nextTick(() => {
-      setTimeout(() => {
-        onWindowLoad()
-      })
+      onWindowLoad()
     })
   }
 })

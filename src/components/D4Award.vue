@@ -95,7 +95,8 @@ withDefaults(defineProps<IProps>(), {
 }
 
 .award.loading::before {
-  filter: contrast(0) blur(4px);
+  filter: contrast(0) opacity(.1);
+  ;
 }
 
 .egg {
@@ -124,7 +125,6 @@ withDefaults(defineProps<IProps>(), {
 }
 
 .award:deep(.etc) {
-  text-align: center;
   min-height: 14px;
   line-height: 1.6;
   white-space: pre-wrap;

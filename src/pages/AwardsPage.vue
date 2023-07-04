@@ -40,7 +40,117 @@ const noData = computed(() => !loading.value && (awards.bestManners?.length || 0
 is.getAwards()
   .then((data) => {
     Object.assign(awards, { highPriced: [], bestManners: [], mostSold: [], mostPurchased: [] })
-    Object.assign(awards, data)
+    //Object.assign(awards, data)
+    Object.assign(awards, {
+      "highPriced": [
+        {
+          "ranking": "1",
+          "battleTag": "현명한다홍전차#31427",
+          "itemName": "명예의 중재자",
+          "itemType": "accesesory",
+          "itemTypeValue1": "amulet",
+          "itemTypeValue2": "",
+          "imageId": 0,
+          "price": "900000000"
+        },
+        {
+          "ranking": "2",
+          "battleTag": "로크#31810",
+          "itemName": "기념비적인 연결체",
+          "itemType": "accesesory",
+          "itemTypeValue1": "amulet",
+          "itemTypeValue2": "",
+          "imageId": 37,
+          "price": "90000000"
+        },
+        {
+          "ranking": "3",
+          "battleTag": "정의구현#31557",
+          "itemName": "SS 뼈의 달음질 (피감(준으뜸),방어도(준으뜸),최생,모능)",
+          "itemType": "armor",
+          "itemTypeValue1": "pants",
+          "itemTypeValue2": "",
+          "imageId": 0,
+          "price": "9000000"
+        },
+        {
+          "ranking": "4",
+          "battleTag": "코붕이#3516",
+          "itemName": "야수의 전통",
+          "itemType": "weapon",
+          "itemTypeValue1": "focus",
+          "itemTypeValue2": "",
+          "imageId": 0,
+          "price": "9000000"
+        }
+      ],
+      "bestManners": [
+        {
+          "ranking": "1",
+          "battleTag": "사랑#64421",
+          "temperature": 3.1
+        },
+        {
+          "ranking": "2",
+          "battleTag": "시가#3271",
+          "temperature": 6.5
+        },
+        {
+          "ranking": "3",
+          "battleTag": "럭스#31227",
+          "temperature": 5.1
+        },
+        {
+          "ranking": "4",
+          "battleTag": "최태공#31975",
+          "temperature": 3.3
+        }
+      ],
+      "mostSold": [
+        {
+          "ranking": "1",
+          "battleTag": "디아블로잉#37066",
+          "items": "10"
+        },
+        {
+          "ranking": "2",
+          "battleTag": "사랑#64421",
+          "items": "10"
+        },
+        {
+          "ranking": "3",
+          "battleTag": "프로#31682",
+          "items": "9"
+        },
+        {
+          "ranking": "4",
+          "battleTag": "현명한금빛임프#3124",
+          "items": "9"
+        }
+      ],
+      "mostPurchased": [
+        {
+          "ranking": "1",
+          "battleTag": "불곰#31810",
+          "items": "16"
+        },
+        {
+          "ranking": "2",
+          "battleTag": "루팡#3483",
+          "items": "14"
+        },
+        {
+          "ranking": "3",
+          "battleTag": "안티#3436",
+          "items": "11"
+        },
+        {
+          "ranking": "4",
+          "battleTag": "junghc#31114",
+          "items": "11"
+        }
+      ]
+    })
   })
   .catch(() => { { } })
   .then(() => {
@@ -58,7 +168,7 @@ is.getAwards()
         {{ awards.highPriced[0]?.itemName }}
       </template>
       <template #detail>
-        <div class="text-h6 text-center text-weight-bold">
+        <div class="text-body1 text-center text-weight-bold">
           {{ n(Number.parseFloat(awards.highPriced[0]?.price as string), 'decimal') }}
         </div>
       </template>
@@ -66,11 +176,16 @@ is.getAwards()
         1. {{ awards.highPriced[0]?.battleTag }}
       </template>
       <template #etc>
-        <div class="text-overline etc" v-for="ranker, idx in awards.highPriced.slice(1, awards.highPriced.length)"
-          :key="idx">
-          {{ ranker?.ranking }}. {{ ranker?.battleTag }} - [{{ ranker?.itemName }}]
-          {{ n(Number.parseFloat(ranker?.price as string), 'decimal') }}
-        </div>
+        <q-list separator>
+          <q-item v-for="ranker, idx in awards.highPriced.slice(1, awards.highPriced.length)" :key="idx" class="etc">
+            <q-item-section>
+              <q-item-label>{{ ranker?.ranking }}. [{{ ranker?.itemName }}]</q-item-label>
+              <q-item-label class="text-right">{{ ranker?.battleTag }}</q-item-label>
+              <q-item-label caption class="text-right">{{ n(Number.parseFloat(ranker?.price as string), 'decimal')
+              }}</q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-list>
       </template>
       <template #desc>
         {{ t('awards.bestManners.desc') }}
