@@ -63,7 +63,7 @@ is.getAwards()
         </div>
       </template>
       <template #battleTag>
-        {{ awards.highPriced[0]?.battleTag }}
+        1. {{ awards.highPriced[0]?.battleTag }}
       </template>
       <template #etc>
         <div class="text-overline etc" v-for="ranker, idx in awards.highPriced.slice(1, awards.highPriced.length)"
@@ -85,7 +85,7 @@ is.getAwards()
         {{ awards.bestManners[0]?.temperature }}&#8451
       </template>
       <template #battleTag>
-        {{ awards.bestManners[0]?.battleTag }}
+        1. {{ awards.bestManners[0]?.battleTag }}
       </template>
       <template #etc>
         <div class="text-overline etc" v-for="ranker, idx in awards.bestManners.slice(1, awards.bestManners.length)"
@@ -124,7 +124,7 @@ is.getAwards()
         {{ awards.mostPurchased[0]?.items }}{{ t('awards.mostPurchased.unit') }}
       </template>
       <template #battleTag>
-        {{ awards.mostPurchased[0]?.battleTag }}
+        1. {{ awards.mostPurchased[0]?.battleTag }}
       </template>
       <template #desc>
         {{ t('awards.mostPurchased.desc') }}

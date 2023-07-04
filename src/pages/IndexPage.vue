@@ -82,6 +82,7 @@ const deleteItem = (item: Item, done: Function) => {
       })
       .catch(() => {
         done()
+        updateOnly(item.itemId)
         disable.value = false
       })
   }
@@ -105,6 +106,7 @@ const relistItem = (item: Item, done: Function) => {
       })
       .catch(() => {
         done()
+        updateOnly(item.itemId)
         disable.value = false
       })
   }
@@ -122,6 +124,7 @@ const statusItem = (item: Item, done: Function) => {
       })
       .catch(() => {
         done()
+        updateOnly(item.itemId)
         disable.value = false
       })
   }
