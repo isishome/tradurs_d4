@@ -138,7 +138,9 @@ onMounted(() => {
     window.addEventListener('load', onWindowLoad)
   else {
     nextTick(() => {
-      onWindowLoad()
+      setTimeout(() => {
+        onWindowLoad()
+      })
     })
   }
 })

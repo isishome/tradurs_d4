@@ -2,6 +2,7 @@
 import { useQuasar, date } from 'quasar'
 import { ref, reactive, computed, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useGlobalStore } from 'src/stores/global-store'
 import { useAccountStore } from 'src/stores/account-store'
 import { useI18n } from 'vue-i18n'
 import { scrollPos } from 'src/common'
@@ -24,6 +25,7 @@ interface Message {
 const $q = useQuasar()
 const route = useRoute()
 const router = useRouter()
+const gs = useGlobalStore()
 const as = useAccountStore()
 const { t, n } = useI18n({ useScope: 'global' })
 
@@ -85,10 +87,12 @@ const refresh = () => {
 }
 
 const prev = () => {
+  gs.refresh++
   router.push({ name: 'messages', query: page.value > 2 ? { page: page.value - 1 } : {} })
 }
 
 const next = () => {
+  gs.refresh++
   router.push({ name: 'messages', query: { page: page.value + 1 } })
 }
 
