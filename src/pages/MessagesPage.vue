@@ -254,11 +254,6 @@ onMounted(() => {
   opacity: .4;
 }
 
-.text-area {
-  line-height: 1.6;
-  white-space: pre-wrap;
-}
-
 .paging:deep(.q-btn.disabled) {
   opacity: .2 !important;
 }

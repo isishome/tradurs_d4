@@ -140,9 +140,6 @@ onUnmounted(() => {
 
 .answer:deep(.text-area) {
   min-height: 14px;
-  line-height: 1.6;
-  white-space: pre-wrap;
-  word-break: keep-all;
 }
 
 .answer:deep(img) {

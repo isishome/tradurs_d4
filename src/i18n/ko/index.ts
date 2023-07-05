@@ -225,7 +225,10 @@ export default {
     success: '문의 내용이 정상적으로 접수되었습니다'
   },
   notice: {
-    message: `<div style="width:400px;max-width:80vw;line-height:2" class="break-keep"><div class='text-h6 q-pb-md'>사과 말씀드립니다.</div><p class="text-body1">금일 오후 5시경 <span class='text-amber-10 text-weight-bold'>데이터베이스 서버에 문제가 발생하여</span> <u>모든 데이터가 유실돼 버리는 문제가 발생했습니다.</u>  사이트 이용을 위해 번거로우시겠지만 재 가입하셔야  정상적으로 사이트 이용이 가능합니다. 다시 한번 이용에 불편을 드려 죄송합니다.</div>`,
+    title: '임시 점검 안내 공지',
+    top: '안녕하세요. Tradurs 입니다.\n\n원활한 서비스 제공을 위해 데이터베이스 서버를 이전합니다.',
+    contents: '점검 일자 : 2023년 7월 6일(목) 01:00 ~ 점검 완료 시\n점검 대상 : Tradurs 데이터베이스 서버\n점검 영향 : 거래 서비스 이용 불가',
+    bottom: '서버가 정상화되면 다시 공지를 통해 안내해 드리도록 하겠습니다.\n\n고맙습니다.',
     close: '24시간 동안 열지 않기'
   },
   message: {

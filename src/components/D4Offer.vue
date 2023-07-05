@@ -183,7 +183,6 @@ const parsEvaluations = computed(() => props.owner ? as.filterEvaluations(props.
             </q-icon>
           </div>
         </div>
-
       </q-item-section>
     </q-item>
   </div>

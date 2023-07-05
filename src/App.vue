@@ -16,7 +16,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, reactive } from 'vue'
 import { useQuasar, useMeta } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
@@ -67,23 +67,15 @@ useMeta(() => {
   }
 })
 
-// const notify = $q.cookies.has('d4.alert')
-// if (!notify) {
-//   $q.notify({
-//     classes: '',
-//     progress: true,
-//     multiLine: true,
-//     position: 'center',
-//     timeout: 100000,
-//     message: t('notice.message'),
-//     html: true,
-//     actions: [
-//       {
-//         label: t('notice.close'), noCaps: true, color: 'white', handler: () => { $q.cookies.set('d4.alert', 'confirm', { expires: 1 }) }
-//       }
-//     ]
-//   })
-// }
+const notice = reactive<{ open: boolean, close: boolean }>({
+  open: !$q.cookies.has('d4.alert'),
+  close: false
+})
+
+const close = () => {
+  $q.cookies.set('d4.alert', 'confirm', { expires: 1 })
+  notice.open = false
+}
 
 onMounted(() => {
   view.value = true
@@ -91,6 +83,32 @@ onMounted(() => {
 </script>
 
 <template>
+  <D4Dialog v-model="notice.open" persistent>
+    <template #top>
+      <q-card-section class="row no-wrap items-center justify-between">
+        <div class="q-pl-sm">
+          <div class="q-pa-md text-body1">{{ t('notice.title') }}</div>
+        </div>
+        <q-btn unelevated aria-label="Tradurs Close Button" class="no-hover icon" :ripple="false">
+          <img src="/images/icons/close.svg" width="24" height="24" @click="notice.open = false" alt="icon_close" />
+        </q-btn>
+      </q-card-section>
+    </template>
+    <template #middle>
+      <q-card-section>
+        <div class="q-pa-md column q-gutter-y-sm" :class="$q.screen.gt.sm ? 'text-body1' : 'text-caption'">
+          <div class="text-area">{{ t('notice.top') }}</div>
+          <div class="text-area text-weight-bold text-secondary">{{ t('notice.contents') }}</div>
+          <div class="text-area">{{ t('notice.bottom') }}</div>
+        </div>
+      </q-card-section>
+    </template>
+    <template #bottom>
+      <div class="q-pa-md text-right">
+        <q-btn outline no-caps :label="t('notice.close')" @click="close" aria-label="Tradurs Button" />
+      </div>
+    </template>
+  </D4Dialog>
   <D4Dialog v-model="showBT" persistent @submit="updateBattleTag">
     <template #top>
       <q-card-section>
