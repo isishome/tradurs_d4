@@ -69,7 +69,7 @@ is.getAwards()
         <q-list separator>
           <q-item v-for="ranker, idx in awards.highPriced.slice(1, awards.highPriced.length)" :key="idx" class="etc">
             <q-item-section>
-              <q-item-label>{{ ranker?.ranking }}. [{{ ranker?.itemName }}]</q-item-label>
+              <q-item-label>{{ ranker?.ranking }}. {{ ranker?.itemName }}</q-item-label>
               <q-item-label class="text-right">{{ ranker?.battleTag }}</q-item-label>
               <q-item-label caption class="text-right">{{ n(Number.parseFloat(ranker?.price as string), 'decimal')
               }}</q-item-label>
@@ -86,7 +86,7 @@ is.getAwards()
         {{ t('awards.bestManners.category') }}
       </template>
       <template #detail>
-        {{ awards.bestManners[0]?.temperature }}&#8451
+        + {{ awards.bestManners[0]?.good }}&#8451
       </template>
       <template #battleTag>
         1. {{ awards.bestManners[0]?.battleTag }}
@@ -94,7 +94,7 @@ is.getAwards()
       <template #etc>
         <div class="text-overline etc" v-for="ranker, idx in awards.bestManners.slice(1, awards.bestManners.length)"
           :key="idx">
-          {{ ranker?.ranking }}. {{ ranker?.battleTag }} - {{ ranker?.temperature }}&#8451
+          {{ ranker?.ranking }}. {{ ranker?.battleTag }} + {{ ranker?.good }}&#8451
         </div>
       </template>
       <template #desc>

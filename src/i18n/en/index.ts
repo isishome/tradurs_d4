@@ -154,7 +154,7 @@ export default {
     retractOffer: 'The offer has been retracted',
     turnDownOffer: 'The offer has been turned down',
     complete: 'Item trade completed',
-    noManners: 'There are no manners evaluations left by the trade partner'
+    noManners: 'The trade partner didn\'t evaluate me:('
   },
   accept: {
     title: 'Accept Offer',

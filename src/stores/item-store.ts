@@ -69,7 +69,7 @@ export interface Restriction extends ILabel {
 
 export interface Award {
   ranking: number,
-  temperature?: number,
+  good?: number,
   items?: number,
   itemName?: string,
   itemType?: string,

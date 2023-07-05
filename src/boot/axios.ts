@@ -18,11 +18,11 @@ export default boot(({ app, ssrContext, store }) => {
     return response
   }, function (error) {
     const status = error.response && error.response.status ? error.response.status : null
-    if (status === 401) {
+    if ([401, 403].includes(status)) {
       const accountStore = useAccountStore(store)
       accountStore.signed = false
       accountStore.info = new User()
-      const url = `${import.meta.env.VITE_APP_TRADURS}/sign?redirect=${encodeURIComponent(document.location.href)}`
+      const url = status === 401 ? `${import.meta.env.VITE_APP_TRADURS}/sign?redirect=${encodeURIComponent(document.location.href)}` : `${import.meta.env.VITE_APP_TRADURS}/info`
       Notify.create({
         progress: true,
         icon: 'img:/images/icons/alert.svg',
@@ -34,24 +34,6 @@ export default boot(({ app, ssrContext, store }) => {
         actions: [
           {
             label: i18n.global.t('btn.move'), color: 'dark', handler: () => {
-              document.location.href = url
-            }
-          }
-        ]
-      })
-    }
-    else if (status === 403) {
-      const url = `${import.meta.env.VITE_APP_TRADURS}/info`
-      Notify.create({
-        icon: 'img:/images/icons/alert.svg',
-        color: 'negative',
-        multiLine: true,
-        classes: '',
-        message: error.response && error.response.data || error.message,
-        timeout: 3000,
-        actions: [
-          {
-            label: i18n.global.t('btn.move'), color: 'white', handler: () => {
               document.location.href = url
             }
           }

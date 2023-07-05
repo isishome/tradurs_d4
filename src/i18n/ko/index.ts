@@ -153,7 +153,7 @@ export default {
     retractOffer: '제안이 철회되었습니다',
     turnDownOffer: '제안을 거절했습니다',
     complete: '아이템 거래가 완료되었습니다',
-    noManners: '상대방이 남긴 매너 평가 항목이 없습니다'
+    noManners: '상대방이 나를 평가하지 않았어요:('
   },
   accept: {
     title: '제안 수락',

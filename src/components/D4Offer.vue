@@ -169,15 +169,14 @@ const parsEvaluations = computed(() => props.owner ? as.filterEvaluations(props.
             <q-icon v-if="existsEvaluation" class="icon" name="img:/images/icons/evaluation.svg" size="19px">
               <D4Tooltip>
                 <div class="text-overline text-weight-bold">
-                  {{ t('complete.evaluate') }}
+                  {{ parsEvaluations.length === 0 ? t('offer.noManners') : t('complete.evaluate') }}
                 </div>
-                <div class="break-keep text-caption">
+                <div v-show="parsEvaluations.length > 0" class="break-keep text-caption">
                   <ul class="evaluation">
                     <li v-for="evaluation, idx of parsEvaluations" :key="idx"
                       :class="{ 'text-negative': evaluation.type === '001' }">
                       {{ evaluation.label }}
                     </li>
-                    <li v-show="parsEvaluations.length === 0">{{ t('offer.noManners') }}</li>
                   </ul>
                 </div>
               </D4Tooltip>
