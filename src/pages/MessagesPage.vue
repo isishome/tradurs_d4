@@ -107,6 +107,7 @@ onMounted(() => {
 
 <template>
   <div>
+    <div class="text-right text-caption q-pa-xs">{{ t('messages.expire') }}</div>
     <q-list bordered class="rounded-borders">
       <q-item>
         <q-item-section side>
@@ -149,12 +150,15 @@ onMounted(() => {
             </q-avatar>
           </q-item-section>
           <q-item-section>
-            <q-item-label class="text-weight-bold" lines="1">{{ ['900', '999'].includes(message.msgType) ? 'Tradurs' :
-              message.itemName
-            }}</q-item-label>
-            <q-item-label caption lines="2">{{ t(`messages.title${message.msgType}`) }}</q-item-label>
-            <q-item-label caption lines="2" v-if="message.currency === 'gold'">{{ `${t('item.gold')} :
-                          ${n(Number.parseFloat(message.currencyValue as string))}` }}</q-item-label>
+            <q-item-label class="text-weight-bold" lines="1">
+              {{ ['900', '999'].includes(message.msgType) ? 'Tradurs' : message.itemName }}
+            </q-item-label>
+            <q-item-label caption lines="2">
+              {{ t(`messages.title${message.msgType}`) }}
+            </q-item-label>
+            <q-item-label caption lines="2" v-if="message.currency === 'gold'">
+              {{ `${t('item.gold')} : ${n(Number.parseFloat(message.currencyValue as string))}` }}
+            </q-item-label>
           </q-item-section>
           <q-item-section side top>
             <q-item-label lines="2" style="max-width:60px" class="text-right">

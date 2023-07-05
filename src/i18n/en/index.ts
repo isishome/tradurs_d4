@@ -199,6 +199,7 @@ export default {
   min: 'Min',
   messages: {
     title: 'Message List',
+    expire: 'Read messages will be kept for 7 days',
     newItems: 'A new item has been registered ({n})',
     newOffer: 'A (new) offer has arrived',
     acceptedOffer: 'Offer has been accepted',

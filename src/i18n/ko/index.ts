@@ -198,6 +198,7 @@ export default {
   min: '최소',
   messages: {
     title: '메세지 리스트',
+    expire: '읽은 메시지는 7일간 보관됩니다',
     newItems: '새로운 아이템이 등록되었습니다 ({n})',
     newOffer: '(새) 제안 요청이 도착했습니다',
     acceptedOffer: '제안이 수락되었습니다',
