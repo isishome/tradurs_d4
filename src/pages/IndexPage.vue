@@ -210,7 +210,7 @@ const getList = (filter?: any) => {
         }
       }
       items.value.push(...result)
-      scrollPos(position.value.top, 'auto')
+      scrollPos(position.value.top)
     }).catch(() => {
       items.value = []
     }).then(() => {

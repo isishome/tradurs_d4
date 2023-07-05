@@ -77,7 +77,7 @@ export const splitArray = (arr: Array<number>, chunkSize: number) => {
 
 export const scrollPos = (top?: number, behavior?: ScrollBehavior) => {
   nextTick(() => {
-    window.scrollTo({ top: top || 0, behavior: (behavior || 'smooth') })
+    window.scrollTo({ top: top || 0, behavior: (behavior || 'auto') })
   })
 }
 
