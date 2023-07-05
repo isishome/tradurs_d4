@@ -13,7 +13,6 @@ export default {
     messages: 'Messages',
     awards: 'Awards',
     support: 'Help',
-    test: 'Test',
     pnf: 'Page not found'
   },
   battlenet: {

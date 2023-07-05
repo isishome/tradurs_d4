@@ -13,7 +13,6 @@ export default {
     messages: '메시지',
     awards: '어워즈',
     support: '도움말',
-    test: '테스트',
     pnf: '페이지를 찾을 수 없습니다'
   },
   battlenet: {
