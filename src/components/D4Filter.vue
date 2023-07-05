@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { QSelect, useQuasar } from 'quasar'
+import { QSelect, useQuasar, debounce } from 'quasar'
 import { useAccountStore } from 'src/stores/account-store'
 import { useItemStore } from 'src/stores/item-store'
 import { useI18n } from 'vue-i18n'
@@ -130,7 +130,7 @@ const fixed = (val: boolean) => {
   stored()
 }
 
-const update = (quality?: Array<string>) => {
+const update = debounce((quality?: Array<string>) => {
   if (quality) {
     Object.keys(is.filter.itemTypeValues1).forEach((q: string) => {
       if (!quality.includes(q))
@@ -141,7 +141,7 @@ const update = (quality?: Array<string>) => {
   stored()
 
   is.filter.request++
-}
+}, 1000)
 </script>
 
 <template>
