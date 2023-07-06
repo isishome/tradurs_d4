@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useQuasar } from 'quasar'
-import { reactive, onUnmounted, computed } from 'vue'
+import { reactive, onUnmounted, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useGlobalStore } from 'stores/global-store'
 
@@ -17,10 +17,6 @@ interface Support {
   answer: Array<Answer>,
   show: boolean
 }
-
-const props = defineProps<{
-  supportid: string
-}>()
 
 const $q = useQuasar()
 const { t, tm } = useI18n({ useScope: 'global' })
@@ -65,6 +61,14 @@ const close = () => {
   contact.disable = false
 }
 
+watch(support, (val: Support[], old?: Support[]) => {
+
+  val.forEach((v: Support, idx: number) => {
+    v.show = old?.[idx]?.show || (!old && idx === 0)
+  })
+},
+  { immediate: true })
+
 onUnmounted(() => {
   support.value.forEach((s: Support) => {
     s.show = false
@@ -74,21 +78,28 @@ onUnmounted(() => {
 
 <template>
   <q-list bordered class="rounded-borders">
-    <template v-for="s, idx in  (support as Array<Support>) " :key="idx">
+    <template v-for="s, idx in   (support as Array<Support>)  " :key="idx">
       <q-separator v-show="idx !== 0" />
       <q-expansion-item v-model="s.show" :class="{ 'no-hover': s.show }" expand-icon="img:/images/icons/dropdown.svg"
         :label="s.question">
         <q-item class="row justify-center items-center" :class="$q.screen.lt.sm ? 'q-px-md' : 'q-px-xl'"
           style="background-color: var(--q-cloud);">
           <q-item-label>
-            <q-intersection v-for="a, aIdx in s.answer" :key="aIdx" transition="fade" class="answer text-center"
+            <q-intersection v-for="a, aIdx in  s.answer " :key="aIdx" transition="fade" class="answer text-center"
               :class="a.type" ssr-prerender once>
               <img v-if="a.type === 'image'" :src="`/images/help/${s.id}/${a.contents}.webp`" />
               <div v-else-if="a.type === 'text'" class="text-area">
                 {{ a.contents }}
               </div>
+              <div v-else-if="a.type === 'question'"
+                class="text-area text-subtitle1 q-mt-lg text-left text-primary text-weight-bold">
+                {{ a.contents }}
+              </div>
+              <div v-else-if="a.type === 'answer'" class="text-area text-body2 q-ma-sm text-left">
+                {{ a.contents }}
+              </div>
             </q-intersection>
-            <div class="q-py-xl q-my-xl"></div>
+            <div class="q-py-lg q-my-lg"></div>
           </q-item-label>
         </q-item>
       </q-expansion-item>

@@ -29,7 +29,7 @@ export default {
     type: '종류',
     advanced: '고급 필터',
     mine: '내 아이템',
-    offered: '제안 받은 아이템',
+    offered: '제안받은 아이템',
     offer: '제안 요청 아이템',
     fixed: '필터 고정',
     fixedDescription: '필터 정보가 로컬 스토리지에 저장됩니다. 설정된 필터에 따라 아이템 노출에 대한 착오 등이 생길 수 있으니 이점 주의하세요.',
@@ -236,6 +236,32 @@ export default {
   },
   support: [
     {
+      id: '000',
+      question: '자주 묻는 질문',
+      answer: [
+        { type: 'question', contents: '1. 아이템 수정 및 삭제, 이미지 분석이 비 활성화입니다.' },
+        { type: 'answer', contents: '→ 아이템에 제안 요청이 있는 경우입니다. 반드시 등록하실 때 항목을 꼼꼼히 확인하고 등록해 주세요.' },
+        { type: 'question', contents: '2. 내가 등록한 아이템이나 제안 요청 한 아이템을 볼 수 없나요?' },
+        { type: 'answer', contents: '→ 로그인한 상태에서 좌측 필터 > 나만의 검색 항목 > \'내 아이템\', \'제안 요청 아이템\' 중 원하는 필터값을 체크해서 사용하시면 됩니다.' },
+        { type: 'answer', contents: '→ 내 아이템\'을 체크하면 서브 체크 항목인 \'제안받은 아이템\' 필터가 활성화되며, 내 아이템 중 제안 요청이 있는 아이템만 필터가 가능합니다.' },
+        { type: 'question', contents: '3. 거래가 무산된 경우 재 판매 설정을 할 수 있나요?' },
+        { type: 'answer', contents: '→ 제안이 수락된 이후에는 거래를 취소할 수 없습니다. 상대방 과실이 있을 경우 비 매너 평가해 주시고 도움말 메뉴에 나온 \'템플릿 복사\' 기능을 이용해 아이템을 재 등록해 주셔야 합니다.' },
+        { type: 'question', contents: '4. 비 매너 평가자에게 페널티는 없나요?' },
+        { type: 'answer', contents: '→ 비 매너 평가 점수가 일정 기간 동안 기준을 초과한 경우 페널티를 줄 예정입니다.' },
+        { type: 'question', contents: '5. 아이템 가격 제안을 없앨 수 없나요?' },
+        { type: 'answer', contents: '→ 좌측 필터 > \'가격 명시만 보기\'를 체크하셔서 가격이 명시된 아이템만 보기가 가능합니다.' },
+        { type: 'question', contents: '6. 노른자는 언제 제공되나요?' },
+        { type: 'answer', contents: '→ 새로 로그인하거나 노른자를 소모 또는 회수하는 경우(계정 정보를 체크할 시) 일일 10개의 노른자가 제공됩니다.' },
+        { type: 'question', contents: '7. 이미지 분석 기능을 정상적으로 사용할 수 없어요.' },
+        { type: 'answer', contents: '→ 계속 개선 중이긴 하나 해상도가 낮거나(사용 중인 엔진의 추천 해상도 300 DPI) 인 게임 캡처가 아닌 아이템 이미지는 인식률이 떨어집니다.' },
+        { type: 'question', contents: '8. 아이템 상태를 구분해서 볼 수 없나요?' },
+        { type: 'answer', contents: '→ 좌측 필터 > \'아이템 상태\' 선택 상자를 이용해 필터 가능합니다.' },
+        { type: 'question', contents: '9. 새 시즌이 시작되면 기존 거래 아이템들은 어떻게 되나요?' },
+        { type: 'answer', contents: '→ 시즌이 새로 시작될 때마다 아이템 및 아이템에 관련된 데이터(옵션, 제약 조건, 메시지 등을 제외한)를 모두 초기화할 예정입니다.' },
+        { type: 'answer', contents: '→ 원래 계획은 기존 데이터를 백업 보존하려 하였으나 데이터베이스 서버의 성능을 고려하여 간단한 거래 내역(히스토리)만 남기고, 모두 초기화하는 방향으로 정했습니다.' }
+      ]
+    },
+    {
       id: '001',
       question: '회원가입은 어떻게 하나요?',
       answer: [
@@ -360,20 +386,20 @@ export default {
   ],
   awards: {
     highPriced: {
-      category: '지난 한 주간 높은 가격 판매 순위',
+      category: '지난 한 주간 판매가 상위 5',
       desc: ''
     },
     bestManners: {
-      category: '지난 한 주간 베스트 매너 순위',
+      category: '지난 한 주간 매너 상위 5',
       desc: ''
     },
     mostSold: {
-      category: '지난 한 주간 최다 판매 순위',
+      category: '지난 한 주간 최다 판매 상위 5',
       unit: '개',
       desc: ''
     },
     mostPurchased: {
-      category: '지난 한 주간 최다 구매 순위',
+      category: '지난 한 주간 최다 구매 상위 5',
       unit: '개',
       desc: ''
     },

@@ -167,6 +167,7 @@ onUnmounted(() => {
             <q-btn round dense flat aria-label="Tradurs Support Button" :ripple="!$q.dark.isActive"
               :to="{ name: 'support' }">
               <img class="icon" width="24" height="24" src="/images/icons/help.svg" alt="icon_support" />
+              <q-badge floating label="N" color="negative" class="new-badge" />
             </q-btn>
             <q-btn round flat aria-label="Tradurs Theme Button" :ripple="!$q.dark.isActive" @click="setDark">
               <img v-show="$q.dark.isActive" class="icon" width="24" height="24" src="/images/icons/light.svg"
@@ -314,6 +315,7 @@ onUnmounted(() => {
           <q-btn round dense flat aria-label="Tradurs Support Button" :ripple="!$q.dark.isActive"
             :to="{ name: 'support' }">
             <img class="icon" width="24" height="24" src="/images/icons/help.svg" alt="icon_support" />
+            <q-badge floating label="N" color="negative" class="new-badge" />
           </q-btn>
           <q-btn round dense flat aria-label="Tradurs Language Button" :ripple="!$q.dark.isActive">
             <img class="icon" width="24" height="24" src="/images/icons/language.svg" alt="icon_language" />
@@ -475,5 +477,14 @@ ins::after {
 
 .page:deep(.active .q-item__label) {
   opacity: 1;
+}
+
+.new-badge {
+  top: 0;
+  right: 0;
+  padding: 3px;
+  border-radius: 40px;
+  font-size: 8px;
+  line-height: 1;
 }
 </style>

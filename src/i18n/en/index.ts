@@ -237,6 +237,32 @@ export default {
   },
   support: [
     {
+      id: '000',
+      question: 'Frequently asked questions',
+      answer: [
+        { type: 'question', contents: '1. Item editing and deletion, image analysis is disabled.' },
+        { type: 'answer', contents: '→ The item has a suggestion request. Please be sure to check the item carefully when registering.' },
+        { type: 'question', contents: '2. I can\'t see the items I\'ve registered or the items with suggestion requests?' },
+        { type: 'answer', contents: '→ While logged in, please check the filter on the left side > Only For Me > \'My items\', \'Have made an offer\', and use the desired filter value.' },
+        { type: 'answer', contents: '→ If you check \'My items\', the sub-checked \'Have been offered\' filter will be activated, and you can filter only the items with suggestion requests among your items.' },
+        { type: 'question', contents: '3. Can I set up a resale if the transaction is canceled?' },
+        { type: 'answer', contents: '→ You cannot cancel a trade after the offer has been accepted. If the other party is at fault, please rate them rude and re-list the item using the \'Copy Template\' function in the Help menu.' },
+        { type: 'question', contents: '4. Are there any penalties for unkind raters?' },
+        { type: 'answer', contents: '→ We plan to penalize non-mannered reviewers if their score exceeds the threshold for a period of time.' },
+        { type: 'question', contents: '5. Can\'t I remove \'Get An Offer\'?' },
+        { type: 'answer', contents: '→ Left filter > \'Show only priced\' to see only items with stated prices.' },
+        { type: 'question', contents: '6. When will the yolk be served?' },
+        { type: 'answer', contents: '→ You will receive 10 yolks per day when you log in for the first time or when you consume or redeem yolks (check your account information).' },
+        { type: 'question', contents: '7. I can\'t use the image analysis function normally.' },
+        { type: 'answer', contents: '→ We\'re working on it, but images of items that are not game captures with low resolution (300 DPI is the recommended resolution for the engine you\'re using) are not recognized.' },
+        { type: 'question', contents: '8. Why can\'t I see item states separately?' },
+        { type: 'answer', contents: '→ You can filter using the left filter > \'Item status\' selection box.' },
+        { type: 'question', contents: '9. What happens to my existing trade items when a new season starts?' },
+        { type: 'answer', contents: '→ At the start of each new season, we will initialize all items and the data associated with them (except for affixes, restrictions, messages, etc.).' },
+        { type: 'answer', contents: '→ The original plan was to keep a backup of the existing data, but considering the performance of the database server, we decided to initialize everything, leaving only a simple transaction history (log).' }
+      ]
+    },
+    {
       id: '001',
       question: 'How do I sign up?',
       answer: [
@@ -367,20 +393,20 @@ export default {
   ],
   awards: {
     highPriced: {
-      category: 'High-priced sales over the past week',
+      category: 'Top 5 selling prices for the past week',
       desc: ''
     },
     bestManners: {
-      category: 'Best manners for the past week',
+      category: 'Top 5 manners for the past week',
       desc: ''
     },
     mostSold: {
-      category: 'Most sold in the past week',
+      category: 'Top 5 sales in the past week',
       unit: '',
       desc: ''
     },
     mostPurchased: {
-      category: 'Most purchased in the past week',
+      category: 'Top 5 most purchased in the past week',
       unit: '',
       desc: ''
     },
