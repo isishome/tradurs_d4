@@ -115,7 +115,7 @@ const mine = () => {
   if (!is.filter.mine)
     is.filter.offered = false
 
-  update()
+  updateDebounce()
 }
 
 const stored = () => {
@@ -130,7 +130,7 @@ const fixed = (val: boolean) => {
   stored()
 }
 
-const update = debounce((quality?: Array<string>) => {
+const update = (quality?: Array<string>) => {
   if (quality) {
     Object.keys(is.filter.itemTypeValues1).forEach((q: string) => {
       if (!quality.includes(q))
@@ -141,7 +141,11 @@ const update = debounce((quality?: Array<string>) => {
   stored()
 
   is.filter.request++
-}, 1000)
+}
+
+const updateDebounce = debounce((quality?: Array<string>) => {
+  update(quality)
+}, 800)
 </script>
 
 <template>
@@ -151,7 +155,7 @@ const update = debounce((quality?: Array<string>) => {
         <div class="row items-center q-gutter-sm">
           <q-checkbox size="xs" v-model="is.filter.hardcore" :label="t('item.hardcore')" @update:model-value="update()" />
           <q-btn dense round flat aria-label="Tradurs Close Button" size="xs" :ripple="false" class="no-hover"
-            @click="is.filter.hardcore = null; update()">
+            @click="is.filter.hardcore = null; updateDebounce()">
             <q-icon class="icon" name="img:/images/icons/close.svg" />
           </q-btn>
         </div>
@@ -162,7 +166,7 @@ const update = debounce((quality?: Array<string>) => {
         <div class="row items-center q-gutter-sm">
           <q-checkbox size="xs" v-model="is.filter.ladder" :label="t('item.ladder')" @update:model-value="update()" />
           <q-btn dense round flat aria-label="Tradurs Close Button" size="xs" :ripple="false" class="no-hover"
-            @click="is.filter.ladder = null; update()">
+            @click="is.filter.ladder = null; updateDebounce()">
             <q-icon class="icon" name="img:/images/icons/close.svg" />
           </q-btn>
         </div>
@@ -171,7 +175,7 @@ const update = debounce((quality?: Array<string>) => {
     <q-item :inset-level=".2">
       <q-item-section>
         <q-checkbox size="xs" v-model="is.filter.onlyCurrency" :label="t('filter.onlyCurrency')"
-          @update:model-value="update()" />
+          @update:model-value="updateDebounce()" />
       </q-item-section>
     </q-item>
     <q-item :inset-level=".3">
@@ -191,13 +195,13 @@ const update = debounce((quality?: Array<string>) => {
           <div v-show="is.filter.mine" class="q-pl-lg row items-center q-gutter-xs">
             <div class="tree"></div>
             <q-checkbox size="xs" class="text-caption" v-model="is.filter.offered" :label="t('filter.offered')"
-              @update:model-value="update()" />
+              @update:model-value="updateDebounce()" />
           </div>
         </q-slide-transition>
         <q-checkbox size="xs" class="q-pl-sm" v-model="is.filter.offer" :label="t('filter.offer')"
-          @update:model-value="update()" />
+          @update:model-value="updateDebounce()" />
         <q-checkbox v-model="is.filter.favorite" class="q-pl-sm" size="xs" :label="t('item.favorites')"
-          @update:model-value="update()" />
+          @update:model-value="updateDebounce()" />
       </q-item-section>
     </q-item>
     <q-item :disable="filterLoading">
@@ -205,10 +209,10 @@ const update = debounce((quality?: Array<string>) => {
         <q-item-label header>{{ t('item.power') }}</q-item-label>
         <div class="row justify-center no-wrap q-col-gutter-sm items-center q-px-md">
           <D4Counter v-model="is.filter.power[0]" :label="t('min')" :max="9999" allow-zero no-button
-            @update:model-value="update()" max-width="100%" />
+            @update:model-value="update()" :debounce="1000" max-width="100%" />
           <div>-</div>
           <D4Counter v-model="is.filter.power[1]" :label="t('max')" :max="9999" allow-zero no-button
-            @update:model-value="update()" max-width="100%" />
+            @update:model-value="update()" :debounce="1000" max-width="100%" />
         </div>
       </q-item-section>
     </q-item>
@@ -217,10 +221,10 @@ const update = debounce((quality?: Array<string>) => {
         <q-item-label header>{{ t('item.level') }}</q-item-label>
         <div class="row justify-center no-wrap q-col-gutter-sm items-center q-px-md">
           <D4Counter v-model="is.filter.level[0]" :label="t('min')" :max="999" allow-zero no-button
-            @update:model-value="update()" max-width="100%" />
+            @update:model-value="update()" :debounce="1000" max-width="100%" />
           <div>-</div>
           <D4Counter v-model="is.filter.level[1]" :label="t('max')" :max="999" allow-zero no-button
-            @update:model-value="update()" max-width="100%" />
+            @update:model-value="update()" :debounce="1000" max-width="100%" />
         </div>
       </q-item-section>
     </q-item>
@@ -229,14 +233,14 @@ const update = debounce((quality?: Array<string>) => {
         <q-item-label header>{{ t('item.quality') }}</q-item-label>
         <q-option-group size="xs" inline class="q-pl-sm"
           :options="filterQuality().map(fq => ({ ...fq, label: fq.fullName }))" type="checkbox"
-          v-model="is.filter.quality" @update:model-value="update()" />
+          v-model="is.filter.quality" @update:model-value="updateDebounce()" />
       </q-item-section>
     </q-item>
     <q-item>
       <q-item-section>
         <q-item-label header>{{ t('item.selectType') }}</q-item-label>
         <q-option-group size="xs" inline class="q-pl-sm" :options="filterTypes()" type="checkbox"
-          v-model="is.filter.itemTypes" @update:model-value="val => update(val)" />
+          v-model="is.filter.itemTypes" @update:model-value="val => updateDebounce(val)" />
       </q-item-section>
     </q-item>
     <q-item :disable="filterLoading" :inset-level=".2"
@@ -246,7 +250,8 @@ const update = debounce((quality?: Array<string>) => {
           :options="findType(itemType)?.value === 'rune' ? filterRunes() : filterClasses(itemType)"
           :label="`${findType(itemType)?.label} ${t('filter.type')}`" outlined dense no-error-icon hide-bottom-space
           emit-value map-options multiple transition-show="none" transition-hide="none" :transition-duration="0"
-          dropdown-icon="img:/images/icons/dropdown.svg" popup-content-class="d4-scroll" @update:model-value="update()">
+          dropdown-icon="img:/images/icons/dropdown.svg" popup-content-class="d4-scroll"
+          @update:model-value="updateDebounce()">
         </q-select>
       </q-item-section>
     </q-item>

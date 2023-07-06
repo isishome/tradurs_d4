@@ -4,7 +4,7 @@ import { i18n } from "src/boot/i18n"
 import { AffixValue } from "src/types/item"
 
 export const checkName = (name: string) => {
-  return /^[0-9a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣\s,\.'"%\(\)\+\-\:]{2,}$/gi.test(name)
+  return /^[0-9a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣\s,\.'"%\(\)\+\-\:]{2,}$/gi.test(name) && name.length <= 256
 }
 
 export const checkAttribute = (attribute: string) => {

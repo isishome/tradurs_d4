@@ -12,6 +12,7 @@ interface IProps {
   allowZero?: boolean,
   allowNull?: boolean,
   noButton?: boolean,
+  debounce?: string | number,
   disable?: boolean
 }
 
@@ -22,6 +23,7 @@ const props = withDefaults(defineProps<IProps>(), {
   allowZero: false,
   allowNull: false,
   noButton: false,
+  debounce: 500,
   disable: false
 })
 
@@ -67,7 +69,7 @@ watch(() => props.modelValue, (val: number | null) => {
     </q-btn>
     <q-input v-model.number="_quantity" :label="label || t('price.quantity')" :style="`max-width:${maxWidth}`"
       input-class="text-center" :disable="disable" dense hide-bottom-space hide-hint no-error-icon outlined
-      :maxlength="max.toString().length" :mask="''.padStart(max.toString().length, '#')" debounce="500"
+      :maxlength="max.toString().length" :mask="''.padStart(max.toString().length, '#')" :debounce="debounce"
       :rules="[(val: number) => (Number.isInteger(val) && (allowZero || val !== 0)) || '']" @update:model-value="update"
       @focus="focus" />
     <q-btn v-show="!$q.screen.lt.sm && !noButton" size="sm" flat dense round aria-label="Tradurs Add Button"

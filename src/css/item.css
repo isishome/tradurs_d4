@@ -382,8 +382,8 @@
   }
 
   .item-image {
-    top: 20%;
-    right: 30%;
+    top: 0%;
+    right: 32%;
     max-width: 10vw;
   }
 }

@@ -323,7 +323,7 @@ defineExpose({ scrollEnd })
       <q-separator v-show="data.itemType !== 'rune'" />
       <q-card-section v-if="data.itemType !== 'rune'">
         <q-input v-show="data.itemType !== 'rune'" :disable="disable" dense no-error-icon hide-bottom-space autofocus
-          v-model="_name" outlined class="col-10" :label="t('item.name')" @update:model-value="update"
+          v-model="_name" outlined class="col-10" :label="t('item.name')" @update:model-value="update" maxlength="256"
           :rules="[val => checkName(val) || '']" />
       </q-card-section>
       <q-separator v-show="data.itemType === 'rune'" />

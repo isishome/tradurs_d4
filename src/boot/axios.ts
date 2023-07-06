@@ -1,6 +1,6 @@
 import { boot } from 'quasar/wrappers'
 import axios, { AxiosInstance } from 'axios'
-import { Notify, Cookies, Quasar } from 'quasar'
+import { Notify, Cookies } from 'quasar'
 import { useAccountStore } from 'stores/account-store'
 import { User } from 'src/types/user'
 import { i18n } from './i18n'
@@ -60,7 +60,7 @@ export default boot(({ app, ssrContext, store }) => {
   if (process.env.SERVER && ssrContext?.req.headers.cookie)
     api.defaults.headers.common['cookie'] = ssrContext?.req.headers.cookie
 
-  api.defaults.headers.common['Accept-Language'] = cookies.has('d4.lang') ? cookies.get('d4.lang') : Quasar.lang.getLocale() || ssrContext?.req.headers['accept-language'] || 'ko-KR'
+  api.defaults.headers.common['Accept-Language'] = cookies.has('d4.lang') ? cookies.get('d4.lang') : ssrContext?.req.headers['accept-language'] || 'ko-KR'
 
   app.provide('axios', api)
 

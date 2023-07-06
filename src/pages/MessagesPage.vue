@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useQuasar, date } from 'quasar'
-import { ref, reactive, computed, watch, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { useGlobalStore } from 'src/stores/global-store'
 import { useAccountStore } from 'src/stores/account-store'
 import { useI18n } from 'vue-i18n'
@@ -23,8 +22,6 @@ interface Message {
 }
 
 const $q = useQuasar()
-const route = useRoute()
-const router = useRouter()
 const gs = useGlobalStore()
 const as = useAccountStore()
 const { t, n } = useI18n({ useScope: 'global' })
@@ -35,7 +32,7 @@ const messages = reactive<Array<Message>>([])
 const selected = ref<boolean>(false)
 const disable = computed(() => messages.filter(m => !m.readYn).length === 0)
 const loading = ref<boolean>(true)
-const page = computed(() => route.query.page ? Number.parseInt(route.query.page.toString()) : 1)
+const page = ref<number>(1)
 const over = computed(() => as.messagePage.over)
 const more = computed(() => as.messagePage.more)
 const newMessages = computed(() => as.newMessages)
@@ -80,25 +77,23 @@ const reads = () => {
 }
 
 const refresh = () => {
-  if (page.value !== 1)
-    router.push({ name: 'messages' })
-  else
-    getList()
+  page.value = 1
+  getList()
 }
 
 const prev = () => {
-  gs.refresh++
-  router.push({ name: 'messages', query: page.value > 2 ? { page: page.value - 1 } : {} })
+  if (page.value > 1) {
+    gs.refresh++
+    page.value--
+    getList()
+  }
 }
 
 const next = () => {
   gs.refresh++
-  router.push({ name: 'messages', query: { page: page.value + 1 } })
-}
-
-watch(page, () => {
+  page.value++
   getList()
-})
+}
 
 onMounted(() => {
   getList()

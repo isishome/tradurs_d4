@@ -34,7 +34,7 @@ const complete = computed(() => is.socket.complete)
 const filter = computed(() => is.filter.request)
 const itemsRef = ref<typeof D4Items | null>(null)
 const items = ref<Array<Item>>([])
-const page = computed(() => route.query.page ? Number.parseInt(route.query.page.toString()) : 1)
+const page = ref<number>(1)
 const over = computed(() => is.itemPage.over)
 const more = computed(() => is.itemPage.more)
 
@@ -50,10 +50,8 @@ const upsertItem = (item: Item, done: Function) => {
       else {
         as.checkSign(true)
         is.clearFilter()
-        if (page.value !== 1)
-          router.push({ name: 'tradeList' })
-        else
-          getList(is.filter)
+        page.value = 1
+        getList(is.filter)
       }
 
       itemsRef.value?.hideEditable()
@@ -99,10 +97,8 @@ const relistItem = (item: Item, done: Function) => {
         scrollPos()
         disable.value = false
 
-        if (page.value !== 1)
-          router.push({ name: 'tradeList' })
-        else
-          getList(is.filter)
+        page.value = 1
+        getList(is.filter)
       })
       .catch(() => {
         done()
@@ -169,13 +165,17 @@ const favorite = (itemId: string, favorite: boolean) => {
 }
 
 const prev = () => {
-  gs.refresh++
-  router.push({ name: 'tradeList', query: page.value > 2 ? { page: page.value - 1 } : {} })
+  if (page.value > 1) {
+    gs.refresh++
+    page.value--
+    getList(is.filter)
+  }
 }
 
 const next = () => {
   gs.refresh++
-  router.push({ name: 'tradeList', query: { page: page.value + 1 } })
+  page.value++
+  getList(is.filter)
 }
 
 const create = (item?: Item) => {
@@ -235,11 +235,6 @@ const notify = (group: string, message: string, caption: string, actionLabel: st
     ]
   })
 }
-
-watch(page, () => {
-  scrollPos()
-  getList(is.filter)
-})
 
 watch(newItems, (val: number) => {
   if (val > 0)

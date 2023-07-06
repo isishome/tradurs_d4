@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { useQuasar } from 'quasar'
+import { ref } from 'vue'
+import { QPopupProxy, useQuasar } from 'quasar'
+import { scrollPos } from 'src/common'
 
 interface IProps {
   anchor?: 'top left'
