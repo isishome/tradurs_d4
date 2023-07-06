@@ -242,10 +242,8 @@ watch(newItems, (val: number) => {
       itemsRef.value?.hideEditable()
       itemsRef.value?.hideOffers()
       is.clearFilter()
-      if (route.name !== 'tradeList' || page.value !== 1)
-        router.push({ name: 'tradeList' })
-      else
-        getList(is.filter)
+      page.value = 1
+      getList(is.filter)
     })
 })
 
@@ -292,7 +290,7 @@ watch(complete, (val: OfferInfo | null) => {
 
 watch(filter, (val, old) => {
   if (Number.isInteger(val) && val !== old) {
-    router.push({ name: 'tradeList' })
+    page.value = 1
     getList(is.filter)
   }
 })
