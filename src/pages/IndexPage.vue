@@ -32,6 +32,7 @@ const retractedOffer = computed(() => is.socket.retractedOffer)
 const turnedDownOffer = computed(() => is.socket.turnedDownOffer)
 const complete = computed(() => is.socket.complete)
 const filter = computed(() => is.filter.request)
+const expanded = computed(() => is.equalDefaultFilter)
 const itemsRef = ref<typeof D4Items | null>(null)
 const items = ref<Array<Item>>([])
 const page = ref<number>(1)
@@ -198,6 +199,12 @@ const getList = (filter?: any) => {
 
   is.getItems(page.value, undefined, filter)
     .then((result: Array<Item>) => {
+
+      // auto expanded
+      result.forEach((i: Item) => {
+        i.expanded = expanded.value
+      })
+
       let i = 0
       while (i < items.value.length) {
         const item = result.shift()

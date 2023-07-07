@@ -236,6 +236,28 @@ export const useItemStore = defineStore('item', {
     },
     matchRestrictions: (state) => {
       return (type: string, attribute: string): boolean => type && attribute ? state.restrictions.data.filter(r => r.type === type && r.label.trim() === attribute).length > 0 : false
+    },
+    equalDefaultFilter: (state) => {
+      return !(state.filter.favorite === false &&
+        state.filter.quality.length === 0 &&
+        state.filter.hardcore === null &&
+        state.filter.ladder === null &&
+        state.filter.onlyCurrency === false &&
+        state.filter.status === null &&
+        state.filter.mine === false &&
+        state.filter.offered === false &&
+        state.filter.offer === false &&
+        state.filter.power[0] === 0 &&
+        state.filter.power[1] === 9999 &&
+        state.filter.level[0] === 0 &&
+        state.filter.level[1] === 999 &&
+        state.filter.itemTypes.length === 0 &&
+        Object.keys(state.filter.itemTypeValues1).length === 0 &&
+        Object.keys(state.filter.itemTypeValues2).length === 0 &&
+        state.filter.properties.length === 0 &&
+        state.filter.affixes.length === 0 &&
+        state.filter.restrictions.length === 0 &&
+        state.filter.name === '')
     }
   },
   actions: {

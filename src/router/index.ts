@@ -33,37 +33,43 @@ const initSocket = (as: any, is: any) => {
     })
   })
 
+  const notify = () => {
+    as.newMessages = true
+    const sound = new Audio('/sounds/notify.wav')
+    sound.play()
+  }
+
   as.socket.on('newItems', () => {
     if (as.info.notifyNew)
       is.socket.newItems++
   })
 
   as.socket.on('newOffer', (offerInfo: OfferInfo) => {
-    as.newMessages = true
+    notify()
     if (as.info.notifyPrivate)
       is.socket.newOffer = offerInfo
   })
 
   as.socket.on('acceptedOffer', (offerInfo: OfferInfo) => {
-    as.newMessages = true
+    notify()
     if (as.info.notifyPrivate)
       is.socket.acceptedOffer = offerInfo
   })
 
   as.socket.on('retractedOffer', (offerInfo: OfferInfo) => {
-    as.newMessages = true
+    notify()
     if (as.info.notifyPrivate)
       is.socket.retractedOffer = offerInfo
   })
 
   as.socket.on('turnedDownOffer', (offerInfo: OfferInfo) => {
-    as.newMessages = true
+    notify()
     if (as.info.notifyPrivate)
       is.socket.turnedDownOffer = offerInfo
   })
 
   as.socket.on('complete', (offerInfo: OfferInfo) => {
-    as.newMessages = true
+    notify()
     if (as.info.notifyPrivate)
       is.socket.complete = offerInfo
   })
