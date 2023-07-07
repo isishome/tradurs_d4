@@ -19,14 +19,12 @@ import D4Dialog from 'components/D4Dialog.vue'
 interface IProps {
   items: Array<Item>,
   width?: string | number,
-  height?: string | number,
-  loading?: boolean
+  height?: string | number
 }
 
 const props = withDefaults(defineProps<IProps>(), {
   width: '728',
-  height: '200',
-  loading: false
+  height: '200'
 })
 
 const emit = defineEmits(['upsert-item', 'delete-item', 'relist-item', 'status-item', 'update-only', 'copy', 'favorite'])
@@ -661,7 +659,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
         :style="`min-height:${height as number - ($q.screen.lt.sm ? 50 : 0)}px;height:${item.expanded ? '100%' : `${height as number - ($q.screen.lt.sm ? 50 : 0)}px`}`"
         transition="fade" @visibility="isVisible => visible(isVisible, item)" ssr-prerender once>
         <div v-if="(item instanceof Advertise)" class="bg-grey" style="width:100%;height:500px"></div>
-        <D4Item v-else :data="item" :loading="loading || item.loading" @favorite="favorite" @copy="copy">
+        <D4Item v-else :data="item" :loading="item.loading" @favorite="favorite" @copy="copy">
           <template #top-right>
           </template>
           <template v-if="requestProperties > 0" #properties>
@@ -677,12 +675,12 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
             <div v-show="item.expanded" class="row justify-between items-center q-pt-lg">
               <div>
                 <D4Btn v-if="item.authorized && item.statusCode !== '001'" :label="t('btn.edit')"
-                  color="var(--q-secondary)" :loading="loading || item.loading" @click="editItem(item)" />
+                  color="var(--q-secondary)" :loading="item.loading" @click="editItem(item)" />
               </div>
               <div>
                 <D4Btn
                   :label="item.authorized || !as.signed || item.statusCode !== '000' ? t('offer.list') : t('btn.makeOffer')"
-                  :loading="loading || item.loading" @click="openMakingOffer(item)" />
+                  :loading="item.loading" @click="openMakingOffer(item)" />
               </div>
             </div>
           </template>
@@ -859,8 +857,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
               <q-option-group v-model="add.type" :options="filterAttributeTypes" :disable="disable" color="primary"
                 size="xs" inline />
               <div v-show="$q.screen.lt.sm" class="text-right">
-                <D4Btn label="{ x }" :loading="loading" round :disable="disable" color="var(--q-light-normal)"
-                  @click="addAttrNum" />
+                <D4Btn label="{ x }" round :disable="disable" color="var(--q-light-normal)" @click="addAttrNum" />
               </div>
             </div>
             <q-input autofocus ref="refAttribute" v-model="add.attribute" type="textarea"
@@ -875,9 +872,8 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
           <div class="row justify-between items-center q-py-xs">
             <q-checkbox size="xs" :disable="disable" v-model="add.continuously" :label="t('attribute.continuously')" />
             <div class="row items-center q-gutter-sm">
-              <D4Btn :label="t('btn.cancel')" :loading="loading" :disable="disable" color="rgb(150,150,150)"
-                @click="add.show = false" />
-              <D4Btn :label="t('btn.register')" :loading="loading" :progress="disable" type="submit" />
+              <D4Btn :label="t('btn.cancel')" :disable="disable" color="rgb(150,150,150)" @click="add.show = false" />
+              <D4Btn :label="t('btn.register')" :progress="disable" type="submit" />
             </div>
           </div>
         </q-card-section>

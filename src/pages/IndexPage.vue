@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { useGlobalStore } from 'src/stores/global-store'
 import { useItemStore, type OfferInfo } from 'stores/item-store'
 import { useAccountStore } from 'stores/account-store'
@@ -12,7 +12,6 @@ import { Item, IPrice } from 'src/types/item'
 import D4Items from 'components/D4Items.vue'
 
 // init module
-const route = useRoute()
 const router = useRouter()
 const gs = useGlobalStore()
 const is = useItemStore()
@@ -317,8 +316,8 @@ defineExpose({ getList })
   <div></div>
   <div>
     <div class="row justify-center items-center">
-      <D4Items ref="itemsRef" :items="items" :loading="disable" @upsert-item="upsertItem" @delete-item="deleteItem"
-        @relist-item="relistItem" @status-item="statusItem" @update-only="updateOnly" @copy="copy" @favorite="favorite" />
+      <D4Items ref="itemsRef" :items="items" @upsert-item="upsertItem" @delete-item="deleteItem" @relist-item="relistItem"
+        @status-item="statusItem" @update-only="updateOnly" @copy="copy" @favorite="favorite" />
     </div>
   </div>
   <div class="q-pt-xl"></div>

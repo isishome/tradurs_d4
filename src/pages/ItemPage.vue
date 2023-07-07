@@ -291,9 +291,8 @@ onUnmounted(() => {
 <template>
   <div>
     <div class="row justify-center items-center">
-      <D4Items ref="itemsRef" :items="is.detailItem" :loading="disable" @upsert-item="upsertItem"
-        @delete-item="deleteItem" @relist-item="relistItem" @status-item="statusItem" @update-only="updateOnly"
-        @copy="copy" @favorite="favorite" />
+      <D4Items ref="itemsRef" :items="is.detailItem" @upsert-item="upsertItem" @delete-item="deleteItem"
+        @relist-item="relistItem" @status-item="statusItem" @update-only="updateOnly" @copy="copy" @favorite="favorite" />
     </div>
   </div>
   <div class="q-py-lg"></div>
