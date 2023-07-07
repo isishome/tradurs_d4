@@ -218,8 +218,11 @@ watch(newOffer, (val: OfferInfo | null) => {
   if (val) {
     const offerPrice: IPrice = JSON.parse(val.price || '{}')
     notify('', t('messages.newOffer'), `[${val.itemName}] ${offerPrice.currency === 'gold' ? t('item.gold') : ''} : ${n(Number.parseFloat(offerPrice.currencyValue as string), 'decimal')}`, t('btn.move'), () => {
-      if (props.itemid === val.itemId)
-        itemsRef.value?.openOffers(props.itemid)
+      if (props.itemid === val.itemId) {
+        updateOnly(val.itemId, () => {
+          itemsRef.value?.openOffers(props.itemid)
+        })
+      }
       else
         router.push({ name: 'itemInfo', params: { itemid: val.itemId }, state: { offers: true } })
     })
@@ -230,8 +233,11 @@ watch(acceptedOffer, (val: OfferInfo | null) => {
   if (val) {
     const offerPrice: IPrice = JSON.parse(val.price || '{}')
     notify('', t('messages.acceptedOffer'), `[${val.itemName}] ${offerPrice.currency === 'gold' ? t('item.gold') : ''} : ${n(Number.parseFloat(offerPrice.currencyValue as string), 'decimal')}`, t('btn.move'), () => {
-      if (props.itemid === val.itemId)
-        itemsRef.value?.openOffers(props.itemid)
+      if (props.itemid === val.itemId) {
+        updateOnly(val.itemId, () => {
+          itemsRef.value?.openOffers(props.itemid)
+        })
+      }
       else
         router.push({ name: 'itemInfo', params: { itemid: val.itemId }, state: { offers: true } })
     })
@@ -242,8 +248,11 @@ watch(retractedOffer, (val: OfferInfo | null) => {
   if (val) {
     const offerPrice: IPrice = JSON.parse(val.price || '{}')
     notify('', t('messages.retractedOffer'), `[${val.itemName}] ${offerPrice.currency === 'gold' ? t('item.gold') : ''} : ${n(Number.parseFloat(offerPrice.currencyValue as string), 'decimal')}`, t('btn.move'), () => {
-      if (props.itemid === val.itemId)
-        itemsRef.value?.openOffers(props.itemid)
+      if (props.itemid === val.itemId) {
+        updateOnly(val.itemId, () => {
+          itemsRef.value?.openOffers(props.itemid)
+        })
+      }
       else
         router.push({ name: 'itemInfo', params: { itemid: val.itemId }, state: { offers: true } })
     })
@@ -254,8 +263,11 @@ watch(turnedDownOffer, (val: OfferInfo | null) => {
   if (val) {
     const offerPrice: IPrice = JSON.parse(val.price || '{}')
     notify('', t('messages.turnedDownOffer'), `[${val.itemName}] ${offerPrice.currency === 'gold' ? t('item.gold') : ''} : ${n(Number.parseFloat(offerPrice.currencyValue as string), 'decimal')}`, t('btn.move'), () => {
-      if (props.itemid === val.itemId)
-        itemsRef.value?.openOffers(props.itemid)
+      if (props.itemid === val.itemId) {
+        updateOnly(val.itemId, () => {
+          itemsRef.value?.openOffers(props.itemid)
+        })
+      }
       else
         router.push({ name: 'itemInfo', params: { itemid: val.itemId }, state: { offers: true } })
     })

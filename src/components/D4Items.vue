@@ -644,8 +644,10 @@ const create = () => {
 const openOffers = (itemId: string) => {
   const findItem = props.items.find(i => i.itemId === itemId)
 
-  if (findItem)
+  if (findItem) {
+    activateShow.value = false
     openMakingOffer(findItem)
+  }
 }
 
 defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })

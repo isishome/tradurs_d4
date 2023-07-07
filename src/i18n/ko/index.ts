@@ -165,11 +165,13 @@ export default {
   },
   retract: {
     title: '제안 철회',
-    msg: '제안을 철회 하시겠습니까?'
+    msg: '제안을 철회 하시겠습니까?',
+    desc: '제안 철회는 아이템 당 1회만 가능합니다'
   },
   turnDown: {
     title: '제안 거절',
-    msg: '제안을 거절 하시겠습니까?'
+    msg: '제안을 거절 하시겠습니까?',
+    desc: '제안을 거절하면 해당 요청자는 더 이상 제안을 할 수 없습니다'
   },
   complete: {
     title: '매너 평가',
@@ -241,6 +243,7 @@ export default {
       answer: [
         { type: 'question', contents: '1. 아이템 수정 및 삭제, 이미지 분석이 비 활성화입니다.' },
         { type: 'answer', contents: '→ 아이템에 제안 요청이 있는 경우입니다. 반드시 등록하실 때 항목을 꼼꼼히 확인하고 등록해 주세요.' },
+        { type: 'answer', contents: '→ 철회되거나 거절된 제안만 남은 경우 아이템 수정 및 삭제, 이미지 분석이 다시 활성화됩니다.' },
         { type: 'question', contents: '2. 내가 등록한 아이템이나 제안 요청 한 아이템을 볼 수 없나요?' },
         { type: 'answer', contents: '→ 로그인한 상태에서 좌측 필터 > 나만의 검색 항목 > \'내 아이템\', \'제안 요청 아이템\' 중 원하는 필터값을 체크해서 사용하시면 됩니다.' },
         { type: 'answer', contents: '→ 내 아이템\'을 체크하면 서브 체크 항목인 \'제안받은 아이템\' 필터가 활성화되며, 내 아이템 중 제안 요청이 있는 아이템만 필터가 가능합니다.' },
@@ -250,7 +253,7 @@ export default {
         { type: 'answer', contents: '→ 비 매너 평가 점수가 일정 기간 동안 기준을 초과한 경우 페널티를 줄 예정입니다.' },
         { type: 'question', contents: '5. 아이템 가격 제안을 없앨 수 없나요?' },
         { type: 'answer', contents: '→ 좌측 필터 > \'가격 명시만 보기\'를 체크하셔서 가격이 명시된 아이템만 보기가 가능합니다.' },
-        { type: 'answer', contents: '→ 2023년 7월 7일부터 \'가격 제안\'은 매너 온도 5℃ 이상만 사용할 수 있습니다.' },
+        { type: 'answer', contents: '→ \'가격 제안\'은 매너 온도 1℃ 이상만 사용할 수 있습니다.' },
         { type: 'question', contents: '6. 노른자는 언제 제공되나요?' },
         { type: 'answer', contents: '→ 새로 로그인하거나 노른자를 소모 또는 회수하는 경우(계정 정보를 체크할 시) 일일 10개의 노른자가 제공됩니다. (가입 당일 x)' },
         { type: 'question', contents: '7. 이미지 분석 기능을 정상적으로 사용할 수 없어요.' },
@@ -321,7 +324,7 @@ export default {
         { type: 'image', contents: '13_attribute' },
         { type: 'text', contents: '13. 추가된 속성에 {x}라고 기입한 부분은 입력 필드가 됩니다.\n입력 필드 우측에 해당 수치의 최소, 최댓값을 입력하는 필드도 자동으로 표시됩니다.' },
         { type: 'image', contents: '14_price' },
-        { type: 'text', contents: '14. 이제 판매할 아이템의 가격을 책정합니다.\n화폐 항목은 현재 제안받기 / 금화만이 가능합니다. 구매자가 금액을 제안하기를 원하는 경우 \'제안받기\'를 선택하시면 됩니다.\n\n\'제안받기\'는 매너 온도 5℃ 이상만 사용할 수 있습니다.' },
+        { type: 'text', contents: '14. 이제 판매할 아이템의 가격을 책정합니다.\n화폐 항목은 현재 제안받기 / 금화만이 가능합니다. 구매자가 금액을 제안하기를 원하는 경우 \'제안받기\'를 선택하시면 됩니다.\n\n\'제안받기\'는 매너 온도 1℃ 이상만 사용할 수 있습니다.' },
         { type: 'image', contents: '15_item' },
         { type: 'text', contents: '15. 적용을 눌러 아이템 등록을 완료합니다. 방금 등록한 아이템이 카드 형태로 표시됩니다.' },
         { type: 'image', contents: '16_finish' },
@@ -352,11 +355,11 @@ export default {
         { type: 'image', contents: '06_turndown_offer' },
         { type: 'text', contents: '6. 제안을 요청한 구매자에게 제안이 거절되었다는 알림이 표시됩니다.' },
         { type: 'image', contents: '07_turndown_offer' },
-        { type: 'text', contents: '7. 이동 링크를 클릭하면 제안 카드의 상태가 \'제안 거절\'로 업데이트 됩니다.\n그래도 구매를 희망하는 경우 새로운 가격으로 *다시 제안* 할 수 있습니다.' },
+        { type: 'text', contents: '7. 이동 링크를 클릭하면 제안 카드의 상태가 \'제안 거절\'로 업데이트 됩니다.\n제안이 거절되면 해당 아이템에 *다시 제안 요청을 할 수 없습니다.' },
         { type: 'image', contents: '08_remake_offer' },
         { type: 'text', contents: '8. 새로운 가격으로 다시 제안이 요청됩니다.\n구매자 역시 *거래가 진행 중이지 않은 경우* 제안을 철회 할 수 있습니다.' },
         { type: 'image', contents: '09_retract_offer' },
-        { type: 'text', contents: '9. 제안 철회 여부를 묻는 확인 창이 표시됩니다.\n제안을 철회하면, 판매자에게 제안이 철회되었다는 알림이 표시됩니다.' },
+        { type: 'text', contents: '9. 제안 철회 여부를 묻는 확인 창이 표시됩니다.\n제안을 철회하면, 판매자에게 제안이 철회되었다는 알림이 표시됩니다.\n\n제안 철회는 *아이템 당 1회만 가능합니다.' },
         { type: 'image', contents: '04_accept_offer' },
         { type: 'text', contents: '10.1. 다시 4번으로 돌아가 제안을 수락해보겠습니다.\n \'수락\' 버튼을 클릭합니다.' },
         { type: 'image', contents: '10_accept_offer' },

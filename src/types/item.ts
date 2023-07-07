@@ -137,6 +137,8 @@ export class Offer {
   public evaluations = []
   public user: User
   public price: Price
+  public rejectable = true
+  public retractable = true
   public authorized = false
   public loading = false
 

@@ -66,7 +66,7 @@ const acceptOffer = () => {
 const retractOffer = () => {
   $q.dialog({
     title: t('retract.title'),
-    message: t('retract.msg'),
+    message: `<div class="text-subtitle1">${t('retract.msg')}</div><div class="q-mt-md text-caption text-negative text-right">${t('retract.desc')}</div>`,
     html: true,
     persistent: true,
     cancel: { label: t('btn.cancel'), noCaps: true, color: 'grey', outline: true },
@@ -83,7 +83,7 @@ const retractOffer = () => {
 const turnDownOffer = () => {
   $q.dialog({
     title: t('turnDown.title'),
-    message: t('turnDown.msg'),
+    message: `<div class="text-subtitle1">${t('turnDown.msg')}</div><div class="q-mt-md text-caption text-negative text-right">${t('turnDown.desc')}</div>`,
     html: true,
     persistent: true,
     cancel: { label: t('btn.cancel'), noCaps: true, color: 'grey', outline: true },
@@ -120,7 +120,7 @@ const complete = () => {
 }
 
 const isAcceptable = computed(() => props.data.itemStatusCode === '000' && props.data.statusCode === '000' && props.owner)
-const isRetractable = computed(() => props.data.itemStatusCode === '000' && props.data.statusCode === '000' && props.data.authorized)
+const isRetractable = computed(() => props.data.itemStatusCode === '000' && props.data.statusCode === '000' && props.data.authorized && props.data.retractable)
 const isTradeable = computed(() => props.data.statusCode === '003' && ((props.data.itemStatusCode === '003' && props.owner && props.evaluations.length === 0) || (props.data.authorized && props.data.evaluations.length === 0)))
 const existsEvaluation = computed(() => (props.evaluations.length > 0 || props.data.evaluations.length > 0) && props.data.statusCode === '001')
 const status = computed(() => is.findOfferStatus(props.data.statusCode)?.label)

@@ -166,11 +166,13 @@ export default {
   },
   retract: {
     title: 'Retract Offer',
-    msg: 'Would you like to retract the offer?'
+    msg: 'Would you like to retract an offer?',
+    desc: 'You can only retract an offer once per item'
   },
   turnDown: {
     title: 'Turn Down Offer',
-    msg: 'Would you like to turn down the offer?'
+    msg: 'Would you like to turn down the offer?',
+    desc: 'If you turn down an offer, the requester can\'t make any more offers.'
   },
   complete: {
     title: 'Manner Evaluation',
@@ -242,6 +244,7 @@ export default {
       answer: [
         { type: 'question', contents: '1. Item editing and deletion, image analysis is disabled.' },
         { type: 'answer', contents: '→ The item has a suggestion request. Please be sure to check the item carefully when registering.' },
+        { type: 'answer', contents: '→ If only retracted or turned down offers remain, editing and deleting items and analyzing images will be enabled again.' },
         { type: 'question', contents: '2. I can\'t see the items I\'ve registered or the items with suggestion requests?' },
         { type: 'answer', contents: '→ While logged in, please check the filter on the left side > Only For Me > \'My items\', \'Have made an offer\', and use the desired filter value.' },
         { type: 'answer', contents: '→ If you check \'My items\', the sub-checked \'Have been offered\' filter will be activated, and you can filter only the items with suggestion requests among your items.' },
@@ -251,7 +254,7 @@ export default {
         { type: 'answer', contents: '→ We plan to penalize non-mannered reviewers if their score exceeds the threshold for a period of time.' },
         { type: 'question', contents: '5. Can\'t I remove \'Get An Offer\'?' },
         { type: 'answer', contents: '→ Left filter > \'Show only priced\' to see only items with stated prices.' },
-        { type: 'answer', contents: '→ Starting July 7, 2023, \'Get An Offer\' will only be available with a manner temperature of 5 degrees or higher' },
+        { type: 'answer', contents: '→ \'Get An Offer\' will only be available with a manner temperature of 1 degrees or higher' },
         { type: 'question', contents: '6. When will the yolk be served?' },
         { type: 'answer', contents: '→ You will receive 10 yolks per day when you log in for the first time or when you consume or redeem yolks (check your account information).' },
         { type: 'question', contents: '7. I can\'t use the image analysis function normally.' },
@@ -353,11 +356,11 @@ export default {
         { type: 'image', contents: '06_turndown_offer' },
         { type: 'text', contents: '6. The buyer who requested the offer will be notified that the offer has been turned down.' },
         { type: 'image', contents: '07_turndown_offer' },
-        { type: 'text', contents: '7. Click the Go link and the status of the offer card will be updated to \'Offer turned down\' - you can *re-offer* at the new price if they still want to buy.' },
+        { type: 'text', contents: '7. Click the Go link and the status of the offer card will be updated to \'Offer turned down\' - If an offer is turned down, you can\'t *request* an offer on that item.' },
         { type: 'image', contents: '08_remake_offer' },
         { type: 'text', contents: '8. The offer is requested again with a new price.\nThe buyer can also retract the offer *if no deal is in progress*.' },
         { type: 'image', contents: '09_retract_offer' },
-        { type: 'text', contents: '9. You will see a confirmation window asking if you want to retract the offer.\nIf you do, the seller will be notified that the offer has been retracted.' },
+        { type: 'text', contents: '9. You will see a confirmation window asking if you want to retract the offer.\nIf you do, the seller will be notified that the offer has been retracted.\n\nYou can only retract an offer once per *item.' },
         { type: 'image', contents: '04_accept_offer' },
         { type: 'text', contents: '10.1. Let\'s go back to number 4 and accept the offer.\n Click the \'Accept\' button.' },
         { type: 'image', contents: '10_accept_offer' },
