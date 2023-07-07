@@ -251,6 +251,7 @@ export default {
         { type: 'answer', contents: '→ We plan to penalize non-mannered reviewers if their score exceeds the threshold for a period of time.' },
         { type: 'question', contents: '5. Can\'t I remove \'Get An Offer\'?' },
         { type: 'answer', contents: '→ Left filter > \'Show only priced\' to see only items with stated prices.' },
+        { type: 'answer', contents: '→ Starting July 7, 2023, \'Get An Offer\' will only be available with a manner temperature of 5 degrees or higher' },
         { type: 'question', contents: '6. When will the yolk be served?' },
         { type: 'answer', contents: '→ You will receive 10 yolks per day when you log in for the first time or when you consume or redeem yolks (check your account information).' },
         { type: 'question', contents: '7. I can\'t use the image analysis function normally.' },

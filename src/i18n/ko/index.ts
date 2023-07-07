@@ -140,7 +140,7 @@ export default {
   price: {
     currency: '화폐 유형',
     quantity: '수량',
-    getOffer: '제안 받기'
+    getOffer: '제안받기'
   },
   offer: {
     title: '가격 제안',
@@ -250,8 +250,9 @@ export default {
         { type: 'answer', contents: '→ 비 매너 평가 점수가 일정 기간 동안 기준을 초과한 경우 페널티를 줄 예정입니다.' },
         { type: 'question', contents: '5. 아이템 가격 제안을 없앨 수 없나요?' },
         { type: 'answer', contents: '→ 좌측 필터 > \'가격 명시만 보기\'를 체크하셔서 가격이 명시된 아이템만 보기가 가능합니다.' },
+        { type: 'answer', contents: '→ 2023년 7월 7일부터 \'가격 제안\'은 매너 온도 5℃ 이상만 사용할 수 있습니다.' },
         { type: 'question', contents: '6. 노른자는 언제 제공되나요?' },
-        { type: 'answer', contents: '→ 새로 로그인하거나 노른자를 소모 또는 회수하는 경우(계정 정보를 체크할 시) 일일 10개의 노른자가 제공됩니다.' },
+        { type: 'answer', contents: '→ 새로 로그인하거나 노른자를 소모 또는 회수하는 경우(계정 정보를 체크할 시) 일일 10개의 노른자가 제공됩니다. (가입 당일 x)' },
         { type: 'question', contents: '7. 이미지 분석 기능을 정상적으로 사용할 수 없어요.' },
         { type: 'answer', contents: '→ 계속 개선 중이긴 하나 해상도가 낮거나(사용 중인 엔진의 추천 해상도 300 DPI) 인 게임 캡처가 아닌 아이템 이미지는 인식률이 떨어집니다.' },
         { type: 'question', contents: '8. 아이템 상태를 구분해서 볼 수 없나요?' },
@@ -320,7 +321,7 @@ export default {
         { type: 'image', contents: '13_attribute' },
         { type: 'text', contents: '13. 추가된 속성에 {x}라고 기입한 부분은 입력 필드가 됩니다.\n입력 필드 우측에 해당 수치의 최소, 최댓값을 입력하는 필드도 자동으로 표시됩니다.' },
         { type: 'image', contents: '14_price' },
-        { type: 'text', contents: '14. 이제 판매할 아이템의 가격을 책정합니다.\n화폐 항목은 현재 제안받기 / 금화만이 가능합니다. 구매자가 금액을 제안하기를 원하는 경우 \'제안받기\'를 선택하시면 됩니다.' },
+        { type: 'text', contents: '14. 이제 판매할 아이템의 가격을 책정합니다.\n화폐 항목은 현재 제안받기 / 금화만이 가능합니다. 구매자가 금액을 제안하기를 원하는 경우 \'제안받기\'를 선택하시면 됩니다.\n\n\'제안받기\'는 매너 온도 5℃ 이상만 사용할 수 있습니다.' },
         { type: 'image', contents: '15_item' },
         { type: 'text', contents: '15. 적용을 눌러 아이템 등록을 완료합니다. 방금 등록한 아이템이 카드 형태로 표시됩니다.' },
         { type: 'image', contents: '16_finish' },
