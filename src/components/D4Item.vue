@@ -461,18 +461,14 @@ defineExpose({ scrollEnd })
         <div class="column justify-center items-end user-area" :class="{ 'q-gutter-xs': !$q.screen.lt.sm || loading }">
           <q-skeleton v-show="loading" width="50px" :height="$q.screen.lt.sm ? '16px' : '18px'" />
           <div v-show="!loading" class="row items-center q-gutter-x-sm">
-            <div v-if="['000', '002'].includes(data.statusCode)" class="remain" :class="remainColor">{{
-              remainHours }}:{{
-    remainMinutes
-  }}:{{
-  remainSeconds }}</div>
-            <div>{{
-              findStatus(data.statusCode)?.label }}</div>
+            <div v-if="['000', '002'].includes(data.statusCode)" class="remain" :class="remainColor">
+              {{ remainHours }}:{{ remainMinutes }}:{{ remainSeconds }}</div>
+            <div>
+              {{ findStatus(data.statusCode)?.label }}</div>
           </div>
           <div v-if="slots['top-right']">
             <slot name="top-right"></slot>
           </div>
-
           <D4Price :data="data.price" :progress="loading" />
           <D4User :data="data.user" :label="t('seller')" :disable="disable" :progress="loading"
             :authorized="data.authorized" />
