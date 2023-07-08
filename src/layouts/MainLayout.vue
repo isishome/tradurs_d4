@@ -8,7 +8,7 @@ import { useI18n } from 'vue-i18n'
 import { useGlobalStore } from 'src/stores/global-store'
 import { useAccountStore } from 'stores/account-store'
 import { useItemStore } from 'stores/item-store'
-import { checkName } from 'src/common'
+import { checkName, scrollPosDirect } from 'src/common'
 
 import D4Filter from 'components/D4Filter.vue'
 import D4User from 'components/D4User.vue'
@@ -103,6 +103,11 @@ const main = () => {
     router.push({ name: 'tradeList' })
 }
 
+const beforeShow = () => {
+  if ($q.platform.is.mobile)
+    scrollPosDirect()
+}
+
 watch(() => route.name, (val, old) => {
   if (val && val !== old)
     reload()
@@ -147,16 +152,17 @@ onUnmounted(() => {
 </script>
 <template>
   <q-layout view="hHh lpR lFf">
-    <q-drawer show-if-above bordered v-model="leftDrawerOpen" side="left" :behavior="screen.lt.md ? 'mobile' : 'desktop'"
-      class="row justify-end no-scroll" :width="300">
-      <q-list class="column full-height" style="width:300px">
+    <q-drawer show-if-above no-swipe-open no-swipe-close no-swipe-backdrop bordered v-model="leftDrawerOpen" side="left"
+      :behavior="screen.lt.md ? 'mobile' : 'desktop'" class="row justify-end no-scroll" :width="300"
+      @before-show="beforeShow">
+      <q-list ref="leftDrawerList" class="column full-height" style="width:300px">
         <q-scroll-area class="col">
           <D4Filter :disable="$route.name !== 'tradeList'" class="q-px-md q-pt-lg" />
         </q-scroll-area>
       </q-list>
     </q-drawer>
-    <q-drawer show-if-above bordered v-model="rightDrawerOpen" side="right" behavior="mobile"
-      class="row justify-start scroll" :width="300">
+    <q-drawer show-if-above no-swipe-open no-swipe-close no-swipe-backdrop bordered v-model="rightDrawerOpen" side="right"
+      behavior="mobile" class="row justify-start scroll" :width="300">
       <q-list class="column full-height" style="width:300px">
         <q-item class="row justify-between q-gutter-xs q-py-lg">
           <q-select v-model="locale" :options="localeOptions" :label="t('language', 0, { locale: brLoc })" dense outlined

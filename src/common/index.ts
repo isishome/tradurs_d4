@@ -81,6 +81,10 @@ export const scrollPos = (top?: number, behavior?: ScrollBehavior) => {
   })
 }
 
+export const scrollPosDirect = (top?: number, behavior?: ScrollBehavior) => {
+  window.scrollTo({ top: top || 0, behavior: (behavior || 'auto') })
+}
+
 export const clipboard = (text: string, msg: string) => {
   if (!text || text.trim() === '')
     return

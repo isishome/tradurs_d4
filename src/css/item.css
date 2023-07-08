@@ -375,16 +375,14 @@
   z-index: 2;
 }
 
-@media (max-width:600px) {
+@media (max-width:724px) {
   .user-area {
     top: 9px;
     right: 10px;
   }
 
   .item-image {
-    top: 0%;
-    right: 32%;
-    max-width: 10vw;
+    display: none;
   }
 }
 

@@ -216,7 +216,20 @@ const getList = (filter?: any) => {
         }
       }
       items.value.push(...result)
-      scrollPos(position.value.top)
+
+      if (is.awardsPick) {
+        is.getItems(1, is.awardsPick.toString())
+          .then((pick: Array<Item>) => {
+            pick = pick.map((p: Item) => ({ ...p, reward: true }))
+            items.value.unshift(...pick)
+          })
+          .catch(() => { })
+          .then(() => {
+            scrollPos(position.value.top)
+          })
+      }
+      else
+        scrollPos(position.value.top)
     }).catch(() => {
       items.value = []
     }).then(() => {

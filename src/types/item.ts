@@ -56,6 +56,7 @@ export interface IItem {
   restrictions: Array<Restriction>,
   price: Price,
   endDate: Date,
+  updDate: Date,
   relistCount: number,
   authorized: boolean,
   user: User,
@@ -65,7 +66,8 @@ export interface IItem {
   editable: boolean,
   actions: Array<number>,
   loading: boolean,
-  expanded: boolean
+  expanded: boolean,
+  reward: boolean
 }
 
 // export interface Advertise extends IItem {
@@ -107,6 +109,7 @@ export class Item implements IItem {
   public restrictions: Array<Restriction> = []
   public price: Price = new Price()
   public endDate = new Date()
+  public updDate = new Date()
   public relistCount = 0
   public authorized = false
   public user: User = new User()
@@ -117,6 +120,7 @@ export class Item implements IItem {
   public actions: Array<number> = []
   public loading = false
   public expanded = false
+  public reward = false
 
   constructor(id?: string) {
     this.itemId = id === undefined ? uid() : id

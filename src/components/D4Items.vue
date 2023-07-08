@@ -656,8 +656,9 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
 <template>
   <div class="col-12" :style="`max-width:${width}px`">
     <div :class="$q.screen.lt.sm ? 'q-gutter-y-xl' : 'q-gutter-y-xxl'">
-      <q-intersection v-for="item, idx in (items as Array<Item | Advertise>)" :key="item.itemId"
-        :data-itemid="item.itemId" class="item" :threshold="[0, 0.25, 0.5, 0.75, 1]"
+      <q-intersection v-for="item, idx in (items as Array<Item | Advertise>)"
+        :key="`${item.itemId}${item.reward ? '_reward' : ''}`" :data-itemid="item.itemId" class="item"
+        :class="{ 'reward': item.reward }" :threshold="[0, 0.25, 0.5, 0.75, 1]"
         :style="`min-height:${height as number - ($q.screen.lt.sm ? 50 : 0)}px;height:${item.expanded ? '100%' : `${height as number - ($q.screen.lt.sm ? 50 : 0)}px`}`"
         transition="fade" @visibility="isVisible => visible(isVisible, item)" ssr-prerender once>
         <div v-if="(item instanceof Advertise)" class="bg-grey" style="width:100%;height:500px"></div>
@@ -927,6 +928,19 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
 <style scoped>
 .item:deep(>div) {
   height: inherit;
+}
+
+.reward::after {
+  content: '';
+  background-image: url('/images/tradurs.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  z-index: 1000;
+  top: 6px;
+  right: 6px;
 }
 
 .body--light .item:deep(>div:after) {

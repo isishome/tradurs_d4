@@ -461,8 +461,12 @@ defineExpose({ scrollEnd })
         <div class="column justify-center items-end user-area" :class="{ 'q-gutter-xs': !$q.screen.lt.sm || loading }">
           <q-skeleton v-show="loading" width="50px" :height="$q.screen.lt.sm ? '16px' : '18px'" />
           <div v-show="!loading" class="row items-center q-gutter-x-sm">
-            <div v-if="['000', '002'].includes(data.statusCode)" class="remain" :class="remainColor">
-              {{ remainHours }}:{{ remainMinutes }}:{{ remainSeconds }}</div>
+            <div v-if="['000', '002'].includes(data.statusCode)" class="date" :class="remainColor">
+              {{ remainHours }}:{{ remainMinutes }}:{{ remainSeconds }}
+            </div>
+            <div v-else-if="data.statusCode === '001'" class="date complete">
+              {{ date.formatDate(data.updDate, 'YY.MM.DD') }}
+            </div>
             <div>
               {{ findStatus(data.statusCode)?.label }}</div>
           </div>
@@ -634,9 +638,13 @@ defineExpose({ scrollEnd })
   </q-card>
 </template>
 <style scoped>
-.remain {
+.date {
   font-family: monospace;
   font-size: 11px;
   line-height: 12px;
+}
+
+.complete {
+  color: var(--q-legendary);
 }
 </style>

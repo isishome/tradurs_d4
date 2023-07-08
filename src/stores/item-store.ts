@@ -70,6 +70,7 @@ export interface Restriction extends ILabel {
 export interface Award {
   ranking: number,
   good?: number,
+  bad?: number,
   items?: number,
   itemName?: string,
   itemType?: string,
@@ -105,6 +106,7 @@ export const useItemStore = defineStore('item', {
     types: [] as Array<ItemType>,
     classes: [] as Array<EquipmentClass>,
     attributeTypes: [] as Array<AttributeType>,
+    awardsPick: null as number | null,
     properties: {
       data: [] as Array<Property>,
       loading: false,
@@ -310,6 +312,7 @@ export const useItemStore = defineStore('item', {
               this.types = response.data.types
               this.classes = response.data.classes
               this.attributeTypes = response.data.attributeTypes
+              this.awardsPick = response.data.awardsPick
             })
             .catch((e) => {
               error = e
@@ -410,9 +413,11 @@ export const useItemStore = defineStore('item', {
       return new Promise<Array<Item>>((resolve, reject) => {
         api.post('/d4/item', { page, rows: this.itemPage.rows, itemId, filter })
           .then(async (response) => {
-            this.itemPage.over = page > 1
-            this.itemPage.more = response.data.length > this.itemPage.rows
-            response.data.splice(this.itemPage.rows, 1)
+            if (!itemId) {
+              this.itemPage.over = page > 1
+              this.itemPage.more = response.data.length > this.itemPage.rows
+              response.data.splice(this.itemPage.rows, 1)
+            }
             resolve(response.data)
           })
           .catch((e) => {
