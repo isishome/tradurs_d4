@@ -64,7 +64,7 @@ const close = () => {
 watch(support, (val: Support[], old?: Support[]) => {
 
   val.forEach((v: Support, idx: number) => {
-    v.show = old?.[idx]?.show || (!old && idx === 3)
+    v.show = old?.[idx]?.show || (!old && idx === 0)
   })
 },
   { immediate: true })
