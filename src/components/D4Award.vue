@@ -87,7 +87,7 @@ withDefaults(defineProps<IProps>(), {
   width: 100%;
   height: 100%;
   opacity: .6;
-  background-image: url('/images/award/laurel.webp');
+  background-image: url('/images/awards/laurel.webp');
   background-size: 280px;
   background-repeat: no-repeat;
   background-position: 50% 140px;
