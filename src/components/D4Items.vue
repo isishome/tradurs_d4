@@ -930,17 +930,28 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
   height: inherit;
 }
 
+.reward::before {
+  content: 'WINNER';
+  font-size: 10px;
+  font-weight: 700;
+  font-family: 'monospace';
+  position: absolute;
+  z-index: 1000;
+  top: 2px;
+  left: 22px;
+}
+
 .reward::after {
   content: '';
   background-image: url('/images/tradurs.svg');
   background-size: contain;
   background-repeat: no-repeat;
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   position: absolute;
   z-index: 1000;
-  top: 6px;
-  right: 6px;
+  top: -2px;
+  left: -2px;
 }
 
 .body--light .item:deep(>div:after) {

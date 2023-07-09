@@ -128,8 +128,10 @@ const updateOnly = (itemId: string, cb?: Function) => {
   disable.value = true
   is.getItems(1, itemId)
     .then((result: Array<Item>) => {
-      if (result.length > 0)
+      if (result.length > 0) {
+        result[0].expanded = true
         is.detailItem.splice(0, 1, result[0])
+      }
 
       if (cb)
         cb(is.detailItem[0])

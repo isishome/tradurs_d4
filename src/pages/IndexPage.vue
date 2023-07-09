@@ -133,8 +133,10 @@ const updateOnly = (itemId: string, cb?: Function) => {
     disable.value = true
     is.getItems(page.value, itemId)
       .then((result: Array<Item>) => {
-        if (result.length > 0)
+        if (result.length > 0) {
+          result[0].expanded = true
           Object.assign(findItem, result[0])
+        }
 
         if (cb)
           cb(findItem)
@@ -217,6 +219,7 @@ const getList = (filter?: any) => {
       }
       items.value.push(...result)
 
+      is.awardsPick = 1
       if (is.awardsPick) {
         is.getItems(1, is.awardsPick.toString())
           .then((pick: Array<Item>) => {

@@ -227,11 +227,18 @@ export default {
     send: 'Send',
     success: 'Your inquiry was successfully received'
   },
-  notice: {
+  maintenance: {
     title: 'Temporary Maintenance Announcement',
     top: 'Hi there. This is Tradurs.\n\nWe will move the database server to provide smooth service.',
     contents: 'Inspection date: July 6, 2023 (Thu) 01:00 ~ Upon completion of inspection\nnspection target : Tradurs database server\nImpact : Trading services will be unavailable',
     bottom: 'We will notify you again when the server is normalized.\n\nThank you.',
+    close: 'Do not open for 24 hours'
+  },
+  notice: {
+    title: 'Announcements about trading items',
+    top: 'Hi there. This is Tradurs.\n\nWe\'d like to share with you some changes and new things to know about trading.',
+    contents: '\n◆ What\'s changing\n\tOffers cannot be turned down\n\t➜ If an offer is turned down, it can be request\n\n◆ What you need to know\n\tThe seller or offerer of an item in a trade that hasn\'t been completed within 24 hours will have their Manor Temperature reduced by a fixed 1 degree.\n\t(Must be completed even if the trade is canceled)\n\n◆ Additions\n\tOne item from last week\'s award winner will be randomly displayed at the top of the list.\n\n',
+    bottom: 'If there are any other changes, we will announce them again.\n\nThank you.',
     close: 'Do not open for 24 hours'
   },
   message: {
