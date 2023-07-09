@@ -55,9 +55,10 @@ is.getAwards()
         {{ t('awards.highPriced.category') }}
       </template>
       <template #item-name>
-        <q-btn flat padding="0" :ripple="false" class="no-hover item-name text-body1 text-weight-bold text-amber-8"
-          type="a" :to="{ name: 'itemInfo', params: { itemid: awards.highPriced[0]?.itemId } }" target="_self"
-          rel="noopener noreferrer" :label="awards.highPriced[0]?.itemName" />
+        <q-item dense class="rounded-borders item-name text-body1 text-weight-bold text-amber-8"
+          :to="{ name: 'itemInfo', params: { itemid: awards.highPriced[0]?.itemId } }">
+          {{ awards.highPriced[0]?.itemName }}
+        </q-item>
       </template>
       <template #detail>
         <div class="text-body1 text-center text-weight-bold">
@@ -65,18 +66,17 @@ is.getAwards()
         </div>
       </template>
       <template #battleTag>
-        1. {{ awards.highPriced[0]?.battleTag }}
+        {{ awards.highPriced[0]?.ranking }}. {{ awards.highPriced[0]?.battleTag }}
       </template>
       <template #etc>
         <q-separator />
-        <q-list separator>
-          <q-item v-for="ranker, idx in awards.highPriced.slice(1, awards.highPriced.length)" :key="idx" class="etc">
-            <q-item-section top>
-              <q-btn flat padding="0" :ripple="false" class="no-hover" type="a"
-                :to="{ name: 'itemInfo', params: { itemid: ranker?.itemId } }" target="_self" rel="noopener noreferrer"
-                :label="`${ranker.ranking}. ${ranker?.itemName}`" />
-            </q-item-section>
+        <q-list separator class="rounded-borders">
+          <q-item v-for="ranker, idx in awards.highPriced.slice(1, awards.highPriced.length)" :key="idx" class="etc"
+            :to="{ name: 'itemInfo', params: { itemid: ranker?.itemId } }">
             <q-item-section>
+              <q-item-label>
+                {{ ranker?.ranking }}. {{ ranker?.itemName }}
+              </q-item-label>
               <q-item-label class="text-right">{{ ranker?.battleTag }}</q-item-label>
               <q-item-label caption class="text-right">{{ n(Number.parseFloat(ranker?.price as string), 'decimal')
               }}</q-item-label>
