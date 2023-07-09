@@ -107,7 +107,7 @@ export const useItemStore = defineStore('item', {
     types: [] as Array<ItemType>,
     classes: [] as Array<EquipmentClass>,
     attributeTypes: [] as Array<AttributeType>,
-    awardsPick: null as number | null,
+    awardsPick: [] as Array<number>,
     properties: {
       data: [] as Array<Property>,
       loading: false,

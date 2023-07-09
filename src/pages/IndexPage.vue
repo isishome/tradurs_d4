@@ -219,8 +219,9 @@ const getList = (filter?: any) => {
       }
       items.value.push(...result)
 
-      if (is.awardsPick) {
-        is.getItems(1, is.awardsPick.toString())
+      if (is.awardsPick.length > 0) {
+        const pickItemId = is.awardsPick[Math.floor(Math.random() * is.awardsPick.length)].toString()
+        is.getItems(1, pickItemId)
           .then((pick: Array<Item>) => {
             pick = pick.map((p: Item) => ({ ...p, reward: true }))
             items.value.unshift(...pick)
