@@ -294,7 +294,11 @@ export default {
         { type: 'image', contents: '07_verify' },
         { type: 'text', contents: '7. If your account is successfully verified, you\'ll see a notification like the one in the image.' },
         { type: 'image', contents: '08_battletag' },
-        { type: 'text', contents: '8. After logging in and navigating to the Tradurs Diablo® IV page, you will be prompted to enter your battle tag. (For normal use, enter the battle tag you are using.)' }
+        { type: 'text', contents: '8. After logging in and navigating to the Tradurs Diablo® IV page, you will be prompted to enter your battle tag. (For normal use, enter the battle tag you are using.)' },
+        { type: 'image', contents: '09_battletag' },
+        { type: 'text', contents: '9. You can edit your battle tag on the Change User Information page. (Note that you can only edit your battle tag once).' },
+        { type: 'image', contents: '10_withdrawal' },
+        { type: 'text', contents: '10. Withdrawal is located at the bottom of the Change User Information page and is done by entering the email address you are using.' }
       ]
     },
     {
@@ -379,7 +383,7 @@ export default {
           type: 'text', contents: '12. The seller\'s offer card will also change to \'Trade in progress\'. nNow the buyer\'s battle tag will be displayed.nClick to copy the battle tag to the clipboard.'
         },
         { type: 'image', contents: '13_proceed_trade' },
-        { type: 'text', contents: '13. The buyer will also see the seller\'s battle tag on the item card.\nClick to copy the battle tag to the clipboard.\nYou will now proceed to trade the item via each other\'s battle tag.\nWhen the item status changes to \'Trade in progress\', you have *24 hours to complete the trade.\nAfter 24 hours, the item will automatically change to \'Trade complete\' status.\n' },
+        { type: 'text', contents: '13. The buyer will also see the seller\'s battle tag on the item card.\nClick to copy the battle tag to the clipboard.\nYou will now proceed to trade the item via each other\'s battle tag.\nWhen the item status changes to \'Trade in progress\', you have *24 hours to complete the trade.\nAfter 24 hours, the item will automatically change to \'Trade complete\' status.\n(Note the fixed 1 degree drop in manor temperature when processing automatically.)' },
         { type: 'image', contents: '1401_evaluation' },
         { type: 'image', contents: '1402_evaluation' },
         {
@@ -391,6 +395,12 @@ export default {
         },
         { type: 'image', contents: '16_copy' },
         { type: 'text', contents: '16. If the transaction is canceled, you can easily re-register the item using the \'Copy Template\' function located on the item card > right side of the item name > More icon.' },
+        { type: 'image', contents: '1701_sound' },
+        { type: 'text', contents: '17.1. If you want to hear a notification sound when you receive a message, click on the left side of the browser (Chrome) address bar,' },
+        { type: 'image', contents: '1702_sound' },
+        { type: 'text', contents: '17.2. Select \'Site Settings\'.' },
+        { type: 'image', contents: '1703_sound' },
+        { type: 'text', contents: '17.3. Change the value of the \'Sound\' tab to \'Allow\' and you should now be able to hear the notification sound.' }
       ]
     },
     {

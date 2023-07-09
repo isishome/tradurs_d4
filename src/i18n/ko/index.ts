@@ -293,7 +293,11 @@ export default {
         { type: 'image', contents: '07_verify' },
         { type: 'text', contents: '7. 계정 인증이 성공하면 이미지와 같은 알림이 표시됩니다.' },
         { type: 'image', contents: '08_battletag' },
-        { type: 'text', contents: '8. 로그인 후 트레이더스 디아블로® IV 페이지로 이동하면 배틀태그 입력 화면이 나타납니다. (정상적인 사용을 위해 사용 중인 배틀태그를 입력하시면 됩니다.)' }
+        { type: 'text', contents: '8. 로그인 후 트레이더스 디아블로® IV 페이지로 이동하면 배틀태그 입력 화면이 나타납니다. (정상적인 사용을 위해 사용 중인 배틀태그를 입력하시면 됩니다.)' },
+        { type: 'image', contents: '09_battletag' },
+        { type: 'text', contents: '9. 사용자 정보 변경 페이지에서 배틀태그 수정이 가능합니다. (배틀 태그 수정은 1회만 가능한 점에 유의하세요.)' },
+        { type: 'image', contents: '10_withdrawal' },
+        { type: 'text', contents: '10. 회원 탈퇴는 사용자 정보 변경 페이지 하단에 위치하고 있으며 사용 중인 이메일 주소를 입력하면 탈퇴가 진행됩니다.' }
       ]
     },
     {
@@ -376,7 +380,7 @@ export default {
         { type: 'image', contents: '12_proceed_trade' },
         { type: 'text', contents: '12. 판매자 역시 제안 카드가 \'거래 진행 상태\'(완료 처리화면)로 변경 됩니다.\n이제 구매자의 배틀 태그가 표시됩니다.\n클릭 하면 배틀태그가 클립보드로 복사됩니다.' },
         { type: 'image', contents: '13_proceed_trade' },
-        { type: 'text', contents: '13. 구매자 역시 아이템 카드에 판매자의 배틀태그가 표시됩니다.\n클릭 하면 배틀태그가 클립보드로 복사됩니다.\n이제 서로의 배틀태그를 통해 아이템 거래를 진행합니다.\n아이템 상태가 \'거래 진행 중\'으로 변경되면 *24시간 이내에 거래 완료 처리*를 해야하며,\n*24시간이 지나면 해당 아이템은 자동으로\'거래 완료\' 상태로 변경* 됩니다.' },
+        { type: 'text', contents: '13. 구매자 역시 아이템 카드에 판매자의 배틀태그가 표시됩니다.\n클릭 하면 배틀태그가 클립보드로 복사됩니다.\n이제 서로의 배틀태그를 통해 아이템 거래를 진행합니다.\n아이템 상태가 \'거래 진행 중\'으로 변경되면 *24시간 이내에 거래 완료 처리*를 해야하며,\n*24시간이 지나면 해당 아이템은 자동으로\'거래 완료\' 상태로 변경* 됩니다.\n(* 자동 처리 시 매너온도 1도 고정 하락에 유의)' },
         { type: 'image', contents: '1401_evaluation' },
         { type: 'image', contents: '1402_evaluation' },
         { type: 'text', contents: '14. 이제 판매자와 구매자는 완료 버튼을 클릭해 서로의 거래에 대한 매너 평가를 남겨주시면 됩니다.\n만약 상대방이 연락이 없거나 판매 또는 구매를 하지 않는 경우에도\n\n*꼭 완료 처리를 해주셔야 노른자(yolk)가 회수됩니다.' },
@@ -384,6 +388,12 @@ export default {
         { type: 'text', contents: '15. 서로의 완료 처리가 끝나면 상대방이 남긴 매너 평가를 확인할 수 있습니다.' },
         { type: 'image', contents: '16_copy' },
         { type: 'text', contents: '16. 거래가 무산된 경우 아이템 카드 > 아이템 명 우측 > 더보기에 있는  \'템플릿 복사\' 기능을 사용하여 손쉽게 아이템 재 등록이 가능합니다.' },
+        { type: 'image', contents: '1701_sound' },
+        { type: 'text', contents: '17.1. 메시지 수신 알림음을 듣고싶은 경우 브라우저(크롬) 주소창 좌측을 클릭하고,' },
+        { type: 'image', contents: '1702_sound' },
+        { type: 'text', contents: '17.2. \'사이트 설정\'을 선택합니다.' },
+        { type: 'image', contents: '1703_sound' },
+        { type: 'text', contents: '17.3. \'소리\' 탭 값을 \'허용\'으로 변경하면 이제 알림음을 들을 수 있습니다.' }
       ]
     },
     {

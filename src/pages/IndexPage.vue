@@ -219,7 +219,6 @@ const getList = (filter?: any) => {
       }
       items.value.push(...result)
 
-      is.awardsPick = 1
       if (is.awardsPick) {
         is.getItems(1, is.awardsPick.toString())
           .then((pick: Array<Item>) => {

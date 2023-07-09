@@ -173,7 +173,7 @@ onUnmounted(() => {
             <q-btn round dense flat aria-label="Tradurs Support Button" :ripple="!$q.dark.isActive"
               :to="{ name: 'support' }">
               <img class="icon" width="24" height="24" src="/images/icons/help.svg" alt="icon_support" />
-              <q-badge floating label="N" color="negative" class="new-badge" />
+              <!-- <q-badge floating label="N" color="negative" class="new-badge" /> -->
             </q-btn>
             <q-btn round flat aria-label="Tradurs Theme Button" :ripple="!$q.dark.isActive" @click="setDark">
               <img v-show="$q.dark.isActive" class="icon" width="24" height="24" src="/images/icons/light.svg"
@@ -217,7 +217,7 @@ onUnmounted(() => {
                 </q-item-label>
               </q-item-section>
               <q-item-section v-show="newMessages" side>
-                <q-badge rounded color="secondary"></q-badge>
+                <q-badge rounded color="negative"></q-badge>
               </q-item-section>
             </q-item>
             <q-item v-if="as.signed" v-ripple clickable :to="{ name: 'awards' }" exact active-class="active">
@@ -304,7 +304,7 @@ onUnmounted(() => {
             <q-tabs dense no-caps narrow-indicator class="gt-sm q-px-sm bg-transparent no-hover nav">
               <q-route-tab :ripple="!$q.dark.isActive" :label="t('page.tradeList')" :to="{ name: 'tradeList' }" exact />
               <q-route-tab v-if="as.signed" :ripple="!$q.dark.isActive" :label="t('page.messages')"
-                class="relative-position" :to="{ name: 'messages' }" :alert="newMessages ? 'secondary' : 'transparent'"
+                class="relative-position" :to="{ name: 'messages' }" :alert="newMessages ? 'negative' : 'transparent'"
                 exact />
               <q-route-tab v-if="as.signed" :ripple="!$q.dark.isActive" :label="t('page.awards')" :to="{ name: 'awards' }"
                 exact />
@@ -321,7 +321,7 @@ onUnmounted(() => {
           <q-btn round dense flat aria-label="Tradurs Support Button" :ripple="!$q.dark.isActive"
             :to="{ name: 'support' }">
             <img class="icon" width="24" height="24" src="/images/icons/help.svg" alt="icon_support" />
-            <q-badge floating label="N" color="negative" class="new-badge" />
+            <!-- <q-badge floating label="N" color="negative" class="new-badge" /> -->
           </q-btn>
           <q-btn round dense flat aria-label="Tradurs Language Button" :ripple="!$q.dark.isActive">
             <img class="icon" width="24" height="24" src="/images/icons/language.svg" alt="icon_language" />
