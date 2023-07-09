@@ -35,7 +35,7 @@ const awards: Awards = reactive({
     battleTag: ''
   }]
 })
-const noData = computed(() => !loading.value && (awards.bestManners?.length || 0) + (awards.mostSold?.length || 0) + (awards.mostPurchased?.length || 0) === 0)
+const noData = computed(() => !loading.value && (awards.highPriced?.length || 0) + (awards.bestManners?.length || 0) + (awards.mostSold?.length || 0) + (awards.mostPurchased?.length || 0) === 0)
 
 is.getAwards()
   .then((data) => {
@@ -55,7 +55,9 @@ is.getAwards()
         {{ t('awards.highPriced.category') }}
       </template>
       <template #item-name>
-        {{ awards.highPriced[0]?.itemName }}
+        <q-btn flat padding="0" :ripple="false" class="no-hover item-name text-body1 text-weight-bold text-amber-8"
+          type="a" :to="{ name: 'itemInfo', params: { itemid: awards.highPriced[0]?.itemId } }" target="_self"
+          rel="noopener noreferrer" :label="awards.highPriced[0]?.itemName" />
       </template>
       <template #detail>
         <div class="text-body1 text-center text-weight-bold">
@@ -66,10 +68,15 @@ is.getAwards()
         1. {{ awards.highPriced[0]?.battleTag }}
       </template>
       <template #etc>
+        <q-separator />
         <q-list separator>
           <q-item v-for="ranker, idx in awards.highPriced.slice(1, awards.highPriced.length)" :key="idx" class="etc">
+            <q-item-section top>
+              <q-btn flat padding="0" :ripple="false" class="no-hover" type="a"
+                :to="{ name: 'itemInfo', params: { itemid: ranker?.itemId } }" target="_self" rel="noopener noreferrer"
+                :label="`${ranker.ranking}. ${ranker?.itemName}`" />
+            </q-item-section>
             <q-item-section>
-              <q-item-label>{{ ranker?.ranking }}. {{ ranker?.itemName }}</q-item-label>
               <q-item-label class="text-right">{{ ranker?.battleTag }}</q-item-label>
               <q-item-label caption class="text-right">{{ n(Number.parseFloat(ranker?.price as string), 'decimal')
               }}</q-item-label>
@@ -151,21 +158,27 @@ is.getAwards()
 
 .etc:nth-child(1) {
   font-size: 13px;
-  opacity: .5;
+  opacity: .7;
 }
 
 .etc:nth-child(2) {
   font-size: 12px;
-  opacity: .4;
+  opacity: .6;
 }
 
 .etc:nth-child(3) {
   font-size: 11px;
-  opacity: .3;
+  opacity: .5;
 }
 
 .etc:nth-child(4) {
   font-size: 10px;
-  opacity: .2;
+  opacity: .4;
+}
+
+.item-name {
+  position: absolute;
+  top: -38px;
+  z-index: 2;
 }
 </style>

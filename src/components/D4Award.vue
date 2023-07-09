@@ -37,9 +37,7 @@ withDefaults(defineProps<IProps>(), {
 
     </q-card-section>
     <q-card-section class="row justify-center items-center q-px-none">
-      <div class="item-name text-body1 text-weight-bold text-amber-8">
-        <slot name="item-name"></slot>
-      </div>
+      <slot name="item-name"></slot>
       <q-avatar size="200px" color="white" class="egg" :style="`--tradurs-logo-image:url('${image}');`">
         <q-avatar color="amber-8" text-color="white" size="120px">
           <div class="text-h5 text-weight-bold">
@@ -116,12 +114,6 @@ withDefaults(defineProps<IProps>(), {
   width: 80px;
   height: 80px;
   z-index: 1;
-}
-
-.award:deep(.item-name) {
-  position: absolute;
-  top: -36px;
-  z-index: 2;
 }
 
 .award:deep(.etc) {

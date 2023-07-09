@@ -71,6 +71,7 @@ export interface Award {
   ranking: number,
   good?: number,
   bad?: number,
+  itemId?: number,
   items?: number,
   itemName?: string,
   itemType?: string,
