@@ -87,6 +87,7 @@ const copyItem = (item: Item) => {
   clone.affixes = clone.affixes.map((a: Affix) => ({ ...a, valueId: uid(), action: 2 }))
   clone.properties = clone.properties.map((p: Property) => ({ ...p, valueId: uid(), action: 2 }))
   clone.restrictions = clone.restrictions.map((r: Restriction) => ({ ...r, valueId: uid(), action: 2 }))
+  clone.offers = 0
   activatedItem.value = clone
   activateShow.value = true
 }

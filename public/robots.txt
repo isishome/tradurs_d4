@@ -1,4 +1,8 @@
 User-agent: *
+Disallow: /messages/
+Disallow: /awards/
+
+User-agent: *
 Allow: /
 
 Sitemap: https://d4.tradurs.com/sitemap.xml
