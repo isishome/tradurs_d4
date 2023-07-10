@@ -83,7 +83,7 @@ const retractOffer = () => {
 const turnDownOffer = () => {
   $q.dialog({
     title: t('turnDown.title'),
-    message: `<div class="text-subtitle1">${t('turnDown.msg')}</div><div class="q-mt-md text-caption text-negative text-right">${t('turnDown.desc')}</div>`,
+    message: `<div class="text-subtitle1">${t('turnDown.msg')}</div>`,
     html: true,
     persistent: true,
     cancel: { label: t('btn.cancel'), noCaps: true, color: 'grey', outline: true },

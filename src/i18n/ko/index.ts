@@ -170,8 +170,7 @@ export default {
   },
   turnDown: {
     title: '제안 거절',
-    msg: '제안을 거절 하시겠습니까?',
-    desc: '제안을 거절하면 해당 요청자는 더 이상 제안을 할 수 없습니다'
+    msg: '제안을 거절 하시겠습니까?'
   },
   complete: {
     title: '매너 평가',

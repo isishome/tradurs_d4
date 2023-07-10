@@ -171,8 +171,7 @@ export default {
   },
   turnDown: {
     title: 'Turn Down Offer',
-    msg: 'Would you like to turn down the offer?',
-    desc: 'If you turn down an offer, the requester can\'t make any more offers.'
+    msg: 'Would you like to turn down the offer?'
   },
   complete: {
     title: 'Manner Evaluation',
