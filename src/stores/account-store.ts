@@ -36,9 +36,9 @@ export const useAccountStore = defineStore('account', {
     }
   },
   actions: {
-    async checkSign(forced?: boolean) {
+    async checkSign() {
       return new Promise<void>((resolve, reject) => {
-        if (this.signed === null || forced) {
+        if (this.signed === null) {
           api.get('/account/signed')
             .then((response) => {
               this.info = response.data
@@ -49,6 +49,21 @@ export const useAccountStore = defineStore('account', {
               reject()
             })
         }
+
+        resolve()
+      })
+    },
+    async retrieve() {
+      return new Promise<void>((resolve, reject) => {
+        api.get('/account/retrieve')
+          .then((response) => {
+            this.info = response.data
+            this.signed = typeof (response.data.id) !== 'undefined'
+            resolve()
+          })
+          .catch(() => {
+            reject()
+          })
 
         resolve()
       })

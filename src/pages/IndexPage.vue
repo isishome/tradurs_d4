@@ -48,7 +48,7 @@ const upsertItem = (item: Item, done: Function) => {
       if (findIndex !== -1)
         items.value.splice(findIndex, 1, item)
       else {
-        as.checkSign(true)
+        as.retrieve()
         is.clearFilter()
         page.value = 1
         getList(is.filter)
@@ -92,7 +92,7 @@ const relistItem = (item: Item, done: Function) => {
     disable.value = true
     is.relistItem(item.itemId)
       .then(() => {
-        as.checkSign(true)
+        as.retrieve()
         itemsRef.value?.hideEditable()
         scrollPos()
         disable.value = false

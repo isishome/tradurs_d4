@@ -68,8 +68,9 @@ const initSocket = (as: any, is: any) => {
       is.socket.turnedDownOffer = offerInfo
   })
 
-  as.socket.on('complete', (offerInfo: OfferInfo) => {
+  as.socket.on('complete', async (offerInfo: OfferInfo) => {
     notify()
+    await as.retrieve()
     if (as.info.notifyPrivate)
       is.socket.complete = offerInfo
   })
