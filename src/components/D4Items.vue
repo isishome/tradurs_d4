@@ -935,11 +935,11 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
   background: url('/images/awards/blood.webp');
   background-size: contain;
   background-repeat: no-repeat;
-  width: 100px;
+  width: 80px;
   height: 200px;
   position: absolute;
   top: -6px;
-  left: 0;
+  left: 6px;
   opacity: 1;
 }
 

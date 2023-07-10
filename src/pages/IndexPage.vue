@@ -219,6 +219,7 @@ const getList = (filter?: any) => {
       }
       items.value.push(...result)
 
+      is.awardsPick = [1]
       if (is.awardsPick.length > 0) {
         const pickItemId = is.awardsPick[Math.floor(Math.random() * is.awardsPick.length)].toString()
         is.getItems(1, pickItemId)
