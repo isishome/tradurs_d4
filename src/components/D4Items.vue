@@ -930,17 +930,31 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
   height: inherit;
 }
 
+@keyframes awards {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
 .reward::after {
+  animation: awards .3s ease-in;
   content: '';
   background: url('/images/awards/blood.webp');
   background-size: contain;
   background-repeat: no-repeat;
   width: 80px;
-  height: 200px;
+  height: 46px;
   position: absolute;
+  top: -4px;
+  left: 2px;
+}
+
+.body--light .reward::after {
   top: -6px;
-  left: 6px;
-  opacity: 1;
 }
 
 .body--light .item:deep(>div:after) {
