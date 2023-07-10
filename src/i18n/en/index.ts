@@ -235,10 +235,10 @@ export default {
     close: 'Do not open for 24 hours'
   },
   notice: {
-    title: 'Announcements about trading items',
-    top: 'Hi there. This is Tradurs.\n\nWe\'d like to share with you some changes and new things to know about trading.',
-    contents: '\n◆ What\'s changing\n\tOffers cannot be turned down\n\t➜ If an offer is turned down, it can be request\n\n◆ What you need to know\n\tThe seller or offerer of an item in a trade that hasn\'t been completed within 24 hours will have their Manor Temperature reduced by a fixed 1 degree.\n\t(Must be completed even if the trade is canceled)\n\n◆ Additions\n\tOne item from last week\'s award winner will be randomly displayed at the top of the list.\n\n',
-    bottom: 'If there are any other changes, we will announce them again.\n\nThank you.',
+    title: 'Manner Temperature Announcement.',
+    top: 'Hi there. This is Tradurs.\n\nWe\'re pleased to announce a fix for Manner Temperature.',
+    contents: '◆ Fixes\n\tBatch adjustments to miscalculated manner temperatures.',
+    bottom: 'We apologize for any inconvenience this may cause.',
     close: 'Do not open for 24 hours'
   },
   message: {
