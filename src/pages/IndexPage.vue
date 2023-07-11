@@ -41,6 +41,10 @@ const more = computed(() => is.itemPage.more)
 // insert or update item
 const upsertItem = (item: Item, done: Function) => {
   const findIndex = items.value.findIndex((i) => i.itemId === item.itemId)
+
+  if (findIndex === -1)
+    scrollPos()
+
   disable.value = true
   is[item.itemId !== '' ? 'updateItem' : 'addItem'](item)
     .then((response) => {
@@ -55,10 +59,6 @@ const upsertItem = (item: Item, done: Function) => {
       }
 
       itemsRef.value?.hideEditable()
-
-      if (findIndex === -1)
-        scrollPos()
-
       disable.value = false
     })
     .catch(() => {
@@ -89,14 +89,13 @@ const deleteItem = (item: Item, done: Function) => {
 const relistItem = (item: Item, done: Function) => {
   const findIndex = items.value.findIndex((i) => i.itemId === item.itemId)
   if (findIndex !== -1) {
+    scrollPos()
     disable.value = true
     is.relistItem(item.itemId)
       .then(() => {
         as.retrieve()
         itemsRef.value?.hideEditable()
-        scrollPos()
         disable.value = false
-
         page.value = 1
         getList(is.filter)
       })
@@ -186,6 +185,7 @@ const create = (item?: Item) => {
 
 const getList = (filter?: any) => {
   is.clearSocket()
+  scrollPos(position.value.top)
   is.filter.loading = true
 
   items.value =
@@ -226,13 +226,7 @@ const getList = (filter?: any) => {
             pick = pick.map((p: Item) => ({ ...p, reward: true }))
             items.value.unshift(...pick)
           })
-          .catch(() => { })
-          .then(() => {
-            scrollPos(position.value.top)
-          })
       }
-      else
-        scrollPos(position.value.top)
     }).catch(() => {
       items.value = []
     }).then(() => {
