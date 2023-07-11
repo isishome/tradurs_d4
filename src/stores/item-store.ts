@@ -408,7 +408,7 @@ export const useItemStore = defineStore('item', {
     },
     getItems(page: number, itemId?: string | string[], filter?: any) {
       return new Promise<Array<Item>>((resolve, reject) => {
-        api.post('/d4/item', { page, rows: this.itemPage.rows, itemId, fixedFilter: this.fixedFilter, filter })
+        api.post('/d4/item', { page, rows: this.itemPage.rows, itemId, fixedFilter: itemId ? {} : this.fixedFilter, filter })
           .then(async (response) => {
             if (!itemId) {
               this.itemPage.over = page > 1

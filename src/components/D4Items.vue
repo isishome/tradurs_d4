@@ -700,7 +700,10 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
         </D4Item>
       </q-intersection>
     </div>
-    <div v-show="items.length === 0" class="row justify-center items-center" style="height:40vh">{{ t('noItem') }}</div>
+    <div v-show="items.filter((i: Item) => !i.reward).length === 0" class="row justify-center items-center"
+      style="height:40vh">
+      {{ t('noItem') }}
+    </div>
     <q-dialog v-model="activateShow" :maximized="$q.screen.lt.sm" persistent transition-show="none" transition-hide="none"
       :transition-duration="0" :no-route-dismiss="false" @hide="hideEditable">
       <D4Item ref="activatedRef" :data="activatedItem" :key="analyzeKey" editable :loading="activatedItem.loading"
