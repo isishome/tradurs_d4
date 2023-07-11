@@ -223,7 +223,8 @@ export default {
     title: 'Contact US',
     question: 'Do you need any other help?',
     contents: 'Content of inquiry',
-    answer: 'Content of answer',
+    answer: 'Answer Inquiry',
+    answerContents: 'Content of answer',
     send: 'Send',
     success: 'Your inquiry was successfully received',
     successAnswer: 'Your answer was successfully sent'

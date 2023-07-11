@@ -5,7 +5,8 @@ import { useGlobalStore } from 'src/stores/global-store'
 import { useAccountStore } from 'src/stores/account-store'
 import { useI18n } from 'vue-i18n'
 import { scrollPos } from 'src/common'
-import { nextTick } from 'process'
+
+import D4Dialog from 'components/D4Dialog.vue'
 
 interface Message {
   msgId: number,
@@ -83,18 +84,22 @@ const refresh = () => {
 }
 
 interface Answer {
+  open: boolean,
   loading: boolean,
+  msgId: number | null,
   contents: string
 }
 
 const answer = reactive<Answer>({
+  open: false,
   loading: false,
+  msgId: null,
   contents: '안녕하세요. Tradurs입니다.\n\n\n\n감사합니다.'
 })
 
-const sendAnswer = (msgId: number) => {
+const sendAnswer = () => {
   answer.loading = true
-  gs.answer(msgId, answer.contents)
+  gs.answer(answer.msgId as number, answer.contents)
     .then(() => {
       $q.notify({
         icon: 'img:/images/icons/check.svg',
@@ -102,12 +107,23 @@ const sendAnswer = (msgId: number) => {
         classes: '',
         message: t('contact.successAnswer')
       })
-      answer.contents = '안녕하세요. Tradurs입니다.\n\n\n\n감사합니다.'
+      answer.open = false
     })
     .catch(() => { })
     .then(() => {
       answer.loading = false
     })
+}
+
+const open = (msgId: number) => {
+  answer.msgId = msgId
+  answer.open = true
+}
+
+const close = () => {
+  answer.msgId = null
+  answer.contents = '안녕하세요. Tradurs입니다.\n\n\n\n감사합니다.'
+  answer.loading = false
 }
 
 const prev = () => {
@@ -200,19 +216,10 @@ onMounted(() => {
                 <div class="text-area">
                   {{ message.msgValue }}
                 </div>
-                <q-form v-if="message.msgType === '900'" class="q-mt-xl row items-center q-gutter-x-sm"
-                  @submit="sendAnswer(message.msgId)">
-                  <q-input outlined dense no-error-icon hide-bottom-space :disable="answer.loading"
-                    :autofocus="$q.platform.is.desktop" rows="10" type="textarea" class="col" input-class="d4-scroll"
-                    :label="t('contact.answer')" v-model="answer.contents" :rules="[val => val && val.length > 10 || '']"
-                    maxlength="500"><template #counter>
-                      {{ answer.contents ? answer.contents.length : 0 }} / 500
-                    </template>
-                  </q-input>
-                  <div>
-                    <q-btn :label="t('contact.send')" push :loading="answer.loading" type="submit" color="secondary" />
-                  </div>
-                </q-form>
+                <div v-if="message.msgType === '900'" class="q-mt-xl row justify-end">
+                  <q-btn :label="t('contact.answer')" push aria-label="Tradurs Answer Button" color="secondary"
+                    @click="open(message.msgId)" />
+                </div>
               </div>
               <q-item-label v-else>
                 <q-btn no-caps unelevated aria-label="Tradurs Go Item Button" color="primary"
@@ -271,6 +278,31 @@ onMounted(() => {
         </q-btn>
       </div>
     </div>
+    <D4Dialog v-model="answer.open" @submit="sendAnswer" @hide="close" :persistent="answer.loading">
+      <template #top>
+        <div class="q-pa-md text-h6">
+          {{ t('contact.answer') }}
+        </div>
+      </template>
+      <template #middle>
+        <div class="q-pa-md">
+          <q-input outlined dense no-error-icon hide-bottom-space :disable="answer.loading"
+            :autofocus="$q.platform.is.desktop" rows="6" type="textarea" class="col" input-class="d4-scroll"
+            :label="t('contact.answerContents')" v-model="answer.contents" :rules="[val => val && val.length > 10 || '']"
+            maxlength="500"><template #counter>
+              {{ answer.contents ? answer.contents.length : 0 }} / 500
+            </template>
+          </q-input>
+        </div>
+      </template>
+      <template #bottom>
+        <div class="row justify-end q-pa-md q-gutter-sm">
+          <D4Btn :label="t('btn.cancel')" :disable="answer.loading" color="rgb(150,150,150)"
+            @click="answer.open = false" />
+          <D4Btn :label="t('contact.send')" :loading="answer.loading" type="submit" />
+        </div>
+      </template>
+    </D4Dialog>
   </div>
 </template>
 

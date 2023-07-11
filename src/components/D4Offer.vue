@@ -122,7 +122,7 @@ const complete = () => {
 const isAcceptable = computed(() => props.data.itemStatusCode === '000' && props.data.statusCode === '000' && props.owner)
 const isRetractable = computed(() => props.data.itemStatusCode === '000' && props.data.statusCode === '000' && props.data.authorized && props.data.retractable)
 const isTradeable = computed(() => (props.data.statusCode === '003' && props.data.authorized) || (props.data.itemStatusCode === '003' && props.owner))
-const existsEvaluation = computed(() => (props.data.statusCode === '001' && props.owner) || (props.data.itemStatusCode === '001' && props.data.authorized))
+const existsEvaluation = computed(() => (props.data.statusCode === '001' && props.owner) || (props.data.statusCode === '001' && props.data.authorized))
 const status = computed(() => is.findOfferStatus(props.data.statusCode)?.label)
 const parsEvaluations = computed(() => props.owner ? as.filterEvaluations(props.data.evaluations) : props.data.authorized ? as.filterEvaluations(props.evaluations) : [])
 </script>
@@ -160,7 +160,6 @@ const parsEvaluations = computed(() => props.owner ? as.filterEvaluations(props.
           </template>
           <D4Btn v-else-if="isRetractable" :label="t('btn.retractOffer')" color="var(--q-secondary)"
             :loading="data.loading" :disable="disable" :progress="progress" @click="retractOffer" />
-
           <D4Btn v-else-if="isTradeable" :label="t('btn.complete')" color="var(--q-primary)" :loading="data.loading"
             :disable="disable" :progress="progress" @click="complete" />
           <div v-else class="row items-start q-col-gutter-xs">

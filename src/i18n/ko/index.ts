@@ -221,7 +221,8 @@ export default {
   contact: {
     title: '문의 하기',
     contents: '문의 내용',
-    answer: '답변 내용',
+    answer: '답변 하기',
+    answerContents: '답변 내용',
     question: '다른 도움이 필요하신가요?',
     send: '전송',
     success: '문의 내용이 정상적으로 접수되었습니다',
