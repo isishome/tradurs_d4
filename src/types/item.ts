@@ -92,7 +92,7 @@ export class Price implements IPrice {
 export class Item implements IItem {
   public itemId = ''
   public hardcore = false
-  public ladder = true
+  public ladder = false
   public statusCode = '000'
   public name = ''
   public quantity = 1

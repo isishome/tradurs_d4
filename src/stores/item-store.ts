@@ -131,12 +131,14 @@ export const useItemStore = defineStore('item', {
       turnedDownOffer: null as OfferInfo | null,
       complete: null as OfferInfo | null
     },
+    fixedFilter: {
+      hardcore: false as boolean,
+      ladder: false as boolean,
+      onlyCurrency: false as boolean,
+    },
     filter: {
       favorite: false as boolean,
       quality: [] as Array<string>,
-      hardcore: null as boolean | null,
-      ladder: null as boolean | null,
-      onlyCurrency: false as boolean | null,
       status: null as string | null,
       mine: false as boolean | null,
       offered: false as boolean | null,
@@ -243,9 +245,6 @@ export const useItemStore = defineStore('item', {
     equalDefaultFilter: (state) => {
       return !(state.filter.favorite === false &&
         state.filter.quality.length === 0 &&
-        state.filter.hardcore === null &&
-        state.filter.ladder === null &&
-        state.filter.onlyCurrency === false &&
         state.filter.status === null &&
         state.filter.mine === false &&
         state.filter.offered === false &&
@@ -276,9 +275,6 @@ export const useItemStore = defineStore('item', {
       if (isForced || !this.filter.fixed) {
         this.filter.favorite = false
         this.filter.quality = []
-        this.filter.hardcore = null
-        this.filter.ladder = null
-        this.filter.onlyCurrency = false
         this.filter.status = null
         this.filter.mine = false
         this.filter.offered = false
@@ -412,7 +408,7 @@ export const useItemStore = defineStore('item', {
     },
     getItems(page: number, itemId?: string | string[], filter?: any) {
       return new Promise<Array<Item>>((resolve, reject) => {
-        api.post('/d4/item', { page, rows: this.itemPage.rows, itemId, filter })
+        api.post('/d4/item', { page, rows: this.itemPage.rows, itemId, fixedFilter: this.fixedFilter, filter })
           .then(async (response) => {
             if (!itemId) {
               this.itemPage.over = page > 1

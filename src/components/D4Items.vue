@@ -636,6 +636,8 @@ const visible = (isVisible: boolean, item: Item): void => {
 }
 
 const create = () => {
+  activatedItem.value.hardcore = is.fixedFilter.hardcore
+  activatedItem.value.ladder = is.fixedFilter.ladder
   activatedItem.value.itemType = 'weapon'
   activatedItem.value.itemTypeValue1 = 'axe'
   setDefaultProperties()

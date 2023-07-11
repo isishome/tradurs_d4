@@ -181,7 +181,7 @@ defineExpose({ scrollEnd })
             <div class="row justify-end items-center q-gutter-xs toggles">
               <q-toggle left-label v-model="_hardcore" :disable="disable" color="secondary" :label="t('item.hardcore')"
                 dense @update:model-value="update" />
-              <q-toggle left-label v-model="_ladder" :disable="disable" color="primary" :label="t('item.ladder')" dense
+              <q-toggle left-label v-model="_ladder" disable color="primary" :label="t('item.ladder')" dense
                 @update:model-value="update" />
             </div>
           </div>

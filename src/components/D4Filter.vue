@@ -36,6 +36,9 @@ const findRestriction = computed(() => is.findRestriction)
 if ($q.localStorage.has('d4.filter'))
   is.filter = JSON.parse($q.localStorage.getItem('d4.filter') as string)
 
+if ($q.localStorage.has('d4.fixedFilter'))
+  is.fixedFilter = JSON.parse($q.localStorage.getItem('d4.fixedFilter') as string)
+
 // about property
 const propertyRef = ref<QSelect | null>(null)
 const propertyOptions = is.filterProperties
@@ -146,39 +149,54 @@ const update = (quality?: Array<string>) => {
 const updateDebounce = debounce((quality?: Array<string>) => {
   update(quality)
 }, 800)
+
+const storedFixed = () => {
+  $q.localStorage.set('d4.fixedFilter', JSON.stringify(is.fixedFilter))
+}
+
+const updateFixed = () => {
+  storedFixed()
+
+  is.filter.request++
+}
+
+const updateFixedDebounce = debounce(() => {
+  updateFixed()
+}, 800)
 </script>
 
 <template>
   <q-list dense class="filter" :class="{ 'disable': disable || filterLoading }">
-    <q-item :disable="filterLoading" :inset-level=".2">
+    <q-item :disable="filterLoading">
       <q-item-section>
-        <div class="row items-center q-gutter-sm">
-          <q-checkbox size="xs" v-model="is.filter.hardcore" :label="t('item.hardcore')" @update:model-value="update()" />
-          <q-btn dense round flat aria-label="Tradurs Close Button" size="xs" :ripple="false" class="no-hover"
-            @click="is.filter.hardcore = null; updateDebounce()">
-            <q-icon class="icon" name="img:/images/icons/close.svg" />
-          </q-btn>
-        </div>
+        <q-item-label header>{{ t('filter.basic') }}</q-item-label>
+        <q-checkbox :disable="filterLoading" size="xs" class="checkbox" v-model="is.fixedFilter.hardcore"
+          :label="t('item.hardcore')" @update:model-value="updateFixedDebounce()" />
+        <q-checkbox disable size="xs" class="checkbox" v-model="is.fixedFilter.ladder" :label="t('item.ladder')"
+          @update:model-value="updateFixedDebounce()" />
+        <q-checkbox :disable="filterLoading" size="xs" class="checkbox" v-model="is.fixedFilter.onlyCurrency"
+          :label="t('filter.onlyCurrency')" @update:model-value="updateFixedDebounce()" />
       </q-item-section>
     </q-item>
-    <q-item :disable="filterLoading" :inset-level=".2">
+    <q-item :disable="filterLoading" v-if="as.signed">
       <q-item-section>
-        <div class="row items-center q-gutter-sm">
-          <q-checkbox size="xs" v-model="is.filter.ladder" :label="t('item.ladder')" @update:model-value="update()" />
-          <q-btn dense round flat aria-label="Tradurs Close Button" size="xs" :ripple="false" class="no-hover"
-            @click="is.filter.ladder = null; updateDebounce()">
-            <q-icon class="icon" name="img:/images/icons/close.svg" />
-          </q-btn>
-        </div>
+        <q-item-label header>{{ t('filter.onlyForMe') }}</q-item-label>
+        <q-checkbox :disable="filterLoading" size="xs" class="checkbox" v-model="is.filter.mine" :label="t('filter.mine')"
+          @update:model-value="mine" />
+        <q-slide-transition>
+          <div v-show="is.filter.mine" class="q-pl-lg row items-center q-gutter-xs">
+            <div class="tree"></div>
+            <q-checkbox :disable="filterLoading" size="xs" class="text-caption" v-model="is.filter.offered"
+              :label="t('filter.offered')" @update:model-value="updateDebounce()" />
+          </div>
+        </q-slide-transition>
+        <q-checkbox :disable="filterLoading" size="xs" class="checkbox" v-model="is.filter.offer"
+          :label="t('filter.offer')" @update:model-value="updateDebounce()" />
+        <q-checkbox :disable="filterLoading" v-model="is.filter.favorite" class="checkbox" size="xs"
+          :label="t('item.favorites')" @update:model-value="updateDebounce()" />
       </q-item-section>
     </q-item>
-    <q-item :inset-level=".2">
-      <q-item-section>
-        <q-checkbox size="xs" v-model="is.filter.onlyCurrency" :label="t('filter.onlyCurrency')"
-          @update:model-value="updateDebounce()" />
-      </q-item-section>
-    </q-item>
-    <q-item :inset-level=".3">
+    <q-item :disable="filterLoading" :inset-level=".3">
       <q-item-section class="q-pt-md q-pr-md select-wrap">
         <q-select v-model="is.filter.status" :disable="filterLoading" outlined dense no-error-icon hide-bottom-space
           emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0" behavior="menu"
@@ -186,33 +204,15 @@ const updateDebounce = debounce((quality?: Array<string>) => {
           popup-content-class="d4-scroll" @update:model-value="update()" />
       </q-item-section>
     </q-item>
-    <q-item :disable="filterLoading" v-if="as.signed">
-      <q-item-section>
-        <q-item-label header>{{ t('filter.onlyForMe') }}</q-item-label>
-        <q-checkbox size="xs" class="q-pl-sm" v-model="is.filter.mine" :label="t('filter.mine')"
-          @update:model-value="mine" />
-        <q-slide-transition>
-          <div v-show="is.filter.mine" class="q-pl-lg row items-center q-gutter-xs">
-            <div class="tree"></div>
-            <q-checkbox size="xs" class="text-caption" v-model="is.filter.offered" :label="t('filter.offered')"
-              @update:model-value="updateDebounce()" />
-          </div>
-        </q-slide-transition>
-        <q-checkbox size="xs" class="q-pl-sm" v-model="is.filter.offer" :label="t('filter.offer')"
-          @update:model-value="updateDebounce()" />
-        <q-checkbox v-model="is.filter.favorite" class="q-pl-sm" size="xs" :label="t('item.favorites')"
-          @update:model-value="updateDebounce()" />
-      </q-item-section>
-    </q-item>
     <q-item :disable="filterLoading">
       <q-item-section>
         <q-item-label header>{{ t('item.power') }}</q-item-label>
         <div class="row justify-center no-wrap q-col-gutter-sm items-center q-px-md">
-          <D4Counter v-model="is.filter.power[0]" :label="t('min')" :max="9999" allow-zero no-button
-            @update:model-value="update()" :debounce="1000" max-width="100%" />
+          <D4Counter :disable="filterLoading" v-model="is.filter.power[0]" :label="t('min')" :max="9999" allow-zero
+            no-button @update:model-value="update()" :debounce="1000" max-width="100%" />
           <div>-</div>
-          <D4Counter v-model="is.filter.power[1]" :label="t('max')" :max="9999" allow-zero no-button
-            @update:model-value="update()" :debounce="1000" max-width="100%" />
+          <D4Counter :disable="filterLoading" v-model="is.filter.power[1]" :label="t('max')" :max="9999" allow-zero
+            no-button @update:model-value="update()" :debounce="1000" max-width="100%" />
         </div>
       </q-item-section>
     </q-item>
@@ -220,33 +220,33 @@ const updateDebounce = debounce((quality?: Array<string>) => {
       <q-item-section>
         <q-item-label header>{{ t('item.level') }}</q-item-label>
         <div class="row justify-center no-wrap q-col-gutter-sm items-center q-px-md">
-          <D4Counter v-model="is.filter.level[0]" :label="t('min')" :max="999" allow-zero no-button
-            @update:model-value="update()" :debounce="1000" max-width="100%" />
+          <D4Counter :disable="filterLoading" v-model="is.filter.level[0]" :label="t('min')" :max="999" allow-zero
+            no-button @update:model-value="update()" :debounce="1000" max-width="100%" />
           <div>-</div>
-          <D4Counter v-model="is.filter.level[1]" :label="t('max')" :max="999" allow-zero no-button
-            @update:model-value="update()" :debounce="1000" max-width="100%" />
+          <D4Counter :disable="filterLoading" v-model="is.filter.level[1]" :label="t('max')" :max="999" allow-zero
+            no-button @update:model-value="update()" :debounce="1000" max-width="100%" />
         </div>
       </q-item-section>
     </q-item>
     <q-item :disable="filterLoading">
       <q-item-section>
         <q-item-label header>{{ t('item.quality') }}</q-item-label>
-        <q-option-group size="xs" inline class="q-pl-sm"
+        <q-option-group :disable="filterLoading" size="xs" inline class="q-pl-sm"
           :options="filterQuality().map(fq => ({ ...fq, label: fq.fullName }))" type="checkbox"
           v-model="is.filter.quality" @update:model-value="updateDebounce()" />
       </q-item-section>
     </q-item>
-    <q-item>
+    <q-item :disable="filterLoading">
       <q-item-section>
         <q-item-label header>{{ t('item.selectType') }}</q-item-label>
-        <q-option-group size="xs" inline class="q-pl-sm" :options="filterTypes()" type="checkbox"
+        <q-option-group :disable="filterLoading" size="xs" inline class="q-pl-sm" :options="filterTypes()" type="checkbox"
           v-model="is.filter.itemTypes" @update:model-value="val => updateDebounce(val)" />
       </q-item-section>
     </q-item>
     <q-item :disable="filterLoading" :inset-level=".2"
       v-for=" itemType in is.filter.itemTypes.filter(it => it !== 'aspect') " :key="itemType">
       <q-item-section>
-        <q-select v-model="is.filter.itemTypeValues1[itemType]"
+        <q-select :disable="filterLoading" v-model="is.filter.itemTypeValues1[itemType]"
           :options="findType(itemType)?.value === 'rune' ? filterRunes() : filterClasses(itemType)"
           :label="`${findType(itemType)?.label} ${t('filter.type')}`" outlined dense no-error-icon hide-bottom-space
           emit-value map-options multiple transition-show="none" transition-hide="none" :transition-duration="0"
@@ -255,7 +255,7 @@ const updateDebounce = debounce((quality?: Array<string>) => {
         </q-select>
       </q-item-section>
     </q-item>
-    <q-item>
+    <q-item :disable="filterLoading">
       <q-item-section>
         <q-item-label header class="row items-center q-gutter-xs">
           <div>
@@ -393,7 +393,8 @@ const updateDebounce = debounce((quality?: Array<string>) => {
     <q-item :disable="filterLoading" :inset-level=".2" class="q-mt-md">
       <q-item-section>
         <div class="row items-center q-gutter-sm">
-          <q-checkbox size="xs" v-model="is.filter.fixed" :label="t('filter.fixed')" @update:model-value="fixed" />
+          <q-checkbox :disable="filterLoading" size="xs" v-model="is.filter.fixed" :label="t('filter.fixed')"
+            @update:model-value="fixed" />
           <q-icon class="icon" name="img:/images/icons/help.svg" size="19px">
             <D4Tooltip>
               <div style="max-width:200px" class="text-caption break-keep">
@@ -444,5 +445,9 @@ const updateDebounce = debounce((quality?: Array<string>) => {
   border-bottom: 1px solid currentColor;
   border-left: 1px solid currentColor;
   transform: translateY(-50%);
+}
+
+.checkbox {
+  padding-left: 10px;
 }
 </style>
