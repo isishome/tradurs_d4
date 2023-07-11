@@ -5,6 +5,7 @@ import { useGlobalStore } from 'src/stores/global-store'
 import { useAccountStore } from 'src/stores/account-store'
 import { useI18n } from 'vue-i18n'
 import { scrollPos } from 'src/common'
+import { nextTick } from 'process'
 
 interface Message {
   msgId: number,
@@ -79,6 +80,34 @@ const reads = () => {
 const refresh = () => {
   page.value = 1
   getList()
+}
+
+interface Answer {
+  loading: boolean,
+  contents: string
+}
+
+const answer = reactive<Answer>({
+  loading: false,
+  contents: '안녕하세요. Tradurs입니다.\n\n\n\n감사합니다.'
+})
+
+const sendAnswer = (msgId: number) => {
+  answer.loading = true
+  gs.answer(msgId, answer.contents)
+    .then(() => {
+      $q.notify({
+        icon: 'img:/images/icons/check.svg',
+        color: 'positive',
+        classes: '',
+        message: t('contact.successAnswer')
+      })
+      answer.contents = '안녕하세요. Tradurs입니다.\n\n\n\n감사합니다.'
+    })
+    .catch(() => { })
+    .then(() => {
+      answer.loading = false
+    })
 }
 
 const prev = () => {
@@ -167,11 +196,26 @@ onMounted(() => {
             <q-item class="q-pa-lg row items-center"
               :class="['900', '999'].includes(message.msgType) ? '' : 'justify-center'"
               style="background-color: var(--q-cloud);">
-              <q-item-label>
-                <div v-if="['900', '999'].includes(message.msgType)" class="text-area">{{
-                  message.msgValue }}
+              <div v-if="['900', '999'].includes(message.msgType)" class="full-width">
+                <div class="text-area">
+                  {{ message.msgValue }}
                 </div>
-                <q-btn v-else no-caps unelevated aria-label="Tradurs Go Item Button" color="primary"
+                <q-form v-if="message.msgType === '900'" class="q-mt-xl row items-center q-gutter-x-sm"
+                  @submit="sendAnswer(message.msgId)">
+                  <q-input outlined dense no-error-icon hide-bottom-space :disable="answer.loading"
+                    :autofocus="$q.platform.is.desktop" rows="10" type="textarea" class="col" input-class="d4-scroll"
+                    :label="t('contact.answer')" v-model="answer.contents" :rules="[val => val && val.length > 10 || '']"
+                    maxlength="500"><template #counter>
+                      {{ answer.contents ? answer.contents.length : 0 }} / 500
+                    </template>
+                  </q-input>
+                  <div>
+                    <q-btn :label="t('contact.send')" push :loading="answer.loading" type="submit" color="secondary" />
+                  </div>
+                </q-form>
+              </div>
+              <q-item-label v-else>
+                <q-btn no-caps unelevated aria-label="Tradurs Go Item Button" color="primary"
                   :to="{ name: 'itemInfo', params: { itemid: message.itemId }, state: { offers: true } }">
                   {{ t('btn.gotoItem') }}
                 </q-btn>

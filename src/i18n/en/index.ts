@@ -123,7 +123,6 @@ export default {
   item: {
     hardcore: 'Hardcore',
     ladder: 'Season',
-
     quality: 'Item Quality',
     selectType: 'Item Type',
     selectClass: 'Equipment Class',
@@ -224,8 +223,10 @@ export default {
     title: 'Contact US',
     question: 'Do you need any other help?',
     contents: 'Content of inquiry',
+    answer: 'Content of answer',
     send: 'Send',
-    success: 'Your inquiry was successfully received'
+    success: 'Your inquiry was successfully received',
+    successAnswer: 'Your answer was successfully sent'
   },
   maintenance: {
     title: 'Temporary Maintenance Announcement',

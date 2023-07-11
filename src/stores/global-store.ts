@@ -14,10 +14,24 @@ export const useGlobalStore = defineStore('global', {
   },
   actions: {
     contactUs(token: string, contents: string | null) {
-      return new Promise<void>(async (resolve) => {
+      return new Promise<void>(async (resolve, reject) => {
         api.post('/d4/contact', { token, contents })
           .then(() => {
             resolve()
+          })
+          .catch(() => {
+            reject()
+          })
+      })
+    },
+    answer(msgId: number, contents: string) {
+      return new Promise<void>(async (resolve, reject) => {
+        api.post('/d4/contact/answer', { msgId, contents })
+          .then(() => {
+            resolve()
+          })
+          .catch(() => {
+            reject()
           })
       })
     }

@@ -122,7 +122,6 @@ export default {
   item: {
     hardcore: '하드코어',
     ladder: '시즌',
-
     quality: '아이템 등급',
     selectType: '아이템 유형',
     selectClass: '장비 클래스',
@@ -222,9 +221,11 @@ export default {
   contact: {
     title: '문의 하기',
     contents: '문의 내용',
+    answer: '답변 내용',
     question: '다른 도움이 필요하신가요?',
     send: '전송',
-    success: '문의 내용이 정상적으로 접수되었습니다'
+    success: '문의 내용이 정상적으로 접수되었습니다',
+    successAnswer: '답변 내용이 정상적으로 접수되었습니다'
   },
   maintenance: {
     title: '임시 점검 안내 공지',
