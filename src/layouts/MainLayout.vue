@@ -283,7 +283,7 @@ onUnmounted(() => {
           </q-btn>
         </div>
         <div class="col row items-center" :class="$q.screen.lt.md ? 'justify-center' : 'justify-between'">
-          <div class="col-9 col-md-6 row no-wrap items-center q-gutter-md">
+          <div class="col-9 col-md-5 row no-wrap items-center q-gutter-md">
             <q-btn v-if="$q.screen.lt.md" flat padding="0" :ripple="false" @click="main">
               <img v-show="$q.dark.isActive" src="/images/logo.webp" width="36" height="36" alt="Tradurs Logo Image" />
               <img v-show="!$q.dark.isActive" src="/images/logo_light.webp" width="36" height="36"
@@ -303,7 +303,7 @@ onUnmounted(() => {
             </q-input>
           </div>
           <div>
-            <q-tabs dense no-caps narrow-indicator class="gt-sm q-px-sm bg-transparent no-hover nav">
+            <q-tabs dense no-caps narrow-indicator class="gt-sm q-px-xs bg-transparent no-hover nav">
               <q-route-tab :ripple="!$q.dark.isActive" :label="t('page.tradeList')" :to="{ name: 'tradeList' }" exact />
               <q-route-tab v-if="as.signed" :ripple="!$q.dark.isActive" :label="t('page.messages')"
                 class="relative-position" :to="{ name: 'messages' }" :alert="newMessages ? 'negative' : 'transparent'"
