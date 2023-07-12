@@ -39,6 +39,8 @@ if ($q.localStorage.has('d4.filter'))
 if ($q.localStorage.has('d4.fixedFilter'))
   is.fixedFilter = JSON.parse($q.localStorage.getItem('d4.fixedFilter') as string)
 
+const filterItemStatus = computed(() => [{ value: null, label: t('filter.all') }, ...is.filterItemStatus()])
+
 // about property
 const propertyRef = ref<QSelect | null>(null)
 const propertyOptions = is.filterProperties
@@ -169,7 +171,18 @@ const updateFixedDebounce = debounce(() => {
   <q-list dense class="filter" :class="{ 'disable': disable || filterLoading }">
     <q-item :disable="filterLoading">
       <q-item-section>
-        <q-item-label header>{{ t('filter.basic') }}</q-item-label>
+        <q-item-label header class="row items-center q-gutter-xs">
+          <div>
+            {{ t('filter.basic') }}
+          </div>
+          <q-icon class="icon" name="img:/images/icons/help.svg" size="19px">
+            <D4Tooltip>
+              <div style="max-width:160px" class="text-caption break-keep">
+                {{ t('filter.basicDescription') }}
+              </div>
+            </D4Tooltip>
+          </q-icon>
+        </q-item-label>
         <q-checkbox :disable="filterLoading" size="xs" class="checkbox" v-model="is.fixedFilter.hardcore"
           :label="t('item.hardcore')" @update:model-value="updateFixedDebounce()" />
         <q-checkbox disable size="xs" class="checkbox" v-model="is.fixedFilter.ladder" :label="t('item.ladder')"
@@ -200,7 +213,7 @@ const updateFixedDebounce = debounce(() => {
       <q-item-section class="q-pt-md q-pr-md select-wrap">
         <q-select v-model="is.filter.status" :disable="filterLoading" outlined dense no-error-icon hide-bottom-space
           emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0" behavior="menu"
-          :label="t('filter.status')" :options="is.filterItemStatus()" dropdown-icon="img:/images/icons/dropdown.svg"
+          :label="t('filter.status')" :options="filterItemStatus" dropdown-icon="img:/images/icons/dropdown.svg"
           popup-content-class="d4-scroll" @update:model-value="update()" />
       </q-item-section>
     </q-item>

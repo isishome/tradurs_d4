@@ -25,6 +25,7 @@ export default {
   filter: {
     basic: '기본 필터',
     onlyCurrency: '가격 명시만 보기',
+    all: '전체',
     onlyForMe: '나만의 검색',
     status: '아이템 상태',
     type: '종류',
@@ -33,7 +34,8 @@ export default {
     offered: '제안받은 아이템',
     offer: '제안 요청 아이템',
     fixed: '필터 고정',
-    fixedDescription: '필터 정보가 로컬 스토리지에 저장됩니다. 설정된 필터에 따라 아이템 노출에 대한 착오 등이 생길 수 있으니 이점 주의하세요.',
+    fixedDescription: '기본 필터 정보를 제외한 필터 정보가 로컬 스토리지에 저장됩니다. 설정된 필터에 따라 아이템 노출에 대한 착오 등이 생길 수 있으니 이점 주의하세요.',
+    basicDescription: '기본 필터 정보는 항상 로컬 스토리지에 저장됩니다.',
     description: {
       advanced: '고급 필터 사용 시 \'고유 특성\'과 \'옵션\'을 구분해서 사용하세요',
       advanced2: '간혹 판매자가 \'고유 특성\'과 \'옵션\'을 잘못 입력하는 경우가 있으니 고려하여 필터 하세요'
