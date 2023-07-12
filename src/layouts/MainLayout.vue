@@ -367,7 +367,7 @@ onUnmounted(() => {
         <div class="row justify-center">
           <div :class="screen.lt.sm ? 'q-pa-sm' : 'q-pa-xl'" :style="screen.lt.sm ? 'width:100%' : 'width:830px'">
             <div class="view max-width">
-              <div class="row justify-center" :class="$q.screen.width < 728 ? 'q-mb-sm' : 'q-mb-md'">
+              <div class="row justify-center top-ads">
                 <ins class="adsbygoogle" :style="`display:inline-block;${size}`" data-ad-client="ca-pub-5110777286519562"
                   data-ad-slot="7137983054" :data-adtest="prod ? 'off' : 'on'" :key="`top-${key}`"></ins>
               </div>
@@ -494,5 +494,15 @@ ins::after {
   border-radius: 40px;
   font-size: 8px;
   line-height: 1;
+}
+
+.top-ads {
+  margin-bottom: 96px;
+}
+
+@media (max-width:600px) {
+  .top-ads {
+    margin-bottom: 48px;
+  }
 }
 </style>
