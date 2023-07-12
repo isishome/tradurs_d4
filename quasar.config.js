@@ -65,7 +65,7 @@ module.exports = configure(function (/* ctx */) {
       // env: {},
       // rawDefine: {}
       // ignorePublicFolder: true,
-      minify: true,
+      // minify: false,
       // polyfillModulePreload: true,
       // distDir
 
