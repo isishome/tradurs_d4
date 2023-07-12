@@ -46,6 +46,7 @@ const updateBattleTag = () => {
 // about Meta
 const titleReactive = computed(() => gs.getTitle(t(`page.${route.name as string}`)))
 const descReactive = computed(() => t('seo.desc'))
+const recaptchaSrc = computed(() => route.name === 'support' ? 'https://www.google.com/recaptcha/api.js?render=6Lf38rYmAAAAAB-ET1oihMUkcDumRascvVHOyGmg' : '')
 
 useMeta(() => {
   return {
@@ -63,7 +64,8 @@ useMeta(() => {
       twitterDescription: { name: 'twitter:description', content: descReactive.value },
       twitterUrl: { name: 'twitter:url', content: 'https://d4.tradurs.com' },
       twitterImage: { name: 'twitter:image', content: 'https://d4.tradurs.com/images/og.png' }
-    }
+    },
+    script: { recaptcha: { src: recaptchaSrc.value } }
   }
 })
 
