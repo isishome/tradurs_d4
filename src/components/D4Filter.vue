@@ -182,6 +182,7 @@ const updateFixedDebounce = debounce(() => {
               </div>
             </D4Tooltip>
           </q-icon>
+          <q-separator class="col q-ml-sm" />
         </q-item-label>
         <q-checkbox :disable="filterLoading" size="xs" class="checkbox" v-model="is.fixedFilter.hardcore"
           :label="t('item.hardcore')" @update:model-value="updateFixedDebounce()" />
@@ -189,6 +190,11 @@ const updateFixedDebounce = debounce(() => {
           @update:model-value="updateFixedDebounce()" />
         <q-checkbox :disable="filterLoading" size="xs" class="checkbox" v-model="is.fixedFilter.onlyCurrency"
           :label="t('filter.onlyCurrency')" @update:model-value="updateFixedDebounce()" />
+      </q-item-section>
+    </q-item>
+    <q-item>
+      <q-item-section>
+        <q-separator inset />
       </q-item-section>
     </q-item>
     <q-item :disable="filterLoading" v-if="as.signed">
