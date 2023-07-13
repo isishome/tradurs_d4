@@ -130,12 +130,13 @@ watch(() => is.filter.request, (val) => {
 const size = computed(() => $q.screen.width < 728 ? 'width:320px;max-height:100px;' : 'width:728px;height:90px;')
 
 const onWindowLoad = () => {
-  const adsbygoogle = window.adsbygoogle || []
-  adsbygoogle.push({})
-  adsbygoogle.push({})
-
-  if ($q.platform.is.mobile)
-    adsbygoogle.push({})
+  if (prod) {
+    const adsbygoogle = window.adsbygoogle || []
+    const ads = document.querySelectorAll('ins.adsbygoogle')
+    ads.forEach(() => {
+      adsbygoogle.push({})
+    })
+  }
 }
 
 onMounted(() => {
@@ -159,7 +160,8 @@ onUnmounted(() => {
       @before-show="beforeShow">
       <q-list ref="leftDrawerList" class="column full-height" style="width:300px">
         <q-scroll-area class="col">
-          <D4Filter :disable="$route.name !== 'tradeList'" class="q-px-md q-pt-lg" />
+          <D4Filter :disable="$route.name !== 'tradeList'" class="q-px-md"
+            :class="$q.screen.lt.sm ? 'q-pt-lg' : 'q-pt-xl'" />
         </q-scroll-area>
       </q-list>
     </q-drawer>
@@ -497,12 +499,12 @@ ins::after {
 }
 
 .top-ads {
-  margin-bottom: 96px;
+  margin-bottom: 48px;
 }
 
 @media (max-width:600px) {
   .top-ads {
-    margin-bottom: 48px;
+    margin: 12px 0 18px 0;
   }
 }
 </style>
