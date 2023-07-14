@@ -36,7 +36,7 @@ export default {
     fixed: 'Fixed Filter',
     basicDescription: 'Basic filter information is always saved to local storage',
     fixedDescription: 'Filter information, except for the basic filter information, is saved to local storage. Please be aware of this, as it may cause misunderstandings about item exposure depending on the filters set',
-    affixDescription: 'Affixes search will also search for items that include 3 out of 4 filter affixes when 4 are selected',
+    affixDescription: 'Affixes search will also search for other items, including any combination of three of the four if you select the four affix filter.',
     description: {
       advanced: 'When using advanced filters, distinguish between \'Characteristics\' and \'Affixes\'',
       advanced2: 'Occasionally, sellers may incorrectly enter \'Characteristics\' and \'Affixes\', so consider filtering'
