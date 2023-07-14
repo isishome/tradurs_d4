@@ -134,6 +134,8 @@ const onWindowLoad = () => {
     const adsbygoogle = window.adsbygoogle || []
     const ads: NodeListOf<Element> = document.querySelectorAll('ins.adsbygoogle')
     ads.forEach((a: Element) => {
+      console.log(a.clientWidth, 'width')
+      console.log(a.clientHeight, 'height')
       if (a.clientWidth + a.clientHeight > 0)
         adsbygoogle.push({})
     })
