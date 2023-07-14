@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { AxiosInstance } from 'axios'
-import { ref, computed, watch, onMounted, onUnmounted, nextTick, inject } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted, inject } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useQuasar, Screen, uid } from 'quasar'
 import { useI18n } from 'vue-i18n'
@@ -75,9 +75,9 @@ const setDark = () => {
 const key = ref(uid())
 const reload = () => {
   key.value = uid()
-  nextTick(() => {
+  setTimeout(() => {
     onWindowLoad()
-  })
+  }, 200)
 }
 
 const _name = ref<string>('')
@@ -131,13 +131,11 @@ const size = computed(() => $q.screen.width < 728 ? 'width:320px;max-height:100p
 
 const onWindowLoad = () => {
   if (prod) {
-    nextTick(() => {
-      const adsbygoogle = window.adsbygoogle || []
-      const ads: NodeListOf<Element> = document.querySelectorAll('ins.adsbygoogle')
-      ads.forEach((a: Element) => {
-        if (a.clientWidth + a.clientHeight > 0)
-          adsbygoogle.push({})
-      })
+    const adsbygoogle = window.adsbygoogle || []
+    const ads: NodeListOf<Element> = document.querySelectorAll('ins.adsbygoogle')
+    ads.forEach((a: Element) => {
+      if (a.clientWidth + a.clientHeight > 0)
+        adsbygoogle.push({})
     })
   }
 }
@@ -146,9 +144,9 @@ onMounted(() => {
   if (document.readyState !== 'complete')
     window.addEventListener('load', onWindowLoad)
   else {
-    nextTick(() => {
+    setTimeout(() => {
       onWindowLoad()
-    })
+    }, 200)
   }
 })
 
