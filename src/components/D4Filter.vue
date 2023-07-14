@@ -171,13 +171,13 @@ const updateFixedDebounce = debounce(() => {
   <q-list dense class="filter" :class="{ 'disable': disable || filterLoading }">
     <q-item :disable="filterLoading">
       <q-item-section>
-        <q-item-label header class="row items-center q-gutter-xs">
+        <q-item-label header class="row items-center q-gutter-sm">
           <div>
             {{ t('filter.basic') }}
           </div>
           <q-icon class="icon" name="img:/images/icons/help.svg" size="19px">
             <D4Tooltip>
-              <div style="max-width:160px" class="text-caption break-keep">
+              <div style="max-width:200px" class="text-caption break-keep">
                 {{ t('filter.basicDescription') }}
               </div>
             </D4Tooltip>
@@ -276,7 +276,7 @@ const updateFixedDebounce = debounce(() => {
     </q-item>
     <q-item :disable="filterLoading">
       <q-item-section>
-        <q-item-label header class="row items-center q-gutter-xs">
+        <q-item-label header class="row items-center q-gutter-sm">
           <div>
             {{ t('filter.advanced') }}
           </div>
@@ -300,7 +300,7 @@ const updateFixedDebounce = debounce(() => {
                 dense no-error-icon use-input hide-bottom-space hide-selected emit-value map-options multiple
                 transition-show="none" transition-hide="none" :transition-duration="0"
                 :label="`${t('properties')} ${t('searchOrSelect')}`" :options="propertyOptions(propertyNeedle)"
-                dropdown-icon="img:/images/icons/dropdown.svg" popup-content-class="d4-scroll"
+                dropdown-icon="img:/images/icons/dropdown.svg" popup-content-class="d4-scroll limit-select"
                 @update:model-value="selectedProperty" @input-value="filterProperties">
                 <template #option="scope">
                   <q-item v-bind="scope.itemProps">
@@ -334,31 +334,40 @@ const updateFixedDebounce = debounce(() => {
               </div>
             </div>
             <div class="select-wrap">
-              <q-select ref="affixRef" v-model="is.filter.affixes" :disable="filterLoading" max-values="3" outlined dense
-                no-error-icon use-input hide-bottom-space hide-selected emit-value map-options multiple
-                transition-show="none" transition-hide="none" :transition-duration="0"
-                :label="`${t('affixes')} ${t('searchOrSelect')}`" :options="affixOptions(affixNeedle)"
-                dropdown-icon="img:/images/icons/dropdown.svg" popup-content-class="d4-scroll"
-                @update:model-value="selectedAffix" @input-value="filterAffixes">
-                <template #option="scope">
-                  <q-item v-bind="scope.itemProps">
-                    <q-item-section side>
-                      <q-icon class="icon" :class="{ 'rotate-45': ['standard'].includes(scope.opt.type as string) }"
-                        size="14px" :name="`img:/images/attribute_types/${scope.opt.type || 'standard'}.svg`" />
-                    </q-item-section>
-                    <q-item-section>
-                      <q-item-label>{{ scope.opt.label }}</q-item-label>
-                    </q-item-section>
-                  </q-item>
-                </template>
-                <template #no-option>
-                  <q-item>
-                    <q-item-section class="text-grey">
-                      {{ t('noMessage', { attr: t('affixes') }) }}
-                    </q-item-section>
-                  </q-item>
-                </template>
-              </q-select>
+              <div class="row items-center q-gutter-x-sm">
+                <q-select ref="affixRef" v-model="is.filter.affixes" class="col" :disable="filterLoading" max-values="4"
+                  outlined dense no-error-icon use-input hide-bottom-space hide-selected emit-value map-options multiple
+                  transition-show="none" transition-hide="none" :transition-duration="0"
+                  :label="`${t('affixes')} ${t('searchOrSelect')}`" :options="affixOptions(affixNeedle)"
+                  dropdown-icon="img:/images/icons/dropdown.svg" popup-content-class="d4-scroll limit-select"
+                  @update:model-value="selectedAffix" @input-value="filterAffixes">
+                  <template #option="scope">
+                    <q-item v-bind="scope.itemProps">
+                      <q-item-section side>
+                        <q-icon class="icon" :class="{ 'rotate-45': ['standard'].includes(scope.opt.type as string) }"
+                          size="14px" :name="`img:/images/attribute_types/${scope.opt.type || 'standard'}.svg`" />
+                      </q-item-section>
+                      <q-item-section>
+                        <q-item-label>{{ scope.opt.label }}</q-item-label>
+                      </q-item-section>
+                    </q-item>
+                  </template>
+                  <template #no-option>
+                    <q-item>
+                      <q-item-section class="text-grey">
+                        {{ t('noMessage', { attr: t('affixes') }) }}
+                      </q-item-section>
+                    </q-item>
+                  </template>
+                </q-select>
+                <q-icon class="icon" name="img:/images/icons/help.svg" size="19px">
+                  <D4Tooltip>
+                    <div style="max-width:200px" class="text-caption break-keep">
+                      {{ t('filter.affixDescription') }}
+                    </div>
+                  </D4Tooltip>
+                </q-icon>
+              </div>
               <div bordered class="q-mt-xs q-pl-sm rounded-borders column q-gutter-xs text-caption full-width">
                 <div v-for=" aid in is.filter.affixes " :key="`${aid}`" class="row items-center no-wrap full-width">
                   <div class="ellipsis">
@@ -376,7 +385,7 @@ const updateFixedDebounce = debounce(() => {
                 outlined dense no-error-icon use-input hide-bottom-space hide-selected emit-value map-options multiple
                 transition-show="none" transition-hide="none" :transition-duration="0"
                 :label="`${t('restrictions')} ${t('searchOrSelect')}`" :options="restrictionOptions(restrictionNeedle)"
-                dropdown-icon="img:/images/icons/dropdown.svg" popup-content-class="d4-scroll"
+                dropdown-icon="img:/images/icons/dropdown.svg" popup-content-class="d4-scroll limit-select"
                 @update:model-value="selectedRestriction" @input-value="filterRestrictions">
                 <template #option="scope">
                   <q-item v-bind="scope.itemProps">

@@ -245,3 +245,7 @@ body.body--dark {
   white-space: pre-wrap;
   word-break: keep-all;
 }
+
+.limit-select {
+  max-height: 40vh !important;
+}
