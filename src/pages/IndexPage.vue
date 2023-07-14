@@ -326,8 +326,8 @@ defineExpose({ getList })
   <div></div>
   <div>
     <div class="row justify-center items-center">
-      <D4Items ref="itemsRef" :items="items" @upsert-item="upsertItem" @delete-item="deleteItem" @relist-item="relistItem"
-        @status-item="statusItem" @update-only="updateOnly" @copy="copy" @favorite="favorite" />
+      <D4Items ref="itemsRef" class="item-list" :items="items" @upsert-item="upsertItem" @delete-item="deleteItem"
+        @relist-item="relistItem" @status-item="statusItem" @update-only="updateOnly" @copy="copy" @favorite="favorite" />
     </div>
   </div>
   <div class="q-pt-xl"></div>

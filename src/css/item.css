@@ -141,7 +141,7 @@
   }
 }
 
-.card-item:not(.editable) .filtered {
+.item-list .item:not(.reward) .card-item:not(.editable) .filtered {
   background-color: rgba(250, 200, 0);
   color: black;
   font-weight: 700;
@@ -355,7 +355,7 @@
   color: rgba(0, 0, 220, .6);
 }
 
-.card-item:not(.editable) .minmax-text {
+.item-list .item:not(.reward) .card-item:not(.editable) .filtered .minmax-text {
   color: rgba(110, 110, 110, 1) !important;
 }
 
