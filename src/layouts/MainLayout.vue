@@ -131,13 +131,13 @@ const size = computed(() => $q.screen.width < 728 ? 'width:320px;max-height:100p
 
 const onWindowLoad = () => {
   if (prod) {
-    const adsbygoogle = window.adsbygoogle || []
-    const ads: NodeListOf<Element> = document.querySelectorAll('ins.adsbygoogle')
-    ads.forEach((a: Element) => {
-      console.log(a.clientWidth, 'width')
-      console.log(a.clientHeight, 'height')
-      if (a.clientWidth + a.clientHeight > 0)
-        adsbygoogle.push({})
+    nextTick(() => {
+      const adsbygoogle = window.adsbygoogle || []
+      const ads: NodeListOf<Element> = document.querySelectorAll('ins.adsbygoogle')
+      ads.forEach((a: Element) => {
+        if (a.clientWidth + a.clientHeight > 0)
+          adsbygoogle.push({})
+      })
     })
   }
 }
