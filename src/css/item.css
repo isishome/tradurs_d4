@@ -141,6 +141,14 @@
   }
 }
 
+.card-item:not(.editable) .filtered {
+  background-color: rgba(250, 200, 0);
+  color: black;
+  font-weight: 700;
+  border-radius: 4px;
+  padding-right: 6px;
+}
+
 .card-item.legendary .stress {
   font-weight: 700;
 }

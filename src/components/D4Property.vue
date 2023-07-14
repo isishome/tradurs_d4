@@ -22,8 +22,8 @@ const emit = defineEmits(['update', 'remove'])
 
 const is = useItemStore()
 
-const findProperty = is.findProperty
-const propertyInfo = computed(() => parse(findProperty(props.data.propertyId)?.label, props.data.propertyValues))
+const findProperty = computed(() => is.findProperty(props.data.propertyId))
+const propertyInfo = computed(() => parse(findProperty.value?.label, props.data.propertyValues))
 const update = (): void => {
   emit('update', { valueId: props.data.valueId, propertyValues: propertyInfo.value.filter(i => i.type === 'variable').map(i => parseFloat(i.value.toString())) })
 }
@@ -36,10 +36,11 @@ const remove = () => {
 <template>
   <div class="row no-wrap items-baseline q-gutter-xs" :class="{ disable }" :data-id="data.valueId">
     <div>
-      <q-icon class="icon" :class="{ 'rotate-45': ['standard'].includes(findProperty(data.propertyId)?.type as string) }"
-        size="13px" :name="`img:/images/attribute_types/${findProperty(data.propertyId)?.type || 'standard'}.svg`" />
+      <q-icon class="icon" :class="{ 'rotate-45': ['standard'].includes(findProperty?.type as string) }" size="13px"
+        :name="`img:/images/attribute_types/${findProperty?.type || 'standard'}.svg`" />
     </div>
-    <div class="row items-center q-gutter-x-xs">
+    <div class="row items-center q-gutter-x-xs"
+      :class="{ 'filtered': is.filter.properties.includes(findProperty?.value as number) }">
       <template v-for="(comp, k) in propertyInfo" :key="k">
         <template v-if="comp.type === 'text'">
           <div v-for="(word, i) in (comp.value as string).split(/\s+/g).filter(w => w !== '')" :key="i">{{ word }}

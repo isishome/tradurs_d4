@@ -452,7 +452,7 @@ defineExpose({ scrollEnd })
     <slot name="more" :loading="loading"></slot>
   </q-card>
   <q-card v-else class="card-item non-selectable no-scroll full-height overflow-hidden"
-    :class="[data.expanded ? 'expanded' : 'no-expanded', data.quality, `status - ${data.statusCode} `]">
+    :class="[data.expanded ? 'expanded' : 'no-expanded', data.quality, `status-${data.statusCode} `]">
     <div class="inner">
       <q-card-section class="relative-position">
         <q-img v-show="!loading"

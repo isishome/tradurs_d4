@@ -50,7 +50,8 @@ const remove = (): void => {
       <q-icon class="icon" :class="{ 'rotate-45': ['standard'].includes(findAffix?.type as string) }" size="13px"
         :name="`img:/images/attribute_types/${findAffix?.type}.svg`" />
     </div>
-    <div class="row items-center q-gutter-x-xs">
+    <div class="row items-center q-gutter-x-xs"
+      :class="{ 'filtered': is.filter.affixes.includes(findAffix?.value as number) }">
       <template v-for="(comp, k) in affixInfo" :key="k">
         <template v-if="comp.type === 'text'">
           <div v-for="(word, i) in (comp.value as string).split(/\s+/g).filter(w => w !== '')" :key="i">{{ word }}
