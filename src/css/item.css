@@ -355,6 +355,10 @@
   color: rgba(0, 0, 220, .6);
 }
 
+.card-item:not(.editable) .minmax-text {
+  color: rgba(110, 110, 110, 1) !important;
+}
+
 .minmax {
   opacity: .8;
 }
