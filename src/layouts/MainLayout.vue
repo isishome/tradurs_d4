@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { AxiosInstance } from 'axios'
-import { ref, computed, watch, onMounted, onUnmounted, inject } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted, nextTick, inject } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useQuasar, Screen, uid } from 'quasar'
 import { useI18n } from 'vue-i18n'
@@ -75,9 +75,9 @@ const setDark = () => {
 const key = ref(uid())
 const reload = () => {
   key.value = uid()
-  setTimeout(() => {
+  nextTick(() => {
     onWindowLoad()
-  }, 200)
+  })
 }
 
 const _name = ref<string>('')
@@ -144,9 +144,9 @@ onMounted(() => {
   if (document.readyState !== 'complete')
     window.addEventListener('load', onWindowLoad)
   else {
-    setTimeout(() => {
+    nextTick(() => {
       onWindowLoad()
-    }, 200)
+    })
   }
 })
 
