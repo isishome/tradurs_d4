@@ -156,8 +156,8 @@ const checkInfo = (textArray: string[]) => {
     return failedScan(t('analyze.typeValueNotFound'))
 
   // check item name
-  const name = textArray.splice(0, indexQuality).join(' ').replace(new RegExp(`[^${is.analyze.lang} ]`, 'gi'), '').trim()
 
+  const name = textArray.splice(indexQuality - 1, 1).join(' ').replace(new RegExp(`[^${is.analyze.lang} ]`, 'gi'), '').trim()
   if (name === '')
     return failedScan(t('analyze.nameNotFound'))
 
@@ -328,11 +328,13 @@ const scan = (files: File) => {
     const image = new Image()
     image.src = fr.result as string
     image.onload = () => {
-      canvas.width = image.width
-      canvas.height = image.height
+      const ratio = Math.round(600 / image.width * 10) / 10
+      canvas.width = 600
+      canvas.height = image.height * ratio
       if (ctx) {
-        ctx.filter = 'contrast(160%)'
-        ctx.drawImage(image, 0, 0)
+        ctx.scale(ratio, ratio)
+        ctx.filter = 'contrast(4) blur(.7px) invert(1) grayscale(1)'
+        ctx.drawImage(image, 4, 4)
         is.recognize(canvas)
           .then((text) => {
             plainText = text
