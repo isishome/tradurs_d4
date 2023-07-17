@@ -231,6 +231,9 @@ onUnmounted(() => {
                   {{ t('page.awards') }}
                 </q-item-label>
               </q-item-section>
+              <q-item-section side>
+                <q-badge label="N" color="negative" class="new-badge2" />
+              </q-item-section>
             </q-item>
           </q-list>
           <q-separator />
@@ -312,7 +315,9 @@ onUnmounted(() => {
                 class="relative-position" :to="{ name: 'messages' }" :alert="newMessages ? 'negative' : 'transparent'"
                 exact />
               <q-route-tab v-if="as.signed" :ripple="!$q.dark.isActive" :label="t('page.awards')" :to="{ name: 'awards' }"
-                exact />
+                exact>
+                <q-badge floating label="N" color="negative" class="new-badge2" />
+              </q-route-tab>
             </q-tabs>
           </div>
         </div>
@@ -493,6 +498,15 @@ ins::after {
 .new-badge {
   top: 0;
   right: 0;
+  padding: 3px;
+  border-radius: 40px;
+  font-size: 8px;
+  line-height: 1;
+}
+
+.new-badge2 {
+  top: 0;
+  right: -10px;
   padding: 3px;
   border-radius: 40px;
   font-size: 8px;
