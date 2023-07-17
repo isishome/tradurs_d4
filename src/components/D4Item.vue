@@ -10,9 +10,7 @@ import { checkName, clipboard } from 'src/common'
 import { itemImgs } from 'src/common/items'
 
 import D4Price from 'components/D4Price.vue'
-import D4Counter from 'components/D4Counter.vue'
 import D4User from 'components/D4User.vue'
-import D4Dialog from 'components/D4Dialog.vue'
 
 interface IProps {
   data: Item,

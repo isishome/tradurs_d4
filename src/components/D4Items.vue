@@ -13,8 +13,8 @@ import D4Item from 'components/D4Item.vue'
 import D4Property from 'components/D4Property.vue'
 import D4Affix from 'components/D4Affix.vue'
 import D4Restriction from 'components/D4Restriction.vue'
-import D4Offer from 'components/D4Offer.vue'
-import D4Dialog from 'components/D4Dialog.vue'
+
+const D4Offer = defineAsyncComponent(() => import('components/D4Offer.vue'))
 
 interface IProps {
   items: Array<Item>,

@@ -3,15 +3,12 @@ import { useAccountStore } from 'stores/account-store'
 import { useItemStore } from 'stores/item-store'
 import { useGlobalStore } from './stores/global-store'
 
-import D4Dialog from 'components/D4Dialog.vue'
-
 export default {
   preFetch({ store }) {
     const as = useAccountStore(store);
     const is = useItemStore(store);
     return Promise.all([as.checkSign(), as.getEvaluations(), is.getBase(), is.getProperties(), is.getAffixes(), is.getRestrictions()]);
-  },
-  components: { D4Dialog }
+  }
 }
 </script>
 

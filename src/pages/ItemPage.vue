@@ -2,7 +2,6 @@
 import { useGlobalStore } from 'src/stores/global-store'
 import { useItemStore, type OfferInfo } from 'stores/item-store'
 
-
 export default {
   preFetch({ store, currentRoute }) {
     const is = useItemStore(store)

@@ -6,8 +6,6 @@ import { useAccountStore } from 'src/stores/account-store'
 import { useI18n } from 'vue-i18n'
 import { scrollPos } from 'src/common'
 
-import D4Dialog from 'components/D4Dialog.vue'
-
 interface Message {
   msgId: number,
   msgType: string,

@@ -189,14 +189,6 @@ body.body--dark {
   box-shadow: none;
 }
 
-.allow-copy {
-  cursor: pointer;
-}
-
-.allow-copy:hover {
-  text-decoration: underline;
-}
-
 .notify {
   background-color: #e0e0e0 !important;
   color: #424242 !important;
@@ -217,23 +209,6 @@ body.body--dark {
 
 .grecaptcha-badge {
   visibility: hidden;
-}
-
-.useful {
-  color: currentColor;
-}
-
-.useful a {
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  border-radius: 0;
-  line-height: 1rem;
-  margin-bottom: 10px;
-  opacity: .5;
-}
-
-.useful a:hover {
-  opacity: 1;
 }
 
 .max-width {

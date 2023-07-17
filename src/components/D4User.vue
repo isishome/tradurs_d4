@@ -6,8 +6,6 @@ import { User, type INotify } from 'src/types/user'
 import { clipboard } from 'src/common'
 import { useAccountStore } from 'src/stores/account-store'
 
-import D4Tooltip from 'components/D4Tooltip.vue'
-
 interface IProps {
   data: User,
   label?: string,
@@ -159,5 +157,13 @@ const notifyPrivate = () => {
   height: 10px;
   margin: 0 -4px 0 0;
   filter: invert(39%) sepia(100%) saturate(1473%) hue-rotate(89deg) brightness(110%) contrast(110%);
+}
+
+.allow-copy {
+  cursor: pointer;
+}
+
+.allow-copy:hover {
+  text-decoration: underline;
 }
 </style>

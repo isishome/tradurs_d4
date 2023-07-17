@@ -7,8 +7,6 @@ import { Price } from 'src/types/item'
 import { itemImgs } from 'src/common/items'
 import { focus } from 'src/common'
 
-import D4Counter from 'components/D4Counter.vue'
-
 interface IProps {
   data: Price,
   offer?: boolean,

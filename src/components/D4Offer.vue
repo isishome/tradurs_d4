@@ -8,7 +8,6 @@ import { useItemStore } from 'src/stores/item-store'
 
 import D4User from 'components/D4User.vue'
 import D4Price from 'components/D4Price.vue'
-import D4Tooltip from 'components/D4Tooltip.vue'
 
 interface IProps {
   data: Offer,

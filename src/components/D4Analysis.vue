@@ -9,9 +9,7 @@ import { reactive, ref } from 'vue'
 import { QFile, uid } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { type ILabel, type Affix as IAffix, useItemStore } from 'src/stores/item-store'
-import { Affix, AffixValue, Item } from 'src/types/item'
-
-import D4Dialog from 'components/D4Dialog.vue'
+import { Affix, Item } from 'src/types/item'
 
 interface IProps {
   loading?: boolean,

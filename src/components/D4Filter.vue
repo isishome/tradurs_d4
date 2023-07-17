@@ -7,9 +7,6 @@ import { useI18n } from 'vue-i18n'
 import NotifyEn from '/images/filter/notify_en.webp'
 import NotifyKo from '/images/filter/notify_ko.webp'
 
-import D4Tooltip from 'components/D4Tooltip.vue'
-import D4Counter from 'components/D4Counter.vue'
-
 interface IProps {
   disable?: boolean
 }

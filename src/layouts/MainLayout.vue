@@ -508,4 +508,21 @@ ins::after {
     margin: 12px 0 18px 0;
   }
 }
+
+.useful {
+  color: currentColor;
+}
+
+.useful a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  border-radius: 0;
+  line-height: 1rem;
+  margin-bottom: 10px;
+  opacity: .5;
+}
+
+.useful a:hover {
+  opacity: 1;
+}
 </style>
