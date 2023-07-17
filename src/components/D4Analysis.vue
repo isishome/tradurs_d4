@@ -208,7 +208,7 @@ const checkInfo = (textArray: string[]) => {
 }
 
 const removeUnnecessary = (attr: string | undefined) => {
-  return attr?.replace(new RegExp(`[^${is.analyze.lang}0-9\\,\\.\\-#\\[\\]]`, 'g'), '')
+  return attr?.replace(/[\(]{1}[^\(]{1,}[\)]{1}/g, '').replace(new RegExp(`[^${is.analyze.lang}0-9\\,\\.\\-#\\[\\]]`, 'g'), '')
 }
 
 const attrToRegex = (attr: string | undefined) => {
@@ -326,12 +326,12 @@ const scan = (files: File) => {
     const image = new Image()
     image.src = fr.result as string
     image.onload = () => {
-      const ratio = Math.round(600 / image.width * 10) / 10
-      canvas.width = 600
+      const ratio = Math.round(500 / image.width * 10) / 10
+      canvas.width = 500
       canvas.height = image.height * ratio
       if (ctx) {
         ctx.scale(ratio, ratio)
-        ctx.filter = 'contrast(4) blur(.7px) invert(1) grayscale(1)'
+        ctx.filter = 'sepia(.5) saturate(4) contrast(2) grayscale(.5) blur(.4px)'
         ctx.drawImage(image, 4, 4)
         is.recognize(canvas)
           .then((text) => {
