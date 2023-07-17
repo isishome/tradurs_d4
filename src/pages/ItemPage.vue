@@ -23,13 +23,13 @@ export default {
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import { ref, computed, watch, onUnmounted, onMounted } from 'vue'
+import { ref, computed, defineAsyncComponent, watch, onUnmounted, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useQuasar, uid } from 'quasar'
 import { useAccountStore } from 'stores/account-store'
 import { Item, IPrice } from 'src/types/item'
 
-import D4Items from 'components/D4Items.vue'
+const D4Items = defineAsyncComponent(() => import('components/D4Items.vue'))
 
 const props = defineProps<{
   itemid: string

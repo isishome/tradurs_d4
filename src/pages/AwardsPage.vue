@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref, computed, reactive } from 'vue'
+import { ref, computed, reactive, defineAsyncComponent } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { type Awards, useItemStore } from 'src/stores/item-store'
-import D4Award from 'components/D4Award.vue'
+
+const D4Award = defineAsyncComponent(() => import('components/D4Award.vue'))
 
 const { t, n } = useI18n({ useScope: 'global' })
 const is = useItemStore()

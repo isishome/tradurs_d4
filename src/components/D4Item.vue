@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref, computed, useSlots, nextTick, watch, onUnmounted } from 'vue'
+import { reactive, ref, computed, defineAsyncComponent, useSlots, nextTick, watch, onUnmounted } from 'vue'
 import { QCard, useQuasar, date } from 'quasar'
 import { useI18n } from 'vue-i18n'
 
@@ -9,8 +9,8 @@ import { Item, Price } from 'src/types/item'
 import { checkName, clipboard } from 'src/common'
 import { itemImgs } from 'src/common/items'
 
-import D4Price from 'components/D4Price.vue'
-import D4User from 'components/D4User.vue'
+const D4Price = defineAsyncComponent(() => import('components/D4Price.vue'))
+const D4User = defineAsyncComponent(() => import('components/D4User.vue'))
 
 interface IProps {
   data: Item,

@@ -9,11 +9,10 @@ import { checkAttribute, scrollPos } from 'src/common'
 import { Item, Advertise, Offer, type AffixValue, type IItem, Price } from 'src/types/item'
 import { User } from 'src/types/user'
 
-import D4Item from 'components/D4Item.vue'
-import D4Property from 'components/D4Property.vue'
-import D4Affix from 'components/D4Affix.vue'
-import D4Restriction from 'components/D4Restriction.vue'
-
+const D4Item = defineAsyncComponent(() => import('components/D4Item.vue'))
+const D4Property = defineAsyncComponent(() => import('components/D4Property.vue'))
+const D4Affix = defineAsyncComponent(() => import('components/D4Affix.vue'))
+const D4Restriction = defineAsyncComponent(() => import('components/D4Restriction.vue'))
 const D4Offer = defineAsyncComponent(() => import('components/D4Offer.vue'))
 
 interface IProps {

@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { reactive, computed } from 'vue'
+import { reactive, computed, defineAsyncComponent } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useQuasar } from 'quasar'
 import { Offer, type Price } from 'src/types/item'
 import { useAccountStore } from 'src/stores/account-store'
 import { useItemStore } from 'src/stores/item-store'
 
-import D4User from 'components/D4User.vue'
-import D4Price from 'components/D4Price.vue'
+const D4User = defineAsyncComponent(() => import('components/D4User.vue'))
+const D4Price = defineAsyncComponent(() => import('components/D4Price.vue'))
 
 interface IProps {
   data: Offer,

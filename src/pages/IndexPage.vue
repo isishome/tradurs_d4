@@ -3,13 +3,14 @@ import { useRouter } from 'vue-router'
 import { useGlobalStore } from 'src/stores/global-store'
 import { useItemStore, type OfferInfo } from 'stores/item-store'
 import { useAccountStore } from 'stores/account-store'
-import { ref, computed, onMounted, watch, onUnmounted } from 'vue'
+import { ref, computed, defineAsyncComponent, onMounted, watch, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useQuasar, uid } from 'quasar'
 import { scrollPos } from 'src/common'
 
 import { Item, IPrice } from 'src/types/item'
-import D4Items from 'components/D4Items.vue'
+
+const D4Items = defineAsyncComponent(() => import('components/D4Items.vue'))
 
 // init module
 const router = useRouter()
