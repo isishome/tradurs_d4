@@ -11,6 +11,7 @@ import { itemImgs } from 'src/common/items'
 
 const D4Price = defineAsyncComponent(() => import('components/D4Price.vue'))
 const D4User = defineAsyncComponent(() => import('components/D4User.vue'))
+const D4Separator = defineAsyncComponent(() => import('components/D4Separator.vue'))
 
 interface IProps {
   data: Item,
@@ -318,13 +319,13 @@ defineExpose({ scrollEnd })
           </div>
         </div>
       </q-card-section>
-      <q-separator v-show="data.itemType !== 'rune'" />
+      <D4Separator v-show="data.itemType !== 'rune'" />
       <q-card-section v-if="data.itemType !== 'rune'">
         <q-input v-show="data.itemType !== 'rune'" :disable="disable" dense no-error-icon hide-bottom-space autofocus
           v-model="_name" outlined class="col-10" :label="t('item.name')" @update:model-value="update" maxlength="256"
           :rules="[val => checkName(val) || '']" />
       </q-card-section>
-      <q-separator v-show="data.itemType === 'rune'" />
+      <D4Separator v-show="data.itemType === 'rune'" />
       <q-card-section v-if="data.itemType === 'rune'" class="col">
         <q-item v-show="loading" style="min-height:10px;padding:3px">
           <q-item-section side class="q-pr-sm">
@@ -352,7 +353,7 @@ defineExpose({ scrollEnd })
           </q-item-section>
         </q-item>
       </q-card-section>
-      <q-separator />
+      <D4Separator />
       <q-card-section class="row justify-between items-center q-col-gutter-x-sm">
         <div class="row items-center q-gutter-x-sm">
           <D4Counter v-model="_power" :label="t('item.power')" :max="9999" max-width="110px" allow-zero no-button
@@ -363,7 +364,7 @@ defineExpose({ scrollEnd })
         <D4Counter v-model="_level" class="col row justify-end" :label="t('item.level')" max-width="110px" :max="999"
           allow-null no-button :disable="disable" @update:model-value="update" />
       </q-card-section>
-      <q-separator />
+      <D4Separator />
       <q-card-section class="tab row justify-end items-center">
         <q-btn-toggle v-model="attribute" square flat no-caps aria-label="Tradurs Attribute Button" :ripple="false"
           :color="$q.dark.isActive ? 'grey-5' : 'grey-8'" :padding="$q.screen.lt.sm ? '8px 8px' : ''"
@@ -438,11 +439,11 @@ defineExpose({ scrollEnd })
           </q-tab-panels>
         </div>
       </q-card-section>
-      <q-separator v-if="!hasProperties" />
+      <D4Separator v-if="!hasProperties" />
       <q-card-section>
         <D4Price :data="data.price" :editable="editable" :disable="disable" :progress="loading" @update="updatePrice" />
       </q-card-section>
-      <q-separator v-if="slots.actions" />
+      <D4Separator v-if="slots.actions" />
       <q-card-section v-if="slots.actions">
         <slot name="actions"></slot>
       </q-card-section>
@@ -550,7 +551,7 @@ defineExpose({ scrollEnd })
           </div>
         </div>
       </q-card-section>
-      <q-separator style="width:50%" />
+      <D4Separator type="left" />
       <q-card-section v-show="loading || (!loading && (data.itemType === 'rune' || data.properties.length > 0))">
         <div v-show="data.itemType === 'rune'" class="q-px-sm">
           <q-item v-show="loading" style="min-height:10px;padding:3px">
@@ -587,7 +588,7 @@ defineExpose({ scrollEnd })
           </div>
         </div>
       </q-card-section>
-      <q-separator v-show="loading || (!loading && data.properties.length > 0 && data.affixes.length > 0)" />
+      <D4Separator v-show="loading || (!loading && data.properties.length > 0 && data.affixes.length > 0)" />
       <q-card-section v-show="loading || (!loading && data.affixes.length > 0)">
         <div class="q-px-sm">
           <q-item v-show="loading" v-for="c in 3" :key="c" style="min-height:10px;padding:3px">
@@ -627,7 +628,7 @@ defineExpose({ scrollEnd })
           </div>
         </div>
       </q-card-section>
-      <q-separator v-show="slots.actions" />
+      <D4Separator v-show="slots.actions" />
       <q-card-section v-if="slots.actions">
         <slot v-if="!loading" name="actions"></slot>
       </q-card-section>

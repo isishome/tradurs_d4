@@ -231,9 +231,9 @@ onUnmounted(() => {
                   {{ t('page.awards') }}
                 </q-item-label>
               </q-item-section>
-              <q-item-section side>
+              <!-- <q-item-section side>
                 <q-badge label="N" color="negative" class="new-badge2" />
-              </q-item-section>
+              </q-item-section> -->
             </q-item>
           </q-list>
           <q-separator />
@@ -316,7 +316,7 @@ onUnmounted(() => {
                 exact />
               <q-route-tab v-if="as.signed" :ripple="!$q.dark.isActive" :label="t('page.awards')" :to="{ name: 'awards' }"
                 exact>
-                <q-badge floating label="N" color="negative" class="new-badge2" />
+                <!-- <q-badge floating label="N" color="negative" class="new-badge2" /> -->
               </q-route-tab>
             </q-tabs>
           </div>
