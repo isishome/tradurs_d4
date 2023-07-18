@@ -394,7 +394,7 @@ export default {
         { type: 'image', contents: '1401_evaluation' },
         { type: 'image', contents: '1402_evaluation' },
         {
-          type: 'text', contents: '14. Now the seller and buyer can leave a manners rating for each other\'s transaction by clicking the Done button.\n\n*Even if the other party doesn\'t contact you or doesn\'t make a sale or purchase, \n\n*you must still complete the transaction to collect your yolk.'
+          type: 'text', contents: '14. Now the seller and buyer can leave a manners rating for each other\'s transaction by clicking the Done button.\n\n*If the other party doesn\'t contact you or doesn\'t make a sale or purchase,\n\n*you still need to complete the transaction so that you get your yolk back and don\'t get penalized for not completing the transaction.'
         },
         { type: 'image', contents: '15_evaluation' },
         {
