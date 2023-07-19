@@ -233,9 +233,9 @@ export default {
     successAnswer: 'Your answer was successfully sent'
   },
   maintenance: {
-    title: 'Temporary Maintenance Announcement',
-    top: 'Hi there. This is Tradurs.\n\nWe will move the database server to provide smooth service.',
-    contents: 'Inspection date: July 6, 2023 (Thu) 01:00 ~ Upon completion of inspection\nnspection target : Tradurs database server\nImpact : Trading services will be unavailable',
+    title: 'Pre-Season Maintenance Guide',
+    top: 'Hello. This is Tradurs.\n\nWe would like to inform you about the regular maintenance before the new season starts on July 21, 2023 at 02:00.',
+    contents: '◆ Maintenance Date\n\tJuly 21, 2023 (Fri) 01:00 ~ Upon completion of maintenance\n◆ What will change\n\tPrevious season data is moved to off-season (standard).\n\tSeasonal items in the basic filter will be enabled.\n\tSeasonal items in item registration fields will be enabled.\n\tIncorrectly entered or unused affix will be deleted.',
     bottom: 'We will notify you again when the server is normalized.\n\nThank you.',
     close: 'Do not open for 24 hours'
   },

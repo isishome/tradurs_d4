@@ -67,7 +67,7 @@ useMeta(() => {
 })
 
 const notice = reactive<{ open: boolean, close: boolean }>({
-  open: false,//!$q.cookies.has('d4.notice'),
+  open: !$q.cookies.has('d4.notice'),
   close: false
 })
 
@@ -86,7 +86,7 @@ onMounted(() => {
     <template #top>
       <q-card-section class="row no-wrap items-center justify-between">
         <div>
-          <div class="q-pa-md text-body1 text-weight-bold">{{ t('notice.title') }}</div>
+          <div class="q-pa-md text-body1 text-weight-bold">{{ t('maintenance.title') }}</div>
         </div>
         <q-btn unelevated aria-label="Tradurs Close Button" class="no-hover icon" :ripple="false">
           <img src="/images/icons/close.svg" width="24" height="24" @click="notice.open = false" alt="icon_close" />
@@ -96,16 +96,16 @@ onMounted(() => {
     <template #middle>
       <q-card-section class="d4-scroll" style="max-height:50vh">
         <div class="q-pa-md column q-gutter-y-sm" :class="$q.screen.gt.sm ? 'text-body2' : 'text-caption'">
-          <div class="text-area">{{ t('notice.top') }}</div>
-          <div class="text-area text-weight-bold text-negative">{{ t('notice.contents') }}</div>
-          <div class="text-area">{{ t('notice.bottom') }}</div>
+          <div class="text-area">{{ t('maintenance.top') }}</div>
+          <div class="text-area text-weight-bold text-negative">{{ t('maintenance.contents') }}</div>
+          <div class="text-area">{{ t('maintenance.bottom') }}</div>
         </div>
       </q-card-section>
     </template>
     <template #bottom>
       <q-card-section>
         <div class="q-pa-md text-right">
-          <q-btn outline no-caps :label="t('notice.close')" @click="close" aria-label="Tradurs Button" />
+          <q-btn outline no-caps :label="t('maintenance.close')" @click="close" aria-label="Tradurs Button" />
         </div>
       </q-card-section>
     </template>
