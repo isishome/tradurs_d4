@@ -191,7 +191,14 @@ const updateFixedDebounce = debounce(() => {
         <q-checkbox :disable="filterLoading" size="xs" class="checkbox" v-model="is.fixedFilter.hardcore"
           :label="t('item.hardcore')" @update:model-value="updateFixedDebounce()" />
         <q-checkbox :disable="filterLoading" size="xs" class="checkbox" v-model="is.fixedFilter.ladder"
-          :label="t('item.ladder')" @update:model-value="updateFixedDebounce()" />
+          @update:model-value="updateFixedDebounce()">
+          <template #default>
+            <div class="row items-center q-gutter-x-xs">
+              <div>{{ t('item.ladder') }}</div>
+              <q-badge label="N" color="negative" class="new-badge" />
+            </div>
+          </template>
+        </q-checkbox>
         <q-checkbox :disable="filterLoading" size="xs" class="checkbox" v-model="is.fixedFilter.onlyCurrency"
           :label="t('filter.onlyCurrency')" @update:model-value="updateFixedDebounce()" />
       </q-item-section>
@@ -481,5 +488,12 @@ const updateFixedDebounce = debounce(() => {
 
 .checkbox {
   padding-left: 10px;
+}
+
+.new-badge {
+  padding: 2px 4px 2px 3px;
+  border-radius: 50px;
+  font-size: 8px;
+  line-height: 11px;
 }
 </style>
