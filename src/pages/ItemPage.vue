@@ -44,6 +44,7 @@ const gs = useGlobalStore()
 const as = useAccountStore()
 
 // loading variable
+const completeInfo = ref(false)
 const disable = ref(false)
 const newItems = computed(() => is.socket.newItems)
 const newOffer = computed(() => is.socket.newOffer)
@@ -293,6 +294,9 @@ onMounted(() => {
     itemsRef.value?.openOffers(props.itemid)
     history.state.offers = false
   }
+  setTimeout(() => {
+    completeInfo.value = true
+  }, 100)
 })
 
 onUnmounted(() => {
@@ -309,7 +313,7 @@ onUnmounted(() => {
     </div>
   </div>
   <div class="q-py-lg"></div>
-  <D4Btn round :to="{ name: 'tradeList' }" class="sticky-btn" color="var(--q-light-normal)" shadow>
+  <D4Btn v-if="completeInfo" round :to="{ name: 'tradeList' }" class="sticky-btn" color="var(--q-light-normal)" shadow>
     <img src="/images/icons/list.svg" width="20" height="20" class="invert" alt="icon_list" />
   </D4Btn>
 </template>

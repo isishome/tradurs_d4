@@ -139,7 +139,8 @@ export default {
     level: 'Requires Level',
     gold: 'Gold',
     url: 'Item URL',
-    favorites: 'Favorite Items'
+    favorites: 'Favorite Items',
+    forDisplay: 'For Display'
   },
   price: {
     currency: 'Currency',

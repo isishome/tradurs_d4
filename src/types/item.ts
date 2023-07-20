@@ -63,6 +63,7 @@ export interface IItem {
   offers: number,
   evaluations: Array<number>,
   favorite: boolean,
+  forDisplay: boolean,
   editable: boolean,
   actions: Array<number>,
   loading: boolean,
@@ -116,6 +117,7 @@ export class Item implements IItem {
   public offers = 0
   public evaluations: Array<number> = []
   public favorite = false
+  public forDisplay = false
   public editable = false
   public actions: Array<number> = []
   public loading = false

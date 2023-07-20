@@ -138,7 +138,8 @@ export default {
     level: '요구 레벨',
     gold: '금화',
     url: '아이템 주소',
-    favorites: '관심 아이템'
+    favorites: '관심 아이템',
+    forDisplay: '전시용'
   },
   price: {
     currency: '화폐 유형',

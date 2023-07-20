@@ -31,7 +31,7 @@ const lang = $q.cookies.has('d4.lang') ? $q.cookies.get('d4.lang') as string : '
 locale.value = lang
 
 const battleTag = ref<string>('')
-const showBT = computed(() => (as.signed as boolean && !(as.info.battleTag && as.info.battleTag !== '') && view.value))
+const showBT = computed(() => (as.signed !== null && as.signed as boolean && !(as.info.battleTag && as.info.battleTag !== '') && view.value))
 const loading = ref<boolean>(false)
 const updateBattleTag = () => {
   as.updateBattleTag(battleTag.value)
@@ -41,7 +41,7 @@ const updateBattleTag = () => {
 }
 
 // about Meta
-const titleReactive = computed(() => gs.getTitle(t(`page.${route.name as string}`)))
+const titleReactive = computed(() => gs.getTitle(route.name ? t(`page.${route.name as string}`) : 'tradeList'))
 const descReactive = computed(() => t('seo.desc'))
 const recaptchaSrc = computed(() => route.name === 'support' ? 'https://www.google.com/recaptcha/api.js?render=6Lf38rYmAAAAAB-ET1oihMUkcDumRascvVHOyGmg' : '')
 
@@ -67,7 +67,7 @@ useMeta(() => {
 })
 
 const notice = reactive<{ open: boolean, close: boolean }>({
-  open: !$q.cookies.has('d4.notice'),
+  open: false,//!$q.cookies.has('d4.notice'),
   close: false
 })
 

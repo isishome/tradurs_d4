@@ -180,7 +180,7 @@ defineExpose({ scrollEnd })
             <div class="row justify-end items-center q-gutter-xs toggles">
               <q-toggle left-label v-model="_hardcore" :disable="disable" color="secondary" :label="t('item.hardcore')"
                 dense @update:model-value="update" />
-              <q-toggle left-label v-model="_ladder" disable color="primary" :label="t('item.ladder')" dense
+              <q-toggle left-label v-model="_ladder" :disable="disable" color="primary" :label="t('item.ladder')" dense
                 @update:model-value="update" />
             </div>
           </div>
@@ -460,20 +460,26 @@ defineExpose({ scrollEnd })
         <div class="column justify-center items-end user-area" :class="{ 'q-gutter-xs': !$q.screen.lt.sm || loading }">
           <q-skeleton v-show="loading" width="50px" :height="$q.screen.lt.sm ? '16px' : '18px'" />
           <div v-show="!loading" class="row items-center q-gutter-x-sm">
-            <div v-if="['000', '002'].includes(data.statusCode)" class="date" :class="remainColor">
-              {{ remainHours }}:{{ remainMinutes }}:{{ remainSeconds }}
+            <template v-if="!data.forDisplay">
+              <div v-if="['000', '002'].includes(data.statusCode)" class="date" :class="remainColor">
+                {{ remainHours }}:{{ remainMinutes }}:{{ remainSeconds }}
+              </div>
+              <div v-else-if="data.statusCode === '001'" class="date complete">
+                {{ date.formatDate(data.updDate, 'YY.MM.DD') }}
+              </div>
+              <div>
+                {{ findStatus(data.statusCode)?.label }}
+              </div>
+            </template>
+            <div v-else>
+              {{ t('item.forDisplay') }}
             </div>
-            <div v-else-if="data.statusCode === '001'" class="date complete">
-              {{ date.formatDate(data.updDate, 'YY.MM.DD') }}
-            </div>
-            <div>
-              {{ findStatus(data.statusCode)?.label }}</div>
           </div>
           <div v-if="slots['top-right']">
             <slot name="top-right"></slot>
           </div>
           <D4Price :data="data.price" :progress="loading" />
-          <D4User :data="data.user" :label="t('seller')" :disable="disable" :progress="loading"
+          <D4User v-if="!data.forDisplay" :data="data.user" :label="t('seller')" :disable="disable" :progress="loading"
             :authorized="data.authorized" />
         </div>
         <div class="column items-start q-pa-sm relative-position" :class="{ 'q-gutter-xs': !$q.screen.lt.sm || loading }">

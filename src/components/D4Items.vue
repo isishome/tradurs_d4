@@ -685,23 +685,23 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
               <div>
                 <D4Btn
                   :label="item.authorized || !as.signed || item.statusCode !== '000' ? t('offer.list') : t('btn.makeOffer')"
-                  :loading="item.loading" @click="openMakingOffer(item)" />
+                  :loading="item.loading" :disable="item.forDisplay" @click="openMakingOffer(item)" />
               </div>
             </div>
           </template>
           <template #more="{ loading }">
             <q-btn v-if="!item.expanded && !loading" flat aria-label="Tradurs More Button" text-color="black"
-              class="more no-hover" padding="10px" @click="expanded(item)">
+              class="more no-hover full-width" padding="10px" @click="expanded(item)">
               <img class="icon" :width="$q.screen.lt.sm ? 24 : 36" :height="$q.screen.lt.sm ? 24 : 36"
                 src="/images/icons/more.svg" alt="icon_more" />
             </q-btn>
           </template>
         </D4Item>
       </q-intersection>
-    </div>
-    <div v-show="items.filter((i: Item) => !i.reward).length === 0" class="row justify-center items-center"
-      style="height:40vh">
-      {{ t('noItem') }}
+      <div v-show="items.filter((i: Item) => !i.reward).length === 0" class="row justify-center items-center"
+        style="min-height:30vh">
+        {{ t('noItem') }}
+      </div>
     </div>
     <q-dialog v-model="activateShow" :maximized="$q.screen.lt.sm" persistent transition-show="none" transition-hide="none"
       :transition-duration="0" :no-route-dismiss="false" @hide="hideEditable">

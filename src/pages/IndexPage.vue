@@ -21,6 +21,7 @@ const { t, n } = useI18n({ useScope: 'global' })
 const $q = useQuasar()
 
 // loading variable
+const completeList = ref(false)
 const disable = ref(false)
 
 // variable
@@ -233,6 +234,9 @@ const getList = (filter?: any) => {
     }).then(() => {
       is.filter.loading = false
       disable.value = false
+      setTimeout(() => {
+        completeList.value = true
+      }, 100)
     })
 }
 
@@ -324,7 +328,6 @@ onUnmounted(() => {
 defineExpose({ getList })
 </script>
 <template>
-  <div></div>
   <div>
     <div class="row justify-center items-center">
       <D4Items ref="itemsRef" class="item-list" :items="items" @upsert-item="upsertItem" @delete-item="deleteItem"
@@ -332,18 +335,20 @@ defineExpose({ getList })
     </div>
   </div>
   <div class="q-pt-xl"></div>
-  <D4Btn v-if="as.signed" round @click="create" class="sticky-btn" color="var(--q-secondary)" :disable="disable" shadow>
-    <img src="/images/icons/add.svg" width="24" height="24" class="invert" alt="icon_add" />
-  </D4Btn>
-  <D4Btn v-else style="visibility: hidden;" />
-  <div class="row q-gutter-xs items-center paging">
-    <D4Btn round @click="prev" color="var(--q-light-magic)" :disable="!over || disable" :shadow="!$q.dark.isActive">
-      <img src="/images/icons/prev.svg" width="24" height="24" class="invert" alt="icon_prev" />
+  <template v-if="completeList">
+    <D4Btn v-if="as.signed" round @click="create" class="sticky-btn" color="var(--q-secondary)" :disable="disable" shadow>
+      <img src="/images/icons/add.svg" width="24" height="24" class="invert" alt="icon_add" />
     </D4Btn>
-    <D4Btn round @click="next" color="var(--q-light-magic)" :disable="!more || disable" :shadow="!$q.dark.isActive">
-      <img src="/images/icons/next.svg" width="24" height="24" class="invert" alt="icon_next" />
-    </D4Btn>
-  </div>
+    <D4Btn v-else style="visibility: hidden;" />
+    <div class="row q-gutter-xs items-center paging">
+      <D4Btn round @click="prev" color="var(--q-light-magic)" :disable="!over || disable" :shadow="!$q.dark.isActive">
+        <img src="/images/icons/prev.svg" width="24" height="24" class="invert" alt="icon_prev" />
+      </D4Btn>
+      <D4Btn round @click="next" color="var(--q-light-magic)" :disable="!more || disable" :shadow="!$q.dark.isActive">
+        <img src="/images/icons/next.svg" width="24" height="24" class="invert" alt="icon_next" />
+      </D4Btn>
+    </div>
+  </template>
 </template>
 
 <style scoped>
