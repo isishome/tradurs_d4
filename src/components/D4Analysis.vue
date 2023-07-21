@@ -154,8 +154,7 @@ const checkInfo = (textArray: string[]) => {
     return failedScan(t('analyze.typeValueNotFound'))
 
   // check item name
-
-  const name = textArray.splice(indexQuality - 1, 1).join(' ').replace(new RegExp(`[^${is.analyze.lang} ]`, 'gi'), '').trim()
+  const name = textArray.splice(0, indexQuality).join(' ').replace(new RegExp(`[^${is.analyze.lang} ]`, 'gi'), '').trim()
   if (name === '')
     return failedScan(t('analyze.nameNotFound'))
 
