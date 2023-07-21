@@ -297,7 +297,11 @@ export const useItemStore = defineStore('item', {
         let error: unknown = null
         if (this.base.request === 0) {
           this.base.loading = true
-          api.get('/d4/item/base')
+          api.get('/d4/item/base', {
+            params: {
+              ladder: this.fixedFilter.ladder
+            }
+          })
             .then((response) => {
               this.itemStatus = response.data.itemStatus
               this.offerStatus = response.data.offerStatus
