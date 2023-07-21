@@ -491,9 +491,11 @@ const updateFixedDebounce = debounce(() => {
 }
 
 .new-badge {
-  padding: 2px 4px 2px 3px;
+  font-family: Arial;
+  padding: 2px 5px;
   border-radius: 50px;
-  font-size: 8px;
-  line-height: 11px;
+  font-size: 10px;
+  line-height: 14px;
+  letter-spacing: 0;
 }
 </style>
