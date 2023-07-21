@@ -270,6 +270,14 @@ onUnmounted(() => {
                 </q-item-label>
               </q-item-section>
             </q-item>
+            <q-item clickable class="no-margin" tag="a" href="https://aziraell3.github.io/GAME/D4/?job=dru"
+              target="_blank" rel="noopener noreferrer">
+              <q-item-section>
+                <q-item-label>
+                  Aspect Simulator
+                </q-item-label>
+              </q-item-section>
+            </q-item>
           </q-list>
         </q-scroll-area>
       </q-list>
@@ -413,6 +421,9 @@ onUnmounted(() => {
                       rel="noopener noreferrer" />
                     <q-btn flat no-caps padding="0" :ripple="false" class="text-overline no-hover" type="a"
                       href="https://maxroll.gg/d4" label="maxroll Diablo IV" target="_blank" rel="noopener noreferrer" />
+                    <q-btn flat no-caps padding="0" :ripple="false" class="text-overline no-hover" type="a"
+                      href="https://aziraell3.github.io/GAME/D4/?job=dru" label="Aspect Simulator" target="_blank"
+                      rel="noopener noreferrer" />
                   </div>
                 </div>
               </div>
