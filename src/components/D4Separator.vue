@@ -27,7 +27,7 @@ withDefaults(defineProps<IProps>(), {
   background-size: 100% 100%;
   content: '';
   top: 0;
-  left: 0;
+  left: 10px;
   right: calc(50% + 14px);
   bottom: 0;
   position: absolute;
@@ -42,7 +42,7 @@ withDefaults(defineProps<IProps>(), {
   top: 0;
   bottom: 0;
   left: calc(50% + 14px);
-  right: 0;
+  right: 10px;
   position: absolute;
 }
 
@@ -53,6 +53,7 @@ withDefaults(defineProps<IProps>(), {
 .separator.left::after {
   background-image: url('/images/frames/separator_center.webp');
   background-position: 9px;
+  right: 0;
   left: calc(50% - 23px);
   width: 28px;
 }
