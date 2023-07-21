@@ -126,7 +126,7 @@ const checkInfo = (textArray: string[]) => {
     return failedScan(t('analyze.typeNotFound'))
 
   // check class
-  const findClass = is.classes.find(c => typeValue.toLowerCase().indexOf(c.label.toLowerCase()) !== -1)
+  const findClass = [...is.classes].sort((a, b) => b.label.length - a.label.length).find(c => typeValue.toLowerCase().indexOf(c.label.toLowerCase()) !== -1)
 
   if (findClass) {
     item.itemType = findClass.type

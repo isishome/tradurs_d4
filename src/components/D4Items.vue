@@ -611,6 +611,7 @@ const startAnalyze = () => {
 const endAnalyze = (item: Item) => {
   disable.value = false
   item.itemId = activatedItem.value.itemId
+  item.ladder = activatedItem.value.ladder
   item.authorized = activatedItem.value.authorized
   activatedItem.value = item
   analyzeKey.value++
