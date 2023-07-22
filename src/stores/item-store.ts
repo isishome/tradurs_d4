@@ -89,6 +89,11 @@ export interface Awards {
   mostPurchased: Array<Award>
 }
 
+export interface AwardsPick {
+  itemId: number,
+  ladder: boolean
+}
+
 export type OfferInfo = { itemName: string, itemId: string, price?: string }
 
 export const useItemStore = defineStore('item', {
@@ -107,7 +112,7 @@ export const useItemStore = defineStore('item', {
     types: [] as Array<ItemType>,
     classes: [] as Array<EquipmentClass>,
     attributeTypes: [] as Array<AttributeType>,
-    awardsPick: [] as Array<number>,
+    awardsPick: [] as Array<AwardsPick>,
     properties: {
       data: [] as Array<Property>,
       loading: false,

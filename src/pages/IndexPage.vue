@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { useGlobalStore } from 'src/stores/global-store'
-import { useItemStore, type OfferInfo } from 'stores/item-store'
+import { useItemStore, type OfferInfo, type AwardsPick } from 'stores/item-store'
 import { useAccountStore } from 'stores/account-store'
 import { ref, computed, defineAsyncComponent, onMounted, watch, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -221,8 +221,9 @@ const getList = (filter?: any) => {
       }
       items.value.push(...result)
 
-      if (is.awardsPick.length > 0) {
-        const pickItemId = is.awardsPick[Math.floor(Math.random() * is.awardsPick.length)].toString()
+      const awardsPick = is.awardsPick.filter((ap: AwardsPick) => ap.ladder === is.fixedFilter.ladder)
+      if (awardsPick.length > 0) {
+        const pickItemId = awardsPick[Math.floor(Math.random() * awardsPick.length)].itemId.toString()
         is.getItems(1, pickItemId)
           .then((pick: Array<Item>) => {
             pick = pick.map((p: Item) => ({ ...p, reward: true }))
