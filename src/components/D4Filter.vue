@@ -168,7 +168,7 @@ const updateFixed = () => {
 
 const updateFixedDebounce = debounce(() => {
   updateFixed()
-}, 800)
+}, 400)
 </script>
 
 <template>

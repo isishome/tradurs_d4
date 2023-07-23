@@ -329,7 +329,9 @@ onUnmounted(() => {
 defineExpose({ getList })
 </script>
 <template>
-  <div>
+  <div class="relative-position">
+    <div v-show="is.fixedFilter.ladder" class="bg-season" :style="`--tradurs-season-image:url('${t('season.bg')}');`">
+    </div>
     <div class="row justify-center items-center">
       <D4Items ref="itemsRef" class="item-list" :items="items" @upsert-item="upsertItem" @delete-item="deleteItem"
         @relist-item="relistItem" @status-item="statusItem" @update-only="updateOnly" @copy="copy" @favorite="favorite" />
@@ -369,5 +371,25 @@ defineExpose({ getList })
 .paging {
   position: absolute;
   transform: translateY(-90%);
+}
+
+.bg-season {
+  position: absolute;
+  top: 0;
+  left: calc(50% - 200px);
+  width: 400px;
+  height: 100%;
+  z-index: -1;
+  opacity: .2;
+}
+
+.bg-season::before {
+  content: '';
+  position: fixed;
+  width: 400px;
+  height: 300px;
+  background-image: var(--tradurs-season-image);
+  background-repeat: no-repeat;
+  background-position: center;
 }
 </style>
