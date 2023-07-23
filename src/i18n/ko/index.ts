@@ -42,6 +42,9 @@ export default {
       advanced2: '간혹 판매자가 \'고유 특성\'과 \'옵션\'을 잘못 입력하는 경우가 있으니 고려하여 필터 하세요'
     }
   },
+  season: {
+    bg: '/images/season_emblem_ko.webp'
+  },
   noItem: '조건에 맞는 검색 결과가 없습니다',
   seller: '판매자',
   offerer: '제안자',

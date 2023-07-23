@@ -42,6 +42,9 @@ export default {
       advanced2: 'Occasionally, sellers may incorrectly enter \'Characteristics\' and \'Affixes\', so consider filtering'
     }
   },
+  season: {
+    bg: '/images/season_emblem_en.webp'
+  },
   noItem: 'No search results matched your criteria',
   trade: 'Trade',
   seller: 'Seller',

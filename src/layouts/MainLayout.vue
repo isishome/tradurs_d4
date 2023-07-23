@@ -381,7 +381,8 @@ onUnmounted(() => {
     <q-page-container>
       <q-page :style-fn="myTweak">
         <div class="row justify-center">
-          <div :class="screen.lt.sm ? 'q-pa-sm' : 'q-pa-xl'" :style="screen.lt.sm ? 'width:100%' : 'width:830px'">
+          <div :class="[screen.lt.sm ? 'q-pa-sm' : 'q-pa-xl', { 'relative-position bg-season': is.fixedFilter.ladder }]"
+            :style="`${screen.lt.sm ? 'width:100%' : 'width:830px'};--tradurs-season-image:url('${t('season.bg')}');`">
             <div class="view max-width">
               <div class="row justify-center top-ads">
                 <ins class="adsbygoogle" :style="`display:inline-block;${size}`" data-ad-client="ca-pub-5110777286519562"
@@ -549,5 +550,19 @@ ins::after {
 
 .useful a:hover {
   opacity: 1;
+}
+
+.bg-season::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: -1;
+  background-image: var(--tradurs-season-image);
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: .2;
 }
 </style>
