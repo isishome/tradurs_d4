@@ -329,9 +329,7 @@ onUnmounted(() => {
 defineExpose({ getList })
 </script>
 <template>
-  <div class="relative-position">
-    <div v-show="is.fixedFilter.ladder" class="bg-season" :style="`--tradurs-season-image:url('${t('season.bg')}');`">
-    </div>
+  <div :class="{ 'bg-season': is.fixedFilter.ladder }" :style="`--tradurs-season-image:url('${t('season.bg')}');`">
     <div class="row justify-center items-center">
       <D4Items ref="itemsRef" class="item-list" :items="items" @upsert-item="upsertItem" @delete-item="deleteItem"
         @relist-item="relistItem" @status-item="statusItem" @update-only="updateOnly" @copy="copy" @favorite="favorite" />
@@ -373,23 +371,18 @@ defineExpose({ getList })
   transform: translateY(-90%);
 }
 
-.bg-season {
-  position: absolute;
-  top: 0;
-  left: calc(50% - 200px);
-  width: 400px;
-  height: 100%;
-  z-index: -1;
-  opacity: .2;
-}
-
 .bg-season::before {
   content: '';
   position: fixed;
-  width: 400px;
-  height: 300px;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  opacity: .2;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
   background-image: var(--tradurs-season-image);
   background-repeat: no-repeat;
-  background-position: center;
+  background-position: center 30%;
 }
 </style>
