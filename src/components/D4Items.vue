@@ -630,9 +630,10 @@ const failedAnalyze = (msg: string) => {
 
 // Execute function if an item is visible (adsense)
 const visible = (isVisible: boolean, item: Item): void => {
-  // const findItem = document.querySelector(`div[data-itemid="${item.itemId}"]`) as HTMLDivElement
-  // if (findItem && item.expanded)
-  //   findItem.style.height = isVisible ? '100%' : `${findItem.offsetHeight}px`
+  const findItem = document.querySelector(`div[data-itemid="${item.itemId}"]`) as HTMLDivElement
+  if (findItem && item.reward)
+    findItem.classList.add('reward')
+  //findItem.style.height = isVisible ? '100%' : `${findItem.offsetHeight}px`
 }
 
 const create = () => {
@@ -661,9 +662,8 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
     <div :class="$q.screen.lt.sm ? 'q-gutter-y-xl' : 'q-gutter-y-xxl'">
       <q-intersection v-for="item, idx in (items as Array<Item | Advertise>)"
         :key="`${item.itemId}${item.reward ? '_reward' : ''}`" :data-itemid="item.itemId" class="item"
-        :class="{ 'reward': item.reward }" :threshold="[0, 0.25, 0.5, 0.75, 1]"
         :style="`min-height:${height as number - ($q.screen.lt.sm ? 50 : 0)}px;height:${item.expanded ? '100%' : `${height as number - ($q.screen.lt.sm ? 50 : 0)}px`}`"
-        transition="fade" @visibility="isVisible => visible(isVisible, item)" ssr-prerender once>
+        transition="jump-up" @visibility="isVisible => visible(isVisible, item)" ssr-prerender once>
         <div v-if="(item instanceof Advertise)" class="bg-grey" style="width:100%;height:500px"></div>
         <D4Item v-else :data="item" :loading="item.loading" @favorite="favorite" @copy="copy">
           <template #top-right>
@@ -938,16 +938,18 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
 
 @keyframes awards {
   0% {
+    top: -8px;
     opacity: 0;
   }
 
   100% {
+    top: -4px;
     opacity: 1;
   }
 }
 
 .reward::after {
-  animation: awards .3s ease-in;
+  animation: awards .6s ease-in;
   content: '';
   background: url('/images/awards/blood.webp');
   background-size: contain;

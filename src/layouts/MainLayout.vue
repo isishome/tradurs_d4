@@ -156,6 +156,9 @@ onUnmounted(() => {
 </script>
 <template>
   <q-layout view="hHh lpR lFf">
+    <div v-show="['tradeList', 'itemInfo'].includes(route.name as string)" :class="{ 'bg-season': is.fixedFilter.ladder }"
+      :style="`--tradurs-season-image:url('${t('season.bg')}');`">
+    </div>
     <q-drawer show-if-above no-swipe-open no-swipe-close no-swipe-backdrop bordered v-model="leftDrawerOpen" side="left"
       :behavior="screen.lt.md ? 'mobile' : 'desktop'" class="row justify-end no-scroll" :width="300"
       @before-show="beforeShow">
@@ -379,6 +382,7 @@ onUnmounted(() => {
       </q-toolbar>
     </q-header>
     <q-page-container>
+
       <q-page :style-fn="myTweak">
         <div class="row justify-center">
           <div :class="screen.lt.sm ? 'q-pa-sm' : 'q-pa-xl'" :style="screen.lt.sm ? 'width:100%' : 'width:830px'">
@@ -549,5 +553,18 @@ ins::after {
 
 .useful a:hover {
   opacity: 1;
+}
+
+.bg-season::before {
+  content: '';
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  opacity: .2;
+  background-image: var(--tradurs-season-image);
+  background-repeat: no-repeat;
+  background-position: center 40%;
+  transition: height 1s ease;
 }
 </style>

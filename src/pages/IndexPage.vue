@@ -221,6 +221,7 @@ const getList = (filter?: any) => {
       }
       items.value.push(...result)
 
+      is.awardsPick = [{ itemId: 60, ladder: true }]
       const awardsPick = is.awardsPick.filter((ap: AwardsPick) => ap.ladder === is.fixedFilter.ladder)
       if (awardsPick.length > 0) {
         const pickItemId = awardsPick[Math.floor(Math.random() * awardsPick.length)].itemId.toString()
@@ -329,7 +330,7 @@ onUnmounted(() => {
 defineExpose({ getList })
 </script>
 <template>
-  <div :class="{ 'bg-season': is.fixedFilter.ladder }" :style="`--tradurs-season-image:url('${t('season.bg')}');`">
+  <div>
     <div class="row justify-center items-center">
       <D4Items ref="itemsRef" class="item-list" :items="items" @upsert-item="upsertItem" @delete-item="deleteItem"
         @relist-item="relistItem" @status-item="statusItem" @update-only="updateOnly" @copy="copy" @favorite="favorite" />
@@ -369,20 +370,5 @@ defineExpose({ getList })
 .paging {
   position: absolute;
   transform: translateY(-90%);
-}
-
-.bg-season::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: -1;
-  opacity: .2;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  background-image: var(--tradurs-season-image);
-  background-repeat: no-repeat;
-  background-position: center 30%;
 }
 </style>
