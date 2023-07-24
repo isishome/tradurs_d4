@@ -156,7 +156,7 @@ onUnmounted(() => {
 </script>
 <template>
   <q-layout view="hHh lpR lFf">
-    <div v-show="['tradeList', 'itemInfo'].includes(route.name as string)" :class="{ 'bg-season': is.fixedFilter.ladder }"
+    <div v-show="['tradeList', 'itemInfo'].includes(route.name as string) && is.fixedFilter.ladder" class="bg-season"
       :style="`--tradurs-season-image:url('${t('season.bg')}');`">
     </div>
     <q-drawer show-if-above no-swipe-open no-swipe-close no-swipe-backdrop bordered v-model="leftDrawerOpen" side="left"
@@ -558,13 +558,12 @@ ins::after {
 .bg-season::before {
   content: '';
   position: fixed;
-  width: 100vw;
-  height: 100vh;
   z-index: -1;
   opacity: .2;
+  width: 100vw;
+  height: 100vh;
   background-image: var(--tradurs-season-image);
   background-repeat: no-repeat;
   background-position: center 40%;
-  transition: height 1s ease;
 }
 </style>

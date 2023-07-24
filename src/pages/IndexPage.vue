@@ -221,7 +221,6 @@ const getList = (filter?: any) => {
       }
       items.value.push(...result)
 
-      is.awardsPick = [{ itemId: 60, ladder: true }]
       const awardsPick = is.awardsPick.filter((ap: AwardsPick) => ap.ladder === is.fixedFilter.ladder)
       if (awardsPick.length > 0) {
         const pickItemId = awardsPick[Math.floor(Math.random() * awardsPick.length)].itemId.toString()
