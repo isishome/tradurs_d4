@@ -15,7 +15,10 @@ import { Manager } from 'socket.io-client'
  * with the Router instance.
  */
 
-const initSocket = (as: any, is: any) => {
+const initSocket = async (as: any, is: any) => {
+  if (process.env.SERVER)
+    return
+
   const manager = new Manager(import.meta.env.VITE_APP_SOCKET, {
     reconnectionDelayMax: 10000,
     withCredentials: import.meta.env.PROD
@@ -104,11 +107,13 @@ export default route(function ({ store }/* { store, ssrContext } */) {
     const is = useItemStore(store)
     const requireAuth = to.matched.find(route => route.meta.requireAuth)
 
-    if (requireAuth && !as.info.id)
-      return { path: '/' }
+    await as.checkSign()
 
-    if (as.info.id && !as.socket)
-      initSocket(as, is)
+    if (requireAuth && !as.info.id)
+      return { name: 'tradeList', params: { lang: to.params.lang } }
+
+    if (as.info.id && as.socket === null)
+      await initSocket(as, is)
   })
 
   return Router

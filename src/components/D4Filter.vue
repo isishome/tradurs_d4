@@ -36,13 +36,6 @@ if ($q.localStorage.has('d4.filter'))
 if ($q.localStorage.has('d4.fixedFilter'))
   is.fixedFilter = JSON.parse($q.localStorage.getItem('d4.fixedFilter') as string)
 
-// new season (* temporary must delete before 7 days)
-if (!$q.cookies.has('d4.season')) {
-  is.fixedFilter.ladder = true
-  $q.localStorage.set('d4.fixedFilter', JSON.stringify(is.fixedFilter))
-  $q.cookies.set('d4.season', '1', { expires: 7 })
-}
-
 const filterItemStatus = computed(() => [{ value: null, label: t('filter.all') }, ...is.filterItemStatus()])
 
 // about property

@@ -4,6 +4,7 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useGlobalStore } from 'src/stores/global-store'
 import { useAccountStore } from 'src/stores/account-store'
 import { useI18n } from 'vue-i18n'
+import { useRoute } from 'vue-router'
 import { scrollPos } from 'src/common'
 
 interface Message {
@@ -25,6 +26,7 @@ const $q = useQuasar()
 const gs = useGlobalStore()
 const as = useAccountStore()
 const { t, n } = useI18n({ useScope: 'global' })
+const route = useRoute()
 
 as.newMessages = false
 
@@ -221,7 +223,7 @@ onMounted(() => {
               </div>
               <q-item-label v-else>
                 <q-btn no-caps unelevated aria-label="Tradurs Go Item Button" color="primary"
-                  :to="{ name: 'itemInfo', params: { itemid: message.itemId }, state: { offers: true } }">
+                  :to="{ name: 'itemInfo', params: { lang: route.params.lang, itemid: message.itemId }, state: { offers: true } }">
                   {{ t('btn.gotoItem') }}
                 </q-btn>
               </q-item-label>

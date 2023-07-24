@@ -2,8 +2,9 @@ import { RouteRecordRaw } from 'vue-router'
 
 const routes: RouteRecordRaw[] = [
   {
-    path: '/',
+    path: '/:lang([^/]{2})?',
     component: () => import('layouts/MainLayout.vue'),
+    props: true,
     children: [
       {
         name: 'tradeList',
@@ -27,10 +28,7 @@ const routes: RouteRecordRaw[] = [
       {
         name: 'awards',
         path: 'awards',
-        component: () => import('pages/AwardsPage.vue'),
-        meta: {
-          requireAuth: true
-        }
+        component: () => import('pages/AwardsPage.vue')
       },
       {
         name: 'support',

@@ -4,6 +4,10 @@ import { i18n } from 'src/boot/i18n'
 
 export const useGlobalStore = defineStore('global', {
   state: () => ({
+    localeOptions: [
+      { value: 'ko', label: '한국어' },
+      { value: 'en', label: 'English' }
+    ],
     itemName: null as string | null,
     refresh: 0 as number
   }),
@@ -14,7 +18,7 @@ export const useGlobalStore = defineStore('global', {
   },
   actions: {
     contactUs(token: string, contents: string | null) {
-      return new Promise<void>(async (resolve, reject) => {
+      return new Promise<void>((resolve, reject) => {
         api.post('/d4/contact', { token, contents })
           .then(() => {
             resolve()
@@ -25,7 +29,7 @@ export const useGlobalStore = defineStore('global', {
       })
     },
     answer(msgId: number, contents: string) {
-      return new Promise<void>(async (resolve, reject) => {
+      return new Promise<void>((resolve, reject) => {
         api.post('/d4/contact/answer', { msgId, contents })
           .then(() => {
             resolve()

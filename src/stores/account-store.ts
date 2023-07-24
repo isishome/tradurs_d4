@@ -4,13 +4,10 @@ import { i18n } from 'boot/i18n'
 import { User, type INotify } from 'src/types/user'
 import { Socket } from 'socket.io-client'
 import { type ILabel } from 'src/stores/item-store'
-import { sleep } from 'src/common'
 
 export interface IEvaluation extends ILabel {
   type: string
 }
-
-const timeout = 0
 
 export const useAccountStore = defineStore('account', {
   state: () => ({
@@ -36,24 +33,20 @@ export const useAccountStore = defineStore('account', {
     }
   },
   actions: {
-    async checkSign() {
+    checkSign() {
       return new Promise<void>((resolve, reject) => {
-        if (this.signed === null) {
-          api.get('/account/signed')
-            .then((response) => {
-              this.info = response.data
-              this.signed = typeof (response.data.id) !== 'undefined'
-              resolve()
-            })
-            .catch(() => {
-              reject()
-            })
-        }
-
-        resolve()
+        api.get('/account/signed')
+          .then((response) => {
+            this.info = response.data
+            this.signed = typeof (response.data.id) !== 'undefined'
+            resolve()
+          })
+          .catch(() => {
+            reject()
+          })
       })
     },
-    async retrieve() {
+    retrieve() {
       return new Promise<void>((resolve, reject) => {
         api.get('/account/retrieve')
           .then((response) => {
@@ -113,8 +106,7 @@ export const useAccountStore = defineStore('account', {
       })
     },
     updateBattleTag(battleTag: string) {
-      return new Promise<void>(async (resolve) => {
-        await sleep(timeout)
+      return new Promise<void>((resolve) => {
         api.post('/battlenet/tag/update', { battleTag })
           .then(() => {
             resolve()
@@ -124,7 +116,7 @@ export const useAccountStore = defineStore('account', {
     notify(notify: INotify) {
       return new Promise<void>((resolve, reject) => {
         api.post('/account/notify', notify)
-          .then(async () => {
+          .then(() => {
             resolve()
           })
           .catch((e) => {
@@ -135,7 +127,7 @@ export const useAccountStore = defineStore('account', {
     getMessages(page: number) {
       return new Promise<void>((resolve) => {
         api.post('/account/messages', { page, rows: this.messagePage.rows })
-          .then(async (response) => {
+          .then((response) => {
             this.messagePage.over = page > 1
             this.messagePage.more = response.data.length > this.messagePage.rows
             response.data.splice(this.messagePage.rows, 1)

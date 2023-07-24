@@ -1,6 +1,7 @@
 <script lang="ts">
 import { useGlobalStore } from 'src/stores/global-store'
 import { useItemStore, type OfferInfo } from 'stores/item-store'
+import { Item, IPrice } from 'src/types/item'
 
 export default {
   preFetch({ store, currentRoute }) {
@@ -9,12 +10,19 @@ export default {
 
     is.clearSocket()
 
+    const tempItem = new Item()
+    tempItem.quality = 'normal'
+    tempItem.loading = true
+    tempItem.user.loading = true
+    tempItem.price.loading = true
+    is.detailItem.splice(0, 1, tempItem)
+
     return is.getItems(1, currentRoute.params.itemid)
       .then((result: Array<Item>) => {
         if (result.length > 0) {
           result[0].expanded = true
           gs.itemName = result[0].name
-          is.detailItem.push(result[0])
+          is.detailItem.splice(0, 1, result[0])
         }
       }, () => { })
   }
@@ -22,20 +30,19 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
-import { ref, computed, defineAsyncComponent, watch, onUnmounted, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { ref, computed, watch, onUnmounted, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useQuasar, uid } from 'quasar'
 import { useAccountStore } from 'stores/account-store'
-import { Item, IPrice } from 'src/types/item'
-
-const D4Items = defineAsyncComponent(() => import('components/D4Items.vue'))
+import D4Items from 'components/D4Items.vue'
 
 const props = defineProps<{
   itemid: string
 }>()
 
 // init module
+const route = useRoute()
 const router = useRouter()
 const { t, n } = useI18n({ useScope: 'global' })
 const $q = useQuasar()
@@ -67,7 +74,7 @@ const upsertItem = (item: Item, done: Function) => {
       else {
         as.retrieve()
         is.clearFilter()
-        router.push({ name: 'tradeList' })
+        router.push({ name: 'tradeList', params: { lang: route.params.lang } })
       }
 
       Object.assign(item, response)
@@ -85,7 +92,7 @@ const deleteItem = (item: Item, done: Function) => {
   disable.value = true
   is.deleteItem(item.itemId)
     .then(() => {
-      router.push({ name: 'tradeList' })
+      router.push({ name: 'tradeList', params: { lang: route.params.lang } })
     })
     .catch(() => {
       done()
@@ -99,7 +106,7 @@ const relistItem = (item: Item, done: Function) => {
   is.relistItem(item.itemId)
     .then(() => {
       as.retrieve()
-      router.push({ name: 'tradeList' })
+      router.push({ name: 'tradeList', params: { lang: route.params.lang } })
     })
     .catch(() => {
       done()
@@ -158,6 +165,7 @@ const getItem = () => {
   is.clearSocket()
 
   const tempItem = new Item()
+  tempItem.quality = 'normal'
   tempItem.loading = true
   tempItem.user.loading = true
   tempItem.price.loading = true
@@ -212,7 +220,7 @@ watch(() => props.itemid, (val, old) => {
 watch(newItems, (val: number) => {
   if (val > 0)
     notify('newItems', t('messages.newItems', val), '', t('btn.refresh'), () => {
-      router.push({ name: 'tradeList' })
+      router.push({ name: 'tradeList', params: { lang: route.params.lang } })
     })
 })
 
@@ -226,7 +234,7 @@ watch(newOffer, (val: OfferInfo | null) => {
         })
       }
       else
-        router.push({ name: 'itemInfo', params: { itemid: val.itemId }, state: { offers: true } })
+        router.push({ name: 'itemInfo', params: { lang: route.params.lang, itemid: val.itemId }, state: { offers: true } })
     })
   }
 })
@@ -241,7 +249,7 @@ watch(acceptedOffer, (val: OfferInfo | null) => {
         })
       }
       else
-        router.push({ name: 'itemInfo', params: { itemid: val.itemId }, state: { offers: true } })
+        router.push({ name: 'itemInfo', params: { lang: route.params.lang, itemid: val.itemId }, state: { offers: true } })
     })
   }
 })
@@ -256,7 +264,7 @@ watch(retractedOffer, (val: OfferInfo | null) => {
         })
       }
       else
-        router.push({ name: 'itemInfo', params: { itemid: val.itemId }, state: { offers: true } })
+        router.push({ name: 'itemInfo', params: { lang: route.params.lang, itemid: val.itemId }, state: { offers: true } })
     })
   }
 })
@@ -271,7 +279,7 @@ watch(turnedDownOffer, (val: OfferInfo | null) => {
         })
       }
       else
-        router.push({ name: 'itemInfo', params: { itemid: val.itemId }, state: { offers: true } })
+        router.push({ name: 'itemInfo', params: { lang: route.params.lang, itemid: val.itemId }, state: { offers: true } })
     })
   }
 })
@@ -285,7 +293,7 @@ watch(complete, (val: { itemName: string, itemId: string } | null) => {
         })
       }
       else
-        router.push({ name: 'itemInfo', params: { itemid: val.itemId }, state: { offers: true } })
+        router.push({ name: 'itemInfo', params: { lang: route.params.lang, itemid: val.itemId }, state: { offers: true } })
     })
 })
 
@@ -311,11 +319,12 @@ onUnmounted(() => {
       <D4Items ref="itemsRef" :items="is.detailItem" @upsert-item="upsertItem" @delete-item="deleteItem"
         @relist-item="relistItem" @status-item="statusItem" @update-only="updateOnly" @copy="copy" @favorite="favorite" />
     </div>
+    <div class="q-py-lg"></div>
+    <D4Btn v-if="completeInfo" round :to="{ name: 'tradeList', params: { lang: route.params.lang } }" class="sticky-btn"
+      color="var(--q-light-normal)" shadow>
+      <img src="/images/icons/list.svg" width="20" height="20" class="invert" alt="icon_list" />
+    </D4Btn>
   </div>
-  <div class="q-py-lg"></div>
-  <D4Btn v-if="completeInfo" round :to="{ name: 'tradeList' }" class="sticky-btn" color="var(--q-light-normal)" shadow>
-    <img src="/images/icons/list.svg" width="20" height="20" class="invert" alt="icon_list" />
-  </D4Btn>
 </template>
 
 <style scoped>

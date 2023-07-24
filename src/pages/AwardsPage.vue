@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { ref, computed, reactive, defineAsyncComponent } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRoute } from 'vue-router'
 import { type Awards, useItemStore } from 'src/stores/item-store'
 
 const D4Award = defineAsyncComponent(() => import('components/D4Award.vue'))
 
 const { t, n } = useI18n({ useScope: 'global' })
+const route = useRoute()
 const is = useItemStore()
 
 const loading = ref<boolean>(true)
@@ -56,7 +58,7 @@ is.getAwards()
       </template>
       <template #item-name>
         <q-item dense class="rounded-borders item-name text-body1 text-weight-bold text-amber-8"
-          :to="{ name: 'itemInfo', params: { itemid: awards.highPriced[0]?.itemId } }">
+          :to="{ name: 'itemInfo', params: { lang: route.params.lang, itemid: awards.highPriced[0]?.itemId } }">
           {{ awards.highPriced[0]?.itemName }}
         </q-item>
       </template>
@@ -72,7 +74,7 @@ is.getAwards()
         <q-separator />
         <q-list separator class="rounded-borders">
           <q-item v-for="ranker, idx in awards.highPriced.slice(1, awards.highPriced.length)" :key="idx" class="etc"
-            :to="{ name: 'itemInfo', params: { itemid: ranker?.itemId } }">
+            :to="{ name: 'itemInfo', params: { lang: route.params.lang, itemid: ranker?.itemId } }">
             <q-item-section>
               <q-item-label>
                 {{ ranker?.ranking }}. {{ ranker?.itemName }}

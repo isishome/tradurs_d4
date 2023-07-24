@@ -1,11 +1,17 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import { useQuasar } from 'quasar'
+import { useRoute } from 'vue-router'
+import { useGlobalStore } from 'src/stores/global-store'
 import Logo from '/images/logo.webp'
 import LogoLight from '/images/logo_light.webp'
 
 const $q = useQuasar()
-const { t } = useI18n({ useScope: 'global' })
+const route = useRoute()
+const { t, locale } = useI18n({ useScope: 'global' })
+const gs = useGlobalStore()
+const brLoc = gs.localeOptions.map(lo => lo.value).includes($q.lang.getLocale()?.substring(0, 2) || '') ? $q.lang.getLocale()?.substring(0, 2) || 'ko' : 'ko'
+locale.value = brLoc
 </script>
 
 <template>
@@ -17,7 +23,7 @@ const { t } = useI18n({ useScope: 'global' })
     <div class="text-h6">{{ t('page.pnf') }}
     </div>
     <div class="q-mt-lg">
-      <D4Btn class="bw" :label="t('notFound.gotoMain')" :to="{ path: '/' }" />
+      <D4Btn class="bw" :label="t('notFound.gotoMain')" :to="{ name: 'tradeList', params: { lang: brLoc } }" />
     </div>
   </div>
 </template>

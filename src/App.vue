@@ -1,13 +1,12 @@
 <script lang="ts">
 import { useAccountStore } from 'stores/account-store'
 import { useItemStore } from 'stores/item-store'
-import { useGlobalStore } from './stores/global-store'
 
 export default {
   preFetch({ store }) {
     const as = useAccountStore(store);
     const is = useItemStore(store);
-    return Promise.all([as.checkSign(), as.getEvaluations(), is.getBase(), is.getProperties(), is.getAffixes(), is.getRestrictions()]);
+    return Promise.all([as.getEvaluations(), is.getBase(), is.getProperties(), is.getAffixes(), is.getRestrictions()]);
   }
 }
 </script>
@@ -15,20 +14,19 @@ export default {
 <script setup lang="ts">
 import { ref, computed, onMounted, reactive } from 'vue'
 import { useQuasar, useMeta } from 'quasar'
-import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+import { useGlobalStore } from 'stores/global-store'
 
 const $q = useQuasar()
+const route = useRoute()
 const as = useAccountStore()
 const gs = useGlobalStore()
 const { t, locale } = useI18n({ useScope: 'global' })
-const route = useRoute()
 
 const view = ref<boolean>(false)
 const isDark = ref($q.cookies.has('d4.dark') ? $q.cookies.get('d4.dark') === 'true' : $q.dark.isActive)
 $q.dark.set(isDark.value)
-const lang = $q.cookies.has('d4.lang') ? $q.cookies.get('d4.lang') as string : 'ko'
-locale.value = lang
 
 const battleTag = ref<string>('')
 const showBT = computed(() => (as.signed !== null && as.signed as boolean && !(as.info.battleTag && as.info.battleTag !== '') && view.value))
@@ -40,8 +38,10 @@ const updateBattleTag = () => {
     })
 }
 
+locale.value = route.params.lang || 'ko'
+
 // about Meta
-const titleReactive = computed(() => gs.getTitle(route.name ? t(`page.${route.name as string}`) : 'tradeList'))
+const titleReactive = computed(() => gs.getTitle(route.name ? t(`page.${route.name as string}`) : undefined))
 const descReactive = computed(() => t('seo.desc'))
 const recaptchaSrc = computed(() => route.name === 'support' ? 'https://www.google.com/recaptcha/api.js?render=6Lf38rYmAAAAAB-ET1oihMUkcDumRascvVHOyGmg' : '')
 

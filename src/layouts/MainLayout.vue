@@ -13,6 +13,10 @@ import { checkName, scrollPosDirect } from 'src/common'
 import D4Filter from 'components/D4Filter.vue'
 import D4User from 'components/D4User.vue'
 
+const props = defineProps<{
+  lang: string
+}>()
+
 const prod: boolean = import.meta.env.PROD
 
 const api = inject('axios') as AxiosInstance
@@ -23,6 +27,9 @@ const gs = useGlobalStore()
 const as = useAccountStore()
 const is = useItemStore()
 const { t, locale } = useI18n({ useScope: 'global' })
+
+locale.value = props.lang || 'ko'
+api.defaults.headers.common['Accept-Language'] = props.lang || 'ko'
 
 const filterLoading = computed(() => is.filter.loading)
 const leftDrawerOpen = ref<boolean>(false)
@@ -55,16 +62,11 @@ const sign = () => {
     })
 }
 
-const localeOptions = [
-  { value: 'ko', label: '한국어' },
-  { value: 'en', label: 'English' }
-]
-
-const brLoc = localeOptions.map(lo => lo.value).includes($q.lang.getLocale()?.substring(0, 2) || '') ? $q.lang.getLocale()?.substring(0, 2) : 'ko'
+const brLoc = gs.localeOptions.map(lo => lo.value).includes($q.lang.getLocale()?.substring(0, 2) || '') ? $q.lang.getLocale()?.substring(0, 2) : 'ko'
 const setLang = (lang: string) => {
   locale.value = lang
-  $q.cookies.set('d4.lang', lang)
   api.defaults.headers.common['Accept-Language'] = lang
+  router.replace({ name: route.name as string, params: { lang } })
 }
 
 const setDark = () => {
@@ -100,7 +102,7 @@ const main = () => {
   if (route.name === 'tradeList' && page.value === 1)
     router.go(0)
   else
-    router.push({ name: 'tradeList' })
+    router.push({ name: 'tradeList', params: { lang: route.params.lang } })
 }
 
 const beforeShow = () => {
@@ -173,13 +175,13 @@ onUnmounted(() => {
       behavior="mobile" class="row justify-start scroll" :width="300">
       <q-list class="column full-height" style="width:300px">
         <q-item class="row justify-between q-gutter-xs q-py-lg">
-          <q-select v-model="locale" :options="localeOptions" :label="t('language', 0, { locale: brLoc })" dense outlined
-            behavior="menu" emit-value map-options options-dense style="min-width: 120px"
+          <q-select v-model="locale" :options="gs.localeOptions" :label="t('language', 0, { locale: brLoc })" dense
+            outlined behavior="menu" emit-value map-options options-dense style="min-width: 120px"
             dropdown-icon="img:/images/icons/dropdown.svg" popup-content-class="d4-scroll"
             @update:model-value="setLang" />
           <div>
             <q-btn round dense flat aria-label="Tradurs Support Button" :ripple="!$q.dark.isActive"
-              :to="{ name: 'support' }">
+              :to="{ name: 'support', params: { lang: route.params.lang } }">
               <img class="icon" width="24" height="24" src="/images/icons/help.svg" alt="icon_support" />
               <!-- <q-badge floating label="N" color="negative" class="new-badge" /> -->
             </q-btn>
@@ -211,14 +213,16 @@ onUnmounted(() => {
         <q-separator />
         <q-scroll-area class="col text-body2">
           <q-list class="q-pa-md page">
-            <q-item v-ripple clickable :to="{ name: 'tradeList' }" exact active-class="active">
+            <q-item v-ripple clickable :to="{ name: 'tradeList', params: { lang: route.params.lang } }" exact
+              active-class="active">
               <q-item-section>
                 <q-item-label>
                   {{ t('page.tradeList') }}
                 </q-item-label>
               </q-item-section>
             </q-item>
-            <q-item v-if="as.signed" v-ripple clickable :to="{ name: 'messages' }" exact active-class="active">
+            <q-item v-if="as.signed" v-ripple clickable :to="{ name: 'messages', params: { lang: route.params.lang } }"
+              exact active-class="active">
               <q-item-section>
                 <q-item-label>
                   {{ t('page.messages') }}
@@ -228,7 +232,8 @@ onUnmounted(() => {
                 <q-badge rounded color="negative"></q-badge>
               </q-item-section>
             </q-item>
-            <q-item v-if="as.signed" v-ripple clickable :to="{ name: 'awards' }" exact active-class="active">
+            <q-item v-ripple clickable :to="{ name: 'awards', params: { lang: route.params.lang } }" exact
+              active-class="active">
               <q-item-section>
                 <q-item-label>
                   {{ t('page.awards') }}
@@ -321,12 +326,13 @@ onUnmounted(() => {
           </div>
           <div>
             <q-tabs dense no-caps narrow-indicator class="gt-sm q-px-xs bg-transparent no-hover nav">
-              <q-route-tab :ripple="!$q.dark.isActive" :label="t('page.tradeList')" :to="{ name: 'tradeList' }" exact />
+              <q-route-tab :ripple="!$q.dark.isActive" :label="t('page.tradeList')"
+                :to="{ name: 'tradeList', params: { lang: route.params.lang } }" />
               <q-route-tab v-if="as.signed" :ripple="!$q.dark.isActive" :label="t('page.messages')"
-                class="relative-position" :to="{ name: 'messages' }" :alert="newMessages ? 'negative' : 'transparent'"
-                exact />
-              <q-route-tab v-if="as.signed" :ripple="!$q.dark.isActive" :label="t('page.awards')" :to="{ name: 'awards' }"
-                exact>
+                class="relative-position" :to="{ name: 'messages', params: { lang: route.params.lang } }"
+                :alert="newMessages ? 'negative' : 'transparent'" />
+              <q-route-tab :ripple="!$q.dark.isActive" :label="t('page.awards')"
+                :to="{ name: 'awards', params: { lang: route.params.lang } }">
                 <!-- <q-badge floating label="N" color="negative" class="new-badge2" /> -->
               </q-route-tab>
             </q-tabs>
@@ -340,7 +346,7 @@ onUnmounted(() => {
         </div>
         <div class="gt-sm col-3 row justify-end items-center q-gutter-xs">
           <q-btn round dense flat aria-label="Tradurs Support Button" :ripple="!$q.dark.isActive"
-            :to="{ name: 'support' }">
+            :to="{ name: 'support', params: { lang: route.params.lang } }">
             <img class="icon" width="24" height="24" src="/images/icons/help.svg" alt="icon_support" />
             <!-- <q-badge floating label="N" color="negative" class="new-badge" /> -->
           </q-btn>
@@ -349,7 +355,7 @@ onUnmounted(() => {
             <q-menu auto-close class="no-shadow" anchor="bottom end" self="top end" transition-show="none"
               transition-hide="none" :transition-duration="0">
               <q-list bordered class="rounded-borders">
-                <q-item v-for="lang in localeOptions" :key="lang.value" clickable :active="lang.value === locale"
+                <q-item v-for="lang in gs.localeOptions" :key="lang.value" clickable :active="lang.value === locale"
                   @click="setLang(lang.value)">
                   {{ lang.label }}</q-item>
               </q-list>

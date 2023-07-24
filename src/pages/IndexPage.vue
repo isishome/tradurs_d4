@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useGlobalStore } from 'src/stores/global-store'
 import { useItemStore, type OfferInfo, type AwardsPick } from 'stores/item-store'
 import { useAccountStore } from 'stores/account-store'
@@ -13,6 +13,7 @@ import { Item, IPrice } from 'src/types/item'
 const D4Items = defineAsyncComponent(() => import('components/D4Items.vue'))
 
 // init module
+const route = useRoute()
 const router = useRouter()
 const gs = useGlobalStore()
 const is = useItemStore()
@@ -273,7 +274,7 @@ watch(newOffer, (val: OfferInfo | null) => {
   if (val) {
     const offerPrice: IPrice = JSON.parse(val.price || '{}')
     notify('', t('messages.newOffer'), `[${val.itemName}] ${offerPrice.currency === 'gold' ? t('item.gold') : ''} : ${n(Number.parseFloat(offerPrice.currencyValue as string), 'decimal')}`, t('btn.move'), () => {
-      router.push({ name: 'itemInfo', params: { itemid: val.itemId }, state: { offers: true } })
+      router.push({ name: 'itemInfo', params: { lang: route.params.lang, itemid: val.itemId }, state: { offers: true } })
     })
   }
 })
@@ -282,7 +283,7 @@ watch(acceptedOffer, (val: OfferInfo | null) => {
   if (val) {
     const offerPrice: IPrice = JSON.parse(val.price || '{}')
     notify('', t('messages.acceptedOffer', { in: val.itemName }), `[${val.itemName}] ${offerPrice.currency === 'gold' ? t('item.gold') : ''} : ${n(Number.parseFloat(offerPrice.currencyValue as string), 'decimal')}`, t('btn.move'), () => {
-      router.push({ name: 'itemInfo', params: { itemid: val.itemId }, state: { offers: true } })
+      router.push({ name: 'itemInfo', params: { lang: route.params.lang, itemid: val.itemId }, state: { offers: true } })
     })
   }
 })
@@ -291,7 +292,7 @@ watch(retractedOffer, (val: OfferInfo | null) => {
   if (val) {
     const offerPrice: IPrice = JSON.parse(val.price || '{}')
     notify('', t('messages.retractedOffer', { in: val.itemName }), `[${val.itemName}] ${offerPrice.currency === 'gold' ? t('item.gold') : ''} : ${n(Number.parseFloat(offerPrice.currencyValue as string), 'decimal')}`, t('btn.move'), () => {
-      router.push({ name: 'itemInfo', params: { itemid: val.itemId }, state: { offers: true } })
+      router.push({ name: 'itemInfo', params: { lang: route.params.lang, itemid: val.itemId }, state: { offers: true } })
     })
   }
 })
@@ -300,14 +301,14 @@ watch(turnedDownOffer, (val: OfferInfo | null) => {
   if (val) {
     const offerPrice: IPrice = JSON.parse(val.price || '{}')
     notify('', t('messages.turnedDownOffer', { in: val.itemName }), `[${val.itemName}] ${offerPrice.currency === 'gold' ? t('item.gold') : ''} : ${n(Number.parseFloat(offerPrice.currencyValue as string), 'decimal')}`, t('btn.move'), () => {
-      router.push({ name: 'itemInfo', params: { itemid: val.itemId }, state: { offers: true } })
+      router.push({ name: 'itemInfo', params: { lang: route.params.lang, itemid: val.itemId }, state: { offers: true } })
     })
   }
 })
 
 watch(complete, (val: OfferInfo | null) => {
   if (val)
-    notify('', t('messages.complete', { in: val.itemName }), '', t('btn.move'), () => { router.push({ name: 'itemInfo', params: { itemid: val.itemId }, state: { offers: true } }) })
+    notify('', t('messages.complete', { in: val.itemName }), '', t('btn.move'), () => { router.push({ name: 'itemInfo', params: { lang: route.params.lang, itemid: val.itemId }, state: { offers: true } }) })
 })
 
 watch(filter, (val, old) => {

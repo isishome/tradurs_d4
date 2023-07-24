@@ -3,7 +3,6 @@ import { api } from 'boot/axios'
 import { i18n } from 'boot/i18n'
 import { createWorker, ImageLike } from 'tesseract.js'
 import { Item, Offer } from 'src/types/item'
-import { sleep } from 'src/common'
 
 export interface ILabel {
   value: number | string,
@@ -414,7 +413,7 @@ export const useItemStore = defineStore('item', {
     getItems(page: number, itemId?: string | string[], filter?: any) {
       return new Promise<Array<Item>>((resolve, reject) => {
         api.post('/d4/item', { page, rows: this.itemPage.rows, itemId, fixedFilter: itemId ? {} : this.fixedFilter, filter })
-          .then(async (response) => {
+          .then((response) => {
             if (!itemId) {
               this.itemPage.over = page > 1
               this.itemPage.more = response.data.length > this.itemPage.rows
@@ -430,7 +429,7 @@ export const useItemStore = defineStore('item', {
     addAttribute(category: string | null, attribute: Property | Affix | Restriction) {
       return new Promise<Property | Affix | Restriction>((resolve, reject) => {
         api.post('/d4/item/attribute', { category: category, attribute: attribute })
-          .then(async (response) => {
+          .then((response) => {
             if (response.data.length) {
               attribute.value = response.data[0].value
               attribute.sort = response.data[0].sort
@@ -449,7 +448,7 @@ export const useItemStore = defineStore('item', {
     addItem(item: Item) {
       return new Promise<Item>((resolve, reject) => {
         api.post('/d4/item/add', { item })
-          .then(async (response) => {
+          .then((response) => {
             resolve(response.data)
           })
           .catch((e) => {
@@ -460,7 +459,7 @@ export const useItemStore = defineStore('item', {
     updateItem(item: Item) {
       return new Promise<Item>((resolve, reject) => {
         api.post('/d4/item/update', { item })
-          .then(async (response) => {
+          .then((response) => {
             resolve(response.data)
           })
           .catch((e) => {
@@ -471,7 +470,7 @@ export const useItemStore = defineStore('item', {
     relistItem(itemId: string) {
       return new Promise<void>((resolve, reject) => {
         api.post('/d4/item/relist', { itemId: itemId })
-          .then(async () => {
+          .then(() => {
             resolve()
           })
           .catch((e) => {
@@ -482,7 +481,7 @@ export const useItemStore = defineStore('item', {
     deleteItem(itemId: string) {
       return new Promise<void>((resolve, reject) => {
         api.post('/d4/item/delete', { itemId: itemId })
-          .then(async () => {
+          .then(() => {
             resolve()
           })
           .catch((e) => {
@@ -493,7 +492,7 @@ export const useItemStore = defineStore('item', {
     statusItem(itemId: string) {
       return new Promise<void>((resolve, reject) => {
         api.post('/d4/item/status', { itemId: itemId })
-          .then(async () => {
+          .then(() => {
             resolve()
           })
           .catch((e) => {
@@ -504,7 +503,7 @@ export const useItemStore = defineStore('item', {
     getOffers(itemId: string, offerId?: string) {
       return new Promise<Array<Offer>>((resolve, reject) => {
         api.get('/d4/item/offer', { params: { itemId, offerId } })
-          .then(async (response) => {
+          .then((response) => {
             resolve(response.data)
           })
           .catch((e) => {
@@ -515,7 +514,7 @@ export const useItemStore = defineStore('item', {
     makeOffer(offer: Offer) {
       return new Promise<Offer>((resolve, reject) => {
         api.post('/d4/item/offer/make', { offer })
-          .then(async (response) => {
+          .then((response) => {
             resolve(response.data)
           })
           .catch((e) => {
@@ -526,7 +525,7 @@ export const useItemStore = defineStore('item', {
     acceptOffer(offer: Offer) {
       return new Promise<void>((resolve, reject) => {
         api.post('/d4/item/offer/accept', { offer })
-          .then(async () => {
+          .then(() => {
             resolve()
           })
           .catch((e) => {
@@ -537,7 +536,7 @@ export const useItemStore = defineStore('item', {
     retractOffer(offerId: string) {
       return new Promise<void>((resolve, reject) => {
         api.post('/d4/item/offer/retract', { offerId })
-          .then(async () => {
+          .then(() => {
             resolve()
           })
           .catch((e) => {
@@ -548,7 +547,7 @@ export const useItemStore = defineStore('item', {
     turnDownOffer(offerId: string) {
       return new Promise<void>((resolve, reject) => {
         api.post('/d4/item/offer/turndown', { offerId })
-          .then(async () => {
+          .then(() => {
             resolve()
           })
           .catch((e) => {
@@ -559,7 +558,7 @@ export const useItemStore = defineStore('item', {
     addEvaluations(itemId: string, evaluations: Array<number>) {
       return new Promise<void>((resolve, reject) => {
         api.post('/d4/item/evaluations/add', { itemId, evaluations })
-          .then(async () => {
+          .then(() => {
             resolve()
           })
           .catch((e) => {
@@ -570,7 +569,7 @@ export const useItemStore = defineStore('item', {
     favorite(itemId: string, favorite: boolean) {
       return new Promise<void>((resolve, reject) => {
         api.post('/d4/item/favorite', { itemId, favorite })
-          .then(async () => {
+          .then(() => {
             resolve()
           })
           .catch((e) => {
@@ -581,7 +580,7 @@ export const useItemStore = defineStore('item', {
     getAwards() {
       return new Promise<Awards>((resolve, reject) => {
         api.get('/d4/awards')
-          .then(async (response) => {
+          .then((response) => {
             resolve(response.data)
           })
           .catch((e) => {
