@@ -40,6 +40,7 @@ const screen = computed<Screen>(() => $q.screen)
 const offsetTop = ref<number>(0)
 const asideHeight = computed<string>(() => `calc(100vh - ${screen.value.gt.sm ? offsetTop.value : 0}px)`)
 const asideTop = computed<string>(() => `${offsetTop.value + 10}px`)
+const newAwards = computed(() => ((new Date()).getDay() === 1 && (new Date()).getHours() >= 9) || (new Date()).getDay() === 2)
 
 const myTweak = (offset: number): void => {
   offsetTop.value = offset || 0
@@ -234,14 +235,14 @@ onUnmounted(() => {
             </q-item>
             <q-item v-ripple clickable :to="{ name: 'awards', params: { lang: route.params.lang } }" exact
               active-class="active">
+              <q-item-section side class="q-pr-xs">
+                <q-badge v-show="newAwards" label="N" color="negative" class="new-badge2" />
+              </q-item-section>
               <q-item-section>
                 <q-item-label>
                   {{ t('page.awards') }}
                 </q-item-label>
               </q-item-section>
-              <!-- <q-item-section side>
-                <q-badge label="N" color="negative" class="new-badge2" />
-              </q-item-section> -->
             </q-item>
           </q-list>
           <q-separator />
@@ -333,7 +334,7 @@ onUnmounted(() => {
                 :alert="newMessages ? 'negative' : 'transparent'" />
               <q-route-tab :ripple="!$q.dark.isActive" :label="t('page.awards')"
                 :to="{ name: 'awards', params: { lang: route.params.lang } }">
-                <!-- <q-badge floating label="N" color="negative" class="new-badge2" /> -->
+                <q-badge v-show="newAwards" floating label="N" color="negative" class="new-badge2" />
               </q-route-tab>
             </q-tabs>
           </div>
@@ -519,19 +520,19 @@ ins::after {
 .new-badge {
   top: 0;
   right: 0;
-  padding: 3px;
+  padding: 2px 3px;
   border-radius: 40px;
-  font-size: 8px;
-  line-height: 1;
+  font-size: 10px;
+  line-height: 10px;
 }
 
 .new-badge2 {
   top: 0;
   right: -10px;
-  padding: 3px;
+  padding: 2px 3px;
   border-radius: 40px;
-  font-size: 8px;
-  line-height: 1;
+  font-size: 10px;
+  line-height: 10px;
 }
 
 .top-ads {

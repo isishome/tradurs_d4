@@ -188,7 +188,7 @@ const updateFixedDebounce = debounce(() => {
           <template #default>
             <div class="row items-center q-gutter-x-xs">
               <div>{{ t('item.ladder') }}</div>
-              <q-badge label="N" color="negative" class="new-badge" />
+              <!-- <q-badge label="N" color="negative" class="new-badge" /> -->
             </div>
           </template>
         </q-checkbox>
