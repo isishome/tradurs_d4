@@ -3,6 +3,7 @@ import { createMemoryHistory, createRouter, createWebHashHistory, createWebHisto
 import routes from './routes'
 import { useAccountStore } from 'src/stores/account-store'
 import { useItemStore, type OfferInfo } from 'src/stores/item-store'
+import { useGlobalStore } from 'src/stores/global-store'
 import { Notify } from 'quasar'
 import { Manager } from 'socket.io-client'
 
@@ -103,11 +104,15 @@ export default route(function ({ store }/* { store, ssrContext } */) {
   })
 
   Router.beforeEach(async (to) => {
+    const gs = useGlobalStore(store)
     const as = useAccountStore(store)
     const is = useItemStore(store)
     const requireAuth = to.matched.find(route => route.meta.requireAuth)
 
     await as.checkSign()
+
+    if (to.params.lang?.length === 2 && !gs.localeOptions.map(lo => lo.value).includes(to.params.lang as string) && to.name !== 'pnf')
+      return { name: 'pnf' }
 
     if (requireAuth && !as.info.id)
       return { name: 'tradeList', params: { lang: to.params.lang } }

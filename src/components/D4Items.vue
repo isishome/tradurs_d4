@@ -660,8 +660,8 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
 <template>
   <div class="col-12" :style="`max-width:${width}px`">
     <div :class="$q.screen.lt.sm ? 'q-gutter-y-xl' : 'q-gutter-y-xxl'">
-      <q-intersection v-for="item, idx in (items as Array<Item | Advertise>)"
-        :key="`${item.itemId}${item.reward ? '_reward' : ''}`" :data-itemid="item.itemId" class="item"
+      <q-intersection v-for="(item, idx) in (items as Array<Item | Advertise>)" :key="idx" :data-itemid="item.itemId"
+        class="item"
         :style="`min-height:${height as number - ($q.screen.lt.sm ? 50 : 0)}px;height:${item.expanded ? '100%' : `${height as number - ($q.screen.lt.sm ? 50 : 0)}px`}`"
         transition="fade" @visibility="isVisible => visible(isVisible, item)" ssr-prerender once>
         <div v-if="(item instanceof Advertise)" class="bg-grey" style="width:100%;height:500px"></div>

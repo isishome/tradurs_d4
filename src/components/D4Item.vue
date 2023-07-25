@@ -46,7 +46,7 @@ const _hardcore = ref<boolean>(props.data.hardcore)
 const _ladder = ref<boolean>(props.data.ladder)
 const _name = ref<string>(props.data.name)
 const _quantity = ref<number>(props.data.quantity || 1)
-let remainDate = ref<number>(date.getDateDiff(props.data.endDate, new Date, 'seconds'))
+const remainDate = ref<number>(date.getDateDiff(new Date(props.data.endDate), new Date(), 'seconds'))
 const hour = 60 * 60
 const minute = 60
 const remainHours = computed(() => Math.floor(Math.max(remainDate.value / hour, 0)).toString().padStart(2, '0'))
@@ -153,6 +153,10 @@ const attribute = ref<string>(hasProperties.value ? 'properties' : 'affixes')
 
 watch(() => props.data.quantity, (val: number) => {
   _quantity.value = val
+})
+
+watch(() => props.data.endDate, (val: string) => {
+  remainDate.value = date.getDateDiff(new Date(val), new Date(), 'seconds')
 })
 
 onUnmounted(() => {
