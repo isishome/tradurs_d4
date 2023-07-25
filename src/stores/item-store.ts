@@ -137,7 +137,7 @@ export const useItemStore = defineStore('item', {
     },
     fixedFilter: {
       hardcore: false as boolean,
-      ladder: false as boolean,
+      ladder: true as boolean,
       onlyCurrency: false as boolean,
     },
     filter: {
