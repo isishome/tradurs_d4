@@ -235,8 +235,8 @@ onUnmounted(() => {
             </q-item>
             <q-item v-ripple clickable :to="{ name: 'awards', params: { lang: route.params.lang } }" exact
               active-class="active">
-              <q-item-section side class="q-pr-xs">
-                <q-badge v-show="newAwards" label="N" color="negative" class="new-badge2" />
+              <q-item-section v-show="newAwards" side class="q-pr-xs">
+                <q-badge label="N" color="negative" class="new-badge2" />
               </q-item-section>
               <q-item-section>
                 <q-item-label>
