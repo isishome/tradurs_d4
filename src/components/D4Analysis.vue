@@ -197,6 +197,13 @@ const checkInfo = (textArray: string[]) => {
 
   restrictionsPhase = textArray.splice(indexRequires, textArray.length).join('').replace(/[\+ ]/g, '').replace(/([0-9.]{1,})(\,)([0-9.]{1,})/g, '$1$3').replace(/(\[)([0-9.]{1,})(\s\-\s)([0-9.]{1,})(\])/g, '$1$2-$4$5')
 
+  // remove lost when epuipped
+  const lostText = `장착.*사라지는|lost.*when`
+  const indexLost = textArray.findIndex(ta => (new RegExp(lostText, 'gi')).test(ta))
+
+  if (indexLost !== -1)
+    textArray.splice(indexLost, textArray.length)
+
   let textStr = textArray.join('').replace(/[\+ ]/g, '').replace(/([0-9.]{1,})(\,)([0-9.]{1,})/g, '$1$3').replace(/(\[)([0-9.]{1,})(\s\-\s)([0-9.]{1,})(\])/g, '$1$2-$4$5')
   //let textStr = textArray.join('').replace(/[\+ ]/g, '').replace(/([0-9.]{1,})(\,)([0-9.]{1,})/g, '$1$3').replace(/(\[)([0-9.]{1,})([^\-\[]*\-[^\-\[]*)([0-9.]{1,})([1\]]{1})/g, '$1$2-$4$5')
 
