@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import { api } from 'boot/axios'
-import { i18n } from 'boot/i18n'
 import { User, type INotify } from 'src/types/user'
 import { Socket } from 'socket.io-client'
 import { type ILabel } from 'src/stores/item-store'
@@ -29,7 +28,7 @@ export const useAccountStore = defineStore('account', {
   }),
   getters: {
     filterEvaluations: (state) => {
-      return (ids?: Array<number>) => ids ? state.evaluations.data.filter(e => ids.includes(Number(e.value)) && e.lang === i18n.global.locale.value) : state.evaluations.data.filter(e => e.lang === i18n.global.locale.value).map(e => ({ ...e, keepColor: e.type === '001', color: e.type === '001' ? 'negative' : 'primary' }))
+      return (ids?: Array<number>) => ids ? state.evaluations.data.filter(e => ids.includes(Number(e.value))) : state.evaluations.data.map(e => ({ ...e, keepColor: e.type === '001', color: e.type === '001' ? 'negative' : 'primary' }))
     }
   },
   actions: {

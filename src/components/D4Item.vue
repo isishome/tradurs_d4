@@ -40,7 +40,6 @@ const editWrap = ref<QCard | null>(null)
 
 const filterClasses = store.filterClasses
 const filterRunesByType = store.filterRunesByType
-const filterGems = store.filterGems
 
 const _hardcore = ref<boolean>(props.data.hardcore)
 const _ladder = ref<boolean>(props.data.ladder)
@@ -59,7 +58,7 @@ const remainInterval = setInterval(() => {
 const _quality = ref<string>(props.data.quality || 'rare')
 const _type = ref<string>(props.data.itemType || store.filterTypes()[0].value as string)
 const _typeValue1 = ref<string>(props.data.itemTypeValue1 || (_type.value === 'aspect' ? store.aspectCategories[0].value as string : filterClasses(_type.value)[0].value as string))
-const _typeValue2 = ref<string>(props.data.itemTypeValue2 || (_typeValue1.value === 'gem' ? filterGems()[0].value as string : ''))
+const _typeValue2 = ref<string>(props.data.itemTypeValue2 || (_typeValue1.value === 'gem' ? store.gems[0].value as string : ''))
 const _power = ref<number>(props.data.power)
 const _upgrade = ref<number>(props.data.upgrade)
 const _level = ref<number | null>(props.data.level === 0 ? null : props.data.level)
@@ -74,7 +73,6 @@ const findStatus = store.findItemStatus
 const findRune = store.findRune
 const findType = store.findType
 const findClass = store.findClass
-const filterAspectCategories = store.filterAspectCategories
 
 const hasProperties = computed(() => findClass(_typeValue1.value)?.properties.length !== 0)
 
@@ -106,7 +104,7 @@ const updateType = (val: string) => {
 const updateTypeValue1 = (val: string) => {
   _image.value = 0
   attribute.value = findClass(val)?.properties.length !== 0 ? 'properties' : 'affixes'
-  _typeValue2.value = val === 'gem' ? filterGems()[0].value as string : ''
+  _typeValue2.value = val === 'gem' ? store.gems[0].value as string : ''
   update()
 }
 
@@ -227,7 +225,7 @@ defineExpose({ scrollEnd })
                 <q-select v-model="_typeValue1" :disable="disable" behavior="menu" outlined dense no-error-icon
                   hide-bottom-space emit-value map-options transition-show="none" transition-hide="none"
                   :transition-duration="0" :label="t('item.selectAspectCategory')"
-                  dropdown-icon="img:/images/icons/dropdown.svg" :options="filterAspectCategories()"
+                  dropdown-icon="img:/images/icons/dropdown.svg" :options="store.aspectCategories"
                   popup-content-class="d4-scroll" @update:model-value="update">
                   <template #selected-item="scope">
                     <div class="ellipsis">{{ scope.opt.label }}</div>
@@ -261,7 +259,7 @@ defineExpose({ scrollEnd })
                   <q-select v-model="_typeValue2" :disable="disable" behavior="menu" outlined dense no-error-icon
                     hide-bottom-space emit-value map-options transition-show="none" transition-hide="none"
                     :transition-duration="0" :label="t('item.selectGem')" dropdown-icon="img:/images/icons/dropdown.svg"
-                    :options="filterGems()" popup-content-class="d4-scroll" @update:model-value="update">
+                    :options="store.gems" popup-content-class="d4-scroll" @update:model-value="update">
                     <template #selected-item="scope">
                       <div class="ellipsis">{{ scope.opt.label }}</div>
                     </template>

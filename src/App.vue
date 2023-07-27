@@ -1,12 +1,16 @@
 <script lang="ts">
 import { useAccountStore } from 'stores/account-store'
 import { useItemStore } from 'stores/item-store'
+import { api } from 'src/boot/axios'
 
 export default {
-  preFetch({ store }) {
+  preFetch({ store, currentRoute }) {
     const as = useAccountStore(store);
     const is = useItemStore(store);
-    return Promise.all([as.getEvaluations(), is.getBase(), is.getProperties(), is.getAffixes(), is.getRestrictions()]);
+
+    api.defaults.headers.common['Accept-Language'] = currentRoute.params.lang || 'ko-KR'
+
+    return Promise.all([as.checkSign(), as.getEvaluations(), is.getBase(), is.getProperties(), is.getAffixes(), is.getRestrictions()]);
   }
 }
 </script>

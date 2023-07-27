@@ -36,7 +36,7 @@ if ($q.localStorage.has('d4.filter'))
 if ($q.localStorage.has('d4.fixedFilter'))
   is.fixedFilter = JSON.parse($q.localStorage.getItem('d4.fixedFilter') as string)
 
-const filterItemStatus = computed(() => [{ value: null, label: t('filter.all') }, ...is.filterItemStatus()])
+const itemStatus = computed(() => [{ value: null, label: t('filter.all') }, ...is.itemStatus])
 
 // about property
 const propertyRef = ref<QSelect | null>(null)
@@ -118,6 +118,11 @@ const mine = () => {
     is.filter.offered = false
 
   updateDebounce()
+}
+
+const clearFilter = () => {
+  is.clearFilter(true)
+  update()
 }
 
 const stored = () => {
@@ -223,7 +228,7 @@ const updateFixedDebounce = debounce(() => {
       <q-item-section class="q-pt-md q-pr-md select-wrap">
         <q-select v-model="is.filter.status" :disable="filterLoading" outlined dense no-error-icon hide-bottom-space
           emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0" behavior="menu"
-          :label="t('filter.status')" :options="filterItemStatus" dropdown-icon="img:/images/icons/dropdown.svg"
+          :label="t('filter.status')" :options="itemStatus" dropdown-icon="img:/images/icons/dropdown.svg"
           popup-content-class="d4-scroll" @update:model-value="update()" />
       </q-item-section>
     </q-item>
@@ -439,7 +444,7 @@ const updateFixedDebounce = debounce(() => {
     </q-item>
     <q-item :disable="filterLoading" :inset-level=".3" class="q-mt-md">
       <q-btn outline aria-label="Tradurs Refresh Button" size="md" :ripple="false" class="no-hover"
-        :disable="filterLoading" @click="is.clearFilter(true)">
+        :disable="filterLoading" @click="clearFilter">
         <div class="row items-center q-gutter-xs">
           <div>{{ t('btn.resetSearch') }}</div>
           <q-icon class="icon" name="img:/images/icons/restore.svg" size="xs" />

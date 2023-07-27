@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { AxiosInstance } from 'axios'
-import { ref, computed, watch, onMounted, onUnmounted, nextTick, inject } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useQuasar, Screen, uid } from 'quasar'
 import { useI18n } from 'vue-i18n'
@@ -19,7 +18,6 @@ const props = defineProps<{
 
 const prod: boolean = import.meta.env.PROD
 
-const api = inject('axios') as AxiosInstance
 const route = useRoute()
 const router = useRouter()
 const $q = useQuasar()
@@ -29,7 +27,6 @@ const is = useItemStore()
 const { t, locale } = useI18n({ useScope: 'global' })
 
 locale.value = props.lang || 'ko'
-api.defaults.headers.common['Accept-Language'] = props.lang || 'ko'
 
 const filterLoading = computed(() => is.filter.loading)
 const leftDrawerOpen = ref<boolean>(false)
@@ -65,9 +62,11 @@ const sign = () => {
 
 const brLoc = gs.localeOptions.map(lo => lo.value).includes($q.lang.getLocale()?.substring(0, 2) || '') ? $q.lang.getLocale()?.substring(0, 2) : 'ko'
 const setLang = (lang: string) => {
-  locale.value = lang
-  api.defaults.headers.common['Accept-Language'] = lang
   router.replace({ name: route.name as string, params: { lang } })
+    .catch(() => { })
+    .then(() => {
+      router.go(0)
+    })
 }
 
 const setDark = () => {
@@ -356,8 +355,8 @@ onUnmounted(() => {
             <q-menu auto-close class="no-shadow" anchor="bottom end" self="top end" transition-show="none"
               transition-hide="none" :transition-duration="0">
               <q-list bordered class="rounded-borders">
-                <q-item v-for="lang in gs.localeOptions" :key="lang.value" clickable :active="lang.value === locale"
-                  @click="setLang(lang.value)">
+                <q-item v-for="lang in gs.localeOptions" :key="lang.value" :clickable="lang.value !== locale"
+                  :active="lang.value === locale" @click="setLang(lang.value)">
                   {{ lang.label }}</q-item>
               </q-list>
             </q-menu>

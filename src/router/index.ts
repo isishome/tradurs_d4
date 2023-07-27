@@ -109,8 +109,6 @@ export default route(function ({ store }/* { store, ssrContext } */) {
     const is = useItemStore(store)
     const requireAuth = to.matched.find(route => route.meta.requireAuth)
 
-    await as.checkSign()
-
     if (to.params.lang?.length === 2 && !gs.localeOptions.map(lo => lo.value).includes(to.params.lang as string) && to.name !== 'pnf')
       return { name: 'pnf' }
 

@@ -1,13 +1,11 @@
 import { defineStore } from 'pinia'
 import { api } from 'boot/axios'
-import { i18n } from 'boot/i18n'
 import { createWorker, ImageLike } from 'tesseract.js'
 import { Item, Offer } from 'src/types/item'
 
 export interface ILabel {
   value: number | string,
-  label: string,
-  lang?: string
+  label: string
 }
 
 export interface Status extends ILabel { }
@@ -52,8 +50,7 @@ export interface AttributeType extends ILabel {
 
 export interface Property extends ILabel {
   type: string,
-  sort?: number,
-  lang: string
+  sort?: number
 }
 
 export interface Affix extends ILabel {
@@ -172,55 +169,46 @@ export const useItemStore = defineStore('item', {
   }),
   getters: {
     findItemStatus: (state) => {
-      return (statusCode?: string): Status | undefined => state.itemStatus.find(s => s.value === statusCode && s.lang === i18n.global.locale.value)
-    },
-    filterItemStatus: (state) => {
-      return (): Array<Status> => state.itemStatus.filter(s => s.lang === i18n.global.locale.value)
+      return (statusCode?: string): Status | undefined => state.itemStatus.find(s => s.value === statusCode)
     },
     findOfferStatus: (state) => {
-      return (statusCode?: string): Status | undefined => state.offerStatus.find(s => s.value === statusCode && s.lang === i18n.global.locale.value)
+      return (statusCode?: string): Status | undefined => state.offerStatus.find(s => s.value === statusCode)
     },
     findQuality: (state) => {
-      return (type?: string): Quality | undefined => state.quality.find(q => q.value === type && q.lang === i18n.global.locale.value)
+      return (type?: string): Quality | undefined => state.quality.find(q => q.value === type)
     },
     filterQuality: (state) => {
-      return (type?: string): Array<Quality> => type ? state.quality.filter(q => q.value === type && q.lang === i18n.global.locale.value) : state.quality.filter(q => q.lang === i18n.global.locale.value)
-    },
-    findClass: (state) => {
-      return (className?: string): EquipmentClass | undefined => state.classes.find(c => c.value === className && c.lang === i18n.global.locale.value)
-    },
-    filterClasses: (state) => {
-      return (type?: string): Array<EquipmentClass> => type ? state.classes.filter(c => c.type === type && c.lang === i18n.global.locale.value) : state.classes.filter(c => c.lang === i18n.global.locale.value)
+      return (type?: string): Array<Quality> => type ? state.quality.filter(q => q.value === type) : state.quality
     },
     findType: (state) => {
-      return (type: string): ItemType | undefined => state.types.find(t => t.value === type && !t.onlyCurrency && t.lang === i18n.global.locale.value)
+      return (type: string): ItemType | undefined => state.types.find(t => t.value === type && !t.onlyCurrency)
     },
     filterTypes: (state) => {
-      return (type?: string): Array<ItemType> => type ? state.types.filter(t => t.value === type && !t.onlyCurrency && t.lang === i18n.global.locale.value) : state.types.filter(t => !t.onlyCurrency && t.lang === i18n.global.locale.value)
+      return (type?: string): Array<ItemType> => type ? state.types.filter(t => t.value === type && !t.onlyCurrency) : state.types.filter(t => !t.onlyCurrency)
+    },
+    findClass: (state) => {
+      return (className?: string): EquipmentClass | undefined => state.classes.find(c => c.value === className)
+    },
+    filterClasses: (state) => {
+      return (type?: string): Array<EquipmentClass> => type ? state.classes.filter(c => c.type === type) : state.classes
     },
     currencies: (state) => {
-      return (): Array<ILabel> => state.types.filter(t => (t.isCurrency || t.onlyCurrency) && t.lang === i18n.global.locale.value)
+      return (): Array<ILabel> => state.types.filter(t => t.isCurrency || t.onlyCurrency)
     },
     findRuneType: (state) => {
-      return (type?: string): RuneType | undefined => state.runeTypes.find(rt => rt.value === type && rt.lang === i18n.global.locale.value)
-    },
-    filterRunesByType: (state) => {
-      return (type?: string): Array<Rune> => type ? state.runes.filter(r => r.type === type && r.lang === i18n.global.locale.value) : state.runes.filter(r => r.lang === i18n.global.locale.value)
+      return (type?: string): RuneType | undefined => state.runeTypes.find(rt => rt.value === type)
     },
     findRune: (state) => {
-      return (id: string): Rune | undefined => state.runes.find(r => r.value === id && r.lang === i18n.global.locale.value)
+      return (id: string): Rune | undefined => state.runes.find(r => r.value === id)
     },
-    filterAspectCategories: (state) => {
-      return (): Array<AspectCategory> => state.aspectCategories.filter(ac => ac.lang === i18n.global.locale.value)
-    },
-    filterGems: (state) => {
-      return (): Array<Gem> => state.gems.filter(g => g.lang === i18n.global.locale.value)
+    filterRunesByType: (state) => {
+      return (type?: string): Array<Rune> => type ? state.runes.filter(r => r.type === type) : state.runes
     },
     filterAttributeTypes: (state) => {
-      return (attribute?: string): Array<AttributeType> => attribute ? state.attributeTypes.filter(at => at.hasAttributes.includes(attribute) && at.lang === i18n.global.locale.value) : state.attributeTypes.filter(at => at.lang === i18n.global.locale.value)
+      return (attribute?: string): Array<AttributeType> => attribute ? state.attributeTypes.filter(at => at.hasAttributes.includes(attribute)) : state.attributeTypes
     },
     filterProperties: (state) => {
-      return (word?: string): Array<Property> => word ? state.properties.data.filter(p => p.label.toLowerCase().indexOf(word.toLowerCase()) !== -1 && p.lang === i18n.global.locale.value) : state.properties.data.filter(p => p.lang === i18n.global.locale.value)
+      return (word?: string): Array<Property> => word ? state.properties.data.filter(p => p.label.toLowerCase().indexOf(word.toLowerCase()) !== -1) : state.properties.data
     },
     filterAffixes: (state) => {
       return (word?: string): Array<Affix> => word ? state.affixes.data.filter(a => a.label.toLowerCase().indexOf(word.toLowerCase()) !== -1) : state.affixes.data
@@ -229,7 +217,7 @@ export const useItemStore = defineStore('item', {
       return (word?: string): Array<Restriction> => word ? state.restrictions.data.filter(r => r.label.toLowerCase().indexOf(word.toLowerCase()) !== -1) : state.restrictions.data
     },
     findProperty: (state) => {
-      return (propertyId: number): Property | undefined => state.properties.data.find(p => p.value === propertyId && p.lang === i18n.global.locale.value)
+      return (propertyId: number): Property | undefined => state.properties.data.find(p => p.value === propertyId)
     },
     findAffix: (state) => {
       return (affixId: number): Affix | undefined => state.affixes.data.find(a => a.value === affixId)
