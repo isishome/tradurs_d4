@@ -572,4 +572,9 @@ ins::after {
   background-repeat: no-repeat;
   background-position: center 40%;
 }
+
+.body--light .bg-season::before {
+  opacity: .3;
+  filter: grayscale(1);
+}
 </style>

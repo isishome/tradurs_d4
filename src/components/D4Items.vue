@@ -14,6 +14,7 @@ const D4Property = defineAsyncComponent(() => import('components/D4Property.vue'
 const D4Affix = defineAsyncComponent(() => import('components/D4Affix.vue'))
 const D4Restriction = defineAsyncComponent(() => import('components/D4Restriction.vue'))
 const D4Offer = defineAsyncComponent(() => import('components/D4Offer.vue'))
+const D4User = defineAsyncComponent(() => import('components/D4User.vue'))
 
 interface IProps {
   items: Array<Item>,
@@ -435,6 +436,7 @@ const progressOffer = ref<boolean>(false)
 const disableOffers = ref<boolean>(false)
 const showOffers = ref<boolean>(false)
 const makeOffer = ref<Offer>(new Offer())
+const allowShowSeller = computed(() => offerItem.value?.statusCode === '003' && offers.value.find(o => o.authorized)?.statusCode === '003' && offers.value.find(o => o.authorized) && offers.value.find(o => o.authorized)?.statusCode === '003')
 
 const hideOffers = () => {
   offerItem.value = undefined
@@ -962,6 +964,11 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
       <template v-if="isMakingOffer" #bottom>
         <q-card-section>
           <D4Offer :data="makeOffer" make :disable="disableOffers" :progress="progressOffer" @make-offer="makingOffer" />
+        </q-card-section>
+      </template>
+      <template v-else-if="allowShowSeller" #bottom>
+        <q-card-section class="row justify-end">
+          <D4User :data="offerItem?.user" :disable="disableOffers" />
         </q-card-section>
       </template>
     </D4Dialog>

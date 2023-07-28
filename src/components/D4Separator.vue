@@ -77,4 +77,8 @@ withDefaults(defineProps<IProps>(), {
     width: 26px;
   }
 }
+
+.body--light .separator {
+  opacity: .4;
+}
 </style>

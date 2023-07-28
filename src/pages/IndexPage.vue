@@ -234,6 +234,8 @@ const getList = (filter?: any) => {
       }, 100)
     })
 
+  rewardItem.value = undefined
+
   const awardsPick = is.awardsPick.filter((ap: AwardsPick) => ap.ladder === is.fixedFilter.ladder)
   if (awardsPick.length > 0) {
     const pickItemId = awardsPick[Math.floor(Math.random() * awardsPick.length)].itemId.toString()
