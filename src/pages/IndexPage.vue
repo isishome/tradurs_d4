@@ -37,6 +37,7 @@ const filter = computed(() => is.filter.request)
 const expanded = computed(() => is.equalDefaultFilter)
 const itemsRef = ref<typeof D4Items | null>(null)
 const items = ref<Array<Item>>([])
+const rewardItem = ref<Item | undefined>()
 const page = ref<number>(1)
 const over = computed(() => is.itemPage.over)
 const more = computed(() => is.itemPage.more)
@@ -222,15 +223,7 @@ const getList = (filter?: any) => {
       }
       items.value.push(...result)
 
-      const awardsPick = is.awardsPick.filter((ap: AwardsPick) => ap.ladder === is.fixedFilter.ladder)
-      if (awardsPick.length > 0) {
-        const pickItemId = awardsPick[Math.floor(Math.random() * awardsPick.length)].itemId.toString()
-        is.getItems(1, pickItemId)
-          .then((pick: Array<Item>) => {
-            pick = pick.map((p: Item) => ({ ...p, reward: true }))
-            items.value = pick.concat(items.value)
-          })
-      }
+
     }).catch(() => {
       items.value = []
     }).then(() => {
@@ -240,6 +233,15 @@ const getList = (filter?: any) => {
         completeList.value = true
       }, 100)
     })
+
+  const awardsPick = is.awardsPick.filter((ap: AwardsPick) => ap.ladder === is.fixedFilter.ladder)
+  if (awardsPick.length > 0) {
+    const pickItemId = awardsPick[Math.floor(Math.random() * awardsPick.length)].itemId.toString()
+    is.getItems(1, pickItemId)
+      .then((pick: Array<Item>) => {
+        rewardItem.value = pick.map((p: Item) => ({ ...p, reward: true }))?.[0]
+      })
+  }
 }
 
 const notify = (group: string, message: string, caption: string, actionLabel: string, action: Function) => {
@@ -332,8 +334,9 @@ defineExpose({ getList })
 <template>
   <div>
     <div class="row justify-center items-center">
-      <D4Items ref="itemsRef" class="item-list" :items="items" @upsert-item="upsertItem" @delete-item="deleteItem"
-        @relist-item="relistItem" @status-item="statusItem" @update-only="updateOnly" @copy="copy" @favorite="favorite" />
+      <D4Items ref="itemsRef" class="item-list" :items="items" :reward-item="rewardItem" @upsert-item="upsertItem"
+        @delete-item="deleteItem" @relist-item="relistItem" @status-item="statusItem" @update-only="updateOnly"
+        @copy="copy" @favorite="favorite" />
     </div>
   </div>
   <div class="q-pt-xl"></div>

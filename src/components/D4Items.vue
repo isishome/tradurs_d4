@@ -17,6 +17,7 @@ const D4Offer = defineAsyncComponent(() => import('components/D4Offer.vue'))
 
 interface IProps {
   items: Array<Item>,
+  rewardItem: Item | undefined,
   width?: string | number,
   height?: string | number
 }
@@ -592,9 +593,9 @@ const complete = (evaluations: Array<number>) => {
     })
 }
 
-const expanded = (item: Item) => {
+const expanded = (item: Item, isReward?: boolean) => {
   item.expanded = true
-  const findItem = document.querySelector(`div[data-itemid="${item.itemId}"]`) as HTMLDivElement
+  const findItem = document.querySelector(`div[data-itemid="${isReward ? 'reward-item' : item.itemId}"]`) as HTMLDivElement
   if (findItem) {
     nextTick(() => {
       scrollPos(findItem.offsetTop, 'smooth')
@@ -630,9 +631,9 @@ const failedAnalyze = (msg: string) => {
 
 // Execute function if an item is visible (adsense)
 const visible = (isVisible: boolean, item: Item): void => {
-  const findItem = document.querySelector(`div[data-itemid="${item.itemId}"]`) as HTMLDivElement
-  if (findItem && item.reward)
-    findItem.classList.add('reward')
+  // const findItem = document.querySelector(`div[data-itemid="${item.itemId}"]`) as HTMLDivElement
+  // if (findItem && item.reward)
+  //   findItem.classList.add('reward')
   //findItem.style.height = isVisible ? '100%' : `${findItem.offsetHeight}px`
 }
 
@@ -660,10 +661,46 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
 <template>
   <div class="col-12" :style="`max-width:${width}px`">
     <div :class="$q.screen.lt.sm ? 'q-gutter-y-xl' : 'q-gutter-y-xxl'">
+      <div v-if="rewardItem" class="item relative-position reward" :style="`min-height:${height as number - ($q.screen.lt.sm ? 50 : 0)}px;height:${rewardItem.expanded ? '100%' :
+        `${height as number - ($q.screen.lt.sm ? 50 : 0)}px`}`" data-itemid="reward-item">
+        <D4Item :data="rewardItem" :loading="rewardItem.loading" @favorite="favorite" @copy="copy">
+          <template #top-right>
+          </template>
+          <template v-if="requestProperties > 0" #properties>
+            <D4Property v-for="property in rewardItem.properties" :key="property.valueId" :data="property" />
+          </template>
+          <template v-if="requestAffixes > 0" #affixes>
+            <D4Affix v-for="affix in rewardItem.affixes" :key="affix.valueId" :data="affix" />
+          </template>
+          <template v-if="requestRestrictions > 0" #restrictions>
+            <D4Restriction v-for="restriction in rewardItem.restrictions" :key="restriction.valueId"
+              :data="restriction" />
+          </template>
+          <template #actions>
+            <div v-show="rewardItem.expanded" class="row justify-between items-center q-pt-lg">
+              <div>
+                <D4Btn v-if="rewardItem.authorized && rewardItem.statusCode !== '001'" :label="t('btn.edit')"
+                  color="var(--q-secondary)" :loading="rewardItem.loading" @click="editItem(rewardItem)" />
+              </div>
+              <div>
+                <D4Btn
+                  :label="rewardItem.authorized || !as.signed || rewardItem.statusCode !== '000' ? t('offer.list') : t('btn.makeOffer')"
+                  :loading="rewardItem.loading" :disable="rewardItem.forDisplay" @click="openMakingOffer(rewardItem)" />
+              </div>
+            </div>
+          </template>
+          <template #more="{ loading }">
+            <q-btn v-if="!rewardItem.expanded && !loading" flat aria-label="Tradurs More Button" text-color="black"
+              class="more no-hover full-width" padding="10px" @click="expanded(rewardItem, true)">
+              <img class="icon" :width="$q.screen.lt.sm ? 24 : 36" :height="$q.screen.lt.sm ? 24 : 36"
+                src="/images/icons/more.svg" alt="icon_more" />
+            </q-btn>
+          </template>
+        </D4Item>
+      </div>
       <q-intersection v-for="item, idx in (items as Array<Item | Advertise>)" :key="idx" :data-itemid="item.itemId"
-        class="item" :class="{ 'reward': item.reward }"
-        :style="`min-height:${height as number - ($q.screen.lt.sm ? 50 : 0)}px;height:${item.expanded ? '100%' : `${height as number - ($q.screen.lt.sm ? 50 : 0)}px`}`"
-        transition="fade" ssr-prerender once>
+        class="item" :style="`min-height:${height as number - ($q.screen.lt.sm ? 50 : 0)}px;height:${item.expanded ? '100%' :
+          `${height as number - ($q.screen.lt.sm ? 50 : 0)}px`}`" transition="fade" ssr-prerender once>
         <div v-if="(item instanceof Advertise)" class="bg-grey" style="width:100%;height:500px"></div>
         <D4Item v-else :data="item" :loading="item.loading" @favorite="favorite" @copy="copy">
           <template #top-right>
@@ -699,8 +736,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
           </template>
         </D4Item>
       </q-intersection>
-      <div v-show="items.filter((i: Item) => !i.reward).length === 0" class="row justify-center items-center"
-        style="min-height:30vh">
+      <div v-show="items.length === 0" class="row justify-center items-center" style="min-height:30vh">
         {{ t('noItem') }}
       </div>
     </div>
