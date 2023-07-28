@@ -228,7 +228,7 @@ const getList = (filter?: any) => {
         is.getItems(1, pickItemId)
           .then((pick: Array<Item>) => {
             pick = pick.map((p: Item) => ({ ...p, reward: true }))
-            items.value.unshift(...pick)
+            items.value = pick.concat(items.value)
           })
       }
     }).catch(() => {
