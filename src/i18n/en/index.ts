@@ -251,6 +251,11 @@ export default {
     bottom: 'We apologize for any inconvenience this may cause.',
     close: 'Do not open for 24 hours'
   },
+  adblock: {
+    title: 'Please allow ads on Tradurs',
+    contents: 'It looks like you are using an ad blocker.\n\nTradurs relies on advertising to help fund our servers',
+    allow: 'Allow & Refresh'
+  },
   message: {
     page: 'Page {page}'
   },

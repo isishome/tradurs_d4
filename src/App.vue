@@ -18,12 +18,15 @@ export default {
 <script setup lang="ts">
 import { ref, computed, onMounted, reactive } from 'vue'
 import { useQuasar, useMeta } from 'quasar'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useGlobalStore } from 'stores/global-store'
 
+const prod: boolean = import.meta.env.PROD
+
 const $q = useQuasar()
 const route = useRoute()
+const router = useRouter()
 const as = useAccountStore()
 const gs = useGlobalStore()
 const { t, locale } = useI18n({ useScope: 'global' })
@@ -82,12 +85,53 @@ const close = () => {
   notice.open = false
 }
 
+const adblock = reactive<{ open: Boolean, close: boolean }>({
+  open: false,
+  close: false
+})
+
 onMounted(() => {
-  view.value = true
+  if (prod) {
+    fetch('https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js').then(() => {
+      view.value = true
+    }).catch(() => {
+      adblock.open = true
+    })
+  }
+  else
+    view.value = true
 })
 </script>
 
 <template>
+  <D4Dialog v-model="adblock.open" persistent>
+    <template #top>
+      <q-card-section class="row justify-center">
+        <div class="row justify-center items-center q-gutter-x-xs">
+          <q-avatar>
+            <q-img width="50px" src="/images/tradurs.svg" />
+          </q-avatar>
+          <div class="q-pa-md text-weight-bold" :class="$q.screen.gt.sm ? 'text-h6' : 'text-body1'">{{
+            t('adblock.title') }}</div>
+        </div>
+      </q-card-section>
+    </template>
+    <template #middle>
+      <q-card-section class="d4-scroll" style="max-height:50vh">
+        <div class="q-pa-md column q-gutter-y-sm" :class="$q.screen.gt.sm ? 'text-body1' : 'text-caption'">
+          <div class="text-area text-weight-bold">{{ t('adblock.contents') }}</div>
+        </div>
+      </q-card-section>
+    </template>
+    <template #bottom>
+      <q-card-section>
+        <div class="q-pa-md text-right">
+          <q-btn outline no-caps :label="t('adblock.allow')" @click="() => router.go(0)"
+            aria-label="Tradurs Allow Button" />
+        </div>
+      </q-card-section>
+    </template>
+  </D4Dialog>
   <D4Dialog v-model="notice.open" persistent>
     <template #top>
       <q-card-section class="row no-wrap items-center justify-between">

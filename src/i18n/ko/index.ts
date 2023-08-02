@@ -250,6 +250,11 @@ export default {
     bottom: '이용에 불편을 드려 죄송합니다.',
     close: '24시간 동안 열지 않기'
   },
+  adblock: {
+    title: '트레이더스에서 광고를 허용해 주세요',
+    contents: '광고 차단 프로그램을 사용 중인 것 같습니다.\n\n트레이더스는 광고를 통해 서버 운영비를 지원받습니다.',
+    allow: '허용함 & 새로고침'
+  },
   message: {
     page: '페이지 {page}'
   },
