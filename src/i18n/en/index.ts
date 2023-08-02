@@ -5,7 +5,8 @@ export default {
   },
   seo: {
     title: "{itemName}{pageName}Diablo® IV {'|'} Tradurs",
-    desc: 'Trade various items used in Diablo® IV on the Tradurs'
+    desc: 'Trade various items used in Diablo® IV on the Tradurs',
+    keywords: 'dia4, dia 4, diablo4, diablo 4, dia, diablo, trade, trading, trade site, trade web'
   },
   page: {
     tradeList: 'Trade List',

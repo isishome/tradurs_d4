@@ -47,6 +47,7 @@ locale.value = route.params.lang || 'ko'
 // about Meta
 const titleReactive = computed(() => gs.getTitle(route.name ? t(`page.${route.name as string}`) : undefined))
 const descReactive = computed(() => t('seo.desc'))
+const keywordsReactive = computed(() => t('seo.keywords'))
 const recaptchaSrc = computed(() => route.name === 'support' ? 'https://www.google.com/recaptcha/api.js?render=6Lf38rYmAAAAAB-ET1oihMUkcDumRascvVHOyGmg' : '')
 
 useMeta(() => {
@@ -54,6 +55,7 @@ useMeta(() => {
     title: titleReactive.value,
     meta: {
       description: { name: 'description', content: descReactive.value },
+      keywords: { name: 'keywords', content: keywordsReactive.value },
       equiv: { 'http-equiv': 'Content-Type', content: 'text/html; charset=UTF-8' },
       ogTitle: { property: 'og:title', content: titleReactive.value },
       ogDescription: { property: 'og:description', content: descReactive.value },

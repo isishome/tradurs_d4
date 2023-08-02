@@ -436,7 +436,7 @@ const progressOffer = ref<boolean>(false)
 const disableOffers = ref<boolean>(false)
 const showOffers = ref<boolean>(false)
 const makeOffer = ref<Offer>(new Offer())
-const allowShowSeller = computed(() => offerItem.value?.statusCode === '003' && offers.value.find(o => o.authorized)?.statusCode === '003' && offers.value.find(o => o.authorized) && offers.value.find(o => o.authorized)?.statusCode === '003')
+const allowShowSeller = computed(() => offerItem.value?.statusCode === '003' && offers.value.find(o => o.authorized)?.statusCode === '003' && offers.value.find(o => o.authorized))
 
 const hideOffers = () => {
   offerItem.value = undefined
