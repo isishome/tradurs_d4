@@ -983,7 +983,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
 
 @keyframes awards {
   0% {
-    top: -8px;
+    transform: translateY(-8px);
     opacity: 0;
   }
 }
@@ -997,8 +997,9 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
   width: 80px;
   height: 46px;
   position: absolute;
-  top: -4px;
-  left: 2px;
+  top: 0;
+  left: 0;
+  transform: translate(2px, -4px);
   opacity: .8;
 }
 
