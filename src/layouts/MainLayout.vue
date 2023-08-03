@@ -74,8 +74,17 @@ const setDark = () => {
   $q.cookies.set('d4.dark', $q.dark.isActive.toString())
 }
 
+const refreshSeconds = 30
 const key = ref(uid())
 const reload = () => {
+  const now = new Date()
+  const diff = date.getDateDiff(now, gs.adsDatetime || date.subtractFromDate(now, { seconds: refreshSeconds * 2 }), 'seconds')
+
+  if (diff < refreshSeconds)
+    return
+
+  gs.adsDatetime = new Date()
+
   key.value = uid()
   nextTick(() => {
     onWindowLoad()
@@ -129,18 +138,10 @@ watch(() => is.filter.request, (val) => {
     _name.value = ''
 })
 
-const refreshSeconds = 30
 const size = computed(() => $q.screen.width < 728 ? 'width:320px;max-height:100px;' : 'width:728px;height:90px;')
 
 const onWindowLoad = () => {
   if (prod) {
-    const now = new Date()
-    const diff = date.getDateDiff(now, gs.adsDatetime || date.subtractFromDate(now, { seconds: refreshSeconds * 2 }), 'seconds')
-
-    if (diff < refreshSeconds)
-      return
-
-    gs.adsDatetime = new Date()
     const adsbygoogle = window.adsbygoogle || []
     const ads: NodeListOf<Element> = document.querySelectorAll('ins.adsbygoogle')
     ads.forEach((a: Element) => {
