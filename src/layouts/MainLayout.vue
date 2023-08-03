@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useQuasar, Screen, uid, date } from 'quasar'
+import { useQuasar, Screen, uid } from 'quasar'
 import { useI18n } from 'vue-i18n'
 
 import { useGlobalStore } from 'src/stores/global-store'
@@ -74,15 +74,8 @@ const setDark = () => {
   $q.cookies.set('d4.dark', $q.dark.isActive.toString())
 }
 
-const refreshSeconds = 30
 const key = ref(uid())
 const reload = () => {
-  const now = new Date()
-  const diff = gs.adsDatetime ? date.getDateDiff(now, gs.adsDatetime, 'seconds') : refreshSeconds
-
-  if (diff < refreshSeconds)
-    return
-
   key.value = uid()
   nextTick(() => {
     onWindowLoad()
@@ -140,7 +133,6 @@ const size = computed(() => $q.screen.width < 728 ? 'width:320px;max-height:100p
 
 const onWindowLoad = () => {
   if (prod) {
-    gs.adsDatetime = new Date()
     const adsbygoogle = window.adsbygoogle || []
     const ads: NodeListOf<Element> = document.querySelectorAll('ins.adsbygoogle')
     ads.forEach((a: Element) => {
