@@ -8,6 +8,7 @@ export const useGlobalStore = defineStore('global', {
       { value: 'ko', label: '한국어' },
       { value: 'en', label: 'English' }
     ],
+    adsDatetime: undefined as Date | undefined,
     itemName: null as string | null,
     refresh: 0 as number
   }),
