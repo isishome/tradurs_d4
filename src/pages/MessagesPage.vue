@@ -62,6 +62,7 @@ const read = (message: Message) => {
         message.readYn = true
         message.show = true
         message.selected = false
+        as.unreadMessages()
       })
   }
   else
@@ -74,6 +75,7 @@ const reads = () => {
     as.readMessage(selected.map(m => m.msgId))
       .then(() => {
         selected.forEach(m => m.readYn = true)
+        as.unreadMessages()
       })
   }
 }

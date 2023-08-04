@@ -23,7 +23,8 @@ export const useAccountStore = defineStore('account', {
     messagePage: {
       rows: 6 as number,
       over: false as boolean,
-      more: false as boolean
+      more: false as boolean,
+      unread: 0 as number
     },
   }),
   getters: {
@@ -138,6 +139,15 @@ export const useAccountStore = defineStore('account', {
       return new Promise<void>((resolve) => {
         api.post('/account/messages/read', { msgIds })
           .then(() => {
+            resolve()
+          })
+      })
+    },
+    unreadMessages() {
+      return new Promise<void>((resolve) => {
+        api.get('/account/messages/unread')
+          .then((response) => {
+            this.messagePage.unread = response.data
             resolve()
           })
       })

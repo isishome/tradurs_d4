@@ -7,7 +7,7 @@ import { i18n } from './i18n'
 
 let api: AxiosInstance
 
-export default boot(({ app, ssrContext, store }) => {
+export default boot(({ app, ssrContext, store, router }) => {
   api = axios.create({
     baseURL: import.meta.env.VITE_APP_BACKEND,
     timeout: 0,
@@ -58,7 +58,10 @@ export default boot(({ app, ssrContext, store }) => {
   if (process.env.SERVER && ssrContext?.req.headers.cookie)
     api.defaults.headers.common['cookie'] = ssrContext?.req.headers.cookie
 
-  api.defaults.headers.common['Accept-Language'] = ssrContext?.req.headers['accept-language'] || 'ko-KR'
+  router.beforeEach((to, from, next) => {
+    api.defaults.headers.common['Accept-Language'] = to.params.lang || ssrContext?.req.headers['Accept-Language'] || 'ko-KR'
+    next()
+  })
 
   app.provide('axios', api)
 

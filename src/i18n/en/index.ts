@@ -60,7 +60,8 @@ export default {
     notify: {
       title: 'Notify',
       new: 'New Item',
-      private: 'Private'
+      private: 'Trade',
+      email: 'Email'
     },
     sh1: 'BattleTags will not be displayed if the trade is ',
     sh2: 'not completed',
@@ -246,10 +247,10 @@ export default {
     close: 'Do not open for 24 hours'
   },
   notice: {
-    title: 'Manner Temperature Announcement.',
-    top: 'Hi there. This is Tradurs.\n\nWe\'re pleased to announce a fix for Manner Temperature.',
-    contents: '◆ Fixes\n\tBatch adjustments to miscalculated manner temperatures.',
-    bottom: 'We apologize for any inconvenience this may cause.',
+    title: 'Notification related update notice',
+    top: 'Hello. This is Tradurs.\n\nWe would like to inform you about the updates related to notifications',
+    contents: '◆ Updates\n\t- A notification icon will be displayed in the top menu if you have any unread messages\n\t- Notifications related to your trades will be sent to the email address used during account registration\n\t- An active/inactive toggle for email notifications has been added.',
+    bottom: 'Thank you',
     close: 'Do not open for 24 hours'
   },
   adblock: {

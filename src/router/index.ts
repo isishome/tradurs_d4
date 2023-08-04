@@ -115,8 +115,10 @@ export default route(function ({ store }/* { store, ssrContext } */) {
     if (requireAuth && !as.info.id)
       return { name: 'tradeList', params: { lang: to.params.lang } }
 
-    if (as.info.id && as.socket === null)
+    if (as.info.id && as.socket === null) {
       await initSocket(as, is)
+      await as.unreadMessages()
+    }
   })
 
   return Router

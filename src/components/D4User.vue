@@ -34,7 +34,8 @@ const loading = computed(() => props.data.loading || props.progress)
 const allowCopy = computed(() => !props.authorized && props.data.battleTag !== '')
 const _notify = reactive<INotify>({
   notifyNew: props.data.notifyNew,
-  notifyPrivate: props.data.notifyPrivate
+  notifyPrivate: props.data.notifyPrivate,
+  notifyEmail: props.data.notifyEmail
 })
 
 const copy = (battleTag: string) => {
@@ -49,6 +50,7 @@ const notifyNew = () => {
     .then(() => {
       as.info.notifyNew = _notify.notifyNew
       as.info.notifyPrivate = _notify.notifyPrivate
+      as.info.notifyEmail = _notify.notifyEmail
     })
     .catch(() => {
       _notify.notifyNew = !_notify.notifyNew
@@ -60,9 +62,22 @@ const notifyPrivate = () => {
     .then(() => {
       as.info.notifyNew = _notify.notifyNew
       as.info.notifyPrivate = _notify.notifyPrivate
+      as.info.notifyEmail = _notify.notifyEmail
     })
     .catch(() => {
       _notify.notifyPrivate = !_notify.notifyPrivate
+    })
+}
+
+const notifyEmail = () => {
+  as.notify(_notify)
+    .then(() => {
+      as.info.notifyNew = _notify.notifyNew
+      as.info.notifyPrivate = _notify.notifyPrivate
+      as.info.notifyEmail = _notify.notifyEmail
+    })
+    .catch(() => {
+      _notify.notifyEmail = !_notify.notifyEmail
     })
 }
 </script>
@@ -80,7 +95,7 @@ const notifyPrivate = () => {
     <q-item class="avatar">
       <q-item-section>
         <q-avatar>
-          <img src="/images/avatar/boy-avatar.png" width="48" height="48" alt="Tradurs Avatar Image">
+          <img src="/images/avatar/avatar.webp" width="48" height="48" alt="Tradurs Avatar Image">
         </q-avatar>
       </q-item-section>
     </q-item>
@@ -91,7 +106,7 @@ const notifyPrivate = () => {
         </div>
         <div class="text-weight-bold text-amber-8 text-body2">{{ data.yolk }}</div>
       </div>
-      <q-separator vertical inset />
+      <q-separator vertical inset class="q-mt-xl" />
       <div class="col text-center q-pa-md">
         <div class="text-caption  row justify-center items-center" style="height:50px">
           {{ t('user.temperature') }}
@@ -100,12 +115,14 @@ const notifyPrivate = () => {
       </div>
     </q-item>
     <q-separator />
-    <div class="q-pt-sm text-center">{{ t('user.notify.title') }}</div>
-    <q-item class="row justify-center items-center q-gutter-md">
+    <div class="q-pt-sm text-center text-subtitle1 text-weight-bold">{{ t('user.notify.title') }}</div>
+    <q-item class="row justify-center items-center q-gutter-md text-caption q-py-md">
       <q-toggle left-label v-model="_notify.notifyNew" :disable="disable" color="secondary" :label="t('user.notify.new')"
-        dense @update:model-value="notifyNew" />
+        size="xs" dense @update:model-value="notifyNew" />
       <q-toggle left-label v-model="_notify.notifyPrivate" :disable="disable" color="secondary"
-        :label="t('user.notify.private')" dense @update:model-value="notifyPrivate" />
+        :label="t('user.notify.private')" size="xs" dense @update:model-value="notifyPrivate" />
+      <q-toggle left-label v-model="_notify.notifyEmail" :disable="disable" color="secondary"
+        :label="t('user.notify.email')" size="xs" dense @update:model-value="notifyEmail" />
     </q-item>
     <q-separator />
     <q-item v-if="$slots.actions" class="q-pa-md row justify-center q-gutter-md">

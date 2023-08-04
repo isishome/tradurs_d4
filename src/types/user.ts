@@ -1,6 +1,7 @@
 export interface INotify {
   notifyNew: boolean,
-  notifyPrivate: boolean
+  notifyPrivate: boolean,
+  notifyEmail: boolean
 }
 
 export interface IUser extends INotify {
@@ -21,6 +22,7 @@ export class User implements IUser {
   public online = false
   public notifyNew = true
   public notifyPrivate = true
+  public notifyEmail = true
   public loading = false
   constructor(id?: string) {
     this.id = id || null
