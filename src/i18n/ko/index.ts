@@ -46,7 +46,8 @@ export default {
   season: {
     bg: '/images/season_emblem_ko.webp'
   },
-  noItem: '조건에 맞는 검색 결과가 없습니다',
+  noFilterdItems: '조건에 맞는 검색 결과가 없습니다',
+  noItem: '아이템 정보가 존재하지 않습니다',
   seller: '판매자',
   offerer: '제안자',
   user: {

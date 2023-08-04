@@ -506,7 +506,6 @@ defineExpose({ scrollEnd })
                 <div class="text-lowercase">x</div>
                 <div>{{ data.quantity }}</div>
               </div>
-
               <div class="more-action">
                 <q-btn dense flat aria-label="Tradurs More Button" :ripple="false" class="no-hover" padding="0">
                   <img class="icon" src="/images/icons/morevert.svg" :width="$q.screen.lt.sm ? 16 : 20"
@@ -653,5 +652,236 @@ defineExpose({ scrollEnd })
 
 .complete {
   color: var(--q-legendary);
+}
+
+.name-place {
+  width: 60%;
+}
+
+.more-action {
+  padding: 0;
+  margin: 0;
+  visibility: hidden;
+}
+
+.card-item:hover:deep(.more-action) {
+  visibility: visible;
+}
+
+@media (max-width:600px) {
+  .card-item:deep(.more-action) {
+    visibility: visible !important;
+  }
+}
+
+.card-item.legendary:deep(.stress) {
+  font-weight: 700;
+}
+
+.card-item.unique:deep(.stress) {
+  font-weight: 700;
+}
+
+.body--dark .card-item.legendary:deep(.stress) {
+  color: var(--q-legendary);
+}
+
+.body--dark .card-item.unique:deep(.stress) {
+  color: var(--q-unique);
+}
+
+.card-item.legendary:deep(.stress .icon) {
+  filter: var(--q-filter-legendary) !important;
+}
+
+.card-item.unique:deep(.stress .icon) {
+  filter: var(--q-filter-unique) !important;
+}
+
+.body--dark .card-item.magic .unique {
+  font-weight: 600;
+  color: var(--q-magic);
+}
+
+.body--dark .card-item.rare .unique {
+  font-weight: 600;
+  color: var(--q-rare);
+}
+
+.body--dark .card-item.set .unique {
+  font-weight: 600;
+  color: var(--q-set);
+}
+
+.body--dark .card-item.legendary .unique {
+  font-weight: 600;
+  color: var(--q-legendary);
+}
+
+.body--dark .card-item.unique .unique {
+  font-weight: 600;
+  color: var(--q-unique);
+}
+
+.body--dark .card-item.magic .unique .icon {
+  filter: var(--q-filter-magic) !important;
+}
+
+.body--dark .card-item.rare .unique .icon {
+  filter: var(--q-filter-rare) !important;
+}
+
+.body--dark .card-item.set .unique .icon {
+  filter: var(--q-filter-set) !important;
+}
+
+.body--dark .card-item.legendary .unique .icon {
+  filter: var(--q-filter-legendary) !important;
+}
+
+.body--dark .card-item.unique .unique .icon {
+  filter: var(--q-filter-unique) !important;
+}
+
+.no-expanded::after {
+  content: '';
+  position: absolute;
+  top: 82%;
+  bottom: -16%;
+  left: 0;
+  right: 0;
+  border-radius: 2px;
+  filter: blur(10px);
+  transform: scale(200%, 200%);
+  background-color: var(--q-light);
+}
+
+.body--dark .no-expanded::after {
+  background-color: var(--q-dark-page);
+}
+
+.status-002 {
+  filter: grayscale(1) opacity(.5);
+}
+
+.user-area {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 1;
+}
+
+.item-image {
+  width: 90px;
+  max-width: 16vw;
+  position: absolute;
+  top: 0;
+  right: 26%;
+  z-index: 2;
+}
+
+@media (max-width:724px) {
+  .user-area {
+    top: 9px;
+    right: 10px;
+  }
+
+  .item-image {
+    display: none;
+  }
+}
+
+@media (max-width:300px) {
+  .item-image {
+    display: none;
+  }
+}
+
+.quality:deep(.q-btn) {
+  font-size: inherit;
+}
+
+.quality:deep(.q-btn:before) {
+  box-shadow: inset 0 0 0 4px rgba(0, 0, 0, .2);
+}
+
+.body--dark .quality:deep(.q-btn:before) {
+  box-shadow: inset 0 0 0 4px rgba(255, 255, 255, .2);
+}
+
+.quality:deep(.q-btn.active) {
+  background-color: var(--q-dark-page);
+  color: var(--q-light-page);
+}
+
+.body--dark .quality:deep(.q-btn.active) {
+  background-color: var(--q-light-page);
+  color: var(--q-dark-page);
+}
+
+.attribute {
+  padding: 8px;
+  border-radius: 4px;
+  background-color: rgba(250, 250, 250, .1);
+  height: 100%;
+}
+
+.body--light .attribute {
+  background-color: rgba(125, 125, 125, .1);
+}
+
+.tab {
+  padding-bottom: 0 !important;
+}
+
+.tab:deep(.q-btn-group .toggle) {
+  font-weight: 700;
+  color: inherit !important;
+  background-color: rgba(250, 250, 250, .1);
+  border-radius: 4px 4px 0 0;
+}
+
+.body--light .tab:deep(.q-btn-group .toggle) {
+  background-color: rgba(125, 125, 125, .1);
+}
+
+.attribute:deep(.q-panel) {
+  overflow: hidden;
+}
+
+.attribute:deep(.list) {
+  max-height: 30vh;
+}
+
+
+.toggles:deep(.q-toggle__thumb::before) {
+  display: none !important;
+}
+
+.hardcore-ladder {
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-size: 12px;
+  width: 18px;
+  transform: translate(-70%, 60%);
+}
+
+@media (max-width:600px) {
+  .hardcore-ladder {
+    line-height: 15px;
+  }
+}
+
+.item-image-card {
+  background-color: var(--q-dark-page);
+}
+
+.body--light .item-image-card {
+  background-color: var(--q-light);
+}
+
+.bg-primary-cloud {
+  background-color: var(--q-primary-cloud) !important;
 }
 </style>

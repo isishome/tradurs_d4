@@ -46,7 +46,8 @@ export default {
   season: {
     bg: '/images/season_emblem_en.webp'
   },
-  noItem: 'No search results matched your criteria',
+  noFilterdItems: 'No search results matched your criteria',
+  noItem: 'Item information does not exist',
   trade: 'Trade',
   seller: 'Seller',
   offerer: 'Offerer',

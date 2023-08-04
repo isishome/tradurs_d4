@@ -2,6 +2,7 @@
 import { ref, computed, reactive, nextTick, defineAsyncComponent } from 'vue'
 import { useQuasar, QInput, QSelect, uid } from 'quasar'
 import { useI18n } from 'vue-i18n'
+import { useRoute } from 'vue-router'
 
 import { useAccountStore } from 'stores/account-store'
 import { useItemStore, type Property, type Affix, type Restriction } from 'stores/item-store'
@@ -35,6 +36,7 @@ const $q = useQuasar()
 const as = useAccountStore()
 const is = useItemStore()
 const { t } = useI18n({ useScope: 'global' })
+const route = useRoute()
 
 // lazy loading components
 const D4Analysis = defineAsyncComponent(() => import('components/D4Analysis.vue'))
@@ -741,7 +743,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
         </D4Item>
       </q-intersection>
       <div v-show="items.length === 0" class="row justify-center items-center" style="min-height:30vh">
-        {{ t('noItem') }}
+        {{ t(route.name === 'tradeList' ? 'noFilterdItems' : 'noItem') }}
       </div>
     </div>
     <q-dialog v-model="activateShow" :maximized="$q.screen.lt.sm" persistent transition-show="none" transition-hide="none"

@@ -376,4 +376,16 @@ defineExpose({ getList })
   position: absolute;
   transform: translateY(-90%);
 }
+
+.item-list:deep(.item:not(.reward) .card-item:not(.editable) .filtered) {
+  background-color: rgba(250, 200, 0);
+  color: black;
+  font-weight: 700;
+  border-radius: 4px;
+  padding-right: 6px;
+}
+
+.item-list:deep(.item:not(.reward) .card-item:not(.editable) .filtered .minmax-text) {
+  color: rgba(110, 110, 110, 1) !important;
+}
 </style>

@@ -51,16 +51,28 @@ is.getAwards()
 </script>
 <template>
   <div class="column items-center">
-    <D4Award v-if="awards.highPriced.length > 0" :loading="loading"
-      :image="awards.highPriced[0]?.itemType === 'aspect' ? `/images/items/${awards.highPriced[0]?.itemType}/${awards.highPriced[0]?.itemTypeValue1}.webp` : awards.highPriced[0]?.itemTypeValue1 === 'gem' ? `/images/items/${awards.highPriced[0]?.itemType}/${awards.highPriced[0]?.itemTypeValue1}/${awards.highPriced[0]?.itemTypeValue2}.webp` : `/images/items/${awards.highPriced[0]?.itemType}/${awards.highPriced[0]?.itemTypeValue1}/${awards.highPriced[0]?.imageId}.webp`">
+    <D4Award v-if="awards.highPriced.length > 0" :loading="loading">
       <template #category>
         {{ t('awards.highPriced.category') }}
       </template>
       <template #item-name>
-        <q-item dense class="rounded-borders item-name text-body1 text-weight-bold text-amber-8"
-          :to="{ name: 'itemInfo', params: { lang: route.params.lang, itemid: awards.highPriced[0]?.itemId } }">
-          {{ awards.highPriced[0]?.itemName }}
-        </q-item>
+        <div class="row justify-center">
+          <q-item dense class="rounded-borders item-name text-body1 text-weight-bold text-amber-8"
+            :to="{ name: 'itemInfo', params: { lang: route.params.lang, itemid: awards.highPriced[0]?.itemId } }">
+            <q-item-section avatar>
+              <q-img
+                :src="awards.highPriced[0]?.itemType === 'aspect' ? `/images/items/${awards.highPriced[0]?.itemType}/${awards.highPriced[0]?.itemTypeValue1}.webp` : awards.highPriced[0]?.itemTypeValue1 === 'gem' ? `/images/items/${awards.highPriced[0]?.itemType}/${awards.highPriced[0]?.itemTypeValue1}/${awards.highPriced[0]?.itemTypeValue2}.webp` : `/images/items/${awards.highPriced[0]?.itemType}/${awards.highPriced[0]?.itemTypeValue1}/${awards.highPriced[0]?.imageId}.webp`" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>
+                {{ awards.highPriced[0]?.itemName }}
+              </q-item-label>
+            </q-item-section>
+            <q-item-section side>
+              <img :src="'/images/icons/open.svg'" class="icon" width="18" height="18" alt="icon_favorite" />
+            </q-item-section>
+          </q-item>
+        </div>
       </template>
       <template #detail>
         <div class="text-h6 text-center text-weight-bold">
@@ -73,7 +85,7 @@ is.getAwards()
       <template #etc>
         <q-separator />
         <q-list separator class="rounded-borders">
-          <q-item v-for="ranker, idx in awards.highPriced.slice(1, awards.highPriced.length)" :key="idx" class="etc"
+          <q-item v-for=" ranker, idx  in  awards.highPriced.slice(1, awards.highPriced.length) " :key="idx" class="etc"
             :to="{ name: 'itemInfo', params: { lang: route.params.lang, itemid: ranker?.itemId } }">
             <q-item-section>
               <q-item-label>
@@ -103,7 +115,7 @@ is.getAwards()
         1. {{ awards.bestManners[0]?.battleTag }}
       </template>
       <template #etc>
-        <div class="text-overline etc" v-for="ranker, idx in awards.bestManners.slice(1, awards.bestManners.length)"
+        <div class="text-overline etc" v-for=" ranker, idx  in  awards.bestManners.slice(1, awards.bestManners.length) "
           :key="idx">
           {{ ranker?.ranking }}. {{ ranker?.battleTag }} + {{ ranker?.good }}&#8451
         </div>
@@ -123,7 +135,8 @@ is.getAwards()
         1. {{ awards.mostSold[0]?.battleTag }}
       </template>
       <template #etc>
-        <div class="text-overline etc" v-for="ranker, idx in awards.mostSold.slice(1, awards.mostSold.length)" :key="idx">
+        <div class="text-overline etc" v-for=" ranker, idx  in  awards.mostSold.slice(1, awards.mostSold.length) "
+          :key="idx">
           {{ ranker?.ranking }}. {{ ranker?.battleTag }} - {{ ranker?.items }}{{ t('awards.mostSold.unit') }}
         </div>
       </template>
@@ -142,8 +155,8 @@ is.getAwards()
         1. {{ awards.mostPurchased[0]?.battleTag }}
       </template>
       <template #etc>
-        <div class="text-overline etc" v-for="ranker, idx in awards.mostPurchased.slice(1, awards.mostPurchased.length)"
-          :key="idx">
+        <div class="text-overline etc"
+          v-for=" ranker, idx  in  awards.mostPurchased.slice(1, awards.mostPurchased.length) " :key="idx">
           {{ ranker?.ranking }}. {{ ranker?.battleTag }} - {{ ranker?.items }}{{ t('awards.mostPurchased.unit') }}
         </div>
       </template>

@@ -166,4 +166,9 @@ const notifyPrivate = () => {
 .allow-copy:hover {
   text-decoration: underline;
 }
+
+.authorized {
+  color: var(--q-primary);
+  font-weight: 700;
+}
 </style>

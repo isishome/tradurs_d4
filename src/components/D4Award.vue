@@ -6,12 +6,10 @@ export default {
 
 <script setup lang="ts">
 interface IProps {
-  image?: string,
   loading?: boolean
 }
 
 withDefaults(defineProps<IProps>(), {
-  image: '/images/tradurs.svg',
   loading: false
 })
 </script>
@@ -36,9 +34,11 @@ withDefaults(defineProps<IProps>(), {
       <slot name="category"></slot>
 
     </q-card-section>
-    <q-card-section class="row justify-center items-center q-px-none">
+    <q-card-section v-if="$slots['item-name']">
       <slot name="item-name"></slot>
-      <q-avatar size="200px" color="white" class="egg" :style="`--tradurs-logo-image:url('${image}');`">
+    </q-card-section>
+    <q-card-section class="row justify-center items-center q-px-none">
+      <q-avatar size="200px" color="white" class="egg">
         <q-avatar color="amber-8" text-color="white" size="120px">
           <div class="text-h5 text-weight-bold">
             <slot name="detail"></slot>
@@ -107,7 +107,7 @@ withDefaults(defineProps<IProps>(), {
   top: -26px;
   left: 50%;
   transform: translateX(-50%);
-  background-image: var(--tradurs-logo-image);
+  background-image: url('/images/tradurs.svg');
   background-size: contain;
   background-position: 50%;
   background-repeat: no-repeat;

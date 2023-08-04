@@ -24,7 +24,11 @@ export default {
           gs.itemName = result[0].name
           is.detailItem.splice(0, 1, result[0])
         }
-      }, () => { })
+        else
+          is.detailItem.splice(0, 1)
+      }, () => {
+        is.detailItem.splice(0, 1)
+      })
   }
 }
 </script>
@@ -181,6 +185,8 @@ const getItem = () => {
 
         is.detailItem.splice(0, 1, result[0])
       }
+      else
+        is.detailItem.splice(0, 1)
     })
     .catch(() => {
       is.detailItem.splice(0, 1)

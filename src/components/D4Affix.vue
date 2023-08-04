@@ -114,4 +114,36 @@ const remove = (): void => {
   cursor: not-allowed;
   pointer-events: fill;
 }
+
+.figure {
+  font-weight: 700;
+}
+
+.stress:deep(.figure) {
+  color: rgb(163, 163, 234);
+}
+
+.body--light .stress:deep(.figure) {
+  color: rgb(123, 123, 234);
+}
+
+.minmax-text {
+  color: rgba(200, 220, 255, .8);
+}
+
+.body--light .minmax-text {
+  color: rgba(0, 0, 220, .6);
+}
+
+.minmax {
+  opacity: .8;
+}
+
+.minmax:deep(.q-field__control::before) {
+  background-color: rgba(60, 60, 100, 1);
+}
+
+.body--light .minmax:deep(.q-field__control::before) {
+  background-color: rgba(45, 0, 150, .2);
+}
 </style>
