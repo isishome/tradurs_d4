@@ -247,9 +247,9 @@ export default {
     close: 'Do not open for 24 hours'
   },
   notice: {
-    title: 'Notification related update notice',
-    top: 'Hello. This is Tradurs.\n\nWe would like to inform you about the updates related to notifications',
-    contents: '◆ Updates\n\t- A notification icon will be displayed in the top menu if you have any unread messages\n\t- Notifications related to your trades will be sent to the email address used during account registration\n\t- An active/inactive toggle for email notifications has been added.',
+    title: 'Update announcement',
+    top: 'Hello. This is Tradurs.\n\n 2023.08.05 Update Notice',
+    contents: '\n◆ Regarding notifications\n\t- A notification icon will be displayed in the top menu if you have unread messages\n\t- Notifications related to trades will be sent to the email address used during account registration\n\t- An active/inactive toggle for email notifications has been added\n\n◆ Regarding options\n\t- The color of the evil home option has been applied\n\n',
     bottom: 'Thank you',
     close: 'Do not open for 24 hours'
   },
