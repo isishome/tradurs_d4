@@ -55,6 +55,7 @@ export interface Property extends ILabel {
 
 export interface Affix extends ILabel {
   type: string,
+  color?: string,
   sort?: number
 }
 

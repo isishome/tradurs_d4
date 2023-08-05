@@ -26,6 +26,7 @@ const is = useItemStore()
 
 const findAffix = computed(() => is.findAffix(props.data.affixId))
 const affixInfo = computed(() => parseAffix(findAffix.value?.label, props.data.affixValues))
+const affixColor = computed(() => findAffix.value?.color || (['legendary', 'unique'].includes(findAffix.value?.type as string) ? 'stress' : findAffix.value?.type === 'socket' ? 'text-grey-6' : ''))
 
 const update = (): void => {
   const av: { valueId: number, affixValues: Array<AffixValue> } = { valueId: props.data.valueId, affixValues: [] }
@@ -43,9 +44,7 @@ const remove = (): void => {
 </script>
 
 <template>
-  <div class="row no-wrap items-baseline q-gutter-xs"
-    :class="{ disable, 'stress': ['legendary', 'unique'].includes(findAffix?.type as string), 'text-grey-6': findAffix?.type === 'socket' }"
-    :data-id="data.valueId">
+  <div class="row no-wrap items-baseline q-gutter-xs" :class="[disable, affixColor]" :data-id="data.valueId">
     <div>
       <q-icon class="icon" :class="{ 'rotate-45': ['standard'].includes(findAffix?.type as string) }" size="13px"
         :name="`img:/images/attribute_types/${findAffix?.type}.svg`" />
@@ -113,10 +112,6 @@ const remove = (): void => {
   right: 0;
   cursor: not-allowed;
   pointer-events: fill;
-}
-
-.figure {
-  font-weight: 700;
 }
 
 .stress:deep(.figure) {
