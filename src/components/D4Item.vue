@@ -2,6 +2,7 @@
 import { reactive, ref, computed, defineAsyncComponent, useSlots, nextTick, watch, onUnmounted } from 'vue'
 import { QCard, useQuasar, date } from 'quasar'
 import { useI18n } from 'vue-i18n'
+import { useRoute } from 'vue-router'
 
 import { useAccountStore } from 'stores/account-store'
 import { useItemStore } from 'stores/item-store'
@@ -34,6 +35,7 @@ const slots = useSlots()
 const as = useAccountStore()
 const store = useItemStore()
 const { t } = useI18n({ useScope: 'global' })
+const route = useRoute()
 
 // variable
 const editWrap = ref<QCard | null>(null)
@@ -86,7 +88,7 @@ const attributes = computed(() => [
 ].filter(a => !a.hide))
 
 const copy = () => {
-  clipboard(`${document.location.origin}/item/${props.data.itemId}`, t('item.url'))
+  clipboard(`${document.location.origin}/${route.params.lang || 'ko'}/item/${props.data.itemId}`, t('item.url'))
 }
 
 const updateQuality = (val: string) => {
