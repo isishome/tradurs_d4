@@ -1,6 +1,5 @@
 User-agent: *
 Disallow: /messages/
-Disallow: /awards/
 
 User-agent: *
 Allow: /
