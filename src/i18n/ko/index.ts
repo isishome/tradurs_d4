@@ -263,7 +263,7 @@ export default {
   },
   support: [
     {
-      id: '000',
+      id: 'qna',
       question: '자주 묻는 질문',
       answer: [
         { type: 'question', contents: '1. 아이템 목록 최상단에 고정으로 나오는 아이템은 무엇인가요?' },
@@ -293,7 +293,7 @@ export default {
       ]
     },
     {
-      id: '001',
+      id: 'join',
       question: '회원가입은 어떻게 하나요?',
       answer: [
         { type: 'image', contents: '01_login' },
@@ -321,7 +321,7 @@ export default {
       ]
     },
     {
-      id: '002',
+      id: 'register',
       question: '아이템은 어떻게 등록하나요?',
       answer: [
         { type: 'image', contents: '01_start' },
@@ -369,7 +369,7 @@ export default {
       ]
     },
     {
-      id: '003',
+      id: 'trade',
       question: '아이템은 어떻게 거래하나요?',
       answer: [
         { type: 'text', contents: '\n\n\n구매자(어두운 테마), 판매자(밝은 테마) 화면으로 설명드립니다.' },
@@ -417,7 +417,7 @@ export default {
       ]
     },
     {
-      id: '004',
+      id: 'yolk',
       question: '노른자(yolk)는 무엇인가요?',
       answer: [
         { type: 'image', contents: '01_yolk' },

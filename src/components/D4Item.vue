@@ -296,7 +296,7 @@ defineExpose({ scrollEnd })
                     <D4Dialog v-model="showItemImages" :no-route-dismiss="false">
                       <template #top>
                         <q-card-section class="row justify-between items-center q-ml-md">
-                          <div class="name text-uppercase">{{ t('item.selectImage', {
+                          <div class="name">{{ t('item.selectImage', {
                             tv:
                               findClass(data.itemTypeValue1)?.label || findType(data.itemType)?.label
                           }) }}

@@ -32,8 +32,9 @@ const routes: RouteRecordRaw[] = [
       },
       {
         name: 'support',
-        path: 'support',
-        component: () => import('pages/SupportPage.vue')
+        path: 'support/:section([a-z]{0,})?',
+        component: () => import('pages/SupportPage.vue'),
+        props: true
       }
     ]
   },

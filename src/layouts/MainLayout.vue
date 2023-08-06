@@ -62,7 +62,12 @@ const sign = () => {
 
 const brLoc = gs.localeOptions.map(lo => lo.value).includes($q.lang.getLocale()?.substring(0, 2) || '') ? $q.lang.getLocale()?.substring(0, 2) : 'ko'
 const setLang = (lang: string) => {
-  router.replace({ name: route.name as string, params: { lang } })
+  const params: { lang?: string, section?: string } = { lang }
+
+  if (route.params.section)
+    params.section = route.params.section as string
+
+  router.replace({ name: route.name as string, params })
     .catch(() => { })
     .then(() => {
       router.go(0)
@@ -331,12 +336,12 @@ onUnmounted(() => {
           <div>
             <q-tabs dense no-caps narrow-indicator class="gt-sm q-px-xs bg-transparent no-hover nav">
               <q-route-tab :ripple="!$q.dark.isActive" :label="t('page.tradeList')"
-                :to="{ name: 'tradeList', params: { lang: route.params.lang } }" />
+                :to="{ name: 'tradeList', params: { lang: route.params.lang } }" exact />
               <q-route-tab v-if="as.signed" :ripple="!$q.dark.isActive" :label="t('page.messages')"
                 class="relative-position" :to="{ name: 'messages', params: { lang: route.params.lang } }"
-                :alert="newMessages ? 'negative' : 'transparent'" />
+                :alert="newMessages ? 'negative' : 'transparent'" exact />
               <q-route-tab :ripple="!$q.dark.isActive" :label="t('page.awards')"
-                :to="{ name: 'awards', params: { lang: route.params.lang } }">
+                :to="{ name: 'awards', params: { lang: route.params.lang } }" exact>
                 <q-badge v-show="newAwards" floating label="N" color="negative" class="new-badge2" />
               </q-route-tab>
             </q-tabs>

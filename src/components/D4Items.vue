@@ -857,24 +857,26 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
           <div v-if="activatedItem.authorized || activatedItem.itemId === ''"
             class="row justify-between items-center q-py-xs">
             <div class="row items-center q-gutter-sm">
-              <D4Btn v-if="activatedItem.itemId" :label="t('btn.moreActions')" :loading="activatedItem.loading"
-                :disable="disable" color="var(--q-secondary)">
-                <q-icon class="q-ml-xs invert" size="sm" name="img:/images/icons/dropdown.svg" />
-                <q-menu fit anchor="bottom middle" self="top middle" auto-close class="no-shadow" transition-show="none"
-                  transition-hide="none" :transition-duration="0">
-                  <q-list bordered class="rounded-borders">
+              <D4Btn v-if="activatedItem.itemId" :label="!$q.screen.lt.sm ? t('btn.moreActions') : ''"
+                :loading="activatedItem.loading" :disable="disable" color="var(--q-secondary)">
+                <q-icon class="invert" :class="{ 'q-ml-xs': !$q.screen.lt.sm }" size="24px"
+                  :name="`img:/images/icons/${!$q.screen.lt.sm ? 'dropdown.svg' : 'morehoriz.svg'}`" />
+                <q-menu fit anchor="bottom middle" self="top middle" auto-close
+                  class="no-shadow d4-scroll rounded-borders" transition-show="none" transition-hide="none"
+                  :transition-duration="0">
+                  <q-list :bordered="!$q.screen.lt.sm" class="rounded-borders">
                     <q-item :disable="activatedItem.statusCode !== '000'" clickable @click="relistItem">
-                      <q-item-section class="text-uppercase">{{ t('btn.relist') }}</q-item-section>
+                      <q-item-section>{{ t('btn.relist') }}</q-item-section>
                     </q-item>
                     <q-item
                       :disable="!['000', '002'].includes(activatedItem.statusCode) || activatedItem.offers > 0 || disable"
                       clickable @click="statusItem">
-                      <q-item-section class="text-uppercase">{{ activatedItem.statusCode === '002' ? t('btn.resume') :
+                      <q-item-section>{{ activatedItem.statusCode === '002' ? t('btn.resume') :
                         t('btn.suspend')
                       }}</q-item-section>
                     </q-item>
                     <q-item clickable :disable="activatedItem.offers > 0 || disable" @click="deleteConfirm">
-                      <q-item-section class="text-uppercase text-negative text-weight-bold">{{ t('btn.delete')
+                      <q-item-section class="text-negative text-weight-bold">{{ t('btn.delete')
                       }}</q-item-section>
                     </q-item>
                   </q-list>
@@ -896,7 +898,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
     <D4Dialog v-model="add.show" :no-route-dismiss="false" :persistent="disable" @submit="applyAdd" @hide="hideAdd">
       <template #top>
         <q-card-section class="row items-center q-ml-md">
-          <div class="name text-uppercase">{{ t('attribute.register', { attr: t(add.category as string) })
+          <div class="name">{{ t('attribute.register', { attr: t(add.category as string) })
           }}
           </div>
         </q-card-section>

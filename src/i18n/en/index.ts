@@ -264,7 +264,7 @@ export default {
   },
   support: [
     {
-      id: '000',
+      id: 'qna',
       question: 'Frequently asked questions',
       answer: [
         { type: 'question', contents: '1. Which item appears as a sticky at the top of the item list?' },
@@ -294,7 +294,7 @@ export default {
       ]
     },
     {
-      id: '001',
+      id: 'join',
       question: 'How do I sign up?',
       answer: [
         { type: 'image', contents: '01_login' },
@@ -322,7 +322,7 @@ export default {
       ]
     },
     {
-      id: '002',
+      id: 'register',
       question: 'How do I list an items?',
       answer: [
         { type: 'image', contents: '01_start' },
@@ -370,7 +370,7 @@ export default {
       ]
     },
     {
-      id: '003',
+      id: 'trade',
       question: 'How do I trade items?',
       answer: [
         { type: 'text', contents: '\n\n\nHere are the buyer (dark theme) and seller (light theme) screens.' },
@@ -424,7 +424,7 @@ export default {
       ]
     },
     {
-      id: '004',
+      id: 'yolk',
       question: 'What is \'yolk\'?',
       answer: [
         { type: 'image', contents: '01_yolk' },
