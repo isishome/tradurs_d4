@@ -58,10 +58,12 @@ const $q = useQuasar()
     <slot name="default">
     </slot>
   </q-tooltip>
-  <q-popup-proxy v-else>
-    <div :class="['q-pa-md rounded-borders', $q.dark.isActive ? 'bg-grey-4 text-grey-9' : 'bg-grey-9 text-grey-4']">
-      <slot name="default">
-      </slot>
-    </div>
-  </q-popup-proxy>
+  <q-btn class="absolute fit" padding="0" flat v-else @click.stop>
+    <q-popup-proxy>
+      <div :class="['q-pa-md rounded-borders', $q.dark.isActive ? 'bg-grey-4 text-grey-9' : 'bg-grey-9 text-grey-4']">
+        <slot name="default">
+        </slot>
+      </div>
+    </q-popup-proxy>
+  </q-btn>
 </template>

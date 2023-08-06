@@ -44,7 +44,8 @@ export default {
     }
   },
   season: {
-    bg: '/images/season_emblem_en.webp'
+    bg: '/images/season_emblem_en.webp',
+    socket: 'In the Season of the Malignant, make sure you enter the correct socket type in the accessory item affixes to increase your item\'s visibility'
   },
   noFilterdItems: 'No search results matched your criteria',
   noItem: 'Item information does not exist',

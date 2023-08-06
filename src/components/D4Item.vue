@@ -195,6 +195,16 @@ defineExpose({ scrollEnd })
                   hide-bottom-space emit-value map-options transition-show="none" transition-hide="none"
                   :transition-duration="0" :label="t('item.selectType')" dropdown-icon="img:/images/icons/dropdown.svg"
                   :options="filterTypes()" popup-content-class="d4-scroll" @update:model-value="updateType">
+                  <template v-if="store.fixedFilter.ladder && _type === 'accessory'" #prepend>
+                    <q-icon class="caution" size="19px">
+                      <q-spinner-puff :color="$q.dark.isActive ? 'yellow-6' : 'black'" />
+                      <D4Tooltip>
+                        <div style="max-width:140px" class="text-caption break-keep">
+                          {{ t('season.socket') }}
+                        </div>
+                      </D4Tooltip>
+                    </q-icon>
+                  </template>
                   <template #selected-item="scope">
                     <div class="ellipsis">{{ scope.opt.label }}</div>
                   </template>
@@ -885,5 +895,17 @@ defineExpose({ scrollEnd })
 
 .bg-primary-cloud {
   background-color: var(--q-primary-cloud) !important;
+}
+
+.caution {
+  position: relative;
+  background-image: url('/images/icons/alert_invert.svg');
+  background-size: cover;
+}
+
+.caution:deep(svg) {
+  position: fixed;
+  width: 50px;
+  height: 50px;
 }
 </style>

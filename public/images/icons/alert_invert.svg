@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   height="48"
+   viewBox="0 -960 960 960"
+   width="48"
+   version="1.1"
+   id="svg142"
+   sodipodi:docname="alert_invert.svg"
+   inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs146" />
+  <sodipodi:namedview
+     id="namedview144"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="24.458333"
+     inkscape:cx="23.059625"
+     inkscape:cy="24"
+     inkscape:window-width="2560"
+     inkscape:window-height="1377"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg142" />
+  <circle
+     style="font-variation-settings:'wght' 600;fill:#000000;fill-opacity:1;stroke:none;stroke-width:15.6354;stroke-linejoin:round;paint-order:fill markers stroke"
+     id="path934"
+     cx="480"
+     cy="-480"
+     r="280" />
+  <path
+     fill="#ffbb00"
+     d="m 479.754,-255 q 24.246,0 39.746,-14.754 15.5,-14.755 15.5,-39 0,-24.246 -15.254,-40.246 -15.255,-16 -39.5,-16 -24.246,0 -39.746,15.982 -15.5,15.983 -15.5,40.229 0,24.245 15.254,39.017 15.255,14.772 39.5,14.772 z M 436,-432 h 94 v -270 h -94 z m 44.404,377 Q 391.532,-55 314.279,-88.084 237.025,-121.167 179.096,-179.096 121.167,-237.025 88.084,-314.215 55,-391.406 55,-480.362 q 0,-88.957 33.084,-166.285 33.083,-77.328 90.855,-134.809 57.772,-57.482 135.036,-91.013 Q 391.238,-906 480.279,-906 q 89.04,0 166.486,33.454 77.446,33.453 134.853,90.802 57.407,57.349 90.895,134.877 33.487,77.527 33.487,166.601 0,89.01 -33.531,166.247 -33.531,77.237 -91.013,134.86 -57.481,57.623 -134.831,90.891 Q 569.276,-55 480.404,-55 Z"
+     id="path140"
+     style="display:inline" />
+</svg>

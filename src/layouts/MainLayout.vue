@@ -292,12 +292,14 @@ onUnmounted(() => {
     </q-drawer>
     <q-header :elevated="!$q.dark.isActive" class="q-py-sm header row justify-center">
       <q-toolbar class="toolbar">
-        <div class="row items-center" :style="$q.screen.gt.sm ? 'min-width:300px' : ''">
+        <div :style="$q.screen.gt.sm ? 'min-width:300px' : ''">
           <q-btn class="gt-sm no-hover q-ml-lg" dense flat aria-label="Tradurs Home Button" padding="0"
             :ripple="!$q.dark.isActive" @click="main">
-            <img v-show="$q.dark.isActive" src="/images/logo.webp" width="48" height="48" alt="Tradurs Logo Image" />
-            <img v-show="!$q.dark.isActive" src="/images/logo_light.webp" width="48" height="48"
-              alt="Tradurs Light Logo Image" />
+            <h1 class="h1">
+              <img v-show="$q.dark.isActive" src="/images/logo.webp" width="48" height="48" alt="Tradurs Logo Image" />
+              <img v-show="!$q.dark.isActive" src="/images/logo_light.webp" width="48" height="48"
+                alt="Tradurs Light Logo Image" />
+            </h1>
           </q-btn>
           <q-btn flat round aria-label="Tradurs Filter Button" class="lt-md" :ripple="!$q.dark.isActive"
             @click="leftDrawerOpen = !leftDrawerOpen">
@@ -307,9 +309,11 @@ onUnmounted(() => {
         <div class="col row items-center" :class="$q.screen.lt.md ? 'justify-center' : 'justify-between'">
           <div class="col-9 col-md-5 row no-wrap items-center q-gutter-md">
             <q-btn v-if="$q.screen.lt.md" flat padding="0" :ripple="false" @click="main">
-              <img v-show="$q.dark.isActive" src="/images/logo.webp" width="36" height="36" alt="Tradurs Logo Image" />
-              <img v-show="!$q.dark.isActive" src="/images/logo_light.webp" width="36" height="36"
-                alt="Tradurs Light Logo Image" />
+              <h1 class="h1">
+                <img v-show="$q.dark.isActive" src="/images/logo.webp" width="36" height="36" alt="Tradurs Logo Image" />
+                <img v-show="!$q.dark.isActive" src="/images/logo_light.webp" width="36" height="36"
+                  alt="Tradurs Light Logo Image" />
+              </h1>
             </q-btn>
             <q-input outlined dense no-error-icon hide-bottom-space class="col" v-model="_name" :label="t('item.name')"
               :disable="filterLoading || $route.name !== 'tradeList'" :rules="[val => checkName(val) || '']"
@@ -576,5 +580,13 @@ ins::after {
 .body--light .bg-season::before {
   opacity: .3;
   filter: grayscale(1);
+}
+
+.h1 {
+  font-size: inherit;
+  line-height: inherit;
+  margin: 0;
+  padding: 0;
+  display: inline-flex;
 }
 </style>
