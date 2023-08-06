@@ -798,7 +798,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                       size="14px" :name="`img:/images/attribute_types/${scope.opt.type || 'standard'}.svg`" />
                   </q-item-section>
                   <q-item-section>
-                    <q-item-label>{{ scope.opt.label }}</q-item-label>
+                    <q-item-label :class="scope.opt.color">{{ scope.opt.label }}</q-item-label>
                   </q-item-section>
                 </q-item>
               </template>

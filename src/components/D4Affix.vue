@@ -50,7 +50,7 @@ const remove = (): void => {
         :name="`img:/images/attribute_types/${findAffix?.type}.svg`" />
     </div>
     <div class="row items-center q-gutter-x-xs"
-      :class="{ 'filtered': is.filter.affixes.includes(findAffix?.value as number) }">
+      :class="[{ 'filtered': is.filter.affixes.includes(findAffix?.value as number) }, findAffix?.color]">
       <template v-for="(comp, k) in affixInfo" :key="k">
         <template v-if="comp.type === 'text'">
           <div v-for="(word, i) in (comp.value as string).split(/\s+/g).filter(w => w !== '')" :key="i">{{ word }}
