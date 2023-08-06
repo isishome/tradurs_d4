@@ -248,9 +248,9 @@ export default {
     close: 'Do not open for 24 hours'
   },
   notice: {
-    title: 'Update announcement',
-    top: 'Hello. This is Tradurs.\n\n 2023.08.05 Update Notice',
-    contents: '\n◆ Regarding notifications\n\t- A notification icon will be displayed in the top menu if you have unread messages\n\t- Notifications related to trades will be sent to the email address used during account registration\n\t- An active/inactive toggle for email notifications has been added\n\n◆ Regarding options\n\t- The color of the evil home option has been applied\n\n',
+    title: 'Update and Notice',
+    top: 'Hello. This is Tradurs.\n\n 2023.08.07 Here are some update and notice.',
+    contents: "\n◆ Update\n· From now on, any yolks spent on a offer request will be recovered as normal if the offer is accepted and the transaction is completed.\n\n◆ Notice\n· If you are registering for the first time because your item affixes are not being retrieved, please be sure to enter your numbers using {'{'}x{'}'} where the numbers are entered. We will arbitrarily remove options with random numbers or affixes that are entered incorrectly (battletag, using abbreviations, etc.).\n\n",
     bottom: 'Thank you',
     close: 'Do not open for 24 hours'
   },

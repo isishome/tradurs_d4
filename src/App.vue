@@ -73,7 +73,7 @@ useMeta(() => {
 })
 
 const notice = reactive<{ open: boolean, close: boolean }>({
-  open: false,//!$q.cookies.has('d4.notice'),
+  open: !$q.cookies.has('d4.notice'),
   close: false
 })
 
@@ -144,7 +144,8 @@ onMounted(() => {
       <q-card-section class="d4-scroll" style="max-height:50vh">
         <div class="q-pa-md column q-gutter-y-sm" :class="$q.screen.gt.sm ? 'text-body2' : 'text-caption'">
           <div class="text-area">{{ t('notice.top') }}</div>
-          <div class="text-area text-weight-bold text-negative">{{ t('notice.contents') }}</div>
+          <div class="text-area text-primary q-px-sm">{{ t('notice.contents') }}
+          </div>
           <div class="text-area">{{ t('notice.bottom') }}</div>
         </div>
       </q-card-section>
