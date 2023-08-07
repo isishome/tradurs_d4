@@ -68,7 +68,7 @@ useMeta(() => {
       twitterUrl: { name: 'twitter:url', content: 'https://d4.tradurs.com' },
       twitterImage: { name: 'twitter:image', content: 'https://d4.tradurs.com/images/og.png' }
     },
-    script: { recaptcha: { src: recaptchaSrc.value } }
+    script: { recaptcha: { src: recaptchaSrc.value } } 
   }
 })
 
@@ -88,6 +88,8 @@ const adblock = reactive<{ open: Boolean, close: boolean }>({
 })
 
 onMounted(() => {
+  document.documentElement.setAttribute('lang', locale.value as string)
+
   if (prod) {
     fetch('https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js').then(() => {
       view.value = true
