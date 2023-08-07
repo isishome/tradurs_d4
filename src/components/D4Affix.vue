@@ -47,10 +47,10 @@ const remove = (): void => {
   <div class="row no-wrap items-baseline q-gutter-xs" :class="[disable, affixColor]" :data-id="data.valueId">
     <div>
       <q-icon class="icon" :class="{ 'rotate-45': ['standard'].includes(findAffix?.type as string) }" size="13px"
-        :name="`img:/images/attribute_types/${findAffix?.type}.svg`" />
+        :name="`img:/images/attribute_types/${findAffix?.type === 'socket' && findAffix?.color ? 'socket_malignant' : findAffix?.type}.svg`" />
     </div>
     <div class="row items-center q-gutter-x-xs"
-      :class="[{ 'filtered': is.filter.affixes.includes(findAffix?.value as number) }, findAffix?.color]">
+      :class="[{ 'filtered': is.filter.affixes.includes(findAffix?.value as number) }, findAffix?.color, { 'text-shadow': findAffix?.color }]">
       <template v-for="(comp, k) in affixInfo" :key="k">
         <template v-if="comp.type === 'text'">
           <div v-for="(word, i) in (comp.value as string).split(/\s+/g).filter(w => w !== '')" :key="i">{{ word }}
@@ -140,5 +140,9 @@ const remove = (): void => {
 
 .body--light .minmax:deep(.q-field__control::before) {
   background-color: rgba(45, 0, 150, .2);
+}
+
+.text-shadow {
+  text-shadow: 1px 1px 0 var(--q-dark);
 }
 </style>
