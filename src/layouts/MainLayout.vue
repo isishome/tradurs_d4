@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted, nextTick, reactive } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useQuasar, Screen, uid } from 'quasar'
 import { useI18n } from 'vue-i18n'
@@ -147,6 +147,17 @@ const onWindowLoad = () => {
   }
 }
 
+// events
+const eventBox = ref<boolean>(as.signed as boolean && false)
+const randomPosition = computed(() => `top:${Math.floor(Math.random() * 80) + 10}%;left:${Math.floor(Math.random() * 80) + 10}%`)
+const event = reactive({
+  open: false
+})
+const showEvent = () => {
+  eventBox.value = false
+  event.open = true
+}
+
 onMounted(() => {
   if (document.readyState !== 'complete')
     window.addEventListener('load', onWindowLoad)
@@ -163,6 +174,18 @@ onUnmounted(() => {
 </script>
 <template>
   <q-layout view="hHh lpR lFf">
+    <q-btn v-if="eventBox" flat padding="0" class="event" :style="randomPosition" :icon="`img:/images/icons/event.svg`"
+      size="14px" @click.stop="showEvent">
+      <q-spinner-puff class="absolute-center" style="z-index:-1" size="50px" />
+    </q-btn>
+    <D4Dialog v-model="event.open" max-width="200px">
+      <template #middle>
+        <q-card-section>
+          <kbd>A</kbd>
+          <kbd>B</kbd>
+        </q-card-section>
+      </template>
+    </D4Dialog>
     <div v-show="['tradeList', 'itemInfo'].includes(route.name as string) && is.fixedFilter.ladder" class="bg-season"
       :style="`--tradurs-season-image:url('${t('season.bg')}');`">
     </div>
@@ -364,7 +387,7 @@ onUnmounted(() => {
             <q-menu auto-close class="no-shadow" anchor="bottom end" self="top end" transition-show="none"
               transition-hide="none" :transition-duration="0">
               <q-list bordered class="rounded-borders">
-                <q-item v-for="lang in gs.localeOptions" :key="lang.value" :clickable="lang.value !== locale"
+                <q-item v-for=" lang  in  gs.localeOptions " :key="lang.value" :clickable="lang.value !== locale"
                   :active="lang.value === locale" @click="setLang(lang.value)">
                   {{ lang.label }}</q-item>
               </q-list>
@@ -593,5 +616,24 @@ ins::after {
   margin: 0;
   padding: 0;
   display: inline-flex;
+}
+
+.event {
+  position: fixed;
+  z-index: 3000;
+  transform: rotate(15deg);
+  filter: invert(62%) sepia(94%) saturate(1568%) hue-rotate(0deg) brightness(105%) contrast(103%);
+  border-radius: 18px;
+}
+
+kbd {
+  font-family: Arial;
+  font-size: 12px;
+  line-height: 12px;
+  padding: 4px 8px 8px;
+  color: #616161;
+  background: linear-gradient(-225deg, #d5dbe4, #f8f8f8);
+  border-radius: 4px;
+  box-shadow: inset 0 -4px 0 0 #cdcde6, inset 0 0 2px 2px #fff, 0 2px 4px 2px rgba(30, 35, 90, 0.4);
 }
 </style>

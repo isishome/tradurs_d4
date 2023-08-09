@@ -68,12 +68,12 @@ useMeta(() => {
       twitterUrl: { name: 'twitter:url', content: 'https://d4.tradurs.com' },
       twitterImage: { name: 'twitter:image', content: 'https://d4.tradurs.com/images/og.png' }
     },
-    script: { recaptcha: { src: recaptchaSrc.value } } 
+    script: { recaptcha: { src: recaptchaSrc.value } }
   }
 })
 
 const notice = reactive<{ open: boolean, close: boolean }>({
-  open: !$q.cookies.has('d4.notice'),
+  open: false,//!$q.cookies.has('d4.notice'),
   close: false
 })
 
