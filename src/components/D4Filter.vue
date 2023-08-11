@@ -229,7 +229,7 @@ const updateFixedDebounce = debounce(() => {
         <q-select v-model="is.filter.status" :disable="filterLoading" outlined dense no-error-icon hide-bottom-space
           emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0" behavior="menu"
           :label="t('filter.status')" :options="itemStatus" dropdown-icon="img:/images/icons/dropdown.svg"
-          popup-content-class="d4-scroll" @update:model-value="update()" />
+          popup-content-class="scroll" @update:model-value="update()" />
       </q-item-section>
     </q-item>
     <q-item :disable="filterLoading">
@@ -268,7 +268,7 @@ const updateFixedDebounce = debounce(() => {
       <q-item-section>
         <q-item-label header>{{ t('item.selectType') }}</q-item-label>
         <q-option-group :disable="filterLoading" size="xs" inline class="q-pl-sm" :options="filterTypes()" type="checkbox"
-          v-model="is.filter.itemTypes" @update:model-value="val => updateDebounce(val)" />
+          v-model="is.filter.itemTypes" @update:model-value="val => update(val)" />
       </q-item-section>
     </q-item>
     <q-item :disable="filterLoading" :inset-level=".2"
@@ -278,7 +278,7 @@ const updateFixedDebounce = debounce(() => {
           :options="findType(itemType)?.value === 'rune' ? filterRunes() : filterClasses(itemType)"
           :label="`${findType(itemType)?.label} ${t('filter.type')}`" outlined dense no-error-icon hide-bottom-space
           emit-value map-options multiple transition-show="none" transition-hide="none" :transition-duration="0"
-          dropdown-icon="img:/images/icons/dropdown.svg" popup-content-class="d4-scroll"
+          dropdown-icon="img:/images/icons/dropdown.svg" popup-content-class="scroll"
           @update:model-value="updateDebounce()">
         </q-select>
       </q-item-section>
@@ -309,7 +309,7 @@ const updateFixedDebounce = debounce(() => {
                 dense no-error-icon use-input hide-bottom-space hide-selected emit-value map-options multiple
                 transition-show="none" transition-hide="none" :transition-duration="0"
                 :label="`${t('properties')} ${t('searchOrSelect')}`" :options="propertyOptions(propertyNeedle)"
-                dropdown-icon="img:/images/icons/dropdown.svg" popup-content-class="d4-scroll limit-select"
+                dropdown-icon="img:/images/icons/dropdown.svg" popup-content-class="scroll limit-select"
                 @update:model-value="selectedProperty" @input-value="filterProperties">
                 <template #option="scope">
                   <q-item v-bind="scope.itemProps">
@@ -348,7 +348,7 @@ const updateFixedDebounce = debounce(() => {
                   outlined dense no-error-icon use-input hide-bottom-space hide-selected emit-value map-options multiple
                   transition-show="none" transition-hide="none" :transition-duration="0"
                   :label="`${t('affixes')} ${t('searchOrSelect')}`" :options="affixOptions(affixNeedle)"
-                  dropdown-icon="img:/images/icons/dropdown.svg" popup-content-class="d4-scroll limit-select"
+                  dropdown-icon="img:/images/icons/dropdown.svg" popup-content-class="scroll limit-select"
                   @update:model-value="selectedAffix" @input-value="filterAffixes">
                   <template #option="scope">
                     <q-item v-bind="scope.itemProps">
@@ -394,7 +394,7 @@ const updateFixedDebounce = debounce(() => {
                 outlined dense no-error-icon use-input hide-bottom-space hide-selected emit-value map-options multiple
                 transition-show="none" transition-hide="none" :transition-duration="0"
                 :label="`${t('restrictions')} ${t('searchOrSelect')}`" :options="restrictionOptions(restrictionNeedle)"
-                dropdown-icon="img:/images/icons/dropdown.svg" popup-content-class="d4-scroll limit-select"
+                dropdown-icon="img:/images/icons/dropdown.svg" popup-content-class="scroll limit-select"
                 @update:model-value="selectedRestriction" @input-value="filterRestrictions">
                 <template #option="scope">
                   <q-item v-bind="scope.itemProps">

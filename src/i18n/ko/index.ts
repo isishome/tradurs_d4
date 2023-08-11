@@ -48,6 +48,7 @@ export default {
     socket: '악의 종자 시즌에는 장신구 아이템 옵션의 홈 유형을 정확하게 선택할수록 아이템의 노출 빈도가 높아집니다'
   },
   noFilterdItems: '조건에 맞는 검색 결과가 없습니다',
+  noFilterdItemsDesc: '아이템 필터를 확인해 보세요',
   noItem: '아이템 정보가 존재하지 않습니다',
   seller: '판매자',
   offerer: '제안자',

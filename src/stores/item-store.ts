@@ -226,14 +226,8 @@ export const useItemStore = defineStore('item', {
     findRestriction: (state) => {
       return (restrictId: number): Restriction | undefined => state.restrictions.data.find(r => r.value === restrictId)
     },
-    matchProperties: (state) => {
-      return (type: string, attribute: string): boolean => type && attribute ? state.properties.data.filter(p => p.type === type && p.label.trim() === attribute).length > 0 : false
-    },
     matchAffixes: (state) => {
       return (type: string, attribute: string): boolean => type && attribute ? state.affixes.data.filter(a => a.type === type && a.label.trim() === attribute).length > 0 : false
-    },
-    matchRestrictions: (state) => {
-      return (type: string, attribute: string): boolean => type && attribute ? state.restrictions.data.filter(r => r.type === type && r.label.trim() === attribute).length > 0 : false
     },
     equalDefaultFilter: (state) => {
       return !(state.filter.favorite === false &&

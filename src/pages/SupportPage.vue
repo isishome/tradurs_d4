@@ -120,7 +120,7 @@ const close = () => {
       <template #middle>
         <div class="q-pa-md">
           <q-input outlined dense no-error-icon hide-bottom-space :disable="contact.disable"
-            :autofocus="$q.platform.is.desktop" rows="10" type="textarea" input-class="d4-scroll"
+            :autofocus="$q.platform.is.desktop" rows="10" type="textarea" input-class="scroll"
             :label="t('contact.contents')" v-model="contact.contents" :rules="[val => val && val.length > 10 || '']"
             maxlength="500">
             <template #counter>

@@ -59,7 +59,7 @@ const updateCurrency = (val: string | null): void => {
         <q-select v-model="_price.currency" :disable="disable" behavior="menu" outlined dense no-error-icon
           hide-bottom-space emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0"
           :label="t('price.currency')" dropdown-icon="img:/images/icons/dropdown.svg" :options="currencies"
-          popup-content-class="d4-scroll" @update:model-value="updateCurrency">
+          popup-content-class="scroll" @update:model-value="updateCurrency">
           <template #selected-item="scope">
             <div class="ellipsis">{{ scope.opt.label }}</div>
           </template>
@@ -67,7 +67,7 @@ const updateCurrency = (val: string | null): void => {
       </div>
       <div v-if="data.currency === 'rune'" class="col">
         <q-select v-model="_price.currencyValue" :disable="disable" behavior="menu" outlined dense no-error-icon
-          hide-bottom-space emit-value map-options popup-content-class="d4-scroll" transition-show="none"
+          hide-bottom-space emit-value map-options popup-content-class="scroll" transition-show="none"
           transition-hide="none" :transition-duration="0" :options="runes()"
           dropdown-icon="img:/images/icons/dropdown.svg" @update:model-value="update">
           <template #selected-item="scope">

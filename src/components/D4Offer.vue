@@ -112,7 +112,7 @@ const complete = () => {
     transitionShow: 'none',
     transitionHide: 'none',
     noRouteDismiss: true,
-    class: 'q-pa-sm evaluations'
+    class: 'q-pa-sm evaluations scroll'
   }).onOk((data) => {
     emit('complete', data)
   })
@@ -123,7 +123,7 @@ const isRetractable = computed(() => props.data.itemStatusCode === '000' && prop
 const isTradeable = computed(() => (props.data.statusCode === '003' && props.data.authorized) || (props.data.itemStatusCode === '003' && props.owner))
 const existsEvaluation = computed(() => (props.data.statusCode === '001' && props.owner) || (props.data.statusCode === '001' && props.data.authorized))
 const status = computed(() => is.findOfferStatus(props.data.statusCode)?.label)
-const parsEvaluations = computed(() => props.owner ? as.filterEvaluations(props.data.evaluations) : props.data.authorized ? as.filterEvaluations(props.evaluations) : [])
+const parsEvaluations = computed(() => props.owner ? as.filterEvaluations(props.evaluations) : props.data.authorized ? as.filterEvaluations(props.data.evaluations) : [])
 </script>
 
 <template>

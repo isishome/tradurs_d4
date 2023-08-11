@@ -254,7 +254,7 @@ const applyAdd = (): void => {
     errorMessage = t('attribute.enter', { attr: t(add.category as string) })
   else if (!checkAttribute(add.attribute))
     errorMessage = t('attribute.invalid', { attr: t(add.category as string) })
-  else if ((add.category === 'properties' && is.matchProperties(add.type, add.attribute)) || (add.category === 'affixes' && is.matchAffixes(add.type, add.attribute)) || (add.category === 'restrictions' && is.matchRestrictions(add.type, add.attribute)))
+  else if (add.category === 'affixes' && is.matchAffixes(add.type, add.attribute))
     errorMessage = t('attribute.exists', { attr: t(add.category as string) })
 
   if (errorMessage !== '') {
@@ -274,9 +274,9 @@ const applyAdd = (): void => {
     .then((result: Property | Affix | Restriction) => {
       const tempId = uid()
       const attribute: any = { valueId: tempId, action: 2 }
-      attribute[add.category === 'properties' ? 'propertyId' : add.category === 'affixes' ? 'affixId' : 'restrictId'] = result.value
-      attribute[add.category === 'properties' ? 'propertyValues' : add.category === 'affixes' ? 'affixValues' : 'restrictValues'] = []
-      const target = add.category === 'properties' ? activatedItem.value.properties : add.category === 'affixes' ? activatedItem.value.affixes : activatedItem.value.restrictions
+      attribute[add.category === 'affixes' ? 'affixId' : 'affixId'] = result.value
+      attribute[add.category === 'affixes' ? 'affixValues' : 'affixValues'] = []
+      const target = add.category === 'affixes' ? activatedItem.value.affixes : activatedItem.value.affixes
       target.push(attribute)
       activatedRef.value?.scrollEnd(add.category, tempId)
 
@@ -406,12 +406,6 @@ const selectedRestriction = (val: number): void => {
   restrictId.value = null
   restrictionNeedle.value = undefined
   activatedRef.value?.scrollEnd('restrictions', tempId)
-}
-
-const createRestriction = (): void => {
-  add.category = 'restrictions'
-  add.type = filterAttributeTypes.value?.[0].value as string
-  add.show = true
 }
 
 const updateRestriction = ({ valueId, restrictValues }: { valueId: string, restrictValues: Array<number> }): void => {
@@ -742,8 +736,9 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
           </template>
         </D4Item>
       </q-intersection>
-      <div v-show="items.length === 0" class="row justify-center items-center" style="min-height:30vh">
-        {{ t(route.name === 'tradeList' ? 'noFilterdItems' : 'noItem') }}
+      <div v-show="items.length === 0" class="column q-gutter-y-sm justify-center items-center" style="min-height:30vh">
+        <div>{{ t(route.name === 'tradeList' ? 'noFilterdItems' : 'noItem') }}</div>
+        <div class="text-caption">{{ t(route.name === 'tradeList' ? 'noFilterdItemsDesc' : '') }}</div>
       </div>
     </div>
     <q-dialog v-model="activateShow" :maximized="$q.screen.lt.sm" persistent transition-show="none" transition-hide="none"
@@ -757,7 +752,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
               use-input hide-bottom-space hide-selected emit-value map-options transition-show="none"
               transition-hide="none" :transition-duration="0" class="col" :label="t('searchOrSelect')"
               :options="propertyOptions(propertyNeedle)" dropdown-icon="img:/images/icons/dropdown.svg"
-              popup-content-class="d4-scroll" @update:model-value="selectedProperty" @input-value="filterProperties">
+              popup-content-class="scroll" @update:model-value="selectedProperty" @input-value="filterProperties">
               <template #option="scope">
                 <q-item v-bind="scope.itemProps">
                   <q-item-section side>
@@ -790,7 +785,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
               use-input hide-bottom-space hide-selected emit-value map-options transition-show="none"
               transition-hide="none" :transition-duration="0" class="col" :label="t('searchOrSelect')"
               :options="affixOptions(affixNeedle)" dropdown-icon="img:/images/icons/dropdown.svg"
-              popup-content-class="d4-scroll" @update:model-value="selectedAffix" @input-value="filterAffixes">
+              popup-content-class="scroll" @update:model-value="selectedAffix" @input-value="filterAffixes">
               <template #option="scope">
                 <q-item v-bind="scope.itemProps">
                   <q-item-section side>
@@ -827,7 +822,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
               use-input hide-bottom-space hide-selected emit-value map-options transition-show="none"
               transition-hide="none" :transition-duration="0" class="col" :label="t('searchOrSelect')"
               :options="restrictionOptions(restrictionNeedle)" dropdown-icon="img:/images/icons/dropdown.svg"
-              popup-content-class="d4-scroll" @update:model-value="selectedRestriction" @input-value="filterRestrictions">
+              popup-content-class="scroll" @update:model-value="selectedRestriction" @input-value="filterRestrictions">
               <template #option="scope">
                 <q-item v-bind="scope.itemProps">
                   <q-item-section>
@@ -843,10 +838,6 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                 </q-item>
               </template>
             </q-select>
-            <q-btn size="sm" :disable="disable" unelevated flat dense round aria-label="Tradurs Add Button"
-              @click="createRestriction">
-              <img class="icon" width="24" height="24" src="/images/icons/add.svg" alt="icon_add" />
-            </q-btn>
           </div>
         </template>
         <template #restrictions>
@@ -861,9 +852,8 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                 :loading="activatedItem.loading" :disable="disable" color="var(--q-secondary)">
                 <q-icon class="invert" :class="{ 'q-ml-xs': !$q.screen.lt.sm }" size="24px"
                   :name="`img:/images/icons/${!$q.screen.lt.sm ? 'dropdown.svg' : 'morehoriz.svg'}`" />
-                <q-menu fit anchor="bottom middle" self="top middle" auto-close
-                  class="no-shadow d4-scroll rounded-borders" transition-show="none" transition-hide="none"
-                  :transition-duration="0">
+                <q-menu fit anchor="bottom middle" self="top middle" auto-close class="no-shadow scroll rounded-borders"
+                  transition-show="none" transition-hide="none" :transition-duration="0">
                   <q-list :bordered="!$q.screen.lt.sm" class="rounded-borders">
                     <q-item :disable="activatedItem.statusCode !== '000'" clickable @click="relistItem">
                       <q-item-section>{{ t('btn.relist') }}</q-item-section>
@@ -946,7 +936,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
         </q-card-section>
       </template>
       <template #middle>
-        <q-card-section class="col d4-scroll"
+        <q-card-section class="col scroll"
           :style="$q.screen.lt.sm ? 'height:100%' : 'min-height:40vh !important;max-height:80vh !important'">
           <div class="q-pb-xl full-height">
             <div class="row items-center q-col-gutter-lg">
@@ -973,7 +963,9 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
         </q-card-section>
       </template>
       <template v-else-if="allowShowSeller" #bottom>
-        <q-card-section class="row justify-end">
+        <q-card-section class="row justify-end q-gutter-sm items-center">
+          <div>{{ t('seller') }}</div>
+          <q-img src="/images/icons/direction.svg" class="icon" width="20px" />
           <D4User :data="offerItem?.user" :disable="disableOffers" />
         </q-card-section>
       </template>

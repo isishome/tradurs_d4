@@ -48,6 +48,7 @@ export default {
     socket: 'During Season of the Malignant, the more accurately you select the socket type in the accessory item affixes, the more often your items will be seen'
   },
   noFilterdItems: 'No search results matched your criteria',
+  noFilterdItemsDesc: 'Check out the item filters',
   noItem: 'Item information does not exist',
   trade: 'Trade',
   seller: 'Seller',

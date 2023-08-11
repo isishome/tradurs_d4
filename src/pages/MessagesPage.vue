@@ -289,7 +289,7 @@ onMounted(() => {
       <template #middle>
         <div class="q-pa-md">
           <q-input outlined dense no-error-icon hide-bottom-space :disable="answer.loading"
-            :autofocus="$q.platform.is.desktop" rows="6" type="textarea" class="col" input-class="d4-scroll"
+            :autofocus="$q.platform.is.desktop" rows="6" type="textarea" class="col" input-class="scroll"
             :label="t('contact.answerContents')" v-model="answer.contents" :rules="[val => val && val.length > 10 || '']"
             maxlength="500"><template #counter>
               {{ answer.contents ? answer.contents.length : 0 }} / 500

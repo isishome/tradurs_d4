@@ -116,7 +116,7 @@ onMounted(() => {
       </q-card-section>
     </template>
     <template #middle>
-      <q-card-section class="d4-scroll" style="max-height:50vh">
+      <q-card-section class="scroll" style="max-height:50vh">
         <div class="q-pa-md column q-gutter-y-sm" :class="$q.screen.gt.sm ? 'text-body1' : 'text-caption'">
           <div class="text-area text-weight-bold">{{ t('adblock.contents') }}</div>
         </div>
@@ -143,7 +143,7 @@ onMounted(() => {
       </q-card-section>
     </template>
     <template #middle>
-      <q-card-section class="d4-scroll" style="max-height:50vh">
+      <q-card-section class="scroll" style="max-height:50vh">
         <div class="q-pa-md column q-gutter-y-sm" :class="$q.screen.gt.sm ? 'text-body2' : 'text-caption'">
           <div class="text-area">{{ t('notice.top') }}</div>
           <div class="text-area text-primary q-px-sm">{{ t('notice.contents') }}
