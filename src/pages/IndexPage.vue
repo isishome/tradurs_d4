@@ -366,12 +366,6 @@ defineExpose({ getList })
   z-index: 1;
 }
 
-@media (max-width:600px) {
-  .sticky-btn {
-    bottom: 10px;
-  }
-}
-
 .paging {
   position: absolute;
   transform: translateY(-90%);
@@ -387,5 +381,15 @@ defineExpose({ getList })
 
 .item-list:deep(.item:not(.reward) .card-item:not(.editable) .filtered .minmax-text) {
   color: rgba(110, 110, 110, 1) !important;
+}
+
+@media (max-width:600px) {
+  .sticky-btn {
+    bottom: 10px;
+  }
+
+  .item-list:deep(.item:not(.reward) .card-item:not(.editable) .filtered) {
+    line-height: 14px;
+  }
 }
 </style>
