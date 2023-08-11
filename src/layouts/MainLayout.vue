@@ -419,7 +419,6 @@ onUnmounted(() => {
       </q-toolbar>
     </q-header>
     <q-page-container>
-
       <q-page :style-fn="myTweak">
         <div class="row justify-center">
           <div :class="screen.lt.sm ? 'q-pa-sm' : 'q-pa-xl'" :style="screen.lt.sm ? 'width:100%' : 'width:830px'">
@@ -431,9 +430,11 @@ onUnmounted(() => {
               <RouterView />
             </div>
             <div class="q-py-xl"></div>
-            <ins v-if="$q.platform.is.mobile" class="adsbygoogle" style="display:block"
-              data-ad-client="ca-pub-5110777286519562" data-ad-slot="6163086381" data-ad-format="auto"
-              data-full-width-responsive="true" :data-adtest="prod ? 'off' : 'on'" :key="`bottom-${key}`"></ins>
+            <div class="row justify-center">
+              <ins v-if="$q.platform.is.mobile" class="adsbygoogle" style="display:inline-block;width:300px;height:250px"
+                data-ad-client="ca-pub-5110777286519562" data-ad-slot="6163086381" :data-adtest="prod ? 'off' : 'on'"
+                :key="`bottom-${key}`"></ins>
+            </div>
             <q-separator />
             <div class="q-pt-lg">
               <div class="row justify-center items-center q-gutter-xs text-caption bottom">
