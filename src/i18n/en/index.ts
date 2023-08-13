@@ -250,8 +250,8 @@ export default {
   },
   notice: {
     title: 'Update and Notice',
-    top: 'Hello. This is Tradurs.\n\n 2023.08.07 Here are some update and notice.',
-    contents: "\n◆ Update\n· From now on, any yolks spent on a offer request will be recovered as normal if the offer is accepted and the transaction is completed.\n\n◆ Notice\n· If you are registering for the first time because your item affixes are not being retrieved, please be sure to enter your numbers using {'{'}x{'}'} where the numbers are entered. We'll remove affixes with arbitrary numbers or affixes that are entered incorrectly (exposing battletag, using abbreviations, etc.).\n\n",
+    top: 'Hello. This is Tradurs.\n\n 2023.08.13 Here are some update and notice.',
+    contents: "\n◆ Update\n· Fixed an error during an item trade\n\n◆ Notice\n· Do not encourage cash transactions\n· Do not display battle tag\n\n",
     bottom: 'Thank you',
     close: 'Do not open for 24 hours'
   },

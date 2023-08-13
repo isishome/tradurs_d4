@@ -120,7 +120,7 @@ const complete = () => {
 
 const isAcceptable = computed(() => props.data.itemStatusCode === '000' && props.data.statusCode === '000' && props.owner)
 const isRetractable = computed(() => props.data.itemStatusCode === '000' && props.data.statusCode === '000' && props.data.authorized && props.data.retractable)
-const isTradeable = computed(() => (props.data.statusCode === '003' && props.data.authorized) || (props.data.itemStatusCode === '003' && props.owner))
+const isTradeable = computed(() => (props.data.statusCode === '003' && props.data.itemStatusCode === '003' && props.data.authorized) || (['001', '003'].includes(props.data.statusCode) && props.data.evaluations.length === 0 && props.owner))
 const existsEvaluation = computed(() => (props.data.statusCode === '001' && props.owner) || (props.data.statusCode === '001' && props.data.authorized))
 const status = computed(() => is.findOfferStatus(props.data.statusCode)?.label)
 const parsEvaluations = computed(() => props.owner ? as.filterEvaluations(props.evaluations) : props.data.authorized ? as.filterEvaluations(props.data.evaluations) : [])
