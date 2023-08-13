@@ -678,8 +678,9 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
             <template #actions>
               <div v-show="rewardItem.expanded" class="row justify-between items-center q-pt-lg">
                 <div>
-                  <D4Btn v-if="rewardItem.authorized && rewardItem.statusCode !== '001'" :label="t('btn.edit')"
-                    color="var(--q-secondary)" :loading="rewardItem.loading" @click="editItem(rewardItem)" />
+                  <D4Btn v-if="rewardItem.authorized && !['001', '004'].includes(rewardItem.statusCode)"
+                    :label="t('btn.edit')" color="var(--q-secondary)" :loading="rewardItem.loading"
+                    @click="editItem(rewardItem)" />
                 </div>
                 <div>
                   <D4Btn
@@ -717,7 +718,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
           <template #actions>
             <div v-show="item.expanded" class="row justify-between items-center q-pt-lg">
               <div>
-                <D4Btn v-if="item.authorized && item.statusCode !== '001'" :label="t('btn.edit')"
+                <D4Btn v-if="item.authorized && !['001', '004'].includes(item.statusCode)" :label="t('btn.edit')"
                   color="var(--q-secondary)" :loading="item.loading" @click="editItem(item)" />
               </div>
               <div>
@@ -872,14 +873,16 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                   </q-list>
                 </q-menu>
               </D4Btn>
-              <D4Analysis ref="analysis" :loading="activatedItem.loading" :disable="activatedItem.offers > 0 || disable"
+              <D4Analysis ref="analysis" :loading="activatedItem.loading"
+                :disable="activatedItem.offers > 0 || ['001', '004'].includes(activatedItem.statusCode) || disable"
                 @start="startAnalyze" @end="endAnalyze" @failed="failedAnalyze" />
             </div>
             <div class="row justify-between items-center q-gutter-sm">
               <D4Btn :label="t('btn.cancel')" :loading="activatedItem.loading" :disable="disable" color="rgb(150,150,150)"
                 @click="activateShow = false" />
               <D4Btn :label="t('btn.apply')" :loading="activatedItem.loading"
-                :disable="activatedItem.offers > 0 || disable" :progress="progress" type="submit" />
+                :disable="activatedItem.offers > 0 || ['001', '004'].includes(activatedItem.statusCode) || disable"
+                :progress="progress" type="submit" />
             </div>
           </div>
         </template>
