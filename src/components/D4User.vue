@@ -139,6 +139,7 @@ const notifyEmail = () => {
       </div>
       <q-icon class="icon" name="img:/images/icons/help.svg" size="19px">
         <D4Tooltip>
+          <img v-if="data.verified" src="/images/users/battlenet.svg" width="100" />
           <div class="text-overline text-weight-bold">{{ t('user.temperature') }} : {{ data.temperature }}&#8451</div>
           <div class="break-keep text-caption" style="max-width:160px;">
             {{ t('user.sh1') }}

@@ -250,8 +250,9 @@ export default {
   },
   notice: {
     title: 'Update and Notice',
-    top: 'Hello. This is Tradurs.\n\n 2023.08.13 Here are some update and notice.',
-    contents: "\n◆ Update\n· Fixed an error during an item trade\n\n◆ Notice\n· Do not encourage cash transactions\n· Do not display battle tag\n\n",
+    top: 'Hello. This is Tradurs.\n\n 2023.08.16 Here are some update and notice.',
+    contents: "◆ Updates\n· Battle.net login feature has been added\n· Battle tag authentication feature has been added\n· Battle tag editing restrictions have been removed with the addition of the battle tag authentication feature\n· The user information tooltip will display whether the battle tag is authenticated while logged in",
+    cautions: "◆ Caveats\n· Prohibit soliciting cash transactions\n· Prohibiting the display of battle tags",
     bottom: 'Thank you',
     close: 'Do not open for 24 hours'
   },
@@ -317,7 +318,9 @@ export default {
         { type: 'image', contents: '08_battletag' },
         { type: 'text', contents: '8. After logging in and navigating to the Tradurs Diablo® IV page, you will be prompted to enter your battle tag. (For normal use, enter the battle tag you are using.)' },
         { type: 'image', contents: '09_battletag' },
-        { type: 'text', contents: '9. You can edit your battle tag on the Change User Information page. (Note that you can only edit your battle tag once).' },
+        { type: 'text', contents: '9.1. You can edit your battle tag on the Change User Information page. (If a battle tag already exists, it cannot be changed.)\nYou can authenticate your battle tag through the Authenticate button.' },
+        { type: 'image', contents: '0901_battletag' },
+        { type: 'text', contents: '9.2. If you are logged in, the user tooltip will show if the battle tag is authenticated or not.' },
         { type: 'image', contents: '10_withdrawal' },
         { type: 'text', contents: '10. Withdrawal is located at the bottom of the Change User Information page and is done by entering the email address you are using.' }
       ]

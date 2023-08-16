@@ -9,6 +9,7 @@ export interface IUser extends INotify {
   yolk: number,
   avatar: number,
   battleTag?: string,
+  verified: boolean,
   temperature: number,
   online: boolean
 }
@@ -18,6 +19,7 @@ export class User implements IUser {
   public yolk = 0
   public avatar = 0
   public battleTag = ''
+  public verified = false
   public temperature = 0
   public online = false
   public notifyNew = true
