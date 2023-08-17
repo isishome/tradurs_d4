@@ -101,8 +101,9 @@ const updateCurrency = (val: string | null): void => {
       </div>
       <div v-else-if="data.currency === 'gold'">
         <q-input :disable="disable" dense no-error-icon hide-bottom-space outlined v-model.number="_price.currencyValue"
-          mask="##,###,###,###" maxlength="14" reverse-fill-mask unmasked-value debounce="500" :error="_priceError"
-          @update:model-value="update" @focus="focus" input-class="text-right"
+          maxlength="14" reverse-fill-mask unmasked-value debounce="500" :error="_priceError" @update:model-value="update"
+          @focus="focus" input-class="text-right"
+          :label="n(Number.parseFloat(_price.currencyValue ? _price.currencyValue.toString() : '0'), 'decimal', { notation: 'compact' })"
           :rules="[val => Number.isInteger(parseInt(val)) && parseInt(val) % 100000 === 0 || '']">
           <q-tooltip v-model="_priceError" :target="_priceError" no-parent-event transition-show="none"
             transition-hide="none" anchor="top end" self="bottom end" class="bg-negative">
@@ -138,10 +139,7 @@ const updateCurrency = (val: string | null): void => {
         <template v-else-if="data.currency === 'gold'">
           <img src="/images/items/inventory/gold.webp" width="24" height="24" alt="icon_price" />
           <div class="q-ml-xs">
-            {{ n(Number.parseFloat(data.currencyValue ? data.currencyValue.toString() : '0'), 'decimal', {
-              notation:
-                'compact'
-            }) }}
+            {{ n(Number.parseFloat(data.currencyValue ? data.currencyValue.toString() : '0'), 'decimal') }}
           </div>
         </template>
         <template v-else>
