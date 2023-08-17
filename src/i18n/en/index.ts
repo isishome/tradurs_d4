@@ -153,7 +153,8 @@ export default {
   price: {
     currency: 'Currency',
     quantity: 'Quantity',
-    getOffer: 'Get An Offer'
+    getOffer: 'Get An Offer',
+    restrictGold: 'Items must have a minimum sale/purchase price of 100,000 gold'
   },
   offer: {
     title: 'Get An Offer',
@@ -251,8 +252,9 @@ export default {
   notice: {
     title: 'Update and Notice',
     top: 'Hello. This is Tradurs.\n\n 2023.08.16 Here are some update and notice.',
-    contents: "◆ Updates\n· Battle.net login feature has been added\n· Battle tag authentication feature has been added\n· Battle tag editing restrictions have been removed with the addition of the battle tag authentication feature\n· The user information tooltip will display whether the battle tag is authenticated while logged in",
-    cautions: "◆ Caveats\n· Prohibit soliciting cash transactions\n· Prohibiting the display of battle tags",
+    changes: "◆ Changes\n· \'Get An Offer\' feature: Manor temperature above 1 degree → Battletag certified user\n· Weekly award targets: certain manners temperature or higher → Battletag certified user\n· Changed gold coin icon image\n· Minimum/maximum gold coin sale, offer amount: 100,000/9,999,999,999,999 → 100,000/99,999,900,000\n·  Minimum gold coin denomination: 1 → 100,000\n",
+    updates: "◆ Updates\n· Added Battle.net login feature.\n· BattleTag Authentication has been added.\n· With the addition of the battle tag verification feature, the battle tag modification limit has been removed.\n· While logged in, the user information tooltip will display whether you are battle tag verified or not.",
+    cautions: "◆ Reminder\n· Do not solicit cash transactions\n· Do not display battletag",
     bottom: 'Thank you',
     close: 'Do not open for 24 hours'
   },

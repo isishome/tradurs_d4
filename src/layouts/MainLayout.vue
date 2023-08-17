@@ -194,7 +194,7 @@ onUnmounted(() => {
       @before-show="beforeShow">
       <q-list ref="leftDrawerList" class="column full-height" style="width:300px">
         <q-scroll-area class="col">
-          <D4Filter :disable="$route.name !== 'tradeList'" class="q-px-md"
+          <D4Filter :disable="route.name !== 'tradeList'" class="q-px-md"
             :class="$q.screen.lt.sm ? 'q-pt-lg' : 'q-pt-lg'" />
         </q-scroll-area>
       </q-list>

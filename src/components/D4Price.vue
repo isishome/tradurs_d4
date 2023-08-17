@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { computed, reactive } from 'vue'
+import { ref, computed, reactive, nextTick } from 'vue'
 import { useItemStore } from 'stores/item-store'
 import { useI18n } from 'vue-i18n'
+import { useQuasar } from 'quasar'
 
 import { Price } from 'src/types/item'
 import { itemImgs } from 'src/common/items'
@@ -27,10 +28,12 @@ const emit = defineEmits(['update'])
 // common variable
 const store = useItemStore()
 const { t, n } = useI18n({ useScope: 'global' })
+const $q = useQuasar()
 
 // variable
 const loading = computed(() => props.data.loading || props.progress)
 const _price = reactive<Price>(new Price(props.data.currency, props.data.currencyValue, props.data.quantity))
+const _priceError = ref<boolean>(false)
 const findType = store.findType
 const runes = store.filterRunesByType
 const currencies = store.currencies()
@@ -39,11 +42,23 @@ if (!props.offer)
   currencies.unshift({ value: 'offer', label: t('price.getOffer') })
 
 const update = (): void => {
-  emit('update', _price)
+  nextTick(() => {
+    if (props.data.currency === 'gold') {
+      _priceError.value = false
+
+      console.log(Number(_price.currencyValue as number) % 100000)
+      if (Number(_price.currencyValue as number) >= 100000)
+        _price.currencyValue = Math.floor(Number(_price.currencyValue as number) / 100000) * 100000
+      else
+        _priceError.value = true
+    }
+
+    emit('update', _price)
+  })
 }
 
 const updateCurrency = (val: string | null): void => {
-  _price.currencyValue = val === 'rune' ? 'eld' : null
+  _price.currencyValue = val === 'rune' ? 'eld' : val === 'gold' ? 100000 : null
   _price.quantity = 1
   update()
 }
@@ -52,8 +67,8 @@ const updateCurrency = (val: string | null): void => {
 <template>
   <div v-if="editable">
     <div class="row justify-end items-center no-wrap q-gutter-sm">
-      <div v-show="!$q.screen.lt.sm">
-        <q-icon class="coin" size="18px" name="img:/images/icons/price.svg" />
+      <div v-show="!$q.screen.lt.sm" class="row items-center">
+        <img src="/images/items/inventory/gold.webp" width="24" height="24" alt="icon_price" />
       </div>
       <div>
         <q-select v-model="_price.currency" :disable="disable" behavior="menu" outlined dense no-error-icon
@@ -63,6 +78,7 @@ const updateCurrency = (val: string | null): void => {
           <template #selected-item="scope">
             <div class="ellipsis">{{ scope.opt.label }}</div>
           </template>
+
         </q-select>
       </div>
       <div v-if="data.currency === 'rune'" class="col">
@@ -87,9 +103,14 @@ const updateCurrency = (val: string | null): void => {
       </div>
       <div v-else-if="data.currency === 'gold'">
         <q-input :disable="disable" dense no-error-icon hide-bottom-space outlined v-model.number="_price.currencyValue"
-          mask="#,###,###,###,###" maxlength="17" reverse-fill-mask unmasked-value debounce="500"
+          mask="##,###,###,###" maxlength="14" reverse-fill-mask unmasked-value debounce="500" :error="_priceError"
           @update:model-value="update" @focus="focus" input-class="text-right"
-          :rules="[val => Number.isInteger(parseInt(val)) && parseInt(val) > 0 || '']" />
+          :rules="[val => Number.isInteger(parseInt(val)) && parseInt(val) % 100000 === 0 || '']">
+          <q-tooltip v-model="_priceError" :target="_priceError" no-parent-event transition-show="none"
+            transition-hide="none" anchor="top end" self="bottom end" class="bg-negative">
+            <div class="tooltip text-caption">{{ t('price.restrictGold') }}</div>
+          </q-tooltip>
+        </q-input>
       </div>
       <D4Counter v-if="!['offer', 'gold'].includes(data.currency)" v-model="_price.quantity" :disable="disable"
         @update:model-value="update" />
@@ -117,9 +138,13 @@ const updateCurrency = (val: string | null): void => {
           <div class="q-ml-xs">{{ (runes().find(r => r.value === data.currencyValue) || {}).label }}</div>
         </template>
         <template v-else-if="data.currency === 'gold'">
-          <img class="coin" src="/images/icons/price.svg" width="18" height="18" alt="icon_price" />
+          <img src="/images/items/inventory/gold.webp" width="24" height="24" alt="icon_price" />
           <div class="q-ml-xs">
-            {{ n(Number.parseFloat(data.currencyValue ? data.currencyValue.toString() : '0'), 'decimal') }}</div>
+            {{ n(Number.parseFloat(data.currencyValue ? data.currencyValue.toString() : '0'), 'decimal', {
+              notation:
+                'compact'
+            }) }}
+          </div>
         </template>
         <template v-else>
           <img :src="itemImgs[data.currency as keyof typeof itemImgs]" width="24" height="24"
@@ -136,11 +161,21 @@ const updateCurrency = (val: string | null): void => {
 </template>
 
 <style scoped>
-.coin {
-  filter: invert(65%) sepia(69%) saturate(606%) hue-rotate(3deg) brightness(90%) contrast(102%);
-}
-
 .body--light .coin {
   filter: invert(55%) sepia(69%) saturate(606%) hue-rotate(3deg) brightness(90%) contrast(102%);
+}
+
+.tooltip {
+  max-width: 200px;
+}
+
+.tooltip::after {
+  content: '';
+  position: fixed;
+  width: 16px;
+  height: 16px;
+  transform: translate(-20px, 14px) rotate(45deg);
+  z-index: -1;
+  background-color: var(--q-negative);
 }
 </style>

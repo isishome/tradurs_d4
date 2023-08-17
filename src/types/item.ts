@@ -84,7 +84,7 @@ export class Price implements IPrice {
 
   constructor(currency?: string, currencyValue?: string | number | null, quantity?: number) {
     this.currency = currency || 'gold'
-    this.currencyValue = this.currency === 'rune' ? 'eld' : currencyValue || null
+    this.currencyValue = this.currency === 'rune' ? 'eld' : this.currency === 'gold' ? 100000 : currencyValue || null
     this.quantity = quantity || 1
   }
 }

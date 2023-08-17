@@ -22,7 +22,7 @@ withDefaults(defineProps<IProps>(), {
     <q-card-section class="row justify-center items-center q-px-none">
       <q-skeleton type="circle" width="200px" height="200px" />
     </q-card-section>
-    <q-card-section class="row justify-center q-pt-xl q-px-none">
+    <q-card-section class="row justify-center q-pt-none q-px-none">
       <q-skeleton type="QChip" width="200px" height="32px" />
     </q-card-section>
     <q-card-section class="column items-center q-gutter-y-xs">
@@ -46,7 +46,7 @@ withDefaults(defineProps<IProps>(), {
         </q-avatar>
       </q-avatar>
     </q-card-section>
-    <q-card-section class="text-center q-pt-xl q-px-none">
+    <q-card-section class="text-center q-pt-none q-px-none">
       <q-chip size="md" color="blue-grey-1" text-color="blue-8" class="text-overline text-weight-bold">
         <slot name="battleTag"></slot>
       </q-chip>
