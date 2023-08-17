@@ -46,7 +46,6 @@ const update = (): void => {
     if (props.data.currency === 'gold') {
       _priceError.value = false
 
-      console.log(Number(_price.currencyValue as number) % 100000)
       if (Number(_price.currencyValue as number) >= 100000)
         _price.currencyValue = Math.floor(Number(_price.currencyValue as number) / 100000) * 100000
       else
