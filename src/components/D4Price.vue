@@ -77,7 +77,6 @@ const updateCurrency = (val: string | null): void => {
           <template #selected-item="scope">
             <div class="ellipsis">{{ scope.opt.label }}</div>
           </template>
-
         </q-select>
       </div>
       <div v-if="data.currency === 'rune'" class="col">
