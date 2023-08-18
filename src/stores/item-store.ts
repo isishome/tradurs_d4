@@ -165,7 +165,12 @@ export const useItemStore = defineStore('item', {
       more: false as boolean
     },
     analyze: {
-      lang: `가-힣ぁ-ゔァ-ヴー々〆〤一-龥a-zA-Z`
+      lang: {
+        ko: `가-힣`,
+        en: `a-zA-Z`,
+        ja: `ぁ-ゔァ-ヴー々〆〤`,
+        zh: `一-龥`
+      }
     }
   }),
   getters: {
@@ -571,17 +576,19 @@ export const useItemStore = defineStore('item', {
           })
       })
     },
-    async recognize(image: ImageLike) {
+    async recognize(image: ImageLike, lang: string) {
+      const locale = lang === 'ko' ? 'kor' : 'eng'
       const worker = await createWorker()
 
-      await worker.loadLanguage('eng+kor')
-      await worker.initialize('eng+kor')
+      await worker.loadLanguage(locale)
+      await worker.initialize(locale)
       await worker.setParameters({
         preserve_interword_spaces: '1'
       })
       const { data: { text } } = await worker.recognize(image)
       await worker.terminate()
-      const parsedText = text.replace(new RegExp(`[^0-9${this.analyze.lang}\/\%\+\.\[\]\-\,\:\n ]`, 'gi'), '').replace(/[ ]{2,}/gi, ' ')
+
+      const parsedText = text.replace(new RegExp(`[^0-9${this.analyze.lang[lang as keyof typeof this.analyze.lang]}\\/\\+\\.\\[\\]\\-\\,\\:\\n ]`, 'gi'), '').replace(/[ ]{2,}/gi, ' ')
       return parsedText
     }
   }

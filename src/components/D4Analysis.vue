@@ -7,6 +7,7 @@ export default {
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { QFile, uid } from 'quasar'
+import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { type ILabel, type Affix as IAffix, useItemStore } from 'src/stores/item-store'
 import { Affix, Item } from 'src/types/item'
@@ -24,8 +25,11 @@ withDefaults(defineProps<IProps>(), {
 const emit = defineEmits(['start', 'end', 'failed'])
 
 const is = useItemStore()
+const route = useRoute()
 const { t } = useI18n({ useScope: 'global' })
 
+const lang: string = route.params.lang as string || 'ko'
+const phase = is.analyze.lang[lang as keyof typeof is.analyze.lang]
 const timeout = 1000
 const showProgress = ref<boolean>(false)
 const checkedItem = reactive<string[]>([])
@@ -45,7 +49,6 @@ const item = new Item('')
 let restrictionsPhase: string
 
 const fileRef = ref<QFile>()
-const fileRef2 = ref<QFile>()
 const file = ref()
 
 const beforeHide = () => {
@@ -121,7 +124,7 @@ const checkInfo = (textArray: string[]) => {
   if (typeValueIndex === -1)
     return failedScan(t('analyze.typeNotFound'))
 
-  const typeValue = qualityPhase.splice(typeValueIndex, qualityPhase.length).join(' ').replace(new RegExp(`[^${is.analyze.lang} ]`, 'gi'), '').trim()
+  const typeValue = qualityPhase.splice(typeValueIndex, qualityPhase.length).join(' ').replace(new RegExp(`[^${phase} ]`, 'gi'), '').trim()
 
   if (!typeValue || typeValue === '')
     return failedScan(t('analyze.typeNotFound'))
@@ -155,7 +158,7 @@ const checkInfo = (textArray: string[]) => {
     return failedScan(t('analyze.typeValueNotFound'))
 
   // check item name
-  const name = textArray.splice(0, indexQuality).join(' ').replace(new RegExp(`[^${is.analyze.lang} ]`, 'gi'), '').trim()
+  const name = textArray.splice(0, indexQuality).join(' ').replace(new RegExp(`[^ ${phase} ]`, 'gi'), '').trim()
   if (name === '')
     return failedScan(t('analyze.nameNotFound'))
 
@@ -196,7 +199,7 @@ const checkInfo = (textArray: string[]) => {
   if (!isNaN(parseFloat(levelPhase)))
     item.level = parseFloat(levelPhase)
 
-  restrictionsPhase = textArray.splice(indexRequires, textArray.length).join('').replace(/[\+ ]/g, '').replace(/([0-9.]{1,})(\,)([0-9.]{1,})/g, '$1$3').replace(/(\[)([0-9.]{1,})(\s\-\s)([0-9.]{1,})(\])/g, '$1$2-$4$5')
+  restrictionsPhase = textArray.splice(indexRequires, textArray.length).join('').replace(/[\+ ]/g, '')
 
   // remove lost when epuipped
   const lostText = `장착.*사라지는|lost.*when`
@@ -205,9 +208,7 @@ const checkInfo = (textArray: string[]) => {
   if (indexLost !== -1)
     textArray.splice(indexLost, textArray.length)
 
-  let textStr = textArray.join('').replace(/[\+ ]/g, '').replace(/([0-9.]{1,})(\,)([0-9.]{1,})/g, '$1$3').replace(/(\[)([0-9.]{1,})(\s\-\s)([0-9.]{1,})(\])/g, '$1$2-$4$5')
-  //let textStr = textArray.join('').replace(/[\+ ]/g, '').replace(/([0-9.]{1,})(\,)([0-9.]{1,})/g, '$1$3').replace(/(\[)([0-9.]{1,})([^\-\[]*\-[^\-\[]*)([0-9.]{1,})([1\]]{1})/g, '$1$2-$4$5')
-
+  let textStr = textArray.join('').replace(/[\+ ]/g, '').replace(/([0-9]*?)(\,)([0-9.]{1,})/g, '$1$3').replace(/\[\[/g, '[').replace(/\]\]/g, ']').replace(/(\[?)([0-9.]{1,})(\-)([0-9.]{1,})(\]?)/g, '[$2-$4]')
   setTimeout(() => {
     checkedItem.push('info')
     checkProperties(textStr)
@@ -215,11 +216,11 @@ const checkInfo = (textArray: string[]) => {
 }
 
 const removeUnnecessary = (attr: string | undefined) => {
-  return attr?.replace(/[\(]{1}[^\(]{1,}[\)]{1}/g, '').replace(new RegExp(`[^${is.analyze.lang}0-9\\,\\.\\-#\\[\\]]`, 'g'), '')
+  return attr?.replace(/[\(]{1}[^\(]{1,}[\)]{1}/g, '').replace(new RegExp(`[^${phase}0-9\\,\\.\\-#\\[\\]]`, 'g'), '')
 }
 
 const attrToRegex = (attr: string | undefined) => {
-  return removeUnnecessary(attr?.replace(/\{x\}/g, '#'))?.replace(/\[/g, '\\[').replace(/\]/g, '\\]').replace(/\-/g, '\\-').replace(/#/g, '[0-9.]{1,}')
+  return removeUnnecessary(attr?.replace(/\{x\}/g, '#'))?.replace(/\s/g, '').replace(/\[/g, '\\[').replace(/\]/g, '\\]').replace(/\-/g, '\\-').replace(/#/g, '[0-9.]{1,}')
 }
 
 const checkProperties = (textStr: string) => {
@@ -255,11 +256,10 @@ const checkAffixes = (textStr: string) => {
   currentCheck.value = 'affixes'
 
   try {
-    const affixData: Array<IAffix> = JSON.parse(JSON.stringify(is.affixes.data)).sort((a: IAffix, b: IAffix) => { return b.label.length - a.label.length })
+    const affixData: Array<IAffix> = JSON.parse(JSON.stringify(is.affixes.data)).filter((a: IAffix) => a.label.match(new RegExp(`[${phase}]`, 'i'))).sort((a: IAffix, b: IAffix) => { return b.label.length - a.label.length })
 
     for (const affix of affixData) {
       const matchAffix = textStr.match(new RegExp(attrToRegex(affix.label) as string, 'i'))
-
       matchAffix?.forEach((ma: string) => {
         const matchMinMax = textStr.substring(textStr.indexOf(ma), textStr.length).match(/[1\[]{1}[0-9.]{1,}[^\-\[]*\-[^\-\[]*[0-9.]{1,}[1\]]{1}/)?.map(mmm => mmm.replace(/1$/, '').replace(/[^0-9.-]/g, '').split(/\-/).map(mm => !isNaN(parseFloat(mm)) ? parseFloat(mm) : 0))
         const matchValues = ma.match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv))
@@ -334,14 +334,14 @@ const scan = (f: File) => {
     const image = new Image()
     image.src = fr.result as string
     image.onload = () => {
+      const predictItem = Math.round(image.width * 0.25)
       canvas.width = image.width
       canvas.height = image.height
       if (ctx) {
-        ctx.filter = 'sepia(1) saturate(2) contrast(2) grayscale(.2) blur(.2px) brightness(.4)'
-        ctx.imageSmoothingEnabled = true
-        ctx.imageSmoothingQuality = 'high'
-        ctx.drawImage(image, 0, 0)
-        is.recognize(canvas)
+        ctx.filter = 'sepia(.2) saturate(1.2) contrast(1.2) blur(.1px)'
+        ctx.drawImage(image, 0, 0, image.width - predictItem, predictItem, 0, 0, image.width - predictItem, predictItem)
+        ctx.drawImage(image, 0, predictItem, image.width, image.height - predictItem, 0, predictItem, image.width, image.height - predictItem)
+        is.recognize(canvas, lang)
           .then((text) => {
             plainText = text
             checkedItem.push('analyze')
