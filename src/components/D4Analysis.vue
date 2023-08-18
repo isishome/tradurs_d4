@@ -45,6 +45,7 @@ const item = new Item('')
 let restrictionsPhase: string
 
 const fileRef = ref<QFile>()
+const fileRef2 = ref<QFile>()
 const file = ref()
 
 const beforeHide = () => {
@@ -319,26 +320,27 @@ const aggregate = () => {
   }, timeout)
 }
 
-const scan = (files: File) => {
+const scan = (f: File) => {
   emit('start')
   currentCheck.value = 'analyze'
   showProgress.value = true
+
   const canvas = document.createElement('canvas')
   const ctx = canvas.getContext('2d')
   const fr = new FileReader()
-  fr.readAsDataURL(files)
+  fr.readAsDataURL(f)
 
   fr.onload = () => {
     const image = new Image()
     image.src = fr.result as string
     image.onload = () => {
-      const ratio = Math.round(500 / image.width * 10) / 10
-      canvas.width = 500
-      canvas.height = image.height * ratio
+      canvas.width = image.width
+      canvas.height = image.height
       if (ctx) {
-        ctx.scale(ratio, ratio)
-        ctx.filter = 'sepia(.5) saturate(4) contrast(2) grayscale(.5) blur(.4px)'
-        ctx.drawImage(image, 4, 4)
+        ctx.filter = 'sepia(1) saturate(2) contrast(2) grayscale(.2) blur(.2px) brightness(.4)'
+        ctx.imageSmoothingEnabled = true
+        ctx.imageSmoothingQuality = 'high'
+        ctx.drawImage(image, 0, 0)
         is.recognize(canvas)
           .then((text) => {
             plainText = text
