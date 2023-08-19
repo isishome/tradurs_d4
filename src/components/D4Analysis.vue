@@ -6,7 +6,7 @@ export default {
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import { QFile, uid } from 'quasar'
+import { QFile, uid, useQuasar } from 'quasar'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { type ILabel, type Affix as IAffix, useItemStore } from 'src/stores/item-store'
@@ -24,9 +24,10 @@ withDefaults(defineProps<IProps>(), {
 
 const emit = defineEmits(['start', 'end', 'failed'])
 
-const is = useItemStore()
+const $q = useQuasar()
 const route = useRoute()
 const { t } = useI18n({ useScope: 'global' })
+const is = useItemStore()
 
 const lang: string = route.params.lang as string || 'ko'
 const phase = is.analyze.lang[lang as keyof typeof is.analyze.lang]
@@ -321,6 +322,7 @@ const aggregate = () => {
 }
 
 const scan = (f: File) => {
+  dropBox.show = false
   emit('start')
   currentCheck.value = 'analyze'
   showProgress.value = true
@@ -356,11 +358,62 @@ const scan = (f: File) => {
     }
   }
 }
+
+const click = () => {
+  if ($q.platform.is.mobile)
+    fileRef.value?.pickFiles()
+  else
+    dropBox.show = true
+}
+
+interface DropBox {
+  show: boolean,
+  enter: number
+}
+
+const dropArea = ref<HTMLDivElement>()
+const dropBox = reactive<DropBox>({
+  show: false,
+  enter: 0
+})
+
+const fileCheckAndScanStart = (f?: File) => {
+  if (f && f.type.indexOf('image') !== -1)
+    scan(f)
+  else {
+    $q.notify({
+      icon: 'img:/images/icons/alert.svg',
+      color: 'negative',
+      classes: '',
+      message: t('analyze.notImageFormat')
+    })
+  }
+}
+
+const drop = (event: DragEvent) => {
+  event.preventDefault()
+  fileCheckAndScanStart(event.dataTransfer?.files[0])
+}
+
+const paste = (event: ClipboardEvent) => {
+  event.preventDefault()
+  fileCheckAndScanStart(event.clipboardData?.files[0])
+}
+
+const showDropBox = () => {
+  dropArea.value?.addEventListener('drop', drop)
+  document.body.addEventListener('paste', paste)
+}
+
+const beforeHideDropBox = () => {
+  dropArea.value?.removeEventListener('drop', drop)
+  document.body.removeEventListener('paste', paste)
+}
 </script>
 <template>
   <div>
     <D4Btn :label="t('btn.imageAnalysis')" :loading="loading" :disable="disable" color="var(--q-light-magic)"
-      @click="fileRef?.pickFiles" v-bind="$attrs" />
+      @click="click" v-bind="$attrs" />
     <q-file v-show="false" ref="fileRef" outlined v-model="file" accept="image/*" @update:model-value="scan" />
     <D4Dialog v-model="showProgress" persistent width="400px" max-width="80vw" @before-hide="beforeHide">
       <template #top>
@@ -384,6 +437,24 @@ const scan = (f: File) => {
         </div>
       </template>
     </D4Dialog>
+    <D4Dialog v-model="dropBox.show" width="600px" max-width="80vw" @show="showDropBox" @before-hide="beforeHideDropBox">
+      <template #middle>
+        <div ref="dropArea" class="drop-area q-ma-lg q-pa-lg column items-center q-gutter-y-sm"
+          :class="{ 'enter': dropBox.enter > 0 }" @dragenter.prevent="dropBox.enter++"
+          @dragleave.prevent="dropBox.enter--" @dragover.prevent>
+          <img src="/images/icons/image.svg" class="icon" width="48" height="48" alt="icon_image" />
+          <div class="text-h6">{{ t('analyze.dragAndDrop') }}</div>
+          <div class="row q-gutter-x-sm items-baseline">
+            <div class="text-h6">{{ t('analyze.or') }}</div>
+            <q-btn flat dense no-caps size="lg" class="no-hover" :ripple="false" padding="0" color="primary"
+              :label="t('analyze.browse')" aria-label="Tradurs Browse Button" @click="fileRef?.pickFiles" />
+          </div>
+          <div class="text-caption q-px-xl break-keep text-center">
+            {{ t('analyze.dragMessage') }}
+          </div>
+        </div>
+      </template>
+    </D4Dialog>
   </div>
 </template>
 <style scoped>
@@ -394,5 +465,19 @@ const scan = (f: File) => {
 .check-item:deep(.q-checkbox__bg) {
   border: none !important;
   background: none !important;
+}
+
+.drop-area {
+  border: dashed 2px currentColor;
+  border-radius: 10px;
+  cursor: default;
+}
+
+.drop-area.enter {
+  background-color: var(--q-dark-page);
+}
+
+.body--light .drop-area.enter {
+  background-color: var(--q-cloud);
 }
 </style>

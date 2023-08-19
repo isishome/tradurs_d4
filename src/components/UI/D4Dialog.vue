@@ -17,7 +17,7 @@ const props = withDefaults(defineProps<IProps>(), {
   width: null,
   maxWidth: null
 })
-const emit = defineEmits(['update:modelValue', 'hide', 'before-hide', 'submit'])
+const emit = defineEmits(['update:modelValue', 'show', 'hide', 'before-hide', 'submit'])
 
 const show = ref<boolean>(props.modelValue)
 
@@ -27,8 +27,8 @@ watch(() => props.modelValue, (val) => {
 </script>
 
 <template>
-  <q-dialog v-model="show" @hide="emit('hide')" @before-hide="emit('before-hide')" :maximized="maximized"
-    :persistent="persistent" transition-show="none" transition-hide="none" :transition-duration="0"
+  <q-dialog v-model="show" @show="emit('show')" @hide="emit('hide')" @before-hide="emit('before-hide')"
+    :maximized="maximized" :persistent="persistent" transition-show="none" transition-hide="none" :transition-duration="0"
     :no-route-dismiss="noRouteDismiss" @update:model-value="emit('update:modelValue', show)">
     <q-card class="card-item dialog normal overflow-hidden"
       :style="`${width ? `width:${width} !important;` : ''}${maxWidth ? `max-width:${maxWidth} !important;` : ''}`">

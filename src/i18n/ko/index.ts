@@ -205,7 +205,12 @@ export default {
     typeNotFound: '아이템 유형 정보를 찾지 못했습니다',
     typeValueNotFound: '아이템 유형 값 정보를 찾지 못했습니다',
     nameNotFound: '아이템 명 정보를 찾지 못했습니다',
-    requireNotFound: '아이템 요구 레벨 정보를 찾지 못했습니다'
+    requireNotFound: '아이템 요구 레벨 정보를 찾지 못했습니다',
+    dragAndDrop: '드래그 & 드롭',
+    or: '또는',
+    browse: '파일 선택',
+    dragMessage: '이곳에 아이템 이미지를 드롭 하거나 클립보드에 복사된 아이템 이미지를 붙여넣기 하세요',
+    notImageFormat: '이미지 형식의 파일이 아닙니다'
   },
   max: '최대',
   min: '최소',

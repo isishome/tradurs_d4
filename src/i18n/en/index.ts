@@ -206,7 +206,12 @@ export default {
     typeNotFound: 'Item type information not found',
     typeValueNotFound: 'Item type value information not found',
     nameNotFound: 'Item name information not found',
-    requireNotFound: 'Item requires level information not found'
+    requireNotFound: 'Item requires level information not found',
+    dragAndDrop: 'Drag & Drop',
+    or: 'or',
+    browse: 'browse',
+    dragMessage: 'Drop an item image here or paste an item image copied from the clipboard',
+    notImageFormat: 'The file is not in an image format'
   },
   max: 'Max',
   min: 'Min',
