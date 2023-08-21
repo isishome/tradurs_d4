@@ -222,7 +222,7 @@ interface Add {
   category: string | null,
   type: string,
   attribute: string,
-  continuously: boolean,
+  continuous: boolean,
   error: boolean,
   errorMessage: string
 }
@@ -233,7 +233,7 @@ const add = reactive<Add>({
   category: null,
   type: '',
   attribute: '',
-  continuously: false,
+  continuous: false,
   error: false,
   errorMessage: ''
 })
@@ -271,19 +271,18 @@ const applyAdd = (): void => {
     label: add.attribute,
     type: add.type
   })
-    .then((result: Property | Affix | Restriction) => {
-      const tempId = uid()
-      const attribute: any = { valueId: tempId, action: 2 }
-      attribute[add.category === 'affixes' ? 'affixId' : 'affixId'] = result.value
-      attribute[add.category === 'affixes' ? 'affixValues' : 'affixValues'] = []
-      const target = add.category === 'affixes' ? activatedItem.value.affixes : activatedItem.value.affixes
-      target.push(attribute)
-      activatedRef.value?.scrollEnd(add.category, tempId)
+    .then(() => {
+      $q.notify({
+        icon: 'img:/images/icons/check.svg',
+        color: 'positive',
+        classes: '',
+        message: t('attribute.complete')
+      })
 
-      if (add.continuously)
+      if (add.continuous)
         add.attribute = ''
 
-      add.show = add.continuously
+      add.show = add.continuous
     })
     .catch(() => { })
     .then(() => {
@@ -891,7 +890,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
     <D4Dialog v-model="add.show" :no-route-dismiss="false" :persistent="disable" @submit="applyAdd" @hide="hideAdd">
       <template #top>
         <q-card-section class="row items-center q-ml-md">
-          <div class="name">{{ t('attribute.register', { attr: t(add.category as string) })
+          <div class="name">{{ t('attribute.request', { attr: t(add.category as string) })
           }}
           </div>
         </q-card-section>
@@ -916,10 +915,10 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
       <template #bottom>
         <q-card-section>
           <div class="row justify-between items-center q-py-xs">
-            <q-checkbox size="xs" :disable="disable" v-model="add.continuously" :label="t('attribute.continuously')" />
+            <q-checkbox size="xs" :disable="disable" v-model="add.continuous" :label="t('attribute.continuous')" />
             <div class="row items-center q-gutter-sm">
               <D4Btn :label="t('btn.cancel')" :disable="disable" color="rgb(150,150,150)" @click="add.show = false" />
-              <D4Btn :label="t('btn.register')" :progress="disable" type="submit" />
+              <D4Btn :label="t('btn.request')" :progress="disable" type="submit" />
             </div>
           </div>
         </q-card-section>

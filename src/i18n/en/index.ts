@@ -121,15 +121,16 @@ export default {
     turnDown: 'Turn Down',
     imageAnalysis: 'Analysis',
     newMessages: 'You have a new message',
-    register: 'Register'
+    request: 'Request'
   },
   attribute: {
-    register: 'Register {attr}',
+    request: 'Request additional {attr}',
     placeholder: "+{'{'}x{'}'}% Increased Attack Speed for {'{'}x{'}'} Seconds After Dodging an Attack",
     enter: 'Please enter the {attr}',
     invalid: 'Invalid {attr} format',
     exists: 'Already exists {attr}',
-    continuously: 'Add continuously'
+    continuous: 'continuous addition',
+    complete: 'Your request to add an affix is complete'
   },
   item: {
     hardcore: 'Hardcore',
@@ -257,8 +258,8 @@ export default {
   notice: {
     title: 'Change and update history, notices',
     top: 'Hello. This is Tradurs.\n\nHere are the details of changes and updates and precautions.',
-    changes: "◆ Changes\n· \'Get An Offer\' feature: Manor temperature above 1 degree → Battletag certified user\n· Weekly award targets: certain manners temperature or higher → certain manners temperature or higher + Battletag certified user\n· Changed gold coin icon image\n· Minimum/maximum gold coin sale, offer amount: 100,000/9,999,999,999,999 → 100,000/99,999,900,000\n·  Minimum gold coin denomination: 1 → 100,000\n",
-    updates: "◆ Updates\n· Added Battle.net login feature.\n· BattleTag Authentication has been added.\n· With the addition of the battle tag verification feature, the battle tag modification limit has been removed.\n· While logged in, the user information tooltip will display whether you are battle tag verified or not.",
+    changes: "◆ Change\n· Item affixes Customization Features → Item Affixes User Requested Features",
+    updates: "◆ Updates\n· Item affixes are fixed by language (Korean, English).",
     cautions: "◆ Precautions\n· Do not solicit cash transactions\n· Do not display battletag",
     bottom: 'Thank you',
     close: 'Do not open for 24 hours'

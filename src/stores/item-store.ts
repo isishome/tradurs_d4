@@ -415,20 +415,10 @@ export const useItemStore = defineStore('item', {
       })
     },
     addAttribute(category: string | null, attribute: Property | Affix | Restriction) {
-      return new Promise<Property | Affix | Restriction>((resolve, reject) => {
+      return new Promise<void>((resolve, reject) => {
         api.post('/d4/item/attribute', { category: category, attribute: attribute })
-          .then((response) => {
-            if (response.data.length) {
-              attribute.value = response.data[0].value
-              attribute.sort = response.data[0].sort
-              const target = category === 'properties' ? this.properties : category === 'affixes' ? this.affixes : category === 'restrictions' ? this.restrictions : undefined
-              if (target?.data.filter(p => p.value === attribute.value).length === 0)
-                target?.data.push(attribute)
-
-              resolve(attribute)
-            }
-            else
-              reject()
+          .then(() => {
+            resolve()
           })
           .catch((e) => { reject(e) })
       })
