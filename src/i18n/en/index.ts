@@ -130,7 +130,9 @@ export default {
     invalid: 'Invalid {attr} format',
     exists: 'Already exists {attr}',
     continuous: 'continuous addition',
-    complete: 'Your request to add an affix is complete'
+    complete: 'Your request to add an affix is complete',
+    open: 'Open Attribute',
+    close: 'Close Attribute'
   },
   item: {
     hardcore: 'Hardcore',

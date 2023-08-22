@@ -1,7 +1,8 @@
 import { nextTick } from "vue"
-import { copyToClipboard, Notify } from 'quasar'
+import { copyToClipboard, Notify, Platform } from 'quasar'
 import { i18n } from "src/boot/i18n"
 import { AffixValue } from "src/types/item"
+import { platform } from "os"
 
 export const checkName = (name: string) => {
   return /^[0-9a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣\s,\.'"%\(\)\+\-\:]{2,}$/gi.test(name) && name.length <= 256
@@ -101,6 +102,9 @@ export const clipboard = (text: string, msg: string) => {
 }
 
 export const focus = (evt: Event) => {
+  if (Platform.is.mobile)
+    return
+
   const el: HTMLInputElement | null = (evt.target as Element)?.closest('input')
   el?.select()
 }

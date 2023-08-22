@@ -167,8 +167,8 @@ onMounted(() => {
         <div v-show="newMessages" class="text-center">
           <q-separator />
           <div class="q-py-md">
-            <q-btn color="secondary" v-show="newMessages" no-caps :disable="disable" unelevated padding="6px"
-              class="text-caption" aria-label="Tradurs Refresh Button" @click="refresh">
+            <q-btn color="secondary" v-show="newMessages" no-caps unelevated padding="6px" class="text-caption"
+              aria-label="Tradurs Refresh Button" @click="refresh">
               <div class="row items-center q-gutter-x-sm">
                 <img src="/images/icons/restore.svg" width="18" height="18" class="invert" alt="icon_prev"
                   @click="prev" />

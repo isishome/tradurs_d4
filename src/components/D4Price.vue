@@ -43,7 +43,7 @@ if (!props.offer)
 
 const update = (): void => {
   nextTick(() => {
-    if (props.data.currency === 'gold') {
+    if (_price.currency === 'gold') {
       _priceError.value = false
 
       if (Number(_price.currencyValue as number) >= 100000)
@@ -70,20 +70,20 @@ const updateCurrency = (val: string | null): void => {
         <img src="/images/items/inventory/gold.webp" width="24" height="24" alt="icon_price" />
       </div>
       <div>
-        <q-select v-model="_price.currency" :disable="disable" behavior="menu" outlined dense no-error-icon
-          hide-bottom-space emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0"
-          :label="t('price.currency')" dropdown-icon="img:/images/icons/dropdown.svg" :options="currencies"
-          popup-content-class="scroll" @update:model-value="updateCurrency">
+        <q-select v-model="_price.currency" :disable="disable" outlined dense no-error-icon hide-bottom-space emit-value
+          map-options transition-show="none" transition-hide="none" :transition-duration="0" :label="t('price.currency')"
+          dropdown-icon="img:/images/icons/dropdown.svg" :options="currencies" popup-content-class="scroll"
+          @update:model-value="updateCurrency">
           <template #selected-item="scope">
             <div class="ellipsis">{{ scope.opt.label }}</div>
           </template>
         </q-select>
       </div>
       <div v-if="data.currency === 'rune'" class="col">
-        <q-select v-model="_price.currencyValue" :disable="disable" behavior="menu" outlined dense no-error-icon
-          hide-bottom-space emit-value map-options popup-content-class="scroll" transition-show="none"
-          transition-hide="none" :transition-duration="0" :options="runes()"
-          dropdown-icon="img:/images/icons/dropdown.svg" @update:model-value="update">
+        <q-select v-model="_price.currencyValue" :disable="disable" outlined dense no-error-icon hide-bottom-space
+          emit-value map-options popup-content-class="scroll" transition-show="none" transition-hide="none"
+          :transition-duration="0" :options="runes()" dropdown-icon="img:/images/icons/dropdown.svg"
+          @update:model-value="update">
           <template #selected-item="scope">
             <div class="ellipsis">{{ scope.opt.label }}</div>
           </template>

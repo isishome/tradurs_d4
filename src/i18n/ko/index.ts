@@ -129,7 +129,9 @@ export default {
     invalid: '잘못된 형식의 {attr} 입니다',
     exists: '이미 존재하는 {attr} 입니다',
     continuous: '연속 추가',
-    complete: '옵션 추가 요청이 완료되었습니다'
+    complete: '옵션 추가 요청이 완료되었습니다',
+    open: '속성 열기',
+    close: '속성 닫기'
   },
   item: {
     hardcore: '하드코어',

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref, computed, defineAsyncComponent, useSlots, nextTick, watch, onUnmounted } from 'vue'
+import { reactive, ref, computed, defineAsyncComponent, useSlots, nextTick, watch, onUnmounted, ComputedRef } from 'vue'
 import { QCard, useQuasar, date } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
@@ -126,6 +126,9 @@ const propertyRef = ref<HTMLDivElement | null>(null)
 const affixRef = ref<HTMLDivElement | null>(null)
 const restrictionRef = ref<HTMLDivElement | null>(null)
 const scrollEnd = (pType: string, valueId: string) => {
+  if ($q.platform.is.mobile)
+    return
+
   nextTick(() => {
     if (pType === 'properties' && propertyRef.value) {
       const findValue = propertyRef.value.querySelector(`div[data-id="${valueId}"] input`) as HTMLInputElement
@@ -150,6 +153,12 @@ const showItemImages = ref<boolean>(false)
 
 // attribute tabs
 const attribute = ref<string>(hasProperties.value ? 'properties' : 'affixes')
+
+// attribute mobile
+const attrMobile = reactive<{ is: ComputedRef<boolean>, show: boolean }>({
+  is: computed(() => $q.screen.lt.md),
+  show: false
+})
 
 watch(() => props.data.quantity, (val: number) => {
   _quantity.value = val
@@ -191,10 +200,10 @@ defineExpose({ scrollEnd })
           <div class="full-width">
             <div class="row items-center q-col-gutter-sm">
               <div class="col">
-                <q-select v-model="_type" :disable="disable" behavior="menu" outlined dense no-error-icon
-                  hide-bottom-space emit-value map-options transition-show="none" transition-hide="none"
-                  :transition-duration="0" :label="t('item.selectType')" dropdown-icon="img:/images/icons/dropdown.svg"
-                  :options="filterTypes()" popup-content-class="scroll" @update:model-value="updateType">
+                <q-select v-model="_type" :disable="disable" outlined dense no-error-icon hide-bottom-space emit-value
+                  map-options transition-show="none" transition-hide="none" :transition-duration="0"
+                  :label="t('item.selectType')" dropdown-icon="img:/images/icons/dropdown.svg" :options="filterTypes()"
+                  popup-content-class="scroll" @update:model-value="updateType">
                   <template v-if="store.fixedFilter.ladder && _type === 'accessory'" #prepend>
                     <q-icon class="caution" size="19px">
                       <q-spinner-puff :color="$q.dark.isActive ? 'yellow-6' : 'black'" />
@@ -212,9 +221,9 @@ defineExpose({ scrollEnd })
               </div>
               <!-- Item Type Value Place ----------------------------------------------------------------------------------->
               <div class="col" v-if="_type === 'rune'">
-                <q-select v-model="_typeValue1" :disable="disable" behavior="menu" outlined dense no-error-icon
-                  hide-bottom-space emit-value map-options transition-show="none" transition-hide="none"
-                  :transition-duration="0" :label="t('item.selectRune')" :options="filterRunesByType()"
+                <q-select v-model="_typeValue1" :disable="disable" outlined dense no-error-icon hide-bottom-space
+                  emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0"
+                  :label="t('item.selectRune')" :options="filterRunesByType()"
                   dropdown-icon="img:/images/icons/dropdown.svg " popup-content-class="scroll"
                   @update:model-value="update">
                   <template #selected-item="scope">
@@ -234,11 +243,10 @@ defineExpose({ scrollEnd })
                 </q-select>
               </div>
               <div class="col" v-else-if="_type === 'aspect'">
-                <q-select v-model="_typeValue1" :disable="disable" behavior="menu" outlined dense no-error-icon
-                  hide-bottom-space emit-value map-options transition-show="none" transition-hide="none"
-                  :transition-duration="0" :label="t('item.selectAspectCategory')"
-                  dropdown-icon="img:/images/icons/dropdown.svg" :options="store.aspectCategories"
-                  popup-content-class="scroll" @update:model-value="update">
+                <q-select v-model="_typeValue1" :disable="disable" outlined dense no-error-icon hide-bottom-space
+                  emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0"
+                  :label="t('item.selectAspectCategory')" dropdown-icon="img:/images/icons/dropdown.svg"
+                  :options="store.aspectCategories" popup-content-class="scroll" @update:model-value="update">
                   <template #selected-item="scope">
                     <div class="ellipsis">{{ scope.opt.label }}</div>
                   </template>
@@ -257,9 +265,9 @@ defineExpose({ scrollEnd })
               </div>
               <template v-else>
                 <div class="col">
-                  <q-select v-model="_typeValue1" :disable="disable" behavior="menu" outlined dense no-error-icon
-                    hide-bottom-space emit-value map-options transition-show="none" transition-hide="none"
-                    :transition-duration="0" :label="t('item.selectClass')" dropdown-icon="img:/images/icons/dropdown.svg"
+                  <q-select v-model="_typeValue1" :disable="disable" outlined dense no-error-icon hide-bottom-space
+                    emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0"
+                    :label="t('item.selectClass')" dropdown-icon="img:/images/icons/dropdown.svg"
                     :options="filterClasses(_type)" popup-content-class="scroll" @update:model-value="updateTypeValue1">
                     <template #selected-item="scope">
                       <div class="ellipsis">{{ scope.opt.label }}</div>
@@ -267,10 +275,10 @@ defineExpose({ scrollEnd })
                   </q-select>
                 </div>
                 <div class="col" v-if="_typeValue1 === 'gem'">
-                  <q-select v-model="_typeValue2" :disable="disable" behavior="menu" outlined dense no-error-icon
-                    hide-bottom-space emit-value map-options transition-show="none" transition-hide="none"
-                    :transition-duration="0" :label="t('item.selectGem')" dropdown-icon="img:/images/icons/dropdown.svg"
-                    :options="store.gems" popup-content-class="scroll" @update:model-value="update">
+                  <q-select v-model="_typeValue2" :disable="disable" outlined dense no-error-icon hide-bottom-space
+                    emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0"
+                    :label="t('item.selectGem')" dropdown-icon="img:/images/icons/dropdown.svg" :options="store.gems"
+                    popup-content-class="scroll" @update:model-value="update">
                     <template #selected-item="scope">
                       <div class="ellipsis">{{ scope.opt.label }}</div>
                     </template>
@@ -378,80 +386,95 @@ defineExpose({ scrollEnd })
           allow-null no-button :disable="disable" @update:model-value="update" />
       </q-card-section>
       <D4Separator />
-      <q-card-section class="tab row justify-end items-center">
-        <q-btn-toggle v-model="attribute" square flat no-caps aria-label="Tradurs Attribute Button" :ripple="false"
-          :color="$q.dark.isActive ? 'grey-5' : 'grey-8'" :padding="$q.screen.lt.sm ? '8px 8px' : ''"
-          :size="$q.screen.lt.sm ? '12px' : ''" toggle-color="transparent toggle" :options="attributes" />
+      <q-card-section class="lt-md col row justify-center items-center">
+        <q-btn no-caps :label="t('attribute.open')" aria-label="Tradurs Attribute Button" class="attribute full-width"
+          size="lg" padding="xl" @click="attrMobile.show = true">
+          <img width="24" height="24" class="icon q-ml-sm rotate-45" src="/images/icons/expand.svg"
+            alt="Tradurs Expand Icon" />
+        </q-btn>
       </q-card-section>
-      <q-card-section class="col scroll" style="padding-top:0">
-        <div class="attribute">
-          <q-tab-panels v-model="attribute" class="q-pa-xs bg-transparent full-height">
-            <q-tab-panel v-if="hasProperties" name="properties" class="q-gutter-y-xs no-padding column">
-              <div v-if="slots['add-property']">
-                <slot name="add-property" :wrap="editWrap"></slot>
-              </div>
-              <div ref="propertyRef" class="col scroll">
-                <q-item v-show="loading" v-for="c in 2" :key="c" style="min-height:10px;padding:3px">
-                  <q-item-section side class="q-pr-sm">
-                    <q-skeleton type="circle" width="10px" height="10px" />
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label>
-                      <q-skeleton type="text" width="65%" />
-                    </q-item-label>
-                  </q-item-section>
-                </q-item>
-                <div v-if="slots.properties && !loading" class="list q-gutter-y-xs">
-                  <slot name="properties">
-                  </slot>
+      <q-card flat v-show="!attrMobile.is || attrMobile.show" class="col"
+        :class="attrMobile.is ? 'fullscreen column' : 'bg-transparent'">
+        <q-card-section class="tab row justify-end items-center">
+          <q-btn-toggle v-model="attribute" square flat no-caps aria-label="Tradurs Attribute Button" :ripple="false"
+            :color="$q.dark.isActive ? 'grey-5' : 'grey-8'" toggle-color="transparent toggle" :options="attributes" />
+        </q-card-section>
+        <q-card-section class="col scroll" style="padding-top:0">
+          <div class="attribute">
+            <q-tab-panels v-model="attribute" class="q-pa-xs bg-transparent full-height">
+              <q-tab-panel v-if="hasProperties" name="properties" class="q-gutter-y-xs no-padding column">
+                <div v-if="slots['add-property']">
+                  <slot name="add-property" :wrap="editWrap"></slot>
                 </div>
-              </div>
-            </q-tab-panel>
-            <q-tab-panel name="affixes" class="q-gutter-y-xs no-padding column">
-              <div v-if="slots['add-affix']">
-                <slot name="add-affix" :wrap="editWrap"></slot>
-              </div>
-              <div ref="affixRef" class="col scroll">
-                <q-item v-show="loading" v-for="c in 3" :key="c" style="min-height:10px;padding:3px">
-                  <q-item-section side class="q-pr-sm">
-                    <q-skeleton type="circle" width="10px" height="10px" />
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label>
-                      <q-skeleton type="text" width="65%" />
-                    </q-item-label>
-                  </q-item-section>
-                </q-item>
-                <div v-if="slots.affixes && !loading" class="list q-gutter-y-xs">
-                  <slot name="affixes">
-                  </slot>
+                <div ref="propertyRef" class="col scroll">
+                  <q-item v-show="loading" v-for="c in 2" :key="c" style="min-height:10px;padding:3px">
+                    <q-item-section side class="q-pr-sm">
+                      <q-skeleton type="circle" width="10px" height="10px" />
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>
+                        <q-skeleton type="text" width="65%" />
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <div v-if="slots.properties && !loading" class="list q-gutter-y-xs">
+                    <slot name="properties">
+                    </slot>
+                  </div>
                 </div>
-              </div>
-            </q-tab-panel>
-            <q-tab-panel name="restrictions" class="q-gutter-y-xs no-padding column">
-              <div v-if="slots['add-restriction']">
-                <slot name="add-restriction" :wrap="editWrap"></slot>
-              </div>
-              <div ref="restrictionRef" class="col scroll">
-                <q-item v-show="loading" v-for="c in 3" :key="c" style="min-height:10px;padding:3px">
-                  <q-item-section side class="q-pr-sm">
-                    <q-skeleton type="circle" width="10px" height="10px" />
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label>
-                      <q-skeleton type="text" width="65%" />
-                    </q-item-label>
-                  </q-item-section>
-                </q-item>
-                <div v-if="slots.restrictions && !loading" class="list q-gutter-y-xs">
-                  <slot name="restrictions">
-                  </slot>
+              </q-tab-panel>
+              <q-tab-panel name="affixes" class="q-gutter-y-xs no-padding column">
+                <div v-if="slots['add-affix']">
+                  <slot name="add-affix" :wrap="editWrap"></slot>
                 </div>
-              </div>
-            </q-tab-panel>
-          </q-tab-panels>
-        </div>
-      </q-card-section>
+                <div ref="affixRef" class="col scroll">
+                  <q-item v-show="loading" v-for="c in 3" :key="c" style="min-height:10px;padding:3px">
+                    <q-item-section side class="q-pr-sm">
+                      <q-skeleton type="circle" width="10px" height="10px" />
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>
+                        <q-skeleton type="text" width="65%" />
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <div v-if="slots.affixes && !loading" class="list q-gutter-y-xs">
+                    <slot name="affixes">
+                    </slot>
+                  </div>
+                </div>
+              </q-tab-panel>
+              <q-tab-panel name="restrictions" class="q-gutter-y-xs no-padding column">
+                <div v-if="slots['add-restriction']">
+                  <slot name="add-restriction" :wrap="editWrap"></slot>
+                </div>
+                <div ref="restrictionRef" class="col scroll">
+                  <q-item v-show="loading" v-for="c in 3" :key="c" style="min-height:10px;padding:3px">
+                    <q-item-section side class="q-pr-sm">
+                      <q-skeleton type="circle" width="10px" height="10px" />
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>
+                        <q-skeleton type="text" width="65%" />
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <div v-if="slots.restrictions && !loading" class="list q-gutter-y-xs">
+                    <slot name="restrictions">
+                    </slot>
+                  </div>
+                </div>
+              </q-tab-panel>
+            </q-tab-panels>
+          </div>
+        </q-card-section>
+        <q-card-section>
+          <q-btn no-caps :label="t('attribute.close')" aria-label="Tradurs Attribute Button"
+            class="lt-md attribute full-width" size="lg" @click="attrMobile.show = false">
+            <img width="24" height="24" class="icon q-ml-sm" src="/images/icons/shrink.svg" alt="Tradurs Expand Icon" />
+          </q-btn>
+        </q-card-section>
+      </q-card>
       <D4Separator v-if="!hasProperties" />
       <q-card-section>
         <D4Price :data="data.price" :editable="editable" :disable="disable" :progress="loading" @update="updatePrice" />
@@ -863,7 +886,6 @@ defineExpose({ scrollEnd })
 .attribute:deep(.list) {
   max-height: 30vh;
 }
-
 
 .toggles:deep(.q-toggle__thumb::before) {
   display: none !important;

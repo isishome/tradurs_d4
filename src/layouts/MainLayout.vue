@@ -32,7 +32,7 @@ const filterLoading = computed(() => is.filter.loading)
 const leftDrawerOpen = ref<boolean>(false)
 const rightDrawerOpen = ref<boolean>(false)
 const signed = computed<boolean | null>(() => as.signed)
-const newMessages = computed<boolean>(() => (route.name !== 'messages' && as.newMessages) || as.messagePage.unread > 0)
+const newMessages = computed<boolean>(() => as.newMessages || as.messagePage.unread > 0)
 const screen = computed<Screen>(() => $q.screen)
 const offsetTop = ref<number>(0)
 const asideHeight = computed<string>(() => `calc(100vh - ${screen.value.gt.sm ? offsetTop.value : 0}px)`)
@@ -154,17 +154,6 @@ const onWindowLoad = () => {
   }
 }
 
-// events
-const eventBox = ref<boolean>(as.signed as boolean && false)
-const randomPosition = computed(() => `top:${Math.floor(Math.random() * 80) + 10}%;left:${Math.floor(Math.random() * 80) + 10}%`)
-const event = reactive({
-  open: false
-})
-const showEvent = () => {
-  eventBox.value = false
-  event.open = true
-}
-
 onMounted(() => {
   if (document.readyState !== 'complete')
     window.addEventListener('load', onWindowLoad)
@@ -181,18 +170,6 @@ onUnmounted(() => {
 </script>
 <template>
   <q-layout view="hHh lpR lFf">
-    <q-btn v-if="eventBox" flat padding="0" class="event" :style="randomPosition" :icon="`img:/images/icons/event.svg`"
-      size="14px" @click.stop="showEvent">
-      <q-spinner-puff class="absolute-center" style="z-index:-1" size="50px" />
-    </q-btn>
-    <D4Dialog v-model="event.open" max-width="200px">
-      <template #middle>
-        <q-card-section>
-          <kbd>A</kbd>
-          <kbd>B</kbd>
-        </q-card-section>
-      </template>
-    </D4Dialog>
     <div v-show="['tradeList', 'itemInfo'].includes(route.name as string) && is.fixedFilter.ladder" class="bg-season"
       :style="`--tradurs-season-image:url('${t('season.bg')}');`">
     </div>
@@ -211,8 +188,8 @@ onUnmounted(() => {
       <q-list class="column full-height" style="width:300px">
         <q-item class="row justify-between q-gutter-xs q-py-lg">
           <q-select v-model="locale" :options="gs.localeOptions" :label="t('language', 0, { locale: brLoc })" outlined
-            dense behavior="menu" emit-value map-options style="min-width: 120px"
-            dropdown-icon="img:/images/icons/dropdown.svg" popup-content-class="scroll" @update:model-value="setLang" />
+            dense emit-value map-options style="min-width: 120px" dropdown-icon="img:/images/icons/dropdown.svg"
+            popup-content-class="scroll" @update:model-value="setLang" />
           <div>
             <q-btn round dense flat aria-label="Tradurs Support Button" :ripple="!$q.dark.isActive"
               :to="{ name: 'support', params: { lang: route.params.lang } }">
@@ -623,14 +600,6 @@ ins::after {
   margin: 0;
   padding: 0;
   display: inline-flex;
-}
-
-.event {
-  position: fixed;
-  z-index: 3000;
-  transform: rotate(15deg);
-  filter: invert(62%) sepia(94%) saturate(1568%) hue-rotate(0deg) brightness(105%) contrast(103%);
-  border-radius: 18px;
 }
 
 kbd {
