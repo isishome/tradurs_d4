@@ -122,7 +122,6 @@ const mine = () => {
 
 const clearFilter = () => {
   is.clearFilter(true)
-  update()
 }
 
 const stored = () => {

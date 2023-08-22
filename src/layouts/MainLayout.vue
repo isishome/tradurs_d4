@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onUnmounted, nextTick, reactive } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useQuasar, Screen, uid } from 'quasar'
+import { useQuasar, Screen, uid, QResizeObserverProps } from 'quasar'
 import { useI18n } from 'vue-i18n'
 
 import { useGlobalStore } from 'src/stores/global-store'
@@ -115,6 +115,14 @@ const beforeShow = () => {
     scrollPosDirect()
 }
 
+// about screen size
+const size = computed(() => $q.screen.width < 728 ? 'width:320px;max-height:100px;' : 'width:728px;height:90px;')
+
+watch([size, () => $q.screen.gt.md], ([new1, new2], [old1, old2]) => {
+  if (new1 !== old1 || new2 !== old2)
+    reload()
+})
+
 watch(() => route.name, (val, old) => {
   if (val && val !== old)
     reload()
@@ -125,16 +133,15 @@ watch(() => gs.refresh, (val, old) => {
     reload()
 })
 
-watch(() => $q.screen.gt.sm, () => {
-  rightDrawerOpen.value = false
+watch(() => $q.screen.gt.sm, (val) => {
+  if (val)
+    rightDrawerOpen.value = false
 })
 
 watch(() => is.filter.request, (val) => {
   if (val === 0)
     _name.value = ''
 })
-
-const size = computed(() => $q.screen.width < 728 ? 'width:320px;max-height:100px;' : 'width:728px;height:90px;')
 
 const onWindowLoad = () => {
   if (prod) {
