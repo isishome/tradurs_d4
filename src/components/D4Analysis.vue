@@ -29,6 +29,7 @@ const route = useRoute()
 const { t } = useI18n({ useScope: 'global' })
 const is = useItemStore()
 
+let time: number = 1
 const lang: string = route.params.lang as string || 'ko'
 const phase = is.analyze.lang[lang as keyof typeof is.analyze.lang]
 const timeout = 1000
@@ -51,6 +52,7 @@ let restrictionsPhase: string
 
 const fileRef = ref<QFile>()
 const file = ref()
+let tempFile: File | undefined
 
 const beforeHide = () => {
   file.value = undefined
@@ -68,6 +70,7 @@ const endScan = () => {
 
 const failedScan = (msg: string) => {
   showProgress.value = false
+  tempFile = undefined
 
   emit('failed', msg)
 }
@@ -104,8 +107,14 @@ const checkInfo = (textArray: string[]) => {
   const qualityText = is.quality.map(q => q.fullName.replace(/[ ]/g, '')).join('|')
   const indexQuality = textArray.findIndex(ta => (new RegExp(qualityText, 'gi')).test(ta.replace(/[ ]/g, '')))
 
-  if (indexQuality === -1)
-    return failedScan(t('analyze.qualityNotFound'))
+  if (indexQuality === -1) {
+    if (time === 3)
+      return failedScan(t('analyze.qualityNotFound'))
+    else {
+      time++
+      filtering()
+    }
+  }
 
   const qualityPhase = textArray[indexQuality].split(/\s/gi)
 
@@ -122,13 +131,26 @@ const checkInfo = (textArray: string[]) => {
   }
 
   // check typevalue
-  if (typeValueIndex === -1)
-    return failedScan(t('analyze.typeNotFound'))
+  if (typeValueIndex === -1) {
+    if (time === 3)
+      return failedScan(t('analyze.typeNotFound'))
+    else {
+      time++
+      filtering()
+    }
+  }
+
 
   const typeValue = qualityPhase.splice(typeValueIndex, qualityPhase.length).join(' ').replace(new RegExp(`[^${phase} ]`, 'gi'), '').trim()
 
-  if (!typeValue || typeValue === '')
-    return failedScan(t('analyze.typeNotFound'))
+  if (!typeValue || typeValue === '') {
+    if (time === 3)
+      return failedScan(t('analyze.typeNotFound'))
+    else {
+      time++
+      filtering()
+    }
+  }
 
   // check class
   const findClass = [...is.classes].sort((a, b) => b.label.length - a.label.length).find(c => typeValue.toLowerCase().indexOf(c.label.toLowerCase()) !== -1)
@@ -322,15 +344,22 @@ const aggregate = () => {
 }
 
 const scan = (f: File) => {
+  tempFile = f
   dropBox.show = false
   emit('start')
+
+  filtering()
+}
+
+const filtering = () => {
+  checkedItem.splice(0, checkedItem.length)
   currentCheck.value = 'analyze'
   showProgress.value = true
 
   const canvas = document.createElement('canvas')
   const ctx = canvas.getContext('2d')
   const fr = new FileReader()
-  fr.readAsDataURL(f)
+  fr.readAsDataURL(tempFile as File)
 
   fr.onload = () => {
     const image = new Image()
@@ -340,7 +369,7 @@ const scan = (f: File) => {
       canvas.width = image.width
       canvas.height = image.height
       if (ctx) {
-        ctx.filter = 'sepia(.2) saturate(1.2) contrast(1.2) blur(.1px)'
+        ctx.filter = time === 1 ? 'sepia(.2) saturate(1.2) contrast(1.2) blur(.1px)' : time === 2 ? 'sepia(.2) saturate(1.4) contrast(1.4) blur(.1px)' : 'sepia(.2) saturate(1.6) contrast(1.6) blur(.1px)'
         ctx.drawImage(image, 0, 0, image.width - predictItem, predictItem, 0, 0, image.width - predictItem, predictItem)
         ctx.drawImage(image, 0, predictItem, image.width, image.height - predictItem, 0, predictItem, image.width, image.height - predictItem)
         is.recognize(canvas, lang)
@@ -439,15 +468,14 @@ const beforeHideDropBox = () => {
     </D4Dialog>
     <D4Dialog v-model="dropBox.show" width="600px" max-width="80vw" @show="showDropBox" @before-hide="beforeHideDropBox">
       <template #middle>
-        <div ref="dropArea" class="drop-area q-ma-lg q-pa-lg column items-center q-gutter-y-sm"
+        <div ref="dropArea" class="drop-area q-ma-xl q-pa-xl column items-center q-gutter-y-sm text-h6"
           :class="{ 'enter': dropBox.enter > 0 }" @dragenter.prevent="dropBox.enter++"
-          @dragleave.prevent="dropBox.enter--" @dragover.prevent>
+          @dragleave.prevent="dropBox.enter--" @dragover.prevent @click="fileRef?.pickFiles">
           <img src="/images/icons/image.svg" class="icon" width="48" height="48" alt="icon_image" />
-          <div class="text-h6">{{ t('analyze.dragAndDrop') }}</div>
+          <div>{{ t('analyze.dragAndDrop') }}</div>
           <div class="row q-gutter-x-sm items-baseline">
-            <div class="text-h6">{{ t('analyze.or') }}</div>
-            <q-btn flat dense no-caps size="lg" class="no-hover" :ripple="false" padding="0" color="primary"
-              :label="t('analyze.browse')" aria-label="Tradurs Browse Button" @click="fileRef?.pickFiles" />
+            <div>{{ t('analyze.or') }}</div>
+            <div class="text-primary">{{ t('analyze.browse') }}</div>
           </div>
           <div class="text-caption q-px-xl break-keep text-center">
             {{ t('analyze.dragMessage') }}
@@ -470,7 +498,7 @@ const beforeHideDropBox = () => {
 .drop-area {
   border: dashed 2px currentColor;
   border-radius: 10px;
-  cursor: default;
+  cursor: pointer;
 }
 
 .drop-area.enter {

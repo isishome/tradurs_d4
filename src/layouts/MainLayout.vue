@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onUnmounted, nextTick, reactive } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useQuasar, Screen, uid, QResizeObserverProps } from 'quasar'
+import { useQuasar, Screen, uid } from 'quasar'
 import { useI18n } from 'vue-i18n'
 
 import { useGlobalStore } from 'src/stores/global-store'
@@ -269,7 +269,7 @@ onUnmounted(() => {
             <q-item v-ripple clickable :to="{ name: 'awards', params: { lang: route.params.lang } }" exact
               active-class="active">
               <q-item-section v-show="newAwards" side class="q-pr-xs">
-                <q-badge label="N" color="negative" class="new-badge2" />
+                <q-badge label="N" color="orange-8" class="new-badge2" />
               </q-item-section>
               <q-item-section>
                 <q-item-label>
@@ -371,7 +371,7 @@ onUnmounted(() => {
                 :alert="newMessages ? 'negative' : 'transparent'" exact />
               <q-route-tab :ripple="!$q.dark.isActive" :label="t('page.awards')"
                 :to="{ name: 'awards', params: { lang: route.params.lang } }" exact>
-                <q-badge v-show="newAwards" floating label="N" color="negative" class="new-badge2" />
+                <q-badge v-show="newAwards" floating label="N" color="orange-8" class="new-badge2" />
               </q-route-tab>
             </q-tabs>
           </div>

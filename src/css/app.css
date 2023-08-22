@@ -145,6 +145,14 @@ body.body--dark {
   min-height: 30px !important;
 }
 
+.scroll.bordered {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.28);
+}
+
+.body--light .scroll.bordered {
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12);
+}
+
 .scroll::-webkit-scrollbar {
   width: 4px !important;
 }
@@ -223,4 +231,10 @@ body.body--dark {
 
 .limit-select {
   max-height: 40vh !important;
+}
+
+@media (min-width:599px) {
+  .limit-select {
+    max-width: 200px;
+  }
 }
