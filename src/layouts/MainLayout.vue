@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onUnmounted, nextTick, reactive } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useQuasar, Screen, uid } from 'quasar'
 import { useI18n } from 'vue-i18n'
@@ -26,8 +26,10 @@ const as = useAccountStore()
 const is = useItemStore()
 const { t, locale } = useI18n({ useScope: 'global' })
 
+
 locale.value = props.lang || 'ko'
 
+const tradurs: string = import.meta.env.VITE_APP_TRADURS + (`/${props.lang || 'ko'}`)
 const filterLoading = computed(() => is.filter.loading)
 const leftDrawerOpen = ref<boolean>(false)
 const rightDrawerOpen = ref<boolean>(false)
@@ -44,20 +46,24 @@ const myTweak = (offset: number): void => {
 }
 
 const info = () => {
-  const tradurs: string = import.meta.env.VITE_APP_TRADURS
   document.location.href = `${tradurs}/info`
 }
 
 const progressSign = ref<boolean>(false)
 const sign = () => {
-  progressSign.value = true
-  as.sign().then((result: boolean) => {
-    if (!result)
-      router.go(0)
-  }).catch(() => { })
-    .then(() => {
-      progressSign.value = false
-    })
+  if (!as.signed) {
+    document.location.href = `${tradurs}/sign?redirect=${encodeURIComponent(document.location.href)}`
+  }
+  else {
+    progressSign.value = true
+    as.sign().then((result: boolean) => {
+      if (!result)
+        router.go(0)
+    }).catch(() => { })
+      .then(() => {
+        progressSign.value = false
+      })
+  }
 }
 
 const brLoc = gs.localeOptions.map(lo => lo.value).includes($q.lang.getLocale()?.substring(0, 2) || '') ? $q.lang.getLocale()?.substring(0, 2) : 'ko'

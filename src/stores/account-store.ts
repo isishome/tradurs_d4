@@ -63,12 +63,6 @@ export const useAccountStore = defineStore('account', {
     },
     sign() {
       return new Promise<boolean>(resolve => {
-        if (!this.signed) {
-          const tradurs: string = import.meta.env.VITE_APP_TRADURS
-          document.location.href = `${tradurs}/sign?redirect=${encodeURIComponent(document.location.href)}`
-          resolve(true)
-        }
-
         api.get('/account/signOut')
           .then(() => {
             this.signed = false

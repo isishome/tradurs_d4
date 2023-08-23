@@ -57,9 +57,8 @@ export default boot(({ app, ssrContext, store, router }) => {
 
   if (process.env.SERVER && ssrContext?.req.headers.cookie)
     api.defaults.headers.common['cookie'] = ssrContext?.req.headers.cookie
-
   router.beforeEach((to, from, next) => {
-    api.defaults.headers.common['Accept-Language'] = to.params.lang || ssrContext?.req.headers['Accept-Language'] || 'ko-KR'
+    api.defaults.headers.common['Accept-Language'] = to.params.lang || ssrContext?.req.headers['Accept-Language'] || 'ko'
     next()
   })
 

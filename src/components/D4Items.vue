@@ -738,7 +738,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
       </q-intersection>
       <div v-show="items.length === 0" class="column q-gutter-y-sm justify-center items-center" style="min-height:30vh">
         <div>{{ t(route.name === 'tradeList' ? 'noFilterdItems' : 'noItem') }}</div>
-        <div class="text-caption">{{ t(route.name === 'tradeList' ? 'noFilterdItemsDesc' : '') }}</div>
+        <div class="text-caption">{{ route.name === 'tradeList' ? t('noFilterdItemsDesc') : '' }}</div>
       </div>
     </div>
     <q-dialog v-model="activateShow" :maximized="$q.screen.lt.sm" persistent transition-show="none" transition-hide="none"
