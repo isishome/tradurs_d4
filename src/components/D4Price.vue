@@ -157,10 +157,6 @@ const updateCurrency = (val: string | null): void => {
 </template>
 
 <style scoped>
-.body--light .coin {
-  filter: invert(55%) sepia(69%) saturate(606%) hue-rotate(3deg) brightness(90%) contrast(102%);
-}
-
 .tooltip {
   max-width: 200px;
 }

@@ -112,7 +112,7 @@ const complete = () => {
     transitionShow: 'none',
     transitionHide: 'none',
     noRouteDismiss: true,
-    class: 'q-pa-sm evaluations scroll'
+    class: 'q-pa-sm scroll'
   }).onOk((data) => {
     emit('complete', data)
   })
@@ -185,14 +185,3 @@ const parsEvaluations = computed(() => props.owner ? as.filterEvaluations(props.
     </q-item>
   </div>
 </template>
-
-<style scoped>
-.coin {
-  filter: invert(65%) sepia(69%) saturate(606%) hue-rotate(3deg) brightness(110%) contrast(102%);
-}
-
-.evaluation {
-  list-style-position: inside;
-  padding-left: 0;
-}
-</style>
