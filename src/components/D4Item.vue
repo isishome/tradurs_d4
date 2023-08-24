@@ -835,16 +835,9 @@ defineExpose({ scrollEnd })
   }
 }
 
-@media (max-width:300px) {
-  .item-image {
-    display: none;
-  }
-}
-
 @media (max-width:400px) {
   .item-image {
-    right: 54%;
-    max-width: 40%;
+    display: none;
   }
 }
 
@@ -911,7 +904,7 @@ defineExpose({ scrollEnd })
 .hardcore-ladder {
   line-height: 24px;
   position: absolute;
-  font-size: 14px;
+  font-size: 12px;
   width: 24px;
   transform: translateX(-26px);
 }
@@ -919,7 +912,7 @@ defineExpose({ scrollEnd })
 @media (max-width:600px) {
   .hardcore-ladder {
     line-height: 18px;
-    font-size: 12px;
+    font-size: 10px;
   }
 }
 
