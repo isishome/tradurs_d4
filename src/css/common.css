@@ -85,17 +85,14 @@
 }
 
 @media (max-width:600px) {
-  .name-place {
-    width: 50%;
-  }
-
   .name {
     font-size: 14px;
     line-height: 18px;
   }
 
   .price {
-    font-size: 12px;
+    font-size: 14px;
+    line-height: 18px;
   }
 
   .info {

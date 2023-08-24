@@ -489,35 +489,40 @@ defineExpose({ scrollEnd })
   <q-card v-else class="card-item non-selectable no-scroll full-height overflow-hidden"
     :class="[data.expanded ? 'expanded' : 'no-expanded', data.quality, `status-${data.statusCode} `]">
     <div class="inner">
-      <q-card-section class="relative-position">
-        <q-img v-show="!loading"
-          :src="data.itemType === 'aspect' ? `/images/items/${data.itemType}/${data.itemTypeValue1}.webp` : data.itemTypeValue1 === 'gem' ? `/images/items/${data.itemType}/${data.itemTypeValue1}/${data.itemTypeValue2}.webp` : `/images/items/${data.itemType}/${data.itemTypeValue1}/${data.imageId}.webp`"
-          class="item-image" alt="Tradurs Item Image" />
-        <div class="column justify-center items-end user-area" :class="{ 'q-gutter-xs': !$q.screen.lt.sm || loading }">
-          <q-skeleton v-show="loading" width="50px" :height="$q.screen.lt.sm ? '16px' : '18px'" />
-          <div v-show="!loading" class="row items-center q-gutter-x-sm">
-            <template v-if="!data.forDisplay">
-              <div v-if="['000', '002'].includes(data.statusCode)" class="date" :class="remainColor">
-                {{ remainHours }}:{{ remainMinutes }}:{{ remainSeconds }}
+      <q-card-section>
+        <div class="user-area row justify-end">
+          <div class="item-image">
+            <q-img v-show="!loading" class="item-image"
+              :src="data.itemType === 'aspect' ? `/images/items/${data.itemType}/${data.itemTypeValue1}.webp` : data.itemTypeValue1 === 'gem' ? `/images/items/${data.itemType}/${data.itemTypeValue1}/${data.itemTypeValue2}.webp` : `/images/items/${data.itemType}/${data.itemTypeValue1}/${data.imageId}.webp`"
+              alt="Tradurs Item Image" />
+          </div>
+          <div class="column justify-center items-end" :class="{ 'q-gutter-xs': !$q.screen.lt.sm || loading }">
+            <q-skeleton v-show="loading" width="50px" :height="$q.screen.lt.sm ? '16px' : '18px'" />
+            <div v-show="!loading" class="row items-center q-gutter-x-sm">
+              <template v-if="!data.forDisplay">
+                <div v-if="['000', '002'].includes(data.statusCode)" class="date" :class="remainColor">
+                  {{ remainHours }}:{{ remainMinutes }}:{{ remainSeconds }}
+                </div>
+                <div v-else-if="data.statusCode === '001'" class="date complete">
+                  {{ date.formatDate(data.updDate, 'YY.MM.DD') }}
+                </div>
+                <div>
+                  {{ findStatus(data.statusCode)?.label }}
+                </div>
+              </template>
+              <div v-else>
+                {{ t('item.forDisplay') }}
               </div>
-              <div v-else-if="data.statusCode === '001'" class="date complete">
-                {{ date.formatDate(data.updDate, 'YY.MM.DD') }}
-              </div>
-              <div>
-                {{ findStatus(data.statusCode)?.label }}
-              </div>
-            </template>
-            <div v-else>
-              {{ t('item.forDisplay') }}
             </div>
+            <div v-if="slots['top-right']">
+              <slot name="top-right"></slot>
+            </div>
+            <D4Price :data="data.price" :progress="loading" />
+            <D4User v-if="!data.forDisplay" :data="data.user" :label="t('seller')" :disable="disable" :progress="loading"
+              :authorized="data.authorized" />
           </div>
-          <div v-if="slots['top-right']">
-            <slot name="top-right"></slot>
-          </div>
-          <D4Price :data="data.price" :progress="loading" />
-          <D4User v-if="!data.forDisplay" :data="data.user" :label="t('seller')" :disable="disable" :progress="loading"
-            :authorized="data.authorized" />
         </div>
+
         <div class="column items-start q-pa-sm relative-position" :class="{ 'q-gutter-xs': !$q.screen.lt.sm || loading }">
           <div v-show="!loading" class="hardcore-ladder row justify-end items-center">
             <div class="text-secondary">{{ data.hardcore ? '&#10074;' : '' }}</div>
@@ -536,14 +541,14 @@ defineExpose({ scrollEnd })
               <div v-show="data.itemType !== 'rune'" class="name stress ellipsis-2-lines">
                 {{ data.name }}
               </div>
-              <div v-if="data.quantity > 1" class="price row items-center q-gutter-xs">
+              <div v-if="data.quantity > 1" class="row items-center q-gutter-x-xs no-wrap">
                 <div class="text-lowercase">x</div>
                 <div>{{ data.quantity }}</div>
               </div>
               <div class="more-action">
                 <q-btn dense flat aria-label="Tradurs More Button" :ripple="false" class="no-hover" padding="0">
-                  <img class="icon" src="/images/icons/morevert.svg" :width="$q.screen.lt.sm ? 16 : 20"
-                    :height="$q.screen.lt.sm ? 16 : 20" alt="icon_more" />
+                  <img class="icon" src="/images/icons/morevert.svg" :width="$q.screen.lt.sm ? 16 : 22"
+                    :height="$q.screen.lt.sm ? 16 : 22" alt="icon_more" />
                   <q-menu auto-close class="no-shadow" transition-show="none" transition-hide="none"
                     :transition-duration="0" anchor="top end" self="bottom start"
                     :class="[$q.dark.isActive ? 'bg-grey-4' : 'bg-grey-9']">
@@ -693,8 +698,9 @@ defineExpose({ scrollEnd })
 }
 
 .more-action {
+  line-height: 24px;
   padding: 0;
-  margin: 0;
+  margin: 0 0 0 4px;
   visibility: hidden;
 }
 
@@ -703,7 +709,12 @@ defineExpose({ scrollEnd })
 }
 
 @media (max-width:600px) {
+  .name-place {
+    width: 50%;
+  }
+
   .card-item:deep(.more-action) {
+    line-height: 18px;
     visibility: visible !important;
   }
 }
@@ -799,6 +810,8 @@ defineExpose({ scrollEnd })
 }
 
 .user-area {
+  position: relative;
+  width: 35%;
   position: absolute;
   top: 16px;
   right: 16px;
@@ -806,28 +819,32 @@ defineExpose({ scrollEnd })
 }
 
 .item-image {
-  width: 90px;
-  max-width: 16vw;
   position: absolute;
   top: 0;
-  right: 26%;
+  right: 46%;
+  width: 90px;
+  max-width: 80%;
   z-index: 2;
 }
 
 @media (max-width:724px) {
   .user-area {
+    width: 45%;
     top: 9px;
     right: 10px;
-  }
-
-  .item-image {
-    display: none;
   }
 }
 
 @media (max-width:300px) {
   .item-image {
     display: none;
+  }
+}
+
+@media (max-width:400px) {
+  .item-image {
+    right: 54%;
+    max-width: 40%;
   }
 }
 
@@ -892,17 +909,17 @@ defineExpose({ scrollEnd })
 }
 
 .hardcore-ladder {
+  line-height: 24px;
   position: absolute;
-  left: 0;
-  top: 0;
-  font-size: 12px;
-  width: 18px;
-  transform: translate(-70%, 60%);
+  font-size: 14px;
+  width: 24px;
+  transform: translateX(-26px);
 }
 
 @media (max-width:600px) {
   .hardcore-ladder {
-    line-height: 15px;
+    line-height: 18px;
+    font-size: 12px;
   }
 }
 

@@ -104,8 +104,8 @@ const checkInfo = (textArray: string[]) => {
   currentCheck.value = 'info'
 
   // check quality
-  const qualityText = is.quality.map(q => q.fullName.replace(/[ ]/g, '')).join('|')
-  const indexQuality = textArray.findIndex(ta => (new RegExp(qualityText, 'gi')).test(ta.replace(/[ ]/g, '')))
+  const qualityText = is.quality.map(q => q.fullName.replace(/[ ]/g, '')).join(' | ')
+  const indexQuality = textArray.findIndex(ta => (new RegExp(qualityText, 'gi')).test(ta))
 
   if (indexQuality === -1) {
     if (time === 3)
@@ -117,6 +117,7 @@ const checkInfo = (textArray: string[]) => {
   }
 
   const qualityPhase = textArray[indexQuality].split(/\s/gi)
+
 
   let typeValueIndex = -1
   for (let i = 0; i < qualityPhase.length; i++) {
@@ -139,7 +140,6 @@ const checkInfo = (textArray: string[]) => {
       filtering()
     }
   }
-
 
   const typeValue = qualityPhase.splice(typeValueIndex, qualityPhase.length).join(' ').replace(new RegExp(`[^${phase} ]`, 'gi'), '').trim()
 
