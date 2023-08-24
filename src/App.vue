@@ -90,15 +90,15 @@ const adblock = reactive<{ open: Boolean, close: boolean }>({
 onMounted(() => {
   document.documentElement.setAttribute('lang', locale.value as string)
 
-  if (prod) {
-    fetch('https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js').then(() => {
-      view.value = true
-    }).catch(() => {
-      adblock.open = true
-    })
-  }
-  else
-    view.value = true
+  // if (prod) {
+  //   fetch('https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js').then(() => {
+  //     view.value = true
+  //   }).catch(() => {
+  //     adblock.open = true
+  //   })
+  // }
+  // else
+  view.value = true
 })
 </script>
 
