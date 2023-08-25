@@ -12,6 +12,10 @@ export interface Status extends ILabel { }
 
 export interface RuneType extends ILabel { }
 
+export interface Tier extends ILabel {
+  fullName: string
+}
+
 export interface Quality extends ILabel {
   fullName: string,
   upgradeLimit: number | null,
@@ -101,6 +105,7 @@ export const useItemStore = defineStore('item', {
     },
     itemStatus: [] as Array<Status>,
     offerStatus: [] as Array<Status>,
+    tiers: [] as Array<Tier>,
     quality: [] as Array<Quality>,
     runeTypes: [] as Array<RuneType>,
     runes: [] as Array<Rune>,
@@ -135,10 +140,10 @@ export const useItemStore = defineStore('item', {
     },
     fixedFilter: {
       hardcore: false as boolean,
-      ladder: true as boolean,
-      onlyCurrency: false as boolean,
+      ladder: true as boolean
     },
     filter: {
+      onlyCurrency: false as boolean,
       favorite: false as boolean,
       quality: [] as Array<string>,
       status: null as string | null,
@@ -179,6 +184,9 @@ export const useItemStore = defineStore('item', {
     },
     findOfferStatus: (state) => {
       return (statusCode?: string): Status | undefined => state.offerStatus.find(s => s.value === statusCode)
+    },
+    findTier: (state) => {
+      return (id?: string): Tier | undefined => state.tiers.find(t => t.value === id)
     },
     findQuality: (state) => {
       return (type?: string): Quality | undefined => state.quality.find(q => q.value === type)
@@ -265,6 +273,7 @@ export const useItemStore = defineStore('item', {
     },
     clearFilter(isForced: boolean = false) {
       if (isForced || !this.filter.fixed) {
+        this.filter.onlyCurrency = false
         this.filter.favorite = false
         this.filter.quality = []
         this.filter.status = null
@@ -293,6 +302,7 @@ export const useItemStore = defineStore('item', {
             .then((response) => {
               this.itemStatus = response.data.itemStatus
               this.offerStatus = response.data.offerStatus
+              this.tiers = response.data.tiers
               this.quality = response.data.quality
               this.runeTypes = response.data.runeTypes
               this.runes = response.data.runes

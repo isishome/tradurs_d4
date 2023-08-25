@@ -45,8 +45,14 @@ const counting = (stat: string): void => {
 }
 
 const update = (val: string | number | null) => {
-  let q = parseInt(val ? val.toString() : props.allowZero ? '0' : '1')
-  q = q > props.max ? props.max : q
+  let q: number | null
+
+  if (props.allowNull && !val)
+    q = null
+  else {
+    q = parseInt(val ? val.toString() : props.allowZero ? '0' : '1')
+    q = q > props.max ? props.max : q
+  }
 
   emit('update:modelValue', q)
 

@@ -35,7 +35,7 @@ export default {
     offered: 'Have been offered',
     offer: 'Have made an offer',
     fixed: 'Fixed Filter',
-    basicDescription: 'Basic filter information is always saved to local storage',
+    basicDescription: 'Basic filter information is always saved to local storage. When registering an item, its hardcore and seasonal status is automatically set by this filter.',
     fixedDescription: 'Filter information, except for the basic filter information, is saved to local storage. Please be aware of this, as it may cause misunderstandings about item exposure depending on the filters set',
     affixDescription: 'Affixes search will also search for other items, including any combination of three of the four if you select the four affix filter.',
     description: {

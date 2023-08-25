@@ -43,8 +43,6 @@ const editWrap = ref<QCard | null>(null)
 const filterClasses = store.filterClasses
 const filterRunesByType = store.filterRunesByType
 
-const _hardcore = ref<boolean>(props.data.hardcore)
-const _ladder = ref<boolean>(props.data.ladder)
 const _name = ref<string>(props.data.name)
 const _quantity = ref<number>(props.data.quantity || 1)
 const remainDate = ref<number>(date.getDateDiff(new Date(props.data.endDate), new Date(), 'seconds'))
@@ -57,6 +55,7 @@ const remainColor = computed(() => remainDate.value < hour ? `text-red-6` : '')
 const remainInterval = setInterval(() => {
   remainDate.value--
 }, 1000)
+const _tier = ref<string>(props.data.tier || 'ancestral')
 const _quality = ref<string>(props.data.quality || 'rare')
 const _type = ref<string>(props.data.itemType || store.filterTypes()[0].value as string)
 const _typeValue1 = ref<string>(props.data.itemTypeValue1 || (_type.value === 'aspect' ? store.aspectCategories[0].value as string : filterClasses(_type.value)[0].value as string))
@@ -69,6 +68,7 @@ const _favorite = ref<boolean>(props.data.favorite)
 const findRuneType = store.findRuneType
 const filterTypes = store.filterTypes
 const upgradeLimit = computed(() => store.findQuality(props.data.quality)?.upgradeLimit)
+const findTier = store.findTier
 const findQuality = store.findQuality
 const filterQuality = store.filterQuality
 const findStatus = store.findItemStatus
@@ -91,6 +91,12 @@ const copy = () => {
   clipboard(`${document.location.origin}/${route.params.lang || 'ko'}/item/${props.data.itemId}`, t('item.url'))
 }
 
+const updateTier = (val: string) => {
+  _tier.value = val
+  _level.value = null
+  update()
+}
+
 const updateQuality = (val: string) => {
   _quality.value = val
   _power.value = 0
@@ -111,7 +117,7 @@ const updateTypeValue1 = (val: string) => {
 }
 
 const update = () => {
-  emit('update', { hardcore: _hardcore.value, ladder: _ladder.value, name: _name, quantity: _quantity.value, quality: _quality.value, itemType: _type.value, itemTypeValue1: _typeValue1.value, itemTypeValue2: _typeValue2.value, imageId: _image, power: _power.value, upgrade: _upgrade.value, level: _level.value, price: _price, favorite: _favorite })
+  emit('update', { name: _name, quantity: _quantity.value, tier: _tier.value, quality: _quality.value, itemType: _type.value, itemTypeValue1: _typeValue1.value, itemTypeValue2: _typeValue2.value, imageId: _image, power: _power.value, upgrade: _upgrade.value, level: _level.value, price: _price, favorite: _favorite })
 }
 
 const updatePrice = (price: Price) => {
@@ -184,17 +190,19 @@ defineExpose({ scrollEnd })
           <div class="row items-center no-wrap justify-between q-col-gutter-sm full-width q-py-sm">
             <div>
               <div class="row no-wrap items-center q-gutter-xs quality">
+                <q-btn :ripple="!$q.dark.isActive" v-for="t in store.tiers" :key="t.value" :disable="disable" round
+                  unelevated aria-label="Tradurs Tier Button"
+                  :class="['text-weight-bold', { 'active': _tier === t.value }]" :label="t.label"
+                  @click="updateTier(t.value as string)" />
+              </div>
+            </div>
+            <div>
+              <div class="row no-wrap items-center q-gutter-xs quality">
                 <q-btn :ripple="!$q.dark.isActive" v-for="q in filterQuality()" :key="q.value" :disable="disable" round
                   unelevated aria-label="Tradurs Quality Button"
                   :class="['text-weight-bold', { 'active': _quality === q.value }]" :label="q.label"
                   @click="updateQuality(q.value as string)" />
               </div>
-            </div>
-            <div class="row justify-end items-center q-gutter-xs toggles">
-              <q-toggle left-label v-model="_hardcore" :disable="disable" color="secondary" :label="t('item.hardcore')"
-                dense @update:model-value="update" />
-              <q-toggle left-label v-model="_ladder" :disable="disable" color="primary" :label="t('item.ladder')" dense
-                @update:model-value="update" />
             </div>
           </div>
           <div class="full-width">
@@ -586,7 +594,8 @@ defineExpose({ scrollEnd })
           <div v-show="loading">
             <q-skeleton width="100px" :height="$q.screen.lt.sm ? '16px' : '18px'" />
           </div>
-          <div v-show="!loading" class="stress" style="opacity:.6">{{ findQuality(data.quality)?.fullName }}
+          <div v-show="!loading" class="stress" style="opacity:.6">{{ findTier(data.tier)?.fullName }} {{
+            findQuality(data.quality)?.fullName }}
             {{ findClass(data.itemTypeValue1)?.label || findType(data.itemType)?.label }}
           </div>
           <div v-show="data.power > 0">

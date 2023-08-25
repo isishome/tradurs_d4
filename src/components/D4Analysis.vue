@@ -103,6 +103,24 @@ const checkText = () => {
 const checkInfo = (textArray: string[]) => {
   currentCheck.value = 'info'
 
+  // check tier
+  const tierText = is.tiers.map(t => t.fullName.replace(/[ ]/g, '')).join('|')
+  const indexTier = textArray.findIndex(ta => (new RegExp(tierText, 'gi')).test(ta))
+
+  if (indexTier !== -1) {
+    const tierPhase = textArray[indexTier].split(/\s/gi)
+
+    for (let i = 0; i < tierPhase.length; i++) {
+      const findTierIndex = is.tiers.findIndex(t => tierPhase[i].toLowerCase().indexOf(t.fullName.toLowerCase()) !== -1)
+
+      if (findTierIndex !== -1) {
+        item.tier = is.tiers[findTierIndex].value as string
+        tierPhase[i].replace(is.quality[findTierIndex].fullName.toLowerCase(), '')
+        break
+      }
+    }
+  }
+
   // check quality
   const qualityText = is.quality.map(q => q.fullName.replace(/[ ]/g, '')).join(' | ')
   const indexQuality = textArray.findIndex(ta => (new RegExp(qualityText, 'gi')).test(ta))
@@ -117,7 +135,6 @@ const checkInfo = (textArray: string[]) => {
   }
 
   const qualityPhase = textArray[indexQuality].split(/\s/gi)
-
 
   let typeValueIndex = -1
   for (let i = 0; i < qualityPhase.length; i++) {

@@ -95,14 +95,13 @@ const copyItem = (item: Item) => {
   activateShow.value = true
 }
 
-const updateItem = ({ hardcore, ladder, name, quantity, quality, itemType, itemTypeValue1, itemTypeValue2, imageId, power, upgrade, level, price }: IItem): void => {
+const updateItem = ({ name, quantity, tier, quality, itemType, itemTypeValue1, itemTypeValue2, imageId, power, upgrade, level, price }: IItem): void => {
   const changeTypeNotFirst = activatedItem.value.itemType && activatedItem.value.itemType !== itemType
   const changeTypeValue1NotFirst = activatedItem.value.itemTypeValue1 && activatedItem.value.itemTypeValue1 !== itemTypeValue1
   activatedItem.value.itemType = itemType
-  activatedItem.value.hardcore = hardcore
-  activatedItem.value.ladder = ladder
   activatedItem.value.name = name
   activatedItem.value.quantity = quantity
+  activatedItem.value.tier = tier
   activatedItem.value.quality = quality
   activatedItem.value.itemTypeValue1 = itemTypeValue1
   activatedItem.value.itemTypeValue2 = itemTypeValue2

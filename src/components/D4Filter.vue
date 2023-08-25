@@ -196,8 +196,6 @@ const updateFixedDebounce = debounce(() => {
             </div>
           </template>
         </q-checkbox>
-        <q-checkbox :disable="filterLoading" size="xs" class="checkbox" v-model="is.fixedFilter.onlyCurrency"
-          :label="t('filter.onlyCurrency')" @update:model-value="updateFixedDebounce()" />
       </q-item-section>
     </q-item>
     <q-item v-if="as.signed">
@@ -224,6 +222,17 @@ const updateFixedDebounce = debounce(() => {
       </q-item-section>
     </q-item>
     <q-item>
+      <q-item-section>
+        <q-separator inset />
+      </q-item-section>
+    </q-item>
+    <q-item :disable="filterLoading">
+      <q-item-section>
+        <q-checkbox :disable="filterLoading" size="xs" class="checkbox" v-model="is.filter.onlyCurrency"
+          :label="t('filter.onlyCurrency')" @update:model-value="updateDebounce()" />
+      </q-item-section>
+    </q-item>
+    <q-item :inset-level="0">
       <q-item-section>
         <q-separator inset />
       </q-item-section>
