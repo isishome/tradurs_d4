@@ -114,7 +114,7 @@ const checkInfo = (textArray: string[]) => {
       const findTierIndex = is.tiers.findIndex(t => tierPhase[i].toLowerCase().indexOf(t.fullName.toLowerCase()) !== -1)
 
       if (findTierIndex !== -1) {
-        item.tier = is.tiers[findTierIndex].value as string
+        item.tier = is.tiers[findTierIndex].value
         tierPhase[i].replace(is.quality[findTierIndex].fullName.toLowerCase(), '')
         break
       }
@@ -122,7 +122,7 @@ const checkInfo = (textArray: string[]) => {
   }
 
   // check quality
-  const qualityText = is.quality.map(q => q.fullName.replace(/[ ]/g, '')).join(' | ')
+  const qualityText = is.quality.map(q => q.fullName.replace(/[ ]/g, '')).join(' |')
   const indexQuality = textArray.findIndex(ta => (new RegExp(qualityText, 'gi')).test(ta))
 
   if (indexQuality === -1) {

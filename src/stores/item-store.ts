@@ -13,6 +13,7 @@ export interface Status extends ILabel { }
 export interface RuneType extends ILabel { }
 
 export interface Tier extends ILabel {
+  value: string,
   fullName: string
 }
 

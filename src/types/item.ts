@@ -43,7 +43,7 @@ export interface IItem {
   statusCode: string,
   name: string,
   quantity: number,
-  tier: string | null,
+  tier: string,
   quality: string,
   itemType: string,
   itemTypeValue1: string,
@@ -97,7 +97,7 @@ export class Item implements IItem {
   public statusCode = '000'
   public name = ''
   public quantity = 1
-  public tier = null
+  public tier = ''
   public quality = 'rare'
   public itemType = ''
   public itemTypeValue1 = ''
