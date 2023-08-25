@@ -186,7 +186,7 @@ export const useItemStore = defineStore('item', {
       return (statusCode?: string): Status | undefined => state.offerStatus.find(s => s.value === statusCode)
     },
     findTier: (state) => {
-      return (id?: string): Tier | undefined => state.tiers.find(t => t.value === id)
+      return (id?: string | null): Tier | undefined => state.tiers.find(t => t.value === id)
     },
     findQuality: (state) => {
       return (type?: string): Quality | undefined => state.quality.find(q => q.value === type)

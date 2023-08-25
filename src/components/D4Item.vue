@@ -55,7 +55,7 @@ const remainColor = computed(() => remainDate.value < hour ? `text-red-6` : '')
 const remainInterval = setInterval(() => {
   remainDate.value--
 }, 1000)
-const _tier = ref<string>(props.data.tier || 'ancestral')
+const _tier = ref<string | null>(props.data.tier)
 const _quality = ref<string>(props.data.quality || 'rare')
 const _type = ref<string>(props.data.itemType || store.filterTypes()[0].value as string)
 const _typeValue1 = ref<string>(props.data.itemTypeValue1 || (_type.value === 'aspect' ? store.aspectCategories[0].value as string : filterClasses(_type.value)[0].value as string))
@@ -92,7 +92,7 @@ const copy = () => {
 }
 
 const updateTier = (val: string) => {
-  _tier.value = val
+  _tier.value = _tier.value === val ? null : val
   _level.value = null
   update()
 }
