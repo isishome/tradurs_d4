@@ -11,11 +11,7 @@ export const useGlobalStore = defineStore('global', {
     itemName: null as string | null,
     refresh: 0 as number
   }),
-  getters: {
-    getTitle: (state) => {
-      return (pageName?: string): string => i18n.global.t('seo.title', { pageName: pageName ? `${pageName} - ` : '', itemName: state.itemName ? `${state.itemName} - ` : '' })
-    },
-  },
+  getters: {},
   actions: {
     contactUs(token: string, contents: string | null) {
       return new Promise<void>((resolve, reject) => {

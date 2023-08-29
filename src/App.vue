@@ -42,12 +42,15 @@ const updateBattleTag = () => {
     })
 }
 
-locale.value = route.params.lang || 'ko'
+const lang = route.params.lang || 'ko'
+locale.value = lang
 
 // about Meta
-const titleReactive = computed(() => gs.getTitle(route.name ? t(`page.${route.name as string}`) : undefined))
-const descReactive = computed(() => t('seo.desc'))
-const keywordsReactive = computed(() => t('seo.keywords'))
+const pageName = computed(() => route.name ? `${t(`page.${route.name as string}`, 0, { locale: lang })} - ` : '')
+const itemName = computed(() => gs.itemName ? `${gs.itemName} - ` : '')
+const titleReactive = computed(() => t('seo.title', { pageName: pageName.value, itemName: itemName.value }, { locale: lang }))
+const descReactive = computed(() => t('seo.desc', 0, { locale: lang }))
+const keywordsReactive = computed(() => t('seo.keywords', 0, { locale: lang }))
 const recaptchaSrc = computed(() => route.name === 'support' ? 'https://www.google.com/recaptcha/api.js?render=6Lf38rYmAAAAAB-ET1oihMUkcDumRascvVHOyGmg' : '')
 
 useMeta(() => {
