@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import { api } from 'boot/axios'
-import { i18n } from 'src/boot/i18n'
 
 export const useGlobalStore = defineStore('global', {
   state: () => ({

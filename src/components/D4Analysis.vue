@@ -126,11 +126,11 @@ const checkInfo = (textArray: string[]) => {
   const indexQuality = textArray.findIndex(ta => (new RegExp(qualityText, 'gi')).test(ta))
 
   if (indexQuality === -1) {
-    if (time === 3)
+    if (time === 2)
       return failedScan(t('analyze.qualityNotFound'))
     else {
       time++
-      filtering()
+      return filtering()
     }
   }
 
@@ -150,22 +150,22 @@ const checkInfo = (textArray: string[]) => {
 
   // check typevalue
   if (typeValueIndex === -1) {
-    if (time === 3)
+    if (time === 2)
       return failedScan(t('analyze.typeNotFound'))
     else {
       time++
-      filtering()
+      return filtering()
     }
   }
 
   const typeValue = qualityPhase.splice(typeValueIndex, qualityPhase.length).join(' ').replace(new RegExp(`[^${phase} ]`, 'gi'), '').trim()
 
   if (!typeValue || typeValue === '') {
-    if (time === 3)
+    if (time === 2)
       return failedScan(t('analyze.typeNotFound'))
     else {
       time++
-      filtering()
+      return filtering()
     }
   }
 
@@ -299,7 +299,8 @@ const checkAffixes = (textStr: string) => {
     const affixData: Array<IAffix> = JSON.parse(JSON.stringify(is.affixes.data)).filter((a: IAffix) => a.label.match(new RegExp(`[${phase}]`, 'i'))).sort((a: IAffix, b: IAffix) => { return b.label.length - a.label.length })
 
     for (const affix of affixData) {
-      const matchAffix = textStr.match(new RegExp(attrToRegex(affix.label) as string, 'i'))
+      let matchAffix = textStr.match(new RegExp(attrToRegex(affix.label) as string, 'i'))
+
       matchAffix?.forEach((ma: string) => {
         const matchMinMax = textStr.substring(textStr.indexOf(ma), textStr.length).match(/[1\[]{1}[0-9.]{1,}[^\-\[]*\-[^\-\[]*[0-9.]{1,}[1\]]{1}/)?.map(mmm => mmm.replace(/1$/, '').replace(/[^0-9.-]/g, '').split(/\-/).map(mm => !isNaN(parseFloat(mm)) ? parseFloat(mm) : 0))
         const matchValues = ma.match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv))
@@ -382,13 +383,15 @@ const filtering = () => {
     const image = new Image()
     image.src = fr.result as string
     image.onload = () => {
-      const predictItem = Math.round(image.width * 0.25)
-      canvas.width = image.width
-      canvas.height = image.height
+      const iWidth = image.width
+      const iHeight = image.height
+      const predictItem = Math.round(iWidth * 0.3)
+      canvas.width = iWidth
+      canvas.height = iHeight
       if (ctx) {
-        ctx.filter = time === 1 ? 'sepia(.2) saturate(1.2) contrast(1.2) blur(.1px)' : time === 2 ? 'sepia(.2) saturate(1.4) contrast(1.4) blur(.1px)' : 'sepia(.2) saturate(1.6) contrast(1.6) blur(.1px)'
-        ctx.drawImage(image, 0, 0, image.width - predictItem, predictItem, 0, 0, image.width - predictItem, predictItem)
-        ctx.drawImage(image, 0, predictItem, image.width, image.height - predictItem, 0, predictItem, image.width, image.height - predictItem)
+        ctx.filter = time === 1 ? 'sepia(.2) saturate(1.2) contrast(1.2) blur(.1px)' : 'invert(1) saturate(1.3) contrast(1.3) blur(.1px)'
+        ctx.drawImage(image, 0, 0, iWidth - predictItem, predictItem, 0, 0, iWidth - predictItem, predictItem)
+        ctx.drawImage(image, 0, predictItem, iWidth, iHeight - predictItem, 0, predictItem, iWidth, iHeight - predictItem)
         is.recognize(canvas, lang)
           .then((text) => {
             plainText = text
