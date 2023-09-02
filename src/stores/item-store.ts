@@ -589,7 +589,7 @@ export const useItemStore = defineStore('item', {
       const { data: { text } } = await worker.recognize(image)
       await worker.terminate()
 
-      const parsedText = text.replace(new RegExp(`[^0-9${this.analyze.lang[lang as keyof typeof this.analyze.lang]}\\/\\+\\.\\[\\]\\-\\,\\:\\n ]`, 'gi'), '').replace(/[ ]{2,}/gi, ' ')
+      const parsedText = text.replace('®', 'O').replace(/\([0-9%+,.-]*\)/g, '').replace(new RegExp(`[^0-9${this.analyze.lang[lang as keyof typeof this.analyze.lang]}\\/\\+\\.\\[\\]\\-\\,\\:\\n ]`, 'gi'), '').replace(/[ ]{2,}/gi, ' ')
       return parsedText
     }
   }

@@ -258,10 +258,10 @@ export default {
     close: 'Do not open for 24 hours'
   },
   notice: {
-    title: 'Change and update history, notices',
-    top: 'Hello. This is Tradurs.\n\nHere are the details of changes and updates and precautions.',
+    title: 'Update Notices',
+    top: 'Hello. This is Tradurs.\n\nHere are the details of updates.',
     changes: "◆ Change\n· Item affixes Customization Features → Item Affixes User Requested Features",
-    updates: "◆ Updates\n· Item affixes are fixed by language (Korean, English).",
+    updates: "◆ Updates\n· Improved item image recognition.",
     cautions: "◆ Precautions\n· Do not solicit cash transactions\n· Do not display battletag",
     bottom: 'Thank you',
     close: 'Do not open for 24 hours'

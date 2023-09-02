@@ -11,6 +11,7 @@ import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { type ILabel, type Affix as IAffix, useItemStore } from 'src/stores/item-store'
 import { Affix, Item } from 'src/types/item'
+import { table } from 'console'
 
 interface IProps {
   loading?: boolean,
@@ -126,7 +127,7 @@ const checkInfo = (textArray: string[]) => {
   const indexQuality = textArray.findIndex(ta => (new RegExp(qualityText, 'gi')).test(ta))
 
   if (indexQuality === -1) {
-    if (time === 2)
+    if (time === 3)
       return failedScan(t('analyze.qualityNotFound'))
     else {
       time++
@@ -150,7 +151,7 @@ const checkInfo = (textArray: string[]) => {
 
   // check typevalue
   if (typeValueIndex === -1) {
-    if (time === 2)
+    if (time === 3)
       return failedScan(t('analyze.typeNotFound'))
     else {
       time++
@@ -161,7 +162,7 @@ const checkInfo = (textArray: string[]) => {
   const typeValue = qualityPhase.splice(typeValueIndex, qualityPhase.length).join(' ').replace(new RegExp(`[^${phase} ]`, 'gi'), '').trim()
 
   if (!typeValue || typeValue === '') {
-    if (time === 2)
+    if (time === 3)
       return failedScan(t('analyze.typeNotFound'))
     else {
       time++
@@ -248,10 +249,12 @@ const checkInfo = (textArray: string[]) => {
   if (indexLost !== -1)
     textArray.splice(indexLost, textArray.length)
 
-  let textStr = textArray.join('').replace(/[\+ ]/g, '').replace(/([0-9]*?)(\,)([0-9.]{1,})/g, '$1$3').replace(/\[\[/g, '[').replace(/\]\]/g, ']').replace(/(\[?)([0-9.]{1,})(\-)([0-9.]{1,})(\]?)/g, '[$2-$4]')
+  let tArray = textArray.map((ta: string) => ta.replace(/[\+ ]/g, '').replace(/([0-9]*?)(\,)([0-9.]{1,})/g, '$1$3').replace(/[\[]{2,}/g, '[').replace(/[\]]{2,}/g, ']').replace(/1\[/g, '[').replace(/\]1/g, ']').replace(/(\[)([0-9.]{1,})(\-?)([0-9.]*)(\]?)/g, '[$2$3$4]'))
+  //let tStr = textArray.join('').replace(/[\+ ]/g, '').replace(/([0-9]*?)(\,)([0-9.]{1,})/g, '$1$3').replace(/[\[]{2,}/g, '[').replace(/[\]]{2,}/g, ']').replace(/1\[/g, '[').replace(/\]1/g, ']').replace(/(\[)([0-9.]{1,})(\-?)([0-9.]*)(\]?)/g, '[$2$3$4]')
+
   setTimeout(() => {
     checkedItem.push('info')
-    checkProperties(textStr)
+    checkProperties(tArray)
   }, timeout)
 }
 
@@ -263,7 +266,48 @@ const attrToRegex = (attr: string | undefined) => {
   return removeUnnecessary(attr?.replace(/\{x\}/g, '#'))?.replace(/\s/g, '').replace(/\[/g, '\\[').replace(/\]/g, '\\]').replace(/\-/g, '\\-').replace(/#/g, '[0-9.]{1,}')
 }
 
-const checkProperties = (textStr: string) => {
+const editDistance = (s1: string, s2: string) => {
+  s1 = s1.toLowerCase()
+  s2 = s2.toLowerCase()
+
+  var costs = new Array()
+  for (var i = 0; i <= s1.length; i++) {
+    var lastValue = i
+    for (var j = 0; j <= s2.length; j++) {
+      if (i == 0)
+        costs[j] = j
+      else {
+        if (j > 0) {
+          var newValue = costs[j - 1]
+          if (s1.charAt(i - 1) != s2.charAt(j - 1))
+            newValue = Math.min(Math.min(newValue, lastValue),
+              costs[j]) + 1
+          costs[j - 1] = lastValue
+          lastValue = newValue
+        }
+      }
+    }
+    if (i > 0)
+      costs[s2.length] = lastValue
+  }
+  return costs[s2.length]
+}
+
+const similarity = (s1: string, s2: string) => {
+  var longer = s1
+  var shorter = s2
+  if (s1.length < s2.length) {
+    longer = s2
+    shorter = s1
+  }
+  var longerLength = longer.length
+  if (longerLength == 0) {
+    return 1.0
+  }
+  return (longerLength - editDistance(longer, shorter)) / parseFloat(longerLength.toString())
+}
+
+const checkProperties = (tArray: string[]) => {
   currentCheck.value = 'properties'
 
   const findClass = is.findClass(item.itemTypeValue1)
@@ -271,12 +315,20 @@ const checkProperties = (textStr: string) => {
   if (findClass) {
     try {
       findClass.properties.forEach((cp: number) => {
-        const matchProperty = removeUnnecessary(textStr)?.match(new RegExp(attrToRegex(is.findProperty(cp)?.label) as string, 'i'))
-        const matchValues = matchProperty?.[0].match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv))
+        const similarLabel = is.findProperty(cp)?.label.replace(/{x}/g, '').replace(/[ \+\-%]/g, '') as string
 
-        if (matchProperty && matchValues && item.properties.filter(p => p.propertyId === cp).length === 0) {
-          item.properties.push({ valueId: uid(), propertyId: cp, propertyValues: matchValues, action: 2 })
-          textStr = textStr.replace(matchProperty[0], '')
+        for (let i = 0; i < tArray.length; i++) {
+          const similar = similarity(tArray[i].replace(/[0-9\[\]\-]/g, ''), similarLabel)
+
+          if (similar > .5) {
+            const matchValues = tArray.slice(i, tArray.length).join('').match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv)) || []
+
+            if (item.properties.filter(p => p.propertyId === cp).length === 0)
+              item.properties.push({ valueId: uid(), propertyId: cp, propertyValues: matchValues, action: 2 })
+
+            tArray.splice(i, 1)
+            break
+          }
         }
       })
     }
@@ -288,31 +340,36 @@ const checkProperties = (textStr: string) => {
 
   setTimeout(() => {
     checkedItem.push('properties')
-    checkAffixes(textStr)
+    checkAffixes(tArray)
   }, timeout)
 }
 
-const checkAffixes = (textStr: string) => {
+const checkAffixes = (tArray: string[]) => {
   currentCheck.value = 'affixes'
 
   try {
     const affixData: Array<IAffix> = JSON.parse(JSON.stringify(is.affixes.data)).filter((a: IAffix) => a.label.match(new RegExp(`[${phase}]`, 'i'))).sort((a: IAffix, b: IAffix) => { return b.label.length - a.label.length })
 
     for (const affix of affixData) {
-      let matchAffix = textStr.match(new RegExp(attrToRegex(affix.label) as string, 'i'))
+      const similarLabel = affix.label.replace(/{x}/g, '').replace(/[ \+\-%]/g, '') as string
 
-      matchAffix?.forEach((ma: string) => {
-        const matchMinMax = textStr.substring(textStr.indexOf(ma), textStr.length).match(/[1\[]{1}[0-9.]{1,}[^\-\[]*\-[^\-\[]*[0-9.]{1,}[1\]]{1}/)?.map(mmm => mmm.replace(/1$/, '').replace(/[^0-9.-]/g, '').split(/\-/).map(mm => !isNaN(parseFloat(mm)) ? parseFloat(mm) : 0))
-        const matchValues = ma.match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv))
-        if (matchValues) {
+      for (let i = 0; i < tArray.length; i++) {
+        const similar = similarity(tArray[i].replace(/[0-9\[\]\-]/g, ''), similarLabel)
+
+        if (similar > .5) {
+          const matchMinMax = tArray.slice(i, tArray.length).join('').match(/[\[]{1}[0-9.]{1,}[^\-\[]*[\-]?[^\-\[]*[0-9.]{0,}[\]]{1}/g)?.map(mmm => mmm.replace(/[^0-9.-]/g, '').split(/\-/).map(mm => !isNaN(parseFloat(mm)) ? parseFloat(mm) : 0))
+          const matchValues = tArray.slice(i, tArray.length).join('').match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv))?.slice(0, affix.label.split(/{x}/).length - 1)
           const a: Affix = { valueId: uid(), affixId: affix.value as number, affixValues: [], action: 2 }
-          matchValues.forEach((mv: number) => {
-            a.affixValues.push({ valueRangeId: uid(), value: mv, min: matchMinMax?.[0]?.[0] as number, max: matchMinMax?.[0]?.[1] as number })
+
+          matchValues?.forEach((mv: number, idx: number) => {
+            a.affixValues.push({ valueRangeId: uid(), value: mv, min: matchMinMax?.[idx]?.[0] as number, max: matchMinMax?.[idx]?.[1] || matchMinMax?.[idx]?.[0] as number })
           })
+
           item.affixes.push(a)
-          textStr = textStr.replace(ma, '')
+          tArray.splice(i, 1)
+          break
         }
-      })
+      }
     }
   }
   catch (e) {
@@ -383,15 +440,18 @@ const filtering = () => {
     const image = new Image()
     image.src = fr.result as string
     image.onload = () => {
+      const ratio = 4
       const iWidth = image.width
       const iHeight = image.height
-      const predictItem = Math.round(iWidth * 0.3)
-      canvas.width = iWidth
-      canvas.height = iHeight
+      const predictItem = Math.ceil(iWidth * 0.32)
+      canvas.width = iWidth * ratio
+      canvas.height = iHeight * ratio
       if (ctx) {
-        ctx.filter = time === 1 ? 'sepia(.2) saturate(1.2) contrast(1.2) blur(.1px)' : 'invert(1) saturate(1.3) contrast(1.3) blur(.1px)'
-        ctx.drawImage(image, 0, 0, iWidth - predictItem, predictItem, 0, 0, iWidth - predictItem, predictItem)
-        ctx.drawImage(image, 0, predictItem, iWidth, iHeight - predictItem, 0, predictItem, iWidth, iHeight - predictItem)
+        ctx.fillStyle = 'black'
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+        ctx.filter = time === 1 ? 'invert(1) saturate(1.3) contrast(1.3) blur(.4px)' : time === 2 ? 'invert(1) saturate(1.3) contrast(1.5) blur(.5px)' : 'invert(1) saturate(1.5) contrast(1.3) blur(.5px)'
+        ctx.drawImage(image, 0, 0, iWidth - predictItem, predictItem, 0, 0, (iWidth - predictItem) * ratio, predictItem * ratio)
+        ctx.drawImage(image, 0, predictItem, iWidth, iHeight - predictItem, 0, predictItem * ratio, iWidth * ratio, (iHeight - predictItem) * ratio)
         is.recognize(canvas, lang)
           .then((text) => {
             plainText = text
