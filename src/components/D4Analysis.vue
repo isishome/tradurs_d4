@@ -11,7 +11,6 @@ import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { type ILabel, type Affix as IAffix, useItemStore } from 'src/stores/item-store'
 import { Affix, Item } from 'src/types/item'
-import { table } from 'console'
 
 interface IProps {
   loading?: boolean,
@@ -32,6 +31,7 @@ const is = useItemStore()
 
 let time: number = 1
 const lang: string = route.params.lang as string || 'ko'
+const similarityRate = lang === 'ko' ? .5 : .7
 const phase = is.analyze.lang[lang as keyof typeof is.analyze.lang]
 const timeout = 1000
 const showProgress = ref<boolean>(false)
@@ -320,7 +320,7 @@ const checkProperties = (tArray: string[]) => {
         for (let i = 0; i < tArray.length; i++) {
           const similar = similarity(tArray[i].replace(/[0-9\[\]\-]/g, ''), similarLabel)
 
-          if (similar > .5) {
+          if (similar > similarityRate) {
             const matchValues = tArray.slice(i, tArray.length).join('').match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv)) || []
 
             if (item.properties.filter(p => p.propertyId === cp).length === 0)
@@ -356,7 +356,7 @@ const checkAffixes = (tArray: string[]) => {
       for (let i = 0; i < tArray.length; i++) {
         const similar = similarity(tArray[i].replace(/[0-9\[\]\-]/g, ''), similarLabel)
 
-        if (similar > .5) {
+        if (similar > similarityRate) {
           const matchMinMax = tArray.slice(i, tArray.length).join('').match(/[\[]{1}[0-9.]{1,}[^\-\[]*[\-]?[^\-\[]*[0-9.]{0,}[\]]{1}/g)?.map(mmm => mmm.replace(/[^0-9.-]/g, '').split(/\-/).map(mm => !isNaN(parseFloat(mm)) ? parseFloat(mm) : 0))
           const matchValues = tArray.slice(i, tArray.length).join('').match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv))?.slice(0, affix.label.split(/{x}/).length - 1)
           const a: Affix = { valueId: uid(), affixId: affix.value as number, affixValues: [], action: 2 }
