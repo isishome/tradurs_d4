@@ -31,7 +31,8 @@ const is = useItemStore()
 
 let time: number = 1
 const lang: string = route.params.lang as string || 'ko'
-const similarityRate = lang === 'ko' ? .5 : .7
+const sPropertyRate = lang === 'ko' ? .6 : .7
+const sAffixRate = lang === 'ko' ? .8 : .85
 const phase = is.analyze.lang[lang as keyof typeof is.analyze.lang]
 const timeout = 1000
 const showProgress = ref<boolean>(false)
@@ -318,15 +319,17 @@ const checkProperties = (tArray: string[]) => {
         const similarLabel = is.findProperty(cp)?.label.replace(/{x}/g, '').replace(/[ \+\-%]/g, '') as string
 
         for (let i = 0; i < tArray.length; i++) {
-          const similar = similarity(tArray[i].replace(/[0-9\[\]\-]/g, ''), similarLabel)
+          const similar1 = similarity(tArray[i].replace(/[0-9\[\]\-.]/g, ''), similarLabel)
+          const similar2 = similarity(tArray.slice(i, i + 2).join('').replace(/[0-9\[\]\-.]/g, ''), similarLabel)
+          const similar3 = similarity(tArray.slice(i, i + 3).join('').replace(/[0-9\[\]\-.]/g, ''), similarLabel)
 
-          if (similar > similarityRate) {
+          if (similar1 >= sPropertyRate || similar2 >= sPropertyRate || similar3 >= sPropertyRate) {
             const matchValues = tArray.slice(i, tArray.length).join('').match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv)) || []
 
             if (item.properties.filter(p => p.propertyId === cp).length === 0)
               item.properties.push({ valueId: uid(), propertyId: cp, propertyValues: matchValues, action: 2 })
 
-            tArray.splice(i, 1)
+            tArray.splice(i, similar1 >= sPropertyRate ? 1 : similar2 >= sPropertyRate ? 2 : 3)
             break
           }
         }
@@ -354,9 +357,11 @@ const checkAffixes = (tArray: string[]) => {
       const similarLabel = affix.label.replace(/{x}/g, '').replace(/[ \+\-%]/g, '') as string
 
       for (let i = 0; i < tArray.length; i++) {
-        const similar = similarity(tArray[i].replace(/[0-9\[\]\-]/g, ''), similarLabel)
+        const similar1 = similarity(tArray[i].replace(/[0-9\[\]\-.]/g, ''), similarLabel)
+        const similar2 = similarity(tArray.slice(i, i + 2).join('').replace(/[0-9\[\]\-.]/g, ''), similarLabel)
+        const similar3 = similarity(tArray.slice(i, i + 3).join('').replace(/[0-9\[\]\-.]/g, ''), similarLabel)
 
-        if (similar > similarityRate) {
+        if (similar1 >= sAffixRate || similar2 >= sAffixRate || similar3 >= sAffixRate) {
           const matchMinMax = tArray.slice(i, tArray.length).join('').match(/[\[]{1}[0-9.]{1,}[^\-\[]*[\-]?[^\-\[]*[0-9.]{0,}[\]]{1}/g)?.map(mmm => mmm.replace(/[^0-9.-]/g, '').split(/\-/).map(mm => !isNaN(parseFloat(mm)) ? parseFloat(mm) : 0))
           const matchValues = tArray.slice(i, tArray.length).join('').match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv))?.slice(0, affix.label.split(/{x}/).length - 1)
           const a: Affix = { valueId: uid(), affixId: affix.value as number, affixValues: [], action: 2 }
@@ -366,7 +371,7 @@ const checkAffixes = (tArray: string[]) => {
           })
 
           item.affixes.push(a)
-          tArray.splice(i, 1)
+          tArray.splice(i, similar1 >= sAffixRate ? 1 : similar2 >= sAffixRate ? 2 : 3)
           break
         }
       }
@@ -447,8 +452,6 @@ const filtering = () => {
       canvas.width = iWidth * ratio
       canvas.height = iHeight * ratio
       if (ctx) {
-        ctx.fillStyle = 'black'
-        ctx.fillRect(0, 0, canvas.width, canvas.height)
         ctx.filter = time === 1 ? 'invert(1) saturate(1.3) contrast(1.3) blur(.4px)' : time === 2 ? 'invert(1) saturate(1.3) contrast(1.5) blur(.5px)' : 'invert(1) saturate(1.5) contrast(1.3) blur(.5px)'
         ctx.drawImage(image, 0, 0, iWidth - predictItem, predictItem, 0, 0, (iWidth - predictItem) * ratio, predictItem * ratio)
         ctx.drawImage(image, 0, predictItem, iWidth, iHeight - predictItem, 0, predictItem * ratio, iWidth * ratio, (iHeight - predictItem) * ratio)
