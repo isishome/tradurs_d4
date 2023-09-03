@@ -29,9 +29,8 @@ const route = useRoute()
 const { t } = useI18n({ useScope: 'global' })
 const is = useItemStore()
 
-let time: number = 1
 const lang: string = route.params.lang as string || 'ko'
-const similarRate = .8
+const similarRate = .83
 const phase = is.analyze.lang[lang as keyof typeof is.analyze.lang]
 const timeout = 1000
 const showProgress = ref<boolean>(false)
@@ -53,7 +52,6 @@ let restrictionsPhase: string[]
 
 const fileRef = ref<QFile>()
 const file = ref()
-let tempFile: File | undefined
 
 const beforeHide = () => {
   file.value = undefined
@@ -71,7 +69,6 @@ const endScan = () => {
 
 const failedScan = (msg: string) => {
   showProgress.value = false
-  tempFile = undefined
 
   emit('failed', msg)
 }
@@ -126,14 +123,8 @@ const checkInfo = (textArray: string[]) => {
   const qualityText = is.quality.map(q => q.fullName.replace(/[ ]/g, '')).join(' |')
   const indexQuality = textArray.findIndex(ta => (new RegExp(qualityText, 'gi')).test(ta))
 
-  if (indexQuality === -1) {
-    if (time === 3)
-      return failedScan(t('analyze.qualityNotFound'))
-    else {
-      time++
-      return filtering()
-    }
-  }
+  if (indexQuality === -1)
+    return failedScan(t('analyze.qualityNotFound'))
 
   const qualityPhase = textArray[indexQuality].split(/\s/gi)
 
@@ -150,25 +141,13 @@ const checkInfo = (textArray: string[]) => {
   }
 
   // check typevalue
-  if (typeValueIndex === -1) {
-    if (time === 3)
-      return failedScan(t('analyze.typeNotFound'))
-    else {
-      time++
-      return filtering()
-    }
-  }
+  if (typeValueIndex === -1)
+    return failedScan(t('analyze.typeNotFound'))
 
   const typeValue = qualityPhase.splice(typeValueIndex, qualityPhase.length).join(' ').replace(new RegExp(`[^${phase} ]`, 'gi'), '').trim()
 
-  if (!typeValue || typeValue === '') {
-    if (time === 3)
-      return failedScan(t('analyze.typeNotFound'))
-    else {
-      time++
-      return filtering()
-    }
-  }
+  if (!typeValue || typeValue === '')
+    return failedScan(t('analyze.typeNotFound'))
 
   // check class
   const findClass = [...is.classes].sort((a, b) => b.label.length - a.label.length).find(c => typeValue.toLowerCase().indexOf(c.label.toLowerCase()) !== -1)
@@ -251,7 +230,6 @@ const checkInfo = (textArray: string[]) => {
 
   let tArray = textArray.map((ta: string) => ta.replace(/[\+ ]/g, '').replace(/([0-9]*?)(\,)([0-9.]{1,})/g, '$1$3').replace(/[\[]{2,}/g, '[').replace(/[\]]{2,}/g, ']').replace(/1\[/g, '[').replace(/\]1/g, ']'))
   //.replace(/(\[)([0-9.]{1,})(\-?)([0-9.]*)(\]?)/g, '[$2$3$4]'))
-  //let tStr = textArray.join('').replace(/[\+ ]/g, '').replace(/([0-9]*?)(\,)([0-9.]{1,})/g, '$1$3').replace(/[\[]{2,}/g, '[').replace(/[\]]{2,}/g, ']').replace(/1\[/g, '[').replace(/\]1/g, ']').replace(/(\[)([0-9.]{1,})(\-?)([0-9.]*)(\]?)/g, '[$2$3$4]')
 
   setTimeout(() => {
     checkedItem.push('info')
@@ -311,28 +289,17 @@ const checkProperties = (tArray: string[]) => {
         const similarLabel = is.findProperty(cp)?.label.replace(/{x}/g, '').replace(/[ \+\-%\[\]]/g, '') as string
 
         for (let i = 0; i < tArray.length; i++) {
-          const similar1 = similarity(tArray[i].replace(/\([^\)]*\)/g, '').replace(/[0-9\[\]\-.]/g, ''), similarLabel)
-          const similar2 = similarity(tArray.slice(i, i + 2).join('').replace(/\([^\)]*\)/g, '').replace(/[0-9\[\]\-.]/g, ''), similarLabel)
-          const similar3 = similarity(tArray.slice(i, i + 3).join('').replace(/\([^\)]*\)/g, '').replace(/[0-9\[\]\-.]/g, ''), similarLabel)
+          const similar1 = similarity(tArray[i].replace(/\([^\)]*\)/g, '').replace(new RegExp(`[^${phase}]`, 'g'), ''), similarLabel)
+          const similar2 = similarity(tArray.slice(i, i + 2).join(' ').replace(/\([^\)]*\)/g, '').replace(new RegExp(`[^${phase}]`, 'g'), ''), similarLabel)
+          const similar3 = similarity(tArray.slice(i, i + 3).join(' ').replace(/\([^\)]*\)/g, '').replace(new RegExp(`[^${phase}]`, 'g'), ''), similarLabel)
 
-          // if (similar1 > .5) {
-          //   console.log(tArray)
-          //   console.log('similar1 : ', tArray[i].replace(/\([^\)]*\)/g, '').replace(/[0-9\[\]\-.]/g, ''), ' / ', similarLabel, ' / ', similar1)
-          // }
+          // if (similarLabel.indexOf('독저항') !== -1)
+          //   console.log(tArray[i].replace(/\([^\)]*\)/g, '').replace(new RegExp(`[^${phase}]`, 'g'), ''), ' / ', similar1)
 
-          // if (similar2 > .5) {
-          //   console.log(tArray)
-          //   console.log('similar2 : ', tArray.slice(i, i + 2).join('').replace(/\([^\)]*\)/g, '').replace(/[0-9\[\]\-.]/g, ''), ' / ', similarLabel, ' / ', similar2)
-          // }
-
-          // if (similar3 > .5) {
-          //   console.log(tArray)
-          //   console.log('similar3 : ', tArray.slice(i, i + 3).join('').replace(/\([^\)]*\)/g, '').replace(/[0-9\[\]\-.]/g, ''), ' / ', similarLabel, ' / ', similar3)
-          // }
-
-          if (similar1 >= similarRate || similar2 >= similarRate || similar3 >= similarRate) {
-            const startIndex = similar1 === 0 && similar2 === 0 ? i + 2 : similar1 === 0 ? i + 1 : i
-            const matchValues = tArray.slice(startIndex, tArray.length).join('').replace(/\([^\)]*\)/g, '').match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv)) || []
+          if (similar1 === 0)
+            continue
+          else if (similar1 >= similarRate || similar2 >= similarRate || similar3 >= similarRate) {
+            const matchValues = tArray.slice(i, tArray.length).join('-').replace(/[\[]{1}[0-9.]{1,}[^\-\[]*[\-]?[^\-\[]*[0-9.]{0,}[\]]/g, '').match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv)) || []
 
             if (item.properties.filter(p => p.propertyId === cp).length === 0)
               item.properties.push({ valueId: uid(), propertyId: cp, propertyValues: matchValues, action: 2 })
@@ -365,29 +332,18 @@ const checkAffixes = (tArray: string[]) => {
       const similarLabel = affix.label.replace(/{x}/g, '').replace(/[ \+\-%]/g, '') as string
 
       for (let i = 0; i < tArray.length; i++) {
-        const similar1 = similarity(tArray[i].replace(/\([^\)]*\)/g, '').replace(/[0-9\[\]\-.]/g, ''), similarLabel)
-        const similar2 = similarity(tArray.slice(i, i + 2).join('').replace(/\([^\)]*\)/g, '').replace(/[0-9\[\]\-.]/g, ''), similarLabel)
-        const similar3 = similarity(tArray.slice(i, i + 3).join('').replace(/\([^\)]*\)/g, '').replace(/[0-9\[\]\-.]/g, ''), similarLabel)
+        const similar1 = similarity(tArray[i].replace(/\([^\)]*\)/g, '').replace(new RegExp(`[^${phase}]`, 'g'), ''), similarLabel)
+        const similar2 = similarity(tArray.slice(i, i + 2).join(' ').replace(/\([^\)]*\)/g, '').replace(new RegExp(`[^${phase}]`, 'g'), ''), similarLabel)
+        const similar3 = similarity(tArray.slice(i, i + 3).join(' ').replace(/\([^\)]*\)/g, '').replace(new RegExp(`[^${phase}]`, 'g'), ''), similarLabel)
 
-        // if (similar1 > .5) {
-        //   console.log(tArray)
-        //   console.log('similar1 : ', tArray[i].replace(/\([^\)]*\)/g, '').replace(/[0-9\[\]\-.]/g, ''), ' / ', similarLabel, ' / ', similar1)
-        // }
+        // if (similarLabel.indexOf('극대화') !== -1)
+        //   console.log(tArray[i].replace(/\([^\)]*\)/g, '').replace(new RegExp(`[^${phase}]`, 'g'), ''), ' / ', similar1)
 
-        // if (similar2 > .5) {
-        //   console.log(tArray)
-        //   console.log('similar2 : ', tArray.slice(i, i + 2).join('').replace(/\([^\)]*\)/g, '').replace(/[0-9\[\]\-.]/g, ''), ' / ', similarLabel, ' / ', similar2)
-        // }
-
-        // if (similar3 > .5) {
-        //   console.log(tArray)
-        //   console.log('similar3 : ', tArray.slice(i, i + 3).join('').replace(/\([^\)]*\)/g, '').replace(/[0-9\[\]\-.]/g, ''), ' / ', similarLabel, ' / ', similar3)
-        // }
-
-        if (similar1 >= similarRate || similar2 >= similarRate || similar3 >= similarRate) {
-          const startIndex = similar1 === 0 && similar2 === 0 ? i + 2 : similar1 === 0 ? i + 1 : i
-          const matchMinMax = tArray.slice(startIndex, tArray.length).join('').replace(/\([^\)]*\)/g, '').match(/[\[]{1}[0-9.]{1,}[^\-\[]*[\-]?[^\-\[]*[0-9.]{0,}[\]]?/g)?.map(mmm => mmm.replace(/[^0-9.-]/g, '').split(/\-/).map(mm => !isNaN(parseFloat(mm)) ? parseFloat(mm) : 0))
-          const matchValues = tArray.slice(startIndex, tArray.length).join('').replace(/\([^\)]*\)/g, '').replace(/[\[]{1}[0-9.]{1,}[^\-\[]*[\-]?[^\-\[]*[0-9.]{0,}[\]]{1}/g, '').match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv))?.slice(0, affix.label.split(/{x}/).length - 1)
+        if (similar1 === 0)
+          continue
+        else if (similar1 >= similarRate || similar2 >= similarRate || similar3 >= similarRate) {
+          const matchMinMax = tArray.slice(i, tArray.length).join('-').match(/[\[]{1}[0-9.]{1,}[^\-\[]*[\-]*[^\-\[]*[0-9.]{0,}[\]]?/g)?.map(mmm => mmm.replace(/[^0-9.-]/g, '').split(/[\-]{1,2}/).map(mm => !isNaN(parseFloat(mm)) ? parseFloat(mm) : 0))
+          const matchValues = tArray.slice(i, tArray.length).join('-').replace(/[\[]{1}[0-9.]{1,}[^\-\[]*[\-]*[^\-\[]*[0-9.]{0,}[\]]?/g, '').match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv))?.slice(0, affix.label.split(/{x}/).length - 1)
           const a: Affix = { valueId: uid(), affixId: affix.value as number, affixValues: [], action: 2 }
 
           matchValues?.forEach((mv: number, idx: number) => {
@@ -420,13 +376,14 @@ const checkRestrictions = () => {
       const similarLabel = restriction.label.replace(/{x}/g, '').replace(/[ \+\-%\[\]]/g, '') as string
 
       for (let i = 0; i < restrictionsPhase.length; i++) {
-        const similar1 = similarity(restrictionsPhase[i].replace(/\([^\)]*\)/g, '').replace(/[0-9\[\]\-.]/g, ''), similarLabel)
-        const similar2 = similarity(restrictionsPhase.slice(i, i + 2).join('').replace(/\([^\)]*\)/g, '').replace(/[0-9\[\]\-.]/g, ''), similarLabel)
-        const similar3 = similarity(restrictionsPhase.slice(i, i + 3).join('').replace(/\([^\)]*\)/g, '').replace(/[0-9\[\]\-.]/g, ''), similarLabel)
+        const similar1 = similarity(restrictionsPhase[i].replace(/\([^\)]*\)/g, '').replace(new RegExp(`[^${phase}]`, 'g'), ''), similarLabel)
+        const similar2 = similarity(restrictionsPhase.slice(i, i + 2).join(' ').replace(/\([^\)]*\)/g, '').replace(new RegExp(`[^${phase}]`, 'g'), ''), similarLabel)
+        const similar3 = similarity(restrictionsPhase.slice(i, i + 3).join(' ').replace(/\([^\)]*\)/g, '').replace(new RegExp(`[^${phase}]`, 'g'), ''), similarLabel)
 
-        if (similar1 >= similarRate || similar2 >= similarRate || similar3 >= similarRate) {
-          const startIndex = similar1 === 0 && similar2 === 0 ? i + 2 : similar1 === 0 ? i + 1 : i
-          const matchValues = restrictionsPhase.slice(startIndex, restrictionsPhase.length).join('').replace(/\([^\)]*\)/g, '').match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv)) || []
+        if (similar1 === 0)
+          continue
+        else if (similar1 >= similarRate || similar2 >= similarRate || similar3 >= similarRate) {
+          const matchValues = restrictionsPhase.slice(i, restrictionsPhase.length).join('-').match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv)) || []
           item.restrictions.push({ valueId: uid(), restrictId: restriction.value as number, restrictValues: matchValues, action: 2 })
           restrictionsPhase.splice(i, similar1 >= similarRate ? 1 : similar2 >= similarRate ? 2 : 3)
           break
@@ -455,14 +412,13 @@ const aggregate = () => {
 }
 
 const scan = (f: File) => {
-  tempFile = f
   dropBox.show = false
   emit('start')
 
-  filtering()
+  filtering(f)
 }
 
-const filtering = () => {
+const filtering = (f: File) => {
   checkedItem.splice(0, checkedItem.length)
   currentCheck.value = 'analyze'
   showProgress.value = true
@@ -470,29 +426,29 @@ const filtering = () => {
   const canvas = document.createElement('canvas')
   const ctx = canvas.getContext('2d')
   const fr = new FileReader()
-  fr.readAsDataURL(tempFile as File)
+  fr.readAsDataURL(f)
 
   fr.onload = () => {
     const image = new Image()
     image.src = fr.result as string
     image.onload = () => {
-      const ratio = 4.17
+      const isTransparent = f.name.toLowerCase().match(/\.(png|webp)/g)
+      const ratio = isTransparent ? 1 : 2.8
       const iWidth = image.width
       const iHeight = image.height
       const predictItem = Math.ceil(iWidth * 0.36)
       canvas.width = iWidth * ratio
       canvas.height = iHeight * ratio
+
       if (ctx) {
-        ctx.fillStyle = 'black'
-        ctx.fillRect(0, 0, canvas.width, canvas.height)
-        ctx.filter = time === 1 ? 'invert(1) saturate(1.3) contrast(1.3) blur(.4px)' : time === 2 ? 'invert(1) saturate(1.3) contrast(1.5) blur(.5px)' : 'invert(1) saturate(1.5) contrast(1.3) blur(.5px)'
+        if (isTransparent) {
+          ctx.fillStyle = '#444444'
+          ctx.fillRect(0, 0, canvas.width, canvas.height)
+        }
+        ctx.filter = 'invert(1) contrast(1.4) blur(.4px)'
         ctx.drawImage(image, 0, 0, iWidth - predictItem, predictItem, 0, 0, (iWidth - predictItem) * ratio, predictItem * ratio)
         ctx.drawImage(image, 0, predictItem, iWidth, iHeight - predictItem, 0, predictItem * ratio, iWidth * ratio, (iHeight - predictItem) * ratio)
-        // canvas.style.position = 'fixed'
-        // canvas.style.top = '0'
-        // canvas.style.left = '0'
-        // canvas.style.zIndex = '6000'
-        // document.body.prepend(canvas)
+
         is.recognize(canvas, lang)
           .then((text) => {
             plainText = text
