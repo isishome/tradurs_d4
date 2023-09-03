@@ -258,11 +258,11 @@ export default {
     close: 'Do not open for 24 hours'
   },
   notice: {
-    title: 'Update Notices',
-    top: 'Hello. This is Tradurs.\n\nHere are the details of updates.',
+    title: 'Updates and notes',
+    top: 'Hello. This is Tradurs.\n\nWe\'ve got an update for you.',
     changes: "◆ Change\n· Item affixes Customization Features → Item Affixes User Requested Features",
-    updates: "◆ Updates\n· Improved item image recognition.",
-    cautions: "◆ Precautions\n· Do not solicit cash transactions\n· Do not display battletag",
+    updates: "◆ Updates\n· Fixed item numerical maximum minimum error",
+    cautions: "◆ Notes\n· We're constantly working to improve item image recognition.\nIf you are experiencing issues with image recognition, please contact us using https://imgur.com with a link to the item image and we'll look into it.",
     bottom: 'Thank you',
     close: 'Do not open for 24 hours'
   },
