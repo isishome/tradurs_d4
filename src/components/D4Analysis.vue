@@ -283,12 +283,12 @@ const checkAttributes = (tArray: string[], index: number, label: string) => {
   let result: number | undefined
   let r = 0
   while (r < 3) {
-    const similar = similarity(tArray.slice(index, index + r + 1).join(' ').replace(/\([^\)]*\)/g, '').replace(new RegExp(`[^${phase}]`, 'g'), ''), label)
+    const similar = similarity(tArray.slice(index, index + r + 1).join(' ').replace(/\([^\)]*\)?/g, '').replace(new RegExp(`[^${phase}]`, 'g'), ''), label)
 
     if (similar === 0)
       break
     else if (similar >= similarRate) {
-      result = r + 1
+      result = r
       break
     }
 
@@ -312,13 +312,13 @@ const checkProperties = (tArray: string[]) => {
         for (let i = 0; i < tArray.length; i++) {
           const result = checkAttributes(tArray, i, similarLabel)
 
-          if (result) {
-            const matchValues = tArray.slice(i, tArray.length).join('-').replace(/[\[]{1}[0-9.]{1,}[^\-\[]*[\-]?[^\-\[]*[0-9.]{0,}[\]]/g, '').match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv)) || []
+          if (typeof (result) === 'number') {
+            const matchValues = tArray.slice(i + result, tArray.length).join('-').match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv)) || []
 
             if (item.properties.filter(p => p.propertyId === cp).length === 0)
               item.properties.push({ valueId: uid(), propertyId: cp, propertyValues: matchValues, action: 2 })
 
-            tArray.splice(i, result)
+            tArray.splice(i, result + 1)
             break
           }
         }
@@ -349,8 +349,8 @@ const checkAffixes = (tArray: string[]) => {
       for (let i = 0; i < tArray.length; i++) {
         const result = checkAttributes(tArray, i, similarLabel)
 
-        if (result) {
-          const matchMinMax = tArray.slice(i, tArray.length).join('-').match(/[\[]{1}[0-9.]{1,}[^\-\[]*[\-]*[^\-\[]*[0-9.]{0,}[\]]?/g)?.map(mmm => mmm.replace(/[^0-9.-]/g, '').split(/[\-]{1,2}/).map(mm => !isNaN(parseFloat(mm)) ? parseFloat(mm) : 0))
+        if (typeof (result) === 'number') {
+          const matchMinMax = tArray.slice(i + result, tArray.length).join('-').match(/[\[]{1}[0-9.]{1,}[^\-\[]*[\-]*[^\-\[]*[0-9.]{0,}[\]]?/g)?.map(mmm => mmm.replace(/[^0-9.-]/g, '').split(/[\-]{1,2}/).map(mm => !isNaN(parseFloat(mm)) ? parseFloat(mm) : 0))
           const matchValues = tArray.slice(i, tArray.length).join('-').replace(/[\[]{1}[0-9.]{1,}[^\-\[]*[\-]*[^\-\[]*[0-9.]{0,}[\]]?/g, '').match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv))?.slice(0, affix.label.split(/{x}/).length - 1)
           const a: Affix = { valueId: uid(), affixId: affix.value as number, affixValues: [], action: 2 }
 
@@ -359,7 +359,7 @@ const checkAffixes = (tArray: string[]) => {
           })
 
           item.affixes.push(a)
-          tArray.splice(i, result)
+          tArray.splice(i, result + 1)
           break
         }
       }
@@ -387,19 +387,14 @@ const checkRestrictions = () => {
       const similarLabel = restriction.label.replace(/{x}/g, '').replace(/[ \+\-%\[\]]/g, '') as string
 
       for (let i = 0; i < restrictionsPhase.length; i++) {
-        const similar1 = similarity(restrictionsPhase[i].replace(/\([^\)]*\)/g, '').replace(new RegExp(`[^${phase}]`, 'g'), ''), similarLabel)
-        const similar2 = similarity(restrictionsPhase.slice(i, i + 2).join(' ').replace(/\([^\)]*\)/g, '').replace(new RegExp(`[^${phase}]`, 'g'), ''), similarLabel)
-        const similar3 = similarity(restrictionsPhase.slice(i, i + 3).join(' ').replace(/\([^\)]*\)/g, '').replace(new RegExp(`[^${phase}]`, 'g'), ''), similarLabel)
+        const result = checkAttributes(restrictionsPhase, i, similarLabel)
 
-        if (similar1 === 0)
-          continue
-        else if (similar1 >= similarRate || similar2 >= similarRate || similar3 >= similarRate) {
-          const matchValues = restrictionsPhase.slice(i, restrictionsPhase.length).join('-').match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv)) || []
+        if (typeof (result) === 'number') {
+          const matchValues = restrictionsPhase.slice(i + result, restrictionsPhase.length).join('-').match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv)) || []
           item.restrictions.push({ valueId: uid(), restrictId: restriction.value as number, restrictValues: matchValues, action: 2 })
-          restrictionsPhase.splice(i, similar1 >= similarRate ? 1 : similar2 >= similarRate ? 2 : 3)
+          restrictionsPhase.splice(i, result + 1)
           break
         }
-
       }
     }
   }
@@ -453,9 +448,8 @@ const filtering = (f: File) => {
 
       if (ctx) {
         if (isTransparent) {
-          ctx.fillStyle = '#444444'
+          ctx.fillStyle = '#552200'
           ctx.fillRect(0, 0, canvas.width, canvas.height)
-          ctx.shadowBlur = 2
         }
         ctx.filter = isTransparent ? 'invert(1) blur(.5px)' : 'invert(1) contrast(1.4) blur(.4px)'
         ctx.drawImage(image, 0, 0, iWidth - predictItem, predictItem, 0, 0, (iWidth - predictItem) * ratio, predictItem * ratio)
