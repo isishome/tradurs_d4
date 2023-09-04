@@ -10,7 +10,8 @@ import { QFile, uid, useQuasar } from 'quasar'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { type ILabel, type Affix as IAffix, useItemStore } from 'src/stores/item-store'
-import { Affix, Item } from 'src/types/item'
+import { Property, Affix, Item } from 'src/types/item'
+import { SSL_OP_CRYPTOPRO_TLSEXT_BUG } from 'constants'
 
 interface IProps {
   loading?: boolean,
@@ -71,6 +72,47 @@ const failedScan = (msg: string) => {
   showProgress.value = false
 
   emit('failed', msg)
+}
+
+const editDistance = (s1: string, s2: string) => {
+  s1 = s1.toLowerCase()
+  s2 = s2.toLowerCase()
+
+  var costs = new Array()
+  for (var i = 0; i <= s1.length; i++) {
+    var lastValue = i
+    for (var j = 0; j <= s2.length; j++) {
+      if (i == 0)
+        costs[j] = j
+      else {
+        if (j > 0) {
+          var newValue = costs[j - 1]
+          if (s1.charAt(i - 1) != s2.charAt(j - 1))
+            newValue = Math.min(Math.min(newValue, lastValue),
+              costs[j]) + 1
+          costs[j - 1] = lastValue
+          lastValue = newValue
+        }
+      }
+    }
+    if (i > 0)
+      costs[s2.length] = lastValue
+  }
+  return costs[s2.length]
+}
+
+const similarity = (s1: string, s2: string) => {
+  var longer = s1
+  var shorter = s2
+  if (s1.length < s2.length) {
+    longer = s2
+    shorter = s1
+  }
+  var longerLength = longer.length
+  if (longerLength == 0) {
+    return 1.0
+  }
+  return (longerLength - editDistance(longer, shorter)) / parseFloat(longerLength.toString())
 }
 
 const checkText = () => {
@@ -237,45 +279,23 @@ const checkInfo = (textArray: string[]) => {
   }, timeout)
 }
 
-const editDistance = (s1: string, s2: string) => {
-  s1 = s1.toLowerCase()
-  s2 = s2.toLowerCase()
+const checkAttributes = (tArray: string[], index: number, label: string) => {
+  let result: number | undefined
+  let r = 0
+  while (r < 3) {
+    const similar = similarity(tArray.slice(index, index + r + 1).join(' ').replace(/\([^\)]*\)/g, '').replace(new RegExp(`[^${phase}]`, 'g'), ''), label)
 
-  var costs = new Array()
-  for (var i = 0; i <= s1.length; i++) {
-    var lastValue = i
-    for (var j = 0; j <= s2.length; j++) {
-      if (i == 0)
-        costs[j] = j
-      else {
-        if (j > 0) {
-          var newValue = costs[j - 1]
-          if (s1.charAt(i - 1) != s2.charAt(j - 1))
-            newValue = Math.min(Math.min(newValue, lastValue),
-              costs[j]) + 1
-          costs[j - 1] = lastValue
-          lastValue = newValue
-        }
-      }
+    if (similar === 0)
+      break
+    else if (similar >= similarRate) {
+      result = r + 1
+      break
     }
-    if (i > 0)
-      costs[s2.length] = lastValue
-  }
-  return costs[s2.length]
-}
 
-const similarity = (s1: string, s2: string) => {
-  var longer = s1
-  var shorter = s2
-  if (s1.length < s2.length) {
-    longer = s2
-    shorter = s1
+    r++
   }
-  var longerLength = longer.length
-  if (longerLength == 0) {
-    return 1.0
-  }
-  return (longerLength - editDistance(longer, shorter)) / parseFloat(longerLength.toString())
+
+  return result
 }
 
 const checkProperties = (tArray: string[]) => {
@@ -285,30 +305,27 @@ const checkProperties = (tArray: string[]) => {
 
   if (findClass) {
     try {
-      findClass.properties.forEach((cp: number) => {
+      for (let ci = 0; ci < findClass.properties.length; ci++) {
+        const cp = findClass.properties[ci]
         const similarLabel = is.findProperty(cp)?.label.replace(/{x}/g, '').replace(/[ \+\-%\[\]]/g, '') as string
 
         for (let i = 0; i < tArray.length; i++) {
-          const similar1 = similarity(tArray[i].replace(/\([^\)]*\)/g, '').replace(new RegExp(`[^${phase}]`, 'g'), ''), similarLabel)
-          const similar2 = similarity(tArray.slice(i, i + 2).join(' ').replace(/\([^\)]*\)/g, '').replace(new RegExp(`[^${phase}]`, 'g'), ''), similarLabel)
-          const similar3 = similarity(tArray.slice(i, i + 3).join(' ').replace(/\([^\)]*\)/g, '').replace(new RegExp(`[^${phase}]`, 'g'), ''), similarLabel)
+          const result = checkAttributes(tArray, i, similarLabel)
 
-          // if (similarLabel.indexOf('독저항') !== -1)
-          //   console.log(tArray[i].replace(/\([^\)]*\)/g, '').replace(new RegExp(`[^${phase}]`, 'g'), ''), ' / ', similar1)
-
-          if (similar1 === 0)
-            continue
-          else if (similar1 >= similarRate || similar2 >= similarRate || similar3 >= similarRate) {
+          if (result) {
             const matchValues = tArray.slice(i, tArray.length).join('-').replace(/[\[]{1}[0-9.]{1,}[^\-\[]*[\-]?[^\-\[]*[0-9.]{0,}[\]]/g, '').match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv)) || []
 
             if (item.properties.filter(p => p.propertyId === cp).length === 0)
               item.properties.push({ valueId: uid(), propertyId: cp, propertyValues: matchValues, action: 2 })
 
-            tArray.splice(i, similar1 >= similarRate ? 1 : similar2 >= similarRate ? 2 : 3)
+            tArray.splice(i, result)
             break
           }
         }
-      })
+      }
+
+      // sort by property id
+      item.properties.sort((a: Property, b: Property) => a.propertyId - b.propertyId)
     }
     catch (e) {
       console.log(e)
@@ -326,22 +343,13 @@ const checkAffixes = (tArray: string[]) => {
   currentCheck.value = 'affixes'
 
   try {
-    const affixData: Array<IAffix> = JSON.parse(JSON.stringify(is.affixes.data)).filter((a: IAffix) => a.label.match(new RegExp(`[${phase}]`, 'i'))).sort((a: IAffix, b: IAffix) => { return b.label.length - a.label.length })
-
-    for (const affix of affixData) {
+    for (const affix of is.filterAffixes()) {
       const similarLabel = affix.label.replace(/{x}/g, '').replace(/[ \+\-%]/g, '') as string
 
       for (let i = 0; i < tArray.length; i++) {
-        const similar1 = similarity(tArray[i].replace(/\([^\)]*\)/g, '').replace(new RegExp(`[^${phase}]`, 'g'), ''), similarLabel)
-        const similar2 = similarity(tArray.slice(i, i + 2).join(' ').replace(/\([^\)]*\)/g, '').replace(new RegExp(`[^${phase}]`, 'g'), ''), similarLabel)
-        const similar3 = similarity(tArray.slice(i, i + 3).join(' ').replace(/\([^\)]*\)/g, '').replace(new RegExp(`[^${phase}]`, 'g'), ''), similarLabel)
+        const result = checkAttributes(tArray, i, similarLabel)
 
-        // if (similarLabel.indexOf('극대화') !== -1)
-        //   console.log(tArray[i].replace(/\([^\)]*\)/g, '').replace(new RegExp(`[^${phase}]`, 'g'), ''), ' / ', similar1)
-
-        if (similar1 === 0)
-          continue
-        else if (similar1 >= similarRate || similar2 >= similarRate || similar3 >= similarRate) {
+        if (result) {
           const matchMinMax = tArray.slice(i, tArray.length).join('-').match(/[\[]{1}[0-9.]{1,}[^\-\[]*[\-]*[^\-\[]*[0-9.]{0,}[\]]?/g)?.map(mmm => mmm.replace(/[^0-9.-]/g, '').split(/[\-]{1,2}/).map(mm => !isNaN(parseFloat(mm)) ? parseFloat(mm) : 0))
           const matchValues = tArray.slice(i, tArray.length).join('-').replace(/[\[]{1}[0-9.]{1,}[^\-\[]*[\-]*[^\-\[]*[0-9.]{0,}[\]]?/g, '').match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv))?.slice(0, affix.label.split(/{x}/).length - 1)
           const a: Affix = { valueId: uid(), affixId: affix.value as number, affixValues: [], action: 2 }
@@ -351,11 +359,14 @@ const checkAffixes = (tArray: string[]) => {
           })
 
           item.affixes.push(a)
-          tArray.splice(i, similar1 >= similarRate ? 1 : similar2 >= similarRate ? 2 : 3)
+          tArray.splice(i, result)
           break
         }
       }
     }
+
+    // sort by affix id
+    item.affixes.sort((a: Affix, b: Affix) => a.affixId - b.affixId)
   }
   catch (e) {
     console.log(e)
@@ -444,8 +455,9 @@ const filtering = (f: File) => {
         if (isTransparent) {
           ctx.fillStyle = '#444444'
           ctx.fillRect(0, 0, canvas.width, canvas.height)
+          ctx.shadowBlur = 2
         }
-        ctx.filter = 'invert(1) contrast(1.4) blur(.4px)'
+        ctx.filter = isTransparent ? 'invert(1) blur(.5px)' : 'invert(1) contrast(1.4) blur(.4px)'
         ctx.drawImage(image, 0, 0, iWidth - predictItem, predictItem, 0, 0, (iWidth - predictItem) * ratio, predictItem * ratio)
         ctx.drawImage(image, 0, predictItem, iWidth, iHeight - predictItem, 0, predictItem * ratio, iWidth * ratio, (iHeight - predictItem) * ratio)
 
