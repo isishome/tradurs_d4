@@ -203,13 +203,13 @@ const apply = () => {
   progress.value = true
   // check attribute
   activatedItem.value.properties.forEach(p => {
-    p.action = is.findProperty(p.propertyId)?.label.match(/\{x\}/g) && p.propertyValues.reduce((pv: number, cv: number) => pv + cv, 0) === 0 ? 8 : p.action
+    p.action = is.findProperty(p.propertyId)?.label.match(/\{x\}/g) && [0, NaN].includes(p.propertyValues.reduce((pv: number, cv: number) => pv + cv, 0)) ? 8 : p.action
   })
   activatedItem.value.affixes.forEach(a => {
-    a.action = is.findAffix(a.affixId)?.label.match(/\{x\}/g) && a.affixValues.map((av: AffixValue) => av.value).reduce((pv: number, cv: number) => pv + cv, 0) === 0 ? 8 : a.action
+    a.action = is.findAffix(a.affixId)?.label.match(/\{x\}/g) && [0, NaN].includes(a.affixValues.map((av: AffixValue) => av.value).reduce((pv: number, cv: number) => pv + cv, 0)) ? 8 : a.action
   })
   activatedItem.value.restrictions.forEach(r => {
-    r.action = is.findRestriction(r.restrictId)?.label.match(/\{x\}/g) && r.restrictValues.reduce((pv: number, cv: number) => pv + cv, 0) === 0 ? 8 : r.action
+    r.action = is.findRestriction(r.restrictId)?.label.match(/\{x\}/g) && [0, NaN].includes(r.restrictValues.reduce((pv: number, cv: number) => pv + cv, 0)) ? 8 : r.action
   })
 
   emit('upsert-item', activatedItem.value, done)

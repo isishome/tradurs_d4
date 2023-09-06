@@ -41,13 +41,16 @@ export default boot(({ app, ssrContext, store, router }) => {
       })
     }
     else {
-      const message = error.response && error.response.data || error.message
+      let message = error.response && error.response.data || error.message
+      const caption = typeof (message) === 'object' && message.caption || ''
+      message = typeof (message) === 'object' && message.body || message
 
       Notify.create({
         icon: 'img:/images/icons/alert.svg',
         color: 'negative',
         classes: '',
-        message: message,
+        message,
+        caption,
         timeout: 3000
       })
     }
