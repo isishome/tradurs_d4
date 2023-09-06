@@ -32,7 +32,7 @@ const update = (): void => {
   const av: { valueId: number, affixValues: Array<AffixValue> } = { valueId: props.data.valueId, affixValues: [] }
   const minmax = splitArray(affixInfo.value.filter(i => i.type === 'min' || i.type === 'max').map(i => i.value as number), 2)
   affixInfo.value.filter(i => i.type === 'variable').forEach((attr: Attribute, idx: number) => {
-    av.affixValues.push({ valueRangeId: uid(), value: attr.value as number, min: minmax[idx][0] as number, max: minmax[idx][1] as number })
+    av.affixValues.push({ valueRangeId: uid(), value: parseFloat(attr.value.toString()) as number, min: parseFloat(minmax[idx][0].toString()), max: parseFloat(minmax[idx][1].toString()) })
   })
 
   emit('update', av)

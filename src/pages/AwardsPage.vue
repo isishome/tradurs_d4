@@ -85,7 +85,7 @@ is.getAwards()
       <template #etc>
         <q-separator />
         <q-list separator class="rounded-borders">
-          <q-item v-for=" ranker, idx  in  awards.highPriced.slice(1, awards.highPriced.length) " :key="idx" class="etc"
+          <q-item v-for="ranker, idx in awards.highPriced.slice(1, awards.highPriced.length) " :key="idx" class="etc"
             :to="{ name: 'itemInfo', params: { lang: route.params.lang, itemid: ranker?.itemId } }">
             <q-item-section>
               <q-item-label>
@@ -115,7 +115,7 @@ is.getAwards()
         1. {{ awards.bestManners[0]?.battleTag }}
       </template>
       <template #etc>
-        <div class="text-overline etc" v-for=" ranker, idx  in  awards.bestManners.slice(1, awards.bestManners.length) "
+        <div class="text-overline etc" v-for="ranker, idx in awards.bestManners.slice(1, awards.bestManners.length) "
           :key="idx">
           {{ ranker?.ranking }}. {{ ranker?.battleTag }} + {{ ranker?.good }}&#8451
         </div>
@@ -135,7 +135,7 @@ is.getAwards()
         1. {{ awards.mostSold[0]?.battleTag }}
       </template>
       <template #etc>
-        <div class="text-overline etc" v-for=" ranker, idx  in  awards.mostSold.slice(1, awards.mostSold.length) "
+        <div class="text-overline etc" v-for="ranker, idx in awards.mostSold.slice(1, awards.mostSold.length) "
           :key="idx">
           {{ ranker?.ranking }}. {{ ranker?.battleTag }} - {{ ranker?.items }}{{ t('awards.mostSold.unit') }}
         </div>
@@ -155,8 +155,8 @@ is.getAwards()
         1. {{ awards.mostPurchased[0]?.battleTag }}
       </template>
       <template #etc>
-        <div class="text-overline etc"
-          v-for=" ranker, idx  in  awards.mostPurchased.slice(1, awards.mostPurchased.length) " :key="idx">
+        <div class="text-overline etc" v-for="ranker, idx in awards.mostPurchased.slice(1, awards.mostPurchased.length) "
+          :key="idx">
           {{ ranker?.ranking }}. {{ ranker?.battleTag }} - {{ ranker?.items }}{{ t('awards.mostPurchased.unit') }}
         </div>
       </template>

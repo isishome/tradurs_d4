@@ -376,7 +376,7 @@ onUnmounted(() => {
             <q-menu auto-close class="no-shadow" anchor="bottom end" self="top end" transition-show="none"
               transition-hide="none" :transition-duration="0">
               <q-list bordered class="rounded-borders">
-                <q-item v-for=" lang  in  gs.localeOptions " :key="lang.value" :clickable="lang.value !== locale"
+                <q-item v-for="lang in gs.localeOptions " :key="lang.value" :clickable="lang.value !== locale"
                   :active="lang.value === locale" @click="setLang(lang.value)">
                   {{ lang.label }}</q-item>
               </q-list>

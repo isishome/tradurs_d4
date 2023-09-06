@@ -48,7 +48,7 @@ export const parse = (label: string | undefined, values?: Array<number>): Array<
   if (label)
     return label.split(/\{x\}/g).reduce((p: Array<Attribute>, c, i) => {
       p.push({ type: 'text', value: c })
-      p.push({ type: 'variable', value: values ? (values[i] || 0) : 0 })
+      p.push({ type: 'variable', value: values?.[i] === 0 ? 0 : values?.[i] || '' })
       return p
     }, []).slice(0, -1)
   else
@@ -59,9 +59,9 @@ export const parseAffix = (label: string | undefined, values?: Array<AffixValue>
   if (label)
     return label.split(/\{x\}/g).reduce((p: Array<Attribute>, c, i) => {
       p.push({ type: 'text', value: c })
-      p.push({ type: 'variable', value: values ? (values[i]?.value || 0) : 0 })
-      p.push({ type: 'min', value: values ? (values[i]?.min || 0) : 0 })
-      p.push({ type: 'max', value: values ? (values[i]?.max || 0) : 0 })
+      p.push({ type: 'variable', value: values?.[i]?.value === 0 ? 0 : values?.[i]?.value || '' })
+      p.push({ type: 'min', value: values?.[i]?.min === 0 ? 0 : values?.[i]?.min || '' })
+      p.push({ type: 'max', value: values?.[i]?.max === 0 ? 0 : values?.[i]?.max || '' })
       return p
     }, []).slice(0, -3)
   else
