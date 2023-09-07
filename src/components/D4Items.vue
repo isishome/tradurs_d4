@@ -152,8 +152,8 @@ const deleteConfirm = () => {
     persistent: true,
     cancel: { label: t('btn.cancel'), color: 'grey', outline: true },
     ok: { label: t('deleteItem.title'), color: 'negative', unelevated: true, class: 'text-weight-bold invert-icon' },
-    transitionShow: 'none',
-    transitionHide: 'none',
+    transitionShow: 'fade',
+    transitionHide: 'fade',
     noRouteDismiss: true,
     class: 'q-pa-sm'
   }).onOk(() => {
@@ -169,8 +169,8 @@ const relistItem = () => {
     persistent: true,
     cancel: { label: t('btn.cancel'), color: 'grey', outline: true },
     ok: { label: t('relistItem.title'), color: 'primary', unelevated: true, class: 'text-weight-bold invert-icon' },
-    transitionShow: 'none',
-    transitionHide: 'none',
+    transitionShow: 'fade',
+    transitionHide: 'fade',
     noRouteDismiss: true,
     class: 'q-pa-sm'
   }).onOk(() => {
@@ -188,8 +188,8 @@ const statusItem = () => {
     persistent: true,
     cancel: { label: t('btn.cancel'), color: 'grey', outline: true },
     ok: { label: title, color: 'primary', unelevated: true, class: 'text-weight-bold invert-icon' },
-    transitionShow: 'none',
-    transitionHide: 'none',
+    transitionShow: 'fade',
+    transitionHide: 'fade',
     noRouteDismiss: true,
     class: 'q-pa-sm'
   }).onOk(() => {
@@ -740,8 +740,8 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
         <div class="text-caption">{{ route.name === 'tradeList' ? t('noFilterdItemsDesc') : '' }}</div>
       </div>
     </div>
-    <q-dialog v-model="activateShow" :maximized="$q.screen.lt.sm" persistent transition-show="none" transition-hide="none"
-      :transition-duration="0" :no-route-dismiss="false" @hide="hideEditable">
+    <q-dialog v-model="activateShow" :maximized="$q.screen.lt.sm" persistent :no-route-dismiss="false"
+      transition-show="fade" transition-hide="fade" transition-duration="100" @hide="hideEditable">
       <D4Item ref="activatedRef" :data="activatedItem" :key="analyzeKey" editable :loading="activatedItem.loading"
         :disable="disable" @update="updateItem" @apply="apply">
         <template #add-property="props">
@@ -923,9 +923,8 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
         </q-card-section>
       </template>
     </D4Dialog>
-    <D4Dialog v-model="showOffers" @hide="hideOffers" :maximized="$q.screen.lt.sm" transition-show="none"
-      transition-hide="none" :transition-duration="0" :persistent="disableOffers || progressOffer"
-      :no-route-dismiss="false">
+    <D4Dialog v-model="showOffers" @hide="hideOffers" :maximized="$q.screen.lt.sm"
+      :persistent="disableOffers || progressOffer" :no-route-dismiss="false">
       <template #top>
         <q-card-section class="row items-center justify-between">
           <div class="text-h6 q-pl-sm">

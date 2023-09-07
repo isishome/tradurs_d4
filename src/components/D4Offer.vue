@@ -53,8 +53,8 @@ const acceptOffer = () => {
     persistent: true,
     cancel: { label: t('btn.cancel'), noCaps: true, color: 'grey', outline: true },
     ok: { label: t('btn.accept'), noCaps: true, color: 'primary', unelevated: true, class: 'text-weight-bold invert-icon' },
-    transitionShow: 'none',
-    transitionHide: 'none',
+    transitionShow: 'fade',
+    transitionHide: 'fade',
     noRouteDismiss: true,
     class: 'q-pa-sm'
   }).onOk(() => {
@@ -70,8 +70,8 @@ const retractOffer = () => {
     persistent: true,
     cancel: { label: t('btn.cancel'), noCaps: true, color: 'grey', outline: true },
     ok: { label: t('btn.retractOffer'), noCaps: true, color: 'primary', unelevated: true, class: 'text-weight-bold invert-icon' },
-    transitionShow: 'none',
-    transitionHide: 'none',
+    transitionShow: 'fade',
+    transitionHide: 'fade',
     noRouteDismiss: true,
     class: 'q-pa-sm'
   }).onOk(() => {
@@ -87,8 +87,8 @@ const turnDownOffer = () => {
     persistent: true,
     cancel: { label: t('btn.cancel'), noCaps: true, color: 'grey', outline: true },
     ok: { label: t('btn.turnDownOffer'), noCaps: true, color: 'primary', unelevated: true, class: 'text-weight-bold invert-icon' },
-    transitionShow: 'none',
-    transitionHide: 'none',
+    transitionShow: 'fade',
+    transitionHide: 'fade',
     noRouteDismiss: true,
     class: 'q-pa-sm'
   }).onOk(() => {
@@ -109,8 +109,8 @@ const complete = () => {
     persistent: true,
     cancel: { label: t('btn.cancel'), noCaps: true, color: 'grey', outline: true },
     ok: { label: t('btn.submit'), noCaps: true, color: 'primary', unelevated: true, class: 'text-weight-bold invert-icon' },
-    transitionShow: 'none',
-    transitionHide: 'none',
+    transitionShow: 'fade',
+    transitionHide: 'fade',
     noRouteDismiss: true,
     class: 'q-pa-sm scroll'
   }).onOk((data) => {
@@ -120,7 +120,7 @@ const complete = () => {
 
 const isAcceptable = computed(() => props.data.itemStatusCode === '000' && props.data.statusCode === '000' && props.owner)
 const isRetractable = computed(() => props.data.itemStatusCode === '000' && props.data.statusCode === '000' && props.data.authorized && props.data.retractable)
-const isTradeable = computed(() => (props.data.statusCode === '003' && props.data.itemStatusCode === '003' && props.data.authorized) || (['001', '003'].includes(props.data.statusCode) && props.data.evaluations.length === 0 && props.owner))
+const isTradeable = computed(() => (props.data.statusCode === '003' && props.data.itemStatusCode === '003' && props.data.authorized) || (['001', '003'].includes(props.data.statusCode) && props.data.itemStatusCode === '003' && props.data.evaluations.length === 0 && props.owner))
 const existsEvaluation = computed(() => (props.data.statusCode === '001' && props.owner) || (props.data.statusCode === '001' && props.data.authorized))
 const status = computed(() => is.findOfferStatus(props.data.statusCode)?.label)
 const parsEvaluations = computed(() => props.owner ? as.filterEvaluations(props.evaluations) : props.data.authorized ? as.filterEvaluations(props.data.evaluations) : [])

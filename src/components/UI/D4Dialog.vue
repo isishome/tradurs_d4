@@ -7,7 +7,10 @@ interface IProps {
   maximized?: boolean,
   persistent?: boolean,
   width?: string | null,
-  maxWidth?: string | null
+  maxWidth?: string | null,
+  transitionShow?: string,
+  transitionHide?: string,
+  transitionDuration?: string | number
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -15,7 +18,10 @@ const props = withDefaults(defineProps<IProps>(), {
   maximized: false,
   persistent: false,
   width: null,
-  maxWidth: null
+  maxWidth: null,
+  transitionShow: 'fade',
+  transitionHide: 'fade',
+  transitionDuration: 100
 })
 const emit = defineEmits(['update:modelValue', 'show', 'hide', 'before-hide', 'submit'])
 
@@ -28,8 +34,9 @@ watch(() => props.modelValue, (val) => {
 
 <template>
   <q-dialog v-model="show" @show="emit('show')" @hide="emit('hide')" @before-hide="emit('before-hide')"
-    :maximized="maximized" :persistent="persistent" transition-show="none" transition-hide="none" :transition-duration="0"
-    :no-route-dismiss="noRouteDismiss" @update:model-value="emit('update:modelValue', show)">
+    :maximized="maximized" :persistent="persistent" :transition-show="transitionShow" :transition-hide="transitionHide"
+    :transition-duration="transitionDuration" :no-route-dismiss="noRouteDismiss"
+    @update:model-value="emit('update:modelValue', show)">
     <q-card class="card-item dialog normal overflow-hidden"
       :style="`${width ? `width:${width} !important;` : ''}${maxWidth ? `max-width:${maxWidth} !important;` : ''}`">
       <q-form class="inner column" :class="{ 'full-height': maximized }" @submit="emit('submit')">

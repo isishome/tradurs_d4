@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { QPopupProxy, useQuasar } from 'quasar'
+import { useQuasar } from 'quasar'
 
 interface IProps {
   anchor?: 'top left'
@@ -34,8 +34,9 @@ interface IProps {
   | 'bottom start'
   | 'bottom end'
   | undefined,
-  transitionHide?: string | undefined,
-  transitionShow?: string | undefined,
+  transitionHide?: string,
+  transitionShow?: string,
+  transitionDuration?: string | number,
   offset?: [number, number],
   behavior?: 'desktop' | 'mobile' | 'auto'
 }
@@ -45,6 +46,7 @@ withDefaults(defineProps<IProps>(), {
   self: 'center left',
   transitionHide: 'jump-right',
   transitionShow: 'jump-left',
+  transitionDuration: 300,
   offset: () => [10, 10],
   behavior: 'auto'
 })
@@ -54,7 +56,8 @@ const $q = useQuasar()
 <template>
   <q-tooltip v-if="!$q.platform.is.mobile || behavior === 'desktop'"
     :class="['q-pa-md', $q.dark.isActive ? 'bg-grey-4 text-grey-9' : 'bg-grey-9 text-grey-4']" :anchor="anchor"
-    :self="self" :offset="offset" :transition-hide="transitionHide" :transition-show="transitionShow">
+    :self="self" :offset="offset" :transition-hide="transitionHide" :transition-show="transitionShow"
+    :transition-duration="transitionDuration">
     <slot name="default">
     </slot>
   </q-tooltip>

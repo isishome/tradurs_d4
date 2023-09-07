@@ -238,3 +238,7 @@ body.body--dark {
     max-width: 200px;
   }
 }
+
+.keep-tooltip {
+  pointer-events: all !important;
+}

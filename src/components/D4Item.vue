@@ -557,8 +557,7 @@ defineExpose({ scrollEnd })
                 <q-btn dense flat aria-label="Tradurs More Button" :ripple="false" class="no-hover" padding="0">
                   <img class="icon" src="/images/icons/morevert.svg" :width="$q.screen.lt.sm ? 16 : 22"
                     :height="$q.screen.lt.sm ? 16 : 22" alt="icon_more" />
-                  <q-menu auto-close class="no-shadow" transition-show="none" transition-hide="none"
-                    :transition-duration="0" anchor="top end" self="bottom start"
+                  <q-menu auto-close class="no-shadow" anchor="top end" self="bottom start"
                     :class="[$q.dark.isActive ? 'bg-grey-4' : 'bg-grey-9']">
                     <q-item v-if="as.signed" :class="[$q.dark.isActive ? 'text-grey-9' : 'text-grey-4']"
                       :dense="$q.screen.lt.sm" clickable @click="$emit('favorite', data.itemId, !data.favorite)">

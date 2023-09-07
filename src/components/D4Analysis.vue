@@ -9,9 +9,8 @@ import { reactive, ref } from 'vue'
 import { QFile, uid, useQuasar } from 'quasar'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { type ILabel, type Affix as IAffix, useItemStore } from 'src/stores/item-store'
+import { type ILabel, useItemStore } from 'src/stores/item-store'
 import { Property, Affix, Item } from 'src/types/item'
-import { SSL_OP_CRYPTOPRO_TLSEXT_BUG } from 'constants'
 
 interface IProps {
   loading?: boolean,

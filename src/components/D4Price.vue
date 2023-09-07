@@ -102,7 +102,7 @@ const updateCurrency = (val: string | null): void => {
       <div v-else-if="data.currency === 'gold'">
         <q-input :disable="disable" dense no-error-icon hide-bottom-space outlined v-model.number="_price.currencyValue"
           maxlength="11" reverse-fill-mask unmasked-value debounce="500" :error="_priceError" @update:model-value="update"
-          @focus="focus" input-class="text-right"
+          @focus="focus" @blur="_priceError = false" input-class="text-right"
           :label="n(Number.parseFloat(_price.currencyValue && Number.isInteger(parseInt(_price.currencyValue as string)) ? _price.currencyValue.toString() : '0'), 'decimal', { notation: 'compact' })"
           :rules="[val => Number.isInteger(parseInt(val)) && parseInt(val) % 100000 === 0 || '']">
           <q-tooltip v-model="_priceError" :target="_priceError" no-parent-event transition-show="none"
