@@ -241,4 +241,6 @@ body.body--dark {
 
 .keep-tooltip {
   pointer-events: all !important;
+  cursor: default;
+  border-radius: 0;
 }

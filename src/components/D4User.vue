@@ -138,8 +138,8 @@ const notifyEmail = () => {
       <div :class="{ 'authorized': authorized, 'allow-copy': allowCopy }" @click="copy(data.battleTag)">
         {{ data.battleTag === '' ? label : data.battleTag }}
       </div>
-      <q-icon class="icon" name="img:/images/icons/help.svg" size="19px">
-        <D4Tooltip>
+      <q-icon class="icon" name="img:/images/icons/info.svg" size="19px">
+        <D4Tooltip :offset="[-20, 10]" keep>
           <svg v-show="data.verified" class="battletag" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
             stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="0"
             aria-labelledby="blz-icon-title-battlenet-logo" viewBox="0 0 196 32" part="icon blz-icon">
@@ -158,7 +158,7 @@ const notifyEmail = () => {
             </path>
           </svg>
           <div class="text-overline text-weight-bold">{{ t('user.temperature') }} : {{ data.temperature }}&#8451</div>
-          <div class="break-keep text-caption" style="max-width:160px;">
+          <div v-if="data.battleTag === ''" class="break-keep text-caption" style="max-width:160px;">
             {{ t('user.sh1') }}
             <span class="underline text-weight-bold">{{ t('user.sh2') }}</span>
             {{ t('user.sh3') }}
