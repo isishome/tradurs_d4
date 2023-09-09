@@ -67,8 +67,10 @@ const show = () => {
 }
 
 const beforeHide = () => {
-  tooltipRef.value?.contentEl?.classList.remove('keep-tooltip')
-  target.value = true
+  if (props.keep) {
+    tooltipRef.value?.contentEl?.classList.remove('keep-tooltip')
+    target.value = true
+  }
 }
 </script>
 <template>

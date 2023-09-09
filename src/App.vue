@@ -76,7 +76,7 @@ useMeta(() => {
 })
 
 const notice = reactive<{ open: boolean, close: boolean }>({
-  open: false,//!$q.cookies.has('d4.notice'),
+  open: !$q.cookies.has('d4.notice'),
   close: false
 })
 
@@ -151,7 +151,7 @@ onMounted(() => {
           <div class="text-area">{{ t('notice.top') }}</div>
           <!-- <div class="text-area q-pa-sm">{{ t('notice.changes') }}</div> -->
           <div class="text-area text-primary q-pa-sm">{{ t('notice.updates') }}</div>
-          <div class="text-area q-pa-sm">{{ t('notice.cautions') }}</div>
+          <div class="text-area text-negative q-pa-sm">{{ t('notice.cautions') }}</div>
           <div class="text-area">{{ t('notice.bottom') }}</div>
         </div>
       </q-card-section>

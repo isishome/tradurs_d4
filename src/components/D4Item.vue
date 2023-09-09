@@ -27,7 +27,7 @@ const props = withDefaults(defineProps<IProps>(), {
   disable: false
 })
 
-const emit = defineEmits(['update', 'apply', 'copy', 'favorite'])
+const emit = defineEmits(['update', 'apply', 'copy', 'favorite', 'block'])
 
 // common variable
 const $q = useQuasar()

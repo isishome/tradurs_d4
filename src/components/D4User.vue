@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { computed, reactive } from 'vue'
+import { ref, computed, reactive } from 'vue'
 import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
 import { User, type INotify } from 'src/types/user'
 import { clipboard } from 'src/common'
 import { useAccountStore } from 'src/stores/account-store'
@@ -28,10 +29,13 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const $q = useQuasar()
 const { t } = useI18n({ useScope: 'global' })
+const router = useRouter()
 const as = useAccountStore()
 
 const loading = computed(() => props.data.loading || props.progress)
+const userProgress = ref<boolean>(false)
 const allowCopy = computed(() => !props.authorized && props.data.battleTag !== '')
+const blocked = computed(() => !props.data.blockable && !props.authorized)
 const _notify = reactive<INotify>({
   notifyNew: props.data.notifyNew,
   notifyPrivate: props.data.notifyPrivate,
@@ -79,6 +83,55 @@ const notifyEmail = () => {
     .catch(() => {
       _notify.notifyEmail = !_notify.notifyEmail
     })
+}
+
+const block = () => {
+  $q.dialog({
+    title: t('blockUser.title'),
+    message: `${t('blockUser.message')}\n${t('blockUser.caption')}`,
+    persistent: true,
+    cancel: { label: t('btn.cancel'), color: 'grey', outline: true },
+    ok: { label: t('btn.block'), color: 'negative', unelevated: true, class: 'text-weight-bold invert-icon' },
+    transitionShow: 'fade',
+    transitionHide: 'fade',
+    noRouteDismiss: true,
+    class: 'q-pa-sm text-area'
+  }).onOk(() => {
+    userProgress.value = true
+    as.block(props.data.battleTag)
+      .then(() => {
+        router.go(0)
+      })
+      .catch(() => { })
+      .then(() => {
+        userProgress.value = false
+      })
+  })
+}
+
+const unblock = () => {
+  $q.dialog({
+    title: t('blockUser.unblockTitle'),
+    message: t('blockUser.unblockMessage'),
+    persistent: true,
+    cancel: { label: t('btn.cancel'), color: 'grey', outline: true },
+    ok: { label: t('btn.unblock'), color: 'positive', unelevated: true, class: 'text-weight-bold invert-icon' },
+    transitionShow: 'fade',
+    transitionHide: 'fade',
+    noRouteDismiss: true,
+    class: 'q-pa-sm text-area'
+  }).onOk(() => {
+    userProgress.value = true
+    as.unblock(props.data.battleTag)
+      .then(() => {
+        router.go(0)
+      })
+      .catch(() => { })
+      .then(() => {
+        userProgress.value = false
+      })
+  })
+
 }
 </script>
 
@@ -138,7 +191,7 @@ const notifyEmail = () => {
       <div :class="{ 'authorized': authorized, 'allow-copy': allowCopy }" @click="copy(data.battleTag)">
         {{ data.battleTag === '' ? label : data.battleTag }}
       </div>
-      <q-icon class="icon" name="img:/images/icons/info.svg" size="19px">
+      <q-icon class="icon" :name="blocked ? 'img:/images/icons/block.svg' : 'img:/images/icons/info.svg'" size="19px">
         <D4Tooltip :offset="[-20, 10]" keep>
           <svg v-show="data.verified" class="battletag" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
             stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="0"
@@ -158,13 +211,24 @@ const notifyEmail = () => {
             </path>
           </svg>
           <div class="text-overline text-weight-bold">{{ t('user.temperature') }} : {{ data.temperature }}&#8451</div>
-          <div v-if="data.battleTag === ''" class="break-keep text-caption" style="max-width:160px;">
+          <div v-show="data.battleTag === ''" class="break-keep text-caption" style="max-width:160px;">
             {{ t('user.sh1') }}
             <span class="underline text-weight-bold">{{ t('user.sh2') }}</span>
             {{ t('user.sh3') }}
             <span class="underline text-weight-bold">{{ t('user.sh4') }}</span>
             {{ t('user.sh5') }}
           </div>
+          <template v-if="data.battleTag !== ''">
+            <div v-if="data.blockable" class="q-mt-lg row justify-center items-center">
+              <q-btn no-caps unelevated :label="t('blockUser.title')" aria-label="Tradurs Block Button" padding="4px"
+                size="12px" color="negative" :disable="disable" :progress="progress || userProgress" @click="block" />
+            </div>
+            <div v-else-if="blocked" class="q-mt-lg row justify-center items-center">
+              <q-btn no-caps unelevated :label="t('blockUser.unblock')" :title="t('blockUser.caption')"
+                aria-label="Tradurs UnBlock Button" padding="4px" size="12px" color="positive"
+                :disable="disable || !data.unblockable" :progress="progress || userProgress" @click="unblock" />
+            </div>
+          </template>
         </D4Tooltip>
       </q-icon>
     </div>

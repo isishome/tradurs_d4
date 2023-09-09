@@ -91,6 +91,14 @@ export default {
     resumeTitle: 'Resume Sale',
     resumeMessage: 'Are you sure you want to resume sale?'
   },
+  blockUser: {
+    title: 'Block user',
+    unblockTitle: 'Unblock user',
+    message: "Do you want to block the user?",
+    unblockMessage: "Do you want to unblock this user?",
+    unblock: 'Unblock user',
+    caption: 'Unblocking is not available until 48 hours after blocking'
+  },
   btn: {
     edit: 'Edit',
     cancel: 'Cancel',
@@ -121,7 +129,9 @@ export default {
     turnDown: 'Turn Down',
     imageAnalysis: 'Analysis',
     newMessages: 'You have a new message',
-    request: 'Request'
+    request: 'Request',
+    block: 'Block',
+    unblock: 'Unblock'
   },
   attribute: {
     request: 'Request additional {attr}',
@@ -258,11 +268,10 @@ export default {
     close: 'Do not open for 24 hours'
   },
   notice: {
-    title: 'Updates and notes',
-    top: 'Hello. This is Tradurs.\n\nWe\'ve got an update for you.',
-    changes: "◆ Change\n· Item affixes Customization Features → Item Affixes User Requested Features",
-    updates: "◆ Updates\n· Fixed item numerical maximum minimum error",
-    cautions: "◆ Notes\n· We're constantly working to improve item image recognition.\nIf you are experiencing issues with image recognition, please contact us using https://imgur.com with a link to the item image and we'll look into it.",
+    title: 'Updates and precautions',
+    top: 'Hello. This is Tradurs.\n\nWe would like to inform you of updates and precautions.',
+    updates: "◆ Updates\n· Addition of user blocking/unblocking features\n\t→ User blocking/unblocking is now possible in the user information tooltip.\n\t→ User blocking occurs when the battle tag is exposed. This is possible.\n\t→ Unblocking a user is possible when the battle tag is exposed after 48 hours of blocking.\n\t→Blocked users will see a blocking icon(🛇) instead of the information icon(🛈).",
+    cautions: "◆ Caution\n· Please note that if you engage in activities such as raising the temperature of your manners through negative methods, encouraging cash transactions, or exposing battle tags, your service may be suspended for a certain period of time or your account may be suspended depending on the severity.",
     bottom: 'Thank you',
     close: 'Do not open for 24 hours'
   },

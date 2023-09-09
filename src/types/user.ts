@@ -11,7 +11,9 @@ export interface IUser extends INotify {
   battleTag?: string,
   verified: boolean,
   temperature: number,
-  online: boolean
+  online: boolean,
+  blockable: boolean,
+  unblockable: boolean
 }
 
 export class User implements IUser {
@@ -22,6 +24,8 @@ export class User implements IUser {
   public verified = false
   public temperature = 0
   public online = false
+  public blockable = false
+  public unblockable = false
   public notifyNew = true
   public notifyPrivate = true
   public notifyEmail = true
