@@ -218,7 +218,7 @@ const unblock = () => {
             <span class="underline text-weight-bold">{{ t('user.sh4') }}</span>
             {{ t('user.sh5') }}
           </div>
-          <template v-if="data.battleTag !== ''">
+          <template v-if="data.battleTag !== '' && as.signed">
             <div v-if="data.blockable" class="q-mt-lg row justify-center items-center">
               <q-btn no-caps unelevated :label="t('blockUser.title')" aria-label="Tradurs Block Button" padding="4px"
                 size="12px" color="negative" :disable="disable" :progress="progress || userProgress" @click="block" />

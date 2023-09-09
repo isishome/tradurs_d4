@@ -270,7 +270,7 @@ export default {
   notice: {
     title: 'Updates and precautions',
     top: 'Hello. This is Tradurs.\n\nWe would like to inform you of updates and precautions.',
-    updates: "◆ Updates\n· Addition of user blocking/unblocking features\n\t→ User blocking/unblocking is now possible in the user information tooltip.\n\t→ User blocking occurs when the battle tag is exposed. This is possible.\n\t→ Unblocking a user is possible when the battle tag is exposed after 48 hours of blocking.\n\t→Blocked users will see a blocking icon(🛇) instead of the information icon(🛈).",
+    updates: "◆ Updates\n· Addition of user blocking/unblocking features\n\t→ User blocking/unblocking is now possible in the user information tooltip.\n\t→ User blocking occurs when the battle tag is exposed. This is possible.\n\t→ Unblocking a user is possible when the battle tag is exposed after 48 hours of blocking.\n\t→Blocked users will see a blocking icon instead of the information icon.",
     cautions: "◆ Caution\n· Please note that if you engage in activities such as raising the temperature of your manners through negative methods, encouraging cash transactions, or exposing battle tags, your service may be suspended for a certain period of time or your account may be suspended depending on the severity.",
     bottom: 'Thank you',
     close: 'Do not open for 24 hours'

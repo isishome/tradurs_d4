@@ -718,7 +718,7 @@ defineExpose({ scrollEnd })
 
 @media (max-width:600px) {
   .name-place {
-    width: 50%;
+    width: 48%;
   }
 
   .card-item:deep(.more-action) {
@@ -837,7 +837,7 @@ defineExpose({ scrollEnd })
 
 @media (max-width:724px) {
   .user-area {
-    width: 45%;
+    width: 50%;
     top: 9px;
     right: 10px;
   }

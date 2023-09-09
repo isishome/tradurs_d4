@@ -138,7 +138,8 @@ onMounted(() => {
     <template #top>
       <q-card-section class="row no-wrap items-center justify-between">
         <div>
-          <div class="q-pa-md text-body1 text-weight-bold">{{ t('notice.title') }}</div>
+          <div class="text-weight-bold" :class="$q.screen.gt.sm ? 'q-pa-md text-h6' : 'q-pa-sm text-body2'">{{
+            t('notice.title') }}</div>
         </div>
         <q-btn unelevated aria-label="Tradurs Close Button" class="no-hover icon" :ripple="false">
           <img src="/images/icons/close.svg" width="24" height="24" @click="notice.open = false" alt="icon_close" />
@@ -159,7 +160,8 @@ onMounted(() => {
     <template #bottom>
       <q-card-section>
         <div class="q-pa-md text-right">
-          <q-btn outline no-caps :label="t('maintenance.close')" @click="close" aria-label="Tradurs Button" />
+          <q-btn :size="$q.screen.gt.sm ? '' : 'sm'" outline no-caps :label="t('maintenance.close')" @click="close"
+            aria-label="Tradurs Button" />
         </div>
       </q-card-section>
     </template>
