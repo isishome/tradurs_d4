@@ -18,6 +18,10 @@ export default boot(({ app, ssrContext, store, router }) => {
     return response
   }, function (error) {
     const status = error.response && error.response.status ? error.response.status : null
+    let message = error.response && error.response.data || error.message
+    const caption = typeof (message) === 'object' && message.caption || ''
+    message = typeof (message) === 'object' && message.body || message
+
     if ([401, 403].includes(status)) {
       const accountStore = useAccountStore(store)
       accountStore.signed = false
@@ -30,7 +34,8 @@ export default boot(({ app, ssrContext, store, router }) => {
         color: 'warning',
         textColor: 'dark',
         multiLine: true,
-        message: error.response && error.response.data || error.message,
+        message,
+        caption,
         actions: [
           {
             label: i18n.global.t('btn.move'), color: 'dark', handler: () => {
