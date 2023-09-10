@@ -148,7 +148,7 @@ export const useAccountStore = defineStore('account', {
     },
     block(battleTag: string) {
       return new Promise<void>((resolve) => {
-        api.post('/d4/account/block', { serviceId: 'diablo4', battleTag })
+        api.post('/d4/account/block', { battleTag })
           .then(() => {
             resolve()
           })
@@ -156,7 +156,7 @@ export const useAccountStore = defineStore('account', {
     },
     unblock(battleTag: string) {
       return new Promise<void>((resolve) => {
-        api.post('/d4/account/unblock', { serviceId: 'diablo4', battleTag })
+        api.post('/d4/account/unblock', { battleTag })
           .then(() => {
             resolve()
           })
