@@ -76,12 +76,12 @@ useMeta(() => {
 })
 
 const notice = reactive<{ open: boolean, close: boolean }>({
-  open: !$q.cookies.has('d4.notice'),
+  open: !$q.cookies.has('d4._notice'),
   close: false
 })
 
 const close = () => {
-  $q.cookies.set('d4.notice', 'confirm', { expires: 1 })
+  $q.cookies.set('d4._notice', 'confirm', { expires: 1 })
   notice.open = false
 }
 
@@ -151,8 +151,8 @@ onMounted(() => {
         <div class="q-pa-md column q-gutter-y-sm" :class="$q.screen.gt.sm ? 'text-body2' : 'text-caption'">
           <div class="text-area">{{ t('notice.top') }}</div>
           <!-- <div class="text-area q-pa-sm">{{ t('notice.changes') }}</div> -->
-          <div class="text-area text-primary q-pa-sm">{{ t('notice.updates') }}</div>
-          <div class="text-area text-negative q-pa-sm">{{ t('notice.cautions') }}</div>
+          <!-- <div class="text-area text-primary q-pa-sm">{{ t('notice.updates') }}</div> -->
+          <div class="text-area text-primary q-pa-sm">{{ t('notice.cautions') }}</div>
           <div class="text-area">{{ t('notice.bottom') }}</div>
         </div>
       </q-card-section>

@@ -268,10 +268,10 @@ export default {
     close: 'Do not open for 24 hours'
   },
   notice: {
-    title: 'Updates and precautions',
-    top: 'Hello. This is Tradurs.\n\nWe would like to inform you of updates and precautions.',
+    title: 'Important notices',
+    top: 'Hello. This is Tradurs.\n\nWe would like to inform you of important notices.',
     updates: "◆ Updates\n· Addition of user blocking/unblocking features\n\t→ User blocking/unblocking is now possible in the user information tooltip.\n\t→ User blocking occurs when the battle tag is exposed. This is possible.\n\t→ Unblocking a user is possible when the battle tag is exposed after 48 hours of blocking.\n\t→Blocked users will see a blocking icon instead of the information icon.",
-    cautions: "◆ Caution\n· Please note that if you engage in activities such as raising the temperature of your manners through negative methods, encouraging cash transactions, or exposing battle tags, your service may be suspended for a certain period of time or your account may be suspended depending on the severity.",
+    cautions: "◆ Important notices\n· In order to prevent negative behavior, block non-mannered users, and work on history pages, the service will be changed so that only users with certified battle tags can use the service in the future. Please keep this in mind and proceed with the battle tag authentication of the account you are currently using.\n\n· Application date: September 14, 2023 (Thu) 15:00~\n\n·  If you have difficulty authenticating the battle tag, please contact us and we will help you to ensure that the authentication is carried out smoothly.",
     bottom: 'Thank you',
     close: 'Do not open for 24 hours'
   },

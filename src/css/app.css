@@ -226,7 +226,7 @@ body.body--dark {
 .text-area {
   line-height: 1.6;
   white-space: pre-wrap;
-  word-break: keep-all;
+  word-break: break-all;
 }
 
 .limit-select {

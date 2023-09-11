@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { useQuasar } from 'quasar'
-import { reactive, onUnmounted, computed, watch } from 'vue'
+import { reactive, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useGlobalStore } from 'stores/global-store'
+import { useAccountStore } from 'stores/account-store'
 
 interface Answer {
   type: string,
@@ -24,6 +25,7 @@ const props = defineProps<{
 const $q = useQuasar()
 const { t, tm } = useI18n({ useScope: 'global' })
 const gs = useGlobalStore()
+const as = useAccountStore()
 
 const support = computed(() => tm('support') as Array<Support>)
 const findSection = support.value.find(s => s.id === (props.section || 'qna'))
@@ -102,14 +104,16 @@ const close = () => {
           </q-item>
         </q-expansion-item>
       </template>
-      <q-separator />
-      <q-expansion-item v-model="contact.show" :class="{ 'no-hover': contact.show }"
-        expand-icon="img:/images/icons/dropdown.svg" :label="t('contact.question')">
-        <q-item class="row justify-center items-center q-py-xl" style="background-color: var(--q-cloud);">
-          <q-btn no-caps class="text-center" color="secondary" aria-label="Tradurs Contact Us Button" push
-            :label="t('contact.title')" @click="contact.open = true" />
-        </q-item>
-      </q-expansion-item>
+      <template v-if="as.signed">
+        <q-separator />
+        <q-expansion-item v-model="contact.show" :class="{ 'no-hover': contact.show }"
+          expand-icon="img:/images/icons/dropdown.svg" :label="t('contact.question')">
+          <q-item class="row justify-center items-center q-py-xl" style="background-color: var(--q-cloud);">
+            <q-btn no-caps class="text-center" color="secondary" aria-label="Tradurs Contact Us Button" push
+              :label="t('contact.title')" @click="contact.open = true" />
+          </q-item>
+        </q-expansion-item>
+      </template>
     </q-list>
     <D4Dialog v-model="contact.open" @submit="send" @hide="close" :persistent="contact.disable">
       <template #top>
