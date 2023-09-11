@@ -449,7 +449,7 @@ export default {
     }
   ],
   awards: {
-    description: '* 어워즈는 단순 합산 결과가 아닌 내부적으로 정한 기준에 의해 산출한 통계입니다',
+    description: '* 어워즈는 단순 합산 결과가 아닌 내부적으로 정한 기준에 의해 산출된 통계 데이터입니다',
     highPriced: {
       category: '지난 한 주간 판매가 상위 5',
       desc: ''

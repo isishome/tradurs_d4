@@ -450,7 +450,7 @@ export default {
     }
   ],
   awards: {
-    description: '* The awards are not a simple aggregate, but a statistic based on internally determined criteria',
+    description: '* Awards are statistical data calculated by internally determined criteria, not just a simple aggregation of results',
     highPriced: {
       category: 'Top 5 selling prices for the past week',
       desc: ''
