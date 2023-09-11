@@ -161,8 +161,7 @@ export default {
     gold: 'Gold',
     url: 'Item URL',
     favorites: 'Favorite Items',
-    forDisplay: 'For Display',
-    expire: 'Completed or expired items are archived for 7 days'
+    forDisplay: 'For Display'
   },
   price: {
     currency: 'Currency',
@@ -450,7 +449,7 @@ export default {
     }
   ],
   awards: {
-    description: '* Awards are statistical data calculated by internally determined criteria, not just a simple aggregation of results',
+    description: '* Awards rankings are calculated based on internally determined criteria, not just the sum of data for each event',
     highPriced: {
       category: 'Top 5 selling prices for the past week',
       desc: ''

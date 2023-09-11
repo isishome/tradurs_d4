@@ -331,7 +331,6 @@ defineExpose({ getList })
 </script>
 <template>
   <div>
-    <div class="text-right text-caption q-pa-xs">{{ t('item.expire') }}</div>
     <div class="row justify-center items-center">
       <D4Items ref="itemsRef" class="item-list" :items="items" :reward-item="rewardItem" @upsert-item="upsertItem"
         @delete-item="deleteItem" @relist-item="relistItem" @status-item="statusItem" @update-only="updateOnly"

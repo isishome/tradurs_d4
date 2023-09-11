@@ -160,8 +160,7 @@ export default {
     gold: '금화',
     url: '아이템 주소',
     favorites: '관심 아이템',
-    forDisplay: '전시용',
-    expire: '완료 또는 만료된 아이템은 7일간 보관됩니다'
+    forDisplay: '전시용'
   },
   price: {
     currency: '화폐 유형',
@@ -449,7 +448,7 @@ export default {
     }
   ],
   awards: {
-    description: '* 어워즈는 단순 합산 결과가 아닌 내부적으로 정한 기준에 의해 산출된 통계 데이터입니다',
+    description: '* 어워즈 순위는 단순히 종목 별 데이터 합산이 아닌 내부적으로 정한 기준을 바탕으로 산출됩니다',
     highPriced: {
       category: '지난 한 주간 판매가 상위 5',
       desc: ''
