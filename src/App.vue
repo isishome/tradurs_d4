@@ -81,7 +81,7 @@ const notice = reactive<{ open: boolean, close: boolean }>({
 })
 
 const close = () => {
-  $q.cookies.set('d4._notice', 'confirm', { expires: 1 })
+  $q.cookies.set('d4._notice', 'confirm', { expires: 1, path: '/' })
   notice.open = false
 }
 

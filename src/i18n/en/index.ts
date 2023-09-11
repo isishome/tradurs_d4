@@ -161,7 +161,8 @@ export default {
     gold: 'Gold',
     url: 'Item URL',
     favorites: 'Favorite Items',
-    forDisplay: 'For Display'
+    forDisplay: 'For Display',
+    expire: 'Completed or expired items are archived for 7 days'
   },
   price: {
     currency: 'Currency',
@@ -270,7 +271,6 @@ export default {
   notice: {
     title: 'Important notices',
     top: 'Hello. This is Tradurs.\n\nWe would like to inform you of important notices.',
-    updates: "◆ Updates\n· Addition of user blocking/unblocking features\n\t→ User blocking/unblocking is now possible in the user information tooltip.\n\t→ User blocking occurs when the battle tag is exposed. This is possible.\n\t→ Unblocking a user is possible when the battle tag is exposed after 48 hours of blocking.\n\t→Blocked users will see a blocking icon instead of the information icon.",
     cautions: "◆ Important notices\n· In order to prevent negative behavior, block non-mannered users, and work on history pages, the service will be changed so that only users with certified battle tags can use the service in the future. Please keep this in mind and proceed with the battle tag authentication of the account you are currently using.\n\n· Application date: September 14, 2023 (Thu) 15:00~\n\n·  If you have difficulty authenticating the battle tag, please contact us and we will help you to ensure that the authentication is carried out smoothly.",
     bottom: 'Thank you',
     close: 'Do not open for 24 hours'
@@ -422,20 +422,14 @@ export default {
         { type: 'image', contents: '11_proceed_trade' },
         { type: 'text', contents: '11. The buyer will be notified of the offer acceptance, and the offer card will change to \'Trade in progress\' (completion screen) when they click the go link.' },
         { type: 'image', contents: '12_proceed_trade' },
-        {
-          type: 'text', contents: '12. The seller\'s offer card will also change to \'Trade in progress\'. nNow the buyer\'s battle tag will be displayed.nClick to copy the battle tag to the clipboard.'
-        },
+        { type: 'text', contents: '12. The seller\'s offer card will also change to \'Trade in progress\'. nNow the buyer\'s battle tag will be displayed.nClick to copy the battle tag to the clipboard.' },
         { type: 'image', contents: '13_proceed_trade' },
         { type: 'text', contents: '13. The buyer will also see the seller\'s battle tag on the item card.\nClick to copy the battle tag to the clipboard.\nYou will now proceed to trade the item via each other\'s battle tag.\nWhen the item status changes to \'Trade in progress\', you have *24 hours to complete the trade.\nAfter 24 hours, the item will automatically change to \'Trade complete\' status.\n(Note the fixed 1 degree drop in manor temperature when processing automatically.)' },
         { type: 'image', contents: '1401_evaluation' },
         { type: 'image', contents: '1402_evaluation' },
-        {
-          type: 'text', contents: '14. Now the seller and buyer can leave a manners rating for each other\'s transaction by clicking the Done button.\n\n*If the other party doesn\'t contact you or doesn\'t make a sale or purchase,\n\n*you still need to complete the transaction so that you get your yolk back and don\'t get penalized for not completing the transaction.'
-        },
+        { type: 'text', contents: '14. Now the seller and buyer can leave a manners rating for each other\'s transaction by clicking the Done button.\n\n*If the other party doesn\'t contact you or doesn\'t make a sale or purchase,\n\n*you still need to complete the transaction so that you get your yolk back and don\'t get penalized for not completing the transaction.' },
         { type: 'image', contents: '15_evaluation' },
-        {
-          type: 'text', contents: '15. When you\'re done with each other, you can see the manners evaluation that the other person left.'
-        },
+        { type: 'text', contents: '15. When you\'re done with each other, you can see the manners evaluation that the other person left.' },
         { type: 'image', contents: '16_copy' },
         { type: 'text', contents: '16. If the transaction is canceled, you can easily re-register the item using the \'Copy Template\' function located on the item card > right side of the item name > More icon.' },
         { type: 'image', contents: '1701_sound' },
@@ -456,6 +450,7 @@ export default {
     }
   ],
   awards: {
+    description: '* The awards are not a simple aggregate, but a statistic based on internally determined criteria',
     highPriced: {
       category: 'Top 5 selling prices for the past week',
       desc: ''

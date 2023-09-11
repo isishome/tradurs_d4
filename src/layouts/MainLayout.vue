@@ -82,7 +82,7 @@ const setLang = (lang: string) => {
 
 const setDark = () => {
   $q.dark.set(!$q.dark.isActive)
-  $q.cookies.set('d4.dark', $q.dark.isActive.toString())
+  $q.cookies.set('d4.dark', $q.dark.isActive.toString(), { path: '/' })
 }
 
 const key = ref(uid())
