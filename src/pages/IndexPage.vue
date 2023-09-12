@@ -36,7 +36,7 @@ const complete = computed(() => is.socket.complete)
 const filter = computed(() => is.filter.request)
 const expanded = computed(() => is.equalDefaultFilter)
 const itemsRef = ref<typeof D4Items | null>(null)
-const items = ref<Array<Item>>([])
+const items = ref<Array<Item | Advertise>>([])
 const rewardItem = ref<Item | undefined>()
 const page = ref<number>(1)
 const over = computed(() => is.itemPage.over)
@@ -223,7 +223,7 @@ const getList = (filter?: any) => {
         }
       }
       items.value.push(...result)
-      items.value.splice(10, 0, new Advertise())
+      items.value.splice(10, 0, new Advertise('advertise'))
 
     }).catch(() => {
       items.value = []

@@ -637,8 +637,10 @@ const visible = (isVisible: boolean, item: Item): void => {
   //findItem.style.height = isVisible ? '100%' : `${findItem.offsetHeight}px`
 
   if (isVisible && item instanceof Advertise && $q.screen.lt.lg && prod) {
-    const adsbygoogle = window.adsbygoogle || []
-    adsbygoogle.push({})
+    setTimeout(() => {
+      const adsbygoogle = window.adsbygoogle || []
+      adsbygoogle.push({})
+    }, 400)
   }
 }
 
@@ -711,16 +713,17 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
         </div>
       </div>
       <q-intersection v-for="item, idx in (items as Array<Item | Advertise>)"
-        :key="(item instanceof Advertise) ? 'gap-ads' : idx" :data-itemid="item.itemId" class="item" :style="`min-height:${(item instanceof Advertise) ? '100%' : height as number - ($q.screen.lt.sm ? 50 : 0)}px;height:${(item instanceof Advertise) ? '100%' : item.expanded ? '100%' :
+        :key="item.itemId === 'advertise' ? 'gap-ads' : idx" :data-itemid="item.itemId" class="item" :style="`min-height:${item.itemId === 'advertise' ? '100%' : height as number - ($q.screen.lt.sm ? 50 : 0)}px;height:${item.itemId === 'advertise' ? '100%' : item.expanded ? '100%' :
           `${height as number - ($q.screen.lt.sm ? 50 : 0)}px`}`" transition="fade" ssr-prerender once
         @visibility="(val: boolean) => visible(val, item)">
-        <div v-if="(item instanceof Advertise) && $q.screen.lt.lg" class="row justify-center">
+        <div v-if="item.itemId === 'advertise' && $q.screen.lt.lg" class="row justify-center">
           <ins class="adsbygoogle" :style="`display:inline-block;${size}`" data-ad-client="ca-pub-5110777286519562"
             data-ad-slot="3229008690" :data-adtest="prod ? 'off' : 'on'" :key="`gap-${gs.reloadAdKey}`"></ins>
         </div>
-        <D4Item v-else :data="item" :loading="item.loading" @favorite="favorite" @copy="copy"
-          @update-only="(val: string) => emit('update-only', val)">
+        <D4Item v-else-if="item.itemId !== 'advertise'" :data="item" :loading="item.loading" @favorite="favorite"
+          @copy="copy" @update-only="(val: string) => emit('update-only', val)">
           <template #top-right>
+            {{ item.itemId }}
           </template>
           <template v-if="requestProperties > 0" #properties>
             <D4Property v-for="property in item.properties" :key="property.valueId" :data="property" />

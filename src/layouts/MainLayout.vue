@@ -60,7 +60,7 @@ const sign = () => {
       if (!result) {
         is.clearFilter()
         mainKey.value++
-        reload()
+        gs.reloadAdKey++
       }
     }).catch(() => { })
       .then(() => {
@@ -114,7 +114,7 @@ const main = () => {
   if (route.name === 'tradeList' && page.value === 1) {
     is.clearFilter()
     mainKey.value++
-    reload()
+    gs.reloadAdKey++
   }
   else
     router.push({ name: 'tradeList', params: { lang: route.params.lang } })
@@ -130,12 +130,12 @@ const size = computed(() => $q.screen.width < 728 ? 'width:320px;max-height:100p
 
 watch([size, () => $q.screen.gt.md], ([new1, new2], [old1, old2]) => {
   if (new1 !== old1 || new2 !== old2)
-    reload()
+    gs.reloadAdKey++
 })
 
 watch(() => route.name, (val, old) => {
   if (val && val !== old)
-    reload()
+    gs.reloadAdKey++
 })
 
 watch(() => gs.reloadAdKey, (val, old) => {
