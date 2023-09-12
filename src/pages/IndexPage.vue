@@ -368,6 +368,7 @@ defineExpose({ getList })
   position: sticky;
   bottom: 8%;
   z-index: 1;
+  pointer-events: none;
 }
 
 .shadow-depth-5::before {
