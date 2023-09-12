@@ -60,6 +60,7 @@ const sign = () => {
       if (!result) {
         is.clearFilter()
         mainKey.value++
+        reload()
       }
     }).catch(() => { })
       .then(() => {
@@ -115,6 +116,7 @@ const main = () => {
   if (route.name === 'tradeList' && page.value === 1) {
     is.clearFilter()
     mainKey.value++
+    reload()
   }
   else
     router.push({ name: 'tradeList', params: { lang: route.params.lang } })
