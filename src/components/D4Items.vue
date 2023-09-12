@@ -723,7 +723,6 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
         <D4Item v-else-if="item.itemId !== 'advertise'" :data="item" :loading="item.loading" @favorite="favorite"
           @copy="copy" @update-only="(val: string) => emit('update-only', val)">
           <template #top-right>
-            {{ item.itemId }}
           </template>
           <template v-if="requestProperties > 0" #properties>
             <D4Property v-for="property in item.properties" :key="property.valueId" :data="property" />
