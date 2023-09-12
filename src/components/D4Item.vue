@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive, ref, computed, defineAsyncComponent, useSlots, nextTick, watch, onUnmounted, ComputedRef } from 'vue'
-import { QCard, useQuasar, date } from 'quasar'
+import { QCard, useQuasar, date, is } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 
@@ -27,7 +27,7 @@ const props = withDefaults(defineProps<IProps>(), {
   disable: false
 })
 
-const emit = defineEmits(['update', 'apply', 'copy', 'favorite', 'block'])
+const emit = defineEmits(['update', 'apply', 'copy', 'favorite', 'update-only'])
 
 // common variable
 const $q = useQuasar()
@@ -45,6 +45,7 @@ const filterRunesByType = store.filterRunesByType
 
 const _name = ref<string>(props.data.name)
 const _quantity = ref<number>(props.data.quantity || 1)
+const selectable = computed(() => props.data.authorized && store.filter.mine && !['001', '003'].includes(props.data.statusCode) && props.data.offers === 0)
 const remainDate = ref<number>(date.getDateDiff(new Date(props.data.endDate), new Date(), 'seconds'))
 const hour = 60 * 60
 const minute = 60
@@ -496,6 +497,7 @@ defineExpose({ scrollEnd })
   </q-card>
   <q-card v-else class="card-item non-selectable no-scroll full-height overflow-hidden"
     :class="[data.expanded ? 'expanded' : 'no-expanded', data.quality, `status-${data.statusCode} `]">
+
     <div class="inner">
       <q-card-section>
         <div class="user-area row justify-end">
@@ -527,10 +529,9 @@ defineExpose({ scrollEnd })
             </div>
             <D4Price :data="data.price" :progress="loading" />
             <D4User v-if="!data.forDisplay" :data="data.user" :label="t('seller')" :disable="disable" :progress="loading"
-              :authorized="data.authorized" />
+              :authorized="data.authorized" @update="emit('update-only', data.itemId)" />
           </div>
         </div>
-
         <div class="column items-start q-pa-sm relative-position" :class="{ 'q-gutter-xs': !$q.screen.lt.sm || loading }">
           <div v-show="!loading" class="hardcore-ladder row justify-end items-center">
             <div class="text-secondary">{{ data.hardcore ? '&#10074;' : '' }}</div>
@@ -541,6 +542,7 @@ defineExpose({ scrollEnd })
           </div>
           <div class="name-place">
             <div v-show="!loading" class="row items-center q-gutter-xs q-mb-xs no-wrap">
+              <!-- <q-checkbox v-if="selectable" v-model="data.selected" dense :size="$q.screen.lt.sm ? 'xs' : 'sm'" /> -->
               <div v-show="data.itemType === 'rune'" class="row items-center q-gutter-sm">
                 <div class="name">{{ (filterRunesByType().find(r => r.value === data.itemTypeValue1) || {}).label }}</div>
                 <div>{{ findRuneType(findRune(data.itemTypeValue1)?.type)?.label }}

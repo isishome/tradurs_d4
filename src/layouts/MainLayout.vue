@@ -26,10 +26,10 @@ const as = useAccountStore()
 const is = useItemStore()
 const { t, locale } = useI18n({ useScope: 'global' })
 
-
 locale.value = props.lang || 'ko'
 
 const tradurs: string = import.meta.env.VITE_APP_TRADURS + (`/${props.lang || 'ko'}`)
+const mainKey = ref<number>(0)
 const filterLoading = computed(() => is.filter.loading)
 const leftDrawerOpen = ref<boolean>(false)
 const rightDrawerOpen = ref<boolean>(false)
@@ -57,8 +57,10 @@ const sign = () => {
   else {
     progressSign.value = true
     as.sign().then((result: boolean) => {
-      if (!result)
-        router.go(0)
+      if (!result) {
+        is.clearFilter()
+        mainKey.value++
+      }
     }).catch(() => { })
       .then(() => {
         progressSign.value = false
@@ -110,8 +112,10 @@ const clear = () => {
 
 const page = computed(() => route.query.page ? Number.parseInt(route.query.page.toString()) : 1)
 const main = () => {
-  if (route.name === 'tradeList' && page.value === 1)
-    router.go(0)
+  if (route.name === 'tradeList' && page.value === 1) {
+    is.clearFilter()
+    mainKey.value++
+  }
   else
     router.push({ name: 'tradeList', params: { lang: route.params.lang } })
 }
@@ -134,7 +138,7 @@ watch(() => route.name, (val, old) => {
     reload()
 })
 
-watch(() => gs.refresh, (val, old) => {
+watch(() => gs.reloadAdKey, (val, old) => {
   if (val && val !== old)
     reload()
 })
@@ -144,8 +148,8 @@ watch(() => $q.screen.gt.sm, (val) => {
     rightDrawerOpen.value = false
 })
 
-watch(() => is.filter.request, (val) => {
-  if (val === 0)
+watch(() => is.filter.name, (val) => {
+  if (val === '')
     _name.value = ''
 })
 
@@ -175,7 +179,7 @@ onUnmounted(() => {
 })
 </script>
 <template>
-  <q-layout view="hHh lpR lFf">
+  <q-layout view="hHh lpR lFf" :key="mainKey">
     <div v-show="['tradeList', 'itemInfo'].includes(route.name as string) && is.fixedFilter.ladder" class="bg-season"
       :style="`--tradurs-season-image:url('${t('season.bg')}');`">
     </div>

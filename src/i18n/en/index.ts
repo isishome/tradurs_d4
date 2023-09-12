@@ -97,7 +97,9 @@ export default {
     message: "Do you want to block the user?",
     unblockMessage: "Do you want to unblock this user?",
     unblock: 'Unblock user',
-    caption: 'Unblocking is not available until 48 hours after blocking'
+    caption: 'Unblocking is not available until 48 hours after blocking',
+    complete: 'User blocking is complete',
+    unblockComplete: 'User unblocking is complete'
   },
   btn: {
     edit: 'Edit',

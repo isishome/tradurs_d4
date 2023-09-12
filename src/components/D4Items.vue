@@ -660,7 +660,8 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
       <div v-if="rewardItem" class="item relative-position reward" :style="`min-height:${height as number - ($q.screen.lt.sm ? 50 : 0)}px;height:${rewardItem.expanded ? '100%' :
         `${height as number - ($q.screen.lt.sm ? 50 : 0)}px`}`" data-itemid="reward-item">
         <div>
-          <D4Item :data="rewardItem" :loading="rewardItem.loading" @favorite="favorite" @copy="copy">
+          <D4Item :data="rewardItem" :loading="rewardItem.loading" @favorite="favorite" @copy="copy"
+            @update-only="(val: string) => emit('update-only', val)">
             <template #top-right>
             </template>
             <template v-if="requestProperties > 0" #properties>
@@ -701,7 +702,8 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
         class="item" :style="`min-height:${height as number - ($q.screen.lt.sm ? 50 : 0)}px;height:${item.expanded ? '100%' :
           `${height as number - ($q.screen.lt.sm ? 50 : 0)}px`}`" transition="fade" ssr-prerender once>
         <div v-if="(item instanceof Advertise)" class="bg-grey" style="width:100%;height:500px"></div>
-        <D4Item v-else :data="item" :loading="item.loading" @favorite="favorite" @copy="copy">
+        <D4Item v-else :data="item" :loading="item.loading" @favorite="favorite" @copy="copy"
+          @update-only="(val: string) => emit('update-only', val)">
           <template #top-right>
           </template>
           <template v-if="requestProperties > 0" #properties>
@@ -947,7 +949,8 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                   <div class="inner">
                     <D4Offer class="offer" :data="offer" :owner="offerItem?.authorized"
                       :evaluations="offerItem?.evaluations" :disable="disableOffers" @accept-offer="acceptOffer"
-                      @retract-offer="retractOffer" @turndown-offer="turnDownOffer" @complete="complete" />
+                      @retract-offer="retractOffer" @turndown-offer="turnDownOffer" @complete="complete"
+                      @reload="openMakingOffer(offerItem as Item)" />
                   </div>
                 </q-card>
               </q-intersection>
@@ -966,7 +969,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
         <q-card-section class="row justify-end q-gutter-sm items-center">
           <div>{{ t('seller') }}</div>
           <q-img src="/images/icons/direction.svg" class="icon" width="20px" />
-          <D4User :data="offerItem?.user" :disable="disableOffers" />
+          <D4User :data="offerItem?.user" :disable="disableOffers" @update="emit('update-only', offerItem?.itemId)" />
         </q-card-section>
       </template>
     </D4Dialog>

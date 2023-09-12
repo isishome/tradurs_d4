@@ -68,7 +68,8 @@ export interface IItem {
   editable: boolean,
   actions: Array<number>,
   loading: boolean,
-  expanded: boolean
+  expanded: boolean,
+  selected: boolean
 }
 
 // export interface Advertise extends IItem {
@@ -123,6 +124,7 @@ export class Item implements IItem {
   public actions: Array<number> = []
   public loading = false
   public expanded = false
+  public selected = false
 
   constructor(id?: string) {
     this.itemId = id === undefined ? uid() : id

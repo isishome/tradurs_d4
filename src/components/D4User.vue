@@ -27,6 +27,8 @@ const props = withDefaults(defineProps<IProps>(), {
   progress: false
 })
 
+const emit = defineEmits(['update'])
+
 const $q = useQuasar()
 const { t } = useI18n({ useScope: 'global' })
 const router = useRouter()
@@ -100,7 +102,13 @@ const block = () => {
     userProgress.value = true
     as.block(props.data.battleTag)
       .then(() => {
-        router.go(0)
+        $q.notify({
+          icon: 'img:/images/icons/check.svg',
+          color: 'positive',
+          classes: '',
+          message: t('blockUser.complete')
+        })
+        emit('update')
       })
       .catch(() => { })
       .then(() => {
@@ -124,7 +132,13 @@ const unblock = () => {
     userProgress.value = true
     as.unblock(props.data.battleTag)
       .then(() => {
-        router.go(0)
+        $q.notify({
+          icon: 'img:/images/icons/check.svg',
+          color: 'positive',
+          classes: '',
+          message: t('blockUser.unblockComplete')
+        })
+        emit('update')
       })
       .catch(() => { })
       .then(() => {

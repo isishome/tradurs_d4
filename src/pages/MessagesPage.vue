@@ -130,14 +130,14 @@ const close = () => {
 
 const prev = () => {
   if (page.value > 1) {
-    gs.refresh++
+    gs.reloadAdKey++
     page.value--
     getList()
   }
 }
 
 const next = () => {
-  gs.refresh++
+  gs.reloadAdKey++
   page.value++
   getList()
 }

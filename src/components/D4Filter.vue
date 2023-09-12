@@ -30,8 +30,11 @@ const findAffix = computed(() => is.findAffix)
 const findRestriction = computed(() => is.findRestriction)
 
 // init filter
-if ($q.localStorage.has('d4.filter'))
-  is.filter = JSON.parse($q.localStorage.getItem('d4.filter') as string)
+if ($q.localStorage.has('d4.filter')) {
+  const storageFilter = JSON.parse($q.localStorage.getItem('d4.filter') as string)
+  delete storageFilter.request
+  Object.assign(is.filter, storageFilter)
+}
 
 if ($q.localStorage.has('d4.fixedFilter'))
   is.fixedFilter = JSON.parse($q.localStorage.getItem('d4.fixedFilter') as string)
@@ -122,6 +125,7 @@ const mine = () => {
 
 const clearFilter = () => {
   is.clearFilter(true)
+  is.filter.request--
 }
 
 const stored = () => {

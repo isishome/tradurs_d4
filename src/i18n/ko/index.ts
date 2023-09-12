@@ -96,7 +96,9 @@ export default {
     message: '해당 사용자를 차단할까요?',
     unblockMessage: '해당 사용자의 차단을 해제할까요?',
     unblock: '사용자 차단 해제',
-    caption: '차단 해제는 차단 후 48시간이 자나야 가능합니다'
+    caption: '차단 해제는 차단 후 48시간이 자나야 가능합니다',
+    complete: '사용자 차단이 완료되었습니다',
+    unblockComplete: '사용자 차단 해제가 완료되었습니다'
   },
   btn: {
     edit: '수정하기',

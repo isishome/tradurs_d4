@@ -26,7 +26,7 @@ const props = withDefaults(defineProps<IProps>(), {
   evaluations: () => []
 })
 
-const emit = defineEmits(['make-offer', 'accept-offer', 'retract-offer', 'turndown-offer', 'complete'])
+const emit = defineEmits(['make-offer', 'accept-offer', 'retract-offer', 'turndown-offer', 'complete', 'reload'])
 
 const { t } = useI18n({ useScope: 'global' })
 const $q = useQuasar()
@@ -141,7 +141,8 @@ const parsEvaluations = computed(() => props.owner ? as.filterEvaluations(props.
           <D4Price :data="data.price" :disable="disable" />
         </q-item-label>
         <q-item-label caption>
-          <D4User :data="data.user" :label="t('offerer')" :disable="disable" :authorized="data.authorized" />
+          <D4User :data="data.user" :label="t('offerer')" :disable="disable" :authorized="data.authorized"
+            @update="emit('reload')" />
         </q-item-label>
       </q-item-section>
     </q-item>

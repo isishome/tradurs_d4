@@ -41,6 +41,7 @@ const rewardItem = ref<Item | undefined>()
 const page = ref<number>(1)
 const over = computed(() => is.itemPage.over)
 const more = computed(() => is.itemPage.more)
+const selectable = computed(() => is.filter.mine)
 
 // insert or update item
 const upsertItem = (item: Item, done: Function) => {
@@ -171,14 +172,14 @@ const favorite = (itemId: string, favorite: boolean) => {
 
 const prev = () => {
   if (page.value > 1) {
-    gs.refresh++
+    gs.reloadAdKey++
     page.value--
     getList(is.filter)
   }
 }
 
 const next = () => {
-  gs.refresh++
+  gs.reloadAdKey++
   page.value++
   getList(is.filter)
 }
@@ -339,10 +340,18 @@ defineExpose({ getList })
   </div>
   <div class="q-pt-xl"></div>
   <template v-if="completeList">
-    <D4Btn v-if="as.signed" round @click="create" class="sticky-btn" color="var(--q-secondary)" :disable="disable" shadow>
-      <img src="/images/icons/add.svg" width="24" height="24" class="invert" alt="icon_add" />
-    </D4Btn>
-    <D4Btn v-else style="visibility: hidden;" />
+    <div class="sticky-place row justify-end">
+      <div v-if="as.signed" class="row items-center q-gutter-x-xs shadow-depth-5 relative-position">
+        <!-- <D4Btn v-if="selectable" round @click="create" color="var(--q-info)"
+          :disable="disable || items.filter((item: Item) => item.selected).length === 0">
+          <img src="/images/icons/remove.svg" width="24" height="24" class="invert" alt="icon_add" />
+        </D4Btn> -->
+        <D4Btn round @click="create" color="var(--q-secondary)" :disable="disable" shadow>
+          <img src="/images/icons/add.svg" width="24" height="24" class="invert" alt="icon_add" />
+        </D4Btn>
+      </div>
+      <D4Btn v-else style="visibility: hidden;" />
+    </div>
     <div class="row q-gutter-xs items-center paging">
       <D4Btn round @click="prev" color="var(--q-light-magic)" :disable="!over || disable" :shadow="!$q.dark.isActive">
         <img src="/images/icons/prev.svg" width="24" height="24" class="invert" alt="icon_prev" />
@@ -355,12 +364,28 @@ defineExpose({ getList })
 </template>
 
 <style scoped>
-.sticky-btn {
+.sticky-place {
   position: sticky;
   bottom: 8%;
-  left: 100%;
   z-index: 1;
 }
+
+.shadow-depth-5::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+}
+
+.body--dark .shadow-depth-5::before {
+  box-shadow: rgb(0, 0, 0) 0 0 60px 60px;
+}
+
+.body--light .shadow-depth-5::before {
+  box-shadow: rgb(38, 57, 77) 0 20px 30px 0;
+}
+
 
 .paging {
   position: absolute;
@@ -380,7 +405,7 @@ defineExpose({ getList })
 }
 
 @media (max-width:600px) {
-  .sticky-btn {
+  .sticky-place {
     bottom: 10px;
   }
 
