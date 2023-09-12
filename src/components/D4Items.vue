@@ -637,10 +637,10 @@ const visible = (isVisible: boolean, item: Item): void => {
   //findItem.style.height = isVisible ? '100%' : `${findItem.offsetHeight}px`
 
   if (isVisible && item instanceof Advertise && $q.screen.lt.lg && prod) {
-    setTimeout(() => {
+    nextTick(() => {
       const adsbygoogle = window.adsbygoogle || []
       adsbygoogle.push({})
-    }, 400)
+    })
   }
 }
 
