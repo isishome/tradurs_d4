@@ -4,6 +4,7 @@ import { useQuasar, QInput, QSelect, uid } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 
+import { useGlobalStore } from 'src/stores/global-store'
 import { useAccountStore } from 'stores/account-store'
 import { useItemStore, type Property, type Affix, type Restriction } from 'stores/item-store'
 import { checkAttribute, scrollPos } from 'src/common'
@@ -31,8 +32,11 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const emit = defineEmits(['upsert-item', 'delete-item', 'relist-item', 'status-item', 'update-only', 'copy', 'favorite'])
 
+const prod: boolean = import.meta.env.PROD
+
 // init module
 const $q = useQuasar()
+const gs = useGlobalStore()
 const as = useAccountStore()
 const is = useItemStore()
 const { t } = useI18n({ useScope: 'global' })
@@ -631,6 +635,11 @@ const visible = (isVisible: boolean, item: Item): void => {
   // if (findItem && item.reward)
   //   findItem.classList.add('reward')
   //findItem.style.height = isVisible ? '100%' : `${findItem.offsetHeight}px`
+
+  if (isVisible && item instanceof Advertise && $q.screen.lt.lg && prod) {
+    const adsbygoogle = window.adsbygoogle || []
+    adsbygoogle.push({})
+  }
 }
 
 const create = () => {
@@ -650,6 +659,9 @@ const openOffers = (itemId: string) => {
     openMakingOffer(findItem)
   }
 }
+
+// about screen size
+const size = computed(() => $q.screen.width < 728 ? 'width:320px;max-height:100px;' : 'width:728px;height:90px;')
 
 defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
 </script>
@@ -698,10 +710,14 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
           </D4Item>
         </div>
       </div>
-      <q-intersection v-for="item, idx in (items as Array<Item | Advertise>)" :key="idx" :data-itemid="item.itemId"
-        class="item" :style="`min-height:${height as number - ($q.screen.lt.sm ? 50 : 0)}px;height:${item.expanded ? '100%' :
-          `${height as number - ($q.screen.lt.sm ? 50 : 0)}px`}`" transition="fade" ssr-prerender once>
-        <div v-if="(item instanceof Advertise)" class="bg-grey" style="width:100%;height:500px"></div>
+      <q-intersection v-for="item, idx in (items as Array<Item | Advertise>)"
+        :key="(item instanceof Advertise) ? 'gap-ads' : idx" :data-itemid="item.itemId" class="item" :style="`min-height:${(item instanceof Advertise) ? '100%' : height as number - ($q.screen.lt.sm ? 50 : 0)}px;height:${(item instanceof Advertise) ? '100%' : item.expanded ? '100%' :
+          `${height as number - ($q.screen.lt.sm ? 50 : 0)}px`}`" transition="fade" ssr-prerender once
+        @visibility="(val: boolean) => visible(val, item)">
+        <div v-if="(item instanceof Advertise) && $q.screen.lt.lg" class="row justify-center">
+          <ins class="adsbygoogle" :style="`display:inline-block;${size}`" data-ad-client="ca-pub-5110777286519562"
+            data-ad-slot="3229008690" :data-adtest="prod ? 'off' : 'on'" :key="`gap-${gs.reloadAdKey}`"></ins>
+        </div>
         <D4Item v-else :data="item" :loading="item.loading" @favorite="favorite" @copy="copy"
           @update-only="(val: string) => emit('update-only', val)">
           <template #top-right>

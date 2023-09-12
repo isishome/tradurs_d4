@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useQuasar, Screen, uid } from 'quasar'
+import { useQuasar, Screen } from 'quasar'
 import { useI18n } from 'vue-i18n'
 
 import { useGlobalStore } from 'src/stores/global-store'
@@ -88,9 +88,7 @@ const setDark = () => {
   $q.cookies.set('d4.dark', $q.dark.isActive.toString(), { path: '/' })
 }
 
-const key = ref(uid())
 const reload = () => {
-  key.value = uid()
   nextTick(() => {
     onWindowLoad()
   })
@@ -421,16 +419,11 @@ onUnmounted(() => {
             <div class="view max-width">
               <div class="row justify-center top-ads">
                 <ins class="adsbygoogle" :style="`display:inline-block;${size}`" data-ad-client="ca-pub-5110777286519562"
-                  data-ad-slot="7137983054" :data-adtest="prod ? 'off' : 'on'" :key="`top-${key}`"></ins>
+                  data-ad-slot="7137983054" :data-adtest="prod ? 'off' : 'on'" :key="`top-${gs.reloadAdKey}`"></ins>
               </div>
               <RouterView />
             </div>
             <div class="q-py-xl"></div>
-            <div class="row justify-center">
-              <ins v-if="$q.platform.is.mobile" class="adsbygoogle" style="display:inline-block;width:300px;height:250px"
-                data-ad-client="ca-pub-5110777286519562" data-ad-slot="6163086381" :data-adtest="prod ? 'off' : 'on'"
-                :key="`bottom-${key}`"></ins>
-            </div>
             <q-separator />
             <div class="q-pt-lg">
               <div class="row justify-center items-center q-gutter-xs text-caption bottom">
@@ -447,7 +440,7 @@ onUnmounted(() => {
               <div :style="`position:sticky;top:${asideTop}`" class="column">
                 <ins class="adsbygoogle" style="display:inline-block;width:160px;height:600px"
                   data-ad-client="ca-pub-5110777286519562" data-ad-slot="6751896285" :data-adtest="prod ? 'off' : 'on'"
-                  :key="`right-${key}`"></ins>
+                  :key="`right-${gs.reloadAdKey}`"></ins>
                 <div class="q-mt-xl">
                   <div class="column items-start useful">
                     <q-btn flat no-caps padding="0" :ripple="false" class="text-overline no-hover" type="a"
@@ -493,33 +486,6 @@ onUnmounted(() => {
   min-height: inherit;
   width: 100vw;
   max-width: 1400px;
-}
-
-ins {
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, .05);
-  background-color: rgba(255, 255, 255, .05);
-  position: relative;
-  min-height: 50px;
-}
-
-.body--light ins {
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, .05);
-  background-color: rgba(0, 0, 0, .05);
-}
-
-ins::after {
-  content: 'AD';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  z-index: -1;
-  transform: translate(-50%, -50%);
-  color: var(--q-light);
-  opacity: .2;
-}
-
-.body--light ins::after {
-  color: var(--q-dark);
 }
 
 .nav,

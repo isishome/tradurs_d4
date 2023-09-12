@@ -8,7 +8,7 @@ import { useI18n } from 'vue-i18n'
 import { useQuasar, uid } from 'quasar'
 import { scrollPos } from 'src/common'
 
-import { Item, IPrice } from 'src/types/item'
+import { Item, IPrice, Advertise } from 'src/types/item'
 
 const D4Items = defineAsyncComponent(() => import('components/D4Items.vue'))
 
@@ -223,7 +223,7 @@ const getList = (filter?: any) => {
         }
       }
       items.value.push(...result)
-
+      items.value.splice(10, 0, new Advertise())
 
     }).catch(() => {
       items.value = []
