@@ -632,11 +632,6 @@ const failedAnalyze = (msg: string) => {
 
 // Execute function if an item is visible (adsense)
 const visible = (isVisible: boolean, item: Item): void => {
-  // const findItem = document.querySelector(`div[data-itemid="${item.itemId}"]`) as HTMLDivElement
-  // if (findItem && item.reward)
-  //   findItem.classList.add('reward')
-  //findItem.style.height = isVisible ? '100%' : `${findItem.offsetHeight}px`
-
   if (isVisible && item.itemId === 'advertise' && $q.screen.lt.lg && prod) {
     nextTick(() => {
       const adsbygoogle = window.adsbygoogle || []

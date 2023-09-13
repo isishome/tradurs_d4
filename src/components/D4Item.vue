@@ -843,6 +843,10 @@ defineExpose({ scrollEnd })
     top: 9px;
     right: 10px;
   }
+
+  .item-image {
+    max-width: 50%;
+  }
 }
 
 @media (max-width:400px) {
