@@ -8,7 +8,7 @@ import { useGlobalStore } from 'src/stores/global-store'
 import { useAccountStore } from 'stores/account-store'
 import { useItemStore, type Property, type Affix, type Restriction } from 'stores/item-store'
 import { checkAttribute, scrollPos } from 'src/common'
-import { Item, Advertise, Offer, type AffixValue, type IItem, Price } from 'src/types/item'
+import { Item, Offer, type AffixValue, type IItem, Price } from 'src/types/item'
 import { User } from 'src/types/user'
 
 const D4Item = defineAsyncComponent(() => import('components/D4Item.vue'))
@@ -49,6 +49,7 @@ const D4Analysis = defineAsyncComponent(() => import('components/D4Analysis.vue'
 const requestProperties = computed<number>(() => is.properties.request)
 const requestAffixes = computed<number>(() => is.affixes.request)
 const requestRestrictions = computed<number>(() => is.restrictions.request)
+const itemHeight = computed(() => parseInt(props.height.toString()) - ($q.screen.lt.sm ? 50 : 0))
 
 // about copy item
 const copy = (itemId: string) => {
@@ -636,7 +637,7 @@ const visible = (isVisible: boolean, item: Item): void => {
   //   findItem.classList.add('reward')
   //findItem.style.height = isVisible ? '100%' : `${findItem.offsetHeight}px`
 
-  if (isVisible && item instanceof Advertise && $q.screen.lt.lg && prod) {
+  if (isVisible && item.itemId === 'advertise' && $q.screen.lt.lg && prod) {
     nextTick(() => {
       const adsbygoogle = window.adsbygoogle || []
       adsbygoogle.push({})
@@ -712,16 +713,15 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
           </D4Item>
         </div>
       </div>
-      <q-intersection v-for="item, idx in (items as Array<Item | Advertise>)"
-        :key="item.itemId === 'advertise' ? 'gap-ads' : idx" :data-itemid="item.itemId" class="item" :style="`min-height:${item.itemId === 'advertise' ? '100%' : height as number - ($q.screen.lt.sm ? 50 : 0)}px;height:${item.itemId === 'advertise' ? '100%' : item.expanded ? '100%' :
-          `${height as number - ($q.screen.lt.sm ? 50 : 0)}px`}`" transition="fade" ssr-prerender once
-        @visibility="(val: boolean) => visible(val, item)">
-        <div v-if="item.itemId === 'advertise' && $q.screen.lt.lg" class="row justify-center">
+      <q-intersection v-for="item, idx in (items as Array<Item>)" :key="item.itemId === 'advertise' ? 'gap-ads' : idx"
+        :data-itemid="item.itemId" class="item" :style="`min-height:${item.itemId === 'advertise' ? '100%' : itemHeight}px;height:${item.expanded ? '100%' :
+          `${itemHeight}px`}`" transition="fade" ssr-prerender once @visibility="(val: boolean) => visible(val, item)">
+        <div v-show="item.itemId === 'advertise' && $q.screen.lt.lg" class="row justify-center">
           <ins class="adsbygoogle" :style="`display:inline-block;${size}`" data-ad-client="ca-pub-5110777286519562"
             data-ad-slot="3229008690" :data-adtest="prod ? 'off' : 'on'" :key="`gap-${gs.reloadAdKey}`"></ins>
         </div>
-        <D4Item v-else-if="item.itemId !== 'advertise'" :data="item" :loading="item.loading" @favorite="favorite"
-          @copy="copy" @update-only="(val: string) => emit('update-only', val)">
+        <D4Item v-if="item.itemId !== 'advertise'" :data="item" :loading="item.loading" @favorite="favorite" @copy="copy"
+          @update-only="(val: string) => emit('update-only', val)">
           <template #top-right>
           </template>
           <template v-if="requestProperties > 0" #properties>

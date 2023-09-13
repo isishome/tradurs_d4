@@ -7,8 +7,7 @@ import { ref, computed, defineAsyncComponent, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useQuasar, uid } from 'quasar'
 import { scrollPos } from 'src/common'
-
-import { Item, IPrice, Advertise } from 'src/types/item'
+import { Item, IPrice } from 'src/types/item'
 
 const D4Items = defineAsyncComponent(() => import('components/D4Items.vue'))
 
@@ -36,7 +35,7 @@ const complete = computed(() => is.socket.complete)
 const filter = computed(() => is.filter.request)
 const expanded = computed(() => is.equalDefaultFilter)
 const itemsRef = ref<typeof D4Items | null>(null)
-const items = ref<Array<Item | Advertise>>([])
+const items = ref<Array<Item>>([])
 const rewardItem = ref<Item | undefined>()
 const page = ref<number>(1)
 const over = computed(() => is.itemPage.over)
@@ -223,7 +222,9 @@ const getList = (filter?: any) => {
         }
       }
       items.value.push(...result)
-      items.value.splice(10, 0, new Advertise('advertise'))
+      const advertise = new Item('advertise')
+      advertise.expanded = true
+      items.value.splice(10, 0, advertise)
 
     }).catch(() => {
       items.value = []

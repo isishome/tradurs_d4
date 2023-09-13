@@ -72,12 +72,6 @@ export interface IItem {
   selected: boolean
 }
 
-// export interface Advertise extends IItem {
-//     slot: string,
-//     width: number,
-//     height: number
-// }
-
 export class Price implements IPrice {
   public currency: string
   public currencyValue: string | number | null
@@ -129,12 +123,6 @@ export class Item implements IItem {
   constructor(id?: string) {
     this.itemId = id === undefined ? uid() : id
   }
-}
-
-export class Advertise extends Item {
-  public slot = ''
-  public width = 160
-  public height = 600
 }
 
 export class Offer {
