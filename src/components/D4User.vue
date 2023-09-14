@@ -2,7 +2,6 @@
 import { ref, computed, reactive } from 'vue'
 import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
-import { useRouter } from 'vue-router'
 import { User, type INotify } from 'src/types/user'
 import { clipboard } from 'src/common'
 import { useAccountStore } from 'src/stores/account-store'
@@ -31,7 +30,6 @@ const emit = defineEmits(['update'])
 
 const $q = useQuasar()
 const { t } = useI18n({ useScope: 'global' })
-const router = useRouter()
 const as = useAccountStore()
 
 const loading = computed(() => props.data.loading || props.progress)
@@ -205,7 +203,8 @@ const unblock = () => {
       <div :class="{ 'authorized': authorized, 'allow-copy': allowCopy }" @click="copy(data.battleTag)">
         {{ data.battleTag === '' ? label : data.battleTag }}
       </div>
-      <q-icon class="icon" :name="blocked ? 'img:/images/icons/block.svg' : 'img:/images/icons/info.svg'" size="19px">
+      <q-icon v-if="as.signed" class="icon" :name="blocked ? 'img:/images/icons/block.svg' : 'img:/images/icons/info.svg'"
+        size="19px">
         <D4Tooltip :offset="[-20, 10]" keep>
           <svg v-show="data.verified" class="battletag" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
             stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="0"

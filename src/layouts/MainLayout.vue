@@ -184,8 +184,7 @@ onUnmounted(() => {
       :style="`--tradurs-season-image:url('${t('season.bg')}');`">
     </div>
     <q-drawer show-if-above no-swipe-open no-swipe-close no-swipe-backdrop bordered v-model="leftDrawerOpen" side="left"
-      :behavior="screen.lt.md ? 'mobile' : 'desktop'" class="row justify-end no-scroll" :width="300"
-      @before-show="beforeShow">
+      :behavior="screen.lt.md ? 'mobile' : 'desktop'" class="row justify-end no-scroll" @before-show="beforeShow">
       <q-list ref="leftDrawerList" class="column full-height" style="width:300px">
         <q-scroll-area class="col">
           <D4Filter :disable="route.name !== 'tradeList'" class="q-px-md"

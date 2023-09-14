@@ -147,7 +147,7 @@ export const useItemStore = defineStore('item', {
       onlyCurrency: false as boolean,
       favorite: false as boolean,
       quality: [] as Array<string>,
-      status: null as string | null,
+      status: 'all' as string,
       mine: false as boolean | null,
       offered: false as boolean | null,
       offer: false as boolean | null,
@@ -246,7 +246,7 @@ export const useItemStore = defineStore('item', {
     equalDefaultFilter: (state) => {
       return !(state.filter.favorite === false &&
         state.filter.quality.length === 0 &&
-        state.filter.status === null &&
+        state.filter.status === 'all' &&
         state.filter.mine === false &&
         state.filter.offered === false &&
         state.filter.offer === false &&
@@ -277,7 +277,7 @@ export const useItemStore = defineStore('item', {
         this.filter.onlyCurrency = false
         this.filter.favorite = false
         this.filter.quality = []
-        this.filter.status = null
+        this.filter.status = 'all'
         this.filter.mine = false
         this.filter.offered = false
         this.filter.offer = false

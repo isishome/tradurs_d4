@@ -29,17 +29,28 @@ const findProperty = computed(() => is.findProperty)
 const findAffix = computed(() => is.findAffix)
 const findRestriction = computed(() => is.findRestriction)
 
+const storedFixed = () => {
+  $q.localStorage.set('d4.fixedFilter', JSON.stringify(is.fixedFilter))
+}
+
 // init filter
 if ($q.localStorage.has('d4.filter')) {
   const storageFilter = JSON.parse($q.localStorage.getItem('d4.filter') as string)
   delete storageFilter.request
+
+  // temporary filter adjust
+  if (!storageFilter.status)
+    storageFilter.status = 'all'
+
   Object.assign(is.filter, storageFilter)
 }
 
 if ($q.localStorage.has('d4.fixedFilter'))
   is.fixedFilter = JSON.parse($q.localStorage.getItem('d4.fixedFilter') as string)
+else
+  storedFixed()
 
-const itemStatus = computed(() => [{ value: null, label: t('filter.all') }, ...is.itemStatus])
+const itemStatus = computed(() => [{ value: 'all', label: t('filter.all') }, ...is.itemStatus])
 
 // about property
 const propertyRef = ref<QSelect | null>(null)
@@ -157,9 +168,7 @@ const updateDebounce = debounce((quality?: Array<string>) => {
   update(quality)
 }, 800)
 
-const storedFixed = () => {
-  $q.localStorage.set('d4.fixedFilter', JSON.stringify(is.fixedFilter))
-}
+
 
 const updateFixed = () => {
   storedFixed()
