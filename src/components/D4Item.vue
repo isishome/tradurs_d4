@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref, computed, defineAsyncComponent, useSlots, nextTick, watch, onUnmounted, ComputedRef, onMounted } from 'vue'
+import { reactive, ref, computed, defineAsyncComponent, useSlots, nextTick, onUnmounted, ComputedRef, onMounted } from 'vue'
 import { QCard, useQuasar, date } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
@@ -172,14 +172,6 @@ const attribute = ref<string>(hasProperties.value ? 'properties' : 'affixes')
 const attrMobile = reactive<{ is: ComputedRef<boolean>, show: boolean }>({
   is: computed(() => $q.screen.lt.md),
   show: false
-})
-
-watch(() => props.data.quantity, (val: number) => {
-  _quantity.value = val
-})
-
-watch(() => props.data.endDate, (val: string) => {
-  remainDate.value = date.getDateDiff(new Date(val), new Date(), 'seconds')
 })
 
 onMounted(() => {

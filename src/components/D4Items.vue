@@ -708,8 +708,8 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
           </D4Item>
         </div>
       </div>
-      <q-intersection v-for="item, idx in (items as Array<Item>)" :key="item.itemId === 'advertise' ? 'gap-ads' : idx"
-        :data-itemid="item.itemId" class="item" :style="`min-height:${item.itemId === 'advertise' ? '100%' : `${itemHeight}px`};height:${item.expanded ? '100%' :
+      <q-intersection v-for="item, idx in (items as Array<Item>)" :key="item.itemId" :data-itemid="item.itemId"
+        class="item" :style="`min-height:${item.itemId === 'advertise' ? '100%' : `${itemHeight}px`};height:${item.expanded ? '100%' :
           `${itemHeight}px`}`" transition="fade" ssr-prerender once @visibility="(val: boolean) => visible(val, item)">
         <div v-if="item.itemId === 'advertise' && $q.screen.lt.lg" class="row justify-center">
           <ins class="adsbygoogle" :style="`display:inline-block;${size}`" data-ad-client="ca-pub-5110777286519562"
