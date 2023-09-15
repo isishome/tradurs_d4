@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { reactive, ref, computed, defineAsyncComponent, useSlots, nextTick, watch, onUnmounted, ComputedRef } from 'vue'
-import { QCard, useQuasar, date, is } from 'quasar'
+import { reactive, ref, computed, defineAsyncComponent, useSlots, nextTick, watch, onUnmounted, ComputedRef, onMounted } from 'vue'
+import { QCard, useQuasar, date } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 
@@ -46,16 +46,23 @@ const filterRunesByType = store.filterRunesByType
 const _name = ref<string>(props.data.name)
 const _quantity = ref<number>(props.data.quantity || 1)
 const selectable = computed(() => props.data.authorized && store.filter.mine && !['001', '003'].includes(props.data.statusCode) && props.data.offers === 0)
-const remainDate = ref<number>(date.getDateDiff(new Date(props.data.endDate), new Date(), 'seconds'))
+const endDate = new Date(props.data.endDate)
+const expDate = date.addToDate(new Date(props.data.updDate), { hours: 24 })
+const remainDate = ref<number>(date.getDateDiff(['000', '002'].includes(props.data.statusCode) ? endDate : expDate, new Date(), 'seconds'))
 const hour = 60 * 60
 const minute = 60
 const remainHours = computed(() => Math.floor(Math.max(remainDate.value / hour, 0)).toString().padStart(2, '0'))
 const remainMinutes = computed(() => Math.floor(Math.max(remainDate.value % hour / minute, 0)).toString().padStart(2, '0'))
 const remainSeconds = computed(() => Math.floor(Math.max(remainDate.value % hour % minute, 0)).toString().padStart(2, '0'))
 const remainColor = computed(() => remainDate.value < hour ? `text-red-6` : '')
-const remainInterval = setInterval(() => {
-  remainDate.value--
-}, 1000)
+let remainInterval: NodeJS.Timeout
+
+const executeInterval = () => {
+  remainInterval = setInterval(() => {
+    remainDate.value--
+  }, 1000)
+}
+
 const _tier = ref<string | null>(props.data.tier)
 const _quality = ref<string>(props.data.quality || 'rare')
 const _type = ref<string>(props.data.itemType || store.filterTypes()[0].value as string)
@@ -173,6 +180,11 @@ watch(() => props.data.quantity, (val: number) => {
 
 watch(() => props.data.endDate, (val: string) => {
   remainDate.value = date.getDateDiff(new Date(val), new Date(), 'seconds')
+})
+
+onMounted(() => {
+  if (['000', '002', '003'].includes(props.data.statusCode))
+    executeInterval()
 })
 
 onUnmounted(() => {
@@ -510,7 +522,7 @@ defineExpose({ scrollEnd })
             <q-skeleton v-show="loading" width="50px" :height="$q.screen.lt.sm ? '16px' : '18px'" />
             <div v-show="!loading" class="row items-center q-gutter-x-sm">
               <template v-if="!data.forDisplay">
-                <div v-if="['000', '002'].includes(data.statusCode)" class="date" :class="remainColor">
+                <div v-if="['000', '002', '003'].includes(data.statusCode)" class="date" :class="remainColor">
                   {{ remainHours }}:{{ remainMinutes }}:{{ remainSeconds }}
                 </div>
                 <div v-else-if="data.statusCode === '001'" class="date complete">
