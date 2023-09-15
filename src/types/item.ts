@@ -58,6 +58,7 @@ export interface IItem {
   price: Price,
   endDate: string,
   updDate: string,
+  expDate: string,
   relistCount: number,
   authorized: boolean,
   user: User,
@@ -107,6 +108,7 @@ export class Item implements IItem {
   public price: Price = new Price()
   public endDate = ''
   public updDate = ''
+  public expDate = ''
   public relistCount = 0
   public authorized = false
   public user: User = new User()

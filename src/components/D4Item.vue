@@ -47,7 +47,7 @@ const _name = ref<string>(props.data.name)
 const _quantity = ref<number>(props.data.quantity || 1)
 const selectable = computed(() => props.data.authorized && store.filter.mine && !['001', '003'].includes(props.data.statusCode) && props.data.offers === 0)
 const endDate = new Date(props.data.endDate)
-const expDate = date.addToDate(new Date(props.data.updDate), { hours: 24 })
+const expDate = new Date(props.data.expDate)
 const remainDate = ref<number>(date.getDateDiff(['000', '002'].includes(props.data.statusCode) ? endDate : expDate, new Date(), 'seconds'))
 const hour = 60 * 60
 const minute = 60
