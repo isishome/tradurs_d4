@@ -222,9 +222,13 @@ const getList = (filter?: any) => {
         }
       }
       items.value.push(...result)
+
+      // add advertise
       const advertise = new Item('advertise')
       advertise.expanded = true
-      items.value.splice(10, 0, advertise)
+      const halfLength = Math.floor(items.value.length / 2)
+      if (halfLength > 3)
+        items.value.splice(halfLength, 0, advertise)
 
     }).catch(() => {
       items.value = []

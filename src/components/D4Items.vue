@@ -713,7 +713,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
           `${itemHeight}px`}`" transition="fade" ssr-prerender once @visibility="(val: boolean) => visible(val, item)">
         <div v-if="item.itemId === 'advertise' && $q.screen.lt.lg" class="row justify-center">
           <ins class="adsbygoogle" :style="`display:inline-block;${size}`" data-ad-client="ca-pub-5110777286519562"
-            data-ad-slot="3229008690" :data-adtest="prod ? 'off' : 'on'" :key="`gap-${gs.reloadAdKey}`"></ins>
+            data-ad-slot="6163086381" :data-adtest="prod ? 'off' : 'on'" :key="`gap-${gs.reloadAdKey}`"></ins>
         </div>
         <D4Item v-else-if="item.itemId !== 'advertise'" :data="item" :loading="item.loading" @favorite="favorite"
           @copy="copy" @update-only="(val: string) => emit('update-only', val)">

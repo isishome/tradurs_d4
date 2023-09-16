@@ -230,7 +230,7 @@ body.body--dark {
 }
 
 .limit-select {
-  max-height: 40vh !important;
+  max-height: 300px !important;
 }
 
 @media (min-width:599px) {

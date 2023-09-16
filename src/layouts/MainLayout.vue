@@ -59,8 +59,13 @@ const sign = () => {
     as.sign().then((result: boolean) => {
       if (!result) {
         is.clearFilter()
-        mainKey.value++
-        gs.reloadAdKey++
+
+        if (route.meta.requireAuth)
+          router.push({ name: 'tradeList', params: { lang: route.params.lang } })
+        else {
+          mainKey.value++
+          gs.reloadAdKey++
+        }
       }
     }).catch(() => { })
       .then(() => {
@@ -127,6 +132,7 @@ const beforeShow = () => {
 
 // about screen size
 const size = computed(() => $q.screen.width < 728 ? 'width:320px;max-height:100px;' : 'width:728px;height:90px;')
+const size2 = computed(() => $q.screen.width < 300 ? 'width:250px;height:250px;' : $q.screen.width < 336 ? 'width:300px;height:250px;' : $q.screen.width < 728 ? 'width:336px;height:280px;' : 'width:728px;height:90px;')
 
 watch([size, () => $q.screen.gt.md], ([new1, new2], [old1, old2]) => {
   if (new1 !== old1 || new2 !== old2)
@@ -423,6 +429,12 @@ onUnmounted(() => {
               <RouterView />
             </div>
             <div class="q-py-xl"></div>
+            <div class="row justify-center">
+              <ins v-if="route.name !== 'tradeList' && $q.screen.lt.lg" class="adsbygoogle"
+                :style="`display:inline-block;${size2}`" data-ad-client="ca-pub-5110777286519562"
+                data-ad-slot="6163086381" :data-adtest="prod ? 'off' : 'on'" :key="`bottom-${gs.reloadAdKey}`"></ins>
+            </div>
+            <div class="q-py-md"></div>
             <q-separator />
             <div class="q-pt-lg">
               <div class="row justify-center items-center q-gutter-xs text-caption bottom">
