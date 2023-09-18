@@ -3,9 +3,30 @@ import { api } from 'boot/axios'
 import { User, type INotify } from 'src/types/user'
 import { Socket } from 'socket.io-client'
 import { type ILabel } from 'src/stores/item-store'
+import { IItem } from 'src/types/item'
 
 export interface IEvaluation extends ILabel {
   type: string
+}
+
+export interface IHistoryTypes extends ILabel { }
+
+interface IContents {
+  item_id?: number,
+  amount?: number,
+  degree?: number
+}
+
+export interface IHistory extends IItem {
+  historyId: number,
+  typeName: string,
+  actionName: string,
+  contents: IContents,
+  description: string | null,
+  regDate: string,
+  price_currency: string,
+  price_currency_value: string | null,
+  price_quantity: number
 }
 
 export const useAccountStore = defineStore('account', {
@@ -15,6 +36,11 @@ export const useAccountStore = defineStore('account', {
     position: { left: 0, top: 0 },
     socket: null as Socket | null,
     newMessages: false as boolean,
+    historyTypes: {
+      data: [] as Array<IHistoryTypes>,
+      loading: false as boolean,
+      request: 0 as number
+    },
     evaluations: {
       data: [] as Array<IEvaluation>,
       loading: false as boolean,
@@ -26,6 +52,10 @@ export const useAccountStore = defineStore('account', {
       more: false as boolean,
       unread: 0 as number
     },
+    historyPage: {
+      rows: 20 as number,
+      nextHistoryId: null as number | null
+    }
   }),
   getters: {
     filterEvaluations: (state) => {
@@ -71,6 +101,32 @@ export const useAccountStore = defineStore('account', {
             this.newMessages = false
             resolve(false)
           })
+      })
+    },
+    getHistoryTypes() {
+      return new Promise<void>((resolve, reject) => {
+        let error: unknown = null
+        if (this.historyTypes.request === 0) {
+          this.historyTypes.loading = true
+          api.get('/history/types')
+            .then((response) => {
+              this.historyTypes.data = response.data
+            })
+            .catch((e) => {
+              error = e
+            })
+            .then(() => {
+              this.historyTypes.loading = false
+              this.historyTypes.request++
+
+              if (error)
+                reject()
+              else
+                resolve()
+            })
+        }
+        else
+          resolve()
       })
     },
     getEvaluations() {
@@ -161,6 +217,23 @@ export const useAccountStore = defineStore('account', {
             resolve()
           })
       })
-    }
+    },
+    getHistory(service: string, historyType?: string, period?: number) {
+      return new Promise<Array<IHistory>>((resolve, reject) => {
+        api.post(`/history/${service}/${historyType}`, {
+          rows: this.historyPage.rows,
+          nextHistoryId: this.historyPage.nextHistoryId,
+          period
+        })
+          .then((response) => {
+            this.historyPage.nextHistoryId = response.data.slice(this.historyPage.rows, this.historyPage.rows + 1)[0]?.historyId
+            response.data.splice(this.historyPage.rows, 1)
+            resolve(response.data)
+          })
+          .catch((e) => {
+            reject(e)
+          })
+      })
+    },
   }
 })

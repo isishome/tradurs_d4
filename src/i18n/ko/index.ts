@@ -12,6 +12,7 @@ export default {
     tradeList: '거래 목록',
     itemInfo: '아이템 정보',
     messages: '메시지',
+    history: '활동 내역',
     awards: '어워즈',
     support: '도움말',
     pnf: '페이지를 찾을 수 없습니다'
@@ -132,7 +133,8 @@ export default {
     newMessages: '새 메시지가 있습니다',
     request: '요청',
     block: '차단',
-    unblock: '차단 해제'
+    unblock: '차단 해제',
+    showMore: '더보기'
   },
   attribute: {
     request: '{attr} 추가 요청',
@@ -248,10 +250,21 @@ export default {
     title999: '문의하신 내용 답변드립니다',
     noData: '수신된 메시지가 없습니다'
   },
+  history: {
+    period: '기간',
+    temperatureRise: "+{degree}{'°C'}",
+    temperatureDrop: "{degree}{'°C'}",
+    yolkRise: "+{amount}개",
+    yolkDrop: "{amount}개",
+    description1: '활동 내역은 이번 달을 포함하여 최대 3개월 이전 데이터까지만 조회 가능합니다.',
+    description2: '활동 내역 데이터 저장 이전에 등록된 아이템은 정보가 표시되지 않을 수 있으니 이점 참고하세요.',
+    noData: '활동 내역이 없어요'
+  },
   notFound: {
     gotoMain: '메인 페이지로'
   },
   contact: {
+    inquiries: '광고 및 제휴 문의',
     title: '문의 하기',
     contents: '문의 내용',
     answer: '답변 하기',

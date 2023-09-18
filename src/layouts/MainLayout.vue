@@ -258,9 +258,20 @@ onUnmounted(() => {
                 <q-badge rounded color="negative"></q-badge>
               </q-item-section>
             </q-item>
+            <q-item v-if="as.signed" v-ripple clickable :to="{ name: 'history', params: { lang: route.params.lang } }"
+              exact active-class="active">
+              <q-item-section v-show="newAwards" side class="absolute-left">
+                <q-badge label="N" color="orange-8" class="new-badge2" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>
+                  {{ t('page.history') }}
+                </q-item-label>
+              </q-item-section>
+            </q-item>
             <q-item v-ripple clickable :to="{ name: 'awards', params: { lang: route.params.lang } }" exact
               active-class="active">
-              <q-item-section v-show="newAwards" side class="q-pr-xs">
+              <q-item-section v-show="newAwards" side class="absolute-left">
                 <q-badge label="N" color="orange-8" class="new-badge2" />
               </q-item-section>
               <q-item-section>
@@ -312,13 +323,20 @@ onUnmounted(() => {
                 </q-item-label>
               </q-item-section>
             </q-item>
+            <q-item>
+              <q-item-section>
+                <q-item-label>
+                  트레이더스 서비스 외 문의
+                </q-item-label>
+              </q-item-section>
+            </q-item>
           </q-list>
         </q-scroll-area>
       </q-list>
     </q-drawer>
     <q-header :elevated="!$q.dark.isActive" class="q-py-sm header row justify-center">
       <q-toolbar class="toolbar">
-        <div :style="$q.screen.gt.sm ? 'min-width:300px' : ''">
+        <div :style="$q.screen.gt.sm ? 'min-width:120px' : ''">
           <q-btn class="gt-sm no-hover q-ml-lg" dense flat aria-label="Tradurs Home Button" padding="0"
             :ripple="!$q.dark.isActive" @click="main">
             <h1 class="h1">
@@ -361,6 +379,10 @@ onUnmounted(() => {
               <q-route-tab v-if="as.signed" :ripple="!$q.dark.isActive" :label="t('page.messages')"
                 class="relative-position" :to="{ name: 'messages', params: { lang: route.params.lang } }"
                 :alert="newMessages ? 'negative' : 'transparent'" exact />
+              <q-route-tab v-if="as.signed" :ripple="!$q.dark.isActive" :label="t('page.history')"
+                class="relative-position" :to="{ name: 'history', params: { lang: route.params.lang } }" exact>
+                <q-badge v-show="newAwards" floating label="N" color="orange-8" class="new-badge2" />
+              </q-route-tab>
               <q-route-tab :ripple="!$q.dark.isActive" :label="t('page.awards')"
                 :to="{ name: 'awards', params: { lang: route.params.lang } }" exact>
                 <q-badge v-show="newAwards" floating label="N" color="orange-8" class="new-badge2" />
@@ -466,6 +488,15 @@ onUnmounted(() => {
                     <q-btn flat no-caps padding="0" :ripple="false" class="text-overline no-hover" type="a"
                       href="https://aziraell3.github.io/GAME/D4/?job=dru" label="Aspect Simulator" target="_blank"
                       rel="noopener noreferrer" />
+                  </div>
+                </div>
+                <div class="column q-py-xl q-pr-xl text-caption">
+                  <div>
+                    {{ t('contact.inquiries') }}
+                  </div>
+                  <div>
+                    <q-btn flat no-caps padding="0" :ripple="false" color="primary" class="no-hover" type="a" size="12px"
+                      href="mailto:serasomething@gmail.com" label="serasomething@gmail.com" />
                   </div>
                 </div>
               </div>

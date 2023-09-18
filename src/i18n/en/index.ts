@@ -12,6 +12,7 @@ export default {
     tradeList: 'Trade List',
     itemInfo: 'Item Information',
     messages: 'Messages',
+    history: 'History',
     awards: 'Awards',
     support: 'Help',
     pnf: 'Page not found'
@@ -133,7 +134,8 @@ export default {
     newMessages: 'You have a new message',
     request: 'Request',
     block: 'Block',
-    unblock: 'Unblock'
+    unblock: 'Unblock',
+    showMore: 'Show More'
   },
   attribute: {
     request: 'Request additional {attr}',
@@ -249,10 +251,21 @@ export default {
     title999: 'We\'re happy to answer your questions',
     noData: 'No messages'
   },
+  history: {
+    period: 'Period',
+    temperatureRise: "+{degree}{'°C'}",
+    temperatureDrop: "{degree}{'°C'}",
+    yolkRise: "+{amount}",
+    yolkDrop: "{amount}",
+    description1: 'You can only view activity history data up to three months old, including the current month.',
+    description2: 'Please note that items registered before the activity history data was stored may not display information.',
+    noData: 'No activity history'
+  },
   notFound: {
     gotoMain: 'Go to main page'
   },
   contact: {
+    inquiries: 'Advertising / Partnership',
     title: 'Contact US',
     question: 'Do you need any other help?',
     contents: 'Content of inquiry',

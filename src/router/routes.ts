@@ -26,6 +26,14 @@ const routes: RouteRecordRaw[] = [
         }
       },
       {
+        name: 'history',
+        path: 'history',
+        component: () => import('pages/HistoryPage.vue'),
+        meta: {
+          requireAuth: true
+        }
+      },
+      {
         name: 'awards',
         path: 'awards',
         component: () => import('pages/AwardsPage.vue')

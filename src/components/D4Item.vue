@@ -18,13 +18,15 @@ interface IProps {
   data: Item,
   editable?: boolean,
   loading?: boolean,
-  disable?: boolean
+  disable?: boolean,
+  history?: boolean
 }
 
 const props = withDefaults(defineProps<IProps>(), {
   editable: false,
   loading: false,
-  disable: false
+  disable: false,
+  history: false
 })
 
 const emit = defineEmits(['update', 'apply', 'copy', 'favorite', 'update-only'])
@@ -513,7 +515,7 @@ defineExpose({ scrollEnd })
           <div class="column justify-center items-end" :class="{ 'q-gutter-xs': !$q.screen.lt.sm || loading }">
             <q-skeleton v-show="loading" width="50px" :height="$q.screen.lt.sm ? '16px' : '18px'" />
             <div v-show="!loading" class="row items-center q-gutter-x-sm">
-              <template v-if="!data.forDisplay">
+              <template v-if="!data.forDisplay && !history">
                 <div v-if="['000', '002', '003'].includes(data.statusCode)" class="date" :class="remainColor">
                   {{ remainHours }}:{{ remainMinutes }}:{{ remainSeconds }}
                 </div>
@@ -524,7 +526,7 @@ defineExpose({ scrollEnd })
                   {{ findStatus(data.statusCode)?.label }}
                 </div>
               </template>
-              <div v-else>
+              <div v-else-if="data.forDisplay">
                 {{ t('item.forDisplay') }}
               </div>
             </div>
@@ -532,8 +534,8 @@ defineExpose({ scrollEnd })
               <slot name="top-right"></slot>
             </div>
             <D4Price :data="data.price" :progress="loading" />
-            <D4User v-if="!data.forDisplay" :data="data.user" :label="t('seller')" :disable="disable" :progress="loading"
-              :authorized="data.authorized" @update="emit('update-only', data.itemId)" />
+            <D4User v-if="!data.forDisplay && !history" :data="data.user" :label="t('seller')" :disable="disable"
+              :progress="loading" :authorized="data.authorized" @update="emit('update-only', data.itemId)" />
           </div>
         </div>
         <div class="column items-start q-pa-sm relative-position" :class="{ 'q-gutter-xs': !$q.screen.lt.sm || loading }">
@@ -559,7 +561,7 @@ defineExpose({ scrollEnd })
                 <div class="text-lowercase">x</div>
                 <div>{{ data.quantity }}</div>
               </div>
-              <div class="more-action">
+              <div v-if="!history" class="more-action">
                 <q-btn dense flat aria-label="Tradurs More Button" :ripple="false" class="no-hover" padding="0">
                   <img class="icon" src="/images/icons/morevert.svg" :width="$q.screen.lt.sm ? 16 : 22"
                     :height="$q.screen.lt.sm ? 16 : 22" alt="icon_more" />
@@ -612,7 +614,7 @@ defineExpose({ scrollEnd })
         </div>
       </q-card-section>
       <D4Separator type="left" />
-      <q-card-section v-show="loading || (!loading && (data.itemType === 'rune' || data.properties.length > 0))">
+      <q-card-section v-show="loading || (!loading && (data.itemType === 'rune' || data.properties?.length > 0))">
         <div v-show="data.itemType === 'rune'" class="q-px-sm">
           <q-item v-show="loading" style="min-height:10px;padding:3px">
             <q-item-section side class="q-pr-sm">
@@ -648,8 +650,8 @@ defineExpose({ scrollEnd })
           </div>
         </div>
       </q-card-section>
-      <D4Separator v-show="loading || (!loading && data.properties.length > 0 && data.affixes.length > 0)" />
-      <q-card-section v-show="loading || (!loading && data.affixes.length > 0)">
+      <D4Separator v-show="loading || (!loading && data.properties?.length > 0 && data.affixes?.length > 0)" />
+      <q-card-section v-show="loading || (!loading && data.affixes?.length > 0)">
         <div class="q-px-sm">
           <q-item v-show="loading" v-for="c in 3" :key="c" style="min-height:10px;padding:3px">
             <q-item-section side class="q-pr-sm">
@@ -668,7 +670,7 @@ defineExpose({ scrollEnd })
           </div>
         </div>
       </q-card-section>
-      <q-card-section v-show="!loading && data.properties.length === 0 && data.affixes.length === 0"
+      <q-card-section v-show="!loading && data.properties?.length === 0 && data.affixes?.length === 0"
         class="q-my-lg"></q-card-section>
       <q-card-section class="row justify-end">
         <div class="q-px-sm">
