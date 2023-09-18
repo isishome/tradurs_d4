@@ -107,7 +107,7 @@ onUnmounted(() => {
           </template>
           <D4Item v-if="h.itemId" :data="h" history></D4Item>
         </q-timeline-entry>
-        <q-timeline-entry v-if="!loading && history.length === 0" heading :tag="$q.screen.lt.sm ? 'h6' : 'h4'"
+        <q-timeline-entry v-if="!loading && history.length === 0" heading :tag="$q.screen.lt.sm ? 'h6' : 'h5'"
           class="text-center q-pb-xl">
           {{ t('history.noData') }}
         </q-timeline-entry>
