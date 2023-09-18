@@ -5,6 +5,7 @@ import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAccountStore, type IHistory } from 'src/stores/account-store'
 import { Item, Price } from 'src/types/item'
+import { sleep } from 'src/common'
 
 const D4Item = defineAsyncComponent(() => import('components/D4Item.vue'))
 
@@ -28,27 +29,30 @@ const history = reactive<Array<IHistory>>([])
 
 const request = (reset: boolean = false) => {
   loading.value = true
+
   if (reset) {
     as.historyPage.nextHistoryId = null
     history.splice(0, history.length)
   }
 
-  as.getHistory('diablo4', historyType.value, period.value)
-    .then((data) => {
-      data.forEach((d: IHistory) => {
-        d.statusCode = '000'
-        d.price = new Price()
-        d.price.currency = d.price_currency
-        d.price.currencyValue = d.price_currency_value
-        d.price.quantity = d.price_quantity
-        d.expanded = true
+  sleep(1000).then(() => {
+    as.getHistory('diablo4', historyType.value, period.value)
+      .then((data) => {
+        data.forEach((d: IHistory) => {
+          d.statusCode = '000'
+          d.price = new Price()
+          d.price.currency = d.price_currency
+          d.price.currencyValue = d.price_currency_value
+          d.price.quantity = d.price_quantity
+          d.expanded = true
+        })
+        history.push(...data)
       })
-      history.push(...data)
-    })
-    .catch(() => { })
-    .then(() => {
-      loading.value = false
-    })
+      .catch(() => { })
+      .then(() => {
+        loading.value = false
+      })
+  })
 }
 
 onMounted(() => {
