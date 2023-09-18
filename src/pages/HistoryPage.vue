@@ -116,7 +116,7 @@ onUnmounted(() => {
           {{ t('history.noData') }}
         </q-timeline-entry>
         <div v-if="loading">
-          <q-timeline-entry v-for="c in as.historyPage.rows" :key="c" color="grey-4">
+          <q-timeline-entry v-for="c in 3" :key="c" color="grey-8">
             <template v-slot:title>
               <q-skeleton width="50%" />
             </template>
