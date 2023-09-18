@@ -258,7 +258,7 @@ export default {
     yolkDrop: "{amount}개",
     description1: '활동 내역은 이번 달을 포함하여 최대 3개월 이전 데이터까지만 조회 가능합니다.',
     description2: '활동 내역 데이터 저장 이전에 등록된 아이템은 정보가 표시되지 않을 수 있으니 이점 참고하세요.',
-    noData: '활동 내역이 없어요'
+    noData: '활동 내역이 없습니다'
   },
   notFound: {
     gotoMain: '메인 페이지로'

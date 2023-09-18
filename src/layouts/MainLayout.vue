@@ -190,17 +190,12 @@ onUnmounted(() => {
       :style="`--tradurs-season-image:url('${t('season.bg')}');`">
     </div>
     <q-drawer show-if-above no-swipe-open no-swipe-close no-swipe-backdrop bordered v-model="leftDrawerOpen" side="left"
-      :behavior="screen.lt.md ? 'mobile' : 'desktop'" class="row justify-end no-scroll" @before-show="beforeShow">
-      <q-list ref="leftDrawerList" class="column full-height" style="width:300px">
-        <q-scroll-area class="col">
-          <D4Filter :disable="route.name !== 'tradeList'" class="q-px-md"
-            :class="$q.screen.lt.sm ? 'q-pt-lg' : 'q-pt-lg'" />
-        </q-scroll-area>
-      </q-list>
+      :behavior="screen.lt.md ? 'default' : 'desktop'" class="row justify-end d4-scroll" @before-show="beforeShow">
+      <D4Filter :disable="route.name !== 'tradeList'" class="q-px-md" :class="$q.screen.lt.sm ? 'q-pt-lg' : 'q-pt-lg'" />
     </q-drawer>
     <q-drawer show-if-above no-swipe-open no-swipe-close no-swipe-backdrop bordered v-model="rightDrawerOpen" side="right"
-      behavior="mobile" class="row justify-start scroll" :width="300">
-      <q-list class="column full-height" style="width:300px">
+      behavior="mobile" class="row justify-start no-scroll" :width="300">
+      <div class="column fit">
         <q-item class="row justify-between q-gutter-xs q-py-lg">
           <q-select v-model="locale" :options="gs.localeOptions" :label="t('language', 0, { locale: brLoc })" outlined
             dense emit-value map-options style="min-width: 120px" dropdown-icon="img:/images/icons/dropdown.svg"
@@ -237,7 +232,7 @@ onUnmounted(() => {
           </div>
         </q-item>
         <q-separator />
-        <q-scroll-area class="col text-body2">
+        <div class="col scroll d4-scroll">
           <q-list class="q-pa-md page">
             <q-item v-ripple clickable :to="{ name: 'tradeList', params: { lang: route.params.lang } }" exact
               active-class="active">
@@ -249,7 +244,7 @@ onUnmounted(() => {
             </q-item>
             <q-item v-if="as.signed" v-ripple clickable :to="{ name: 'messages', params: { lang: route.params.lang } }"
               exact active-class="active">
-              <q-item-section>
+              <q-item-section avatar>
                 <q-item-label>
                   {{ t('page.messages') }}
                 </q-item-label>
@@ -260,29 +255,29 @@ onUnmounted(() => {
             </q-item>
             <q-item v-if="as.signed" v-ripple clickable :to="{ name: 'history', params: { lang: route.params.lang } }"
               exact active-class="active">
-              <q-item-section v-show="newAwards" side class="absolute-left">
-                <q-badge label="N" color="orange-8" class="new-badge2" />
-              </q-item-section>
-              <q-item-section>
+              <q-item-section avatar>
                 <q-item-label>
                   {{ t('page.history') }}
                 </q-item-label>
               </q-item-section>
+              <q-item-section v-show="newAwards" side>
+                <q-badge label="N" color="orange-8" class="new-badge2" />
+              </q-item-section>
             </q-item>
             <q-item v-ripple clickable :to="{ name: 'awards', params: { lang: route.params.lang } }" exact
               active-class="active">
-              <q-item-section v-show="newAwards" side class="absolute-left">
-                <q-badge label="N" color="orange-8" class="new-badge2" />
-              </q-item-section>
-              <q-item-section>
+              <q-item-section avatar>
                 <q-item-label>
                   {{ t('page.awards') }}
                 </q-item-label>
               </q-item-section>
+              <q-item-section v-show="newAwards" side>
+                <q-badge label="N" color="orange-8" class="new-badge2" />
+              </q-item-section>
             </q-item>
           </q-list>
           <q-separator />
-          <q-list class="q-mx-md q-py-xl text-overline useful" dense>
+          <q-list class="q-mx-md q-py-xl q-mt-xl text-overline useful" dense>
             <q-item clickable class="no-margin" tag="a" href="https://diablo4.cc" target="_blank"
               rel="noopener noreferrer">
               <q-item-section>
@@ -323,16 +318,18 @@ onUnmounted(() => {
                 </q-item-label>
               </q-item-section>
             </q-item>
-            <q-item>
-              <q-item-section>
-                <q-item-label>
-                  트레이더스 서비스 외 문의
-                </q-item-label>
-              </q-item-section>
-            </q-item>
           </q-list>
-        </q-scroll-area>
-      </q-list>
+          <div class="column q-mt-lg q-mb-xl q-ml-lg q-pl-sm text-caption">
+            <div>
+              {{ t('contact.inquiries') }}
+            </div>
+            <div>
+              <q-btn flat no-caps padding="0" :ripple="false" color="primary" class="no-hover" type="a" size="12px"
+                href="mailto:serasomething@gmail.com" label="serasomething@gmail.com" />
+            </div>
+          </div>
+        </div>
+      </div>
     </q-drawer>
     <q-header :elevated="!$q.dark.isActive" class="q-py-sm header row justify-center">
       <q-toolbar class="toolbar">
@@ -536,7 +533,8 @@ onUnmounted(() => {
 }
 
 .nav:deep(.q-tab__alert) {
-  top: 3px;
+  top: 4px;
+  right: -6px;
 }
 
 .view {
@@ -545,11 +543,12 @@ onUnmounted(() => {
 }
 
 .page:deep(.q-item__label) {
-  opacity: .4;
+  opacity: .6;
 }
 
 .page:deep(.active .q-item__label) {
   opacity: 1;
+  text-decoration: underline;
 }
 
 .new-badge {
@@ -562,12 +561,19 @@ onUnmounted(() => {
 }
 
 .new-badge2 {
-  top: 0;
-  right: -10px;
-  padding: 2px 3px;
+  top: 2px;
+  right: -8px;
+  padding: 1px 2px;
   border-radius: 40px;
   font-size: 10px;
   line-height: 10px;
+  color: var(--q-dark);
+  font-weight: 700;
+}
+
+.body--light .new-badge2 {
+  color: var(--q-light-page);
+  font-weight: 500;
 }
 
 .top-ads {
@@ -620,16 +626,5 @@ onUnmounted(() => {
   margin: 0;
   padding: 0;
   display: inline-flex;
-}
-
-kbd {
-  font-family: Arial;
-  font-size: 12px;
-  line-height: 12px;
-  padding: 4px 8px 8px;
-  color: #616161;
-  background: linear-gradient(-225deg, #d5dbe4, #f8f8f8);
-  border-radius: 4px;
-  box-shadow: inset 0 -4px 0 0 #cdcde6, inset 0 0 2px 2px #fff, 0 2px 4px 2px rgba(30, 35, 90, 0.4);
 }
 </style>

@@ -87,16 +87,15 @@ onUnmounted(() => {
     </div>
     <q-list bordered :class="$q.screen.lt.sm ? 'q-py-md q-pl-sm q-pr-lg' : 'q-py-lg q-pl-md q-pr-xl'">
       <q-timeline>
-        <q-timeline-entry :tag="$q.screen.lt.sm ? 'h5' : 'h4'" heading>
-          <q-skeleton v-show="loading" width="50%" height="36px" />
+        <q-timeline-entry :tag="$q.screen.lt.sm ? 'h6' : 'h5'" heading>
+          <q-skeleton v-show="loading" width="30%" height="36px" />
           <div v-show="!loading">{{ periodOptions.find(po => po.value === period)?.label }}</div>
         </q-timeline-entry>
         <q-timeline-entry v-for="(h, i) in history" :key="i" class="entry">
           <template v-slot:title>
-            <div class="row items-center q-gutter-x-md">
+            <div class="row items-center q-gutter-x-md text-body1">
               <div>{{ h.actionName }}</div>
-              <div v-if="historyType ===
-                'temperature'">
+              <div v-if="historyType === 'temperature'">
                 {{ h.contents.degree as number > 0 ? t('history.temperatureRise', { degree: h.contents.degree }) :
                   t('history.temperatureDrop', { degree: h.contents.degree }) }}
               </div>
@@ -111,8 +110,7 @@ onUnmounted(() => {
           </template>
           <D4Item v-if="h.itemId" :data="h" history></D4Item>
         </q-timeline-entry>
-        <q-timeline-entry v-if="!loading && history.length === 0" heading :tag="$q.screen.lt.sm ? 'h6' : 'h5'"
-          class="text-center q-pb-xl">
+        <q-timeline-entry v-if="!loading && history.length === 0" heading tag="div" class="text-center q-pb-xl">
           {{ t('history.noData') }}
         </q-timeline-entry>
         <div v-if="loading">
