@@ -344,6 +344,8 @@ const checkProperties = (tArray: string[]) => {
           item.properties.push({ valueId: uid(), propertyId: ma.match[0]?.id, propertyValues: matchValues, action: 2 })
       })
 
+      tArray.splice(0, Math.max(...matchAttribute.map((ma: ISimilar) => ma.index)) + 1)
+
       // sort by property id
       item.properties.sort((a: Property, b: Property) => a.propertyId - b.propertyId)
     }
