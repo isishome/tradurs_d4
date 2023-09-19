@@ -30,7 +30,7 @@ const { t } = useI18n({ useScope: 'global' })
 const is = useItemStore()
 
 const lang: string = route.params.lang as string || 'ko'
-const similarRate = .83
+const similarRate = .8
 const phase = is.analyze.lang[lang as keyof typeof is.analyze.lang]
 const timeout = 1000
 const showProgress = ref<boolean>(false)
@@ -278,20 +278,32 @@ const checkInfo = (textArray: string[]) => {
   }, timeout)
 }
 
-const checkAttributes = (tArray: string[], index: number, label: string) => {
-  let result: number | undefined
-  let r = 0
-  while (r < 3) {
-    const similar = similarity(tArray.slice(index, index + r + 1).join(' ').replace(/\([^\)]*\)?/g, '').replace(new RegExp(`[^${phase}]`, 'g'), ''), label)
+interface IMatch {
+  id: number,
+  length: number,
+  rate: number
+}
+
+interface ISimilar {
+  index: number,
+  match: Array<IMatch>
+}
+
+const checkAttributes = (tArray: string[], index: number, id: number, label: string) => {
+  const result: Array<IMatch> = []
+
+  let l = 0
+  while (l < 3) {
+    const similar = similarity(tArray.slice(index, index + l + 1).join(' ').replace(/\([^\)]*\)?/g, '').replace(new RegExp(`[^${phase}]`, 'g'), ''), label)
 
     if (similar === 0)
       break
     else if (similar >= similarRate) {
-      result = r
+      result.push({ id, length: l, rate: similar })
       break
     }
 
-    r++
+    l++
   }
 
   return result
@@ -304,24 +316,33 @@ const checkProperties = (tArray: string[]) => {
 
   if (findClass) {
     try {
-      for (let ci = 0; ci < findClass.properties.length; ci++) {
-        const cp = findClass.properties[ci]
-        const similarLabel = is.findProperty(cp)?.label.replace(/{x}/g, '').replace(/[ \+\-%\[\]]/g, '') as string
+      const matchAttribute: Array<ISimilar> = []
+
+      for (let pi = 0; pi < findClass.properties.length; pi++) {
+        const pid = findClass.properties[pi]
+        const propertyLabel = is.findProperty(pid)?.label.replace(/{x}/g, '').replace(/[ \+\-%\[\]]/g, '') as string
 
         for (let i = 0; i < tArray.length; i++) {
-          const result = checkAttributes(tArray, i, similarLabel)
+          const result = checkAttributes(tArray, i, pid, propertyLabel)
 
-          if (typeof (result) === 'number') {
-            const matchValues = tArray.slice(i + result, tArray.length).join('-').match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv)) || []
+          if (result.length > 0) {
+            const findAttribute = matchAttribute.find((ma: ISimilar) => ma.index === i)
 
-            if (item.properties.filter(p => p.propertyId === cp).length === 0)
-              item.properties.push({ valueId: uid(), propertyId: cp, propertyValues: matchValues, action: 2 })
-
-            tArray.splice(i, result + 1)
-            break
+            if (findAttribute)
+              findAttribute.match.push(...result)
+            else
+              matchAttribute.push({ index: i, match: result })
           }
         }
       }
+
+      matchAttribute.forEach((ma: ISimilar) => {
+        ma.match.sort((a, b) => b.rate - a.rate)
+        const matchValues = tArray.slice(ma.index + ma.match[0]?.length, tArray.length).join('-').match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv)) || []
+
+        if (item.properties.filter(p => p.propertyId === ma.match[0]?.id).length === 0)
+          item.properties.push({ valueId: uid(), propertyId: ma.match[0]?.id, propertyValues: matchValues, action: 2 })
+      })
 
       // sort by property id
       item.properties.sort((a: Property, b: Property) => a.propertyId - b.propertyId)
@@ -342,27 +363,38 @@ const checkAffixes = (tArray: string[]) => {
   currentCheck.value = 'affixes'
 
   try {
+    const matchAttribute: Array<ISimilar> = []
+
     for (const affix of is.filterAffixes()) {
-      const similarLabel = affix.label.replace(/{x}/g, '').replace(/[ \+\-%]/g, '') as string
+      const affixLabel = affix.label.replace(/{x}/g, '').replace(/[ \+\-%]/g, '') as string
 
       for (let i = 0; i < tArray.length; i++) {
-        const result = checkAttributes(tArray, i, similarLabel)
+        const result = checkAttributes(tArray, i, affix.value as number, affixLabel)
 
-        if (typeof (result) === 'number') {
-          const matchMinMax = tArray.slice(i + result, tArray.length).join('-').match(/[\[]{1}[0-9.]{1,}[^\-\[]*[\-]*[^\-\[]*[0-9.]{0,}[\]]?/g)?.map(mmm => mmm.replace(/[^0-9.-]/g, '').split(/[\-]{1,2}/).map(mm => !isNaN(parseFloat(mm)) ? parseFloat(mm) : 0))
-          const matchValues = tArray.slice(i, tArray.length).join('-').replace(/[\[]{1}[0-9.]{1,}[^\-\[]*[\-]*[^\-\[]*[0-9.]{0,}[\]]?/g, '').match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv))?.slice(0, affix.label.split(/{x}/).length - 1)
-          const a: Affix = { valueId: uid(), affixId: affix.value as number, affixValues: [], action: 2 }
+        if (result.length > 0) {
+          const findAttribute = matchAttribute.find((ma: ISimilar) => ma.index === i)
 
-          matchValues?.forEach((mv: number, idx: number) => {
-            a.affixValues.push({ valueRangeId: uid(), value: mv, min: matchMinMax?.[idx]?.[0] as number, max: matchMinMax?.[idx]?.[1] || matchMinMax?.[idx]?.[0] as number })
-          })
-
-          item.affixes.push(a)
-          tArray.splice(i, result + 1)
-          break
+          if (findAttribute)
+            findAttribute.match.push(...result)
+          else
+            matchAttribute.push({ index: i, match: result })
         }
       }
     }
+
+    matchAttribute.forEach((ma: ISimilar) => {
+      ma.match.sort((a, b) => b.rate - a.rate)
+
+      const matchMinMax = tArray.slice(ma.index + ma.match[0]?.length, tArray.length).join('-').match(/[\[]{1}[0-9.]{1,}[^\-\[]*[\-]*[^\-\[]*[0-9.]{0,}[\]]?/g)?.map(mmm => mmm.replace(/[^0-9.-]/g, '').split(/[\-]{1,2}/).map(mm => !isNaN(parseFloat(mm)) ? parseFloat(mm) : 0))
+      const matchValues = tArray.slice(ma.index, tArray.length).join('-').replace(/[\[]{1}[0-9.]{1,}[^\-\[]*[\-]*[^\-\[]*[0-9.]{0,}[\]]?/g, '').match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv))?.slice(0, is.findAffix(ma.match[0]?.id)?.label.split(/{x}/).length as number - 1)
+      const a: Affix = { valueId: uid(), affixId: ma.match[0]?.id as number, affixValues: [], action: 2 }
+
+      matchValues?.forEach((mv: number, idx: number) => {
+        a.affixValues.push({ valueRangeId: uid(), value: mv, min: matchMinMax?.[idx]?.[0] as number, max: matchMinMax?.[idx]?.[1] || matchMinMax?.[idx]?.[0] as number })
+      })
+
+      item.affixes.push(a)
+    })
 
     // sort by affix id
     item.affixes.sort((a: Affix, b: Affix) => a.affixId - b.affixId)
@@ -382,20 +414,32 @@ const checkRestrictions = () => {
   currentCheck.value = 'restrictions'
 
   try {
+    const matchAttribute: Array<ISimilar> = []
+
     for (const restriction of is.restrictions.data) {
-      const similarLabel = restriction.label.replace(/{x}/g, '').replace(/[ \+\-%\[\]]/g, '') as string
+      const restrictLabel = restriction.label.replace(/{x}/g, '').replace(/[ \+\-%\[\]]/g, '') as string
 
       for (let i = 0; i < restrictionsPhase.length; i++) {
-        const result = checkAttributes(restrictionsPhase, i, similarLabel)
+        const result = checkAttributes(restrictionsPhase, i, restriction.value as number, restrictLabel)
 
-        if (typeof (result) === 'number') {
-          const matchValues = restrictionsPhase.slice(i + result, restrictionsPhase.length).join('-').match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv)) || []
-          item.restrictions.push({ valueId: uid(), restrictId: restriction.value as number, restrictValues: matchValues, action: 2 })
-          restrictionsPhase.splice(i, result + 1)
-          break
+        if (result.length > 0) {
+          const findAttribute = matchAttribute.find((ma: ISimilar) => ma.index === i)
+
+          if (findAttribute)
+            findAttribute.match.push(...result)
+          else
+            matchAttribute.push({ index: i, match: result })
         }
       }
     }
+
+    matchAttribute.forEach((ma: ISimilar) => {
+      ma.match.sort((a, b) => b.rate - a.rate)
+
+      const matchValues = restrictionsPhase.slice(ma.index + ma.match[0]?.length, restrictionsPhase.length).join('-').match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv)) || []
+      item.restrictions.push({ valueId: uid(), restrictId: ma.match[0]?.id, restrictValues: matchValues, action: 2 })
+      restrictionsPhase.splice(ma.index, ma.match[0]?.length + 1)
+    })
   }
   catch (e) {
     console.log(e)
