@@ -59,7 +59,12 @@ const sign = () => {
       if (!result) {
         is.clearFilter()
 
-        router.push({ name: 'tradeList', params: { lang: route.params.lang } })
+        if (route.name === 'tradeList') {
+          mainKey.value++
+          gs.reloadAdKey++
+        }
+        else
+          router.push({ name: 'tradeList', params: { lang: route.params.lang } })
       }
     }).catch(() => { })
       .then(() => {
@@ -108,9 +113,8 @@ const clear = () => {
   }
 }
 
-const page = computed(() => route.query.page ? Number.parseInt(route.query.page.toString()) : 1)
 const main = () => {
-  if (route.name === 'tradeList' && page.value === 1) {
+  if (route.name === 'tradeList') {
     is.clearFilter()
     mainKey.value++
     gs.reloadAdKey++
