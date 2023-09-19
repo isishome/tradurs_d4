@@ -51,9 +51,8 @@ const info = () => {
 
 const progressSign = ref<boolean>(false)
 const sign = () => {
-  if (!as.signed) {
+  if (!as.signed)
     document.location.href = `${tradurs}/sign?redirect=${encodeURIComponent(document.location.href)}`
-  }
   else {
     progressSign.value = true
     as.sign().then((result: boolean) => {
@@ -140,6 +139,11 @@ watch([size, () => $q.screen.gt.md], ([new1, new2], [old1, old2]) => {
 })
 
 watch(() => route.name, (val, old) => {
+  if (val !== 'itemInfo') {
+    gs.itemName = null
+    is.detailItem.splice(0, is.detailItem.length)
+  }
+
   if (val && val !== old)
     gs.reloadAdKey++
 })
@@ -190,8 +194,10 @@ onUnmounted(() => {
       :style="`--tradurs-season-image:url('${t('season.bg')}');`">
     </div>
     <q-drawer show-if-above no-swipe-open no-swipe-close no-swipe-backdrop bordered v-model="leftDrawerOpen" side="left"
-      :behavior="screen.lt.md ? 'default' : 'desktop'" class="row justify-end d4-scroll" @before-show="beforeShow">
-      <D4Filter :disable="route.name !== 'tradeList'" class="q-px-md" :class="$q.screen.lt.sm ? 'q-pt-lg' : 'q-pt-lg'" />
+      :behavior="screen.lt.md ? 'default' : 'desktop'" class="row justify-end d4-scroll" @before-show="beforeShow"
+      :width="300">
+      <D4Filter :disable="route.name !== 'tradeList'" class="q-px-md" :class="$q.screen.lt.sm ? 'q-pt-lg' : 'q-pt-lg'"
+        style="width:300px" />
     </q-drawer>
     <q-drawer show-if-above no-swipe-open no-swipe-close no-swipe-backdrop bordered v-model="rightDrawerOpen" side="right"
       behavior="mobile" class="row justify-start no-scroll" :width="300">

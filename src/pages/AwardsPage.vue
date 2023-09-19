@@ -51,9 +51,9 @@ is.getAwards()
 </script>
 <template>
   <div class="column items-center">
-    <D4Note label="test" class="full-width">
+    <!-- <D4Note label="test" class="full-width">
       <p class="text-caption no-padding">{{ t('awards.description') }}</p>
-    </D4Note>
+    </D4Note> -->
     <D4Award v-if="awards.highPriced.length > 0" :loading="loading">
       <template #category>
         {{ t('awards.highPriced.category') }}

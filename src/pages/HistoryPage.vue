@@ -66,10 +66,10 @@ onUnmounted(() => {
 
 <template>
   <div>
-    <D4Note label="test" class="full-width">
+    <!-- <D4Note label="test" class="full-width">
       <p class="text-caption no-padding">{{ t('history.description1') }}</p>
       <p class="text-caption no-padding">{{ t('history.description2') }}</p>
-    </D4Note>
+    </D4Note> -->
     <div v-show="$q.screen.lt.sm" class="row justify-end item-center q-mb-sm">
       <q-select v-model="period" outlined dense no-error-icon hide-bottom-space emit-value map-options
         transition-show="none" transition-hide="none" :transition-duration="0" :label="t('history.period')"
@@ -85,10 +85,10 @@ onUnmounted(() => {
         :options="periodOptions" dropdown-icon="img:/images/icons/dropdown.svg" class="q-mb-xs"
         popup-content-class="scroll bordered" @update:model-value="request(true)" :disable="loading" />
     </div>
-    <q-list bordered :class="$q.screen.lt.sm ? 'q-py-md q-pl-sm q-pr-lg' : 'q-py-lg q-pl-md q-pr-xl'">
+    <q-list bordered class="contents" :class="$q.screen.lt.sm ? 'q-py-md q-pl-sm q-pr-lg' : 'q-py-lg q-pl-md q-pr-xl'">
       <q-timeline>
-        <q-timeline-entry :tag="$q.screen.lt.sm ? 'h6' : 'h5'" heading>
-          <q-skeleton v-show="loading" width="30%" height="36px" />
+        <q-timeline-entry class="q-pl-sm" :tag="$q.screen.lt.sm ? 'h6' : 'h5'" heading>
+          <q-skeleton v-show="loading" width="100px" height="24px" />
           <div v-show="!loading">{{ periodOptions.find(po => po.value === period)?.label }}</div>
         </q-timeline-entry>
         <q-timeline-entry v-for="(h, i) in history" :key="i" class="entry">
@@ -116,12 +116,12 @@ onUnmounted(() => {
         <div v-if="loading">
           <q-timeline-entry v-for="c in 3" :key="c" color="grey-8">
             <template v-slot:title>
-              <q-skeleton width="50%" />
+              <q-skeleton width="40%" height="20px" />
             </template>
             <template v-slot:subtitle>
               <div class="row q-gutter-x-xs item-center">
-                <q-skeleton class="col-2" />
-                <q-skeleton class="col-1" />
+                <q-skeleton type="text" class="col-2" />
+                <q-skeleton type="text" class="col-1" />
               </div>
             </template>
             <D4Item :data="loadingItem" loading style="max-height:200px" />
@@ -143,14 +143,14 @@ onUnmounted(() => {
 
 .tab:deep(button) {
   border: none !important;
-  box-shadow: inset 0 1px 0 1px rgba(255, 255, 255, 0.28), 0 1px 0 0 var(--q-dark-page);
-  border-radius: 4px 4px 0 0 !important;
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.28), inset 1px 0 0 0 rgba(255, 255, 255, 0.28), inset -1px 0 0 0 rgba(255, 255, 255, 0.28), 0 1px 0 0 var(--q-dark-page);
+  border-radius: 8px 8px 0 0 !important;
   background-color: var(--q-dark);
   opacity: .4 !important;
 }
 
 .body--light .tab:deep(button) {
-  box-shadow: inset 0 1px 0 1px rgba(0, 0, 0, 0.12), 0 1px 0 0 var(--q-light-page);
+  box-shadow: inset 0 1px 0 0 rgba(0, 0, 0, 0.12), inset 1px 0 0 0 rgba(0, 0, 0, 0.12), inset -1px 0 0 0 rgba(0, 0, 0, 0.12), 0 1px 0 0 var(--q-light-page);
   background-color: var(--q-light);
 }
 
@@ -163,6 +163,10 @@ onUnmounted(() => {
 .body--light .tab:deep(.bg-active) {
   background-color: var(--q-light-page);
   color: currentColor !important;
+}
+
+.contents {
+  border-radius: 0 0 8px 8px;
 }
 
 .entry:deep(.q-timeline__content) {
