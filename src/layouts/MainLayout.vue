@@ -59,12 +59,7 @@ const sign = () => {
       if (!result) {
         is.clearFilter()
 
-        if (route.meta.requireAuth)
-          router.push({ name: 'tradeList', params: { lang: route.params.lang } })
-        else {
-          mainKey.value++
-          gs.reloadAdKey++
-        }
+        router.push({ name: 'tradeList', params: { lang: route.params.lang } })
       }
     }).catch(() => { })
       .then(() => {
@@ -139,11 +134,6 @@ watch([size, () => $q.screen.gt.md], ([new1, new2], [old1, old2]) => {
 })
 
 watch(() => route.name, (val, old) => {
-  if (val !== 'itemInfo') {
-    gs.itemName = null
-    is.detailItem.splice(0, is.detailItem.length)
-  }
-
   if (val && val !== old)
     gs.reloadAdKey++
 })
@@ -194,8 +184,7 @@ onUnmounted(() => {
       :style="`--tradurs-season-image:url('${t('season.bg')}');`">
     </div>
     <q-drawer show-if-above no-swipe-open no-swipe-close no-swipe-backdrop bordered v-model="leftDrawerOpen" side="left"
-      :behavior="screen.lt.md ? 'default' : 'desktop'" class="row justify-end d4-scroll" @before-show="beforeShow"
-      :width="300">
+      :behavior="screen.lt.md ? 'default' : 'desktop'" class="row justify-end" @before-show="beforeShow" :width="300">
       <D4Filter :disable="route.name !== 'tradeList'" class="q-px-md" :class="$q.screen.lt.sm ? 'q-pt-lg' : 'q-pt-lg'"
         style="width:300px" />
     </q-drawer>
@@ -238,7 +227,7 @@ onUnmounted(() => {
           </div>
         </q-item>
         <q-separator />
-        <div class="col scroll d4-scroll">
+        <div class="col scroll">
           <q-list class="q-pa-md page">
             <q-item v-ripple clickable :to="{ name: 'tradeList', params: { lang: route.params.lang } }" exact
               active-class="active">
@@ -261,13 +250,10 @@ onUnmounted(() => {
             </q-item>
             <q-item v-if="as.signed" v-ripple clickable :to="{ name: 'history', params: { lang: route.params.lang } }"
               exact active-class="active">
-              <q-item-section avatar>
+              <q-item-section>
                 <q-item-label>
                   {{ t('page.history') }}
                 </q-item-label>
-              </q-item-section>
-              <q-item-section v-show="newAwards" side>
-                <q-badge label="N" color="orange-8" class="new-badge2" />
               </q-item-section>
             </q-item>
             <q-item v-ripple clickable :to="{ name: 'awards', params: { lang: route.params.lang } }" exact
@@ -383,9 +369,7 @@ onUnmounted(() => {
                 class="relative-position" :to="{ name: 'messages', params: { lang: route.params.lang } }"
                 :alert="newMessages ? 'negative' : 'transparent'" exact />
               <q-route-tab v-if="as.signed" :ripple="!$q.dark.isActive" :label="t('page.history')"
-                class="relative-position" :to="{ name: 'history', params: { lang: route.params.lang } }" exact>
-                <q-badge v-show="newAwards" floating label="N" color="orange-8" class="new-badge2" />
-              </q-route-tab>
+                class="relative-position" :to="{ name: 'history', params: { lang: route.params.lang } }" exact />
               <q-route-tab :ripple="!$q.dark.isActive" :label="t('page.awards')"
                 :to="{ name: 'awards', params: { lang: route.params.lang } }" exact>
                 <q-badge v-show="newAwards" floating label="N" color="orange-8" class="new-badge2" />

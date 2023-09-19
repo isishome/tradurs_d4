@@ -312,6 +312,11 @@ onMounted(() => {
     completeInfo.value = true
   }, 100)
 })
+
+onUnmounted(() => {
+  gs.itemName = null
+  is.detailItem.splice(0, is.detailItem.length)
+})
 </script>
 
 <template>

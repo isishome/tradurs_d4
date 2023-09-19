@@ -143,24 +143,26 @@ onUnmounted(() => {
 
 .tab:deep(button) {
   border: none !important;
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.28), inset 1px 0 0 0 rgba(255, 255, 255, 0.28), inset -1px 0 0 0 rgba(255, 255, 255, 0.28), 0 1px 0 0 var(--q-dark-page);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.28), inset 1px 0 0 0 rgba(255, 255, 255, 0.28), inset -1px 0 0 0 rgba(255, 255, 255, 0.28);
   border-radius: 8px 8px 0 0 !important;
   background-color: var(--q-dark);
-  opacity: .4 !important;
+  filter: opacity(.4);
 }
 
 .body--light .tab:deep(button) {
-  box-shadow: inset 0 1px 0 0 rgba(0, 0, 0, 0.12), inset 1px 0 0 0 rgba(0, 0, 0, 0.12), inset -1px 0 0 0 rgba(0, 0, 0, 0.12), 0 1px 0 0 var(--q-light-page);
+  box-shadow: inset 0 1px 0 0 rgba(0, 0, 0, 0.12), inset 1px 0 0 0 rgba(0, 0, 0, 0.12), inset -1px 0 0 0 rgba(0, 0, 0, 0.12);
   background-color: var(--q-light);
 }
 
 .tab:deep(.bg-active) {
-  opacity: 1 !important;
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.28), inset 1px 0 0 0 rgba(255, 255, 255, 0.28), inset -1px 0 0 0 rgba(255, 255, 255, 0.28), 0 1px 0 0 var(--q-dark-page);
   background-color: var(--q-dark-page);
   font-weight: 700;
+  filter: opacity(1);
 }
 
 .body--light .tab:deep(.bg-active) {
+  box-shadow: inset 0 1px 0 0 rgba(0, 0, 0, 0.12), inset 1px 0 0 0 rgba(0, 0, 0, 0.12), inset -1px 0 0 0 rgba(0, 0, 0, 0.12), 0 1px 0 0 var(--q-light-page);
   background-color: var(--q-light-page);
   color: currentColor !important;
 }
