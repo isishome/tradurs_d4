@@ -336,6 +336,7 @@ onUnmounted(() => {
               <img v-show="$q.dark.isActive" src="/images/logo.webp" width="48" height="48" alt="Tradurs Logo Image" />
               <img v-show="!$q.dark.isActive" src="/images/logo_light.webp" width="48" height="48"
                 alt="Tradurs Light Logo Image" />
+              <span class="blind">{{ t('seo.title') }}</span>
             </h1>
           </q-btn>
           <q-btn flat round aria-label="Tradurs Filter Button" class="lt-md" :ripple="!$q.dark.isActive"
@@ -620,5 +621,14 @@ onUnmounted(() => {
   margin: 0;
   padding: 0;
   display: inline-flex;
+}
+
+.blind {
+  position: absolute;
+  clip: rect(0 0 0 0);
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
 }
 </style>
