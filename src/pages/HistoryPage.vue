@@ -35,24 +35,26 @@ const request = (reset: boolean = false) => {
     history.splice(0, history.length)
   }
 
-  sleep(1000).then(() => {
-    as.getHistory('diablo4', historyType.value, period.value)
-      .then((data) => {
-        data.forEach((d: IHistory) => {
-          d.statusCode = '000'
-          d.price = new Price()
-          d.price.currency = d.price_currency
-          d.price.currencyValue = d.price_currency_value
-          d.price.quantity = d.price_quantity
-          d.expanded = true
-        })
-        history.push(...data)
+  as.getHistory('diablo4', historyType.value, period.value)
+    .then((data) => {
+      data.forEach((d: IHistory) => {
+        d.statusCode = '000'
+        d.price = new Price()
+        d.price.currency = d.price_currency
+        d.price.currencyValue = d.price_currency_value
+        d.price.quantity = d.price_quantity
+        d.expanded = true
       })
-      .catch(() => { })
-      .then(() => {
+      history.push(...data)
+    })
+    .catch(() => { })
+    .then(() => {
+      const timeout = history.length === 0 ? 1000 : 0
+
+      sleep(timeout).then(() => {
         loading.value = false
       })
-  })
+    })
 }
 
 onMounted(() => {
