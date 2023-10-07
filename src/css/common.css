@@ -238,3 +238,15 @@ ins::after {
 .figure {
   font-weight: 700;
 }
+
+.caution {
+  position: relative;
+  background-image: url('/images/icons/alert_invert.svg');
+  background-size: cover;
+}
+
+.caution:deep(svg) {
+  position: fixed;
+  width: 50px;
+  height: 50px;
+}

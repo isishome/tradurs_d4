@@ -40,7 +40,8 @@ interface IProps {
   transitionDuration?: string | number,
   offset?: [number, number],
   behavior?: 'desktop' | 'mobile' | 'auto',
-  keep?: boolean
+  keep?: boolean,
+  padding?: string
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -51,7 +52,8 @@ const props = withDefaults(defineProps<IProps>(), {
   transitionDuration: 300,
   offset: () => [10, 10],
   behavior: 'auto',
-  keep: false
+  keep: false,
+  padding: 'md'
 })
 
 const $q = useQuasar()
@@ -79,7 +81,7 @@ const beforeHide = () => {
     :transition-show="transitionShow" :transition-duration="transitionDuration" @show="show" @before-hide="beforeHide">
     <div class="row items-center" :data-tooltip-id="id">
       <div v-show="keep" class="keep-space"></div>
-      <div :class="['q-pa-md', $q.dark.isActive ? 'bg-grey-4 text-grey-9' : 'bg-grey-9 text-grey-4', { keep }]">
+      <div :class="[`q-pa-${padding}`, $q.dark.isActive ? 'bg-grey-4 text-grey-9' : 'bg-grey-9 text-grey-4', { keep }]">
         <slot name="default">
         </slot>
       </div>
@@ -87,7 +89,8 @@ const beforeHide = () => {
   </q-tooltip>
   <q-btn class="absolute fit" padding="0" flat v-else @click.stop>
     <q-popup-proxy>
-      <div :class="['q-pa-md rounded-borders', $q.dark.isActive ? 'bg-grey-4 text-grey-9' : 'bg-grey-9 text-grey-4']">
+      <div
+        :class="[`q-pa-${padding} rounded-borders`, $q.dark.isActive ? 'bg-grey-4 text-grey-9' : 'bg-grey-9 text-grey-4']">
         <slot name="default">
         </slot>
       </div>

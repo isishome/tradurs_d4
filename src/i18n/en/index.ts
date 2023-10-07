@@ -45,8 +45,16 @@ export default {
     }
   },
   season: {
-    bg: '/images/season_emblem_en.webp',
-    socket: 'During Season of the Malignant, the more accurately you select the socket type in the accessory item affixes, the more often your items will be seen'
+    bg: '/images/season/002/season_emblem_en.webp',
+    first: {
+      socket: 'During Season of the Malignant, the more accurately you select the socket type in the accessory item affixes, the more often your items will be seen',
+    },
+    second: {
+      pact: 'During the Season of Blood, you can unpack vampire power by enchanting your armor with pacts',
+      ferocity: 'Ferocity',
+      divinity: 'Divinity',
+      eternity: 'Eternity'
+    }
   },
   noFilterdItems: 'No search results matched your criteria',
   noFilterdItemsDesc: 'Check out the item filters',
@@ -150,13 +158,14 @@ export default {
   },
   item: {
     hardcore: 'Hardcore',
-    ladder: 'Season',
+    ladder: 'Season of Blood',
     quality: 'Item Quality',
     selectType: 'Item Type',
-    selectClass: 'Equipment Class',
+    selectClass: 'Select {type}',
     selectRune: 'Select Rune',
     selectAspectCategory: 'Select Aspect Category',
     selectGem: 'Select Gem',
+    selectElixir: 'Select Elixir',
     selectImage: 'Select {tv} Image',
     name: 'Item Name',
     power: '{p} Item Power',

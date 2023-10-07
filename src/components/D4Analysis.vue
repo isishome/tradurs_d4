@@ -296,14 +296,13 @@ const checkAttributes = (tArray: string[], index: number, id: number, label: str
   while (l < 3) {
     const similar = similarity(tArray.slice(index, index + l + 1).join(' ').replace(/\([^\)]*\)?/g, '').replace(new RegExp(`[^${phase}]`, 'g'), ''), label)
 
-    if (similar === 0)
-      break
-    else if (similar >= similarRate) {
+    if (similar >= similarRate) {
       result.push({ id, length: l, rate: similar })
-      break
+      l++
+      continue
     }
-
-    l++
+    else
+      break
   }
 
   return result

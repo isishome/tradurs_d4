@@ -110,7 +110,7 @@ onUnmounted(() => {
           <template v-slot:subtitle>
             {{ (new Date(h.regDate)).toLocaleString(lang) }}
           </template>
-          <D4Item v-if="h.itemId" :data="h" history></D4Item>
+          <D4Item v-if="h.itemId" :data="h" history />
         </q-timeline-entry>
         <q-timeline-entry v-if="!loading && history.length === 0" heading tag="div" class="text-center q-pb-xl">
           {{ t('history.noData') }}

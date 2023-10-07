@@ -45,8 +45,16 @@ export default {
     }
   },
   season: {
-    bg: '/images/season_emblem_ko.webp',
-    socket: '악의 종자 시즌에는 장신구 아이템 옵션의 홈 유형을 정확하게 선택할수록 아이템의 노출 빈도가 높아집니다'
+    bg: '/images/season/002/season_emblem_ko.webp',
+    first: {
+      socket: '악의 종자 시즌에는 장신구 아이템 옵션의 홈 유형을 정확하게 선택할수록 아이템의 노출 빈도가 높아집니다'
+    },
+    second: {
+      pact: '피의 시즌에는 방어구에 서약을 부여하여 흡혈귀의 힘을 해방할 수 있습니다',
+      ferocity: '야성',
+      divinity: '신성',
+      eternity: '영원'
+    }
   },
   noFilterdItems: '조건에 맞는 검색 결과가 없습니다',
   noFilterdItemsDesc: '아이템 필터를 확인해 보세요',
@@ -149,13 +157,14 @@ export default {
   },
   item: {
     hardcore: '하드코어',
-    ladder: '시즌',
+    ladder: '피의 시즌',
     quality: '아이템 등급',
     selectType: '아이템 유형',
-    selectClass: '장비 클래스',
+    selectClass: '{type} 선택',
     selectRune: '룬 선택',
     selectAspectCategory: '위상 범주',
     selectGem: '보석 선택',
+    selectElixir: '비약 선택',
     selectImage: '{tv} 이미지 선택',
     name: '아이템 명',
     power: '아이템 위력 {p}{u}',

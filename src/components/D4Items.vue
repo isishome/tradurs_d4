@@ -8,7 +8,7 @@ import { useGlobalStore } from 'src/stores/global-store'
 import { useAccountStore } from 'stores/account-store'
 import { useItemStore, type Property, type Affix, type Restriction } from 'stores/item-store'
 import { checkAttribute, scrollPos } from 'src/common'
-import { Item, Offer, type AffixValue, type IItem, Price } from 'src/types/item'
+import { Item, Offer, type AffixValue, type IItem, Price, type Property as IProperty, type Affix as IAffix, type Restriction as IRestriction, type Pacts as IPacts } from 'src/types/item'
 import { User } from 'src/types/user'
 
 const D4Item = defineAsyncComponent(() => import('components/D4Item.vue'))
@@ -92,9 +92,9 @@ const copyItem = (item: Item) => {
   clone.statusCode = '000'
   clone.user = new User()
   clone.price = new Price()
-  clone.affixes = clone.affixes.map((a: Affix) => ({ ...a, valueId: uid(), action: 2 }))
-  clone.properties = clone.properties.map((p: Property) => ({ ...p, valueId: uid(), action: 2 }))
-  clone.restrictions = clone.restrictions.map((r: Restriction) => ({ ...r, valueId: uid(), action: 2 }))
+  clone.affixes = clone.affixes.map((a: IAffix) => ({ ...a, valueId: uid(), action: 2 }))
+  clone.properties = clone.properties.map((p: IProperty) => ({ ...p, valueId: uid(), action: 2 }))
+  clone.restrictions = clone.restrictions.map((r: IRestriction) => ({ ...r, valueId: uid(), action: 2 }))
   clone.offers = 0
   activatedItem.value = clone
   activateShow.value = true
@@ -124,6 +124,8 @@ const updateItem = ({ name, quantity, tier, quality, itemType, itemTypeValue1, i
     activatedItem.value.properties.splice(0, activatedItem.value.properties.length)
     activatedItem.value.affixes.splice(0, activatedItem.value.affixes.length)
     activatedItem.value.restrictions.splice(0, activatedItem.value.restrictions.length)
+    activatedItem.value.pacts = { ferocity: 0, divinity: 0, eternity: 0 }
+
     const actions = new Set(activatedItem.value.actions)
     actions.add(16)
     activatedItem.value.actions = Array.from(actions)
@@ -857,6 +859,56 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
         <template #restrictions>
           <D4Restriction v-for="restriction in activatedItem.restrictions" :key="restriction.valueId || uid()"
             :data="restriction" editable :disable="disable" @update="updateRestriction" @remove="removeRestriction" />
+        </template>
+        <template v-if="is.fixedFilter.ladder && activatedItem.itemType === 'armor'" #base-end>
+          <div class="row justify-around items-center">
+            <div class="relative-position">
+              <q-spinner-puff :color="$q.dark.isActive ? 'yellow-6' : 'black'" class="absolute-center" size="52px" />
+              <q-icon class="caution" size="19px">
+                <D4Tooltip>
+                  <div style="max-width:140px" class="text-caption break-keep">
+                    {{ t('season.second.pact') }}
+                  </div>
+                </D4Tooltip>
+              </q-icon>
+            </div>
+            <div class="row items-center">
+              <q-icon name="img:/images/season/002/ferocity.webp" size="36px">
+                <D4Tooltip anchor="top middle" self="top middle" :offset="[14, 28]" padding="xs" transition-show="jump-up"
+                  transition-hide="jump-down">
+                  <div style="max-width:140px" class="text-caption break-keep">
+                    {{ t('season.second.ferocity') }}
+                  </div>
+                </D4Tooltip>
+              </q-icon>
+              <D4Counter v-model.number="activatedItem.pacts.ferocity" max-width="40px" hide-label :max="5" allow-zero
+                allow-null :disable="disable" />
+            </div>
+            <div class="row items-center">
+              <q-icon name="img:/images/season/002/divinity.webp" size="36px">
+                <D4Tooltip anchor="top middle" self="top middle" :offset="[14, 28]" padding="xs" transition-show="jump-up"
+                  transition-hide="jump-down">
+                  <div style="max-width:140px" class="text-caption break-keep">
+                    {{ t('season.second.divinity') }}
+                  </div>
+                </D4Tooltip>
+              </q-icon>
+              <D4Counter v-model.number="activatedItem.pacts.divinity" max-width="40px" hide-label :max="5" allow-zero
+                allow-null :disable="disable" />
+            </div>
+            <div class="row items-center">
+              <q-icon name="img:/images/season/002/eternity.webp" size="36px">
+                <D4Tooltip anchor="top middle" self="top middle" :offset="[14, 28]" padding="xs" transition-show="jump-up"
+                  transition-hide="jump-down">
+                  <div style="max-width:140px" class="text-caption break-keep">
+                    {{ t('season.second.eternity') }}
+                  </div>
+                </D4Tooltip>
+              </q-icon>
+              <D4Counter v-model.number="activatedItem.pacts.eternity" max-width="40px" hide-label :max="5" allow-zero
+                allow-null :disable="disable" />
+            </div>
+          </div>
         </template>
         <template #actions>
           <div v-if="activatedItem.authorized || activatedItem.itemId === ''"

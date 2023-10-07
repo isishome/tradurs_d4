@@ -13,7 +13,8 @@ interface IProps {
   allowNull?: boolean,
   noButton?: boolean,
   debounce?: string | number,
-  disable?: boolean
+  disable?: boolean,
+  hideLabel?: boolean
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -24,7 +25,8 @@ const props = withDefaults(defineProps<IProps>(), {
   allowNull: false,
   noButton: false,
   debounce: 500,
-  disable: false
+  disable: false,
+  hideLabel: false
 })
 
 const emit = defineEmits(['update:modelValue'])
@@ -34,7 +36,7 @@ const $q = useQuasar()
 const { t } = useI18n({ useScope: 'global' })
 
 // variable
-const _quantity = ref<number | null>(props.modelValue || (props.allowZero ? 0 : props.allowNull ? null : 1))
+const _quantity = ref<number | null>(props.modelValue)
 
 // methods
 const counting = (stat: string): void => {
@@ -55,10 +57,6 @@ const update = (val: string | number | null) => {
   }
 
   emit('update:modelValue', q)
-
-  nextTick(() => {
-    _quantity.value = q
-  })
 }
 
 watch(() => props.modelValue, (val: number | null) => {
@@ -73,11 +71,12 @@ watch(() => props.modelValue, (val: number | null) => {
       @click="counting('dec')">
       <img class="icon" width="17" height="17" src="/images/icons/remove.svg" alt="icon_remove" />
     </q-btn>
-    <q-input v-model.number="_quantity" :label="label || t('price.quantity')" :style="`max-width:${maxWidth}`"
-      input-class="text-center" :disable="disable" dense hide-bottom-space hide-hint no-error-icon outlined
-      :maxlength="max.toString().length" :mask="''.padStart(max.toString().length, '#')" :debounce="debounce"
-      :rules="[(val: number) => (Number.isInteger(val) && (allowZero || val !== 0)) || '']" @update:model-value="update"
-      @focus="focus" />
+    <q-input v-model.number="_quantity" :label="hideLabel ? undefined : label || t('price.quantity')"
+      :style="`max-width:${maxWidth}`" input-class="text-center" :disable="disable" dense hide-bottom-space hide-hint
+      no-error-icon outlined :maxlength="max.toString().length" :mask="''.padStart(max.toString().length, '#')"
+      :debounce="debounce"
+      :rules="[(val: number) => ((Number.isInteger(val) && (allowZero || val !== 0) || (allowNull && !val))) || '']"
+      @update:model-value="update" @focus="focus" />
     <q-btn v-show="!$q.screen.lt.sm && !noButton" size="sm" flat dense round aria-label="Tradurs Add Button"
       :disable="disable || (!allowNull && parseInt((_quantity || '0').toString()) > (max - 1))" @click="counting('inc')">
       <img class="icon" width="17" height="17" src="/images/icons/add.svg" alt="icon_add" />

@@ -44,6 +44,7 @@ const editWrap = ref<QCard | null>(null)
 
 const filterClasses = store.filterClasses
 const filterRunesByType = store.filterRunesByType
+const imgSrc = computed(() => props.data.itemType === 'aspect' ? `/images/items/${props.data.itemType}/${props.data.itemTypeValue1}.webp` : props.data.itemTypeValue1 === 'gem' ? `/images/items/${props.data.itemType}/${props.data.itemTypeValue1}/${props.data.itemTypeValue2}.webp` : props.data.itemTypeValue1 === 'elixir' ? `/images/items/${props.data.itemType}/${props.data.itemTypeValue1}/${props.data.itemTypeValue2.split('_')[1]}.webp` : `/images/items/${props.data.itemType}/${props.data.itemTypeValue1}/${props.data.imageId}.webp`)
 
 const _name = ref<string>(props.data.name)
 const _quantity = ref<number>(props.data.quantity || 1)
@@ -69,7 +70,7 @@ const _tier = ref<string | null>(props.data.tier)
 const _quality = ref<string>(props.data.quality || 'rare')
 const _type = ref<string>(props.data.itemType || store.filterTypes()[0].value as string)
 const _typeValue1 = ref<string>(props.data.itemTypeValue1 || (_type.value === 'aspect' ? store.aspectCategories[0].value as string : filterClasses(_type.value)[0].value as string))
-const _typeValue2 = ref<string>(props.data.itemTypeValue2 || (_typeValue1.value === 'gem' ? store.gems[0].value as string : ''))
+const _typeValue2 = ref<string>(props.data.itemTypeValue2 || (_typeValue1.value === 'gem' ? store.gems[0].value as string : _typeValue1.value === 'elixir' ? store.elixirs[0].value as string : ''))
 const _power = ref<number>(props.data.power)
 const _upgrade = ref<number>(props.data.upgrade)
 const _level = ref<number | null>(props.data.level === 0 ? null : props.data.level)
@@ -90,6 +91,9 @@ const hasProperties = computed(() => findClass(_typeValue1.value)?.properties.le
 
 const _image = ref<number>(props.data.imageId)
 const _price = reactive<Price>(new Price((props.data.price && props.data.price.currency ? props.data.price.currency : 'offer'), (props.data.price && props.data.price.currencyValue ? props.data.price.currencyValue : null), (props.data.price && props.data.price.quantity ? props.data.price.quantity : undefined)))
+
+const tierable = computed(() => !['aspect', 'inventory', 'consumables'].includes(_type.value))
+const qualifiable = computed(() => !['inventory', 'consumables'].includes(_type.value))
 
 const attributes = computed(() => [
   { label: t('properties'), value: 'properties', hide: !hasProperties.value },
@@ -115,14 +119,23 @@ const updateQuality = (val: string) => {
 }
 
 const updateType = (val: string) => {
-  _typeValue1.value = val === 'aspect' ? store.aspectCategories[0].value as string : filterClasses(val)[0].value as string
-  update()
+  if (!tierable.value) {
+    _tier.value = ''
+    _name.value = ''
+  }
+
+  if (!qualifiable.value)
+    _quality.value = 'normal'
+
+  _typeValue1.value = (val === 'aspect' ? store.aspectCategories[0].value as string : filterClasses(val)[0].value as string)
+
+  updateTypeValue1(_typeValue1.value)
 }
 
 const updateTypeValue1 = (val: string) => {
   _image.value = 0
   attribute.value = findClass(val)?.properties.length !== 0 ? 'properties' : 'affixes'
-  _typeValue2.value = val === 'gem' ? store.gems[0].value as string : ''
+  _typeValue2.value = (val === 'gem' ? store.gems[0].value as string : val === 'elixir' ? store.elixirs[0].value as string : '')
   update()
 }
 
@@ -197,16 +210,16 @@ defineExpose({ scrollEnd })
           <div class="row items-center no-wrap justify-between q-col-gutter-sm full-width q-py-sm">
             <div>
               <div class="row no-wrap items-center q-gutter-xs quality">
-                <q-btn :ripple="!$q.dark.isActive" v-for="t in store.tiers" :key="t.value" :disable="disable" round
-                  unelevated aria-label="Tradurs Tier Button"
+                <q-btn :ripple="!$q.dark.isActive" v-for="t in store.tiers" :key="t.value" :disable="disable || !tierable"
+                  round unelevated aria-label="Tradurs Tier Button"
                   :class="['text-weight-bold', { 'active': _tier === t.value }]" :label="t.label"
                   @click="updateTier(t.value as string)" />
               </div>
             </div>
             <div>
               <div class="row no-wrap items-center q-gutter-xs quality">
-                <q-btn :ripple="!$q.dark.isActive" v-for="q in filterQuality()" :key="q.value" :disable="disable" round
-                  unelevated aria-label="Tradurs Quality Button"
+                <q-btn :ripple="!$q.dark.isActive" v-for="q in filterQuality()" :key="q.value"
+                  :disable="disable || !qualifiable" round unelevated aria-label="Tradurs Quality Button"
                   :class="['text-weight-bold', { 'active': _quality === q.value }]" :label="q.label"
                   @click="updateQuality(q.value as string)" />
               </div>
@@ -219,16 +232,17 @@ defineExpose({ scrollEnd })
                   map-options transition-show="none" transition-hide="none" :transition-duration="0"
                   :label="t('item.selectType')" dropdown-icon="img:/images/icons/dropdown.svg" :options="filterTypes()"
                   popup-content-class="scroll" @update:model-value="updateType">
-                  <template v-if="store.fixedFilter.ladder && _type === 'accessory'" #prepend>
+                  <!-- Season 1 accessory notify -->
+                  <!-- <template v-if="store.fixedFilter.ladder && _type === 'accessory'" #prepend>
                     <q-icon class="caution" size="19px">
                       <q-spinner-puff :color="$q.dark.isActive ? 'yellow-6' : 'black'" />
                       <D4Tooltip>
                         <div style="max-width:140px" class="text-caption break-keep">
-                          {{ t('season.socket') }}
+                          {{ t('season.first.socket') }}
                         </div>
                       </D4Tooltip>
                     </q-icon>
-                  </template>
+                  </template> -->
                   <template #selected-item="scope">
                     <div class="ellipsis">{{ scope.opt.label }}</div>
                   </template>
@@ -282,8 +296,9 @@ defineExpose({ scrollEnd })
                 <div class="col">
                   <q-select v-model="_typeValue1" :disable="disable" outlined dense no-error-icon hide-bottom-space
                     emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0"
-                    :label="t('item.selectClass')" dropdown-icon="img:/images/icons/dropdown.svg"
-                    :options="filterClasses(_type)" popup-content-class="scroll" @update:model-value="updateTypeValue1">
+                    :label="t('item.selectClass', { type: findType(data.itemType)?.label })"
+                    dropdown-icon="img:/images/icons/dropdown.svg" :options="filterClasses(_type)"
+                    popup-content-class="scroll" @update:model-value="updateTypeValue1">
                     <template #selected-item="scope">
                       <div class="ellipsis">{{ scope.opt.label }}</div>
                     </template>
@@ -301,7 +316,29 @@ defineExpose({ scrollEnd })
                       <q-item clickable @click="scope.toggleOption(scope.opt.value)">
                         <q-item-section avatar>
                           <img height="36" :src="`/images/items/${_type}/${_typeValue1}/${scope.opt.value}.webp`"
-                            alt="Tradurs Gem Image" />
+                            alt="Tradurs Gem Images" />
+                        </q-item-section>
+                        <q-item-section>
+                          <q-item-label class="ellipsis">{{ scope.opt.label }}</q-item-label>
+                        </q-item-section>
+                      </q-item>
+                    </template>
+                  </q-select>
+                </div>
+                <div class="col" v-else-if="_typeValue1 === 'elixir'">
+                  <q-select v-model="_typeValue2" :disable="disable" outlined dense no-error-icon hide-bottom-space
+                    emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0"
+                    :label="t('item.selectElixir')" dropdown-icon="img:/images/icons/dropdown.svg"
+                    :options="store.elixirs" popup-content-class="scroll" @update:model-value="update">
+                    <template #selected-item="scope">
+                      <div class="ellipsis">{{ scope.opt.label }}</div>
+                    </template>
+                    <template #option="scope">
+                      <q-item :disable="scope.opt.onlyHardcore && !store.fixedFilter.hardcore" clickable
+                        @click="scope.toggleOption(scope.opt.value)">
+                        <q-item-section avatar>
+                          <img height="36" :src="`/images/items/${_type}/${_typeValue1}/${scope.opt.elixir}.webp`"
+                            alt="Tradurs Elixir Images" />
                         </q-item-section>
                         <q-item-section>
                           <q-item-label class="ellipsis">{{ scope.opt.label }}</q-item-label>
@@ -355,14 +392,14 @@ defineExpose({ scrollEnd })
           </div>
         </div>
       </q-card-section>
-      <D4Separator v-show="data.itemType !== 'rune'" />
-      <q-card-section v-if="data.itemType !== 'rune'">
-        <q-input v-show="data.itemType !== 'rune'" :disable="disable" dense no-error-icon hide-bottom-space autofocus
-          v-model="_name" outlined class="col-10" :label="t('item.name')" @update:model-value="update" maxlength="256"
+      <D4Separator v-show="qualifiable" />
+      <q-card-section v-if="qualifiable">
+        <q-input :disable="disable" dense no-error-icon hide-bottom-space autofocus v-model="_name" outlined
+          class="col-10" :label="t('item.name')" @update:model-value="update" maxlength="256"
           :rules="[val => checkName(val) || '']" />
       </q-card-section>
-      <D4Separator v-show="data.itemType === 'rune'" />
-      <q-card-section v-if="data.itemType === 'rune'" class="col">
+      <D4Separator v-show="!qualifiable" />
+      <q-card-section v-if="data.itemTypeValue1 === 'rune'" class="col">
         <q-item v-show="loading" style="min-height:10px;padding:3px">
           <q-item-section side class="q-pr-sm">
             <q-skeleton type="circle" width="10px" height="10px" />
@@ -389,109 +426,114 @@ defineExpose({ scrollEnd })
           </q-item-section>
         </q-item>
       </q-card-section>
-      <D4Separator />
+      <D4Separator v-show="tierable" />
       <q-card-section class="row justify-between items-center q-col-gutter-x-sm">
-        <div class="row items-center q-gutter-x-sm">
+        <div v-show="tierable" class="row items-center q-gutter-x-sm">
           <D4Counter v-model="_power" :label="t('item.power')" :max="9999" max-width="110px" allow-zero no-button
             :disable="disable" @update:model-value="update" />
           <D4Counter v-if="upgradeLimit" v-model="_upgrade" :label="t('item.upgrade', { u: _upgrade, ul: upgradeLimit })"
             max-width="110px" :max="upgradeLimit" allow-zero :disable="disable" @update:model-value="update" />
         </div>
         <D4Counter v-model="_level" class="col row justify-end" :label="t('item.level')" max-width="110px" :max="999"
-          allow-null no-button :disable="disable" @update:model-value="update" />
+          no-button :disable="disable" @update:model-value="update" />
       </q-card-section>
       <D4Separator />
-      <q-card-section class="lt-md col row justify-center items-center">
-        <q-btn no-caps :label="t('attribute.open')" aria-label="Tradurs Attribute Button" class="attribute full-width"
-          size="lg" padding="xl" @click="attrMobile.show = true">
-          <img width="24" height="24" class="icon q-ml-sm rotate-45" src="/images/icons/expand.svg"
-            alt="Tradurs Expand Icon" />
-        </q-btn>
-      </q-card-section>
-      <q-card flat v-show="!attrMobile.is || attrMobile.show" class="col"
-        :class="attrMobile.is ? 'fullscreen column' : 'bg-transparent'">
-        <q-card-section class="tab row justify-end items-center">
-          <q-btn-toggle v-model="attribute" square flat no-caps aria-label="Tradurs Attribute Button" :ripple="false"
-            :color="$q.dark.isActive ? 'grey-5' : 'grey-8'" toggle-color="transparent toggle" :options="attributes" />
+      <template v-if="qualifiable">
+        <q-card-section v-if="$slots['base-end']">
+          <slot name="base-end"></slot>
         </q-card-section>
-        <q-card-section class="col scroll" style="padding-top:0">
-          <div class="attribute">
-            <q-tab-panels v-model="attribute" class="q-pa-xs bg-transparent full-height">
-              <q-tab-panel v-if="hasProperties" name="properties" class="q-gutter-y-xs no-padding column">
-                <div v-if="slots['add-property']">
-                  <slot name="add-property" :wrap="editWrap"></slot>
-                </div>
-                <div ref="propertyRef" class="col scroll">
-                  <q-item v-show="loading" v-for="c in 2" :key="c" style="min-height:10px;padding:3px">
-                    <q-item-section side class="q-pr-sm">
-                      <q-skeleton type="circle" width="10px" height="10px" />
-                    </q-item-section>
-                    <q-item-section>
-                      <q-item-label>
-                        <q-skeleton type="text" width="65%" />
-                      </q-item-label>
-                    </q-item-section>
-                  </q-item>
-                  <div v-if="slots.properties && !loading" class="list q-gutter-y-xs">
-                    <slot name="properties">
-                    </slot>
-                  </div>
-                </div>
-              </q-tab-panel>
-              <q-tab-panel name="affixes" class="q-gutter-y-xs no-padding column">
-                <div v-if="slots['add-affix']">
-                  <slot name="add-affix" :wrap="editWrap"></slot>
-                </div>
-                <div ref="affixRef" class="col scroll">
-                  <q-item v-show="loading" v-for="c in 3" :key="c" style="min-height:10px;padding:3px">
-                    <q-item-section side class="q-pr-sm">
-                      <q-skeleton type="circle" width="10px" height="10px" />
-                    </q-item-section>
-                    <q-item-section>
-                      <q-item-label>
-                        <q-skeleton type="text" width="65%" />
-                      </q-item-label>
-                    </q-item-section>
-                  </q-item>
-                  <div v-if="slots.affixes && !loading" class="list q-gutter-y-xs">
-                    <slot name="affixes">
-                    </slot>
-                  </div>
-                </div>
-              </q-tab-panel>
-              <q-tab-panel name="restrictions" class="q-gutter-y-xs no-padding column">
-                <div v-if="slots['add-restriction']">
-                  <slot name="add-restriction" :wrap="editWrap"></slot>
-                </div>
-                <div ref="restrictionRef" class="col scroll">
-                  <q-item v-show="loading" v-for="c in 3" :key="c" style="min-height:10px;padding:3px">
-                    <q-item-section side class="q-pr-sm">
-                      <q-skeleton type="circle" width="10px" height="10px" />
-                    </q-item-section>
-                    <q-item-section>
-                      <q-item-label>
-                        <q-skeleton type="text" width="65%" />
-                      </q-item-label>
-                    </q-item-section>
-                  </q-item>
-                  <div v-if="slots.restrictions && !loading" class="list q-gutter-y-xs">
-                    <slot name="restrictions">
-                    </slot>
-                  </div>
-                </div>
-              </q-tab-panel>
-            </q-tab-panels>
-          </div>
-        </q-card-section>
-        <q-card-section>
-          <q-btn no-caps :label="t('attribute.close')" aria-label="Tradurs Attribute Button"
-            class="lt-md attribute full-width" size="lg" @click="attrMobile.show = false">
-            <img width="24" height="24" class="icon q-ml-sm" src="/images/icons/shrink.svg" alt="Tradurs Expand Icon" />
+        <D4Separator v-if="$slots['base-end']" />
+        <q-card-section class="lt-md col row justify-center items-center">
+          <q-btn no-caps :label="t('attribute.open')" aria-label="Tradurs Attribute Button" class="attribute full-width"
+            size="lg" padding="xl" @click="attrMobile.show = true">
+            <img width="24" height="24" class="icon q-ml-sm rotate-45" src="/images/icons/expand.svg"
+              alt="Tradurs Expand Icon" />
           </q-btn>
         </q-card-section>
-      </q-card>
-      <D4Separator v-if="!hasProperties" />
-      <q-card-section>
+        <q-card flat v-show="!attrMobile.is || attrMobile.show" class="col"
+          :class="attrMobile.is ? 'fullscreen column' : 'bg-transparent'">
+          <q-card-section class="tab row justify-end items-center">
+            <q-btn-toggle v-model="attribute" square flat no-caps aria-label="Tradurs Attribute Button" :ripple="false"
+              :color="$q.dark.isActive ? 'grey-5' : 'grey-8'" toggle-color="transparent toggle" :options="attributes" />
+          </q-card-section>
+          <q-card-section class="col scroll" style="padding-top:0">
+            <div class="attribute">
+              <q-tab-panels v-model="attribute" class="q-pa-xs bg-transparent full-height">
+                <q-tab-panel v-if="hasProperties" name="properties" class="q-gutter-y-xs no-padding column">
+                  <div v-if="slots['add-property']">
+                    <slot name="add-property" :wrap="editWrap"></slot>
+                  </div>
+                  <div ref="propertyRef" class="col scroll">
+                    <q-item v-show="loading" v-for="c in 2" :key="c" style="min-height:10px;padding:3px">
+                      <q-item-section side class="q-pr-sm">
+                        <q-skeleton type="circle" width="10px" height="10px" />
+                      </q-item-section>
+                      <q-item-section>
+                        <q-item-label>
+                          <q-skeleton type="text" width="65%" />
+                        </q-item-label>
+                      </q-item-section>
+                    </q-item>
+                    <div v-if="slots.properties && !loading" class="list q-gutter-y-xs">
+                      <slot name="properties">
+                      </slot>
+                    </div>
+                  </div>
+                </q-tab-panel>
+                <q-tab-panel name="affixes" class="q-gutter-y-xs no-padding column">
+                  <div v-if="slots['add-affix']">
+                    <slot name="add-affix" :wrap="editWrap"></slot>
+                  </div>
+                  <div ref="affixRef" class="col scroll">
+                    <q-item v-show="loading" v-for="c in 3" :key="c" style="min-height:10px;padding:3px">
+                      <q-item-section side class="q-pr-sm">
+                        <q-skeleton type="circle" width="10px" height="10px" />
+                      </q-item-section>
+                      <q-item-section>
+                        <q-item-label>
+                          <q-skeleton type="text" width="65%" />
+                        </q-item-label>
+                      </q-item-section>
+                    </q-item>
+                    <div v-if="slots.affixes && !loading" class="list q-gutter-y-xs">
+                      <slot name="affixes">
+                      </slot>
+                    </div>
+                  </div>
+                </q-tab-panel>
+                <q-tab-panel name="restrictions" class="q-gutter-y-xs no-padding column">
+                  <div v-if="slots['add-restriction']">
+                    <slot name="add-restriction" :wrap="editWrap"></slot>
+                  </div>
+                  <div ref="restrictionRef" class="col scroll">
+                    <q-item v-show="loading" v-for="c in 3" :key="c" style="min-height:10px;padding:3px">
+                      <q-item-section side class="q-pr-sm">
+                        <q-skeleton type="circle" width="10px" height="10px" />
+                      </q-item-section>
+                      <q-item-section>
+                        <q-item-label>
+                          <q-skeleton type="text" width="65%" />
+                        </q-item-label>
+                      </q-item-section>
+                    </q-item>
+                    <div v-if="slots.restrictions && !loading" class="list q-gutter-y-xs">
+                      <slot name="restrictions">
+                      </slot>
+                    </div>
+                  </div>
+                </q-tab-panel>
+              </q-tab-panels>
+            </div>
+          </q-card-section>
+          <q-card-section>
+            <q-btn no-caps :label="t('attribute.close')" aria-label="Tradurs Attribute Button"
+              class="lt-md attribute full-width" size="lg" @click="attrMobile.show = false">
+              <img width="24" height="24" class="icon q-ml-sm" src="/images/icons/shrink.svg" alt="Tradurs Expand Icon" />
+            </q-btn>
+          </q-card-section>
+        </q-card>
+      </template>
+      <q-card-section :class="{ 'col row justify-end items-end': !qualifiable }">
         <D4Price :data="data.price" :editable="editable" :disable="disable" :progress="loading" @update="updatePrice" />
       </q-card-section>
       <D4Separator v-if="slots.actions" />
@@ -502,15 +544,12 @@ defineExpose({ scrollEnd })
     <slot name="more" :loading="loading"></slot>
   </q-card>
   <q-card v-else class="card-item non-selectable no-scroll full-height overflow-hidden"
-    :class="[data.expanded ? 'expanded' : 'no-expanded', data.quality, `status-${data.statusCode} `]">
-
+    :class="[data.expanded ? 'expanded' : 'no-expanded', data.quality, `status-${data.statusCode}`]">
     <div class="inner">
       <q-card-section>
         <div class="user-area row justify-end">
           <div class="item-image">
-            <q-img v-show="!loading" class="item-image"
-              :src="data.itemType === 'aspect' ? `/images/items/${data.itemType}/${data.itemTypeValue1}.webp` : data.itemTypeValue1 === 'gem' ? `/images/items/${data.itemType}/${data.itemTypeValue1}/${data.itemTypeValue2}.webp` : `/images/items/${data.itemType}/${data.itemTypeValue1}/${data.imageId}.webp`"
-              alt="Tradurs Item Image" />
+            <q-img v-show="!loading" class="item-image" :src="imgSrc" alt="Tradurs Item Image" />
           </div>
           <div class="column justify-center items-end" :class="{ 'q-gutter-xs': !$q.screen.lt.sm || loading }">
             <q-skeleton v-show="loading" width="50px" :height="$q.screen.lt.sm ? '16px' : '18px'" />
@@ -549,13 +588,21 @@ defineExpose({ scrollEnd })
           <div class="name-place">
             <div v-show="!loading" class="row items-center q-gutter-xs q-mb-xs no-wrap">
               <!-- <q-checkbox v-if="selectable" v-model="data.selected" dense :size="$q.screen.lt.sm ? 'xs' : 'sm'" /> -->
-              <div v-show="data.itemType === 'rune'" class="row items-center q-gutter-sm">
+              <div v-show="data.itemTypeValue1 === 'rune'" class="row items-center q-gutter-sm">
                 <div class="name">{{ (filterRunesByType().find(r => r.value === data.itemTypeValue1) || {}).label }}</div>
                 <div>{{ findRuneType(findRune(data.itemTypeValue1)?.type)?.label }}
                 </div>
               </div>
-              <div v-show="data.itemType !== 'rune'" class="name stress ellipsis-2-lines">
-                {{ data.name }}
+              <div class="name stress ellipsis-2-lines">
+                <span v-show="qualifiable">
+                  {{ data.name }}
+                </span>
+                <span v-show="data.itemTypeValue1 === 'gem'">
+                  {{ store.gems.find(g => g.value === data.itemTypeValue2)?.label }}
+                </span>
+                <span v-show="data.itemTypeValue1 === 'elixir'">
+                  {{ store.elixirs.find(e => e.value === data.itemTypeValue2)?.label }}
+                </span>
               </div>
               <div v-if="data.quantity > 1" class="row items-center q-gutter-x-xs no-wrap">
                 <div class="text-lowercase">x</div>
@@ -601,7 +648,7 @@ defineExpose({ scrollEnd })
           <div v-show="loading">
             <q-skeleton width="100px" :height="$q.screen.lt.sm ? '16px' : '18px'" />
           </div>
-          <div v-show="!loading" class="stress" style="opacity:.6">{{ findTier(data.tier)?.fullName }} {{
+          <div v-show="!loading && qualifiable" class="stress" style="opacity:.6">{{ findTier(data.tier)?.fullName }} {{
             findQuality(data.quality)?.fullName }}
             {{ findClass(data.itemTypeValue1)?.label || findType(data.itemType)?.label }}
           </div>
@@ -613,7 +660,45 @@ defineExpose({ scrollEnd })
           </div>
         </div>
       </q-card-section>
-      <D4Separator type="left" />
+      <D4Separator v-show="qualifiable" type="left" />
+      <q-card-section
+        v-if="store.fixedFilter.ladder && data.itemType === 'armor' && !history && Object.values(data.pacts).reduce((a: number, b: number) => a + b, 0) > 0">
+        <div class="row justify-start items-center " :class="!$q.screen.lt.sm ? 'q-gutter-x-xl' : 'q-gutter-x-md'">
+          <div v-show="data.pacts.ferocity" class="row items-center q-gutter-x-sm">
+            <q-icon name="img:/images/season/002/ferocity.webp" :size="!$q.screen.lt.sm ? '48px' : '36px'">
+              <D4Tooltip anchor="top middle" self="top middle" :offset="[14, 28]" padding="xs" transition-show="jump-up"
+                transition-hide="jump-down">
+                <div style="max-width:140px" class="text-caption break-keep">
+                  {{ t('season.second.ferocity') }}
+                </div>
+              </D4Tooltip>
+            </q-icon>
+            <div>{{ data.pacts.ferocity }}</div>
+          </div>
+          <div v-show="data.pacts.divinity" class="row items-center  q-gutter-x-sm">
+            <q-icon name="img:/images/season/002/divinity.webp" :size="!$q.screen.lt.sm ? '48px' : '36px'">
+              <D4Tooltip anchor="top middle" self="top middle" :offset="[14, 28]" padding="xs" transition-show="jump-up"
+                transition-hide="jump-down">
+                <div style="max-width:140px" class="text-caption break-keep">
+                  {{ t('season.second.divinity') }}
+                </div>
+              </D4Tooltip>
+            </q-icon>
+            <div>{{ data.pacts.divinity }}</div>
+          </div>
+          <div v-show="data.pacts.eternity" class="row items-center  q-gutter-x-sm">
+            <q-icon name="img:/images/season/002/eternity.webp" :size="!$q.screen.lt.sm ? '48px' : '36px'">
+              <D4Tooltip anchor="top middle" self="top middle" :offset="[14, 28]" padding="xs" transition-show="jump-up"
+                transition-hide="jump-down">
+                <div style="max-width:140px" class="text-caption break-keep">
+                  {{ t('season.second.eternity') }}
+                </div>
+              </D4Tooltip>
+            </q-icon>
+            <div>{{ data.pacts.eternity }}</div>
+          </div>
+        </div>
+      </q-card-section>
       <q-card-section v-show="loading || (!loading && (data.itemType === 'rune' || data.properties?.length > 0))">
         <div v-show="data.itemType === 'rune'" class="q-px-sm">
           <q-item v-show="loading" style="min-height:10px;padding:3px">
@@ -653,7 +738,7 @@ defineExpose({ scrollEnd })
       <D4Separator v-show="loading || (!loading && data.properties?.length > 0 && data.affixes?.length > 0)" />
       <q-card-section v-show="loading || (!loading && data.affixes?.length > 0)">
         <div class="q-px-sm">
-          <q-item v-show="loading" v-for="c in 3" :key="c" style="min-height:10px;padding:3px">
+          <q-item v-show="loading" v-for="  c   in   3  " :key="c" style="min-height:10px;padding:3px">
             <q-item-section side class="q-pr-sm">
               <q-skeleton type="circle" width="10px" height="10px" />
             </q-item-section>
@@ -674,7 +759,7 @@ defineExpose({ scrollEnd })
         class="q-my-lg"></q-card-section>
       <q-card-section class="row justify-end">
         <div class="q-px-sm">
-          <q-item v-show="loading" v-for="c in 3" :key="c" style="min-height:10px;padding:3px">
+          <q-item v-show="loading" v-for="  c   in   3  " :key="c" style="min-height:10px;padding:3px">
             <q-item-section>
               <q-item-label>
                 <q-skeleton type="text" width="65%" />
@@ -689,6 +774,8 @@ defineExpose({ scrollEnd })
             </slot>
           </div>
         </div>
+      </q-card-section>
+      <q-card-section v-if="history">
       </q-card-section>
       <D4Separator v-show="slots.actions" />
       <q-card-section v-if="slots.actions">
@@ -946,17 +1033,5 @@ defineExpose({ scrollEnd })
 
 .bg-primary-cloud {
   background-color: var(--q-primary-cloud) !important;
-}
-
-.caution {
-  position: relative;
-  background-image: url('/images/icons/alert_invert.svg');
-  background-size: cover;
-}
-
-.caution:deep(svg) {
-  position: fixed;
-  width: 50px;
-  height: 50px;
 }
 </style>

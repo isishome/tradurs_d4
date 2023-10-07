@@ -30,6 +30,12 @@ export interface Restriction extends Attribute {
   restrictValues: Array<number>
 }
 
+export interface Pacts {
+  ferocity: number | null,
+  divinity: number | null,
+  eternity: number | null
+}
+
 export interface IPrice {
   currency: string | null,
   currencyValue: string | number | null,
@@ -55,6 +61,7 @@ export interface IItem {
   properties: Array<Property>,
   affixes: Array<Affix>,
   restrictions: Array<Restriction>,
+  pacts: Pacts,
   price: Price,
   endDate: string,
   updDate: string,
@@ -106,6 +113,7 @@ export class Item implements IItem {
   public affixes: Array<Affix> = []
   public restrictions: Array<Restriction> = []
   public price: Price = new Price()
+  public pacts: Pacts = { ferocity: 0, divinity: 0, eternity: 0 }
   public endDate = ''
   public updDate = ''
   public expDate = ''

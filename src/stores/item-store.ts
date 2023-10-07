@@ -37,6 +37,15 @@ export interface Gem extends ILabel {
   qualityName: string
 }
 
+export interface Elixir extends ILabel {
+  elixir: string,
+  gradable: boolean,
+  craftable: boolean,
+  onlyHardcore: boolean,
+  grade: string,
+  gradeName: string
+}
+
 export interface ItemType extends ILabel {
   attribute: string,
   isCurrency: boolean,
@@ -68,6 +77,8 @@ export interface Restriction extends ILabel {
   type: string,
   sort?: number
 }
+
+export interface Pact extends ILabel { }
 
 export interface Award {
   ranking: number,
@@ -112,6 +123,7 @@ export const useItemStore = defineStore('item', {
     runes: [] as Array<Rune>,
     aspectCategories: [] as Array<AspectCategory>,
     gems: [] as Array<Gem>,
+    elixirs: [] as Array<Elixir>,
     types: [] as Array<ItemType>,
     classes: [] as Array<EquipmentClass>,
     attributeTypes: [] as Array<AttributeType>,
@@ -128,6 +140,11 @@ export const useItemStore = defineStore('item', {
     },
     restrictions: {
       data: [] as Array<Restriction>,
+      loading: false,
+      request: 0
+    },
+    pacts: {
+      data: [] as Array<Pact>,
       loading: false,
       request: 0
     },
@@ -309,6 +326,7 @@ export const useItemStore = defineStore('item', {
               this.runes = response.data.runes
               this.aspectCategories = response.data.aspectCategories
               this.gems = response.data.gems
+              this.elixirs = response.data.elixirs
               this.types = response.data.types
               this.classes = response.data.classes
               this.attributeTypes = response.data.attributeTypes
@@ -398,6 +416,32 @@ export const useItemStore = defineStore('item', {
             .then(() => {
               this.restrictions.loading = false
               this.restrictions.request++
+
+              if (error)
+                reject()
+              else
+                resolve()
+            })
+        }
+        else
+          resolve()
+      })
+    },
+    getPacts() {
+      return new Promise<void>((resolve, reject) => {
+        let error: unknown = null
+        if (this.pacts.request === 0) {
+          this.pacts.loading = true
+          api.get('/d4/item/pacts')
+            .then((response) => {
+              this.pacts.data = response.data
+            })
+            .catch((e) => {
+              error = e
+            })
+            .then(() => {
+              this.pacts.loading = false
+              this.pacts.request++
 
               if (error)
                 reject()
