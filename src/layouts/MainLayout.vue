@@ -602,7 +602,7 @@ onUnmounted(() => {
   content: '';
   position: fixed;
   z-index: -1;
-  opacity: .2;
+  opacity: .3;
   width: 100vw;
   height: 100vh;
   background-image: var(--tradurs-season-image);
@@ -611,7 +611,6 @@ onUnmounted(() => {
 }
 
 .body--light .bg-season::before {
-  opacity: .3;
   filter: grayscale(1);
 }
 

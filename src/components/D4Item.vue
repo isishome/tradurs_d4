@@ -665,7 +665,7 @@ defineExpose({ scrollEnd })
         v-if="store.fixedFilter.ladder && data.itemType === 'armor' && !history && Object.values(data.pacts).reduce((a: number, b: number) => a + b, 0) > 0">
         <div class="row justify-start items-center " :class="!$q.screen.lt.sm ? 'q-gutter-x-xl' : 'q-gutter-x-md'">
           <div v-show="data.pacts.ferocity" class="row items-center q-gutter-x-sm">
-            <q-icon name="img:/images/season/002/ferocity.webp" :size="!$q.screen.lt.sm ? '48px' : '36px'">
+            <q-icon name="img:/images/season/002/ferocity.webp" :size="!$q.screen.lt.sm ? '48px' : '40px'">
               <D4Tooltip anchor="top middle" self="top middle" :offset="[14, 28]" padding="xs" transition-show="jump-up"
                 transition-hide="jump-down">
                 <div style="max-width:140px" class="text-caption break-keep">
@@ -775,7 +775,7 @@ defineExpose({ scrollEnd })
           </div>
         </div>
       </q-card-section>
-      <q-card-section v-if="history">
+      <q-card-section v-if="history" :class="{ 'q-my-md': $q.screen.gt.sm }">
       </q-card-section>
       <D4Separator v-show="slots.actions" />
       <q-card-section v-if="slots.actions">

@@ -233,13 +233,23 @@ const unblock = () => {
           </div>
           <template v-if="data.battleTag !== '' && as.signed">
             <div v-if="data.blockable" class="q-mt-lg row justify-center items-center">
-              <q-btn no-caps unelevated :label="t('blockUser.title')" aria-label="Tradurs Block Button" padding="4px"
-                size="12px" color="negative" :disable="disable" :progress="progress || userProgress" @click="block" />
+              <q-btn no-caps unelevated aria-label="Tradurs Block Button" padding="4px" size="12px" color="negative"
+                :disable="disable" :progress="progress || userProgress" @click="block">
+                <div class="row items-center q-gutter-x-xs">
+                  <q-icon class="invert" name="img:/images/icons/block.svg" size="19px" />
+                  <div>{{ t('blockUser.title') }}</div>
+                </div>
+              </q-btn>
             </div>
             <div v-else-if="blocked" class="q-mt-lg row justify-center items-center">
-              <q-btn no-caps unelevated :label="t('blockUser.unblock')" :title="t('blockUser.caption')"
-                aria-label="Tradurs UnBlock Button" padding="4px" size="12px" color="positive"
-                :disable="disable || !data.unblockable" :progress="progress || userProgress" @click="unblock" />
+              <q-btn no-caps unelevated :title="t('blockUser.caption')" aria-label="Tradurs UnBlock Button" padding="4px"
+                size="12px" color="positive" :disable="disable || !data.unblockable" :progress="progress || userProgress"
+                @click="unblock">
+                <div class="row items-center q-gutter-x-xs">
+                  <q-icon class="invert" name="img:/images/icons/check.svg" size="19px" />
+                  <div>{{ t('blockUser.unblock') }}</div>
+                </div>
+              </q-btn>
             </div>
           </template>
         </D4Tooltip>

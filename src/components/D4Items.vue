@@ -873,7 +873,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
               </q-icon>
             </div>
             <div class="row items-center">
-              <q-icon name="img:/images/season/002/ferocity.webp" size="36px">
+              <q-icon name="img:/images/season/002/ferocity.webp" size="40px">
                 <D4Tooltip anchor="top middle" self="top middle" :offset="[14, 28]" padding="xs" transition-show="jump-up"
                   transition-hide="jump-down">
                   <div style="max-width:140px" class="text-caption break-keep">
@@ -885,7 +885,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                 allow-null :disable="disable" />
             </div>
             <div class="row items-center">
-              <q-icon name="img:/images/season/002/divinity.webp" size="36px">
+              <q-icon name="img:/images/season/002/divinity.webp" size="40px">
                 <D4Tooltip anchor="top middle" self="top middle" :offset="[14, 28]" padding="xs" transition-show="jump-up"
                   transition-hide="jump-down">
                   <div style="max-width:140px" class="text-caption break-keep">
@@ -897,7 +897,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                 allow-null :disable="disable" />
             </div>
             <div class="row items-center">
-              <q-icon name="img:/images/season/002/eternity.webp" size="36px">
+              <q-icon name="img:/images/season/002/eternity.webp" size="40px">
                 <D4Tooltip anchor="top middle" self="top middle" :offset="[14, 28]" padding="xs" transition-show="jump-up"
                   transition-hide="jump-down">
                   <div style="max-width:140px" class="text-caption break-keep">
