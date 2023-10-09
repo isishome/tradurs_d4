@@ -1,26 +1,12 @@
 <script setup lang="ts">
-import { useQuasar, date } from 'quasar'
 import { ref, reactive, computed, onMounted } from 'vue'
-import { useGlobalStore } from 'src/stores/global-store'
-import { useAccountStore } from 'src/stores/account-store'
+import { useQuasar, date } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import { scrollPos } from 'src/common'
-
-interface Message {
-  msgId: number,
-  msgType: string,
-  msgValue: string,
-  itemId: number,
-  itemName: string,
-  currency: string,
-  currencyValue: string,
-  regDate: string,
-  readYn: boolean,
-  quantity: number,
-  show: boolean,
-  selected: boolean
-}
+import { useGlobalStore } from 'src/stores/global-store'
+import { useAccountStore } from 'src/stores/account-store'
+import { IMessage, IAnswer } from 'src/types/user'
 
 const $q = useQuasar()
 const gs = useGlobalStore()
@@ -30,10 +16,11 @@ const route = useRoute()
 
 as.newMessages = false
 
-const messages = reactive<Array<Message>>([])
+const messages = reactive<Array<IMessage>>([])
 const selected = ref<boolean>(false)
 const disable = computed(() => messages.filter(m => !m.readYn).length === 0)
 const loading = ref<boolean>(true)
+const process = ref<boolean>(false)
 const page = ref<number>(1)
 const over = computed(() => as.messagePage.over)
 const more = computed(() => as.messagePage.more)
@@ -55,8 +42,10 @@ const getList = () => {
     })
 }
 
-const read = (message: Message) => {
+const read = (message: IMessage) => {
   if (!message.readYn && !message.show) {
+    process.value = true
+    message.disable = true
     as.readMessage([message.msgId])
       .then(() => {
         message.readYn = true
@@ -64,18 +53,34 @@ const read = (message: Message) => {
         message.selected = false
         as.unreadMessages()
       })
+      .catch(() => { })
+      .then(() => {
+        process.value = false
+        message.disable = false
+      })
   }
   else
     message.show = !message.show
 }
 
 const reads = () => {
-  const selected = messages.filter(m => m.selected)
-  if (selected.length > 0) {
-    as.readMessage(selected.map(m => m.msgId))
+  const selectedMessages = messages.filter(m => m.selected)
+  if (selectedMessages.length > 0) {
+    process.value = true
+    selectedMessages.forEach(m => m.disable = true)
+    as.readMessage(selectedMessages.map(m => m.msgId))
       .then(() => {
-        selected.forEach(m => m.readYn = true)
+        selectedMessages.forEach(m => m.readYn = true)
         as.unreadMessages()
+      })
+      .catch(() => { })
+      .then(() => {
+        process.value = false
+        selected.value = false
+        selectedMessages.forEach(m => {
+          m.selected = !m.readYn
+          m.disable = false
+        })
       })
   }
 }
@@ -85,14 +90,7 @@ const refresh = () => {
   getList()
 }
 
-interface Answer {
-  open: boolean,
-  loading: boolean,
-  msgId: number | null,
-  contents: string
-}
-
-const answer = reactive<Answer>({
+const answer = reactive<IAnswer>({
   open: false,
   loading: false,
   msgId: null,
@@ -153,13 +151,13 @@ onMounted(() => {
     <q-list bordered class="rounded-borders">
       <q-item>
         <q-item-section side>
-          <q-checkbox size="xs" color="grey-secondary" v-model="selected" :disable="disable"
+          <q-checkbox size="xs" color="grey-secondary" v-model="selected" :disable="disable || process"
             @update:model-value="val => messages.filter(m => !m.readYn).forEach(m => m.selected = val)" />
         </q-item-section>
         <q-item-section>
         </q-item-section>
         <q-item-section side>
-          <q-btn no-caps push :disable="disable" unelevated aria-label="Tradurs Read Button" color="grey-8"
+          <q-btn no-caps push :disable="disable || process" unelevated aria-label="Tradurs Read Button" color="grey-8"
             :label="t('btn.markRead')" @click="reads" />
         </q-item-section>
       </q-item>
@@ -184,7 +182,8 @@ onMounted(() => {
         <q-separator />
         <q-item clickable v-ripple @click="read(message)" :class="['q-py-lg', { 'read': message.readYn }]">
           <q-item-section side @click.stop>
-            <q-checkbox size="xs" color="grey-10" v-model="message.selected" :disable="message.readYn" />
+            <q-checkbox size="xs" color="grey-10" v-model="message.selected"
+              :disable="message.readYn || message.disable" />
           </q-item-section>
           <q-item-section avatar v-show="!$q.screen.lt.sm">
             <q-avatar size="md" color="grey-4 text-dark">

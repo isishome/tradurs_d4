@@ -11,9 +11,11 @@ export default {
   page: {
     tradeList: '거래 목록',
     itemInfo: '아이템 정보',
-    messages: '메시지',
-    history: '활동 내역',
     awards: '어워즈',
+    mySpace: '내 공간',
+    messages: '메시지',
+    blocks: '차단 관리',
+    history: '활동 내역',
     support: '도움말',
     pnf: '페이지를 찾을 수 없습니다'
   },
@@ -104,10 +106,12 @@ export default {
     unblockTitle: '사용자 차단 해제',
     message: '해당 사용자를 차단할까요?',
     unblockMessage: '해당 사용자의 차단을 해제할까요?',
-    unblock: '사용자 차단 해제',
-    caption: '차단 해제는 차단 후 48시간이 자나야 가능합니다',
+    block: '차단',
+    unblock: '차단 해제',
+    caption: '차단 해제는 48시간 이후 가능합니다',
     complete: '사용자 차단이 완료되었습니다',
-    unblockComplete: '사용자 차단 해제가 완료되었습니다'
+    unblockComplete: '사용자 차단 해제가 완료되었습니다',
+    noData: '차단된 사용자가 없습니다'
   },
   btn: {
     edit: '수정하기',
@@ -142,6 +146,7 @@ export default {
     request: '요청',
     block: '차단',
     unblock: '차단 해제',
+    bulkUnblock: '일괄 차단 해제',
     showMore: '더보기'
   },
   attribute: {

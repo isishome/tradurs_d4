@@ -18,9 +18,22 @@ const routes: RouteRecordRaw[] = [
         props: true
       },
       {
+        name: 'awards',
+        path: 'awards',
+        component: () => import('pages/AwardsPage.vue')
+      },
+      {
         name: 'messages',
         path: 'messages',
         component: () => import('pages/MessagesPage.vue'),
+        meta: {
+          requireAuth: true
+        }
+      },
+      {
+        name: 'blocks',
+        path: 'blocks',
+        component: () => import('pages/BlocksPage.vue'),
         meta: {
           requireAuth: true
         }
@@ -32,11 +45,6 @@ const routes: RouteRecordRaw[] = [
         meta: {
           requireAuth: true
         }
-      },
-      {
-        name: 'awards',
-        path: 'awards',
-        component: () => import('pages/AwardsPage.vue')
       },
       {
         name: 'support',

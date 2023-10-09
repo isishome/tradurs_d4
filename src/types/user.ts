@@ -16,6 +16,36 @@ export interface IUser extends INotify {
   unblockable: boolean
 }
 
+export interface IMessage {
+  msgId: number,
+  msgType: string,
+  msgValue: string,
+  itemId: number,
+  itemName: string,
+  currency: string,
+  currencyValue: string,
+  regDate: string,
+  readYn: boolean,
+  quantity: number,
+  show: boolean,
+  selected: boolean,
+  disable: boolean
+}
+
+export interface IAnswer {
+  open: boolean,
+  loading: boolean,
+  msgId: number | null,
+  contents: string
+}
+
+export interface IBlock {
+  battleTag: string,
+  regDate: string,
+  selected: boolean,
+  disable: boolean
+}
+
 export class User implements IUser {
   public id
   public yolk = 0

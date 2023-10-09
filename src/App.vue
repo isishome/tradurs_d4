@@ -141,8 +141,9 @@ onMounted(() => {
           <div class="text-weight-bold" :class="$q.screen.gt.sm ? 'q-pa-md text-h6' : 'q-pa-sm text-body2'">{{
             t('notice.title') }}</div>
         </div>
-        <q-btn unelevated aria-label="Tradurs Close Button" class="no-hover icon" :ripple="false">
-          <img src="/images/icons/close.svg" width="24" height="24" @click="notice.open = false" alt="icon_close" />
+        <q-btn unelevated aria-label="Tradurs Close Button" class="no-hover icon" :ripple="false"
+          @click="notice.open = false">
+          <img src="/images/icons/close.svg" width="24" height="24" alt="icon_close" />
         </q-btn>
       </q-card-section>
     </template>

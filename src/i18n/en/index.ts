@@ -11,9 +11,11 @@ export default {
   page: {
     tradeList: 'Trade List',
     itemInfo: 'Item Information',
-    messages: 'Messages',
-    history: 'History',
     awards: 'Awards',
+    mySpace: 'My Space',
+    messages: 'Messages',
+    blocks: 'Blocks',
+    history: 'History',
     support: 'Help',
     pnf: 'Page not found'
   },
@@ -105,10 +107,12 @@ export default {
     unblockTitle: 'Unblock user',
     message: "Do you want to block the user?",
     unblockMessage: "Do you want to unblock this user?",
-    unblock: 'Unblock user',
-    caption: 'Unblocking is not available until 48 hours after blocking',
+    block: 'Block',
+    unblock: 'Unblock',
+    caption: 'Unblocking is available after 48 hours',
     complete: 'User blocking is complete',
-    unblockComplete: 'User unblocking is complete'
+    unblockComplete: 'User unblocking is complete',
+    noData: 'No users are blocked'
   },
   btn: {
     edit: 'Edit',
@@ -143,6 +147,7 @@ export default {
     request: 'Request',
     block: 'Block',
     unblock: 'Unblock',
+    bulkUnblock: 'Bulk Unblock',
     showMore: 'Show More'
   },
   attribute: {

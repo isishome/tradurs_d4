@@ -997,8 +997,9 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
           <div class="text-h6 q-pl-sm">
             {{ t('offer.list') }}
           </div>
-          <q-btn unelevated aria-label="Tradurs Close Button" class="no-hover icon" :ripple="false">
-            <img src="/images/icons/close.svg" width="24" height="24" @click="showOffers = false" alt="icon_close" />
+          <q-btn unelevated aria-label="Tradurs Close Button" class="no-hover icon" :ripple="false"
+            @click="showOffers = false">
+            <img src="/images/icons/close.svg" width="24" height="24" alt="icon_close" />
           </q-btn>
         </q-card-section>
       </template>

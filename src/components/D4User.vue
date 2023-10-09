@@ -128,7 +128,7 @@ const unblock = () => {
     class: 'q-pa-sm text-area'
   }).onOk(() => {
     userProgress.value = true
-    as.unblock(props.data.battleTag)
+    as.unblock([props.data.battleTag])
       .then(() => {
         $q.notify({
           icon: 'img:/images/icons/check.svg',
@@ -136,6 +136,7 @@ const unblock = () => {
           classes: '',
           message: t('blockUser.unblockComplete')
         })
+
         emit('update')
       })
       .catch(() => { })
@@ -237,7 +238,7 @@ const unblock = () => {
                 :disable="disable" :progress="progress || userProgress" @click="block">
                 <div class="row items-center q-gutter-x-xs">
                   <q-icon class="invert" name="img:/images/icons/block.svg" size="19px" />
-                  <div>{{ t('blockUser.title') }}</div>
+                  <div>{{ t('blockUser.block') }}</div>
                 </div>
               </q-btn>
             </div>

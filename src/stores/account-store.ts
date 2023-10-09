@@ -52,6 +52,11 @@ export const useAccountStore = defineStore('account', {
       more: false as boolean,
       unread: 0 as number
     },
+    blockPage: {
+      rows: 6 as number,
+      over: false as boolean,
+      more: false as boolean
+    },
     historyPage: {
       rows: 20 as number,
       nextHistoryId: null as number | null
@@ -185,6 +190,17 @@ export const useAccountStore = defineStore('account', {
           })
       })
     },
+    getBlocks(page: number) {
+      return new Promise<void>((resolve) => {
+        api.post('/d4/account/blocks', { page, rows: this.blockPage.rows })
+          .then((response) => {
+            this.blockPage.over = page > 1
+            this.blockPage.more = response.data.length > this.blockPage.rows
+            response.data.splice(this.blockPage.rows, 1)
+            resolve(response.data)
+          })
+      })
+    },
     readMessage(msgIds: Array<number>) {
       return new Promise<void>((resolve) => {
         api.post('/account/messages/read', { msgIds })
@@ -210,9 +226,9 @@ export const useAccountStore = defineStore('account', {
           })
       })
     },
-    unblock(battleTag: string) {
+    unblock(battleTags: Array<string>) {
       return new Promise<void>((resolve) => {
-        api.post('/d4/account/unblock', { battleTag })
+        api.post('/d4/account/unblock', { battleTags })
           .then(() => {
             resolve()
           })

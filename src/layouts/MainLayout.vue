@@ -128,6 +128,10 @@ const beforeShow = () => {
     scrollPosDirect()
 }
 
+// drawer expansion item
+const expanded = ref<boolean>(false)
+const isMySpace = computed(() => ['messages', 'blocks', 'history'].includes(route.name as string))
+
 // about screen size
 const size = computed(() => $q.screen.width < 728 ? 'width:320px;max-height:100px;' : 'width:728px;height:90px;')
 const size2 = computed(() => $q.screen.width < 300 ? 'width:250px;height:250px;' : $q.screen.width < 336 ? 'width:300px;height:250px;' : $q.screen.width < 728 ? 'width:336px;height:280px;' : 'width:728px;height:90px;')
@@ -235,42 +239,52 @@ onUnmounted(() => {
           <q-list class="q-pa-md page">
             <q-item v-ripple clickable :to="{ name: 'tradeList', params: { lang: route.params.lang } }" exact
               active-class="active">
-              <q-item-section>
+              <q-item-section side>
                 <q-item-label>
                   {{ t('page.tradeList') }}
                 </q-item-label>
               </q-item-section>
             </q-item>
-            <q-item v-if="as.signed" v-ripple clickable :to="{ name: 'messages', params: { lang: route.params.lang } }"
-              exact active-class="active">
-              <q-item-section avatar>
-                <q-item-label>
-                  {{ t('page.messages') }}
-                </q-item-label>
-              </q-item-section>
-              <q-item-section v-show="newMessages" side>
-                <q-badge rounded color="negative"></q-badge>
-              </q-item-section>
-            </q-item>
-            <q-item v-if="as.signed" v-ripple clickable :to="{ name: 'history', params: { lang: route.params.lang } }"
-              exact active-class="active">
-              <q-item-section>
-                <q-item-label>
-                  {{ t('page.history') }}
-                </q-item-label>
-              </q-item-section>
-            </q-item>
             <q-item v-ripple clickable :to="{ name: 'awards', params: { lang: route.params.lang } }" exact
               active-class="active">
-              <q-item-section avatar>
+              <q-item-section side>
                 <q-item-label>
                   {{ t('page.awards') }}
                 </q-item-label>
-              </q-item-section>
-              <q-item-section v-show="newAwards" side>
-                <q-badge label="N" color="orange-8" class="new-badge2" />
+                <q-badge v-show="newAwards" floating label="N" color="orange-8" class="new-badge2" />
               </q-item-section>
             </q-item>
+            <q-expansion-item v-if="as.signed" v-model="expanded" :label="t('page.mySpace')"
+              expand-icon="img:/images/icons/dropdown.svg" :default-opened="isMySpace"
+              :class="expanded ? 'expanded rounded-borders' : ''">
+              <q-list bordered class="sub rounded-borders">
+                <q-item :inset-level=".4" v-ripple clickable
+                  :to="{ name: 'messages', params: { lang: route.params.lang } }" exact active-class="active">
+                  <q-item-section side>
+                    <q-item-label>
+                      {{ t('page.messages') }}
+                    </q-item-label>
+                    <div v-show="newMessages" class="alert"></div>
+                  </q-item-section>
+                </q-item>
+                <q-item :inset-level=".4" v-ripple clickable :to="{ name: 'blocks', params: { lang: route.params.lang } }"
+                  exact active-class="active">
+                  <q-item-section side>
+                    <q-item-label>
+                      {{ t('page.blocks') }}
+                    </q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item :inset-level=".4" v-ripple clickable
+                  :to="{ name: 'history', params: { lang: route.params.lang } }" exact active-class="active">
+                  <q-item-section side>
+                    <q-item-label>
+                      {{ t('page.history') }}
+                    </q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-expansion-item>
           </q-list>
           <q-separator />
           <q-list class="q-mx-md q-py-xl q-mt-xl text-overline useful" dense>
@@ -367,19 +381,69 @@ onUnmounted(() => {
             </q-input>
           </div>
           <div>
+            <q-toolbar class="gt-sm nav">
+              <q-btn flat no-caps type="a" :ripple="false" class="no-hover"
+                :class="{ 'active': route.name === 'tradeList' }" :label="t('page.tradeList')"
+                :to="{ name: 'tradeList', params: { lang: route.params.lang } }" />
+              <q-btn flat no-caps type="a" :ripple="false" class="no-hover" :class="{ 'active': route.name === 'awards' }"
+                :to="{ name: 'awards', params: { lang: route.params.lang } }">
+                <div class="relative-position">
+                  {{ t('page.awards') }}
+                  <q-badge v-show="newAwards" floating label="N" color="orange-8" class="new-badge2" style="top:-4px" />
+                </div>
+              </q-btn>
+              <q-btn-dropdown v-if="as.signed" flat content-class="no-shadow" no-caps :ripple="false"
+                :label="t('page.mySpace')" class="no-hover" transition-show="none" transition-hide="none"
+                transition-duration="0" dropdown-icon="img:/images/icons/dropdown.svg">
+                <q-list bordered class="page rounded-borders shadow-3">
+                  <q-item v-ripple clickable :to="{ name: 'messages', params: { lang: route.params.lang } }" exact
+                    active-class="active">
+                    <q-item-section side>
+                      <q-item-label>
+                        {{ t('page.messages') }}
+                      </q-item-label>
+                      <div v-show="newMessages" class="alert"></div>
+                    </q-item-section>
+                  </q-item>
+                  <q-item v-ripple clickable :to="{ name: 'blocks', params: { lang: route.params.lang } }" exact
+                    active-class="active">
+                    <q-item-section side>
+                      <q-item-label>
+                        {{ t('page.blocks') }}
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <q-item v-ripple clickable :to="{ name: 'history', params: { lang: route.params.lang } }" exact
+                    active-class="active">
+                    <q-item-section side>
+                      <q-item-label>
+                        {{ t('page.history') }}
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </q-btn-dropdown>
+            </q-toolbar>
+            <!--
             <q-tabs dense no-caps narrow-indicator class="gt-sm q-px-xs bg-transparent no-hover nav">
               <q-route-tab :ripple="!$q.dark.isActive" :label="t('page.tradeList')"
                 :to="{ name: 'tradeList', params: { lang: route.params.lang } }" exact />
-              <q-route-tab v-if="as.signed" :ripple="!$q.dark.isActive" :label="t('page.messages')"
-                class="relative-position" :to="{ name: 'messages', params: { lang: route.params.lang } }"
-                :alert="newMessages ? 'negative' : 'transparent'" exact />
-              <q-route-tab v-if="as.signed" :ripple="!$q.dark.isActive" :label="t('page.history')"
-                class="relative-position" :to="{ name: 'history', params: { lang: route.params.lang } }" exact />
+
               <q-route-tab :ripple="!$q.dark.isActive" :label="t('page.awards')"
                 :to="{ name: 'awards', params: { lang: route.params.lang } }" exact>
                 <q-badge v-show="newAwards" floating label="N" color="orange-8" class="new-badge2" />
               </q-route-tab>
+              <q-tab label="내 정보">
+                <q-tabs>
+                  <q-route-tab v-if="as.signed" :ripple="!$q.dark.isActive" :label="t('page.messages')"
+                    class="relative-position" :to="{ name: 'messages', params: { lang: route.params.lang } }"
+                    :alert="newMessages ? 'negative' : 'transparent'" exact />
+                  <q-route-tab v-if="as.signed" :ripple="!$q.dark.isActive" :label="t('page.history')"
+                    class="relative-position" :to="{ name: 'history', params: { lang: route.params.lang } }" exact />
+                </q-tabs>
+              </q-tab>
             </q-tabs>
+            -->
           </div>
         </div>
         <div class="lt-md col-1 col-md-3 row justify-end q-gutter-sm">
@@ -522,14 +586,22 @@ onUnmounted(() => {
   max-width: 1400px;
 }
 
-.nav,
-.nav:deep(.q-tab) {
-  transition: none !important;
+.nav:deep(.q-btn) {
+  opacity: .6;
+  transition: opacity .3s ease-in-out;
 }
 
-.nav:deep(.q-tab__alert) {
-  top: 4px;
-  right: -6px;
+.nav:deep(.q-btn .q-btn__content) {
+  transition: border .3s ease-in-out;
+  border-bottom: solid 2px transparent;
+}
+
+.nav:deep(.q-btn.active) {
+  opacity: 1;
+}
+
+.nav:deep(.q-btn.active .q-btn__content) {
+  border-bottom-color: currentColor;
 }
 
 .view {
@@ -537,27 +609,61 @@ onUnmounted(() => {
   min-height: 40vh;
 }
 
-.page:deep(.q-item__label) {
+.page:deep(.sub) {
+  background-color: var(--q-cloud);
+  border-top: none;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.page:deep(.q-expansion-item>div>.q-item:first-child) {
+  transition: box-shadow .3s ease;
+}
+
+.page:deep(.expanded>div>.q-item:first-child) {
+  border-radius: 4px 4px 0 0;
+  box-shadow: inset 0 0 0 1px rgba(100, 100, 100, 1);
+  opacity: 1;
+}
+
+.page:deep(.q-item__section--side) {
+  color: currentColor;
+}
+
+.page:deep(.q-item) {
   opacity: .6;
 }
 
-.page:deep(.active .q-item__label) {
-  opacity: 1;
-  text-decoration: underline;
+.page:deep(.q-item__section) {
+  position: relative;
+  padding-right: 0;
 }
 
-.new-badge {
+.page:deep(.q-item__label) {
+  border-bottom: solid 2px transparent;
+}
+
+.page:deep(.q-item.active) {
+  opacity: 1;
+}
+
+.page:deep(.active .q-item__label) {
+  border-bottom-color: currentColor;
+}
+
+.alert {
+  position: absolute;
   top: 0;
-  right: 0;
-  padding: 2px 3px;
+  right: -9px;
   border-radius: 40px;
-  font-size: 10px;
-  line-height: 10px;
+  width: 10px;
+  height: 10px;
+  background-color: var(--q-negative);
 }
 
 .new-badge2 {
-  top: 2px;
-  right: -8px;
+  top: 0;
+  right: -10px;
   padding: 1px 2px;
   border-radius: 40px;
   font-size: 10px;
