@@ -55,6 +55,7 @@ const unblock = (block: IBlock) => {
     .catch(() => { })
     .then(() => {
       progress.value = false
+      block.disable = false
     })
 }
 
@@ -78,6 +79,7 @@ const unblocks = () => {
       .then(() => {
         selected.value = false
         progress.value = false
+        selectedBlocks.forEach(b => { b.disable = false })
       })
   }
 }
@@ -194,24 +196,6 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.read,
-.read:deep(.q-item__label--caption),
-.read:deep(.q-item__section--side),
-.body--light .read:deep(.q-checkbox__inner) {
-  color: rgb(100, 100, 100);
-}
-
-.body--light .read,
-.body--light .read:deep(.q-item__label--caption),
-.body--light .read:deep(.q-item__section--side),
-.body--light .read:deep(.q-checkbox__inner) {
-  color: rgb(150, 150, 150);
-}
-
-.read .q-avatar {
-  opacity: .4;
-}
-
 .paging:deep(.q-btn.disabled) {
   opacity: .2 !important;
 }

@@ -180,7 +180,7 @@ export const useAccountStore = defineStore('account', {
       })
     },
     getMessages(page: number) {
-      return new Promise<void>((resolve) => {
+      return new Promise<void>((resolve, reject) => {
         api.post('/account/messages', { page, rows: this.messagePage.rows })
           .then((response) => {
             this.messagePage.over = page > 1
@@ -188,10 +188,13 @@ export const useAccountStore = defineStore('account', {
             response.data.splice(this.messagePage.rows, 1)
             resolve(response.data)
           })
+          .catch(() => {
+            reject()
+          })
       })
     },
     getBlocks(page: number) {
-      return new Promise<void>((resolve) => {
+      return new Promise<void>((resolve, reject) => {
         api.post('/d4/account/blocks', { page, rows: this.blockPage.rows })
           .then((response) => {
             this.blockPage.over = page > 1
@@ -199,13 +202,19 @@ export const useAccountStore = defineStore('account', {
             response.data.splice(this.blockPage.rows, 1)
             resolve(response.data)
           })
+          .catch(() => {
+            reject()
+          })
       })
     },
     readMessage(msgIds: Array<number>) {
-      return new Promise<void>((resolve) => {
+      return new Promise<void>((resolve, reject) => {
         api.post('/account/messages/read', { msgIds })
           .then(() => {
             resolve()
+          })
+          .catch(() => {
+            reject()
           })
       })
     },
@@ -219,18 +228,24 @@ export const useAccountStore = defineStore('account', {
       })
     },
     block(battleTag: string) {
-      return new Promise<void>((resolve) => {
+      return new Promise<void>((resolve, reject) => {
         api.post('/d4/account/block', { battleTag })
           .then(() => {
             resolve()
           })
+          .catch(() => {
+            reject()
+          })
       })
     },
     unblock(battleTags: Array<string>) {
-      return new Promise<void>((resolve) => {
+      return new Promise<void>((resolve, reject) => {
         api.post('/d4/account/unblock', { battleTags })
           .then(() => {
             resolve()
+          })
+          .catch(() => {
+            reject()
           })
       })
     },
