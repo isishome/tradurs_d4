@@ -253,7 +253,7 @@ defineExpose({ scrollEnd })
                 <q-select v-model="_typeValue1" :disable="disable" outlined dense no-error-icon hide-bottom-space
                   emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0"
                   :label="t('item.selectRune')" :options="filterRunesByType()"
-                  dropdown-icon="img:/images/icons/dropdown.svg " popup-content-class="scroll"
+                  dropdown-icon="img:/images/icons/dropdown.svg " popup-content-class="scroll limit-select"
                   @update:model-value="update">
                   <template #selected-item="scope">
                     <div class="ellipsis">{{ scope.opt.label }}</div>
@@ -275,7 +275,8 @@ defineExpose({ scrollEnd })
                 <q-select v-model="_typeValue1" :disable="disable" outlined dense no-error-icon hide-bottom-space
                   emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0"
                   :label="t('item.selectAspectCategory')" dropdown-icon="img:/images/icons/dropdown.svg"
-                  :options="store.aspectCategories" popup-content-class="scroll" @update:model-value="update">
+                  :options="store.aspectCategories" popup-content-class="scroll limit-select"
+                  @update:model-value="update">
                   <template #selected-item="scope">
                     <div class="ellipsis">{{ scope.opt.label }}</div>
                   </template>
@@ -286,7 +287,7 @@ defineExpose({ scrollEnd })
                           alt="Tradurs Aspect Image" />
                       </q-item-section>
                       <q-item-section>
-                        <q-item-label class="ellipsis">{{ scope.opt.label }}</q-item-label>
+                        <q-item-label>{{ scope.opt.label }}</q-item-label>
                       </q-item-section>
                     </q-item>
                   </template>
@@ -308,9 +309,11 @@ defineExpose({ scrollEnd })
                   <q-select v-model="_typeValue2" :disable="disable" outlined dense no-error-icon hide-bottom-space
                     emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0"
                     :label="t('item.selectGem')" dropdown-icon="img:/images/icons/dropdown.svg" :options="store.gems"
-                    popup-content-class="scroll" @update:model-value="update">
+                    popup-content-class="scroll limit-select" @update:model-value="update">
                     <template #selected-item="scope">
-                      <div class="ellipsis">{{ scope.opt.label }}</div>
+                      <q-item-section>
+                        <q-item-label class="ellipsis">{{ scope.opt.label }}</q-item-label>
+                      </q-item-section>
                     </template>
                     <template #option="scope">
                       <q-item clickable @click="scope.toggleOption(scope.opt.value)">
@@ -319,7 +322,7 @@ defineExpose({ scrollEnd })
                             alt="Tradurs Gem Images" />
                         </q-item-section>
                         <q-item-section>
-                          <q-item-label class="ellipsis">{{ scope.opt.label }}</q-item-label>
+                          <q-item-label>{{ scope.opt.label }}</q-item-label>
                         </q-item-section>
                       </q-item>
                     </template>
@@ -329,7 +332,7 @@ defineExpose({ scrollEnd })
                   <q-select v-model="_typeValue2" :disable="disable" outlined dense no-error-icon hide-bottom-space
                     emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0"
                     :label="t('item.selectElixir')" dropdown-icon="img:/images/icons/dropdown.svg"
-                    :options="store.elixirs" popup-content-class="scroll" @update:model-value="update">
+                    :options="store.elixirs" popup-content-class="scroll limit-select" @update:model-value="update">
                     <template #selected-item="scope">
                       <div class="ellipsis">{{ scope.opt.label }}</div>
                     </template>
@@ -341,7 +344,7 @@ defineExpose({ scrollEnd })
                             alt="Tradurs Elixir Images" />
                         </q-item-section>
                         <q-item-section>
-                          <q-item-label class="ellipsis">{{ scope.opt.label }}</q-item-label>
+                          <q-item-label>{{ scope.opt.label }}</q-item-label>
                         </q-item-section>
                       </q-item>
                     </template>
