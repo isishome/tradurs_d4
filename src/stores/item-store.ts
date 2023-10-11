@@ -34,7 +34,8 @@ export interface AspectCategory extends ILabel { }
 
 export interface Gem extends ILabel {
   quality: string,
-  qualityName: string
+  qualityName: string,
+  level: number | null
 }
 
 export interface Elixir extends ILabel {
@@ -43,7 +44,8 @@ export interface Elixir extends ILabel {
   craftable: boolean,
   onlyHardcore: boolean,
   grade: string,
-  gradeName: string
+  gradeName: string,
+  level: number | null
 }
 
 export interface ItemType extends ILabel {

@@ -5,7 +5,7 @@ import { useI18n } from 'vue-i18n'
 import { focus } from 'src/common'
 
 interface IProps {
-  modelValue: number | null,
+  modelValue: number | string | null,
   label?: string | null,
   maxWidth?: string,
   max?: number,
@@ -36,31 +36,40 @@ const $q = useQuasar()
 const { t } = useI18n({ useScope: 'global' })
 
 // variable
-const _quantity = ref<number | null>(props.modelValue)
+const _quantity = ref<number | string>(typeof (props.modelValue) === 'number' ? props.modelValue : '')
 
 // methods
 const counting = (stat: string): void => {
   if (typeof (_quantity.value) === 'number') {
-    _quantity.value = _quantity.value + (stat === 'inc' ? 1 : -1) as number
-    emit('update:modelValue', _quantity.value)
+    const q = _quantity.value + (stat === 'inc' ? 1 : -1) as number
+    emit('update:modelValue', q)
   }
+}
+
+const validate = (n: string | number) => {
+  let q: number | string = n
+
+  if (q !== '') {
+    q = parseInt(n.toString())
+    q = (q === 0 && !props.allowZero ? 1 : q > props.max ? props.max : q)
+  }
+
+  return q
 }
 
 const update = (val: string | number | null) => {
-  let q: number | null
-
-  if (props.allowNull && !val)
-    q = null
-  else {
-    q = parseInt(val ? val.toString() : props.allowZero ? '0' : '1')
-    q = q > props.max ? props.max : q
-  }
-
-  emit('update:modelValue', q)
+  emit('update:modelValue', val)
 }
 
-watch(() => props.modelValue, (val: number | null) => {
-  _quantity.value = val
+watch(() => props.modelValue, (val: number | string | null) => {
+  const q = validate(typeof (val) === 'number' ? val : '')
+
+  nextTick(() => {
+    _quantity.value = q
+  })
+
+  if ((val || '') !== q)
+    emit('update:modelValue', q)
 })
 </script>
 
@@ -75,7 +84,7 @@ watch(() => props.modelValue, (val: number | null) => {
       :style="`max-width:${maxWidth}`" input-class="text-center" :disable="disable" dense hide-bottom-space hide-hint
       no-error-icon outlined :maxlength="max.toString().length" :mask="''.padStart(max.toString().length, '#')"
       :debounce="debounce"
-      :rules="[(val: number) => ((Number.isInteger(val) && (allowZero || val !== 0) || (allowNull && !val))) || '']"
+      :rules="[(val: number | string) => ((typeof (val) === 'number' && (val > 0 || allowZero)) || (allowNull && val === '')) || '']"
       @update:model-value="update" @focus="focus" />
     <q-btn v-show="!$q.screen.lt.sm && !noButton" size="sm" flat dense round aria-label="Tradurs Add Button"
       :disable="disable || (!allowNull && parseInt((_quantity || '0').toString()) > (max - 1))" @click="counting('inc')">

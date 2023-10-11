@@ -5,7 +5,7 @@ import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 
 import { useAccountStore } from 'stores/account-store'
-import { useItemStore } from 'stores/item-store'
+import { Elixir, Gem, useItemStore } from 'stores/item-store'
 import { Item, Price } from 'src/types/item'
 import { checkName, clipboard } from 'src/common'
 import { itemImgs } from 'src/common/items'
@@ -136,6 +136,12 @@ const updateTypeValue1 = (val: string) => {
   _image.value = 0
   attribute.value = findClass(val)?.properties.length !== 0 ? 'properties' : 'affixes'
   _typeValue2.value = (val === 'gem' ? store.gems[0].value as string : val === 'elixir' ? store.elixirs[0].value as string : '')
+  _level.value = (val === 'gem' ? store.gems[0].level : val === 'elixir' ? store.elixirs[0].level : _level.value)
+  updateTypeValue2(_typeValue2.value)
+}
+
+const updateTypeValue2 = (val: string) => {
+  _level.value = (_typeValue1.value === 'gem' ? store.gems.find((g: Gem) => g.value === val)?.level || null : _typeValue1.value === 'elixir' ? store.elixirs.find((e: Elixir) => e.value === val)?.level || null : null)
   update()
 }
 
@@ -309,7 +315,7 @@ defineExpose({ scrollEnd })
                   <q-select v-model="_typeValue2" :disable="disable" outlined dense no-error-icon hide-bottom-space
                     emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0"
                     :label="t('item.selectGem')" dropdown-icon="img:/images/icons/dropdown.svg" :options="store.gems"
-                    popup-content-class="scroll limit-select" @update:model-value="update">
+                    popup-content-class="scroll limit-select" @update:model-value="updateTypeValue2">
                     <template #selected-item="scope">
                       <q-item-section>
                         <q-item-label class="ellipsis">{{ scope.opt.label }}</q-item-label>
@@ -332,7 +338,8 @@ defineExpose({ scrollEnd })
                   <q-select v-model="_typeValue2" :disable="disable" outlined dense no-error-icon hide-bottom-space
                     emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0"
                     :label="t('item.selectElixir')" dropdown-icon="img:/images/icons/dropdown.svg"
-                    :options="store.elixirs" popup-content-class="scroll limit-select" @update:model-value="update">
+                    :options="store.elixirs" popup-content-class="scroll limit-select"
+                    @update:model-value="updateTypeValue2">
                     <template #selected-item="scope">
                       <div class="ellipsis">{{ scope.opt.label }}</div>
                     </template>
@@ -430,7 +437,7 @@ defineExpose({ scrollEnd })
         </q-item>
       </q-card-section>
       <D4Separator v-show="tierable" />
-      <q-card-section class="row justify-between items-center q-col-gutter-x-sm">
+      <q-card-section class="q-col-gutter-x-sm" :class="qualifiable ? 'row justify-between items-center' : 'col'">
         <div v-show="tierable" class="row items-center q-gutter-x-sm">
           <D4Counter v-model="_power" :label="t('item.power')" :max="9999" max-width="110px" allow-zero no-button
             :disable="disable" @update:model-value="update" />
@@ -438,7 +445,7 @@ defineExpose({ scrollEnd })
             max-width="110px" :max="upgradeLimit" allow-zero :disable="disable" @update:model-value="update" />
         </div>
         <D4Counter v-model="_level" class="col row justify-end" :label="t('item.level')" max-width="110px" :max="999"
-          no-button :disable="disable" @update:model-value="update" />
+          no-button :disable="disable || !qualifiable" @update:model-value="update" />
       </q-card-section>
       <D4Separator />
       <template v-if="qualifiable">
@@ -536,7 +543,7 @@ defineExpose({ scrollEnd })
           </q-card-section>
         </q-card>
       </template>
-      <q-card-section :class="{ 'col row justify-end items-end': !qualifiable }">
+      <q-card-section>
         <D4Price :data="data.price" :editable="editable" :disable="disable" :progress="loading" @update="updatePrice" />
       </q-card-section>
       <D4Separator v-if="slots.actions" />
