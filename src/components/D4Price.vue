@@ -104,7 +104,7 @@ const updateCurrency = (val: string | null): void => {
           maxlength="11" reverse-fill-mask unmasked-value debounce="500" :error="_priceError" @update:model-value="update"
           @focus="focus" @blur="_priceError = false" input-class="text-right"
           :label="n(Number.parseFloat(_price.currencyValue && Number.isInteger(parseInt(_price.currencyValue as string)) ? _price.currencyValue.toString() : '0'), 'decimal', { notation: 'compact' })"
-          :rules="[val => Number.isInteger(parseInt(val)) && parseInt(val) % 100000 === 0 || '']">
+          :rules="[val => Number.isInteger(parseInt(val)) && parseInt(val) > 0 && parseInt(val) % 100000 === 0 || '']">
           <q-tooltip v-model="_priceError" :target="_priceError" no-parent-event transition-show="none"
             transition-hide="none" anchor="top end" self="bottom end" class="bg-negative">
             <div class="tooltip text-caption">{{ t('price.restrictGold') }}</div>
