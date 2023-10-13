@@ -114,7 +114,6 @@ export type OfferInfo = { itemName: string, itemId: string, price?: string }
 export interface IStorage {
   hardcore: boolean,
   ladder: boolean,
-  presetId: number | null,
   presets: Array<IPreset>
 }
 
