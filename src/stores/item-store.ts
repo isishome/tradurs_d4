@@ -146,7 +146,6 @@ export interface IPreset extends ILabel {
 
 export const useItemStore = defineStore('item', {
   state: () => ({
-    tempPresets: [] as Array<IPreset>,
     storage: {
       loading: false as boolean,
       request: 0 as number,
