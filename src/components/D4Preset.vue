@@ -19,7 +19,7 @@ const emit = defineEmits(['update:modelValue', 'add', 'remove'])
 const $q = useQuasar()
 const { t } = useI18n({ useScope: 'global' })
 
-const presetLabel = computed(() => props.options.length === 0 ? t('filter.noPreset') : undefined)
+const presetLabel = computed(() => !preset.value ? t('filter.noPreset') : undefined)
 const optionStyle = computed(() => !$q.platform.is.mobile ? { maxWidth: `${presetRef.value?.$el.offsetWidth}px` } : {})
 const preset = ref<number | null>(props.modelValue)
 
@@ -74,14 +74,26 @@ watch(() => props.modelValue, (val: number | null) => {
 </script>
 <template>
   <q-item-label header>
-    {{ t('filter.preset') }}
-    <q-popup-proxy v-model="showAddPreset" no-parent-event transition-show="none" transition-hide="none"
-      transition-duration="0" @hide="done">
-      <q-card>
+    <div class="row items-center q-gutter-sm">
+      <div>
+        {{ t('filter.preset') }}
+      </div>
+      <q-icon class="icon" name="img:/images/icons/help.svg" size="19px">
+        <D4Tooltip>
+          <div style="max-width:200px" class="text-caption break-keep">
+            {{ t('filter.presetDescription') }}
+          </div>
+        </D4Tooltip>
+      </q-icon>
+    </div>
+    <q-popup-proxy v-model="showAddPreset" no-parent-event transition-show="flip-down" transition-hide="flip-up"
+      @hide="done" style="width:276px">
+      <q-card :dark="!$q.dark.isActive">
         <q-card-section>
           <q-form autofocus class="row items-center justify-between q-gutter-x-sm" @submit="add">
-            <q-input :disable="disable || progress" dense no-error-icon hide-bottom-space autofocus v-model="presetName"
-              outlined :label="t('filter.presetName')" maxlength="32" :rules="[val => val && val.trim() !== '' || '']" />
+            <q-input :dark="false" :disable="disable || progress" dense no-error-icon hide-bottom-space autofocus
+              v-model="presetName" outlined :label="t('filter.presetName')" maxlength="32"
+              :rules="[val => val && val.trim() !== '' || '']" class="col" />
             <q-btn no-caps :disable="disable" :progress="progress" unelevated :label="t('btn.add')" color="primary"
               aria-label="Tradurs Add Button" type="submit" />
           </q-form>
@@ -92,19 +104,19 @@ watch(() => props.modelValue, (val: number | null) => {
   <q-item :disable="disable">
     <q-item-section>
       <q-item-label>
-        <q-select ref="presetRef" v-model="preset" :disable="disable || options.length === 0" :label="presetLabel"
-          outlined dense no-error-icon hide-bottom-space emit-value map-options transition-show="none"
-          transition-hide="none" :transition-duration="0" dropdown-icon="img:/images/icons/dropdown.svg"
-          :options="options" popup-content-class="scroll bordered" @update:model-value="update">
+        <q-select ref="presetRef" v-model="preset" :disable="disable" :label="presetLabel" stack-label outlined dense
+          no-error-icon hide-bottom-space emit-value map-options transition-show="none" transition-hide="none"
+          :transition-duration="0" dropdown-icon="img:/images/icons/dropdown.svg" :options="options"
+          popup-content-class="scroll bordered" @update:model-value="update">
           <template #selected-item="scope">
             <div class="ellipsis">{{ scope.opt.label }}</div>
           </template>
           <template #option="scope">
             <q-item clickable :style="optionStyle" v-bind="scope.itemProps">
               <q-item-section side>
-                <q-btn size="xs" :disable="disable" :progress="progress" unelevated dense round outline
+                <q-btn size="xs" :disable="disable" :progress="progress" unelevated dense round outline color="negative"
                   aria-label="Tradurs Remove Button" @click.stop="remove(scope.opt.value)">
-                  <img class="icon" width="13" height="13" src="/images/icons/remove.svg" alt="icon_remove" />
+                  <img class="negative" width="13" height="13" src="/images/icons/remove.svg" alt="icon_remove" />
                 </q-btn>
               </q-item-section>
               <q-item-section>
@@ -118,12 +130,17 @@ watch(() => props.modelValue, (val: number | null) => {
       </q-item-label>
     </q-item-section>
     <q-item-section side>
-      <q-btn size="sm" :disable="disable || options.length === 3" unelevated dense round outline :ripple="false"
-        aria-label="Tradurs Add Button" @click="showAddPreset = true">
-        <img class="icon" width="16" height="16" src="/images/icons/add.svg" alt="icon_add" />
+      <q-btn size="sm" :disable="disable || options.length === 5" unelevated dense round
+        :color="$q.dark.isActive ? 'grey-4' : 'grey-9'" :ripple="false" aria-label="Tradurs Add Button"
+        @click="showAddPreset = true">
+        <img :class="{ 'invert': !$q.dark.isActive }" width="16" height="16" src="/images/icons/add.svg" alt="icon_add" />
       </q-btn>
     </q-item-section>
   </q-item>
 </template>
 
-<style scoped></style>
+<style scoped>
+.negative {
+  filter: invert(11%) sepia(78%) saturate(7404%) hue-rotate(349deg) brightness(75%) contrast(105%);
+}
+</style>
