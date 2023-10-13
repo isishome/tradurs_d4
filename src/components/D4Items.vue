@@ -643,8 +643,8 @@ const visible = (isVisible: boolean, item: Item): void => {
 }
 
 const create = () => {
-  activatedItem.value.hardcore = is.fixedFilter.hardcore
-  activatedItem.value.ladder = is.fixedFilter.ladder
+  activatedItem.value.hardcore = is.storage.data.hardcore
+  activatedItem.value.ladder = is.storage.data.ladder
   activatedItem.value.itemType = 'weapon'
   activatedItem.value.itemTypeValue1 = 'axe'
   setDefaultProperties()
@@ -860,7 +860,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
           <D4Restriction v-for="restriction in activatedItem.restrictions" :key="restriction.valueId || uid()"
             :data="restriction" editable :disable="disable" @update="updateRestriction" @remove="removeRestriction" />
         </template>
-        <template v-if="is.fixedFilter.ladder && activatedItem.itemType === 'armor'" #base-end>
+        <template v-if="is.storage.data.ladder && activatedItem.itemType === 'armor'" #base-end>
           <div class="row justify-around items-center">
             <div class="relative-position">
               <q-spinner-puff :color="$q.dark.isActive ? 'yellow-6' : 'black'" class="absolute-center" size="52px" />

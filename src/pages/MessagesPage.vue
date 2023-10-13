@@ -20,7 +20,7 @@ const messages = reactive<Array<IMessage>>([])
 const selected = ref<boolean>(false)
 const disable = computed(() => messages.filter(m => !m.readYn).length === 0)
 const loading = ref<boolean>(true)
-const process = ref<boolean>(false)
+const progress = ref<boolean>(false)
 const page = ref<number>(1)
 const over = computed(() => as.messagePage.over)
 const more = computed(() => as.messagePage.more)
@@ -44,7 +44,7 @@ const getList = () => {
 
 const read = (message: IMessage) => {
   if (!message.readYn && !message.show) {
-    process.value = true
+    progress.value = true
     message.disable = true
     as.readMessage([message.msgId])
       .then(() => {
@@ -55,7 +55,7 @@ const read = (message: IMessage) => {
       })
       .catch(() => { })
       .then(() => {
-        process.value = false
+        progress.value = false
         message.disable = false
       })
   }
@@ -66,7 +66,7 @@ const read = (message: IMessage) => {
 const reads = () => {
   const selectedMessages = messages.filter(m => m.selected)
   if (selectedMessages.length > 0) {
-    process.value = true
+    progress.value = true
     selectedMessages.forEach(m => m.disable = true)
     as.readMessage(selectedMessages.map(m => m.msgId))
       .then(() => {
@@ -75,7 +75,7 @@ const reads = () => {
       })
       .catch(() => { })
       .then(() => {
-        process.value = false
+        progress.value = false
         selected.value = false
         selectedMessages.forEach(m => {
           m.selected = !m.readYn
@@ -151,13 +151,13 @@ onMounted(() => {
     <q-list bordered class="rounded-borders">
       <q-item>
         <q-item-section side>
-          <q-checkbox size="xs" color="grey-secondary" v-model="selected" :disable="disable || process"
+          <q-checkbox size="xs" color="grey-secondary" v-model="selected" :disable="disable || progress"
             @update:model-value="val => messages.filter(m => !m.readYn).forEach(m => m.selected = val)" />
         </q-item-section>
         <q-item-section>
         </q-item-section>
         <q-item-section side>
-          <q-btn no-caps push :disable="disable || process" unelevated aria-label="Tradurs Read Button" color="grey-8"
+          <q-btn no-caps push :disable="disable || progress" unelevated aria-label="Tradurs Read Button" color="grey-8"
             :label="t('btn.markRead')" @click="reads" />
         </q-item-section>
       </q-item>

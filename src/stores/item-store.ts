@@ -111,8 +111,47 @@ export interface AwardsPick {
 
 export type OfferInfo = { itemName: string, itemId: string, price?: string }
 
+export interface IStorage {
+  hardcore: boolean,
+  ladder: boolean,
+  presetId: number | null,
+  presets: Array<IPreset>
+}
+
+interface IFilter {
+  onlyCurrency: boolean,
+  favorite: boolean,
+  quality: Array<string>,
+  status: string,
+  mine: boolean | null,
+  offered: boolean | null,
+  offer: boolean | null,
+  power: [number, number],
+  level: [number, number],
+  itemTypes: Array<string>,
+  itemTypeValues1: { [key: string]: Array<number> },
+  itemTypeValues2: { [key: string]: Array<number> },
+  properties: Array<number>,
+  affixes: Array<number>,
+  restrictions: Array<number>,
+  name: string,
+  request: number,
+  loading: boolean,
+  fixed: boolean
+}
+
+export interface IPreset extends ILabel {
+  filter: IFilter
+}
+
 export const useItemStore = defineStore('item', {
   state: () => ({
+    tempPresets: [] as Array<IPreset>,
+    storage: {
+      loading: false as boolean,
+      request: 0 as number,
+      data: {} as IStorage
+    },
     base: {
       loading: false as boolean,
       request: 0 as number
@@ -158,31 +197,27 @@ export const useItemStore = defineStore('item', {
       turnedDownOffer: null as OfferInfo | null,
       complete: null as OfferInfo | null
     },
-    fixedFilter: {
-      hardcore: false as boolean,
-      ladder: true as boolean
-    },
     filter: {
-      onlyCurrency: false as boolean,
-      favorite: false as boolean,
-      quality: [] as Array<string>,
-      status: 'all' as string,
-      mine: false as boolean | null,
-      offered: false as boolean | null,
-      offer: false as boolean | null,
-      power: [0, 9999] as [number, number],
-      level: [0, 999] as [number, number],
-      itemTypes: [] as Array<string>,
-      itemTypeValues1: {} as { [key: string]: Array<number> },
-      itemTypeValues2: {} as { [key: string]: Array<number> },
-      properties: [] as Array<number>,
-      affixes: [] as Array<number>,
-      restrictions: [] as Array<number>,
-      name: '' as string,
-      request: 0 as number,
-      loading: false as boolean,
-      fixed: false as boolean
-    },
+      onlyCurrency: false,
+      favorite: false,
+      quality: [],
+      status: 'all',
+      mine: false,
+      offered: false,
+      offer: false,
+      power: [0, 9999],
+      level: [0, 999],
+      itemTypes: [],
+      itemTypeValues1: {},
+      itemTypeValues2: {},
+      properties: [],
+      affixes: [],
+      restrictions: [],
+      name: '',
+      request: 0,
+      loading: false,
+      fixed: false
+    } as IFilter,
     detailItem: [] as Array<Item>,
     itemPage: {
       rows: 20 as number,
@@ -199,6 +234,9 @@ export const useItemStore = defineStore('item', {
     }
   }),
   getters: {
+    findPreset: (state) => {
+      return (id: number): IPreset | undefined => state.storage.data.presets.find(p => p.value === id)
+    },
     findItemStatus: (state) => {
       return (statusCode?: string): Status | undefined => state.itemStatus.find(s => s.value === statusCode)
     },
@@ -312,6 +350,42 @@ export const useItemStore = defineStore('item', {
         this.filter.request = 0
         this.filter.loading = false
       }
+    },
+    getStorage() {
+      return new Promise<void>((resolve, reject) => {
+        let error: unknown = null
+        if (this.storage.request === 0) {
+          api.get('/d4/account/storage')
+            .then((response) => {
+              this.storage.data = response.data
+            })
+            .catch((e) => {
+              error = e
+            })
+            .then(() => {
+              this.storage.loading = false
+              this.storage.request++
+
+              if (error)
+                reject()
+              else
+                resolve()
+            })
+        }
+        else
+          resolve()
+      })
+    },
+    setStorage() {
+      return new Promise<void>((resolve, reject) => {
+        api.post('/d4/account/storage/update', { hardcore: this.storage.data.hardcore, ladder: this.storage.data.ladder })
+          .then(() => {
+            resolve()
+          })
+          .catch((e) => {
+            reject(e)
+          })
+      })
     },
     getBase() {
       return new Promise<void>((resolve, reject) => {
@@ -455,9 +529,9 @@ export const useItemStore = defineStore('item', {
           resolve()
       })
     },
-    getItems(page: number, itemId?: string | string[], filter?: any) {
+    getItems(page: number, itemId?: string | string[], filter?: IFilter) {
       return new Promise<Array<Item>>((resolve, reject) => {
-        api.post('/d4/item', { page, rows: this.itemPage.rows, itemId, fixedFilter: itemId ? {} : this.fixedFilter, filter })
+        api.post('/d4/item', { page, rows: this.itemPage.rows, itemId, basicFilter: itemId ? {} : { hardcore: this.storage.data.hardcore, ladder: this.storage.data.ladder }, filter })
           .then((response) => {
             if (!itemId) {
               this.itemPage.over = page > 1
@@ -617,6 +691,39 @@ export const useItemStore = defineStore('item', {
         api.get('/d4/awards')
           .then((response) => {
             resolve(response.data)
+          })
+          .catch((e) => {
+            reject(e)
+          })
+      })
+    },
+    addPreset(name: string) {
+      return new Promise<number>((resolve, reject) => {
+        const cloneFilter = JSON.parse(JSON.stringify(this.filter))
+        delete cloneFilter.request
+        delete cloneFilter.loading
+        delete cloneFilter.fixed
+
+        api.post('/d4/account/preset/add', { name, preset: cloneFilter })
+          .then((response) => {
+            this.storage.data.presets.push({ value: response.data, label: name, filter: cloneFilter })
+            resolve(response.data)
+          })
+          .catch((e) => {
+            reject(e)
+          })
+      })
+    },
+    removePreset(id: number) {
+      return new Promise<void>((resolve, reject) => {
+        api.post('/d4/account/preset/remove', { id })
+          .then(() => {
+            const presetIndex = this.storage.data.presets.findIndex((p: IPreset) => p.value === id)
+
+            if (presetIndex !== -1)
+              this.storage.data.presets.splice(presetIndex, 1)
+
+            resolve()
           })
           .catch((e) => {
             reject(e)

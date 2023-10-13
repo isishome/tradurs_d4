@@ -237,9 +237,9 @@ defineExpose({ scrollEnd })
                 <q-select v-model="_type" :disable="disable" outlined dense no-error-icon hide-bottom-space emit-value
                   map-options transition-show="none" transition-hide="none" :transition-duration="0"
                   :label="t('item.selectType')" dropdown-icon="img:/images/icons/dropdown.svg" :options="filterTypes()"
-                  popup-content-class="scroll" @update:model-value="updateType">
+                  popup-content-class="scroll bordered" @update:model-value="updateType">
                   <!-- Season 1 accessory notify -->
-                  <!-- <template v-if="store.fixedFilter.ladder && _type === 'accessory'" #prepend>
+                  <!-- <template v-if="store.storage.data.ladder && _type === 'accessory'" #prepend>
                     <q-icon class="caution" size="19px">
                       <q-spinner-puff :color="$q.dark.isActive ? 'yellow-6' : 'black'" />
                       <D4Tooltip>
@@ -259,7 +259,7 @@ defineExpose({ scrollEnd })
                 <q-select v-model="_typeValue1" :disable="disable" outlined dense no-error-icon hide-bottom-space
                   emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0"
                   :label="t('item.selectRune')" :options="filterRunesByType()"
-                  dropdown-icon="img:/images/icons/dropdown.svg " popup-content-class="scroll limit-select"
+                  dropdown-icon="img:/images/icons/dropdown.svg " popup-content-class="scroll bordered limit-select"
                   @update:model-value="update">
                   <template #selected-item="scope">
                     <div class="ellipsis">{{ scope.opt.label }}</div>
@@ -281,19 +281,20 @@ defineExpose({ scrollEnd })
                 <q-select v-model="_typeValue1" :disable="disable" outlined dense no-error-icon hide-bottom-space
                   emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0"
                   :label="t('item.selectAspectCategory')" dropdown-icon="img:/images/icons/dropdown.svg"
-                  :options="store.aspectCategories" popup-content-class="scroll limit-select"
+                  :options="store.aspectCategories" popup-content-class="scroll bordered limit-select"
                   @update:model-value="update">
                   <template #selected-item="scope">
                     <div class="ellipsis">{{ scope.opt.label }}</div>
                   </template>
                   <template #option="scope">
-                    <q-item clickable @click="scope.toggleOption(scope.opt.value)">
+                    <q-item clickable v-bind="scope.itemProps">
                       <q-item-section avatar>
                         <img height="36" :src="`/images/items/${_type}/${scope.opt.value}.webp`"
                           alt="Tradurs Aspect Image" />
                       </q-item-section>
                       <q-item-section>
-                        <q-item-label>{{ scope.opt.label }}</q-item-label>
+                        <q-item-label>{{ scope.opt.label
+                        }}</q-item-label>
                       </q-item-section>
                     </q-item>
                   </template>
@@ -305,7 +306,7 @@ defineExpose({ scrollEnd })
                     emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0"
                     :label="t('item.selectClass', { type: findType(data.itemType)?.label })"
                     dropdown-icon="img:/images/icons/dropdown.svg" :options="filterClasses(_type)"
-                    popup-content-class="scroll" @update:model-value="updateTypeValue1">
+                    popup-content-class="scroll bordered" @update:model-value="updateTypeValue1">
                     <template #selected-item="scope">
                       <div class="ellipsis">{{ scope.opt.label }}</div>
                     </template>
@@ -315,20 +316,22 @@ defineExpose({ scrollEnd })
                   <q-select v-model="_typeValue2" :disable="disable" outlined dense no-error-icon hide-bottom-space
                     emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0"
                     :label="t('item.selectGem')" dropdown-icon="img:/images/icons/dropdown.svg" :options="store.gems"
-                    popup-content-class="scroll limit-select" @update:model-value="updateTypeValue2">
+                    popup-content-class="scroll bordered limit-select" @update:model-value="updateTypeValue2"
+                    exact-active>
                     <template #selected-item="scope">
                       <q-item-section>
                         <q-item-label class="ellipsis">{{ scope.opt.label }}</q-item-label>
                       </q-item-section>
                     </template>
                     <template #option="scope">
-                      <q-item clickable @click="scope.toggleOption(scope.opt.value)">
+                      <q-item clickable v-bind="scope.itemProps">
                         <q-item-section avatar>
                           <img height="36" :src="`/images/items/${_type}/${_typeValue1}/${scope.opt.value}.webp`"
                             alt="Tradurs Gem Images" />
                         </q-item-section>
                         <q-item-section>
-                          <q-item-label>{{ scope.opt.label }}</q-item-label>
+                          <q-item-label>{{ scope.opt.label
+                          }}</q-item-label>
                         </q-item-section>
                       </q-item>
                     </template>
@@ -338,20 +341,21 @@ defineExpose({ scrollEnd })
                   <q-select v-model="_typeValue2" :disable="disable" outlined dense no-error-icon hide-bottom-space
                     emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0"
                     :label="t('item.selectElixir')" dropdown-icon="img:/images/icons/dropdown.svg"
-                    :options="store.elixirs" popup-content-class="scroll limit-select"
+                    :options="store.elixirs" popup-content-class="scroll bordered limit-select"
                     @update:model-value="updateTypeValue2">
                     <template #selected-item="scope">
                       <div class="ellipsis">{{ scope.opt.label }}</div>
                     </template>
                     <template #option="scope">
-                      <q-item :disable="scope.opt.onlyHardcore && !store.fixedFilter.hardcore" clickable
-                        @click="scope.toggleOption(scope.opt.value)">
+                      <q-item :disable="scope.opt.onlyHardcore && !store.storage.data.hardcore" clickable
+                        v-bind="scope.itemProps">
                         <q-item-section avatar>
                           <img height="36" :src="`/images/items/${_type}/${_typeValue1}/${scope.opt.elixir}.webp`"
                             alt="Tradurs Elixir Images" />
                         </q-item-section>
                         <q-item-section>
-                          <q-item-label>{{ scope.opt.label }}</q-item-label>
+                          <q-item-label>{{ scope.opt.label
+                          }}</q-item-label>
                         </q-item-section>
                       </q-item>
                     </template>
@@ -672,7 +676,7 @@ defineExpose({ scrollEnd })
       </q-card-section>
       <D4Separator v-show="qualifiable" type="left" />
       <q-card-section
-        v-if="store.fixedFilter.ladder && data.itemType === 'armor' && !history && Object.values(data.pacts).reduce((a: number, b: number) => a + b, 0) > 0">
+        v-if="store.storage.data.ladder && data.itemType === 'armor' && !history && Object.values(data.pacts).reduce((a: number, b: number) => a + b, 0) > 0">
         <div class="row justify-start items-center " :class="!$q.screen.lt.sm ? 'q-gutter-x-xl' : 'q-gutter-x-md'">
           <div v-show="data.pacts.ferocity" class="row items-center q-gutter-x-sm">
             <q-icon name="img:/images/season/002/ferocity.webp" :size="!$q.screen.lt.sm ? '48px' : '40px'">
@@ -748,7 +752,7 @@ defineExpose({ scrollEnd })
       <D4Separator v-show="loading || (!loading && data.properties?.length > 0 && data.affixes?.length > 0)" />
       <q-card-section v-show="loading || (!loading && data.affixes?.length > 0)">
         <div class="q-px-sm">
-          <q-item v-show="loading" v-for="  c   in   3  " :key="c" style="min-height:10px;padding:3px">
+          <q-item v-show="loading" v-for="c in 3" :key="c" style="min-height:10px;padding:3px">
             <q-item-section side class="q-pr-sm">
               <q-skeleton type="circle" width="10px" height="10px" />
             </q-item-section>
@@ -769,7 +773,7 @@ defineExpose({ scrollEnd })
         class="q-my-lg"></q-card-section>
       <q-card-section class="row justify-end">
         <div class="q-px-sm">
-          <q-item v-show="loading" v-for="  c   in   3  " :key="c" style="min-height:10px;padding:3px">
+          <q-item v-show="loading" v-for="c in 3" :key="c" style="min-height:10px;padding:3px">
             <q-item-section>
               <q-item-label>
                 <q-skeleton type="text" width="65%" />

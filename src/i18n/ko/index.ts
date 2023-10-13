@@ -37,14 +37,19 @@ export default {
     mine: '내 아이템',
     offered: '제안받은 아이템',
     offer: '제안 요청 아이템',
-    fixed: '필터 고정',
-    basicDescription: '기본 필터 정보는 항상 로컬 스토리지에 저장됩니다. 아이템 등록 시 하드코어와 시즌 여부는 이 필터에 의해 자동으로 설정됩니다.',
-    fixedDescription: '기본 필터 정보를 제외한 필터 정보가 로컬 스토리지에 저장됩니다. 설정된 필터에 따라 아이템 노출에 대한 착오 등이 생길 수 있으니 이점 주의하세요',
+    preset: '사전 설정',
+    presetName: '사전 설정 명',
+    noPreset: '사전 설정을 추가해 주세요',
+    basicDescription: '기본 필터 정보는 사용자 저장소에 저장됩니다. 아이템 등록 시 하드코어와 시즌 여부는 기본 필터 정보에 의해 자동으로 설정됩니다.',
     affixDescription: '옵션 검색은 4개의 옵션 필터를 선택할 경우 4개 중 조합된 3개를 포함한 다른 아이템들도 함께 검색됩니다',
     description: {
       advanced: '고급 필터 사용 시 \'고유 특성\'과 \'옵션\'을 구분해서 사용하세요',
       advanced2: '간혹 판매자가 \'고유 특성\'과 \'옵션\'을 잘못 입력하는 경우가 있으니 고려하여 필터 하세요'
     }
+  },
+  preset: {
+    title: '사전 설정 삭제',
+    message: '해당 사전 설정을 삭제할까요?'
   },
   season: {
     bg: '/images/season/002/season_emblem_ko.webp',

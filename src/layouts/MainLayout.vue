@@ -188,13 +188,12 @@ onUnmounted(() => {
 </script>
 <template>
   <q-layout view="hHh lpR lFf" :key="mainKey">
-    <div v-show="['tradeList', 'itemInfo'].includes(route.name as string) && is.fixedFilter.ladder" class="bg-season"
+    <div v-show="['tradeList', 'itemInfo'].includes(route.name as string) && is.storage.data.ladder" class="bg-season"
       :style="`--tradurs-season-image:url('${t('season.bg')}');`">
     </div>
     <q-drawer show-if-above no-swipe-open no-swipe-close no-swipe-backdrop bordered v-model="leftDrawerOpen" side="left"
       :behavior="screen.lt.md ? 'default' : 'desktop'" class="row justify-end" @before-show="beforeShow" :width="300">
-      <D4Filter :disable="route.name !== 'tradeList'" class="q-px-md" :class="$q.screen.lt.sm ? 'q-pt-lg' : 'q-pt-lg'"
-        style="width:300px" />
+      <D4Filter :disable="route.name !== 'tradeList'" class="q-pa-lg" style="width:300px" />
     </q-drawer>
     <q-drawer show-if-above no-swipe-open no-swipe-close no-swipe-backdrop bordered v-model="rightDrawerOpen" side="right"
       behavior="mobile" class="row justify-start no-scroll" :width="300">

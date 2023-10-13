@@ -147,6 +147,16 @@ body.body--dark {
   min-height: 30px !important;
 }
 
+.scroll.q-menu .q-item__section,
+.q-select__dialog .q-item__section {
+  word-break: break-all;
+}
+
+.scroll.q-menu .q-item__label,
+.q-select__dialog .q-item__label {
+  line-height: 1.4 !important;
+}
+
 .scroll.bordered {
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.28);
 }
