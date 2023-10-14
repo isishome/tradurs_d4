@@ -40,6 +40,7 @@ export default {
     preset: 'Filter Preset',
     presetName: 'Preset Name',
     noPreset: 'Add a preset',
+    selectPreset: 'Select a preset',
     basicDescription: 'The basic filter information is saved in your account storage. When you register an item, its hardcore and seasonal status is automatically set by the basic filter information.',
     presetDescription: 'This feature saves the currently set filter values. Up to 3 presets can be saved.',
     affixDescription: 'Affixes search will also search for other items, including any combination of five of the four if you select the four affix filter.',

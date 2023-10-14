@@ -85,7 +85,7 @@ const close = () => {
           <q-item class="row justify-center items-center" :class="$q.screen.lt.sm ? 'q-px-md' : 'q-px-xl'"
             style="background-color: var(--q-cloud);">
             <q-item-label>
-              <q-intersection v-for="a, aIdx in  s.answer " :key="aIdx" transition="fade" class="answer text-center"
+              <q-intersection v-for="a, aIdx in s.answer" :key="aIdx" transition="fade" class="answer text-center"
                 :class="a.type" ssr-prerender once>
                 <img v-if="a.type === 'image'" :src="`/images/help/${s.id}/${a.contents}.webp`" />
                 <div v-else-if="a.type === 'text'" class="text-area">

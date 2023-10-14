@@ -768,7 +768,8 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
               use-input hide-bottom-space hide-selected emit-value map-options transition-show="none"
               transition-hide="none" :transition-duration="0" class="col" :label="t('searchOrSelect')"
               :options="propertyOptions(propertyNeedle)" dropdown-icon="img:/images/icons/dropdown.svg"
-              popup-content-class="scroll" @update:model-value="selectedProperty" @input-value="filterProperties">
+              popup-content-class="scroll bordered" @update:model-value="selectedProperty"
+              @input-value="filterProperties">
               <template #option="scope">
                 <q-item v-bind="scope.itemProps">
                   <q-item-section side>
@@ -801,7 +802,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
               use-input hide-bottom-space hide-selected emit-value map-options transition-show="none"
               transition-hide="none" :transition-duration="0" class="col" :label="t('searchOrSelect')"
               :options="affixOptions(affixNeedle)" dropdown-icon="img:/images/icons/dropdown.svg"
-              popup-content-class="scroll" @update:model-value="selectedAffix" @input-value="filterAffixes">
+              popup-content-class="scroll bordered" @update:model-value="selectedAffix" @input-value="filterAffixes">
               <template #option="scope">
                 <q-item v-bind="scope.itemProps">
                   <q-item-section side>
@@ -838,7 +839,8 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
               use-input hide-bottom-space hide-selected emit-value map-options transition-show="none"
               transition-hide="none" :transition-duration="0" class="col" :label="t('searchOrSelect')"
               :options="restrictionOptions(restrictionNeedle)" dropdown-icon="img:/images/icons/dropdown.svg"
-              popup-content-class="scroll" @update:model-value="selectedRestriction" @input-value="filterRestrictions">
+              popup-content-class="scroll bordered" @update:model-value="selectedRestriction"
+              @input-value="filterRestrictions">
               <template #option="scope">
                 <q-item v-bind="scope.itemProps">
                   <q-item-section>
@@ -1008,7 +1010,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
           :style="$q.screen.lt.sm ? 'height:100%' : 'min-height:40vh !important;max-height:80vh !important'">
           <div class="q-pb-xl full-height">
             <div class="row items-center q-col-gutter-lg">
-              <q-intersection v-for="offer, idx in  (offers as Array<Offer>) " :key="`offers_${idx}`"
+              <q-intersection v-for="offer, idx in (offers as Array<Offer>)" :key="`offers_${idx}`"
                 class="col-12 col-sm-6" transition="fade" once>
                 <q-card flat bordered class="card-item expanded"
                   :class="{ 'unique': offer.statusCode === '003', 'set': offer.statusCode === '001', 'magic': offer.authorized }">

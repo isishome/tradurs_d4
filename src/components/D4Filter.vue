@@ -192,18 +192,20 @@ const removePreset = ({ id, done, error }: { id: number, done: Function, error: 
 
 <template>
   <q-list dense class="filter" :class="{ 'disable': disable || filterLoading }">
-    <q-item-label header class="row items-center q-gutter-sm">
-      <div>
-        {{ t('filter.basic') }}
+    <q-item-label header>
+      <div class="row items-center q-gutter-sm">
+        <div>
+          {{ t('filter.basic') }}
+        </div>
+        <q-icon v-if="as.signed" class="icon" name="img:/images/icons/help.svg" size="19px">
+          <D4Tooltip>
+            <div style="max-width:200px" class="text-caption break-keep">
+              {{ t('filter.basicDescription') }}
+            </div>
+          </D4Tooltip>
+        </q-icon>
+        <q-separator class="col" />
       </div>
-      <q-icon v-if="as.signed" class="icon" name="img:/images/icons/help.svg" size="19px">
-        <D4Tooltip>
-          <div style="max-width:200px" class="text-caption break-keep">
-            {{ t('filter.basicDescription') }}
-          </div>
-        </D4Tooltip>
-      </q-icon>
-      <q-separator class="col" />
     </q-item-label>
     <q-item :disable="filterLoading">
       <q-item-section>
@@ -502,7 +504,7 @@ const removePreset = ({ id, done, error }: { id: number, done: Function, error: 
 
 .q-separator--horizontal-inset {
   margin-top: 8px;
-  margin-bottom: 8px;
+  margin-bottom: 0;
 }
 
 .q-option-group.q-gutter-x-sm:deep(>*) {

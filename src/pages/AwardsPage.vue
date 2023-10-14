@@ -88,7 +88,7 @@ is.getAwards()
       <template #etc>
         <q-separator />
         <q-list separator class="rounded-borders">
-          <q-item v-for="ranker, idx in awards.highPriced.slice(1, awards.highPriced.length) " :key="idx" class="etc"
+          <q-item v-for="ranker, idx in awards.highPriced.slice(1, awards.highPriced.length)" :key="idx" class="etc"
             :to="{ name: 'itemInfo', params: { lang: route.params.lang, itemid: ranker?.itemId } }">
             <q-item-section>
               <q-item-label>

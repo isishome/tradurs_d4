@@ -201,7 +201,7 @@ onUnmounted(() => {
         <q-item class="row justify-between q-gutter-xs q-py-lg">
           <q-select v-model="locale" :options="gs.localeOptions" :label="t('language', 0, { locale: brLoc })" outlined
             dense emit-value map-options style="min-width: 120px" dropdown-icon="img:/images/icons/dropdown.svg"
-            popup-content-class="scroll" @update:model-value="setLang" />
+            popup-content-class="scroll bordered" @update:model-value="setLang" />
           <div>
             <q-btn round dense flat aria-label="Tradurs Support Button" :ripple="!$q.dark.isActive"
               :to="{ name: 'support', params: { lang: route.params.lang } }">
@@ -462,7 +462,7 @@ onUnmounted(() => {
             <q-menu auto-close class="no-shadow" anchor="bottom end" self="top end" transition-show="none"
               transition-hide="none" :transition-duration="0">
               <q-list bordered class="rounded-borders">
-                <q-item v-for="lang in gs.localeOptions " :key="lang.value" :clickable="lang.value !== locale"
+                <q-item v-for="lang in gs.localeOptions" :key="lang.value" :clickable="lang.value !== locale"
                   :active="lang.value === locale" @click="setLang(lang.value)">
                   {{ lang.label }}</q-item>
               </q-list>

@@ -79,7 +79,7 @@ const click = () => {
   user-select: none;
   pointer-events: none;
   position: relative;
-  filter: contrast(40%);
+  filter: contrast(40%) opacity(.7);
 }
 
 .progress {

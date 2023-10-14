@@ -19,7 +19,7 @@ const emit = defineEmits(['update:modelValue', 'add', 'remove'])
 const $q = useQuasar()
 const { t } = useI18n({ useScope: 'global' })
 
-const presetLabel = computed(() => !preset.value ? t('filter.noPreset') : undefined)
+const presetLabel = computed(() => props.options.length === 0 ? t('filter.noPreset') : !preset.value ? t('filter.selectPreset') : undefined)
 const optionStyle = computed(() => !$q.platform.is.mobile ? { maxWidth: `${presetRef.value?.$el.offsetWidth}px` } : {})
 const preset = ref<number | null>(props.modelValue)
 

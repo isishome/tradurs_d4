@@ -259,7 +259,7 @@ defineExpose({ scrollEnd })
                 <q-select v-model="_typeValue1" :disable="disable" outlined dense no-error-icon hide-bottom-space
                   emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0"
                   :label="t('item.selectRune')" :options="filterRunesByType()"
-                  dropdown-icon="img:/images/icons/dropdown.svg " popup-content-class="scroll bordered limit-select"
+                  dropdown-icon="img:/images/icons/dropdown.svg" popup-content-class="scroll bordered limit-select"
                   @update:model-value="update">
                   <template #selected-item="scope">
                     <div class="ellipsis">{{ scope.opt.label }}</div>
@@ -677,7 +677,7 @@ defineExpose({ scrollEnd })
       <D4Separator v-show="qualifiable" type="left" />
       <q-card-section
         v-if="store.storage.data.ladder && data.itemType === 'armor' && !history && Object.values(data.pacts).reduce((a: number, b: number) => a + b, 0) > 0">
-        <div class="row justify-start items-center " :class="!$q.screen.lt.sm ? 'q-gutter-x-xl' : 'q-gutter-x-md'">
+        <div class="row justify-start items-center" :class="!$q.screen.lt.sm ? 'q-gutter-x-xl' : 'q-gutter-x-md'">
           <div v-show="data.pacts.ferocity" class="row items-center q-gutter-x-sm">
             <q-icon name="img:/images/season/002/ferocity.webp" :size="!$q.screen.lt.sm ? '48px' : '40px'">
               <D4Tooltip anchor="top middle" self="top middle" :offset="[14, 28]" padding="xs" transition-show="jump-up"
