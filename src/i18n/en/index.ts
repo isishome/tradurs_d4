@@ -325,9 +325,29 @@ export default {
     close: 'Do not open for 24 hours'
   },
   notice: {
-    title: 'Important notices',
-    top: 'Hello. This is Tradurs.\n\nWe would like to inform you of important notices.',
-    cautions: "◆ Important notices\n· In order to prevent negative behavior, block non-mannered users, and work on history pages, the service will be changed so that only users with certified battle tags can use the service in the future. Please keep this in mind and proceed with the battle tag authentication of the account you are currently using.\n\n· Application date: September 14, 2023 (Thu) 15:00~\n\n·  If you have difficulty authenticating the battle tag, please contact us and we will help you to ensure that the authentication is carried out smoothly.",
+    title: 'Maintenance completed',
+    top: 'Hello. This is Tradurs.\n\nWe\'ve completed our maintenance for the new seasonal update.',
+    contents: [
+      { type: 'head', value: '◆ Update details' },
+      { type: 'image', value: '/images/notice/20231018/season2.webp' },
+      { type: 'list', value: 'Previous season data is moved to off-season (standard)' },
+      { type: 'space' },
+      { type: 'image', value: '/images/notice/20231018/pacts.webp' },
+      { type: 'list', value: 'Added pact armor settings' },
+      { type: 'space' },
+      { type: 'image', value: '/images/notice/20231018/ring.webp' },
+      { type: 'list', value: 'Characteristics of the ring are changed' },
+      { type: 'space' },
+      { type: 'image', value: '/images/notice/20231018/elixirs.webp' },
+      { type: 'list', value: 'Elixir items and gem items are added' },
+      { type: 'space' },
+      { type: 'image', value: '/images/notice/20231018/myspace.webp' },
+      { type: 'list', value: 'Added "My Space" group menu and blocking management page' },
+      { type: 'space' },
+      { type: 'image', value: '/images/notice/20231018/preset.webp' },
+      { type: 'list', value: 'Filter preset feature is added' },
+      { type: 'space' }
+    ],
     bottom: 'Thank you',
     close: 'Do not open for 24 hours'
   },

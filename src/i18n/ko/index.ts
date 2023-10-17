@@ -328,9 +328,29 @@ export default {
     close: '24시간 동안 열지 않기'
   },
   notice: {
-    title: '중요 안내사항',
-    top: '안녕하세요. 트레이더스입니다.\n\n중요 안내사항입니다.',
-    cautions: "◆ 중요사항\n· 부정적인 행위 방지와 비 매너 사용자의 차단 및 히스토리 페이지 작업을 위해 앞으로는 배틀태그가 인증된 사용자만 서비스를 이용할 수 있도록 변경될 예정입니다.\n이점 유의하시고 현재 사용 중인 계정의 배틀태그 인증을 미리 진행해 주시기 바랍니다.\n\n· 적용 일자 : 2023년 9월 15일(금) 00:00 ~\n\n· 배틀 태그 인증이 어려운 사용자는 문의하시면 특별한 문제가 없는 경우 인증이 원활하게 진행될 수 있도록 도와드리도록 하겠습니다.",
+    title: '정기점검 완료',
+    top: '안녕하세요. 트레이더스입니다.\n\n새로운 시즌 업데이트를 위한 정기점검이 완료되었습니다.',
+    contents: [
+      { type: 'head', value: '◆ 업데이트 사항' },
+      { type: 'image', value: '/images/notice/20231018/season2.webp' },
+      { type: 'list', value: '이전 시즌 데이터 비시즌(스탠)으로 이동' },
+      { type: 'space' },
+      { type: 'image', value: '/images/notice/20231018/pacts.webp' },
+      { type: 'list', value: '서약 방어구 설정 추가' },
+      { type: 'space' },
+      { type: 'image', value: '/images/notice/20231018/ring.webp' },
+      { type: 'list', value: '반지 기본 특성 변경' },
+      { type: 'space' },
+      { type: 'image', value: '/images/notice/20231018/elixirs.webp' },
+      { type: 'list', value: '비약 아이템 및 보석 아이템 추가' },
+      { type: 'space' },
+      { type: 'image', value: '/images/notice/20231018/myspace.webp' },
+      { type: 'list', value: '"내 공간" 그룹 메뉴 추가 및 차단 관리 페이지 추가' },
+      { type: 'space' },
+      { type: 'image', value: '/images/notice/20231018/preset.webp' },
+      { type: 'list', value: '필터 프리셋 기능 추가' },
+      { type: 'space' }
+    ],
     bottom: '감사합니다.',
     close: '24시간 동안 열지 않기'
   },

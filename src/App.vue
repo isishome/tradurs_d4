@@ -82,12 +82,12 @@ useMeta(() => {
 })
 
 const notice = reactive<{ open: boolean, close: boolean }>({
-  open: !$q.cookies.has('_d4.notice'),
+  open: !$q.cookies.has('d4.maintenance'),
   close: false
 })
 
 const close = () => {
-  $q.cookies.set('_d4.notice', 'confirm', { expires: 1, path: '/' })
+  $q.cookies.set('d4.maintenance', 'confirm', { expires: 1, path: '/' })
   notice.open = false
 }
 
@@ -145,7 +145,7 @@ onMounted(() => {
       <q-card-section class="row no-wrap items-center justify-between">
         <div>
           <div class="text-weight-bold" :class="$q.screen.gt.sm ? 'q-pa-md text-h6' : 'q-pa-sm text-body2'">{{
-            t('maintenance.title') }}</div>
+            t('notice.title') }}</div>
         </div>
         <q-btn unelevated aria-label="Tradurs Close Button" class="no-hover icon" :ripple="false"
           @click="notice.open = false">
@@ -156,12 +156,9 @@ onMounted(() => {
     <template #middle>
       <q-card-section class="scroll notice" style="max-height:50vh">
         <div class="q-pa-md column q-gutter-y-sm" :class="$q.screen.gt.sm ? 'text-body2' : 'text-caption'">
-          <div class="text-area">{{ t('maintenance.top') }}</div>
-          <!-- <div class="text-area q-pa-sm">{{ t('notice.changes') }}</div> -->
-          <!-- <div class="text-area text-primary q-pa-sm">{{ t('notice.updates') }}</div> -->
-          <!-- <div class="text-area text-primary q-pa-sm">{{ t('maintenance.contents') }}</div> -->
+          <div class="text-area">{{ t('notice.top') }}</div>
           <div>
-            <template v-for="(c, i) in  (tm('maintenance.contents') as Array<IParagraph>) " :key="i">
+            <template v-for="(c, i) in  (tm('notice.contents') as Array<IParagraph>) " :key="i">
               <div v-if="c.type === 'head'" :class="['q-pt-md q-pb-sm text-subtitle2 text-primary', c.class]">{{
                 c.value }}
               </div>
@@ -172,14 +169,14 @@ onMounted(() => {
               <q-space v-else-if="c.type === 'space'" class="space" />
             </template>
           </div>
-          <div class="text-area">{{ t('maintenance.bottom') }}</div>
+          <div class="text-area">{{ t('notice.bottom') }}</div>
         </div>
       </q-card-section>
     </template>
     <template #bottom>
       <q-card-section>
         <div class="q-pa-md text-right">
-          <q-btn :size="$q.screen.gt.sm ? '' : 'sm'" outline no-caps :label="t('maintenance.close')" @click="close"
+          <q-btn :size="$q.screen.gt.sm ? '' : 'sm'" outline no-caps :label="t('notice.close')" @click="close"
             aria-label="Tradurs Button" />
         </div>
       </q-card-section>
