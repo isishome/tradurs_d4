@@ -282,7 +282,6 @@ export default {
       { type: 'head', value: '◆ Maintenance Date' },
       { type: 'list', value: 'October 17, 2023 (Tue) 09:00 ~ Upon completion of maintenance' },
       { type: 'head', value: '◆ What will change' },
-      { type: 'space' },
       { type: 'image', value: '/images/notice/20231018/season2.webp' },
       { type: 'list', value: 'Previous season data is moved to off-season (standard).' },
       { type: 'space' },
