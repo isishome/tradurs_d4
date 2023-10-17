@@ -235,7 +235,7 @@ onMounted(() => {
   margin-left: 20px;
   width: auto;
   max-width: 90%;
-  height: 90%;
+  max-height: 90%;
   box-shadow: 0 0 1px 0 currentColor;
   border-radius: 4px;
 }
