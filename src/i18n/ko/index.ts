@@ -302,7 +302,6 @@ export default {
       { type: 'head', value: '◆ 점검 일자' },
       { type: 'list', value: '2023년 10월 18일(수) 01:00 ~ 점검 완료 시' },
       { type: 'head', value: '◆ 변동 사항' },
-      { type: 'space' },
       { type: 'image', value: '/images/notice/20231018/season2.webp' },
       { type: 'list', value: '이전 시즌 데이터가 비시즌(스탠)으로 이동됩니다.' },
       { type: 'space' },
