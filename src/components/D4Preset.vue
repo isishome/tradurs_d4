@@ -86,20 +86,22 @@ watch(() => props.modelValue, (val: number | null) => {
         </D4Tooltip>
       </q-icon>
     </div>
-    <q-popup-proxy v-model="showAddPreset" no-parent-event transition-show="flip-down" transition-hide="flip-up"
-      @hide="done" style="width:276px">
-      <q-card :dark="!$q.dark.isActive">
-        <q-card-section>
-          <q-form autofocus class="row items-center justify-between q-gutter-x-sm" @submit="add">
-            <q-input :dark="false" :disable="disable || progress" dense no-error-icon hide-bottom-space autofocus
-              v-model="presetName" outlined :label="t('filter.presetName')" maxlength="32"
-              :rules="[val => val && val.trim() !== '' || '']" class="col" />
-            <q-btn no-caps :disable="disable" :progress="progress" unelevated :label="t('btn.add')" color="primary"
-              aria-label="Tradurs Add Button" type="submit" />
-          </q-form>
-        </q-card-section>
-      </q-card>
-    </q-popup-proxy>
+    <div>
+      <q-popup-proxy v-model="showAddPreset" no-parent-event transition-show="flip-down" transition-hide="flip-up"
+        @hide="done" style="width:276px">
+        <q-card :dark="!$q.dark.isActive">
+          <q-card-section>
+            <q-form autofocus class="row items-center justify-between q-gutter-x-sm" @submit="add">
+              <q-input :dark="false" :disable="disable || progress" dense no-error-icon hide-bottom-space autofocus
+                v-model="presetName" outlined :label="t('filter.presetName')" maxlength="32"
+                :rules="[val => val && val.trim() !== '' || '']" class="col" />
+              <q-btn no-caps :disable="disable" :progress="progress" unelevated :label="t('btn.add')" color="primary"
+                aria-label="Tradurs Add Button" type="submit" />
+            </q-form>
+          </q-card-section>
+        </q-card>
+      </q-popup-proxy>
+    </div>
   </q-item-label>
   <q-item :disable="disable">
     <q-item-section>
