@@ -19,6 +19,12 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useGlobalStore } from 'stores/global-store'
 
+interface IParagraph {
+  type: string,
+  value?: string,
+  class?: string
+}
+
 const prod: boolean = import.meta.env.PROD
 
 const $q = useQuasar()
@@ -26,7 +32,7 @@ const route = useRoute()
 const router = useRouter()
 const as = useAccountStore()
 const gs = useGlobalStore()
-const { t, locale } = useI18n({ useScope: 'global' })
+const { t, tm, locale } = useI18n({ useScope: 'global' })
 
 const view = ref<boolean>(false)
 const isDark = ref($q.cookies.has('d4.dark') ? $q.cookies.get('d4.dark') === 'true' : $q.dark.isActive)
@@ -76,12 +82,12 @@ useMeta(() => {
 })
 
 const notice = reactive<{ open: boolean, close: boolean }>({
-  open: false,//!$q.cookies.has('d4.notice'),
+  open: !$q.cookies.has('_d4.notice'),
   close: false
 })
 
 const close = () => {
-  $q.cookies.set('d4.notice', 'confirm', { expires: 1, path: '/' })
+  $q.cookies.set('_d4.notice', 'confirm', { expires: 1, path: '/' })
   notice.open = false
 }
 
@@ -139,7 +145,7 @@ onMounted(() => {
       <q-card-section class="row no-wrap items-center justify-between">
         <div>
           <div class="text-weight-bold" :class="$q.screen.gt.sm ? 'q-pa-md text-h6' : 'q-pa-sm text-body2'">{{
-            t('notice.title') }}</div>
+            t('maintenance.title') }}</div>
         </div>
         <q-btn unelevated aria-label="Tradurs Close Button" class="no-hover icon" :ripple="false"
           @click="notice.open = false">
@@ -148,13 +154,25 @@ onMounted(() => {
       </q-card-section>
     </template>
     <template #middle>
-      <q-card-section class="scroll" style="max-height:50vh">
+      <q-card-section class="scroll notice" style="max-height:50vh">
         <div class="q-pa-md column q-gutter-y-sm" :class="$q.screen.gt.sm ? 'text-body2' : 'text-caption'">
-          <div class="text-area">{{ t('notice.top') }}</div>
+          <div class="text-area">{{ t('maintenance.top') }}</div>
           <!-- <div class="text-area q-pa-sm">{{ t('notice.changes') }}</div> -->
           <!-- <div class="text-area text-primary q-pa-sm">{{ t('notice.updates') }}</div> -->
-          <div class="text-area text-primary q-pa-sm">{{ t('notice.cautions') }}</div>
-          <div class="text-area">{{ t('notice.bottom') }}</div>
+          <!-- <div class="text-area text-primary q-pa-sm">{{ t('maintenance.contents') }}</div> -->
+          <div>
+            <template v-for="(c, i) in  (tm('maintenance.contents') as Array<IParagraph>) " :key="i">
+              <div v-if="c.type === 'head'" :class="['q-pt-md q-pb-sm text-subtitle2 text-primary', c.class]">{{
+                c.value }}
+              </div>
+              <div v-else-if="c.type === 'list'" :class="['list', c.class]">{{ c.value }}</div>
+              <div v-else-if="c.type === 'image'">
+                <img :src="c.value" :class="['image', c.class]" />
+              </div>
+              <q-space v-else-if="c.type === 'space'" class="space" />
+            </template>
+          </div>
+          <div class="text-area">{{ t('maintenance.bottom') }}</div>
         </div>
       </q-card-section>
     </template>
@@ -205,3 +223,25 @@ onMounted(() => {
   </D4Dialog>
   <router-view v-if="!showBT && view" />
 </template>
+
+<style scoped>
+.notice:deep(.list) {
+  margin-left: 40px;
+  display: list-item;
+  list-style: disc;
+  list-style-position: outside;
+}
+
+.notice:deep(.image) {
+  margin-left: 20px;
+  width: auto;
+  max-width: 90%;
+  max-height: 90%;
+  box-shadow: 0 0 1px 0 currentColor;
+  border-radius: 4px;
+}
+
+.notice:deep(.space) {
+  padding: 16px;
+}
+</style>
