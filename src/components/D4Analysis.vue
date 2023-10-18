@@ -293,7 +293,7 @@ const checkAttributes = (tArray: string[], index: number, id: number, label: str
   const result: Array<IMatch> = []
 
   let l = 0
-  while (l < 3) {
+  while (l < 2) {
     const similar = similarity(tArray.slice(index, index + l + 1).join(' ').replace(/\([^\)]*\)?/g, '').replace(new RegExp(`[^${phase}]`, 'g'), ''), label)
 
     if (similar >= similarRate) {
@@ -321,33 +321,25 @@ const checkProperties = (tArray: string[]) => {
         const pid = findClass.properties[pi]
         const propertyLabel = is.findProperty(pid)?.label.replace(/{x}/g, '').replace(/[ \+\-%\[\]]/g, '') as string
 
-        let exists = false
         for (let i = 0; i < tArray.length; i++) {
           const result = checkAttributes(tArray, i, pid, propertyLabel)
 
           if (result.length > 0) {
-            exists = true
-            const existsAttribute = matchAttribute.filter((ma: ISimilar) => ma.match.map((m: IMatch) => m.id).includes(result[0]?.id)).length > 0
             const findAttribute = matchAttribute.find((ma: ISimilar) => ma.index === i)
 
-            if (!existsAttribute) {
-              if (findAttribute)
-                findAttribute.match.push(...result)
-              else
-                matchAttribute.push({ index: i, match: result })
-            }
+            if (findAttribute)
+              findAttribute.match.push(...result)
+            else
+              matchAttribute.push({ index: i, match: result })
 
             break
           }
         }
-
-        if (!exists)
-          matchAttribute.push({ index: -1, match: [{ id: pid, length: 0, rate: 1 }] })
       }
 
       matchAttribute.forEach((ma: ISimilar) => {
         ma.match.sort((a, b) => b.rate - a.rate)
-        const matchValues = ma.index === -1 ? Array.from({ length: (is.findProperty(ma.match[0]?.id)?.label.split(/{x}/g).length || 1) - 1 }, (i, _) => 0) : tArray.slice(ma.index + ma.match[0]?.length, tArray.length).join('-').match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv)) || []
+        const matchValues = tArray.slice(ma.index + ma.match[0]?.length, tArray.length).join('-').match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv)) || []
 
         if (item.properties.filter(p => p.propertyId === ma.match[0]?.id).length === 0)
           item.properties.push({ valueId: uid(), propertyId: ma.match[0]?.id, propertyValues: matchValues, action: 2 })
