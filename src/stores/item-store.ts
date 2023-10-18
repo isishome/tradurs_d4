@@ -72,7 +72,8 @@ export interface Property extends ILabel {
 export interface Affix extends ILabel {
   type: string,
   color?: string,
-  sort?: number
+  sort?: number,
+  disable: boolean
 }
 
 export interface Restriction extends ILabel {
@@ -282,6 +283,9 @@ export const useItemStore = defineStore('item', {
     },
     filterAffixes: (state) => {
       return (word?: string): Array<Affix> => word ? state.affixes.data.filter(a => a.label.toLowerCase().indexOf(word.toLowerCase()) !== -1) : state.affixes.data
+    },
+    availableAffixes: (state) => {
+      return (): Array<Affix> => state.affixes.data.filter((a: Affix) => !a.disable)
     },
     filterRestrictions: (state) => {
       return (word?: string): Array<Restriction> => word ? state.restrictions.data.filter(r => r.label.toLowerCase().indexOf(word.toLowerCase()) !== -1) : state.restrictions.data
