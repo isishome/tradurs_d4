@@ -167,7 +167,7 @@ const checkInfo = (textArray: string[]) => {
   if (indexQuality === -1)
     return failedScan(t('analyze.qualityNotFound'))
 
-  const qualityPhase = textArray[indexQuality].split(/\s/gi)
+  const qualityPhase = textArray.slice(indexQuality, indexQuality + 2).join(' ').split(/\s/gi)
 
   let typeValueIndex = -1
   for (let i = 0; i < qualityPhase.length; i++) {
@@ -185,7 +185,7 @@ const checkInfo = (textArray: string[]) => {
   if (typeValueIndex === -1)
     return failedScan(t('analyze.typeNotFound'))
 
-  const typeValue = qualityPhase.splice(typeValueIndex, qualityPhase.length).join(' ').replace(new RegExp(`[^${phase} ]`, 'gi'), '').trim()
+  const typeValue = qualityPhase.splice(typeValueIndex, qualityPhase.length).join(' ').replace(new RegExp(`[^${phase}\- ]`, 'gi'), '').trim()
 
   if (!typeValue || typeValue === '')
     return failedScan(t('analyze.typeNotFound'))
@@ -499,7 +499,7 @@ const filtering = (f: File) => {
       const ratio = isTransparent ? 1 : 2.8
       const iWidth = image.width
       const iHeight = image.height
-      const predictItem = Math.ceil(iWidth * 0.36)
+      const predictItem = Math.ceil(iWidth * 0.28)
       canvas.width = iWidth * ratio
       canvas.height = iHeight * ratio
 
