@@ -185,13 +185,13 @@ const checkInfo = (textArray: string[]) => {
   if (typeValueIndex === -1)
     return failedScan(t('analyze.typeNotFound'))
 
-  const typeValue = qualityPhase.splice(typeValueIndex, qualityPhase.length).join(' ').replace(new RegExp(`[^${phase}\- ]`, 'gi'), '').trim()
+  const typeValue = qualityPhase.splice(typeValueIndex, qualityPhase.length).join(' ').replace(new RegExp(`[^${phase}]`, 'gi'), '').trim()
 
   if (!typeValue || typeValue === '')
     return failedScan(t('analyze.typeNotFound'))
 
   // check class
-  const findClass = [...is.classes].sort((a, b) => b.label.length - a.label.length).find(c => typeValue.toLowerCase().indexOf(c.label.toLowerCase()) !== -1)
+  const findClass = [...is.classes].sort((a, b) => b.label.length - a.label.length).find(c => typeValue.toLowerCase().indexOf(c.label.replace(new RegExp(`[^${phase}]`, 'gi'), '').toLowerCase()) !== -1)
 
   if (findClass) {
     item.itemType = findClass.type
