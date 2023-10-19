@@ -14,8 +14,6 @@ const as = useAccountStore()
 const { t, n } = useI18n({ useScope: 'global' })
 const route = useRoute()
 
-as.newMessages = false
-
 const messages = reactive<Array<IMessage>>([])
 const selected = ref<boolean>(false)
 const disable = computed(() => messages.filter(m => !m.readYn).length === 0)

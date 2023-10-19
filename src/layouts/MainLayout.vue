@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useQuasar, Screen } from 'quasar'
+import { useQuasar, Screen, QBtnDropdown } from 'quasar'
 import { useI18n } from 'vue-i18n'
 
 import { useGlobalStore } from 'src/stores/global-store'
@@ -253,9 +253,14 @@ onUnmounted(() => {
                 <q-badge v-show="newAwards" floating label="N" color="orange-8" class="new-badge2" />
               </q-item-section>
             </q-item>
-            <q-expansion-item v-if="as.signed" v-model="expanded" :label="t('page.mySpace')"
-              expand-icon="img:/images/icons/dropdown.svg" :default-opened="isMySpace"
-              :class="expanded ? 'expanded rounded-borders' : ''">
+            <q-expansion-item v-if="as.signed" v-model="expanded" expand-icon="img:/images/icons/dropdown.svg"
+              :default-opened="isMySpace" :class="expanded ? 'expanded rounded-borders' : ''">
+              <template #header>
+                <div class="relative-position">
+                  {{ t('page.mySpace') }}
+                  <div v-show="newMessages" class="alert" style="top:-4px"></div>
+                </div>
+              </template>
               <q-list bordered class="sub rounded-borders">
                 <q-item :inset-level=".4" v-ripple clickable
                   :to="{ name: 'messages', params: { lang: route.params.lang } }" exact active-class="active">
@@ -391,9 +396,15 @@ onUnmounted(() => {
                   <q-badge v-show="newAwards" floating label="N" color="orange-8" class="new-badge2" style="top:-4px" />
                 </div>
               </q-btn>
-              <q-btn-dropdown v-if="as.signed" flat content-class="no-shadow" no-caps :ripple="false"
-                :label="t('page.mySpace')" class="no-hover" transition-show="none" transition-hide="none"
-                transition-duration="0" dropdown-icon="img:/images/icons/dropdown.svg">
+              <q-btn-dropdown v-if="as.signed" flat content-class="no-shadow" no-caps :ripple="false" class="no-hover"
+                transition-show="none" transition-hide="none" transition-duration="0"
+                dropdown-icon="img:/images/icons/dropdown.svg">
+                <template #label>
+                  <div class="relative-position">
+                    {{ t('page.mySpace') }}
+                    <div v-show="newMessages" class="alert" style="top:-2px"></div>
+                  </div>
+                </template>
                 <q-list bordered class="page rounded-borders shadow-3">
                   <q-item v-ripple clickable :to="{ name: 'messages', params: { lang: route.params.lang } }" exact
                     active-class="active">

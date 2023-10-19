@@ -5,7 +5,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { reactive, ref, computed } from 'vue'
+import { reactive, ref } from 'vue'
 import { QFile, uid, useQuasar } from 'quasar'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
@@ -30,7 +30,7 @@ const { t } = useI18n({ useScope: 'global' })
 const is = useItemStore()
 
 const lang: string = route.params.lang as string || 'ko'
-const similarRate = .7
+const similarRate = .6
 const phase = is.analyze.lang[lang as keyof typeof is.analyze.lang]
 const timeout = 1000
 const showProgress = ref<boolean>(false)
@@ -293,13 +293,18 @@ const checkAttributes = (tArray: string[], index: number, id: number, label: str
   const result: Array<IMatch> = []
 
   let l = 0
-  while (l < 2) {
-    const similar = similarity(tArray.slice(index, index + l + 1).join(' ').replace(/\([^\)]*\)?/g, '').replace(new RegExp(`[^${phase}]`, 'g'), ''), label)
+  while (l < 3) {
+    const text = tArray.slice(index, index + l + 1).join(' ').replace(/\([^\)]*\)?/g, '').replace(new RegExp(`[^${phase}]`, 'g'), '')
+    const similar = similarity(text, label)
 
     if (similar >= similarRate) {
       result.push({ id, length: l, rate: similar })
       l++
-      continue
+
+      if (text.length < label.length)
+        continue
+      else
+        break
     }
     else
       break
@@ -317,35 +322,41 @@ const checkProperties = (tArray: string[]) => {
     try {
       const matchAttribute: Array<ISimilar> = []
 
+      let cut = 0
       for (let pi = 0; pi < findClass.properties.length; pi++) {
         const pid = findClass.properties[pi]
         const propertyLabel = is.findProperty(pid)?.label.replace(/{x}/g, '').replace(/[ \+\-%\[\]]/g, '') as string
 
         for (let i = 0; i < tArray.length; i++) {
-          const result = checkAttributes(tArray, i, pid, propertyLabel)
+          const result = checkAttributes(tArray, i + cut, pid, propertyLabel)
 
           if (result.length > 0) {
-            const findAttribute = matchAttribute.find((ma: ISimilar) => ma.index === i)
+            const findAttribute = matchAttribute.find((ma: ISimilar) => ma.index === i + cut)
 
             if (findAttribute)
               findAttribute.match.push(...result)
             else
-              matchAttribute.push({ index: i, match: result })
+              matchAttribute.push({ index: i + cut, match: result })
+
+            cut++
 
             break
           }
         }
       }
 
+      let maxIL: [number, number] = [0, 0]
       matchAttribute.forEach((ma: ISimilar) => {
         ma.match.sort((a, b) => b.rate - a.rate)
         const matchValues = tArray.slice(ma.index + ma.match[0]?.length, tArray.length).join('-').match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv)) || []
 
-        if (item.properties.filter(p => p.propertyId === ma.match[0]?.id).length === 0)
+        if (item.properties.filter(p => p.propertyId === ma.match[0]?.id).length === 0) {
+          maxIL = maxIL[0] < ma.index ? [ma.index, ma.match[0].length + 1] : maxIL
           item.properties.push({ valueId: uid(), propertyId: ma.match[0]?.id, propertyValues: matchValues, action: 2 })
+        }
       })
 
-      tArray.splice(0, Math.max(...matchAttribute.map((ma: ISimilar) => ma.index)) + 1)
+      tArray.splice(0, maxIL[0] + maxIL[1])
 
       // sort by property id
       item.properties.sort((a: Property, b: Property) => a.propertyId - b.propertyId)
