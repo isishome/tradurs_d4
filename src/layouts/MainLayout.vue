@@ -256,10 +256,13 @@ onUnmounted(() => {
             <q-expansion-item v-if="as.signed" v-model="expanded" expand-icon="img:/images/icons/dropdown.svg"
               :default-opened="isMySpace" :class="expanded ? 'expanded rounded-borders' : ''">
               <template #header>
-                <div class="relative-position">
-                  {{ t('page.mySpace') }}
-                  <div v-show="newMessages" class="alert" style="top:-4px"></div>
-                </div>
+                <q-item-section>
+                  <div>
+                    <span class="relative-position">{{ t('page.mySpace') }}
+                      <div v-show="newMessages" class="alert" style="top:-6px"></div>
+                    </span>
+                  </div>
+                </q-item-section>
               </template>
               <q-list bordered class="sub rounded-borders">
                 <q-item :inset-level=".4" v-ripple clickable
