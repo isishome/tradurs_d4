@@ -386,8 +386,7 @@ export default {
         { type: 'question', contents: '9. Why can\'t I see item states separately?' },
         { type: 'answer', contents: '→ You can filter using the left filter > \'Item status\' selection box.' },
         { type: 'question', contents: '10. What happens to my existing trade items when a new season starts?' },
-        { type: 'answer', contents: '→ At the start of each new season, we will initialize all items and the data associated with them (except for affixes, restrictions, messages, etc.).' },
-        { type: 'answer', contents: '→ The original plan was to keep a backup of the existing data, but considering the performance of the database server, we decided to initialize everything, leaving only a simple transaction history (log).' }
+        { type: 'answer', contents: '→ With each new season, seasonal items are moved to the Eternal Realm (Standard).' }
       ]
     },
     {
