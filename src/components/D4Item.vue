@@ -465,16 +465,16 @@ defineExpose({ scrollEnd })
         </q-item>
       </q-card-section>
       <D4Separator v-show="qualifiable && !noLevel" />
-      <q-card-section v-show="!noLevel" class="q-col-gutter-x-sm"
-        :class="qualifiable ? 'row justify-between items-center' : 'col'">
+      <q-card-section class="q-col-gutter-x-sm" :class="qualifiable ? 'row justify-between items-center' : 'col'">
         <div v-show="tierable" class="row items-center q-gutter-x-sm">
           <D4Counter v-model="_power" :label="t('item.power')" :max="9999" max-width="110px" allow-zero no-button
             :disable="disable" @update:model-value="update" />
           <D4Counter v-if="upgradeLimit" v-model="_upgrade" :label="t('item.upgrade', { u: _upgrade, ul: upgradeLimit })"
             max-width="110px" :max="upgradeLimit" allow-zero :disable="disable" @update:model-value="update" />
         </div>
-        <D4Counter v-model="_level" class="col row justify-end" :label="t('item.level')" max-width="110px" :max="999"
-          no-button :disable="disable || !qualifiable || noLevel" @update:model-value="update" />
+        <D4Counter v-show="!noLevel" v-model="_level" class="col row justify-end" :label="t('item.level')"
+          max-width="110px" :max="999" no-button :disable="disable || !qualifiable || noLevel"
+          @update:model-value="update" />
       </q-card-section>
       <D4Separator />
       <template v-if="qualifiable">

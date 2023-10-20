@@ -738,10 +738,8 @@ export const useItemStore = defineStore('item', {
     },
     async recognize(image: ImageLike, lang: string) {
       const locale = lang === 'ko' ? 'kor' : 'eng'
-      const worker = await createWorker()
+      const worker = await createWorker(locale)
 
-      await worker.loadLanguage(locale)
-      await worker.initialize(locale)
       await worker.setParameters({
         preserve_interword_spaces: '1'
       })

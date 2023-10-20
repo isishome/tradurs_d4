@@ -30,7 +30,7 @@ const { t } = useI18n({ useScope: 'global' })
 const is = useItemStore()
 
 const lang: string = route.params.lang as string || 'ko'
-const similarRate = .6
+const similarRate = .7
 const phase = is.analyze.lang[lang as keyof typeof is.analyze.lang]
 const timeout = 1000
 const showProgress = ref<boolean>(false)
