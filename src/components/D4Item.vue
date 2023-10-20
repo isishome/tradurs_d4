@@ -5,7 +5,7 @@ import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 
 import { useAccountStore } from 'stores/account-store'
-import { Elixir, Gem, useItemStore } from 'stores/item-store'
+import { type Gem, type Elixir, type Summoning, useItemStore } from 'stores/item-store'
 import { Item, Price } from 'src/types/item'
 import { checkName, clipboard } from 'src/common'
 import { itemImgs } from 'src/common/items'
@@ -44,7 +44,11 @@ const editWrap = ref<QCard | null>(null)
 
 const filterClasses = store.filterClasses
 const filterRunesByType = store.filterRunesByType
-const imgSrc = computed(() => props.data.itemType === 'aspect' ? `/images/items/${props.data.itemType}/${props.data.itemTypeValue1}.webp` : props.data.itemTypeValue1 === 'gem' ? `/images/items/${props.data.itemType}/${props.data.itemTypeValue1}/${props.data.itemTypeValue2}.webp` : props.data.itemTypeValue1 === 'elixir' ? `/images/items/${props.data.itemType}/${props.data.itemTypeValue1}/${props.data.itemTypeValue2.split('_')[1]}.webp` : `/images/items/${props.data.itemType}/${props.data.itemTypeValue1}/${props.data.imageId}.webp`)
+const imgSrc = computed(() =>
+  props.data.itemType === 'aspect' ? `/images/items/${props.data.itemType}/${props.data.itemTypeValue1}.webp` :
+    ['gem', 'summoning'].includes(props.data.itemTypeValue1) ? `/images/items/${props.data.itemType}/${props.data.itemTypeValue1}/${props.data.itemTypeValue2}.webp` :
+      props.data.itemTypeValue1 === 'elixir' ? `/images/items/${props.data.itemType}/${props.data.itemTypeValue1}/${props.data.itemTypeValue2.split('_')[1]}.webp` :
+        `/images/items/${props.data.itemType}/${props.data.itemTypeValue1}/${props.data.imageId}.webp`)
 
 const _name = ref<string>(props.data.name)
 const _quantity = ref<number>(props.data.quantity || 1)
@@ -70,7 +74,7 @@ const _tier = ref<string | null>(props.data.tier)
 const _quality = ref<string>(props.data.quality || 'rare')
 const _type = ref<string>(props.data.itemType || store.filterTypes()[0].value as string)
 const _typeValue1 = ref<string>(props.data.itemTypeValue1 || (_type.value === 'aspect' ? store.aspectCategories[0].value as string : filterClasses(_type.value)[0].value as string))
-const _typeValue2 = ref<string>(props.data.itemTypeValue2 || (_typeValue1.value === 'gem' ? store.gems[0].value as string : _typeValue1.value === 'elixir' ? store.elixirs[0].value as string : ''))
+const _typeValue2 = ref<string>(props.data.itemTypeValue2 || (_typeValue1.value === 'gem' ? store.gems[0].value as string : _typeValue1.value === 'elixir' ? store.elixirs[0].value as string : _typeValue1.value === 'summoning' ? store.summonings[0].value as string : ''))
 const _power = ref<number>(props.data.power)
 const _upgrade = ref<number>(props.data.upgrade)
 const _level = ref<number | null>(props.data.level === 0 ? null : props.data.level)
@@ -94,6 +98,7 @@ const _price = reactive<Price>(new Price((props.data.price && props.data.price.c
 
 const tierable = computed(() => !['aspect', 'inventory', 'consumables'].includes(_type.value))
 const qualifiable = computed(() => !['inventory', 'consumables'].includes(_type.value))
+const noLevel = computed(() => ['summoning'].includes(_typeValue1.value))
 
 const attributes = computed(() => [
   { label: t('properties'), value: 'properties', hide: !hasProperties.value },
@@ -135,7 +140,7 @@ const updateType = (val: string) => {
 const updateTypeValue1 = (val: string) => {
   _image.value = 0
   attribute.value = findClass(val)?.properties.length !== 0 ? 'properties' : 'affixes'
-  _typeValue2.value = (val === 'gem' ? store.gems[0].value as string : val === 'elixir' ? store.elixirs[0].value as string : '')
+  _typeValue2.value = (val === 'gem' ? store.gems[0].value as string : val === 'elixir' ? store.elixirs[0].value as string : val === 'summoning' ? store.summonings[0].value as string : '')
   _level.value = (val === 'gem' ? store.gems[0].level : val === 'elixir' ? store.elixirs[0].level : _level.value)
   updateTypeValue2(_typeValue2.value)
 }
@@ -293,8 +298,7 @@ defineExpose({ scrollEnd })
                           alt="Tradurs Aspect Image" />
                       </q-item-section>
                       <q-item-section>
-                        <q-item-label>{{ scope.opt.label
-                        }}</q-item-label>
+                        <q-item-label>{{ scope.opt.label }}</q-item-label>
                       </q-item-section>
                     </q-item>
                   </template>
@@ -330,8 +334,7 @@ defineExpose({ scrollEnd })
                             alt="Tradurs Gem Images" />
                         </q-item-section>
                         <q-item-section>
-                          <q-item-label>{{ scope.opt.label
-                          }}</q-item-label>
+                          <q-item-label>{{ scope.opt.label }}</q-item-label>
                         </q-item-section>
                       </q-item>
                     </template>
@@ -354,8 +357,29 @@ defineExpose({ scrollEnd })
                             alt="Tradurs Elixir Images" />
                         </q-item-section>
                         <q-item-section>
-                          <q-item-label>{{ scope.opt.label
-                          }}</q-item-label>
+                          <q-item-label>{{ scope.opt.label }}</q-item-label>
+                        </q-item-section>
+                      </q-item>
+                    </template>
+                  </q-select>
+                </div>
+                <div class="col" v-else-if="_typeValue1 === 'summoning'">
+                  <q-select v-model="_typeValue2" :disable="disable" outlined dense no-error-icon hide-bottom-space
+                    emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0"
+                    :label="t('item.selectSummoning')" dropdown-icon="img:/images/icons/dropdown.svg"
+                    :options="store.summonings" popup-content-class="scroll bordered limit-select"
+                    @update:model-value="updateTypeValue2">
+                    <template #selected-item="scope">
+                      <div class="ellipsis">{{ scope.opt.label }}</div>
+                    </template>
+                    <template #option="scope">
+                      <q-item clickable v-bind="scope.itemProps">
+                        <q-item-section avatar>
+                          <img height="36" :src="`/images/items/${_type}/${_typeValue1}/${scope.opt.value}.webp`"
+                            alt="Tradurs Summoning Images" />
+                        </q-item-section>
+                        <q-item-section>
+                          <q-item-label>{{ scope.opt.label }}</q-item-label>
                         </q-item-section>
                       </q-item>
                     </template>
@@ -412,7 +436,7 @@ defineExpose({ scrollEnd })
           class="col-10" :label="t('item.name')" @update:model-value="update" maxlength="256"
           :rules="[val => checkName(val) || '']" />
       </q-card-section>
-      <D4Separator v-show="!qualifiable" />
+      <D4Separator v-show="!qualifiable && !noLevel" />
       <q-card-section v-if="data.itemTypeValue1 === 'rune'" class="col">
         <q-item v-show="loading" style="min-height:10px;padding:3px">
           <q-item-section side class="q-pr-sm">
@@ -440,8 +464,9 @@ defineExpose({ scrollEnd })
           </q-item-section>
         </q-item>
       </q-card-section>
-      <D4Separator v-show="tierable" />
-      <q-card-section class="q-col-gutter-x-sm" :class="qualifiable ? 'row justify-between items-center' : 'col'">
+      <D4Separator v-show="qualifiable && !noLevel" />
+      <q-card-section v-show="!noLevel" class="q-col-gutter-x-sm"
+        :class="qualifiable ? 'row justify-between items-center' : 'col'">
         <div v-show="tierable" class="row items-center q-gutter-x-sm">
           <D4Counter v-model="_power" :label="t('item.power')" :max="9999" max-width="110px" allow-zero no-button
             :disable="disable" @update:model-value="update" />
@@ -449,7 +474,7 @@ defineExpose({ scrollEnd })
             max-width="110px" :max="upgradeLimit" allow-zero :disable="disable" @update:model-value="update" />
         </div>
         <D4Counter v-model="_level" class="col row justify-end" :label="t('item.level')" max-width="110px" :max="999"
-          no-button :disable="disable || !qualifiable" @update:model-value="update" />
+          no-button :disable="disable || !qualifiable || noLevel" @update:model-value="update" />
       </q-card-section>
       <D4Separator />
       <template v-if="qualifiable">
@@ -617,6 +642,9 @@ defineExpose({ scrollEnd })
                 <span v-show="data.itemTypeValue1 === 'elixir'">
                   {{ store.elixirs.find(e => e.value === data.itemTypeValue2)?.label }}
                 </span>
+                <span v-show="data.itemTypeValue1 === 'summoning'">
+                  {{ store.summonings.find(s => s.value === data.itemTypeValue2)?.label }}
+                </span>
               </div>
               <div v-if="data.quantity > 1" class="row items-center q-gutter-x-xs no-wrap">
                 <div class="text-lowercase">x</div>
@@ -780,7 +808,7 @@ defineExpose({ scrollEnd })
               </q-item-label>
             </q-item-section>
           </q-item>
-          <div class="column" :class="{ 'q-gutter-y-xs': !$q.screen.lt.sm }">
+          <div v-show="data.itemTypeValue1 !== 'summoning'" class="column" :class="{ 'q-gutter-y-xs': !$q.screen.lt.sm }">
             <div class="text-right q-pt-sm">
               {{ t('item.level') }}: {{ data.level }}
             </div>
@@ -789,7 +817,8 @@ defineExpose({ scrollEnd })
           </div>
         </div>
       </q-card-section>
-      <q-card-section v-if="history" :class="{ 'q-my-md': $q.screen.gt.sm }">
+      <q-card-section v-if="history" :class="{ 'q-my-md': $q.screen.gt.sm && noLevel }">
+        <div :class="{ 'q-py-md': $q.screen.gt.sm && noLevel }"></div>
       </q-card-section>
       <D4Separator v-show="slots.actions" />
       <q-card-section v-if="slots.actions">

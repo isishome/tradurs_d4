@@ -48,6 +48,8 @@ export interface Elixir extends ILabel {
   level: number | null
 }
 
+export interface Summoning extends ILabel { }
+
 export interface ItemType extends ILabel {
   attribute: string,
   isCurrency: boolean,
@@ -164,6 +166,7 @@ export const useItemStore = defineStore('item', {
     aspectCategories: [] as Array<AspectCategory>,
     gems: [] as Array<Gem>,
     elixirs: [] as Array<Elixir>,
+    summonings: [] as Array<Summoning>,
     types: [] as Array<ItemType>,
     classes: [] as Array<EquipmentClass>,
     attributeTypes: [] as Array<AttributeType>,
@@ -405,6 +408,7 @@ export const useItemStore = defineStore('item', {
               this.aspectCategories = response.data.aspectCategories
               this.gems = response.data.gems
               this.elixirs = response.data.elixirs
+              this.summonings = response.data.summonings
               this.types = response.data.types
               this.classes = response.data.classes
               this.attributeTypes = response.data.attributeTypes

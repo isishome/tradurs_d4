@@ -82,12 +82,12 @@ useMeta(() => {
 })
 
 const notice = reactive<{ open: boolean, close: boolean }>({
-  open: false,//!$q.cookies.has('d4.maintenance'),
+  open: !$q.cookies.has('d4.update.20231020'),
   close: false
 })
 
 const close = () => {
-  $q.cookies.set('d4.maintenance', 'confirm', { expires: 1, path: '/' })
+  $q.cookies.set('d4.update.20231020', 'confirm', { expires: 1, path: '/' })
   notice.open = false
 }
 
