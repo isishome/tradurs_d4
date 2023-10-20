@@ -334,7 +334,7 @@ export default {
     contents: [
       { type: 'head', value: '◆ 업데이트 사항' },
       { type: 'image', value: '/images/notice/20231020/summoning_ko.webp' },
-      { type: 'list', value: '소비용품에 소환 재료가 추가' },
+      { type: 'list', value: '소비용품에 소환 재료 추가' },
       { type: 'space' }
     ],
     bottom: '감사합니다.',
