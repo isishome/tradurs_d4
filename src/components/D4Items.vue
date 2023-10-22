@@ -6,9 +6,9 @@ import { useRoute } from 'vue-router'
 
 import { useGlobalStore } from 'src/stores/global-store'
 import { useAccountStore } from 'stores/account-store'
-import { useItemStore, type Property, type Affix, type Restriction } from 'stores/item-store'
+import { useItemStore } from 'stores/item-store'
 import { checkAttribute, scrollPos } from 'src/common'
-import { Item, Offer, type AffixValue, type IItem, Price, type Property as IProperty, type Affix as IAffix, type Restriction as IRestriction, type Pacts as IPacts } from 'src/types/item'
+import { Item, Offer, type AffixValue, type IItem, Price, type Property, type Affix, type Restriction } from 'src/types/item'
 import { User } from 'src/types/user'
 
 const D4Item = defineAsyncComponent(() => import('components/D4Item.vue'))
@@ -92,9 +92,9 @@ const copyItem = (item: Item) => {
   clone.statusCode = '000'
   clone.user = new User()
   clone.price = new Price()
-  clone.affixes = clone.affixes.map((a: IAffix) => ({ ...a, valueId: uid(), action: 2 }))
-  clone.properties = clone.properties.map((p: IProperty) => ({ ...p, valueId: uid(), action: 2 }))
-  clone.restrictions = clone.restrictions.map((r: IRestriction) => ({ ...r, valueId: uid(), action: 2 }))
+  clone.affixes = clone.affixes.map((a: Affix) => ({ ...a, valueId: uid(), action: 2 }))
+  clone.properties = clone.properties.map((p: Property) => ({ ...p, valueId: uid(), action: 2 }))
+  clone.restrictions = clone.restrictions.map((r: Restriction) => ({ ...r, valueId: uid(), action: 2 }))
   clone.offers = 0
   activatedItem.value = clone
   activateShow.value = true

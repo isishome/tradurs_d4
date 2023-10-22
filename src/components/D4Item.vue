@@ -5,7 +5,7 @@ import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 
 import { useAccountStore } from 'stores/account-store'
-import { type Gem, type Elixir, type Summoning, useItemStore } from 'stores/item-store'
+import { type Gem, type Elixir, useItemStore } from 'stores/item-store'
 import { Item, Price } from 'src/types/item'
 import { checkName, clipboard } from 'src/common'
 import { itemImgs } from 'src/common/items'
@@ -215,10 +215,10 @@ defineExpose({ scrollEnd })
 <template>
   <q-card v-if="editable" ref="editWrap" class="card-item non-selectable no-scroll editable" :class="data.quality">
     <q-form class="inner column no-wrap" :class="{ 'justify-between': !$q.screen.lt.sm }" @submit="apply"
-      :style="$q.screen.lt.sm ? 'height:100%' : 'max-height:90vh'">
+      :style="$q.screen.lt.sm ? 'height:100%' : 'max-height:90vh;min-height:50vh'">
       <q-card-section>
         <div class="column items-start q-gutter-y-sm">
-          <div class="row items-center no-wrap justify-between q-col-gutter-sm full-width q-py-sm">
+          <div class="row items-center no-wrap justify-between q-col-gutter-sm full-width q-pt-sm">
             <div>
               <div class="row no-wrap items-center q-gutter-xs quality">
                 <q-btn :ripple="!$q.dark.isActive" v-for="t in store.tiers" :key="t.value" :disable="disable || !tierable"
@@ -236,15 +236,18 @@ defineExpose({ scrollEnd })
               </div>
             </div>
           </div>
-          <div class="full-width">
-            <div class="row items-center q-col-gutter-sm">
-              <div class="col">
-                <q-select v-model="_type" :disable="disable" outlined dense no-error-icon hide-bottom-space emit-value
-                  map-options transition-show="none" transition-hide="none" :transition-duration="0"
-                  :label="t('item.selectType')" dropdown-icon="img:/images/icons/dropdown.svg" :options="filterTypes()"
-                  popup-content-class="scroll bordered" @update:model-value="updateType">
-                  <!-- Season 1 accessory notify -->
-                  <!-- <template v-if="store.storage.data.ladder && _type === 'accessory'" #prepend>
+        </div>
+      </q-card-section>
+      <D4Separator />
+      <q-card-section>
+        <div class="row items-center q-col-gutter-sm">
+          <div class="col">
+            <q-select v-model="_type" :disable="disable" outlined dense no-error-icon hide-bottom-space emit-value
+              map-options transition-show="none" transition-hide="none" :transition-duration="0"
+              :label="t('item.selectType')" dropdown-icon="img:/images/icons/dropdown.svg" :options="filterTypes()"
+              popup-content-class="scroll bordered" @update:model-value="updateType">
+              <!-- Season 1 accessory notify -->
+              <!-- <template v-if="store.storage.data.ladder && _type === 'accessory'" #prepend>
                     <q-icon class="caution" size="19px">
                       <q-spinner-puff :color="$q.dark.isActive ? 'yellow-6' : 'black'" />
                       <D4Tooltip>
@@ -254,189 +257,182 @@ defineExpose({ scrollEnd })
                       </D4Tooltip>
                     </q-icon>
                   </template> -->
-                  <template #selected-item="scope">
-                    <div class="ellipsis">{{ scope.opt.label }}</div>
-                  </template>
-                </q-select>
-              </div>
-              <!-- Item Type Value Place ----------------------------------------------------------------------------------->
-              <div class="col" v-if="_type === 'rune'">
-                <q-select v-model="_typeValue1" :disable="disable" outlined dense no-error-icon hide-bottom-space
-                  emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0"
-                  :label="t('item.selectRune')" :options="filterRunesByType()"
-                  dropdown-icon="img:/images/icons/dropdown.svg" popup-content-class="scroll bordered limit-select"
-                  @update:model-value="update">
-                  <template #selected-item="scope">
-                    <div class="ellipsis">{{ scope.opt.label }}</div>
-                  </template>
-                  <template #option="scope">
-                    <q-item v-bind="scope.itemProps">
-                      <q-item-section avatar>
-                        <img :src="`/images/items/rune/${scope.opt.value}.webp`" width="24" height="24"
-                          alt="Tradurs Rune Image" />
-                      </q-item-section>
-                      <q-item-section>
-                        <q-item-label>{{ scope.opt.label }}</q-item-label>
-                      </q-item-section>
-                    </q-item>
-                  </template>
-                </q-select>
-              </div>
-              <div class="col" v-else-if="_type === 'aspect'">
-                <q-select v-model="_typeValue1" :disable="disable" outlined dense no-error-icon hide-bottom-space
-                  emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0"
-                  :label="t('item.selectAspectCategory')" dropdown-icon="img:/images/icons/dropdown.svg"
-                  :options="store.aspectCategories" popup-content-class="scroll bordered limit-select"
-                  @update:model-value="update">
-                  <template #selected-item="scope">
-                    <div class="ellipsis">{{ scope.opt.label }}</div>
-                  </template>
-                  <template #option="scope">
-                    <q-item clickable v-bind="scope.itemProps">
-                      <q-item-section avatar>
-                        <img height="36" :src="`/images/items/${_type}/${scope.opt.value}.webp`"
-                          alt="Tradurs Aspect Image" />
-                      </q-item-section>
-                      <q-item-section>
-                        <q-item-label>{{ scope.opt.label }}</q-item-label>
-                      </q-item-section>
-                    </q-item>
-                  </template>
-                </q-select>
-              </div>
-              <template v-else>
-                <div class="col">
-                  <q-select v-model="_typeValue1" :disable="disable" outlined dense no-error-icon hide-bottom-space
-                    emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0"
-                    :label="t('item.selectClass', { type: findType(data.itemType)?.label })"
-                    dropdown-icon="img:/images/icons/dropdown.svg" :options="filterClasses(_type)"
-                    popup-content-class="scroll bordered" @update:model-value="updateTypeValue1">
-                    <template #selected-item="scope">
-                      <div class="ellipsis">{{ scope.opt.label }}</div>
-                    </template>
-                  </q-select>
-                </div>
-                <div class="col" v-if="_typeValue1 === 'gem'">
-                  <q-select v-model="_typeValue2" :disable="disable" outlined dense no-error-icon hide-bottom-space
-                    emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0"
-                    :label="t('item.selectGem')" dropdown-icon="img:/images/icons/dropdown.svg" :options="store.gems"
-                    popup-content-class="scroll bordered limit-select" @update:model-value="updateTypeValue2"
-                    exact-active>
-                    <template #selected-item="scope">
-                      <q-item-section>
-                        <q-item-label class="ellipsis">{{ scope.opt.label }}</q-item-label>
-                      </q-item-section>
-                    </template>
-                    <template #option="scope">
-                      <q-item clickable v-bind="scope.itemProps">
-                        <q-item-section avatar>
-                          <img height="36" :src="`/images/items/${_type}/${_typeValue1}/${scope.opt.value}.webp`"
-                            alt="Tradurs Gem Images" />
-                        </q-item-section>
-                        <q-item-section>
-                          <q-item-label>{{ scope.opt.label }}</q-item-label>
-                        </q-item-section>
-                      </q-item>
-                    </template>
-                  </q-select>
-                </div>
-                <div class="col" v-else-if="_typeValue1 === 'elixir'">
-                  <q-select v-model="_typeValue2" :disable="disable" outlined dense no-error-icon hide-bottom-space
-                    emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0"
-                    :label="t('item.selectElixir')" dropdown-icon="img:/images/icons/dropdown.svg"
-                    :options="store.elixirs" popup-content-class="scroll bordered limit-select"
-                    @update:model-value="updateTypeValue2">
-                    <template #selected-item="scope">
-                      <div class="ellipsis">{{ scope.opt.label }}</div>
-                    </template>
-                    <template #option="scope">
-                      <q-item :disable="scope.opt.onlyHardcore && !store.storage.data.hardcore" clickable
-                        v-bind="scope.itemProps">
-                        <q-item-section avatar>
-                          <img height="36" :src="`/images/items/${_type}/${_typeValue1}/${scope.opt.elixir}.webp`"
-                            alt="Tradurs Elixir Images" />
-                        </q-item-section>
-                        <q-item-section>
-                          <q-item-label>{{ scope.opt.label }}</q-item-label>
-                        </q-item-section>
-                      </q-item>
-                    </template>
-                  </q-select>
-                </div>
-                <div class="col" v-else-if="_typeValue1 === 'summoning'">
-                  <q-select v-model="_typeValue2" :disable="disable" outlined dense no-error-icon hide-bottom-space
-                    emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0"
-                    :label="t('item.selectSummoning')" dropdown-icon="img:/images/icons/dropdown.svg"
-                    :options="store.summonings" popup-content-class="scroll bordered limit-select"
-                    @update:model-value="updateTypeValue2">
-                    <template #selected-item="scope">
-                      <div class="ellipsis">{{ scope.opt.label }}</div>
-                    </template>
-                    <template #option="scope">
-                      <q-item clickable v-bind="scope.itemProps">
-                        <q-item-section avatar>
-                          <img height="36" :src="`/images/items/${_type}/${_typeValue1}/${scope.opt.value}.webp`"
-                            alt="Tradurs Summoning Images" />
-                        </q-item-section>
-                        <q-item-section>
-                          <q-item-label>{{ scope.opt.label }}</q-item-label>
-                        </q-item-section>
-                      </q-item>
-                    </template>
-                  </q-select>
-                </div>
-                <div v-else>
-                  <q-btn dense glossy outline aria-label="Tradurs Thumbnail Button" padding="4px 8px" color="primary"
-                    :ripple="false" class="no-hover rounded-borders" @click="showItemImages = true">
-                    <img height="32" :src="`/images/items/${_type}/${_typeValue1}/${_image}.webp`"
-                      alt="Tradurs Item Thumbnail Image" />
-                    <D4Dialog v-model="showItemImages" :no-route-dismiss="false">
-                      <template #top>
-                        <q-card-section class="row justify-between items-center q-ml-md">
-                          <div class="name">{{ t('item.selectImage', {
-                            tv:
-                              findClass(data.itemTypeValue1)?.label || findType(data.itemType)?.label
-                          }) }}
-                          </div>
-                          <q-btn unelevated aria-label="Tradurs Close Button" class="no-hover icon" :ripple="false">
-                            <img src="/images/icons/close.svg" width="24" height="24" @click="showItemImages = false"
-                              alt="icon_close" />
-                          </q-btn>
-                        </q-card-section>
-                      </template>
-                      <template #middle>
-                        <q-card-section class="scroll q-ma-lg" style="height:50vh">
-                          <div class="row q-col-gutter-md">
-                            <div v-for="i, idx in itemImgs[_type][_typeValue1 as string]" :key="idx"
-                              class="col-4 col-md-3 cursor-pointer" @click="_image = idx; update()" v-close-popup>
-                              <q-card flat bordered class="item-image-card"
-                                :class="{ 'bg-primary-cloud': idx === data.imageId }">
-                                <q-card-section class="text-center no-padding">
-                                  <q-img style="width:90%" :src="`/images/items/${_type}/${_typeValue1}/${idx}.webp`"
-                                    alt="Tradurs Item Image" />
-                                </q-card-section>
-                              </q-card>
-                            </div>
-                          </div>
-                        </q-card-section>
-                      </template>
-                    </D4Dialog>
-                  </q-btn>
-                </div>
+              <template #selected-item="scope">
+                <div class="ellipsis">{{ scope.opt.label }}</div>
               </template>
-              <!-- Item Type Value Place ----------------------------------------------------------------------------------->
-              <D4Counter v-model="_quantity" :disable="disable" @update:model-value="update" />
-            </div>
+            </q-select>
           </div>
+          <!-- Item Type Value Place ----------------------------------------------------------------------------------->
+          <div class="col" v-if="_type === 'rune'">
+            <q-select v-model="_typeValue1" :disable="disable" outlined dense no-error-icon hide-bottom-space emit-value
+              map-options transition-show="none" transition-hide="none" :transition-duration="0"
+              :label="t('item.selectRune')" :options="filterRunesByType()" dropdown-icon="img:/images/icons/dropdown.svg"
+              popup-content-class="scroll bordered limit-select" @update:model-value="update">
+              <template #selected-item="scope">
+                <div class="ellipsis">{{ scope.opt.label }}</div>
+              </template>
+              <template #option="scope">
+                <q-item v-bind="scope.itemProps">
+                  <q-item-section avatar>
+                    <img :src="`/images/items/rune/${scope.opt.value}.webp`" width="24" height="24"
+                      alt="Tradurs Rune Image" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>{{ scope.opt.label }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+          </div>
+          <div class="col" v-else-if="_type === 'aspect'">
+            <q-select v-model="_typeValue1" :disable="disable" outlined dense no-error-icon hide-bottom-space emit-value
+              map-options transition-show="none" transition-hide="none" :transition-duration="0"
+              :label="t('item.selectAspectCategory')" dropdown-icon="img:/images/icons/dropdown.svg"
+              :options="store.aspectCategories" popup-content-class="scroll bordered limit-select"
+              @update:model-value="update">
+              <template #selected-item="scope">
+                <div class="ellipsis">{{ scope.opt.label }}</div>
+              </template>
+              <template #option="scope">
+                <q-item clickable v-bind="scope.itemProps">
+                  <q-item-section avatar>
+                    <img height="48" :src="`/images/items/${_type}/${scope.opt.value}.webp`" alt="Tradurs Aspect Image" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>{{ scope.opt.label }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+          </div>
+          <template v-else>
+            <div class="col">
+              <q-select v-model="_typeValue1" :disable="disable" outlined dense no-error-icon hide-bottom-space emit-value
+                map-options transition-show="none" transition-hide="none" :transition-duration="0"
+                :label="t('item.selectClass', { type: findType(data.itemType)?.label })"
+                dropdown-icon="img:/images/icons/dropdown.svg" :options="filterClasses(_type)"
+                popup-content-class="scroll bordered" @update:model-value="updateTypeValue1">
+                <template #selected-item="scope">
+                  <div class="ellipsis">{{ scope.opt.label }}</div>
+                </template>
+              </q-select>
+            </div>
+            <div class="col" v-if="_typeValue1 === 'gem'">
+              <q-select v-model="_typeValue2" :disable="disable" outlined dense no-error-icon hide-bottom-space emit-value
+                map-options transition-show="none" transition-hide="none" :transition-duration="0"
+                :label="t('item.selectGem')" dropdown-icon="img:/images/icons/dropdown.svg" :options="store.gems"
+                popup-content-class="scroll bordered limit-select" options-dense @update:model-value="updateTypeValue2"
+                exact-active>
+                <template #selected-item="scope">
+                  <q-item-section>
+                    <q-item-label class="ellipsis">{{ scope.opt.label }}</q-item-label>
+                  </q-item-section>
+                </template>
+                <template #option="scope">
+                  <q-item clickable v-bind="scope.itemProps">
+                    <q-item-section avatar>
+                      <img height="36" :src="`/images/items/${_type}/${_typeValue1}/${scope.opt.value}.webp`"
+                        alt="Tradurs Gem Images" />
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>{{ scope.opt.label }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
+            </div>
+            <div class="col" v-else-if="_typeValue1 === 'elixir'">
+              <q-select v-model="_typeValue2" :disable="disable" outlined dense no-error-icon hide-bottom-space emit-value
+                map-options transition-show="none" transition-hide="none" :transition-duration="0"
+                :label="t('item.selectElixir')" dropdown-icon="img:/images/icons/dropdown.svg" :options="store.elixirs"
+                popup-content-class="scroll bordered limit-select" options-dense @update:model-value="updateTypeValue2">
+                <template #selected-item="scope">
+                  <div class="ellipsis">{{ scope.opt.label }}</div>
+                </template>
+                <template #option="scope">
+                  <q-item :disable="scope.opt.onlyHardcore && !store.storage.data.hardcore" clickable
+                    v-bind="scope.itemProps">
+                    <q-item-section avatar>
+                      <img height="36" :src="`/images/items/${_type}/${_typeValue1}/${scope.opt.elixir}.webp`"
+                        alt="Tradurs Elixir Images" />
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>{{ scope.opt.label }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
+            </div>
+            <div class="col" v-else-if="_typeValue1 === 'summoning'">
+              <q-select v-model="_typeValue2" :disable="disable" outlined dense no-error-icon hide-bottom-space emit-value
+                map-options transition-show="none" transition-hide="none" :transition-duration="0"
+                :label="t('item.selectSummoning')" dropdown-icon="img:/images/icons/dropdown.svg"
+                :options="store.summonings" popup-content-class="scroll bordered limit-select" options-dense
+                @update:model-value="updateTypeValue2">
+                <template #selected-item="scope">
+                  <div class="ellipsis">{{ scope.opt.label }}</div>
+                </template>
+                <template #option="scope">
+                  <q-item clickable v-bind="scope.itemProps">
+                    <q-item-section avatar>
+                      <img height="36" :src="`/images/items/${_type}/${_typeValue1}/${scope.opt.value}.webp`"
+                        alt="Tradurs Summoning Images" />
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>{{ scope.opt.label }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
+            </div>
+            <div v-else>
+              <q-btn dense glossy outline aria-label="Tradurs Thumbnail Button" padding="4px 8px" color="primary"
+                :ripple="false" class="no-hover rounded-borders" @click="showItemImages = true">
+                <img height="32" :src="`/images/items/${_type}/${_typeValue1}/${_image}.webp`"
+                  alt="Tradurs Item Thumbnail Image" />
+                <D4Dialog v-model="showItemImages" :no-route-dismiss="false">
+                  <template #top>
+                    <q-card-section class="row justify-between items-center q-ml-md">
+                      <div class="name">{{ t('item.selectImage', {
+                        tv:
+                          findClass(data.itemTypeValue1)?.label || findType(data.itemType)?.label
+                      }) }}
+                      </div>
+                      <q-btn unelevated aria-label="Tradurs Close Button" class="no-hover icon" :ripple="false">
+                        <img src="/images/icons/close.svg" width="24" height="24" @click="showItemImages = false"
+                          alt="icon_close" />
+                      </q-btn>
+                    </q-card-section>
+                  </template>
+                  <template #middle>
+                    <q-card-section class="scroll q-ma-lg" style="height:50vh">
+                      <div class="row q-col-gutter-md">
+                        <div v-for="i, idx in itemImgs[_type][_typeValue1 as string]" :key="idx"
+                          class="col-4 col-md-3 cursor-pointer" @click="_image = idx; update()" v-close-popup>
+                          <q-card flat bordered class="item-image-card"
+                            :class="{ 'bg-primary-cloud': idx === data.imageId }">
+                            <q-card-section class="text-center no-padding">
+                              <q-img style="width:90%" :src="`/images/items/${_type}/${_typeValue1}/${idx}.webp`"
+                                alt="Tradurs Item Image" />
+                            </q-card-section>
+                          </q-card>
+                        </div>
+                      </div>
+                    </q-card-section>
+                  </template>
+                </D4Dialog>
+              </q-btn>
+            </div>
+          </template>
+          <!-- Item Type Value Place ----------------------------------------------------------------------------------->
+          <D4Counter v-model="_quantity" :disable="disable" @update:model-value="update" />
         </div>
       </q-card-section>
-      <D4Separator v-show="qualifiable" />
       <q-card-section v-if="qualifiable">
         <q-input :disable="disable" dense no-error-icon hide-bottom-space autofocus v-model="_name" outlined
           class="col-10" :label="t('item.name')" @update:model-value="update" maxlength="256"
           :rules="[val => checkName(val) || '']" />
       </q-card-section>
-      <D4Separator v-show="!qualifiable && !noLevel" />
       <q-card-section v-if="data.itemTypeValue1 === 'rune'" class="col">
         <q-item v-show="loading" style="min-height:10px;padding:3px">
           <q-item-section side class="q-pr-sm">
@@ -464,7 +460,6 @@ defineExpose({ scrollEnd })
           </q-item-section>
         </q-item>
       </q-card-section>
-      <D4Separator v-show="qualifiable && !noLevel" />
       <q-card-section class="q-col-gutter-x-sm" :class="qualifiable ? 'row justify-between items-center' : 'col'">
         <div v-show="tierable" class="row items-center q-gutter-x-sm">
           <D4Counter v-model="_power" :label="t('item.power')" :max="9999" max-width="110px" allow-zero no-button
@@ -476,12 +471,14 @@ defineExpose({ scrollEnd })
           max-width="110px" :max="999" no-button :disable="disable || !qualifiable || noLevel"
           @update:model-value="update" />
       </q-card-section>
-      <D4Separator />
       <template v-if="qualifiable">
-        <q-card-section v-if="$slots['base-end']">
-          <slot name="base-end"></slot>
-        </q-card-section>
-        <D4Separator v-if="$slots['base-end']" />
+        <template v-if="$slots['base-end']">
+          <D4Separator />
+          <q-card-section>
+            <slot name="base-end"></slot>
+          </q-card-section>
+          <D4Separator />
+        </template>
         <q-card-section class="lt-md col row justify-center items-center">
           <q-btn no-caps :label="t('attribute.open')" aria-label="Tradurs Attribute Button" class="attribute full-width"
             size="lg" padding="xl" @click="attrMobile.show = true">
@@ -572,6 +569,7 @@ defineExpose({ scrollEnd })
           </q-card-section>
         </q-card>
       </template>
+      <D4Separator />
       <q-card-section>
         <D4Price :data="data.price" :editable="editable" :disable="disable" :progress="loading" @update="updatePrice" />
       </q-card-section>

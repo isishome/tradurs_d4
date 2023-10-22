@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue'
+import { computed, ref } from 'vue'
 import { QSelect, debounce } from 'quasar'
 import { useAccountStore } from 'src/stores/account-store'
-import { type IPreset, useItemStore } from 'src/stores/item-store'
+import { useItemStore } from 'src/stores/item-store'
 import { useI18n } from 'vue-i18n'
 import NotifyEn from '/images/filter/notify_en.webp'
 import NotifyKo from '/images/filter/notify_ko.webp'
@@ -21,7 +21,6 @@ const is = useItemStore()
 const { t, locale } = useI18n({ useScope: 'global' })
 
 const preset = ref<number | null>(null)
-//const presets = reactive<Array<IPreset>>([])
 const presets = is.storage.data.presets
 const filterQuality = is.filterQuality
 const filterTypes = is.filterTypes
