@@ -444,7 +444,7 @@ export default {
         { type: 'image', contents: '15_item' },
         { type: 'text', contents: '15. Press Apply to finalize the item registration. The item you just registered is displayed in the form of a card.' },
         { type: 'image', contents: '16_finish' },
-        { type: 'text', contents: '16. On the top right of the card, to the left of the item status, you will see the time remaining until the sale ends.\nBy default, the sale period is 3 days (72 hours), if you need to extend it, click \'Edit\' on the bottom left of the item.' },
+        { type: 'text', contents: '16. On the top right of the card, to the left of the item status, you will see the time remaining until the sale ends.\nBy default, the sale period is 2 days (48 hours), if you need to extend it, click \'Edit\' on the bottom left of the item.' },
         { type: 'image', contents: '17_relist' },
         { type: 'text', contents: '17. In the bottom left of the edit window, select More actions > Pull to move the item to the top and renew the sale period.' },
         { type: 'image', contents: '18_analyze' },

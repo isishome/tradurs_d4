@@ -447,7 +447,7 @@ export default {
         { type: 'image', contents: '15_item' },
         { type: 'text', contents: '15. 적용을 눌러 아이템 등록을 완료합니다. 방금 등록한 아이템이 카드 형태로 표시됩니다.' },
         { type: 'image', contents: '16_finish' },
-        { type: 'text', contents: '16. 카드 우측 상단 아이템 상태 좌측에 판매 종료까지 남은 시간이 표시됩니다.\n기본적으로 판매 기간은 3일(72시간)이며 연장이 필요 한 경우 아이템 좌측 하단의 \'수정하기\'를 클릭하고' },
+        { type: 'text', contents: '16. 카드 우측 상단 아이템 상태 좌측에 판매 종료까지 남은 시간이 표시됩니다.\n기본적으로 판매 기간은 2일(48시간)이며 연장이 필요 한 경우 아이템 좌측 하단의 \'수정하기\'를 클릭하고' },
         { type: 'image', contents: '17_relist' },
         { type: 'text', contents: '17. 수정 창 좌측 하단에 추가 작업 > 끌어올림을 선택하면 아이템이 최 상단으로 끌어올려짐과 동시에 판매 기간이 갱신됩니다.' },
         { type: 'image', contents: '18_analyze' },
