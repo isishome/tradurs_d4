@@ -400,7 +400,7 @@ defineExpose({ scrollEnd })
                       </div>
                       <q-btn unelevated aria-label="Tradurs Close Button" class="no-hover icon" :ripple="false">
                         <img src="/images/icons/close.svg" width="24" height="24" @click="showItemImages = false"
-                          alt="icon_close" />
+                          alt="Tradurs Close Icon" />
                       </q-btn>
                     </q-card-section>
                   </template>
@@ -651,7 +651,7 @@ defineExpose({ scrollEnd })
               <div v-if="!history" class="more-action">
                 <q-btn dense flat aria-label="Tradurs More Button" :ripple="false" class="no-hover" padding="0">
                   <img class="icon" src="/images/icons/morevert.svg" :width="$q.screen.lt.sm ? 16 : 22"
-                    :height="$q.screen.lt.sm ? 16 : 22" alt="icon_more" />
+                    :height="$q.screen.lt.sm ? 16 : 22" alt="Tradurs More Icon" />
                   <q-menu auto-close class="no-shadow" anchor="top end" self="bottom start"
                     :class="[$q.dark.isActive ? 'bg-grey-4' : 'bg-grey-9']">
                     <q-item v-if="as.signed" :class="[$q.dark.isActive ? 'text-grey-9' : 'text-grey-4']"
@@ -659,7 +659,7 @@ defineExpose({ scrollEnd })
                       <q-item-section side>
                         <img :class="{ 'invert': !$q.dark.isActive }"
                           :src="data.favorite ? '/images/icons/unfavorite.svg' : '/images/icons/favorite.svg'" width="24"
-                          height="24" alt="icon_favorite" />
+                          height="24" alt="Tradurs Favorite Icon" />
                       </q-item-section>
                       <q-item-section>{{ data.favorite ? t('btn.unfavorite') : t('btn.favorite')
                       }}</q-item-section>
@@ -668,7 +668,7 @@ defineExpose({ scrollEnd })
                       :dense="$q.screen.lt.sm" clickable @click="$emit('copy', data.itemId)">
                       <q-item-section side>
                         <img :class="{ 'invert': !$q.dark.isActive }" src="/images/icons/copy.svg" width="24" height="24"
-                          alt="icon_copy" />
+                          alt="Tradurs Copy Icon" />
                       </q-item-section>
                       <q-item-section>{{ t('btn.copy') }}</q-item-section>
                     </q-item>
@@ -676,7 +676,7 @@ defineExpose({ scrollEnd })
                       @click="copy">
                       <q-item-section side>
                         <img :class="{ 'invert': !$q.dark.isActive }" src="/images/icons/share.svg" width="24" height="24"
-                          alt="icon_share" />
+                          alt="Tradurs Share Icon" />
                       </q-item-section>
                       <q-item-section>{{ t('btn.share') }}</q-item-section>
                     </q-item>

@@ -349,20 +349,20 @@ defineExpose({ getList })
       <div v-if="as.signed" class="row items-center q-gutter-x-xs shadow-depth-5 relative-position">
         <!-- <D4Btn v-if="selectable" round @click="create" color="var(--q-info)"
           :disable="disable || items.filter((item: Item) => item.selected).length === 0">
-          <img src="/images/icons/remove.svg" width="24" height="24" class="invert" alt="icon_add" />
+          <img src="/images/icons/remove.svg" width="24" height="24" class="invert" alt="Tradurs Add Icon" />
         </D4Btn> -->
         <D4Btn round @click="create" color="var(--q-secondary)" :disable="disable" shadow>
-          <img src="/images/icons/add.svg" width="24" height="24" class="invert" alt="icon_add" />
+          <img src="/images/icons/add.svg" width="24" height="24" class="invert" alt="Tradurs Add Icon" />
         </D4Btn>
       </div>
       <D4Btn v-else style="visibility: hidden;" />
     </div>
     <div class="row q-gutter-xs items-center paging">
       <D4Btn round @click="prev" color="var(--q-light-magic)" :disable="!over || disable" :shadow="!$q.dark.isActive">
-        <img src="/images/icons/prev.svg" width="24" height="24" class="invert" alt="icon_prev" />
+        <img src="/images/icons/prev.svg" width="24" height="24" class="invert" alt="Tradurs Prev Icon" />
       </D4Btn>
       <D4Btn round @click="next" color="var(--q-light-magic)" :disable="!more || disable" :shadow="!$q.dark.isActive">
-        <img src="/images/icons/next.svg" width="24" height="24" class="invert" alt="icon_next" />
+        <img src="/images/icons/next.svg" width="24" height="24" class="invert" alt="Tradurs Next Icon" />
       </D4Btn>
     </div>
   </template>

@@ -67,7 +67,7 @@ const updateCurrency = (val: string | null): void => {
   <div v-if="editable">
     <div class="row justify-end items-center no-wrap q-gutter-sm">
       <div v-show="!$q.screen.lt.sm" class="row items-center">
-        <img src="/images/items/inventory/gold.webp" width="24" height="24" alt="icon_price" />
+        <img src="/images/items/inventory/gold.webp" width="24" height="24" alt="Tradurs Price Icon" />
       </div>
       <div>
         <q-select v-model="_price.currency" :disable="disable" outlined dense no-error-icon hide-bottom-space emit-value
@@ -137,7 +137,7 @@ const updateCurrency = (val: string | null): void => {
           <div class="q-ml-xs">{{ (runes().find(r => r.value === data.currencyValue) || {}).label }}</div>
         </template>
         <template v-else-if="data.currency === 'gold'">
-          <img src="/images/items/inventory/gold.webp" width="24" height="24" alt="icon_price" />
+          <img src="/images/items/inventory/gold.webp" width="24" height="24" alt="Tradurs Price Icon" />
           <div class="q-ml-xs">
             {{ n(Number.parseFloat(data.currencyValue ? data.currencyValue.toString() : '0'), 'decimal') }}
           </div>

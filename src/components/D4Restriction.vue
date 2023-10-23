@@ -54,7 +54,7 @@ const remove = (): void => {
       <q-btn v-show="editable" :disable="disable" dense unelevated flat round aria-label="Tradurs Remove/Restore Button"
         size="xs" :tabindex="-1" class="q-ml-sm" @click="remove">
         <img v-show="data.action !== 8" class="icon" width="13" height="13" src="/images/icons/close.svg"
-          alt="icon_close" />
+          alt="Tradurs Close Icon" />
         <img v-show="data.action === 8" class="icon flip-horizontal" width="13" height="13"
           src="/images/icons/restore.svg" alt="icon_restore" />
       </q-btn>

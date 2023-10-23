@@ -166,7 +166,7 @@ onMounted(() => {
             <q-btn color="secondary" v-show="newMessages" no-caps unelevated padding="6px" class="text-caption"
               aria-label="Tradurs Refresh Button" @click="refresh">
               <div class="row items-center q-gutter-x-sm">
-                <img src="/images/icons/restore.svg" width="18" height="18" class="invert" alt="icon_prev"
+                <img src="/images/icons/restore.svg" width="18" height="18" class="invert" alt="Tradurs Refresh Icon"
                   @click="prev" />
                 <div>
                   {{ t('btn.newMessages') }}
@@ -269,11 +269,11 @@ onMounted(() => {
       <div class="row justify-end items-center q-gutter-x-md">
         <q-btn flat dense round padding="0" aria-label="Tradurs Prev Button" :disable="!over || loading"
           :shadow="!$q.dark.isActive">
-          <img src="/images/icons/prev.svg" width="24" height="24" class="icon" alt="icon_prev" @click="prev" />
+          <img src="/images/icons/prev.svg" width="24" height="24" class="icon" alt="Tradurs Prev Icon" @click="prev" />
         </q-btn>
         <q-btn flat dense round padding="0" aria-label="Tradurs Next Button" :disable="!more || loading"
           :shadow="!$q.dark.isActive" @click="next">
-          <img src="/images/icons/next.svg" width="24" height="24" class="icon" alt="icon_next" />
+          <img src="/images/icons/next.svg" width="24" height="24" class="icon" alt="Tradurs Next Icon" />
         </q-btn>
       </div>
     </div>

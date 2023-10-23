@@ -328,7 +328,7 @@ onUnmounted(() => {
     <div class="q-py-lg"></div>
     <D4Btn v-if="completeInfo" round :to="{ name: 'tradeList', params: { lang: route.params.lang } }" class="sticky-btn"
       color="var(--q-light-normal)" shadow>
-      <img src="/images/icons/list.svg" width="20" height="20" class="invert" alt="icon_list" />
+      <img src="/images/icons/list.svg" width="20" height="20" class="invert" alt="Tradurs List Icon" />
     </D4Btn>
   </div>
 </template>

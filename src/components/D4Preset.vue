@@ -118,7 +118,7 @@ watch(() => props.modelValue, (val: number | null) => {
               <q-item-section side>
                 <q-btn size="xs" :disable="disable" :progress="progress" unelevated dense round outline color="negative"
                   aria-label="Tradurs Remove Button" @click.stop="remove(scope.opt.value)">
-                  <img class="negative" width="13" height="13" src="/images/icons/remove.svg" alt="icon_remove" />
+                  <img class="negative" width="13" height="13" src="/images/icons/remove.svg" alt="Tradurs Remove Icon" />
                 </q-btn>
               </q-item-section>
               <q-item-section>
@@ -135,7 +135,8 @@ watch(() => props.modelValue, (val: number | null) => {
       <q-btn size="sm" :disable="disable || options.length === 5" unelevated dense round
         :color="$q.dark.isActive ? 'grey-4' : 'grey-9'" :ripple="false" aria-label="Tradurs Add Button"
         @click="showAddPreset = true">
-        <img :class="{ 'invert': !$q.dark.isActive }" width="16" height="16" src="/images/icons/add.svg" alt="icon_add" />
+        <img :class="{ 'invert': !$q.dark.isActive }" width="16" height="16" src="/images/icons/add.svg"
+          alt="Tradurs Add Icon" />
       </q-btn>
     </q-item-section>
   </q-item>

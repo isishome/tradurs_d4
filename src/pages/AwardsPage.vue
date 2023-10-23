@@ -72,7 +72,7 @@ is.getAwards()
               </q-item-label>
             </q-item-section>
             <q-item-section side>
-              <img :src="'/images/icons/open.svg'" class="icon" width="18" height="18" alt="icon_favorite" />
+              <img :src="'/images/icons/open.svg'" class="icon" width="18" height="18" alt="Tradurs Favorite Icon" />
             </q-item-section>
           </q-item>
         </div>

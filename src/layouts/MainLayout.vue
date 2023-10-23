@@ -205,17 +205,17 @@ onUnmounted(() => {
           <div>
             <q-btn round dense flat aria-label="Tradurs Support Button" :ripple="!$q.dark.isActive"
               :to="{ name: 'support', params: { lang: route.params.lang } }">
-              <img class="icon" width="24" height="24" src="/images/icons/help.svg" alt="icon_support" />
+              <img class="icon" width="24" height="24" src="/images/icons/help.svg" alt="Tradurs Help Icon" />
               <!-- <q-badge floating label="N" color="negative" class="new-badge" /> -->
             </q-btn>
             <q-btn round flat aria-label="Tradurs Theme Button" :ripple="!$q.dark.isActive" @click="setDark">
               <img v-show="$q.dark.isActive" class="icon" width="24" height="24" src="/images/icons/light.svg"
-                alt="icon_light" />
+                alt="Tradurs Light Icon" />
               <img v-show="!$q.dark.isActive" class="icon" width="24" height="24" src="/images/icons/dark.svg"
-                alt="icon_dark" />
+                alt="Tradurs Dark Icon" />
             </q-btn>
             <q-btn v-if="signed" round flat aria-label="Tradurs User Info Button" :ripple="!$q.dark.isActive">
-              <img class="icon" width="24" height="24" src="/images/icons/user.svg" alt="icon_user" />
+              <img class="icon" width="24" height="24" src="/images/icons/user.svg" alt="Tradurs User Icon" />
               <q-menu anchor="bottom end" self="top end" transition-show="none" transition-hide="none"
                 :transition-duration="0" style="min-width:260px">
                 <D4User :data="as.info" info>
@@ -229,7 +229,7 @@ onUnmounted(() => {
               </q-menu>
             </q-btn>
             <q-btn v-else round flat aria-label="Tradurs Login Button" :ripple="!$q.dark.isActive" @click="sign">
-              <img class="icon" width="24" height="24" src="/images/icons/login.svg" alt="icon_login" />
+              <img class="icon" width="24" height="24" src="/images/icons/login.svg" alt="Tradurs Signin Icon" />
             </q-btn>
           </div>
         </q-item>
@@ -362,7 +362,7 @@ onUnmounted(() => {
           </q-btn>
           <q-btn flat round aria-label="Tradurs Filter Button" class="lt-md" :ripple="!$q.dark.isActive"
             @click="leftDrawerOpen = !leftDrawerOpen">
-            <img src="/images/icons/filter.svg" class="icon" width="24" height="24" alt="icon_filter" />
+            <img src="/images/icons/filter.svg" class="icon" width="24" height="24" alt="Tradurs Filter Icon" />
           </q-btn>
         </div>
         <div class="col row items-center" :class="$q.screen.lt.md ? 'justify-center' : 'justify-between'">
@@ -408,7 +408,7 @@ onUnmounted(() => {
                     <div v-show="newMessages" class="alert" style="top:-2px"></div>
                   </div>
                 </template>
-                <q-list bordered class="page rounded-borders shadow-3">
+                <q-list bordered class="page rounded-borders">
                   <q-item v-ripple clickable :to="{ name: 'messages', params: { lang: route.params.lang } }" exact
                     active-class="active">
                     <q-item-section side>
@@ -462,17 +462,17 @@ onUnmounted(() => {
         <div class="lt-md col-1 col-md-3 row justify-end q-gutter-sm">
           <q-btn round flat aria-label="Tradurs Morevert Button" :ripple="!$q.dark.isActive"
             @click="rightDrawerOpen = !rightDrawerOpen">
-            <img class="icon" width="24" height="24" src="/images/icons/morevert.svg" alt="icon_morevert" />
+            <img class="icon" width="24" height="24" src="/images/icons/morevert.svg" alt="Tradurs More Vertical Icon" />
           </q-btn>
         </div>
         <div class="gt-sm col-3 row justify-end items-center q-gutter-xs">
           <q-btn round dense flat aria-label="Tradurs Support Button" :ripple="!$q.dark.isActive"
             :to="{ name: 'support', params: { lang: route.params.lang } }">
-            <img class="icon" width="24" height="24" src="/images/icons/help.svg" alt="icon_support" />
+            <img class="icon" width="24" height="24" src="/images/icons/help.svg" alt="Tradurs Hekp Icon" />
             <!-- <q-badge floating label="N" color="negative" class="new-badge" /> -->
           </q-btn>
           <q-btn round dense flat aria-label="Tradurs Language Button" :ripple="!$q.dark.isActive">
-            <img class="icon" width="24" height="24" src="/images/icons/language.svg" alt="icon_language" />
+            <img class="icon" width="24" height="24" src="/images/icons/language.svg" alt="Tradurs Language Icon" />
             <q-menu auto-close class="no-shadow" anchor="bottom end" self="top end" transition-show="none"
               transition-hide="none" :transition-duration="0">
               <q-list bordered class="rounded-borders">
@@ -484,12 +484,12 @@ onUnmounted(() => {
           </q-btn>
           <q-btn round dense flat aria-label="Tradurs Theme Button" :ripple="!$q.dark.isActive" @click="setDark">
             <img v-show="$q.dark.isActive" class="icon" width="24" height="24" src="/images/icons/light.svg"
-              alt="icon_light" />
+              alt="Tradurs Light Icon" />
             <img v-show="!$q.dark.isActive" class="icon" width="24" height="24" src="/images/icons/dark.svg"
-              alt="icon_dark" />
+              alt="Tradurs Dark Icon" />
           </q-btn>
           <q-btn v-if="signed" round flat aria-label="Tradurs User Info Button" :ripple="!$q.dark.isActive">
-            <img class="icon" width="24" height="24" src="/images/icons/user.svg" alt="icon_user" />
+            <img class="icon" width="24" height="24" src="/images/icons/user.svg" alt="Tradurs User Icon" />
             <q-menu anchor="bottom end" self="top end" transition-show="none" transition-hide="none"
               :transition-duration="0" style="min-width:280px">
               <D4User :data="as.info" info>
@@ -503,7 +503,7 @@ onUnmounted(() => {
             </q-menu>
           </q-btn>
           <q-btn v-else round dense flat aria-label="Tradurs Login Button" :ripple="!$q.dark.isActive" @click="sign">
-            <img class="icon" width="24" height="24" src="/images/icons/login.svg" alt="icon_login" />
+            <img class="icon" width="24" height="24" src="/images/icons/login.svg" alt="Tradurs Signin Icon" />
           </q-btn>
         </div>
       </q-toolbar>
@@ -623,18 +623,22 @@ onUnmounted(() => {
 }
 
 .page:deep(.sub) {
-  background-color: var(--q-cloud);
+  background-color: var(--q-dark);
   border-top: none;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
 
+.body--light .page:deep(.sub) {
+  background-color: var(--q-light-page);
+}
+
 .page:deep(.q-expansion-item>div>.q-item:first-child) {
   transition: box-shadow .3s ease;
+  border-radius: 4px 4px 0 0;
 }
 
 .page:deep(.expanded>div>.q-item:first-child) {
-  border-radius: 4px 4px 0 0;
   box-shadow: inset 0 0 0 1px rgba(100, 100, 100, 1);
   opacity: 1;
 }

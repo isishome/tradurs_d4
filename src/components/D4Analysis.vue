@@ -611,7 +611,7 @@ const beforeHideDropBox = () => {
         <div ref="dropArea" class="drop-area q-ma-xl q-pa-xl column items-center q-gutter-y-sm text-h6"
           :class="{ 'enter': dropBox.enter > 0 }" @dragenter.prevent="dropBox.enter++"
           @dragleave.prevent="dropBox.enter--" @dragover.prevent @click="fileRef?.pickFiles">
-          <img src="/images/icons/image.svg" class="icon" width="48" height="48" alt="icon_image" />
+          <img src="/images/icons/image.svg" class="icon" width="48" height="48" alt="Tradurs Image Icon" />
           <div>{{ t('analyze.dragAndDrop') }}</div>
           <div class="row q-gutter-x-sm items-baseline">
             <div>{{ t('analyze.or') }}</div>

@@ -1,5 +1,7 @@
 User-agent: *
 Disallow: /messages/
+Disallow: /blocks/
+Disallow: /history/
 
 User-agent: *
 Allow: /

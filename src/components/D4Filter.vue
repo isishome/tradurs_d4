@@ -376,7 +376,7 @@ const removePreset = ({ id, done, error }: { id: number, done: Function, error: 
       <q-item-section side>
         <q-btn :disable="filterLoading" dense unelevated flat round aria-label="Tradurs Close Button" size="xs"
           :tabindex="-1" class="q-ml-sm" @click="removeProperty(pid)">
-          <img class="icon" width="13" height="13" src="/images/icons/close.svg" alt="icon_close" />
+          <img class="icon" width="13" height="13" src="/images/icons/close.svg" alt="Tradurs Close Icon" />
         </q-btn>
       </q-item-section>
     </q-item>
@@ -418,7 +418,7 @@ const removePreset = ({ id, done, error }: { id: number, done: Function, error: 
       <q-item-section side>
         <q-btn :disable="filterLoading" dense unelevated flat round aria-label="Tradurs Close Button" size="xs"
           :tabindex="-1" class="q-ml-sm" @click="removeAffix(aid)">
-          <img class="icon" width="13" height="13" src="/images/icons/close.svg" alt="icon_close" />
+          <img class="icon" width="13" height="13" src="/images/icons/close.svg" alt="Tradurs Close Icon" />
         </q-btn>
       </q-item-section>
     </q-item>
@@ -456,7 +456,7 @@ const removePreset = ({ id, done, error }: { id: number, done: Function, error: 
       <q-item-section side>
         <q-btn :disable="filterLoading" dense unelevated flat round aria-label="Tradurs Close Button" size="xs"
           :tabindex="-1" class="q-ml-sm" @click="removeRestriction(rid)">
-          <img class="icon" width="13" height="13" src="/images/icons/close.svg" alt="icon_close" />
+          <img class="icon" width="13" height="13" src="/images/icons/close.svg" alt="Tradurs Close Icon" />
         </q-btn>
       </q-item-section>
     </q-item>

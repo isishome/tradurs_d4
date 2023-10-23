@@ -704,7 +704,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
               <q-btn v-if="!rewardItem.expanded && !loading" flat aria-label="Tradurs More Button" text-color="black"
                 class="more no-hover full-width" padding="10px" @click="expanded(rewardItem, true)">
                 <img class="icon" :width="$q.screen.lt.sm ? 24 : 36" :height="$q.screen.lt.sm ? 24 : 36"
-                  src="/images/icons/more.svg" alt="icon_more" />
+                  src="/images/icons/more.svg" alt="Tradurs More Icon" />
               </q-btn>
             </template>
           </D4Item>
@@ -747,7 +747,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
             <q-btn v-if="!item.expanded && !loading" flat aria-label="Tradurs More Button" text-color="black"
               class="more no-hover full-width" padding="10px" @click="expanded(item)">
               <img class="icon" :width="$q.screen.lt.sm ? 24 : 36" :height="$q.screen.lt.sm ? 24 : 36"
-                src="/images/icons/more.svg" alt="icon_more" />
+                src="/images/icons/more.svg" alt="Tradurs More Icon" />
             </q-btn>
           </template>
         </D4Item>
@@ -824,7 +824,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
             </q-select>
             <q-btn size="sm" :disable="disable" unelevated flat dense round aria-label="Tradurs Add Button"
               @click="createAffix">
-              <img class="icon" width="24" height="24" src="/images/icons/add.svg" alt="icon_add" />
+              <img class="icon" width="24" height="24" src="/images/icons/add.svg" alt="Tradurs Add Icon" />
             </q-btn>
           </div>
         </template>
@@ -1001,7 +1001,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
           </div>
           <q-btn unelevated aria-label="Tradurs Close Button" class="no-hover icon" :ripple="false"
             @click="showOffers = false">
-            <img src="/images/icons/close.svg" width="24" height="24" alt="icon_close" />
+            <img src="/images/icons/close.svg" width="24" height="24" alt="Tradurs Close Icon" />
           </q-btn>
         </q-card-section>
       </template>

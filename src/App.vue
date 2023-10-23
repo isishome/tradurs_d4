@@ -149,7 +149,7 @@ onMounted(() => {
         </div>
         <q-btn unelevated aria-label="Tradurs Close Button" class="no-hover icon" :ripple="false"
           @click="notice.open = false">
-          <img src="/images/icons/close.svg" width="24" height="24" alt="icon_close" />
+          <img src="/images/icons/close.svg" width="24" height="24" alt="Tradurs Close Icon" />
         </q-btn>
       </q-card-section>
     </template>
