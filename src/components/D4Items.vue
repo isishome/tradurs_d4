@@ -1030,7 +1030,8 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
       </template>
       <template v-if="isMakingOffer" #bottom>
         <q-card-section>
-          <D4Offer :data="makeOffer" make :disable="disableOffers" :progress="progressOffer" @make-offer="makingOffer" />
+          <D4Offer :data="makeOffer" make :fixed="offerItem?.price.currency !== 'offer'" :disable="disableOffers"
+            :progress="progressOffer" @make-offer="makingOffer" />
         </q-card-section>
       </template>
       <template v-else-if="allowShowSeller" #bottom>

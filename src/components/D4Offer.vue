@@ -15,6 +15,7 @@ interface IProps {
   disable?: boolean,
   progress?: boolean,
   owner?: boolean,
+  fixed?: boolean,
   evaluations?: Array<number>
 }
 
@@ -23,6 +24,7 @@ const props = withDefaults(defineProps<IProps>(), {
   disable: false,
   progress: false,
   owner: false,
+  fixed: false,
   evaluations: () => []
 })
 
@@ -130,7 +132,7 @@ const parsEvaluations = computed(() => props.owner ? as.filterEvaluations(props.
   <q-form v-if="make" @submit="makeOffer" class="q-pt-md row justify-end items-center q-col-gutter-sm q-pa-md"
     :class="{ 'q-pt-lg': !$q.screen.lt.sm }">
     <div class="col">
-      <D4Price offer :data="_offer.price" editable :disable="disable || progress" @update="updatePrice" />
+      <D4Price offer :fixed="fixed" :data="_offer.price" editable :disable="disable || progress" @update="updatePrice" />
     </div>
     <D4Btn :label="t('btn.offer')" :loading="data.loading" :disable="disable" :progress="progress" type="submit" />
   </q-form>

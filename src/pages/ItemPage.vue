@@ -218,6 +218,14 @@ const notify = (group: string, message: string, caption: string, actionLabel: st
   })
 }
 
+const parseOfferPrice = (priceStr?: string) => {
+  const price: IPrice = JSON.parse(priceStr || '{}')
+  const currencyName = price.currency === 'gold' ? t('item.gold') : price.currency === 'summoning' ? is.summonings.find(s => s.value === price.currencyValue)?.label : ''
+  const currencyValue = price.currency === 'gold' ? ` : ${n(Number.parseFloat(price.currencyValue as string), 'decimal')}` : price.currency === 'summoning' ? ` x ${price.quantity}` : ''
+
+  return { currencyName, currencyValue }
+}
+
 watch(() => props.itemid, (val, old) => {
   if (val && val !== old)
     getItem()
@@ -232,8 +240,8 @@ watch(newItems, (val: number) => {
 
 watch(newOffer, (val: OfferInfo | null) => {
   if (val) {
-    const offerPrice: IPrice = JSON.parse(val.price || '{}')
-    notify('', t('messages.newOffer'), `[${val.itemName}] ${offerPrice.currency === 'gold' ? t('item.gold') : ''} : ${n(Number.parseFloat(offerPrice.currencyValue as string), 'decimal')}`, t('btn.move'), () => {
+    const parsing = parseOfferPrice(val.price)
+    notify('', t('messages.newOffer'), `[${val.itemName}] ${parsing.currencyName}${parsing.currencyValue}`, t('btn.move'), () => {
       if (props.itemid === val.itemId) {
         updateOnly(val.itemId, () => {
           itemsRef.value?.openOffers(props.itemid)
@@ -247,8 +255,8 @@ watch(newOffer, (val: OfferInfo | null) => {
 
 watch(acceptedOffer, (val: OfferInfo | null) => {
   if (val) {
-    const offerPrice: IPrice = JSON.parse(val.price || '{}')
-    notify('', t('messages.acceptedOffer'), `[${val.itemName}] ${offerPrice.currency === 'gold' ? t('item.gold') : ''} : ${n(Number.parseFloat(offerPrice.currencyValue as string), 'decimal')}`, t('btn.move'), () => {
+    const parsing = parseOfferPrice(val.price)
+    notify('', t('messages.acceptedOffer'), `[${val.itemName}] ${parsing.currencyName}${parsing.currencyValue}`, t('btn.move'), () => {
       if (props.itemid === val.itemId) {
         updateOnly(val.itemId, () => {
           itemsRef.value?.openOffers(props.itemid)
@@ -262,8 +270,8 @@ watch(acceptedOffer, (val: OfferInfo | null) => {
 
 watch(retractedOffer, (val: OfferInfo | null) => {
   if (val) {
-    const offerPrice: IPrice = JSON.parse(val.price || '{}')
-    notify('', t('messages.retractedOffer'), `[${val.itemName}] ${offerPrice.currency === 'gold' ? t('item.gold') : ''} : ${n(Number.parseFloat(offerPrice.currencyValue as string), 'decimal')}`, t('btn.move'), () => {
+    const parsing = parseOfferPrice(val.price)
+    notify('', t('messages.retractedOffer'), `[${val.itemName}] ${parsing.currencyName}${parsing.currencyValue}`, t('btn.move'), () => {
       if (props.itemid === val.itemId) {
         updateOnly(val.itemId, () => {
           itemsRef.value?.openOffers(props.itemid)
@@ -277,8 +285,8 @@ watch(retractedOffer, (val: OfferInfo | null) => {
 
 watch(turnedDownOffer, (val: OfferInfo | null) => {
   if (val) {
-    const offerPrice: IPrice = JSON.parse(val.price || '{}')
-    notify('', t('messages.turnedDownOffer'), `[${val.itemName}] ${offerPrice.currency === 'gold' ? t('item.gold') : ''} : ${n(Number.parseFloat(offerPrice.currencyValue as string), 'decimal')}`, t('btn.move'), () => {
+    const parsing = parseOfferPrice(val.price)
+    notify('', t('messages.turnedDownOffer'), `[${val.itemName}] ${parsing.currencyName}${parsing.currencyValue}`, t('btn.move'), () => {
       if (props.itemid === val.itemId) {
         updateOnly(val.itemId, () => {
           itemsRef.value?.openOffers(props.itemid)

@@ -2,7 +2,6 @@ import { nextTick } from "vue"
 import { copyToClipboard, Notify, Platform } from 'quasar'
 import { i18n } from "src/boot/i18n"
 import { AffixValue } from "src/types/item"
-import { platform } from "os"
 
 export const checkName = (name: string) => {
   return /^[0-9a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣\s,\.'"%\(\)\+\-\:]{2,}$/gi.test(name) && name.length <= 256

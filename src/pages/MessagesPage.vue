@@ -6,11 +6,13 @@ import { useRoute } from 'vue-router'
 import { scrollPos } from 'src/common'
 import { useGlobalStore } from 'src/stores/global-store'
 import { useAccountStore } from 'src/stores/account-store'
+import { useItemStore } from 'src/stores/item-store'
 import { IMessage, IAnswer } from 'src/types/user'
 
 const $q = useQuasar()
 const gs = useGlobalStore()
 const as = useAccountStore()
+const is = useItemStore()
 const { t, n } = useI18n({ useScope: 'global' })
 const route = useRoute()
 
@@ -176,7 +178,7 @@ onMounted(() => {
           </div>
         </div>
       </q-slide-transition>
-      <template v-for="message in messages" :key="message.msgId">
+      <template v-for="message in  messages " :key="message.msgId">
         <q-separator />
         <q-item clickable v-ripple @click="read(message)" :class="['q-py-lg', { 'read': message.readYn }]">
           <q-item-section side @click.stop>
@@ -190,13 +192,17 @@ onMounted(() => {
           </q-item-section>
           <q-item-section>
             <q-item-label class="text-weight-bold" lines="1">
-              {{ ['900', '999'].includes(message.msgType) ? 'Tradurs' : message.itemName }}
+              {{ ['900', '999'].includes(message.msgType) ? 'Tradurs' : `${message.itemName}${message.itemQuantity !== 1 ?
+                ` x ${message.itemQuantity}` : ''}` }}
             </q-item-label>
             <q-item-label caption lines="2">
               {{ t(`messages.title${message.msgType}`) }}
             </q-item-label>
             <q-item-label caption lines="2" v-if="message.currency === 'gold'">
-              {{ `${t('item.gold')} : ${n(Number.parseFloat(message.currencyValue as string))}` }}
+              {{ `${t('item.gold')} : ${n(Number.parseFloat(message.currencyValue as string))} ` }}
+            </q-item-label>
+            <q-item-label caption lines="2" v-else-if="message.currency === 'summoning'">
+              {{ `${is.summonings.find(s => s.value === message.currencyValue)?.label} x ${message.quantity} ` }}
             </q-item-label>
           </q-item-section>
           <q-item-section side top>
@@ -230,7 +236,7 @@ onMounted(() => {
           </div>
         </q-slide-transition>
       </template>
-      <template v-if="loading" v-for="c in messages.length || as.messagePage.rows" :key="c">
+      <template v-if="loading" v-for=" c  in  messages.length || as.messagePage.rows " :key="c">
         <q-separator />
         <q-item class="q-py-md">
           <q-item-section side>

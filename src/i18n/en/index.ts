@@ -186,6 +186,7 @@ export default {
     forDisplay: 'For Display'
   },
   price: {
+    title: 'Price',
     currency: 'Currency',
     quantity: 'Quantity',
     getOffer: 'Get An Offer',
@@ -330,8 +331,10 @@ export default {
     top: 'Hello. This is Tradurs.\n\nAnnouncement of new updates.',
     contents: [
       { type: 'head', value: '◆ Updates' },
-      { type: 'image', value: '/images/notice/20231020/summoning_en.webp' },
-      { type: 'list', value: 'Summoning materials added to consumables' },
+      { type: 'image', value: '/images/notice/20231028/01.webp' },
+      { type: 'space' },
+      { type: 'image', value: '/images/notice/20231028/02.webp' },
+      { type: 'list', value: 'Summoning materials are added to the currency types.' },
       { type: 'space' }
     ],
     bottom: 'Thank you',

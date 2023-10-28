@@ -22,6 +22,7 @@ export interface IMessage {
   msgValue: string,
   itemId: number,
   itemName: string,
+  itemQuantity: number,
   currency: string,
   currencyValue: string,
   regDate: string,

@@ -269,6 +269,14 @@ const notify = (group: string, message: string, caption: string, actionLabel: st
   })
 }
 
+const parseOfferPrice = (priceStr?: string) => {
+  const price: IPrice = JSON.parse(priceStr || '{}')
+  const currencyName = price.currency === 'gold' ? t('item.gold') : price.currency === 'summoning' ? is.summonings.find(s => s.value === price.currencyValue)?.label : ''
+  const currencyValue = price.currency === 'gold' ? ` : ${n(Number.parseFloat(price.currencyValue as string), 'decimal')}` : price.currency === 'summoning' ? ` x ${price.quantity}` : ''
+
+  return { currencyName, currencyValue }
+}
+
 watch(newItems, (val: number) => {
   if (val > 0)
     notify('newItems', t('messages.newItems', val), '', t('btn.refresh'), () => {
@@ -282,8 +290,8 @@ watch(newItems, (val: number) => {
 
 watch(newOffer, (val: OfferInfo | null) => {
   if (val) {
-    const offerPrice: IPrice = JSON.parse(val.price || '{}')
-    notify('', t('messages.newOffer'), `[${val.itemName}] ${offerPrice.currency === 'gold' ? t('item.gold') : ''} : ${n(Number.parseFloat(offerPrice.currencyValue as string), 'decimal')}`, t('btn.move'), () => {
+    const parsing = parseOfferPrice(val.price)
+    notify('', t('messages.newOffer'), `[${val.itemName}] ${parsing.currencyName}${parsing.currencyValue}`, t('btn.move'), () => {
       router.push({ name: 'itemInfo', params: { lang: route.params.lang, itemid: val.itemId }, state: { offers: true } })
     })
   }
@@ -291,8 +299,8 @@ watch(newOffer, (val: OfferInfo | null) => {
 
 watch(acceptedOffer, (val: OfferInfo | null) => {
   if (val) {
-    const offerPrice: IPrice = JSON.parse(val.price || '{}')
-    notify('', t('messages.acceptedOffer', { in: val.itemName }), `[${val.itemName}] ${offerPrice.currency === 'gold' ? t('item.gold') : ''} : ${n(Number.parseFloat(offerPrice.currencyValue as string), 'decimal')}`, t('btn.move'), () => {
+    const parsing = parseOfferPrice(val.price)
+    notify('', t('messages.acceptedOffer', { in: val.itemName }), `[${val.itemName}] ${parsing.currencyName}${parsing.currencyValue}`, t('btn.move'), () => {
       router.push({ name: 'itemInfo', params: { lang: route.params.lang, itemid: val.itemId }, state: { offers: true } })
     })
   }
@@ -300,8 +308,8 @@ watch(acceptedOffer, (val: OfferInfo | null) => {
 
 watch(retractedOffer, (val: OfferInfo | null) => {
   if (val) {
-    const offerPrice: IPrice = JSON.parse(val.price || '{}')
-    notify('', t('messages.retractedOffer', { in: val.itemName }), `[${val.itemName}] ${offerPrice.currency === 'gold' ? t('item.gold') : ''} : ${n(Number.parseFloat(offerPrice.currencyValue as string), 'decimal')}`, t('btn.move'), () => {
+    const parsing = parseOfferPrice(val.price)
+    notify('', t('messages.retractedOffer', { in: val.itemName }), `[${val.itemName}] ${parsing.currencyName}${parsing.currencyValue}`, t('btn.move'), () => {
       router.push({ name: 'itemInfo', params: { lang: route.params.lang, itemid: val.itemId }, state: { offers: true } })
     })
   }
@@ -309,8 +317,8 @@ watch(retractedOffer, (val: OfferInfo | null) => {
 
 watch(turnedDownOffer, (val: OfferInfo | null) => {
   if (val) {
-    const offerPrice: IPrice = JSON.parse(val.price || '{}')
-    notify('', t('messages.turnedDownOffer', { in: val.itemName }), `[${val.itemName}] ${offerPrice.currency === 'gold' ? t('item.gold') : ''} : ${n(Number.parseFloat(offerPrice.currencyValue as string), 'decimal')}`, t('btn.move'), () => {
+    const parsing = parseOfferPrice(val.price)
+    notify('', t('messages.turnedDownOffer', { in: val.itemName }), `[${val.itemName}] ${parsing.currencyName}${parsing.currencyValue}`, t('btn.move'), () => {
       router.push({ name: 'itemInfo', params: { lang: route.params.lang, itemid: val.itemId }, state: { offers: true } })
     })
   }

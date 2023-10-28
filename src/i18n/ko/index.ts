@@ -189,6 +189,7 @@ export default {
     forDisplay: '전시용'
   },
   price: {
+    title: '가격',
     currency: '화폐 유형',
     quantity: '수량',
     getOffer: '제안받기',
@@ -333,8 +334,10 @@ export default {
     top: '안녕하세요. 트레이더스입니다.\n\n새로운 업데이트 사항 안내입니다.',
     contents: [
       { type: 'head', value: '◆ 업데이트 사항' },
-      { type: 'image', value: '/images/notice/20231020/summoning_ko.webp' },
-      { type: 'list', value: '소비용품에 소환 재료 추가' },
+      { type: 'image', value: '/images/notice/20231028/01.webp' },
+      { type: 'space' },
+      { type: 'image', value: '/images/notice/20231028/02.webp' },
+      { type: 'list', value: '화폐 종류에 소환 재료가 추가됩니다.' },
       { type: 'space' }
     ],
     bottom: '감사합니다.',

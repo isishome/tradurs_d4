@@ -58,6 +58,7 @@ export interface ItemType extends ILabel {
 
 export interface EquipmentClass extends ILabel {
   type: string,
+  isCurrency: boolean,
   properties: number[]
 }
 
@@ -267,7 +268,7 @@ export const useItemStore = defineStore('item', {
       return (type?: string): Array<EquipmentClass> => type ? state.classes.filter(c => c.type === type) : state.classes
     },
     currencies: (state) => {
-      return (): Array<ILabel> => state.types.filter(t => t.isCurrency || t.onlyCurrency)
+      return (): Array<ILabel> => [...state.types.filter(t => t.isCurrency || t.onlyCurrency), ...state.classes.filter(c => c.isCurrency)]
     },
     findRuneType: (state) => {
       return (type?: string): RuneType | undefined => state.runeTypes.find(rt => rt.value === type)
