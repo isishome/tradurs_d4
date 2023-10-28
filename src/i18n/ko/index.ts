@@ -337,7 +337,7 @@ export default {
       { type: 'image', value: '/images/notice/20231028/01.webp' },
       { type: 'space' },
       { type: 'image', value: '/images/notice/20231028/02.webp' },
-      { type: 'list', value: '화폐 종류에 소환 재료가 추가됩니다.' },
+      { type: 'list', value: '화폐 유형에 소환 재료가 추가됩니다.' },
       { type: 'space' }
     ],
     bottom: '감사합니다.',
