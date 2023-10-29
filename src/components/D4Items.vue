@@ -8,6 +8,7 @@ import { useGlobalStore } from 'src/stores/global-store'
 import { useAccountStore } from 'stores/account-store'
 import { useItemStore } from 'stores/item-store'
 import { checkAttribute, scrollPos } from 'src/common'
+import { itemImgs } from 'src/common/items'
 import { Item, Offer, type AffixValue, type IItem, Price, type Property, type Affix, type Restriction } from 'src/types/item'
 import { User } from 'src/types/user'
 
@@ -120,7 +121,7 @@ const updateItem = ({ name, quantity, tier, quality, itemType, itemTypeValue1, i
 
   if (changeTypeNotFirst) {
     activatedItem.value.quantity = 1
-    activatedItem.value.imageId = 0
+    activatedItem.value.imageId = Math.floor(Math.random() * itemImgs[itemType][itemTypeValue1 as string])
     activatedItem.value.properties.splice(0, activatedItem.value.properties.length)
     activatedItem.value.affixes.splice(0, activatedItem.value.affixes.length)
     activatedItem.value.restrictions.splice(0, activatedItem.value.restrictions.length)
