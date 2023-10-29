@@ -93,7 +93,7 @@ const findClass = store.findClass
 
 const hasProperties = computed(() => findClass(_typeValue1.value)?.properties.length !== 0)
 
-const _image = ref<number>(props.data.itemId !== '' ? props.data.imageId : Math.floor(Math.random() * itemImgs[_type.value][_typeValue1.value as string]))
+const _image = ref<number>(props.data.itemId !== '' ? props.data.imageId : Math.floor(Math.random() * itemImgs[_type.value]?.[_typeValue1.value as string]))
 const _price = reactive<Price>(new Price((props.data.price && props.data.price.currency ? props.data.price.currency : 'offer'), (props.data.price && props.data.price.currencyValue ? props.data.price.currencyValue : null), (props.data.price && props.data.price.quantity ? props.data.price.quantity : undefined)))
 
 const tierable = computed(() => !['aspect', 'inventory', 'consumables'].includes(_type.value))
@@ -138,7 +138,7 @@ const updateType = (val: string) => {
 }
 
 const updateTypeValue1 = (val: string) => {
-  _image.value = Math.floor(Math.random() * itemImgs[_type.value][_typeValue1.value as string])
+  _image.value = Math.floor(Math.random() * itemImgs[_type.value]?.[_typeValue1.value as string])
   attribute.value = findClass(val)?.properties.length !== 0 ? 'properties' : 'affixes'
   _typeValue2.value = (val === 'gem' ? store.gems[0].value as string : val === 'elixir' ? store.elixirs[0].value as string : val === 'summoning' ? store.summonings[0].value as string : '')
   _level.value = (val === 'gem' ? store.gems[0].level : val === 'elixir' ? store.elixirs[0].level : _level.value)

@@ -121,7 +121,7 @@ const updateItem = ({ name, quantity, tier, quality, itemType, itemTypeValue1, i
 
   if (changeTypeNotFirst) {
     activatedItem.value.quantity = 1
-    activatedItem.value.imageId = Math.floor(Math.random() * itemImgs[itemType][itemTypeValue1 as string])
+    activatedItem.value.imageId = Math.floor(Math.random() * itemImgs[itemType]?.[itemTypeValue1 as string])
     activatedItem.value.properties.splice(0, activatedItem.value.properties.length)
     activatedItem.value.affixes.splice(0, activatedItem.value.affixes.length)
     activatedItem.value.restrictions.splice(0, activatedItem.value.restrictions.length)
