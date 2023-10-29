@@ -32,7 +32,7 @@ const is = useItemStore()
 const lang: string = route.params.lang as string || 'ko'
 const similarRate = .7
 const phase = is.analyze.lang[lang as keyof typeof is.analyze.lang]
-const timeout = 1000
+const timeout = 400
 const showProgress = ref<boolean>(false)
 const checkedItem = reactive<string[]>([])
 const checkList: ILabel[] = [
@@ -496,7 +496,7 @@ const filtering = (f: File) => {
     image.src = fr.result as string
     image.onload = () => {
       const isTransparent = f.name.toLowerCase().match(/\.(png|webp)/g)
-      const ratio = isTransparent ? 1 : 2.8
+      const ratio = Math.round(430 / image.width * 10000) / 10000
       const iWidth = image.width
       const iHeight = image.height
       const predictItem = Math.ceil(iWidth * 0.28)
@@ -505,10 +505,11 @@ const filtering = (f: File) => {
 
       if (ctx) {
         if (isTransparent) {
-          ctx.fillStyle = '#552200'
+          ctx.fillStyle = '#000000'
           ctx.fillRect(0, 0, canvas.width, canvas.height)
         }
-        ctx.filter = isTransparent ? 'invert(1) blur(.5px)' : 'invert(1) contrast(1.4) blur(.4px)'
+
+        ctx.filter = isTransparent ? 'contrast(1.4) blur(.4px)' : 'invert(1) contrast(1.4) blur(.4px)'
         ctx.drawImage(image, 0, 0, iWidth - predictItem, predictItem, 0, 0, (iWidth - predictItem) * ratio, predictItem * ratio)
         ctx.drawImage(image, 0, predictItem, iWidth, iHeight - predictItem, 0, predictItem * ratio, iWidth * ratio, (iHeight - predictItem) * ratio)
 
