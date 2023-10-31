@@ -334,10 +334,9 @@ export default {
     top: '안녕하세요. 트레이더스입니다.\n\n새로운 업데이트 사항 안내입니다.',
     contents: [
       { type: 'head', value: '◆ 업데이트 사항' },
-      { type: 'image', value: '/images/notice/20231028/01.webp' },
-      { type: 'space' },
-      { type: 'image', value: '/images/notice/20231028/02.webp' },
-      { type: 'list', value: '화폐 유형에 소환 재료가 추가됩니다.' },
+      { type: 'image', value: '/images/notice/20231031/discord.jpg' },
+      { type: 'list', value: '메뉴에 디스코드 링크 아이콘이 추가되었습니다.' },
+      { type: 'list', value: '디스코드를 사용하여 손쉽게 버그를 제보하고 서비스에 대한 개선을 요청할 수 있습니다.' },
       { type: 'space' }
     ],
     bottom: '감사합니다.',

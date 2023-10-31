@@ -166,9 +166,6 @@ const propertyRef = ref<HTMLDivElement | null>(null)
 const affixRef = ref<HTMLDivElement | null>(null)
 const restrictionRef = ref<HTMLDivElement | null>(null)
 const scrollEnd = (pType: string, valueId: string) => {
-  if ($q.platform.is.mobile)
-    return
-
   nextTick(() => {
     if (pType === 'properties' && propertyRef.value) {
       const findValue = propertyRef.value.querySelector(`div[data-id="${valueId}"] input`) as HTMLInputElement
@@ -213,9 +210,8 @@ defineExpose({ scrollEnd })
 </script>
 
 <template>
-  <q-card v-if="editable" ref="editWrap" class="card-item non-selectable no-scroll editable" :class="data.quality">
-    <q-form class="inner column no-wrap" :class="{ 'justify-between': !$q.screen.lt.sm }" @submit="apply"
-      :style="$q.screen.lt.sm ? 'height:100%' : 'max-height:90vh;min-height:50vh'">
+  <q-card v-if="editable" ref="editWrap" class="card-item non-selectable scroll editable" :class="data.quality">
+    <q-form class="inner" :class="$q.screen.lt.sm ? 'column full-height' : 'justify-between'" @submit="apply">
       <q-card-section>
         <div class="column items-start q-gutter-y-sm">
           <div class="row items-center no-wrap justify-between q-col-gutter-sm full-width q-pt-sm">
@@ -478,27 +474,100 @@ defineExpose({ scrollEnd })
           </q-card-section>
           <D4Separator />
         </template>
-        <q-card-section class="lt-md col row justify-center items-center">
+        <q-card-section v-show="attrMobile.is && !attrMobile.show" class="col row justify-center items-center">
           <q-btn no-caps :label="t('attribute.open')" aria-label="Tradurs Attribute Button" class="attribute full-width"
             size="lg" padding="xl" @click="attrMobile.show = true">
             <img width="24" height="24" class="icon q-ml-sm rotate-45" src="/images/icons/expand.svg"
               alt="Tradurs Expand Icon" />
           </q-btn>
         </q-card-section>
-        <q-card flat v-show="!attrMobile.is || attrMobile.show" class="col"
-          :class="attrMobile.is ? 'fullscreen column' : 'bg-transparent'">
+        <q-card-section v-show="!attrMobile.is || attrMobile.show" class="tab row justify-end items-center">
+          <q-btn-toggle v-model="attribute" square flat no-caps aria-label="Tradurs Attribute Button" :ripple="false"
+            :color="$q.dark.isActive ? 'grey-5' : 'grey-8'" toggle-color="transparent toggle" :options="attributes" />
+        </q-card-section>
+        <q-card-section v-show="!attrMobile.is" style="padding-top:0">
+          <div class="attribute">
+            <q-tab-panels v-model="attribute" class="q-pa-xs bg-transparent">
+              <q-tab-panel v-if="hasProperties" name="properties" class="q-gutter-y-xs no-padding column no-wrap"
+                style="max-height:30vh">
+                <div v-if="slots['add-property']">
+                  <slot name="add-property" :wrap="editWrap"></slot>
+                </div>
+                <div ref="propertyRef" class="col scroll">
+                  <q-item v-show="loading" v-for="c in 2" :key="c" style="min-height:10px;padding:3px">
+                    <q-item-section side class="q-pr-sm">
+                      <q-skeleton type="circle" width="10px" height="10px" />
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>
+                        <q-skeleton type="text" width="65%" />
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <div v-if="slots.properties && !loading" class="q-gutter-y-xs">
+                    <slot name="properties">
+                    </slot>
+                  </div>
+                </div>
+              </q-tab-panel>
+              <q-tab-panel name="affixes" class="q-gutter-y-xs no-padding column">
+                <div v-if="slots['add-affix']">
+                  <slot name="add-affix" :wrap="editWrap"></slot>
+                </div>
+                <div ref="affixRef" class="col scroll">
+                  <q-item v-show="loading" v-for="c in 3" :key="c" style="min-height:10px;padding:3px">
+                    <q-item-section side class="q-pr-sm">
+                      <q-skeleton type="circle" width="10px" height="10px" />
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>
+                        <q-skeleton type="text" width="65%" />
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <div v-if="slots.affixes && !loading" class="q-gutter-y-xs">
+                    <slot name="affixes">
+                    </slot>
+                  </div>
+                </div>
+              </q-tab-panel>
+              <q-tab-panel name="restrictions" class="q-gutter-y-xs no-padding column">
+                <div v-if="slots['add-restriction']">
+                  <slot name="add-restriction" :wrap="editWrap"></slot>
+                </div>
+                <div ref="restrictionRef" class="col scroll">
+                  <q-item v-show="loading" v-for="c in 3" :key="c" style="min-height:10px;padding:3px">
+                    <q-item-section side class="q-pr-sm">
+                      <q-skeleton type="circle" width="10px" height="10px" />
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>
+                        <q-skeleton type="text" width="65%" />
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <div v-if="slots.restrictions && !loading" class="q-gutter-y-xs">
+                    <slot name="restrictions">
+                    </slot>
+                  </div>
+                </div>
+              </q-tab-panel>
+            </q-tab-panels>
+          </div>
+        </q-card-section>
+        <q-card flat v-show="attrMobile.is && attrMobile.show" class="col fullscreen column">
           <q-card-section class="tab row justify-end items-center">
             <q-btn-toggle v-model="attribute" square flat no-caps aria-label="Tradurs Attribute Button" :ripple="false"
               :color="$q.dark.isActive ? 'grey-5' : 'grey-8'" toggle-color="transparent toggle" :options="attributes" />
           </q-card-section>
-          <q-card-section class="col scroll" style="padding-top:0">
+          <q-card-section style="padding-top:0" class="col">
             <div class="attribute">
               <q-tab-panels v-model="attribute" class="q-pa-xs bg-transparent full-height">
                 <q-tab-panel v-if="hasProperties" name="properties" class="q-gutter-y-xs no-padding column">
                   <div v-if="slots['add-property']">
                     <slot name="add-property" :wrap="editWrap"></slot>
                   </div>
-                  <div ref="propertyRef" class="col scroll">
+                  <div class="col scroll">
                     <q-item v-show="loading" v-for="c in 2" :key="c" style="min-height:10px;padding:3px">
                       <q-item-section side class="q-pr-sm">
                         <q-skeleton type="circle" width="10px" height="10px" />
@@ -509,7 +578,7 @@ defineExpose({ scrollEnd })
                         </q-item-label>
                       </q-item-section>
                     </q-item>
-                    <div v-if="slots.properties && !loading" class="list q-gutter-y-xs">
+                    <div v-if="slots.properties && !loading" class="q-gutter-y-xs">
                       <slot name="properties">
                       </slot>
                     </div>
@@ -519,7 +588,7 @@ defineExpose({ scrollEnd })
                   <div v-if="slots['add-affix']">
                     <slot name="add-affix" :wrap="editWrap"></slot>
                   </div>
-                  <div ref="affixRef" class="col scroll">
+                  <div class="col scroll">
                     <q-item v-show="loading" v-for="c in 3" :key="c" style="min-height:10px;padding:3px">
                       <q-item-section side class="q-pr-sm">
                         <q-skeleton type="circle" width="10px" height="10px" />
@@ -530,7 +599,7 @@ defineExpose({ scrollEnd })
                         </q-item-label>
                       </q-item-section>
                     </q-item>
-                    <div v-if="slots.affixes && !loading" class="list q-gutter-y-xs">
+                    <div v-if="slots.affixes && !loading" class="q-gutter-y-xs">
                       <slot name="affixes">
                       </slot>
                     </div>
@@ -540,7 +609,7 @@ defineExpose({ scrollEnd })
                   <div v-if="slots['add-restriction']">
                     <slot name="add-restriction" :wrap="editWrap"></slot>
                   </div>
-                  <div ref="restrictionRef" class="col scroll">
+                  <div class="col scroll">
                     <q-item v-show="loading" v-for="c in 3" :key="c" style="min-height:10px;padding:3px">
                       <q-item-section side class="q-pr-sm">
                         <q-skeleton type="circle" width="10px" height="10px" />
@@ -551,7 +620,7 @@ defineExpose({ scrollEnd })
                         </q-item-label>
                       </q-item-section>
                     </q-item>
-                    <div v-if="slots.restrictions && !loading" class="list q-gutter-y-xs">
+                    <div v-if="slots.restrictions && !loading" class="q-gutter-y-xs">
                       <slot name="restrictions">
                       </slot>
                     </div>
@@ -560,7 +629,7 @@ defineExpose({ scrollEnd })
               </q-tab-panels>
             </div>
           </q-card-section>
-          <q-card-section>
+          <q-card-section v-show="attrMobile.show">
             <q-btn no-caps :label="t('attribute.close')" aria-label="Tradurs Attribute Button"
               class="lt-md attribute full-width" size="lg" @click="attrMobile.show = false">
               <img width="24" height="24" class="icon q-ml-sm" src="/images/icons/shrink.svg" alt="Tradurs Expand Icon" />
@@ -1038,10 +1107,6 @@ defineExpose({ scrollEnd })
 
 .attribute:deep(.q-panel) {
   overflow: hidden;
-}
-
-.attribute:deep(.list) {
-  max-height: 30vh;
 }
 
 .toggles:deep(.q-toggle__thumb::before) {

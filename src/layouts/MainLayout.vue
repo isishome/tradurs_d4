@@ -198,23 +198,29 @@ onUnmounted(() => {
     <q-drawer show-if-above no-swipe-open no-swipe-close no-swipe-backdrop bordered v-model="rightDrawerOpen" side="right"
       behavior="mobile" class="row justify-start no-scroll" :width="300">
       <div class="column fit">
-        <q-item class="row justify-between q-gutter-xs q-py-lg">
+        <q-item class="row justify-between items-center q-py-lg">
           <q-select v-model="locale" :options="gs.localeOptions" :label="t('language', 0, { locale: brLoc })" outlined
-            dense emit-value map-options style="min-width: 120px" dropdown-icon="img:/images/icons/dropdown.svg"
+            dense emit-value map-options dropdown-icon="img:/images/icons/dropdown.svg"
             popup-content-class="scroll bordered" @update:model-value="setLang" />
-          <div>
+          <div class="row items-center justify-end q-gutter-x-xs">
+            <q-btn round dense flat aria-label="Tradurs Discord Button" :ripple="!$q.dark.isActive" tag="a"
+              href="https://discord.gg/BhEuWf7YJg" target="_blank" rel="noopener noreferrer">
+              <img width="24" height="24"
+                :src="$q.dark.isActive ? '/images/icons/discord_white.svg' : '/images/icons/discord_black.svg'"
+                alt="Discord Icon" />
+            </q-btn>
             <q-btn round dense flat aria-label="Tradurs Support Button" :ripple="!$q.dark.isActive"
               :to="{ name: 'support', params: { lang: route.params.lang } }">
               <img class="icon" width="24" height="24" src="/images/icons/help.svg" alt="Tradurs Help Icon" />
               <!-- <q-badge floating label="N" color="negative" class="new-badge" /> -->
             </q-btn>
-            <q-btn round flat aria-label="Tradurs Theme Button" :ripple="!$q.dark.isActive" @click="setDark">
+            <q-btn round flat dense aria-label="Tradurs Theme Button" :ripple="!$q.dark.isActive" @click="setDark">
               <img v-show="$q.dark.isActive" class="icon" width="24" height="24" src="/images/icons/light.svg"
                 alt="Tradurs Light Icon" />
               <img v-show="!$q.dark.isActive" class="icon" width="24" height="24" src="/images/icons/dark.svg"
                 alt="Tradurs Dark Icon" />
             </q-btn>
-            <q-btn v-if="signed" round flat aria-label="Tradurs User Info Button" :ripple="!$q.dark.isActive">
+            <q-btn v-if="signed" dense round flat aria-label="Tradurs User Info Button" :ripple="!$q.dark.isActive">
               <img class="icon" width="24" height="24" src="/images/icons/user.svg" alt="Tradurs User Icon" />
               <q-menu anchor="bottom end" self="top end" transition-show="none" transition-hide="none"
                 :transition-duration="0" style="min-width:260px">
@@ -228,7 +234,7 @@ onUnmounted(() => {
                 </D4User>
               </q-menu>
             </q-btn>
-            <q-btn v-else round flat aria-label="Tradurs Login Button" :ripple="!$q.dark.isActive" @click="sign">
+            <q-btn v-else round flat dense aria-label="Tradurs Login Button" :ripple="!$q.dark.isActive" @click="sign">
               <img class="icon" width="24" height="24" src="/images/icons/login.svg" alt="Tradurs Signin Icon" />
             </q-btn>
           </div>
@@ -466,9 +472,15 @@ onUnmounted(() => {
           </q-btn>
         </div>
         <div class="gt-sm col-3 row justify-end items-center q-gutter-xs">
+          <q-btn round dense flat aria-label="Tradurs Discord Button" :ripple="!$q.dark.isActive" tag="a"
+            href="https://discord.gg/BhEuWf7YJg" target="_blank" rel="noopener noreferrer">
+            <img width="24" height="24"
+              :src="$q.dark.isActive ? '/images/icons/discord_white.svg' : '/images/icons/discord_black.svg'"
+              alt="Discord Icon" />
+          </q-btn>
           <q-btn round dense flat aria-label="Tradurs Support Button" :ripple="!$q.dark.isActive"
             :to="{ name: 'support', params: { lang: route.params.lang } }">
-            <img class="icon" width="24" height="24" src="/images/icons/help.svg" alt="Tradurs Hekp Icon" />
+            <img class="icon" width="24" height="24" src="/images/icons/help.svg" alt="Tradurs Help Icon" />
             <!-- <q-badge floating label="N" color="negative" class="new-badge" /> -->
           </q-btn>
           <q-btn round dense flat aria-label="Tradurs Language Button" :ripple="!$q.dark.isActive">

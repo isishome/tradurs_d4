@@ -331,10 +331,9 @@ export default {
     top: 'Hello. This is Tradurs.\n\nAnnouncement of new updates.',
     contents: [
       { type: 'head', value: '◆ Updates' },
-      { type: 'image', value: '/images/notice/20231028/01.webp' },
-      { type: 'space' },
-      { type: 'image', value: '/images/notice/20231028/02.webp' },
-      { type: 'list', value: 'Summoning materials are added to the currency types.' },
+      { type: 'image', value: '/images/notice/20231031/discord.jpg' },
+      { type: 'list', value: 'Added a discord link icon to the menu.' },
+      { type: 'list', value: 'Discord makes it easy to report bugs and request improvements to the service.' },
       { type: 'space' }
     ],
     bottom: 'Thank you',
