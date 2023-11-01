@@ -162,7 +162,7 @@ onMounted(() => {
               </div>
               <div v-else-if="c.type === 'list'" :class="['list', c.class]">{{ c.value }}</div>
               <div v-else-if="c.type === 'image'">
-                <img :src="c.value" :class="['image', c.class]" />
+                <img :src="c.value" :class="['image', c.class]" alt="Tradurs Notice Image" />
               </div>
               <q-space v-else-if="c.type === 'space'" class="space" />
             </template>
