@@ -157,7 +157,7 @@ onMounted(() => {
         <q-item-section>
         </q-item-section>
         <q-item-section side>
-          <q-btn no-caps push :disable="disable || progress" unelevated aria-label="Tradurs Read Button" color="grey-8"
+          <q-btn no-caps push :disable="disable || progress" unelevated :aria-label="t('btn.markRead')" color="grey-8"
             :label="t('btn.markRead')" @click="reads" />
         </q-item-section>
       </q-item>
@@ -222,7 +222,7 @@ onMounted(() => {
                   {{ message.msgValue }}
                 </div>
                 <div v-if="message.msgType === '900'" class="q-mt-xl row justify-end">
-                  <q-btn :label="t('contact.answer')" push aria-label="Tradurs Answer Button" color="secondary"
+                  <q-btn :label="t('contact.answer')" push :aria-label="t('contact.answer')" color="secondary"
                     @click="open(message.msgId)" />
                 </div>
               </div>

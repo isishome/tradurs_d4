@@ -131,7 +131,7 @@ onUnmounted(() => {
         </div>
       </q-timeline>
       <div v-show="more" class="row justify-center items-center">
-        <q-btn :loading="loading" no-caps unelevated aria-label="Tradurs More Button" :ripple="false" class="no-hover"
+        <q-btn :loading="loading" no-caps unelevated :aria-label="t('btn.showMore')" :ripple="false" class="no-hover"
           :label="t('btn.showMore')" color="primary" @click="request()" />
       </div>
     </q-list>

@@ -475,7 +475,7 @@ defineExpose({ scrollEnd })
           <D4Separator />
         </template>
         <q-card-section v-show="attrMobile.is && !attrMobile.show" class="col row justify-center items-center">
-          <q-btn no-caps :label="t('attribute.open')" aria-label="Tradurs Attribute Button" class="attribute full-width"
+          <q-btn no-caps :label="t('attribute.open')" :aria-label="t('attribute.open')" class="attribute full-width"
             size="lg" padding="xl" @click="attrMobile.show = true">
             <img width="24" height="24" class="icon q-ml-sm rotate-45" src="/images/icons/expand.svg"
               alt="Tradurs Expand Icon" />
@@ -630,7 +630,7 @@ defineExpose({ scrollEnd })
             </div>
           </q-card-section>
           <q-card-section v-show="attrMobile.show">
-            <q-btn no-caps :label="t('attribute.close')" aria-label="Tradurs Attribute Button"
+            <q-btn no-caps :label="t('attribute.close')" :aria-label="t('attribute.close')"
               class="lt-md attribute full-width" size="lg" @click="attrMobile.show = false">
               <img width="24" height="24" class="icon q-ml-sm" src="/images/icons/shrink.svg" alt="Tradurs Expand Icon" />
             </q-btn>

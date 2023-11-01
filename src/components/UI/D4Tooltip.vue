@@ -87,7 +87,7 @@ const beforeHide = () => {
       </div>
     </div>
   </q-tooltip>
-  <q-btn class="absolute fit" padding="0" flat v-else @click.stop>
+  <q-btn class="absolute fit" aria-label="Tradurs Tooltip Button" padding="0" flat v-else @click.stop>
     <q-popup-proxy>
       <div
         :class="[`q-pa-${padding} rounded-borders`, $q.dark.isActive ? 'bg-grey-4 text-grey-9' : 'bg-grey-9 text-grey-4']">

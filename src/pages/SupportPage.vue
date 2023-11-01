@@ -110,7 +110,7 @@ const close = () => {
         <q-expansion-item v-model="contact.show" :class="{ 'no-hover': contact.show }"
           expand-icon="img:/images/icons/dropdown.svg" :label="t('contact.question')">
           <q-item class="row justify-center items-center q-py-xl" style="background-color: var(--q-cloud);">
-            <q-btn no-caps class="text-center" color="secondary" aria-label="Tradurs Contact Us Button" push
+            <q-btn no-caps class="text-center" color="secondary" :aria-label="t('contact.title')" push
               :label="t('contact.title')" @click="contact.open = true" />
           </q-item>
         </q-expansion-item>

@@ -175,7 +175,7 @@ onMounted(() => {
       <q-card-section>
         <div class="q-pa-md text-right">
           <q-btn :size="$q.screen.gt.sm ? '' : 'sm'" outline no-caps :label="t('notice.close')" @click="close"
-            aria-label="Tradurs Button" />
+            :aria-label="t('notice.close')" />
         </div>
       </q-card-section>
     </template>

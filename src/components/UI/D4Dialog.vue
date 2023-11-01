@@ -33,9 +33,9 @@ watch(() => props.modelValue, (val) => {
 </script>
 
 <template>
-  <q-dialog v-model="show" @show="emit('show')" @hide="emit('hide')" @before-hide="emit('before-hide')"
-    :maximized="maximized" :persistent="persistent" :transition-show="transitionShow" :transition-hide="transitionHide"
-    :transition-duration="transitionDuration" :no-route-dismiss="noRouteDismiss"
+  <q-dialog v-model="show" aria-label="Tradurs Dialog" @show="emit('show')" @hide="emit('hide')"
+    @before-hide="emit('before-hide')" :maximized="maximized" :persistent="persistent" :transition-show="transitionShow"
+    :transition-hide="transitionHide" :transition-duration="transitionDuration" :no-route-dismiss="noRouteDismiss"
     @update:model-value="emit('update:modelValue', show)">
     <q-card class="card-item dialog normal overflow-hidden"
       :style="`${width ? `width:${width} !important;` : ''}${maxWidth ? `max-width:${maxWidth} !important;` : ''}`">

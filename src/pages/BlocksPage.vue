@@ -115,7 +115,7 @@ onMounted(() => {
         <q-item-section>
         </q-item-section>
         <q-item-section side>
-          <q-btn no-caps push :disable="disable || progress" unelevated aria-label="Tradurs Read Button" color="grey-8"
+          <q-btn no-caps push :disable="disable || progress" unelevated :aria-label="t('btn.bulkUnblock')" color="grey-8"
             :label="t('btn.bulkUnblock')" @click="unblocks" />
         </q-item-section>
       </q-item>
