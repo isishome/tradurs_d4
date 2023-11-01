@@ -474,18 +474,18 @@ defineExpose({ scrollEnd })
           </q-card-section>
           <D4Separator />
         </template>
-        <q-card-section v-show="attrMobile.is && !attrMobile.show" class="col row justify-center items-center">
+        <q-card-section v-if="attrMobile.is && !attrMobile.show" class="col row justify-center items-center">
           <q-btn no-caps :label="t('attribute.open')" :aria-label="t('attribute.open')" class="attribute full-width"
             size="lg" padding="xl" @click="attrMobile.show = true">
             <img width="24" height="24" class="icon q-ml-sm rotate-45" src="/images/icons/expand.svg"
               alt="Tradurs Expand Icon" />
           </q-btn>
         </q-card-section>
-        <q-card-section v-show="!attrMobile.is || attrMobile.show" class="tab row justify-end items-center">
+        <q-card-section v-if="!attrMobile.is || attrMobile.show" class="tab row justify-end items-center">
           <q-btn-toggle v-model="attribute" square flat no-caps aria-label="Tradurs Attribute Button" :ripple="false"
             :color="$q.dark.isActive ? 'grey-5' : 'grey-8'" toggle-color="transparent toggle" :options="attributes" />
         </q-card-section>
-        <q-card-section v-show="!attrMobile.is" style="padding-top:0">
+        <q-card-section v-if="!attrMobile.is" style="padding-top:0">
           <div class="attribute">
             <q-tab-panels v-model="attribute" class="q-pa-xs bg-transparent">
               <q-tab-panel v-if="hasProperties" name="properties" class="q-gutter-y-xs no-padding column no-wrap"
@@ -555,7 +555,7 @@ defineExpose({ scrollEnd })
             </q-tab-panels>
           </div>
         </q-card-section>
-        <q-card flat v-show="attrMobile.is && attrMobile.show" class="col fullscreen column">
+        <q-card flat v-if="attrMobile.is && attrMobile.show" class="col fullscreen column">
           <q-card-section class="tab row justify-end items-center">
             <q-btn-toggle v-model="attribute" square flat no-caps aria-label="Tradurs Attribute Button" :ripple="false"
               :color="$q.dark.isActive ? 'grey-5' : 'grey-8'" toggle-color="transparent toggle" :options="attributes" />
@@ -629,7 +629,7 @@ defineExpose({ scrollEnd })
               </q-tab-panels>
             </div>
           </q-card-section>
-          <q-card-section v-show="attrMobile.show">
+          <q-card-section v-if="attrMobile.show">
             <q-btn no-caps :label="t('attribute.close')" :aria-label="t('attribute.close')"
               class="lt-md attribute full-width" size="lg" @click="attrMobile.show = false">
               <img width="24" height="24" class="icon q-ml-sm" src="/images/icons/shrink.svg" alt="Tradurs Expand Icon" />
