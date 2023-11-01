@@ -57,7 +57,6 @@ const itemName = computed(() => gs.itemName ? `${gs.itemName} - ` : '')
 const titleReactive = computed(() => t('seo.title', { pageName: pageName.value, itemName: itemName.value }, { locale: lang }))
 const descReactive = computed(() => t('seo.desc', 0, { locale: lang }))
 const keywordsReactive = computed(() => t('seo.keywords', 0, { locale: lang }))
-const recaptchaSrc = computed(() => route.name === 'support' ? 'https://www.google.com/recaptcha/api.js?render=6Lf38rYmAAAAAB-ET1oihMUkcDumRascvVHOyGmg' : '')
 
 useMeta(() => {
   return {
@@ -76,8 +75,7 @@ useMeta(() => {
       twitterDescription: { name: 'twitter:description', content: descReactive.value },
       twitterUrl: { name: 'twitter:url', content: 'https://d4.tradurs.com' },
       twitterImage: { name: 'twitter:image', content: 'https://d4.tradurs.com/images/og.png' }
-    },
-    script: { recaptcha: { src: recaptchaSrc.value } }
+    }
   }
 })
 
