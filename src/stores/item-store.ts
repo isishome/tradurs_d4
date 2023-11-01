@@ -748,8 +748,6 @@ export const useItemStore = defineStore('item', {
       const { data: { text } } = await worker.recognize(image)
       await worker.terminate()
 
-      console.log(text)
-
       const parsedText = text.replace(new RegExp(`[^0-9${this.analyze.lang[lang as keyof typeof this.analyze.lang]}\\/\\+\\.\\[\\]\\-\\,\\:\\n\\(\\) ]`, 'gi'), '').replace(/[ ]{2,}/gi, ' ')
       return parsedText
     }
