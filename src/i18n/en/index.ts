@@ -49,6 +49,10 @@ export default {
       advanced2: 'Occasionally, sellers may incorrectly enter \'Characteristics\' and \'Affixes\', so consider filtering'
     }
   },
+  preset: {
+    title: 'Delete Preset',
+    message: 'Do you want to delete this preset?'
+  },
   season: {
     bg: '/images/season/002/season_emblem_en.webp',
     first: {

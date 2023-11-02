@@ -50,8 +50,8 @@ export default {
     }
   },
   preset: {
-    title: '사전 설정 삭제',
-    message: '해당 사전 설정을 삭제할까요?'
+    title: '프리셋 삭제',
+    message: '해당 프리셋을 삭제할까요?'
   },
   season: {
     bg: '/images/season/002/season_emblem_ko.webp',
