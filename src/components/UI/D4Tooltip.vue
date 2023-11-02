@@ -79,12 +79,13 @@ const beforeHide = () => {
   <q-tooltip ref="tooltipRef" v-if="!$q.platform.is.mobile || behavior === 'desktop'" :target="target"
     class="no-padding bg-transparent" :anchor="anchor" :self="self" :offset="offset" :transition-hide="transitionHide"
     :transition-show="transitionShow" :transition-duration="transitionDuration" @show="show" @before-hide="beforeHide">
-    <div class="row items-center" :data-tooltip-id="id">
-      <div v-show="keep" class="keep-space"></div>
-      <div :class="[`q-pa-${padding}`, $q.dark.isActive ? 'bg-grey-4 text-grey-9' : 'bg-grey-9 text-grey-4', { keep }]">
-        <slot name="default">
-        </slot>
+    <div :data-tooltip-id="id" class="relative-position"
+      :class="[`q-pa-${padding}`, $q.dark.isActive ? 'bg-grey-4 text-grey-9' : 'bg-grey-9 text-grey-4', { keep }]">
+      <div v-show="keep" class="keep-absolute">
+        <div class="keep-fixed"></div>
       </div>
+      <slot name="default">
+      </slot>
     </div>
   </q-tooltip>
   <q-btn class="absolute fit" aria-label="Tradurs Tooltip Button" padding="0" flat v-else @click.stop>
@@ -98,9 +99,17 @@ const beforeHide = () => {
   </q-btn>
 </template>
 <style scoped>
-.keep-space {
+.keep-absolute {
+  position: absolute;
+  left: 0;
+  top: 50%;
+}
+
+.keep-fixed {
+  position: fixed;
   width: 30px;
-  height: 100%;
+  height: 30px;
+  transform: translate(-100%, -50%);
 }
 
 .keep {

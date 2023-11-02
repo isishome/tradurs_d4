@@ -164,7 +164,7 @@ const updateCurrency = (val: string | null): void => {
       <div v-if="data.currency === 'offer'">
         <div>{{ t('offer.title') }}</div>
       </div>
-      <div v-else class="row items-center q-gutter-xs">
+      <div v-else class="row items-center q-gutter-xs relative-position">
         <!-- <template v-if="data.currency === 'rune'">
           <img :src="(runes().find(r => r.value === data.currencyValue) || {}).img" width="24" height="24"
             alt="Tradurs Rune Image" />

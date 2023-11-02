@@ -206,7 +206,7 @@ const unblock = () => {
       </div>
       <q-icon v-if="as.signed" class="icon" :name="blocked ? 'img:/images/icons/block.svg' : 'img:/images/icons/info.svg'"
         size="19px">
-        <D4Tooltip :offset="[-20, 10]" keep>
+        <D4Tooltip keep>
           <svg v-show="data.verified" class="battletag" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
             stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="0"
             aria-labelledby="blz-icon-title-battlenet-logo" viewBox="0 0 196 32" part="icon blz-icon">
