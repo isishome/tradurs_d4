@@ -68,7 +68,6 @@ export default {
   noFilterdItems: 'No search results matched your criteria',
   noFilterdItemsDesc: 'Check out the item filters',
   noItem: 'Item information does not exist',
-  trade: 'Trade',
   seller: 'Seller',
   offerer: 'Offerer',
   user: {
