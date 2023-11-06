@@ -141,11 +141,6 @@ watch([size, () => $q.screen.gt.md], ([new1, new2], [old1, old2]) => {
     gs.reloadAdKey++
 })
 
-watch(() => route.name, (val, old) => {
-  if (val && val !== old)
-    gs.reloadAdKey++
-})
-
 watch(() => gs.reloadAdKey, (val, old) => {
   if (val && val !== old)
     reload()
@@ -173,11 +168,10 @@ const onWindowLoad = () => {
 }
 
 onMounted(() => {
-  if (!window.adsbygoogle)
+  if (!window?.adsbygoogle)
     window.addEventListener('load', onWindowLoad)
-  else {
+  else
     onWindowLoad()
-  }
 })
 
 onUnmounted(() => {

@@ -15,16 +15,17 @@
   <% if (ctx.prod) { %>
     <script defer src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5110777286519562"
       crossorigin="anonymous"></script>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-S8LQETJ7W1"></script>
+    <script defer src="https://www.googletagmanager.com/gtag/js?id=G-S8LQETJ7W1"></script>
+    <script defer
+      src="https://www.google.com/recaptcha/api.js?render=6Lf38rYmAAAAAB-ET1oihMUkcDumRascvVHOyGmg"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag() { dataLayer.push(arguments); }
       gtag('js', new Date());
 
-      gtag('config', 'G-S8LQETJ7W1');
+      gtag('config', 'G-S8LQETJ7W1', { send_page_view: false });
     </script>
-    <script defer
-      src="https://www.google.com/recaptcha/api.js?render=6Lf38rYmAAAAAB-ET1oihMUkcDumRascvVHOyGmg"></script>
+
     <% } %>
 </head>
 

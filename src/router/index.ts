@@ -16,13 +16,15 @@ import { Manager } from 'socket.io-client'
  * with the Router instance.
  */
 
+const prod = import.meta.env.PROD
+
 const initSocket = async (as: any, is: any) => {
   if (process.env.SERVER)
     return
 
   const manager = new Manager(import.meta.env.VITE_APP_SOCKET, {
     reconnectionDelayMax: 10000,
-    withCredentials: import.meta.env.PROD
+    withCredentials: prod
   })
 
   as.socket = manager.socket('/messenger')
@@ -118,6 +120,22 @@ export default route(function ({ store }/* { store, ssrContext } */) {
     if (as.info.id && as.socket === null) {
       await initSocket(as, is)
       await as.unreadMessages()
+    }
+  })
+
+  Router.afterEach((to, from) => {
+    if (to.name && to.name !== from.name) {
+      if (from.name) {
+        const gs = useGlobalStore(store)
+        gs.reloadAdKey++
+      }
+
+      if (prod) {
+        window?.gtag('config', import.meta.env.VITE_APP_TRADURS, {
+          page_path: to.fullPath,
+          send_page_view: true
+        })
+      }
     }
   })
 
