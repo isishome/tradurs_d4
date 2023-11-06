@@ -656,9 +656,6 @@ const openOffers = (itemId: string) => {
   }
 }
 
-// about screen size
-const size = computed(() => $q.screen.width < 300 ? 'width:200px;height:200px;' : $q.screen.width < 336 ? 'width:300px;height:250px;' : $q.screen.width < 728 ? 'width:336px;height:280px;' : 'width:728px;height:90px;')
-
 defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
 </script>
 
@@ -710,8 +707,8 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
         class="item" :style="`min-height:${item.itemId === 'advertise' ? '100%' : `${itemHeight}px`};height:${item.expanded ? '100%' :
           `${itemHeight}px`}`" transition="fade" ssr-prerender once @visibility="(val: boolean) => visible(val, item)">
         <div v-if="item.itemId === 'advertise' && $q.screen.lt.lg" class="row justify-center">
-          <Adsense :style="size" data-ad-client="ca-pub-5110777286519562" data-ad-slot="6163086381" :data-adtest="!prod"
-            :key="`gap-${gs.reloadAdKey}`" />
+          <Adsense style="display:block" data-ad-client="ca-pub-5110777286519562" data-ad-slot="6163086381"
+            :data-adtest="!prod" data-ad-format="auto" data-full-width-responsive="true" :key="`gap-${gs.reloadAdKey}`" />
         </div>
         <D4Item v-else-if="item.itemId !== 'advertise'" :data="item" :loading="item.loading" @favorite="favorite"
           @copy="copy" @update-only="(val: string) => emit('update-only', val)">

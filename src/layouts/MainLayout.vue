@@ -127,8 +127,7 @@ const expanded = ref<boolean>(false)
 const isMySpace = computed(() => ['messages', 'blocks', 'history'].includes(route.name as string))
 
 // about screen size
-const size = computed(() => $q.screen.width < 728 ? 'width:320px;max-height:100px;' : 'width:728px;height:90px;')
-const size2 = computed(() => $q.screen.width < 300 ? 'width:200px;height:200px;' : $q.screen.width < 336 ? 'width:300px;height:250px;' : $q.screen.width < 728 ? 'width:336px;height:280px;' : 'width:728px;height:90px;')
+const size = computed(() => $q.screen.width < 728 ? 'display:inline-block;width:320px;max-height:100px;' : 'display:inline-block;width:728px;height:90px;')
 
 watch([size, () => $q.screen.gt.md], ([new1, new2], [old1, old2]) => {
   if (new1 !== old1 || new2 !== old2)
@@ -472,9 +471,9 @@ watch(() => is.filter.name, (val) => {
             </div>
             <div class="q-py-xl"></div>
             <div class="row justify-center">
-              <Adsense v-if="route.name !== 'tradeList' && $q.screen.lt.lg" :style="size2"
+              <Adsense v-if="route.name !== 'tradeList' && $q.screen.lt.lg" style="display:block"
                 data-ad-client="ca-pub-5110777286519562" data-ad-slot="6163086381" :data-adtest="!prod"
-                :key="`bottom-${gs.reloadAdKey}`" />
+                data-ad-format="auto" data-full-width-responsive="true" :key="`bottom-${gs.reloadAdKey}`" />
             </div>
             <div class="q-py-md"></div>
             <q-separator />
@@ -491,7 +490,7 @@ watch(() => is.filter.name, (val) => {
           <div class="gt-md col">
             <div class="full-height q-px-lg q-py-xl" :style="`width:280px;height:${asideHeight}`">
               <div :style="`position:sticky;top:${asideTop}`" class="column">
-                <Adsense :style="`width:160px;height:600px`" data-ad-client="ca-pub-5110777286519562"
+                <Adsense style="display:inline-block;width:160px;height:600px" data-ad-client="ca-pub-5110777286519562"
                   data-ad-slot="6751896285" :data-adtest="!prod" :key="`right-${gs.reloadAdKey}`" />
                 <div class="q-mt-xl">
                   <div class="column items-start useful">

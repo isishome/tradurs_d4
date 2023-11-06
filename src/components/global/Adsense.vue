@@ -6,24 +6,21 @@ interface IProps {
   dataAdSlot: string,
   dataAdFormat?: string,
   dataAdtest?: boolean,
-  dataFullWidthResponsive?: string,
-  style?: string
+  dataFullWidthResponsive?: string
 }
 
 withDefaults(defineProps<IProps>(), {
   dataAdFormat: undefined,
   dataAdtest: undefined,
-  dataFullWidthResponsive: undefined,
-  style: undefined
+  dataFullWidthResponsive: undefined
 })
 
 const insRef = ref()
 
 const render = () => {
   const adsbygoogle = window.adsbygoogle || []
-  if (insRef.value?.clientWidth + insRef.value?.clientHeight > 0) {
+  if (insRef.value?.clientWidth + insRef.value?.clientHeight > 0)
     adsbygoogle.push({})
-  }
 }
 
 onMounted(() => {
@@ -39,8 +36,8 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <ins ref="insRef" class="adsbygoogle ins" :style="`display:inline-block;${style}`" :data-ad-client="dataAdClient"
-    :data-ad-slot="dataAdSlot" :data-ad-format="dataAdFormat" :data-adtest="dataAdtest ? 'on' : null"
+  <ins ref="insRef" class="adsbygoogle ins" :data-ad-client="dataAdClient" :data-ad-slot="dataAdSlot"
+    :data-ad-format="dataAdFormat" :data-adtest="dataAdtest ? 'on' : null"
     :data-full-width-responsive="dataFullWidthResponsive"></ins>
 </template>
 
