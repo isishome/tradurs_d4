@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, computed, watch, onMounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useQuasar, Screen, QBtnDropdown } from 'quasar'
 import { useI18n } from 'vue-i18n'
@@ -176,18 +176,7 @@ onMounted(() => {
   nextTick(() => {
     onWindowLoad()
   })
-  // if (document.readyState !== 'complete')
-  //   window.addEventListener('load', onWindowLoad)
-  // else {
-  //   nextTick(() => {
-  //     onWindowLoad()
-  //   })
-  // }
 })
-
-// onUnmounted(() => {
-//   window.removeEventListener('load', onWindowLoad)
-// })
 </script>
 <template>
   <q-layout view="hHh lpR lFf" :key="mainKey">
@@ -446,26 +435,6 @@ onMounted(() => {
                 </q-list>
               </q-btn-dropdown>
             </q-toolbar>
-            <!--
-            <q-tabs dense no-caps narrow-indicator class="gt-sm q-px-xs bg-transparent no-hover nav">
-              <q-route-tab :ripple="!$q.dark.isActive" :label="t('page.tradeList')"
-                :to="{ name: 'tradeList', params: { lang: route.params.lang } }" exact />
-
-              <q-route-tab :ripple="!$q.dark.isActive" :label="t('page.awards')"
-                :to="{ name: 'awards', params: { lang: route.params.lang } }" exact>
-                <q-badge v-show="newAwards" floating label="N" color="orange-8" class="new-badge2" />
-              </q-route-tab>
-              <q-tab label="내 정보">
-                <q-tabs>
-                  <q-route-tab v-if="as.signed" :ripple="!$q.dark.isActive" :label="t('page.messages')"
-                    class="relative-position" :to="{ name: 'messages', params: { lang: route.params.lang } }"
-                    :alert="newMessages ? 'negative' : 'transparent'" exact />
-                  <q-route-tab v-if="as.signed" :ripple="!$q.dark.isActive" :label="t('page.history')"
-                    class="relative-position" :to="{ name: 'history', params: { lang: route.params.lang } }" exact />
-                </q-tabs>
-              </q-tab>
-            </q-tabs>
-            -->
           </div>
         </div>
         <div class="lt-md col-1 col-md-3 row justify-end q-gutter-sm">
