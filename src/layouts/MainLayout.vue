@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useQuasar, Screen, QBtnDropdown } from 'quasar'
 import { useI18n } from 'vue-i18n'
@@ -92,12 +92,6 @@ const setDark = () => {
   $q.cookies.set('d4.dark', $q.dark.isActive.toString(), { path: '/' })
 }
 
-const reload = () => {
-  nextTick(() => {
-    onWindowLoad()
-  })
-}
-
 const _name = ref<string>('')
 const search = () => {
   if (checkName(_name.value)) {
@@ -141,11 +135,6 @@ watch([size, () => $q.screen.gt.md], ([new1, new2], [old1, old2]) => {
     gs.reloadAdKey++
 })
 
-watch(() => gs.reloadAdKey, (val, old) => {
-  if (val && val !== old)
-    reload()
-})
-
 watch(() => $q.screen.gt.sm, (val) => {
   if (val)
     rightDrawerOpen.value = false
@@ -154,28 +143,6 @@ watch(() => $q.screen.gt.sm, (val) => {
 watch(() => is.filter.name, (val) => {
   if (val === '')
     _name.value = ''
-})
-
-const onWindowLoad = () => {
-  if (prod) {
-    const adsbygoogle = window.adsbygoogle || []
-    const ads: NodeListOf<Element> = document.querySelectorAll('ins.adsbygoogle')
-    ads.forEach((a: Element) => {
-      if (a.clientWidth + a.clientHeight > 0)
-        adsbygoogle.push({})
-    })
-  }
-}
-
-onMounted(() => {
-  if (!window?.adsbygoogle)
-    window.addEventListener('load', onWindowLoad)
-  else
-    onWindowLoad()
-})
-
-onUnmounted(() => {
-  window.removeEventListener('load', onWindowLoad)
 })
 </script>
 <template>
@@ -498,16 +465,16 @@ onUnmounted(() => {
           <div :class="screen.lt.sm ? 'q-pa-sm' : 'q-pa-xl'" :style="screen.lt.sm ? 'width:100%' : 'width:830px'">
             <div class="view max-width">
               <div class="row justify-center top-ads">
-                <ins class="adsbygoogle" :style="`display:inline-block;${size}`" data-ad-client="ca-pub-5110777286519562"
-                  data-ad-slot="7137983054" :data-adtest="prod ? 'off' : 'on'" :key="`top-${gs.reloadAdKey}`"></ins>
+                <Adsense :style="size" data-ad-client="ca-pub-5110777286519562" data-ad-slot="7137983054"
+                  :data-adtest="!prod" :key="`top-${gs.reloadAdKey}`" />
               </div>
               <RouterView />
             </div>
             <div class="q-py-xl"></div>
             <div class="row justify-center">
-              <ins v-if="route.name !== 'tradeList' && $q.screen.lt.lg" class="adsbygoogle"
-                :style="`display:inline-block;${size2}`" data-ad-client="ca-pub-5110777286519562"
-                data-ad-slot="6163086381" :data-adtest="prod ? 'off' : 'on'" :key="`bottom-${gs.reloadAdKey}`"></ins>
+              <Adsense v-if="route.name !== 'tradeList' && $q.screen.lt.lg" :style="size2"
+                data-ad-client="ca-pub-5110777286519562" data-ad-slot="6163086381" :data-adtest="!prod"
+                :key="`bottom-${gs.reloadAdKey}`" />
             </div>
             <div class="q-py-md"></div>
             <q-separator />
@@ -524,9 +491,8 @@ onUnmounted(() => {
           <div class="gt-md col">
             <div class="full-height q-px-lg q-py-xl" :style="`width:280px;height:${asideHeight}`">
               <div :style="`position:sticky;top:${asideTop}`" class="column">
-                <ins class="adsbygoogle" style="display:inline-block;width:160px;height:600px"
-                  data-ad-client="ca-pub-5110777286519562" data-ad-slot="6751896285" :data-adtest="prod ? 'off' : 'on'"
-                  :key="`right-${gs.reloadAdKey}`"></ins>
+                <Adsense :style="`width:160px;height:600px`" data-ad-client="ca-pub-5110777286519562"
+                  data-ad-slot="6751896285" :data-adtest="!prod" :key="`right-${gs.reloadAdKey}`" />
                 <div class="q-mt-xl">
                   <div class="column items-start useful">
                     <q-btn flat no-caps padding="0" :ripple="false" class="text-overline no-hover" type="a"

@@ -1,0 +1,74 @@
+<script setup lang="ts">
+import { ref, onMounted, onUnmounted } from 'vue'
+
+interface IProps {
+  dataAdClient: string,
+  dataAdSlot: string,
+  dataAdFormat?: string,
+  dataAdtest?: boolean,
+  dataFullWidthResponsive?: string,
+  style?: string
+}
+
+withDefaults(defineProps<IProps>(), {
+  dataAdFormat: undefined,
+  dataAdtest: undefined,
+  dataFullWidthResponsive: undefined,
+  style: undefined
+})
+
+const insRef = ref()
+
+const render = () => {
+  const adsbygoogle = window.adsbygoogle || []
+  if (insRef.value?.clientWidth + insRef.value?.clientHeight > 0) {
+    adsbygoogle.push({})
+  }
+}
+
+onMounted(() => {
+  if (!window.adsbygoogle)
+    window.addEventListener('load', render)
+  else
+    render()
+})
+
+onUnmounted(() => {
+  window.removeEventListener('load', render)
+})
+</script>
+
+<template>
+  <ins ref="insRef" class="adsbygoogle ins" :style="`display:inline-block;${style}`" :data-ad-client="dataAdClient"
+    :data-ad-slot="dataAdSlot" :data-ad-format="dataAdFormat" :data-adtest="dataAdtest ? 'on' : null"
+    :data-full-width-responsive="dataFullWidthResponsive"></ins>
+</template>
+
+<style scoped>
+.ins {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, .05);
+  background-color: rgba(255, 255, 255, .05);
+  position: relative;
+  min-height: 50px;
+}
+
+.body--light .ins {
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, .05);
+  background-color: rgba(0, 0, 0, .05);
+}
+
+.ins::after {
+  content: 'AD';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: -1;
+  transform: translate(-50%, -50%);
+  color: #EFEFEF;
+  opacity: .2;
+}
+
+.body--light .ins::after {
+  color: #1a1a1a;
+}
+</style>
