@@ -39,7 +39,7 @@ const screen = computed<Screen>(() => $q.screen)
 const offsetTop = ref<number>(0)
 const asideHeight = computed<string>(() => `calc(100vh - ${screen.value.gt.sm ? offsetTop.value : 0}px)`)
 const asideTop = computed<string>(() => `${offsetTop.value + 10}px`)
-const newAwards = computed(() => ((new Date()).getDay() === 1 && (new Date()).getHours() >= 9) || (new Date()).getDay() === 2)
+const newAwards = computed(() => (is.awards > 0 && (new Date()).getDay() === 1 && (new Date()).getHours() >= 9) || (new Date()).getDay() === 2)
 
 const myTweak = (offset: number): void => {
   offsetTop.value = offset || 0
@@ -162,7 +162,8 @@ watch(() => is.filter.name, (val) => {
 })
 
 const onWindowLoad = () => {
-  if (prod) {
+  if (!prod) {
+    console.log('adsense')
     const adsbygoogle = window.adsbygoogle || []
     const ads: NodeListOf<Element> = document.querySelectorAll('ins.adsbygoogle')
     ads.forEach((a: Element) => {
@@ -173,18 +174,21 @@ const onWindowLoad = () => {
 }
 
 onMounted(() => {
-  if (document.readyState !== 'complete')
-    window.addEventListener('load', onWindowLoad)
-  else {
-    nextTick(() => {
-      onWindowLoad()
-    })
-  }
+  nextTick(() => {
+    onWindowLoad()
+  })
+  // if (document.readyState !== 'complete')
+  //   window.addEventListener('load', onWindowLoad)
+  // else {
+  //   nextTick(() => {
+  //     onWindowLoad()
+  //   })
+  // }
 })
 
-onUnmounted(() => {
-  window.removeEventListener('load', onWindowLoad)
-})
+// onUnmounted(() => {
+//   window.removeEventListener('load', onWindowLoad)
+// })
 </script>
 <template>
   <q-layout view="hHh lpR lFf" :key="mainKey">

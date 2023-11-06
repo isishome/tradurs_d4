@@ -171,6 +171,7 @@ export const useItemStore = defineStore('item', {
     types: [] as Array<ItemType>,
     classes: [] as Array<EquipmentClass>,
     attributeTypes: [] as Array<AttributeType>,
+    awards: 0 as number,
     awardsPick: [] as Array<AwardsPick>,
     properties: {
       data: [] as Array<Property>,
@@ -413,6 +414,7 @@ export const useItemStore = defineStore('item', {
               this.types = response.data.types
               this.classes = response.data.classes
               this.attributeTypes = response.data.attributeTypes
+              this.awards = response.data.awards
               this.awardsPick = response.data.awardsPick
             })
             .catch((e) => {
