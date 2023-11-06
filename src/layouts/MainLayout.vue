@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, nextTick } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useQuasar, Screen, QBtnDropdown } from 'quasar'
 import { useI18n } from 'vue-i18n'
@@ -173,9 +173,15 @@ const onWindowLoad = () => {
 }
 
 onMounted(() => {
-  nextTick(() => {
+  if (!window.adsbygoogle)
+    window.addEventListener('load', onWindowLoad)
+  else {
     onWindowLoad()
-  })
+  }
+})
+
+onUnmounted(() => {
+  window.removeEventListener('load', onWindowLoad)
 })
 </script>
 <template>
