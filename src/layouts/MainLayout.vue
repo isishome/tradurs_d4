@@ -93,7 +93,9 @@ const setDark = () => {
 }
 
 const reload = () => {
-  onWindowLoad()
+  nextTick(() => {
+    onWindowLoad()
+  })
 }
 
 const _name = ref<string>('')
@@ -156,15 +158,11 @@ watch(() => is.filter.name, (val) => {
 
 const onWindowLoad = () => {
   if (prod) {
-    nextTick(() => {
-      const adsbygoogle = window.adsbygoogle || []
-      const ads: NodeListOf<Element> = document.querySelectorAll('ins.adsbygoogle')
-      console.log(ads, 'ads element')
-      ads.forEach((a: Element) => {
-        console.log(a.clientWidth, a.clientHeight, 'ads size')
-        if (a.clientWidth + a.clientHeight > 0)
-          adsbygoogle.push({})
-      })
+    const adsbygoogle = window.adsbygoogle || []
+    const ads: NodeListOf<Element> = document.querySelectorAll('ins.adsbygoogle')
+    ads.forEach((a: Element) => {
+      if (a.clientWidth + a.clientHeight > 0)
+        adsbygoogle.push({})
     })
   }
 }
