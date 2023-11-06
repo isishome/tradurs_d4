@@ -706,10 +706,9 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
       <q-intersection v-for="item, idx in (items as Array<Item>)" :key="item.itemId" :data-itemid="item.itemId"
         class="item" :style="`min-height:${item.itemId === 'advertise' ? '100%' : `${itemHeight}px`};height:${item.expanded ? '100%' :
           `${itemHeight}px`}`" transition="fade" ssr-prerender once @visibility="(val: boolean) => visible(val, item)">
-        <div v-if="item.itemId === 'advertise' && $q.screen.lt.lg" class="row justify-center">
-          <Adsense style="display:block" data-ad-client="ca-pub-5110777286519562" data-ad-slot="6163086381"
-            :data-adtest="!prod" data-ad-format="auto" data-full-width-responsive="true" :key="`gap-${gs.reloadAdKey}`" />
-        </div>
+        <Adsense v-if="item.itemId === 'advertise' && $q.screen.lt.lg" style="display:block"
+          data-ad-client="ca-pub-5110777286519562" data-ad-slot="6163086381" :data-adtest="!prod" data-ad-format="auto"
+          data-full-width-responsive="true" :key="`gap-${gs.reloadAdKey}`" />
         <D4Item v-else-if="item.itemId !== 'advertise'" :data="item" :loading="item.loading" @favorite="favorite"
           @copy="copy" @update-only="(val: string) => emit('update-only', val)">
           <template #top-right>
