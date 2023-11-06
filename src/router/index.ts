@@ -124,18 +124,9 @@ export default route(function ({ store }/* { store, ssrContext } */) {
   })
 
   Router.afterEach((to, from) => {
-    if (to.name && to.name !== from.name) {
-      if (from.name) {
-        const gs = useGlobalStore(store)
-        gs.reloadAdKey++
-      }
-
-      if (prod) {
-        window?.gtag('config', import.meta.env.VITE_APP_TRADURS, {
-          page_path: to.fullPath,
-          send_page_view: true
-        })
-      }
+    if (from.name && to.name && to.name !== from.name) {
+      const gs = useGlobalStore(store)
+      gs.reloadAdKey++
     }
   })
 
