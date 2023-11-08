@@ -153,7 +153,7 @@ const hideEditable = () => {
   activateShow.value = false
 }
 
-const deleteConfirm = () => {
+const deleteConfirm = (deleteItem?: Item) => {
   $q.dialog({
     title: t('deleteItem.title'),
     message: t('deleteItem.message'),
@@ -166,7 +166,7 @@ const deleteConfirm = () => {
     class: 'q-pa-sm'
   }).onOk(() => {
     disable.value = true
-    emit('delete-item', activatedItem.value, done)
+    emit('delete-item', deleteItem || activatedItem.value, done)
   })
 }
 
@@ -725,8 +725,10 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
           <template #actions>
             <div v-show="item.expanded" class="row justify-between items-center q-pt-lg">
               <div>
-                <D4Btn v-if="item.authorized && !['001', '004'].includes(item.statusCode)" :label="t('btn.edit')"
-                  color="var(--q-secondary)" :loading="item.loading" @click="editItem(item)" />
+                <D4Btn v-if="item.authorized && ['004'].includes(item.statusCode)" :label="t('btn.delete')"
+                  color="var(--q-secondary)" :loading="item.loading" @click="deleteConfirm(item)" />
+                <D4Btn v-else-if="item.authorized && !['001', '004'].includes(item.statusCode)" :label="t('btn.edit')"
+                  color="var(--q-light-set)" :loading="item.loading" @click="editItem(item)" />
               </div>
               <div>
                 <D4Btn
@@ -925,7 +927,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                         t('btn.suspend')
                       }}</q-item-section>
                     </q-item>
-                    <q-item clickable :disable="activatedItem.offers > 0 || disable" @click="deleteConfirm">
+                    <q-item clickable :disable="activatedItem.offers > 0 || disable" @click="deleteConfirm()">
                       <q-item-section class="text-negative text-weight-bold">{{ t('btn.delete')
                       }}</q-item-section>
                     </q-item>
