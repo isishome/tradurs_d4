@@ -162,7 +162,7 @@ watch(() => is.filter.name, (val) => {
             popup-content-class="scroll bordered" @update:model-value="setLang" />
           <div class="row items-center justify-end q-gutter-x-xs">
             <q-btn round dense flat aria-label="Tradurs Discord Button" :ripple="!$q.dark.isActive" tag="a"
-              href="https://discord.gg/BhEuWf7YJg" target="_blank" rel="noopener noreferrer">
+              href="https://discord.gg/dwRuWq4enx" target="_blank" rel="noopener noreferrer">
               <img width="24" height="24"
                 :src="$q.dark.isActive ? '/images/icons/discord_white.svg' : '/images/icons/discord_black.svg'"
                 alt="Discord Icon" />
@@ -411,7 +411,7 @@ watch(() => is.filter.name, (val) => {
         </div>
         <div class="gt-sm col-3 row justify-end items-center q-gutter-xs">
           <q-btn round dense flat aria-label="Tradurs Discord Button" :ripple="!$q.dark.isActive" tag="a"
-            href="https://discord.gg/BhEuWf7YJg" target="_blank" rel="noopener noreferrer">
+            href="https://discord.gg/dwRuWq4enx" target="_blank" rel="noopener noreferrer">
             <img width="24" height="24"
               :src="$q.dark.isActive ? '/images/icons/discord_white.svg' : '/images/icons/discord_black.svg'"
               alt="Discord Icon" />
