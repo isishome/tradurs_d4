@@ -18,6 +18,11 @@ const routes: RouteRecordRaw[] = [
         props: true
       },
       {
+        name: 'party',
+        path: 'party',
+        component: () => import('pages/PartyPage.vue')
+      },
+      {
         name: 'awards',
         path: 'awards',
         component: () => import('pages/AwardsPage.vue')

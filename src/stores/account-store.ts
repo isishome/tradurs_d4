@@ -34,7 +34,7 @@ export const useAccountStore = defineStore('account', {
     signed: null as boolean | null,
     info: {} as User,
     position: { left: 0, top: 0 },
-    socket: null as Socket | null,
+    messenger: null as Socket | null,
     newMessages: false as boolean,
     historyTypes: {
       data: [] as Array<IHistoryTypes>,
@@ -102,7 +102,7 @@ export const useAccountStore = defineStore('account', {
           .then(() => {
             this.signed = false
             this.info = {} as User
-            this.socket = null
+            this.messenger = null
             this.newMessages = false
             resolve(false)
           })

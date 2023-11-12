@@ -10,6 +10,7 @@ export default {
   },
   page: {
     tradeList: 'Trade List',
+    party: 'Party',
     itemInfo: 'Item Information',
     awards: 'Awards',
     mySpace: 'My Space',

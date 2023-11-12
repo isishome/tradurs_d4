@@ -6,7 +6,11 @@ import { useItemStore, type OfferInfo } from 'src/stores/item-store'
 import { useGlobalStore } from 'src/stores/global-store'
 import { Notify } from 'quasar'
 import { Manager } from 'socket.io-client'
+import { usePartyStore } from 'src/stores/party-store'
 
+type AccountStore = ReturnType<typeof useAccountStore>
+type ItemStore = ReturnType<typeof useItemStore>
+type PartyStore = ReturnType<typeof usePartyStore>
 /*
  * If not building with SSR mode, you can
  * directly export the Router instantiation;
@@ -18,7 +22,7 @@ import { Manager } from 'socket.io-client'
 
 const prod = import.meta.env.PROD
 
-const initSocket = async (as: any, is: any) => {
+const initSocket = async (as: AccountStore, is: ItemStore, ps: PartyStore) => {
   if (process.env.SERVER)
     return
 
@@ -27,12 +31,18 @@ const initSocket = async (as: any, is: any) => {
     withCredentials: prod
   })
 
-  as.socket = manager.socket('/messenger')
-  as.socket.on('connect', () => {
-    as.socket.emit('join', as.info.id)
+  as.messenger = manager.socket('/messenger')
+  ps.party = manager.socket('/party')
+
+  as.messenger.on('connect', () => {
+    as.messenger?.emit('join', as.info.id)
   })
 
-  as.socket.on('message', (data: string) => {
+  as.messenger.on('connect', () => {
+    ps.party?.emit('init', as.info.id)
+  })
+
+  as.messenger.on('message', (data: string) => {
     Notify.create({
       position: 'top',
       message: data,
@@ -45,36 +55,36 @@ const initSocket = async (as: any, is: any) => {
     sound.play()
   }
 
-  as.socket.on('newItems', () => {
+  as.messenger.on('newItems', () => {
     if (as.info.notifyNew)
       is.socket.newItems++
   })
 
-  as.socket.on('newOffer', (offerInfo: OfferInfo) => {
+  as.messenger.on('newOffer', (offerInfo: OfferInfo) => {
     notify()
     if (as.info.notifyPrivate)
       is.socket.newOffer = offerInfo
   })
 
-  as.socket.on('acceptedOffer', (offerInfo: OfferInfo) => {
+  as.messenger.on('acceptedOffer', (offerInfo: OfferInfo) => {
     notify()
     if (as.info.notifyPrivate)
       is.socket.acceptedOffer = offerInfo
   })
 
-  as.socket.on('retractedOffer', (offerInfo: OfferInfo) => {
+  as.messenger.on('retractedOffer', (offerInfo: OfferInfo) => {
     notify()
     if (as.info.notifyPrivate)
       is.socket.retractedOffer = offerInfo
   })
 
-  as.socket.on('turnedDownOffer', (offerInfo: OfferInfo) => {
+  as.messenger.on('turnedDownOffer', (offerInfo: OfferInfo) => {
     notify()
     if (as.info.notifyPrivate)
       is.socket.turnedDownOffer = offerInfo
   })
 
-  as.socket.on('complete', async (offerInfo: OfferInfo) => {
+  as.messenger.on('complete', async (offerInfo: OfferInfo) => {
     notify()
     await as.retrieve()
     if (as.info.notifyPrivate)
@@ -109,6 +119,7 @@ export default route(function ({ store }/* { store, ssrContext } */) {
     const gs = useGlobalStore(store)
     const as = useAccountStore(store)
     const is = useItemStore(store)
+    const ps = usePartyStore(store)
     const requireAuth = to.matched.find(route => route.meta.requireAuth)
 
     if (to.params.lang?.length === 2 && !gs.localeOptions.map(lo => lo.value).includes(to.params.lang as string) && to.name !== 'pnf')
@@ -117,8 +128,8 @@ export default route(function ({ store }/* { store, ssrContext } */) {
     if (requireAuth && !as.info.id)
       return { name: 'tradeList', params: { lang: to.params.lang } }
 
-    if (as.info.id && as.socket === null) {
-      await initSocket(as, is)
+    if (as.info.id && (as.messenger === null || is.socket === null || ps.party === null)) {
+      await initSocket(as, is, ps)
       await as.unreadMessages()
     }
   })

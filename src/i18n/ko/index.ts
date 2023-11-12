@@ -11,6 +11,7 @@ export default {
   page: {
     tradeList: '거래 목록',
     itemInfo: '아이템 정보',
+    party: '파티',
     awards: '어워즈',
     mySpace: '내 공간',
     messages: '메시지',

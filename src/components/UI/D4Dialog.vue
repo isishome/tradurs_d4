@@ -4,8 +4,10 @@ import { ref, watch } from 'vue'
 interface IProps {
   modelValue: boolean,
   noRouteDismiss?: boolean,
+  position?: 'standard' | 'top' | 'right' | 'left' | 'bottom',
   maximized?: boolean,
   persistent?: boolean,
+  seamless?: boolean,
   width?: string | null,
   maxWidth?: string | null,
   transitionShow?: string,
@@ -15,8 +17,10 @@ interface IProps {
 
 const props = withDefaults(defineProps<IProps>(), {
   noRouteDismiss: true,
+  position: 'standard',
   maximized: false,
   persistent: false,
+  seamless: false,
   width: null,
   maxWidth: null,
   transitionShow: 'fade',
@@ -34,10 +38,11 @@ watch(() => props.modelValue, (val) => {
 
 <template>
   <q-dialog v-model="show" aria-label="Tradurs Dialog" @show="emit('show')" @hide="emit('hide')"
-    @before-hide="emit('before-hide')" :maximized="maximized" :persistent="persistent" :transition-show="transitionShow"
-    :transition-hide="transitionHide" :transition-duration="transitionDuration" :no-route-dismiss="noRouteDismiss"
-    @update:model-value="emit('update:modelValue', show)">
-    <q-card class="card-item dialog normal overflow-hidden"
+    @before-hide="emit('before-hide')" :position="position" :maximized="maximized" :persistent="persistent"
+    :seamless="seamless" :transition-show="transitionShow" :transition-hide="transitionHide"
+    :transition-duration="transitionDuration" :no-route-dismiss="noRouteDismiss"
+    @update:model-value="emit('update:modelValue', show)" class="shadow-5">
+    <q-card class="card-item normal overflow-hidden" :class="position === 'standard' ? 'dialog' : 'on-wall unique'"
       :style="`${width ? `width:${width} !important;` : ''}${maxWidth ? `max-width:${maxWidth} !important;` : ''}`">
       <q-form class="inner column" :class="{ 'full-height': maximized }" @submit="emit('submit')">
         <slot v-if="$slots.top" name="top">

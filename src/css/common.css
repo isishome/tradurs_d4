@@ -185,6 +185,14 @@
   max-width: 100vw;
 }
 
+.card-item.on-wall {
+  margin-right: -10px;
+}
+
+.q-dialog__inner:has(.on-wall) {
+  align-items: end;
+}
+
 @media (max-width:600px) {
   .card-item .inner {
     padding: 6px;
