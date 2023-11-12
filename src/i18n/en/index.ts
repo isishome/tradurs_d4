@@ -334,9 +334,8 @@ export default {
     top: 'Hello. This is Tradurs.\n\nAnnouncement of new updates.',
     contents: [
       { type: 'head', value: '◆ Updates' },
-      { type: 'image', value: '/images/notice/20231031/discord.jpg' },
-      { type: 'list', value: 'Added a discord link icon to the menu.' },
-      { type: 'list', value: 'Discord makes it easy to report bugs and request improvements to the service.' },
+      { type: 'image', value: '/images/notice/20231112/set.webp' },
+      { type: 'list', value: 'Consumables > Summonning Materials > Boss Summon Materials adds four new sets of materials.' },
       { type: 'space' }
     ],
     bottom: 'Thank you',
