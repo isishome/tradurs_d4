@@ -80,7 +80,7 @@ useMeta(() => {
 })
 
 const notice = reactive<{ open: boolean, close: boolean }>({
-  open: !$q.cookies.has('d4.update.20231112'),
+  open: false, //!$q.cookies.has('d4.update.20231112'),
   close: false
 })
 
