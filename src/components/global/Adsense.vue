@@ -18,13 +18,12 @@ withDefaults(defineProps<IProps>(), {
 const insRef = ref()
 
 const render = () => {
-  const adsbygoogle = window.adsbygoogle || []
-  if (insRef.value?.clientWidth + insRef.value?.clientHeight > 0)
-    adsbygoogle.push({})
+  if (window?.adsbygoogle && insRef.value?.clientWidth + insRef.value?.clientHeight > 0)
+    (window.adsbygoogle || []).push({})
 }
 
 onMounted(() => {
-  if (!window.adsbygoogle)
+  if (!window?.adsbygoogle)
     window.addEventListener('load', render)
   else
     render()
