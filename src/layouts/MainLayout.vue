@@ -480,9 +480,11 @@ watch(() => is.filter.name, (val) => {
               <RouterView />
             </div>
             <div class="q-py-xl"></div>
-            <Adsense v-if="route.name !== 'tradeList' && $q.screen.lt.lg" style="display:block"
-              data-ad-client="ca-pub-5110777286519562" data-ad-slot="6163086381" :data-adtest="!prod"
-              data-ad-format="auto" data-full-width-responsive="true" :key="`bottom-${gs.reloadAdKey}`" />
+            <q-intersection transition="none" ssr-prerender once style="min-height:100px">
+              <Adsense style="display:block" data-ad-client="ca-pub-5110777286519562" data-ad-slot="6163086381"
+                :data-adtest="!prod" data-ad-format="auto" data-full-width-responsive="true"
+                :key="`bottom-${gs.reloadAdKey}`" />
+            </q-intersection>
             <div class="q-py-md"></div>
             <q-separator />
             <div class="q-pt-lg">

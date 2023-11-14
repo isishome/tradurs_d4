@@ -684,18 +684,19 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                 <div>
                   <D4Btn v-if="rewardItem.authorized && !['001', '004'].includes(rewardItem.statusCode)"
                     :label="t('btn.edit')" color="var(--q-secondary)" :loading="rewardItem.loading"
-                    @click="editItem(rewardItem)" />
+                    @click="editItem(rewardItem as Item)" />
                 </div>
                 <div>
                   <D4Btn
                     :label="rewardItem.authorized || !as.signed || rewardItem.statusCode !== '000' ? t('offer.list') : t('btn.makeOffer')"
-                    :loading="rewardItem.loading" :disable="rewardItem.forDisplay" @click="openMakingOffer(rewardItem)" />
+                    :loading="rewardItem.loading" :disable="rewardItem.forDisplay"
+                    @click="openMakingOffer(rewardItem as Item)" />
                 </div>
               </div>
             </template>
             <template #more="{ loading }">
               <q-btn v-if="!rewardItem.expanded && !loading" flat aria-label="Tradurs More Button" text-color="black"
-                class="more no-hover full-width" padding="10px" @click="expanded(rewardItem, true)">
+                class="more no-hover full-width" padding="10px" @click="expanded(rewardItem as Item, true)">
                 <img class="icon" :width="$q.screen.lt.sm ? 24 : 36" :height="$q.screen.lt.sm ? 24 : 36"
                   src="/images/icons/more.svg" alt="Tradurs More Icon" />
               </q-btn>
@@ -707,7 +708,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
         class="item" :style="`min-height:${item.itemId === 'advertise' ? '100%' : `${itemHeight}px`};height:${item.expanded ? '100%' :
           `${itemHeight}px`}`" transition="fade" ssr-prerender once @visibility="(val: boolean) => visible(val, item)">
         <Adsense v-if="item.itemId === 'advertise' && $q.screen.lt.lg" style="display:block"
-          data-ad-client="ca-pub-5110777286519562" data-ad-slot="6163086381" :data-adtest="!prod" data-ad-format="auto"
+          data-ad-client="ca-pub-5110777286519562" data-ad-slot="1830333287" :data-adtest="!prod" data-ad-format="auto"
           data-full-width-responsive="true" :key="`gap-${gs.reloadAdKey}`" />
         <D4Item v-else-if="item.itemId !== 'advertise'" :data="item" :loading="item.loading" @favorite="favorite"
           @copy="copy" @update-only="(val: string) => emit('update-only', val)">
