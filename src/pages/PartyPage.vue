@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { ref, reactive, computed, defineAsyncComponent, onMounted } from 'vue'
+import { storeToRefs } from 'pinia'
 import { useI18n } from 'vue-i18n'
-import { useQuasar, uid } from 'quasar'
+import { useQuasar } from 'quasar'
 import { useRoute, useRouter } from 'vue-router'
 import { useGlobalStore } from 'src/stores/global-store'
 import { useAccountStore } from 'stores/account-store'
-import { type IParty, type IPartyMessage, usePartyStore } from 'src/stores/party-store'
-import { IUser } from 'src/types/user'
+import { type IParty, usePartyStore } from 'src/stores/party-store'
 import { scrollPos } from 'src/common'
 import D4Dialog from 'src/components/UI/D4Dialog.vue'
 
@@ -29,18 +29,8 @@ const disable = computed(() => progress.value || disabled.value)
 
 // variable
 const page = ref<number>(1)
-const over = computed(() => ps.partyPage.over)
-const more = computed(() => ps.partyPage.more)
-const joined = ref<boolean>(false)
-const partyId = ref<number | null>(null)
-const partyMember = reactive<Array<IUser>>([])
-const partyMessages = reactive<Array<IPartyMessage>>([])
+const { partyPage } = storeToRefs(ps)
 const parties = reactive<Array<IParty>>([])
-const text = ref<string>()
-
-const send = () => {
-  ps.party?.emit('send', { msg: text.value })
-}
 
 const temp = {
   id: 1,
@@ -80,7 +70,7 @@ const open = () => {
   progress.value = true
   ps.setParty(party)
     .then((id: number) => {
-      partyId.value = id
+      ps.partyId = id
       showForm.value = false
       getParties()
     })
@@ -96,7 +86,7 @@ const open = () => {
 const join = (id?: number) => {
   if (id)
     ps.party?.emit('join', id, () => {
-      joined.value = true
+      ps.joined = true
     })
 }
 
@@ -115,47 +105,14 @@ const next = () => {
 }
 
 onMounted(() => {
-  progress.value = true
-  Promise.all([getParties(), ps.check()])
-    .then(([, id]) => {
-      if (id) {
-        partyId.value = id
-        joined.value = true
-      }
-    })
-    .catch(() => { })
-    .then(() => {
-      progress.value = false
-    })
+  getParties()
 })
 
 </script>
 
 <template>
   <div>
-    <D4Dialog v-model="joined" position="right" transition-duration="300" transition-show="slide-left"
-      transition-hide="slide-right" seamless>
-      <template #middle>
-        <q-card-section class="row justify-center">
-          <div style="width: 300px; height: 300px;background-color: var(--q-cloud);" class="rounded-borders">
-            <q-chat-message v-for="pm in partyMessages" :key="pm.id" :text="[pm.message]" sent text-color="white"
-              bg-color="primary">
-              <template v-slot:name>{{ pm.battleTag }}</template>
-              <template v-slot:stamp>{{ pm.regDate }}</template>
-              <template v-slot:avatar>
-                <img class="q-message-avatar q-message-avatar--sent" src="https://cdn.quasar.dev/img/avatar5.jpg">
-              </template>
-            </q-chat-message>
-          </div>
-        </q-card-section>
-      </template>
-      <template #bottom>
-        <q-card-section class="row justify-between">
-          <q-input class="col" outlined dense v-model="text" />
-          <q-btn label="전송" @click="send" />
-        </q-card-section>
-      </template>
-    </D4Dialog>
+
     <q-list bordered separator>
       <q-item v-for="p in parties" :key="p.id">
         <q-item-section>
@@ -222,10 +179,12 @@ onMounted(() => {
       <D4Btn v-else style="visibility: hidden;" />
     </div>
     <div class="row q-gutter-xs items-center paging">
-      <D4Btn round @click="prev" color="var(--q-light-magic)" :disable="!over || disable" :shadow="!$q.dark.isActive">
+      <D4Btn round @click="prev" color="var(--q-light-magic)" :disable="!partyPage.over || disable"
+        :shadow="!$q.dark.isActive">
         <img src="/images/icons/prev.svg" width="24" height="24" class="invert" alt="Tradurs Prev Icon" />
       </D4Btn>
-      <D4Btn round @click="next" color="var(--q-light-magic)" :disable="!more || disable" :shadow="!$q.dark.isActive">
+      <D4Btn round @click="next" color="var(--q-light-magic)" :disable="!partyPage.more || disable"
+        :shadow="!$q.dark.isActive">
         <img src="/images/icons/next.svg" width="24" height="24" class="invert" alt="Tradurs Next Icon" />
       </D4Btn>
     </div>

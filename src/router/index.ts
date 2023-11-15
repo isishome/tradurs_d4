@@ -28,7 +28,8 @@ const initSocket = async (as: AccountStore, is: ItemStore, ps: PartyStore) => {
 
   const manager = new Manager(import.meta.env.VITE_APP_SOCKET, {
     reconnectionDelayMax: 10000,
-    withCredentials: prod
+    withCredentials: prod,
+    transports: ['polling']
   })
 
   as.messenger = manager.socket('/messenger')

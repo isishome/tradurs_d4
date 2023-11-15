@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useQuasar, Screen, QBtnDropdown } from 'quasar'
 import { useI18n } from 'vue-i18n'
@@ -7,6 +7,7 @@ import { useI18n } from 'vue-i18n'
 import { useGlobalStore } from 'src/stores/global-store'
 import { useAccountStore } from 'stores/account-store'
 import { useItemStore } from 'stores/item-store'
+import { usePartyStore } from 'stores/party-store'
 import { checkName, scrollPosDirect } from 'src/common'
 
 import D4Filter from 'components/D4Filter.vue'
@@ -24,6 +25,7 @@ const $q = useQuasar()
 const gs = useGlobalStore()
 const as = useAccountStore()
 const is = useItemStore()
+const ps = usePartyStore()
 const { t, locale } = useI18n({ useScope: 'global' })
 
 locale.value = props.lang || 'ko'
@@ -129,6 +131,13 @@ const isMySpace = computed(() => ['messages', 'blocks', 'history'].includes(rout
 // about screen size
 const size = computed(() => $q.screen.width < 728 ? 'display:inline-block;width:320px;max-height:100px;' : 'display:inline-block;width:728px;height:90px;')
 
+// about party
+const text = ref<string>()
+
+const send = () => {
+  ps.party?.emit('send', { msg: text.value })
+}
+
 watch([size, () => $q.screen.gt.md], ([new1, new2], [old1, old2]) => {
   if (new1 !== old1 || new2 !== old2)
     gs.reloadAdKey++
@@ -143,12 +152,45 @@ watch(() => is.filter.name, (val) => {
   if (val === '')
     _name.value = ''
 })
+
+onMounted(() => {
+  ps.check()
+    .then((id) => {
+      if (id) {
+        ps.partyId = id
+        ps.joined = true
+      }
+    })
+})
 </script>
 <template>
   <q-layout view="hHh lpR lFf" :key="mainKey">
     <div v-show="['tradeList', 'itemInfo'].includes(route.name as string) && is.storage.data.ladder" class="bg-season"
       :style="`--tradurs-season-image:url('${t('season.bg')}');`">
     </div>
+    <D4Dialog v-model="ps.joined" :position="!$q.screen.lt.sm ? 'right' : 'bottom'" transition-duration="300"
+      :transition-show="!$q.screen.lt.sm ? 'slide-left' : 'slide-up'" transition-hide="slide-right" seamless>
+      <template #middle>
+        <q-card-section class="row justify-center">
+          <div style="width: 300px; height: 300px;background-color: var(--q-cloud);" class="rounded-borders">
+            <q-chat-message v-for="pm in ps.partyMessages" :key="pm.id" :text="[pm.message]" sent text-color="white"
+              bg-color="primary">
+              <template v-slot:name>{{ pm.battleTag }}</template>
+              <template v-slot:stamp>{{ pm.regDate }}</template>
+              <template v-slot:avatar>
+                <img class="q-message-avatar q-message-avatar--sent" src="https://cdn.quasar.dev/img/avatar5.jpg">
+              </template>
+            </q-chat-message>
+          </div>
+        </q-card-section>
+      </template>
+      <template #bottom>
+        <q-card-section class="row justify-between">
+          <q-input class="col" outlined dense v-model="text" />
+          <q-btn label="전송" @click="send" />
+        </q-card-section>
+      </template>
+    </D4Dialog>
     <q-drawer show-if-above no-swipe-open no-swipe-close no-swipe-backdrop bordered v-model="leftDrawerOpen" side="left"
       :behavior="screen.lt.md ? 'default' : 'desktop'" class="row justify-end" @before-show="beforeShow" :width="300">
       <D4Filter :disable="route.name !== 'tradeList'" class="q-pa-lg" style="width:300px" />
