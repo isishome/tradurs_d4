@@ -4,6 +4,7 @@ import { reactive, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useGlobalStore } from 'stores/global-store'
 import { useAccountStore } from 'stores/account-store'
+import { useScript } from 'src/composables/script'
 
 interface Answer {
   type: string,
@@ -21,11 +22,16 @@ const props = defineProps<{
   section?: string
 }>()
 
+const prod: boolean = import.meta.env.PROD
+const recaptchaApiKey = import.meta.env.VITE_APP_RECAPTCHA
 
 const $q = useQuasar()
 const { t, tm } = useI18n({ useScope: 'global' })
 const gs = useGlobalStore()
 const as = useAccountStore()
+
+if (prod)
+  useScript(`https://www.google.com/recaptcha/api.js?render=${recaptchaApiKey}`, undefined, { async: true })
 
 const support = computed(() => tm('support') as Array<Support>)
 const findSection = support.value.find(s => s.id === (props.section || 'qna'))
@@ -43,7 +49,7 @@ const send = () => {
   contact.disable = true
   if (window?.grecaptcha) {
     window.grecaptcha.ready(() => {
-      window.grecaptcha.execute('6Lf38rYmAAAAAB-ET1oihMUkcDumRascvVHOyGmg', { action: 'submit' })
+      window.grecaptcha.execute(recaptchaApiKey, { action: 'submit' })
         .then((token: string) => {
           gs.contactUs(token, contact.contents)
             .then(() => {
