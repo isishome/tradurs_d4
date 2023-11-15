@@ -24,7 +24,8 @@ const initSocket = async (as: any, is: any) => {
 
   const manager = new Manager(import.meta.env.VITE_APP_SOCKET, {
     reconnectionDelayMax: 10000,
-    withCredentials: prod
+    withCredentials: prod,
+    transports: ['polling']
   })
 
   as.socket = manager.socket('/messenger')
