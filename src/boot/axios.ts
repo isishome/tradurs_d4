@@ -7,7 +7,10 @@ import { i18n } from './i18n'
 
 let api: AxiosInstance
 
-export default boot(({ app, ssrContext, store, router }) => {
+// "async" is optional;
+// more info on params: https://v2.quasar.dev/quasar-cli/boot-files
+export default boot(({ app, ssrContext, store, router }/* { app, router, ... } */) => {
+  // something to do
   api = axios.create({
     baseURL: import.meta.env.VITE_APP_BACKEND,
     timeout: 0,
@@ -79,6 +82,6 @@ export default boot(({ app, ssrContext, store, router }) => {
   app.config.globalProperties.$api = api
   // ^ ^ ^ this will allow you to use this.$api (for Vue Options API form)
   //       so you can easily perform requests against your app's API
-});
+})
 
 export { api }

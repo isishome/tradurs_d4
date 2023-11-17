@@ -1,7 +1,0 @@
-{
-  "appId": "org.capacitor.tradurs_d4.app",
-  "appName": "D4 App",
-  "bundledWebRuntime": false,
-  "npmClient": "npm",
-  "webDir": "www"
-}

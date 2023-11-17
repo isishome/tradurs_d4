@@ -7,7 +7,10 @@ import D4Dialog from 'components/UI/D4Dialog.vue'
 import D4Tooltip from 'components/UI/D4Tooltip.vue'
 import D4Note from 'components/UI/D4Note.vue'
 
-export default boot(({ app }) => {
+// "async" is optional;
+// more info on params: https://v2.quasar.dev/quasar-cli/boot-files
+export default boot(({ app }/* { app, router, ... } */) => {
+  // something to do
   app.component('Adsense', Adsense)
     .component('D4Btn', D4Btn)
     .component('D4Counter', D4Counter)

@@ -22,7 +22,10 @@ declare module 'vue-i18n' {
 
 let i18n: any
 
-export default boot(({ app }) => {
+// "async" is optional;
+// more info on params: https://v2.quasar.dev/quasar-cli/boot-files
+export default boot(({ app }/* { app, router, ... } */) => {
+  // something to do
   i18n = createI18n({
     locale: 'ko',
     legacy: false,

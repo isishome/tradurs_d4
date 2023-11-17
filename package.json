@@ -9,8 +9,8 @@
     "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
-    "@quasar/extras": "^1.0.0",
-    "axios": "^0.21.1",
+    "@quasar/extras": "^1.16.4",
+    "axios": "^1.2.1",
     "pinia": "^2.0.11",
     "quasar": "^2.6.0",
     "socket.io-client": "^4.6.1",
@@ -21,8 +21,8 @@
   },
   "devDependencies": {
     "@intlify/vite-plugin-vue-i18n": "^3.3.1",
-    "@quasar/app-vite": "^1.0.0",
-    "@types/node": "^12.20.55",
+    "@quasar/app-vite": "^1.3.0",
+    "@types/node": "^12.20.21",
     "autoprefixer": "^10.4.2",
     "typescript": "^4.5.4"
   },
