@@ -31,7 +31,7 @@ const gs = useGlobalStore()
 const as = useAccountStore()
 
 if (prod)
-  useScript(`https://www.google.com/recaptcha/api.js?render=${recaptchaApiKey}`, undefined, { async: true })
+  useScript(`https://www.google.com/recaptcha/api.js?render=${recaptchaApiKey}`, { async: true })
 
 const support = computed(() => tm('support') as Array<Support>)
 const findSection = support.value.find(s => s.id === (props.section || 'qna'))
