@@ -11,7 +11,7 @@ interface IProps {
   textColor?: string,
   round?: boolean,
   shadow?: boolean,
-  shadowDepth?: number,
+  shadowDepth?: number | string,
   to?: RouteLocationRaw,
   loading?: boolean,
   disable?: boolean,
@@ -214,6 +214,10 @@ const click = () => {
   box-shadow: rgb(0, 0, 0) 0 0 12px 12px;
 }
 
+.body--dark .shadow-depth-3 {
+  box-shadow: rgb(0, 0, 0) 0 0 36px 36px;
+}
+
 .body--light .shadow-depth-5 {
   box-shadow: rgb(38, 57, 77) 0 20px 30px 0;
 }
@@ -221,6 +225,19 @@ const click = () => {
 .body--light .shadow-depth-1 {
   box-shadow: rgb(38, 57, 77) 0 4px 6px 0;
 }
+
+.body--light .shadow-depth-3 {
+  box-shadow: rgb(38, 57, 77) 0 12px 12px 0;
+}
+
+.body--dark .shadow-depth-deep {
+  box-shadow: rgb(0, 0, 0) 0 0 60px 60px, rgb(0, 0, 0) 0 0 60px 60px !important;
+}
+
+.body--light .shadow-depth-deep {
+  box-shadow: rgb(38, 57, 77) 0 20px 30px 0, rgb(38, 57, 77) 0 20px 30px 0 !important;
+}
+
 
 .body--dark .round::after {
   content: '';

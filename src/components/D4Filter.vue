@@ -367,7 +367,7 @@ const removePreset = ({ id, done, error }: { id: number, done: Function, error: 
         </q-select>
       </q-item-section>
     </q-item>
-    <q-item :disable="filterLoading" class="q-mx-md q-mb-xs" v-for=" pid  in  is.filter.properties " :key="`${pid}`">
+    <q-item :disable="filterLoading" class="q-mx-md q-mb-xs" v-for="pid in is.filter.properties" :key="`${pid}`">
       <q-item-section>
         <q-item-label caption>
           {{ findProperty(pid as number)?.label }}
@@ -409,7 +409,7 @@ const removePreset = ({ id, done, error }: { id: number, done: Function, error: 
         </q-select>
       </q-item-section>
     </q-item>
-    <q-item :disable="filterLoading" class="q-mx-md q-mb-xs" v-for=" aid  in  is.filter.affixes " :key="`${aid}`">
+    <q-item :disable="filterLoading" class="q-mx-md q-mb-xs" v-for="aid in is.filter.affixes" :key="`${aid}`">
       <q-item-section>
         <q-item-label caption>
           {{ findAffix(aid as number)?.label }}
@@ -447,7 +447,7 @@ const removePreset = ({ id, done, error }: { id: number, done: Function, error: 
         </q-select>
       </q-item-section>
     </q-item>
-    <q-item :disable="filterLoading" class="q-mx-md q-mb-xs" v-for=" rid  in  is.filter.restrictions " :key="`${rid}`">
+    <q-item :disable="filterLoading" class="q-mx-md q-mb-xs" v-for="rid  in  is.filter.restrictions" :key="`${rid}`">
       <q-item-section>
         <q-item-label caption>
           {{ findRestriction(rid as number)?.label }}

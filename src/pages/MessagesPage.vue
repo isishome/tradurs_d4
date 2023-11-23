@@ -236,7 +236,7 @@ onMounted(() => {
           </div>
         </q-slide-transition>
       </template>
-      <template v-if="loading" v-for=" c  in  messages.length || as.messagePage.rows " :key="c">
+      <template v-if="loading" v-for="c in  messages.length || as.messagePage.rows" :key="c">
         <q-separator />
         <q-item class="q-py-md">
           <q-item-section side>

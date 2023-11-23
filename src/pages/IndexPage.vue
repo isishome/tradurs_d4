@@ -354,12 +354,12 @@ defineExpose({ getList })
   <div class="q-pt-xl"></div>
   <template v-if="completeList">
     <div class="sticky-place row justify-end">
-      <div v-if="as.signed" class="row items-center q-gutter-x-xs shadow-depth-5 relative-position">
+      <div v-if="as.signed" class="row items-center q-gutter-x-xs relative-position">
         <!-- <D4Btn v-if="selectable" round @click="create" color="var(--q-info)"
           :disable="disable || items.filter((item: Item) => item.selected).length === 0">
           <img src="/images/icons/remove.svg" width="24" height="24" class="invert" alt="Tradurs Add Icon" />
         </D4Btn> -->
-        <D4Btn round @click="create" color="var(--q-secondary)" :disable="disable" shadow>
+        <D4Btn round @click="create" color="var(--q-secondary)" :disable="disable" shadow shadow-depth="deep">
           <img src="/images/icons/add.svg" width="24" height="24" class="invert" alt="Tradurs Add Icon" />
         </D4Btn>
       </div>
@@ -384,22 +384,11 @@ defineExpose({ getList })
   pointer-events: none;
 }
 
-.shadow-depth-5::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 0;
-  width: 100%;
+@media (max-width:600px) {
+  .sticky-place {
+    bottom: 10px;
+  }
 }
-
-.body--dark .shadow-depth-5::before {
-  box-shadow: rgb(0, 0, 0) 0 0 60px 60px;
-}
-
-.body--light .shadow-depth-5::before {
-  box-shadow: rgb(38, 57, 77) 0 20px 30px 0;
-}
-
 
 .paging {
   position: absolute;
@@ -419,10 +408,6 @@ defineExpose({ getList })
 }
 
 @media (max-width:600px) {
-  .sticky-place {
-    bottom: 10px;
-  }
-
   .item-list:deep(.item:not(.reward) .card-item:not(.editable) .filtered) {
     line-height: 14px;
   }

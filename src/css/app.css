@@ -33,6 +33,7 @@
   --q-shadow: #000000;
   --q-cloud: #99999916;
   --q-half: rgba(150, 150, 150, 0.2);
+  --q-shadow: rgba(150, 150, 150, 0.6);
   --q-filter-normal: invert(39%) sepia(1%) saturate(1823%) hue-rotate(16deg) brightness(100%) contrast(89%);
   --q-filter-magic: invert(35%) sepia(72%) saturate(1098%) hue-rotate(212deg) brightness(80%) contrast(96%);
   --q-filter-rare: invert(91%) sepia(21%) saturate(2166%) hue-rotate(5deg) brightness(96%) contrast(91%);
@@ -245,7 +246,7 @@ body.body--dark {
   max-height: 40vh !important;
 }
 
-@media (min-width:599px) {
+@media (min-width:600px) {
   .limit-select {
     max-width: 200px;
   }

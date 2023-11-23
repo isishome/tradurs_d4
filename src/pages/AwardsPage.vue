@@ -79,7 +79,7 @@ is.getAwards()
       </template>
       <template #detail>
         <div class="text-h6 text-center text-weight-bold">
-          {{ n(Number.parseFloat(awards.highPriced[0]?.price as string), 'decimal', { notation: 'compact' }) }}
+          {{ $n(Number.parseFloat(awards.highPriced[0]?.price as string), 'decimal', { notation: 'compact' as string }) }}
         </div>
       </template>
       <template #battleTag>
@@ -95,7 +95,7 @@ is.getAwards()
                 {{ ranker?.ranking }}. {{ ranker?.itemName }}
               </q-item-label>
               <q-item-label class="text-right">{{ ranker?.battleTag }}</q-item-label>
-              <q-item-label caption class="text-right">{{ n(Number.parseFloat(ranker?.price as string), 'decimal', {
+              <q-item-label caption class="text-right">{{ $n(Number.parseFloat(ranker?.price as string), 'decimal', {
                 notation: 'compact'
               })
               }}</q-item-label>

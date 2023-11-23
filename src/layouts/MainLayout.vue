@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useQuasar, Screen, QBtnDropdown } from 'quasar'
 import { useI18n } from 'vue-i18n'
@@ -7,11 +7,12 @@ import { useI18n } from 'vue-i18n'
 import { useGlobalStore } from 'src/stores/global-store'
 import { useAccountStore } from 'stores/account-store'
 import { useItemStore } from 'stores/item-store'
-import { usePartyStore } from 'stores/party-store'
+import { usePartyStore } from 'src/stores/party-store'
 import { checkName, scrollPosDirect } from 'src/common'
 
 import D4Filter from 'components/D4Filter.vue'
 import D4User from 'components/D4User.vue'
+
 
 const props = defineProps<{
   lang: string
@@ -60,11 +61,10 @@ const sign = () => {
     as.sign().then((result: boolean) => {
       if (!result) {
         is.clearFilter()
+        ps.dispose()
 
-        if (route.name === 'tradeList') {
+        if (route.name === 'tradeList')
           mainKey.value++
-          gs.reloadAdKey++
-        }
         else
           router.push({ name: 'tradeList', params: { lang: route.params.lang } })
       }
@@ -75,7 +75,6 @@ const sign = () => {
   }
 }
 
-const brLoc = gs.localeOptions.map(lo => lo.value).includes($q.lang.getLocale()?.substring(0, 2) || '') ? $q.lang.getLocale()?.substring(0, 2) : 'ko'
 const setLang = (lang: string) => {
   const params: { lang?: string, section?: string } = { lang }
 
@@ -113,7 +112,6 @@ const main = () => {
   if (route.name === 'tradeList') {
     is.clearFilter()
     mainKey.value++
-    gs.reloadAdKey++
   }
   else
     router.push({ name: 'tradeList', params: { lang: route.params.lang } })
@@ -131,12 +129,8 @@ const isMySpace = computed(() => ['messages', 'blocks', 'history'].includes(rout
 // about screen size
 const size = computed(() => $q.screen.width < 728 ? 'display:inline-block;width:320px;max-height:100px;' : 'display:inline-block;width:728px;height:90px;')
 
-// about party
-const text = ref<string>()
-
-const send = () => {
-  ps.party?.emit('send', { msg: text.value })
-}
+// party
+const availableParty = computed(() => as.signed && ps.joined && ps.minimum)
 
 watch([size, () => $q.screen.gt.md], ([new1, new2], [old1, old2]) => {
   if (new1 !== old1 || new2 !== old2)
@@ -152,45 +146,13 @@ watch(() => is.filter.name, (val) => {
   if (val === '')
     _name.value = ''
 })
-
-onMounted(() => {
-  ps.check()
-    .then((id) => {
-      if (id) {
-        ps.partyId = id
-        ps.joined = true
-      }
-    })
-})
 </script>
 <template>
   <q-layout view="hHh lpR lFf" :key="mainKey">
     <div v-show="['tradeList', 'itemInfo'].includes(route.name as string) && is.storage.data.ladder" class="bg-season"
       :style="`--tradurs-season-image:url('${t('season.bg')}');`">
     </div>
-    <D4Dialog v-model="ps.joined" :position="!$q.screen.lt.sm ? 'right' : 'bottom'" transition-duration="300"
-      :transition-show="!$q.screen.lt.sm ? 'slide-left' : 'slide-up'" transition-hide="slide-right" seamless>
-      <template #middle>
-        <q-card-section class="row justify-center">
-          <div style="width: 300px; height: 300px;background-color: var(--q-cloud);" class="rounded-borders">
-            <q-chat-message v-for="pm in ps.partyMessages" :key="pm.id" :text="[pm.message]" sent text-color="white"
-              bg-color="primary">
-              <template v-slot:name>{{ pm.battleTag }}</template>
-              <template v-slot:stamp>{{ pm.regDate }}</template>
-              <template v-slot:avatar>
-                <img class="q-message-avatar q-message-avatar--sent" src="https://cdn.quasar.dev/img/avatar5.jpg">
-              </template>
-            </q-chat-message>
-          </div>
-        </q-card-section>
-      </template>
-      <template #bottom>
-        <q-card-section class="row justify-between">
-          <q-input class="col" outlined dense v-model="text" />
-          <q-btn label="전송" @click="send" />
-        </q-card-section>
-      </template>
-    </D4Dialog>
+
     <q-drawer show-if-above no-swipe-open no-swipe-close no-swipe-backdrop bordered v-model="leftDrawerOpen" side="left"
       :behavior="screen.lt.md ? 'default' : 'desktop'" class="row justify-end" @before-show="beforeShow" :width="300">
       <D4Filter :disable="route.name !== 'tradeList'" class="q-pa-lg" style="width:300px" />
@@ -198,46 +160,56 @@ onMounted(() => {
     <q-drawer show-if-above no-swipe-open no-swipe-close no-swipe-backdrop bordered v-model="rightDrawerOpen" side="right"
       behavior="mobile" class="row justify-start no-scroll" :width="300">
       <div class="column fit">
-        <q-item class="row justify-between items-center q-py-lg">
-          <q-select v-model="locale" :options="gs.localeOptions" :label="t('language', 0, { locale: brLoc })" outlined
-            dense emit-value map-options dropdown-icon="img:/images/icons/dropdown.svg"
-            popup-content-class="scroll bordered" @update:model-value="setLang" />
-          <div class="row items-center justify-end q-gutter-x-xs">
-            <q-btn round dense flat aria-label="Tradurs Discord Button" :ripple="!$q.dark.isActive" tag="a"
-              href="https://discord.gg/dwRuWq4enx" target="_blank" rel="noopener noreferrer">
-              <img width="24" height="24"
-                :src="$q.dark.isActive ? '/images/icons/discord_white.svg' : '/images/icons/discord_black.svg'"
-                alt="Discord Icon" />
-            </q-btn>
-            <q-btn round dense flat aria-label="Tradurs Support Button" :ripple="!$q.dark.isActive"
-              :to="{ name: 'support', params: { lang: route.params.lang } }">
-              <img class="icon" width="24" height="24" src="/images/icons/help.svg" alt="Tradurs Help Icon" />
-              <!-- <q-badge floating label="N" color="negative" class="new-badge" /> -->
-            </q-btn>
-            <q-btn round flat dense aria-label="Tradurs Theme Button" :ripple="!$q.dark.isActive" @click="setDark">
-              <img v-show="$q.dark.isActive" class="icon" width="24" height="24" src="/images/icons/light.svg"
-                alt="Tradurs Light Icon" />
-              <img v-show="!$q.dark.isActive" class="icon" width="24" height="24" src="/images/icons/dark.svg"
-                alt="Tradurs Dark Icon" />
-            </q-btn>
-            <q-btn v-if="signed" dense round flat aria-label="Tradurs User Info Button" :ripple="!$q.dark.isActive">
-              <img class="icon" width="24" height="24" src="/images/icons/user.svg" alt="Tradurs User Icon" />
-              <q-menu anchor="bottom end" self="top end" transition-show="none" transition-hide="none"
-                :transition-duration="0" style="min-width:260px">
-                <D4User :data="as.info" info>
-                  <template #actions>
-                    <q-btn no-caps unelevated :disable="progressSign" aria-label="Tradurs Info Button" color="grey-9"
-                      :label="t('user.info')" @click="info" v-close-popup />
-                    <q-btn no-caps unelevated :loading="progressSign" aria-label="Tradurs Signout Button"
-                      color="secondary" :label="t('user.signout')" @click="sign" v-close-popup />
-                  </template>
-                </D4User>
-              </q-menu>
-            </q-btn>
-            <q-btn v-else round flat dense aria-label="Tradurs Login Button" :ripple="!$q.dark.isActive" @click="sign">
-              <img class="icon" width="24" height="24" src="/images/icons/login.svg" alt="Tradurs Signin Icon" />
-            </q-btn>
-          </div>
+        <q-item class="row justify-end items-center q-py-lg q-gutter-x-xs icons">
+          <q-btn v-show="availableParty" round dense flat aria-label="Tradurs Chat Button" class="chat-color"
+            :ripple="!$q.dark.isActive" @click="ps.minimum = false">
+            <img :class="{ 'icon': !$q.dark.isActive }" width="24" height="24" src="/images/icons/chat.svg"
+              alt="Chat Icon" />
+          </q-btn>
+          <q-btn round dense flat aria-label="Tradurs Discord Button" :ripple="!$q.dark.isActive" tag="a"
+            href="https://discord.gg/dwRuWq4enx" target="_blank" rel="noopener noreferrer">
+            <img class="icon" width="24" height="24" style="padding:1px" src="/images/icons/discord.svg"
+              alt="Discord Icon" />
+          </q-btn>
+          <q-btn round dense flat aria-label="Tradurs Support Button" :ripple="!$q.dark.isActive"
+            :to="{ name: 'support', params: { lang: route.params.lang } }">
+            <img class="icon" width="24" height="24" src="/images/icons/help.svg" alt="Tradurs Help Icon" />
+            <!-- <q-badge floating label="N" color="negative" class="new-badge" /> -->
+          </q-btn>
+          <q-btn round dense flat aria-label="Tradurs Language Button" :ripple="!$q.dark.isActive">
+            <img class="icon" width="24" height="24" src="/images/icons/language.svg" alt="Tradurs Language Icon" />
+            <q-menu auto-close class="no-shadow" anchor="bottom end" self="top end" transition-show="none"
+              transition-hide="none" :transition-duration="0">
+              <q-list bordered class="rounded-borders">
+                <q-item v-for="lang in gs.localeOptions" :key="lang.value" :clickable="lang.value !== locale"
+                  :active="lang.value === locale" @click="setLang(lang.value)">
+                  {{ lang.label }}</q-item>
+              </q-list>
+            </q-menu>
+          </q-btn>
+          <q-btn round flat dense aria-label="Tradurs Theme Button" :ripple="!$q.dark.isActive" @click="setDark">
+            <img v-show="$q.dark.isActive" class="icon" width="24" height="24" src="/images/icons/light.svg"
+              alt="Tradurs Light Icon" />
+            <img v-show="!$q.dark.isActive" class="icon" width="24" height="24" src="/images/icons/dark.svg"
+              alt="Tradurs Dark Icon" />
+          </q-btn>
+          <q-btn v-if="signed" dense round flat aria-label="Tradurs User Info Button" :ripple="!$q.dark.isActive">
+            <img class="icon" width="24" height="24" src="/images/icons/user.svg" alt="Tradurs User Icon" />
+            <q-menu anchor="bottom end" self="top end" transition-show="none" transition-hide="none"
+              :transition-duration="0" style="min-width:260px">
+              <D4User :data="as.info" info>
+                <template #actions>
+                  <q-btn no-caps unelevated :disable="progressSign" aria-label="Tradurs Info Button" color="grey-9"
+                    :label="t('user.info')" @click="info" v-close-popup />
+                  <q-btn no-caps unelevated :loading="progressSign" aria-label="Tradurs Signout Button" color="secondary"
+                    :label="t('user.signout')" @click="sign" v-close-popup />
+                </template>
+              </D4User>
+            </q-menu>
+          </q-btn>
+          <q-btn v-else round flat dense aria-label="Tradurs Login Button" :ripple="!$q.dark.isActive" @click="sign">
+            <img class="icon" width="24" height="24" src="/images/icons/login.svg" alt="Tradurs Signin Icon" />
+          </q-btn>
         </q-item>
         <q-separator />
         <div class="col scroll">
@@ -462,10 +434,14 @@ onMounted(() => {
           </q-btn>
         </div>
         <div class="gt-sm col-3 row justify-end items-center q-gutter-xs">
+          <q-btn v-show="availableParty" round dense flat aria-label="Tradurs Chat Button" class="chat-color"
+            :ripple="!$q.dark.isActive" @click="ps.minimum = false">
+            <img :class="{ 'icon': !$q.dark.isActive }" width="24" height="24"
+              :src="`/images/icons/${$q.dark.isActive ? 'chat_fill' : 'chat'}.svg`" alt="Chat Icon" />
+          </q-btn>
           <q-btn round dense flat aria-label="Tradurs Discord Button" :ripple="!$q.dark.isActive" tag="a"
             href="https://discord.gg/dwRuWq4enx" target="_blank" rel="noopener noreferrer">
-            <img width="24" height="24"
-              :src="$q.dark.isActive ? '/images/icons/discord_white.svg' : '/images/icons/discord_black.svg'"
+            <img class="icon" width="24" height="24" style="padding:1px" src="/images/icons/discord.svg"
               alt="Discord Icon" />
           </q-btn>
           <q-btn round dense flat aria-label="Tradurs Support Button" :ripple="!$q.dark.isActive"
@@ -490,7 +466,7 @@ onMounted(() => {
             <img v-show="!$q.dark.isActive" class="icon" width="24" height="24" src="/images/icons/dark.svg"
               alt="Tradurs Dark Icon" />
           </q-btn>
-          <q-btn v-if="signed" round flat aria-label="Tradurs User Info Button" :ripple="!$q.dark.isActive">
+          <q-btn v-if="signed" round flat dense aria-label="Tradurs User Info Button" :ripple="!$q.dark.isActive">
             <img class="icon" width="24" height="24" src="/images/icons/user.svg" alt="Tradurs User Icon" />
             <q-menu anchor="bottom end" self="top end" transition-show="none" transition-hide="none"
               :transition-duration="0" style="min-width:280px">
@@ -522,11 +498,9 @@ onMounted(() => {
               <RouterView />
             </div>
             <div class="q-py-xl"></div>
-            <q-intersection transition="none" ssr-prerender once style="min-height:100px">
-              <Adsense style="display:block" data-ad-client="ca-pub-5110777286519562" data-ad-slot="6163086381"
-                :data-adtest="!prod" data-ad-format="auto" data-full-width-responsive="true"
-                :key="`bottom-${gs.reloadAdKey}`" />
-            </q-intersection>
+            <Adsense style="display:block" data-ad-client="ca-pub-5110777286519562" data-ad-slot="6163086381"
+              :data-adtest="!prod" data-ad-format="auto" data-full-width-responsive="true"
+              :key="`bottom-${gs.reloadAdKey}`" />
             <div class="q-py-md"></div>
             <q-separator />
             <div class="q-pt-lg">
@@ -590,7 +564,8 @@ onMounted(() => {
   color: var(--q-dark);
 }
 
-.header:deep(.q-btn .icon) {
+.header:deep(.q-btn .icon),
+.icons:deep(.q-btn .icon) {
   filter: contrast(0%);
 }
 
@@ -753,5 +728,30 @@ onMounted(() => {
   height: 1px;
   margin: -1px;
   overflow: hidden;
+}
+
+.chat {
+  margin-top: -50px;
+}
+
+@media (max-width:600px) {
+  .chat {
+    margin-top: -42px;
+  }
+}
+
+.body--dark .chat-color {
+  filter: invert(80%) sepia(77%) saturate(1168%) hue-rotate(357deg) brightness(103%) contrast(105%);
+}
+
+.body--light .chat-color::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  bottom: 12px;
+  left: 8px;
+  right: 8px;
+  background-color: #fee500;
+  z-index: -1;
 }
 </style>

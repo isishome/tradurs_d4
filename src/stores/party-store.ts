@@ -1,8 +1,14 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { api } from 'boot/axios'
 import { Socket } from 'socket.io-client'
 import { IUser } from 'src/types/user'
+
+export interface IPartyUser extends IUser {
+  partyId: number,
+  owner: boolean,
+  typing: boolean
+}
 
 export interface IPartyMessage {
   id: number,
@@ -12,7 +18,7 @@ export interface IPartyMessage {
 }
 
 export interface IParty {
-  id?: number,
+  battleTag?: string,
   type: string,
   category: string,
   name: string,
@@ -21,7 +27,8 @@ export interface IParty {
   people: number,
   region: string,
   notes: string,
-  regDate?: string
+  regDate?: string,
+  joined?: number
 }
 
 export interface IPage {
@@ -38,9 +45,9 @@ export const usePartyStore = defineStore('party', () => {
     over: false,
     more: false
   })
-  const partyId = ref<number | null>(null)
   const joined = ref<boolean>(false)
-  const partyMember = ref<Array<IUser>>([])
+  const minimum = ref<boolean>(false)
+  const partyMember = ref<Array<IPartyUser>>([])
   const partyMessages = ref<Array<IPartyMessage>>([])
 
   const getParties = (page: number) => {
@@ -58,11 +65,11 @@ export const usePartyStore = defineStore('party', () => {
     })
   }
 
-  const setParty = (party: IParty) => {
-    return new Promise<number>((resolve, reject) => {
+  const openParty = (party: IParty) => {
+    return new Promise<void>((resolve, reject) => {
       api.post('/d4/party/open', { party })
-        .then((response) => {
-          resolve(response.data)
+        .then(() => {
+          resolve()
         })
         .catch(() => {
           reject()
@@ -70,11 +77,11 @@ export const usePartyStore = defineStore('party', () => {
     })
   }
 
-  const check = () => {
-    return new Promise<number>((resolve, reject) => {
-      api.get('/d4/party/check')
-        .then((response) => {
-          resolve(response.data)
+  const joinParty = (battleTag: string) => {
+    return new Promise<void>((resolve, reject) => {
+      api.post('/d4/party/join', { battleTag })
+        .then(() => {
+          resolve()
         })
         .catch(() => {
           reject()
@@ -82,6 +89,25 @@ export const usePartyStore = defineStore('party', () => {
     })
   }
 
-  return { party, parties, partyPage, partyId, joined, partyMember, partyMessages, getParties, setParty, check }
+  const sendParty = ({ msg }: { msg: string }) => {
+    return new Promise<void>((resolve, reject) => {
+      api.post('/d4/party/send', { msg })
+        .then(() => {
+          resolve()
+        })
+        .catch(() => {
+          reject()
+        })
+    })
+  }
+
+  const dispose = () => {
+    joined.value = false
+    minimum.value = false
+    partyMember.value = []
+    partyMessages.value = []
+  }
+
+  return { party, parties, partyPage, joined, minimum, partyMember, partyMessages, getParties, openParty, joinParty, sendParty, dispose }
 
 })

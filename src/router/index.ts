@@ -6,7 +6,7 @@ import { useItemStore, type OfferInfo } from 'src/stores/item-store'
 import { useGlobalStore } from 'src/stores/global-store'
 import { Notify } from 'quasar'
 import { Manager } from 'socket.io-client'
-import { usePartyStore } from 'src/stores/party-store'
+import { usePartyStore, type IPartyMessage, IPartyUser } from 'src/stores/party-store'
 
 type AccountStore = ReturnType<typeof useAccountStore>
 type ItemStore = ReturnType<typeof useItemStore>
@@ -28,8 +28,7 @@ const initSocket = async (as: AccountStore, is: ItemStore, ps: PartyStore) => {
 
   const manager = new Manager(import.meta.env.VITE_APP_SOCKET, {
     reconnectionDelayMax: 10000,
-    withCredentials: prod,
-    transports: ['polling']
+    withCredentials: prod
   })
 
   as.messenger = manager.socket('/messenger')
@@ -39,15 +38,34 @@ const initSocket = async (as: AccountStore, is: ItemStore, ps: PartyStore) => {
     as.messenger?.emit('join', as.info.id)
   })
 
-  as.messenger.on('connect', () => {
-    ps.party?.emit('init', as.info.id)
-  })
-
   as.messenger.on('message', (data: string) => {
     Notify.create({
       position: 'top',
       message: data,
     })
+  })
+
+  ps.party.on('connect', () => {
+    ps.party?.emit('join', { id: as.info.id, battleTag: as.info.battleTag }, (result?: Array<IPartyUser>) => {
+      if (result) {
+        ps.partyMember = result
+        ps.joined = true
+      }
+    })
+  })
+
+  ps.party.on('message', (data: IPartyMessage) => {
+    const findUser = ps.partyMember.find((pm: IPartyUser) => pm.battleTag === data.battleTag)
+    if (findUser) {
+      findUser.typing = false
+      ps.partyMessages.splice(0, 0, data)
+    }
+  })
+
+  ps.party.on('typing', ({ battleTag, typing }: { battleTag: string, typing: boolean }) => {
+    const findUser = ps.partyMember.find((pm: IPartyUser) => pm.battleTag === battleTag && as.info.battleTag !== battleTag)
+    if (findUser)
+      findUser.typing = typing
   })
 
   const notify = () => {

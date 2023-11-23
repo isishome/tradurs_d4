@@ -29,6 +29,8 @@ const disable = computed(() => progress.value || disabled.value)
 
 // variable
 const page = ref<number>(1)
+const over = computed(() => ps.partyPage.over)
+const more = computed(() => ps.partyPage.more)
 const { partyPage } = storeToRefs(ps)
 const parties = reactive<Array<IParty>>([])
 
@@ -68,9 +70,9 @@ const party = reactive<IParty>({
 
 const open = () => {
   progress.value = true
-  ps.setParty(party)
-    .then((id: number) => {
-      ps.partyId = id
+  ps.openParty(party)
+    .then(() => {
+      ps.joined = true
       showForm.value = false
       getParties()
     })
@@ -83,10 +85,16 @@ const open = () => {
   // })
 }
 
-const join = (id?: number) => {
-  if (id)
-    ps.party?.emit('join', id, () => {
-      ps.joined = true
+const join = (battleTag: string) => {
+  progress.value = true
+  ps.joinParty(battleTag)
+    .then(() => {
+      showForm.value = false
+      getParties()
+    })
+    .catch(() => { })
+    .then(() => {
+      progress.value = false
     })
 }
 
@@ -114,17 +122,39 @@ onMounted(() => {
   <div>
 
     <q-list bordered separator>
-      <q-item v-for="p in parties" :key="p.id">
+      <q-item>
+        <q-item-section>
+        </q-item-section>
+        <q-item-section side>
+          <q-btn no-caps push :disable="disable || progress" unelevated aria-label="방 만들기" color="grey-8" label="방 만들기"
+            @click="showForm = true" />
+        </q-item-section>
+      </q-item>
+      <q-item v-for="p in parties" :key="p.battleTag">
         <q-item-section>
           <q-item-label>
             카테고리 :{{ p.category }}
           </q-item-label>
         </q-item-section>
         <q-item-section side>
-          <q-btn v-if="(p.current || 0) < p.people" color="green-7" label="입장" @click="join(p.id)" />
+          <q-btn :disable="disable || p.joined === 1 || (p.current || 0) >= p.people" color="green-7" label="입장"
+            @click="join(p.battleTag as string)" />
         </q-item-section>
       </q-item>
     </q-list>
+    <div class="row justify-between q-mt-md q-px-sm paging">
+      <div>{{ t('message.page', { page }) }}</div>
+      <div class="row justify-end items-center q-gutter-x-md">
+        <q-btn flat dense round padding="0" aria-label="Tradurs Prev Button" :disable="!over || disable"
+          :shadow="!$q.dark.isActive">
+          <img src="/images/icons/prev.svg" width="24" height="24" class="icon" alt="Tradurs Prev Icon" @click="prev" />
+        </q-btn>
+        <q-btn flat dense round padding="0" aria-label="Tradurs Next Button" :disable="!more || disable"
+          :shadow="!$q.dark.isActive" @click="next">
+          <img src="/images/icons/next.svg" width="24" height="24" class="icon" alt="Tradurs Next Icon" />
+        </q-btn>
+      </div>
+    </div>
     <D4Dialog v-model="showForm" :maximized="$q.screen.lt.sm" @submit="open">
       <template #top>
 
@@ -170,76 +200,8 @@ onMounted(() => {
   </div>
   <div class="q-pt-xl"></div>
   <template v-if="completeList">
-    <div class="sticky-place row justify-end">
-      <div v-if="as.signed" class="row items-center q-gutter-x-xs shadow-depth-5 relative-position">
-        <D4Btn round @click="showForm = true" color="var(--q-secondary)" :disable="disable" shadow>
-          <img src="/images/icons/add.svg" width="24" height="24" class="invert" alt="Tradurs Add Icon" />
-        </D4Btn>
-      </div>
-      <D4Btn v-else style="visibility: hidden;" />
-    </div>
-    <div class="row q-gutter-xs items-center paging">
-      <D4Btn round @click="prev" color="var(--q-light-magic)" :disable="!partyPage.over || disable"
-        :shadow="!$q.dark.isActive">
-        <img src="/images/icons/prev.svg" width="24" height="24" class="invert" alt="Tradurs Prev Icon" />
-      </D4Btn>
-      <D4Btn round @click="next" color="var(--q-light-magic)" :disable="!partyPage.more || disable"
-        :shadow="!$q.dark.isActive">
-        <img src="/images/icons/next.svg" width="24" height="24" class="invert" alt="Tradurs Next Icon" />
-      </D4Btn>
-    </div>
+
   </template>
 </template>
 
-<style scoped>
-.sticky-place {
-  position: sticky;
-  bottom: 8%;
-  z-index: 1;
-  pointer-events: none;
-}
-
-.shadow-depth-5::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 0;
-  width: 100%;
-}
-
-.body--dark .shadow-depth-5::before {
-  box-shadow: rgb(0, 0, 0) 0 0 60px 60px;
-}
-
-.body--light .shadow-depth-5::before {
-  box-shadow: rgb(38, 57, 77) 0 20px 30px 0;
-}
-
-
-.paging {
-  position: absolute;
-  transform: translateY(-90%);
-}
-
-.item-list:deep(.item:not(.reward) .card-item:not(.editable) .filtered) {
-  background-color: rgba(250, 200, 0);
-  color: black;
-  font-weight: 700;
-  border-radius: 4px;
-  padding-right: 6px;
-}
-
-.item-list:deep(.item:not(.reward) .card-item:not(.editable) .filtered .minmax-text) {
-  color: rgba(110, 110, 110, 1) !important;
-}
-
-@media (max-width:600px) {
-  .sticky-place {
-    bottom: 10px;
-  }
-
-  .item-list:deep(.item:not(.reward) .card-item:not(.editable) .filtered) {
-    line-height: 14px;
-  }
-}
-</style>
+<style scoped></style>

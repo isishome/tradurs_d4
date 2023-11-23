@@ -18,6 +18,7 @@ import { useQuasar, useMeta } from 'quasar'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useGlobalStore } from 'stores/global-store'
+import D4Chat from 'src/components/D4Chat.vue'
 
 interface IParagraph {
   type: string,
@@ -48,7 +49,7 @@ const updateBattleTag = () => {
     })
 }
 
-const lang = route.params.lang || 'ko'
+const lang = route.params.lang as string || 'ko'
 locale.value = lang
 
 // about Meta
@@ -216,6 +217,7 @@ onMounted(() => {
       </q-card-section>
     </template>
   </D4Dialog>
+  <D4Chat />
   <router-view v-if="!showBT && view" />
 </template>
 
