@@ -2,7 +2,7 @@
 import { ref, computed, reactive, defineAsyncComponent } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
-import { type Awards, type Gem, type Elixir, useItemStore } from 'src/stores/item-store'
+import { type Awards, type Gem, type Elixir, useItemStore, Summoning } from 'src/stores/item-store'
 
 const D4Award = defineAsyncComponent(() => import('components/D4Award.vue'))
 
@@ -37,7 +37,7 @@ const awards: Awards = reactive({
     battleTag: ''
   }]
 })
-const itemName = computed(() => (itemName?: string, typeValue1?: string, typeValue2?: string) => (typeValue1 === 'gem' ? is.gems.find((g: Gem) => g.value === typeValue2)?.label || null : typeValue1 === 'elixir' ? is.elixirs.find((e: Elixir) => e.value === typeValue2)?.label || null : itemName))
+const itemName = computed(() => (itemName?: string, typeValue1?: string, typeValue2?: string) => (typeValue1 === 'gem' ? is.gems.find((g: Gem) => g.value === typeValue2)?.label || null : typeValue1 === 'elixir' ? is.elixirs.find((e: Elixir) => e.value === typeValue2)?.label || null : typeValue1 === 'summoning' ? is.summonings.find((s: Summoning) => s.value === typeValue2)?.label || null : itemName))
 
 const noData = computed(() => !loading.value && (awards.highPriced?.length || 0) + (awards.bestManners?.length || 0) + (awards.mostSold?.length || 0) + (awards.mostPurchased?.length || 0) === 0)
 
