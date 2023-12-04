@@ -2,11 +2,11 @@
 import { ref, computed, reactive, defineAsyncComponent } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
-import { type Awards, useItemStore } from 'src/stores/item-store'
+import { type Awards, type Gem, type Elixir, useItemStore } from 'src/stores/item-store'
 
 const D4Award = defineAsyncComponent(() => import('components/D4Award.vue'))
 
-const { t, n } = useI18n({ useScope: 'global' })
+const { t } = useI18n({ useScope: 'global' })
 const route = useRoute()
 const is = useItemStore()
 
@@ -37,6 +37,8 @@ const awards: Awards = reactive({
     battleTag: ''
   }]
 })
+const itemName = computed(() => (itemName?: string, typeValue1?: string, typeValue2?: string) => (typeValue1 === 'gem' ? is.gems.find((g: Gem) => g.value === typeValue2)?.label || null : typeValue1 === 'elixir' ? is.elixirs.find((e: Elixir) => e.value === typeValue2)?.label || null : itemName))
+
 const noData = computed(() => !loading.value && (awards.highPriced?.length || 0) + (awards.bestManners?.length || 0) + (awards.mostSold?.length || 0) + (awards.mostPurchased?.length || 0) === 0)
 
 is.getAwards()
@@ -68,7 +70,10 @@ is.getAwards()
             </q-item-section>
             <q-item-section>
               <q-item-label>
-                {{ awards.highPriced[0]?.itemName }}
+                {{
+                  itemName(awards.highPriced[0]?.itemName, awards.highPriced[0]?.itemTypeValue1,
+                    awards.highPriced[0]?.itemTypeValue2)
+                }}
               </q-item-label>
             </q-item-section>
             <q-item-section side>
@@ -79,7 +84,7 @@ is.getAwards()
       </template>
       <template #detail>
         <div class="text-h6 text-center text-weight-bold">
-          {{ n(Number.parseFloat(awards.highPriced[0]?.price as string), 'decimal', { notation: 'compact' }) }}
+          {{ $n(Number.parseFloat(awards.highPriced[0]?.price as string), 'decimal', { notation: 'compact' }) }}
         </div>
       </template>
       <template #battleTag>
@@ -92,10 +97,11 @@ is.getAwards()
             :to="{ name: 'itemInfo', params: { lang: route.params.lang, itemid: ranker?.itemId } }">
             <q-item-section>
               <q-item-label>
-                {{ ranker?.ranking }}. {{ ranker?.itemName }}
+                {{ ranker?.ranking }}. {{ itemName(ranker?.itemName, ranker?.itemTypeValue1,
+                  ranker?.itemTypeValue2) }}
               </q-item-label>
               <q-item-label class="text-right">{{ ranker?.battleTag }}</q-item-label>
-              <q-item-label caption class="text-right">{{ n(Number.parseFloat(ranker?.price as string), 'decimal', {
+              <q-item-label caption class="text-right">{{ $n(Number.parseFloat(ranker?.price as string), 'decimal', {
                 notation: 'compact'
               })
               }}</q-item-label>

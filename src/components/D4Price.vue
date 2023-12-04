@@ -27,7 +27,7 @@ const emit = defineEmits(['update'])
 
 // common variable
 const store = useItemStore()
-const { t, n } = useI18n({ useScope: 'global' })
+const { t } = useI18n({ useScope: 'global' })
 
 // variable
 const loading = computed(() => props.data.loading || props.progress)
@@ -116,7 +116,7 @@ const updateCurrency = (val: string | null): void => {
         <q-input :disable="disable" dense no-error-icon hide-bottom-space outlined v-model.number="_price.currencyValue"
           maxlength="11" reverse-fill-mask unmasked-value debounce="500" :error="_priceError" @update:model-value="update"
           @focus="focus" @blur="_priceError = false" input-class="text-right"
-          :label="n(Number.parseFloat(_price.currencyValue && Number.isInteger(parseInt(_price.currencyValue as string)) ? _price.currencyValue.toString() : '0'), 'decimal', { notation: 'compact' })"
+          :label="$n(Number.parseFloat(_price.currencyValue && Number.isInteger(parseInt(_price.currencyValue as string)) ? _price.currencyValue.toString() : '0'), 'decimal', { notation: 'compact' })"
           :rules="[val => Number.isInteger(parseInt(val)) && parseInt(val) > 0 && parseInt(val) % 100000 === 0 || '']">
           <q-tooltip v-model="_priceError" :target="_priceError" no-parent-event transition-show="none"
             transition-hide="none" anchor="top end" self="bottom end" class="bg-negative">
@@ -173,7 +173,7 @@ const updateCurrency = (val: string | null): void => {
         <template v-if="data.currency === 'gold'">
           <img :src="currencyValueImg" width="24" height="24" alt="Tradurs Price Icon" />
           <div>
-            {{ n(Number.parseFloat(data.currencyValue ? data.currencyValue.toString() : '0'), 'decimal') }}
+            {{ $n(Number.parseFloat(data.currencyValue ? data.currencyValue.toString() : '0'), 'decimal') }}
           </div>
         </template>
         <template v-else>
