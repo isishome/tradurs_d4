@@ -4,6 +4,7 @@ import { User, type INotify } from 'src/types/user'
 import { Socket } from 'socket.io-client'
 import { type ILabel } from 'src/stores/item-store'
 import { IItem } from 'src/types/item'
+import { usePartyStore } from './party-store'
 
 export interface IEvaluation extends ILabel {
   type: string
@@ -100,9 +101,13 @@ export const useAccountStore = defineStore('account', {
       return new Promise<boolean>(resolve => {
         api.get('/account/signOut')
           .then(() => {
+            const ps = usePartyStore()
             this.signed = false
             this.info = {} as User
+            this.messenger?.disconnect()
             this.messenger = null
+            ps.party?.disconnect()
+            ps.party = null
             this.newMessages = false
             resolve(false)
           })

@@ -4,17 +4,22 @@ import { api } from 'boot/axios'
 import { Socket } from 'socket.io-client'
 import { IUser } from 'src/types/user'
 
+export enum PartyMessageTypes {
+  SYSTEM = 0,
+  DEFAULT = 1
+}
+
 export interface IPartyUser extends IUser {
-  partyId: number,
   owner: boolean,
   typing: boolean
 }
 
 export interface IPartyMessage {
-  id: number,
+  type: PartyMessageTypes,
   battleTag: string,
+  avatar?: string,
   message: string,
-  regDate: string,
+  regDate?: number,
 }
 
 export interface IParty {
@@ -26,6 +31,8 @@ export interface IParty {
   current?: number,
   people: number,
   region: string,
+  hardcore: boolean,
+  ladder: boolean,
   notes: string,
   regDate?: string,
   joined?: number
@@ -89,16 +96,21 @@ export const usePartyStore = defineStore('party', () => {
     })
   }
 
-  const sendParty = ({ msg }: { msg: string }) => {
-    return new Promise<void>((resolve, reject) => {
-      api.post('/d4/party/send', { msg })
-        .then(() => {
-          resolve()
-        })
-        .catch(() => {
-          reject()
-        })
-    })
+  const push = (message: IPartyMessage) => {
+    const max = 50
+    if (partyMessages.value.length > 50)
+      partyMessages.value.splice(50, partyMessages.value.length)
+
+    partyMessages.value.splice(0, 0, message)
+  }
+
+  const kick = (battleTag: string) => {
+    const findPartyUserIndex = partyMember.value.findIndex((pm: IPartyUser) => pm.battleTag === battleTag)
+    if (findPartyUserIndex !== -1) {
+      const message: IPartyMessage = { type: PartyMessageTypes.SYSTEM, battleTag, message: `${battleTag}님을 방에서 내보냈습니다.` }
+      partyMember.value.splice(findPartyUserIndex, 1)
+      push(message)
+    }
   }
 
   const dispose = () => {
@@ -108,6 +120,6 @@ export const usePartyStore = defineStore('party', () => {
     partyMessages.value = []
   }
 
-  return { party, parties, partyPage, joined, minimum, partyMember, partyMessages, getParties, openParty, joinParty, sendParty, dispose }
+  return { party, parties, partyPage, joined, minimum, partyMember, partyMessages, getParties, openParty, joinParty, push, kick, dispose }
 
 })

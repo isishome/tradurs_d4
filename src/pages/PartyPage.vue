@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { ref, reactive, computed, defineAsyncComponent, onMounted } from 'vue'
+import { ref, reactive, computed, defineAsyncComponent, onMounted, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useI18n } from 'vue-i18n'
 import { useQuasar } from 'quasar'
 import { useRoute, useRouter } from 'vue-router'
 import { useGlobalStore } from 'src/stores/global-store'
 import { useAccountStore } from 'stores/account-store'
-import { type IParty, usePartyStore } from 'src/stores/party-store'
+import { type IParty, type IPartyUser, usePartyStore } from 'src/stores/party-store'
 import { scrollPos } from 'src/common'
 import D4Dialog from 'src/components/UI/D4Dialog.vue'
 
@@ -26,6 +26,7 @@ const completeList = ref(false)
 const progress = ref(false)
 const disabled = ref(false)
 const disable = computed(() => progress.value || disabled.value)
+const joined = computed(() => ps.joined)
 
 // variable
 const page = ref<number>(1)
@@ -46,7 +47,8 @@ const getParties = () => {
   disabled.value = true
   ps.getParties(page.value)
     .then((result) => {
-      Object.assign(parties, result)
+      parties.splice(0, parties.length)
+      parties.push(...result)
       setTimeout(() => {
         completeList.value = true
       }, 100)
@@ -63,16 +65,27 @@ const party = reactive<IParty>({
   category: 'duriel',
   name: '테스트 파티',
   runs: 1,
-  people: 2,
+  people: 4,
   region: 'asia',
+  hardcore: false,
+  ladder: true,
   notes: '테스트를 해보자'
 })
+
+const check = () => {
+  ps.party?.emit('check', as.info.id, (member?: Array<IPartyUser>) => {
+    if (member) {
+      ps.partyMember = member!
+      ps.joined = true
+    }
+  })
+}
 
 const open = () => {
   progress.value = true
   ps.openParty(party)
     .then(() => {
-      ps.joined = true
+      check()
       showForm.value = false
       getParties()
     })
@@ -80,17 +93,13 @@ const open = () => {
     .then(() => {
       progress.value = false
     })
-  // ps.party?.emit('create', as.info.id, (member: Array<IUser>) => {
-  //   Object.assign(partyMember, member)
-  // })
 }
 
 const join = (battleTag: string) => {
   progress.value = true
   ps.joinParty(battleTag)
     .then(() => {
-      showForm.value = false
-      getParties()
+      check()
     })
     .catch(() => { })
     .then(() => {
@@ -111,6 +120,10 @@ const next = () => {
   page.value++
   getParties()
 }
+
+watch(joined, () => {
+  getParties()
+})
 
 onMounted(() => {
   getParties()
@@ -178,11 +191,13 @@ onMounted(() => {
         <q-card-section>
           <div class="row justify-between items-center">
             <q-input outlined dense v-model="party.runs" label="회차" />
-            <q-input outlined dense v-model="party.runs" label="인원" />
+            <q-input outlined dense v-model="party.people" label="인원" />
             <q-select v-model="party.region" :disable="disable" outlined dense no-error-icon hide-bottom-space emit-value
               map-options transition-show="none" transition-hide="none" :transition-duration="0"
               :options="[{ value: 'asia', label: '아시아' }]" dropdown-icon="img:/images/icons/dropdown.svg"
               popup-content-class="scroll bordered" />
+            <q-checkbox dense v-model="party.hardcore" label="하드코어" />
+            <q-checkbox dense v-model="party.ladder" label="시즌" />
           </div>
         </q-card-section>
         <q-card-section class="col">

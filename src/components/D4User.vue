@@ -2,6 +2,7 @@
 import { ref, computed, reactive } from 'vue'
 import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
+import { useRoute } from 'vue-router'
 import { User, type INotify } from 'src/types/user'
 import { clipboard } from 'src/common'
 import { useAccountStore } from 'src/stores/account-store'
@@ -30,8 +31,11 @@ const emit = defineEmits(['update'])
 
 const $q = useQuasar()
 const { t } = useI18n({ useScope: 'global' })
+const route = useRoute()
 const as = useAccountStore()
 
+
+const tradurs: string = import.meta.env.VITE_APP_TRADURS + (`/${route.params.lang || 'ko'}`)
 const loading = computed(() => props.data.loading || props.progress)
 const userProgress = ref<boolean>(false)
 const allowCopy = computed(() => !props.authorized && props.data.battleTag !== '')
@@ -144,7 +148,11 @@ const unblock = () => {
         userProgress.value = false
       })
   })
+}
 
+
+const goInfo = () => {
+  document.location.href = `${tradurs}/info`
 }
 </script>
 
@@ -161,9 +169,9 @@ const unblock = () => {
     </q-item>
     <q-item class="avatar">
       <q-item-section>
-        <q-avatar>
-          <img src="/images/avatar/avatar.webp" width="48" height="48" alt="Tradurs Avatar Image">
-        </q-avatar>
+        <q-btn flat dense round @click="goInfo">
+          <img :src="`/images/avatar/${as.info.avatar}.webp`" width="48" height="48" alt="Tradurs Avatar Image">
+        </q-btn>
       </q-item-section>
     </q-item>
     <q-item class="row items-center justify-between no-padding">
@@ -265,13 +273,15 @@ const unblock = () => {
   position: absolute;
   left: 50%;
   transform: translate(-50%, -50%);
+  z-index: 1;
 }
 
-.avatar:deep(.q-avatar) {
+.avatar:deep(.q-btn) {
   box-shadow: 0 0 0 3px var(--q-dark);
+  z-index: 2;
 }
 
-.body--light .avatar:deep(.q-avatar) {
+.body--light .avatar:deep(.q-btn) {
   box-shadow: 0 0 0 3px var(--q-light-page);
 }
 

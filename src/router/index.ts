@@ -4,9 +4,9 @@ import routes from './routes'
 import { useAccountStore } from 'src/stores/account-store'
 import { useItemStore, type OfferInfo } from 'src/stores/item-store'
 import { useGlobalStore } from 'src/stores/global-store'
-import { Notify } from 'quasar'
+import { Notify, Screen } from 'quasar'
 import { Manager } from 'socket.io-client'
-import { usePartyStore, type IPartyMessage, IPartyUser } from 'src/stores/party-store'
+import { usePartyStore, type IPartyMessage, type IPartyUser, PartyMessageTypes } from 'src/stores/party-store'
 
 type AccountStore = ReturnType<typeof useAccountStore>
 type ItemStore = ReturnType<typeof useItemStore>
@@ -46,26 +46,79 @@ const initSocket = async (as: AccountStore, is: ItemStore, ps: PartyStore) => {
   })
 
   ps.party.on('connect', () => {
-    ps.party?.emit('join', { id: as.info.id, battleTag: as.info.battleTag }, (result?: Array<IPartyUser>) => {
-      if (result) {
-        ps.partyMember = result
+    ps.party?.emit('check', as.info.id, (member?: Array<IPartyUser>) => {
+      if (member) {
+        ps.partyMember = member!
         ps.joined = true
       }
+    })
+  })
+
+  ps.party.on('error', (data: string) => {
+    Notify.create({
+      message: data,
+      classes: 'bg-negative',
+      textColor: 'white',
+      position: Screen.lt.sm ? 'bottom' : 'bottom-right'
     })
   })
 
   ps.party.on('message', (data: IPartyMessage) => {
     const findUser = ps.partyMember.find((pm: IPartyUser) => pm.battleTag === data.battleTag)
     if (findUser) {
+      data.type = PartyMessageTypes.DEFAULT
+      data.regDate = Date.now()
       findUser.typing = false
-      ps.partyMessages.splice(0, 0, data)
+      ps.push(data)
     }
   })
 
-  ps.party.on('typing', ({ battleTag, typing }: { battleTag: string, typing: boolean }) => {
+  ps.party.on('typing', ({ battleTag, typing, avatar }: { battleTag: string, typing: boolean, avatar: number }) => {
     const findUser = ps.partyMember.find((pm: IPartyUser) => pm.battleTag === battleTag && as.info.battleTag !== battleTag)
-    if (findUser)
+    if (findUser) {
+      findUser.avatar = avatar
       findUser.typing = typing
+    }
+  })
+
+  ps.party.on('online', (data: IPartyUser) => {
+    let findUser = ps.partyMember.find((pm: IPartyUser) => pm.battleTag === data.battleTag)
+
+    if (findUser)
+      findUser.online = true
+    else {
+      ps.partyMember.push(data)
+      const message: IPartyMessage = { type: PartyMessageTypes.SYSTEM, battleTag: data.battleTag as string, message: `${data.battleTag}님이 방에 들어왔습니다.` }
+      ps.push(message)
+    }
+  })
+
+  ps.party.on('offline', (data: string) => {
+    const findUser = ps.partyMember.find((pm: IPartyUser) => pm.battleTag === data)
+    if (findUser)
+      findUser.online = false
+  })
+
+  ps.party.on('leave', (data: string) => {
+    const message: IPartyMessage = { type: PartyMessageTypes.SYSTEM, battleTag: data as string, message: `${data}님이 방을 나갔습니다.` }
+    const findUserIndex = ps.partyMember.findIndex((pm: IPartyUser) => pm.battleTag === data)
+    if (findUserIndex !== -1) {
+      ps.partyMember.splice(findUserIndex, 1)
+      ps.push(message)
+    }
+  })
+
+  ps.party.on('kick', (data: string) => {
+    const message: IPartyMessage = { type: PartyMessageTypes.SYSTEM, battleTag: data as string, message: `${data}님 방에서 쫓겨났습니다.` }
+    const findUserIndex = ps.partyMember.findIndex((pm: IPartyUser) => pm.battleTag === data)
+    if (findUserIndex !== -1) {
+      ps.partyMember.splice(findUserIndex, 1)
+
+      if (as.info.battleTag === data)
+        ps.dispose()
+      else
+        ps.push(message)
+    }
   })
 
   const notify = () => {
