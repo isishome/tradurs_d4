@@ -27,7 +27,7 @@ const emit = defineEmits(['update'])
 
 // common variable
 const store = useItemStore()
-const { t, n } = useI18n({ useScope: 'global' })
+const { t } = useI18n({ useScope: 'global' })
 
 // variable
 const loading = computed(() => props.data.loading || props.progress)
@@ -173,7 +173,7 @@ const updateCurrency = (val: string | null): void => {
         <template v-if="data.currency === 'gold'">
           <img :src="currencyValueImg" width="24" height="24" alt="Tradurs Price Icon" />
           <div>
-            {{ n(Number.parseFloat(data.currencyValue ? data.currencyValue.toString() : '0'), 'decimal') }}
+            {{ $n(Number.parseFloat(data.currencyValue ? data.currencyValue.toString() : '0'), 'decimal') }}
           </div>
         </template>
         <template v-else>
