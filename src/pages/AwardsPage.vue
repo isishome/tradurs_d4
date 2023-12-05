@@ -2,7 +2,7 @@
 import { ref, computed, reactive, defineAsyncComponent } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
-import { type Awards, type Gem, type Elixir, useItemStore, Summoning } from 'src/stores/item-store'
+import { type Awards, type Award, type Gem, type Elixir, useItemStore, Summoning } from 'src/stores/item-store'
 
 const D4Award = defineAsyncComponent(() => import('components/D4Award.vue'))
 
@@ -38,6 +38,7 @@ const awards: Awards = reactive({
   }]
 })
 const itemName = computed(() => (itemName?: string, typeValue1?: string, typeValue2?: string) => (typeValue1 === 'gem' ? is.gems.find((g: Gem) => g.value === typeValue2)?.label || null : typeValue1 === 'elixir' ? is.elixirs.find((e: Elixir) => e.value === typeValue2)?.label || null : typeValue1 === 'summoning' ? is.summonings.find((s: Summoning) => s.value === typeValue2)?.label || null : itemName))
+const itemImage = computed(() => (awards: Award) => awards.itemType === 'aspect' ? `/images/items/${awards.itemType}/${awards.itemTypeValue1}.webp` : ['gem', 'summoning'].includes(awards.itemTypeValue1 as string) ? `/images/items/${awards.itemType}/${awards.itemTypeValue1}/${awards.itemTypeValue2}.webp` : awards.itemTypeValue1 === 'elixir' ? `/images/items/${awards.itemType}/${awards.itemTypeValue1}/${awards.itemTypeValue2?.split('_')[1]}.webp` : `/images/items/${awards.itemType}/${awards.itemTypeValue1}/${awards.imageId}.webp`)
 
 const noData = computed(() => !loading.value && (awards.highPriced?.length || 0) + (awards.bestManners?.length || 0) + (awards.mostSold?.length || 0) + (awards.mostPurchased?.length || 0) === 0)
 
@@ -65,8 +66,7 @@ is.getAwards()
           <q-item dense class="rounded-borders item-name text-body1 text-weight-bold text-amber-8"
             :to="{ name: 'itemInfo', params: { lang: route.params.lang, itemid: awards.highPriced[0]?.itemId } }">
             <q-item-section avatar>
-              <q-img
-                :src="awards.highPriced[0]?.itemType === 'aspect' ? `/images/items/${awards.highPriced[0]?.itemType}/${awards.highPriced[0]?.itemTypeValue1}.webp` : awards.highPriced[0]?.itemTypeValue1 === 'gem' ? `/images/items/${awards.highPriced[0]?.itemType}/${awards.highPriced[0]?.itemTypeValue1}/${awards.highPriced[0]?.itemTypeValue2}.webp` : `/images/items/${awards.highPriced[0]?.itemType}/${awards.highPriced[0]?.itemTypeValue1}/${awards.highPriced[0]?.imageId}.webp`" />
+              <q-img :src="itemImage(awards.highPriced[0])" />
             </q-item-section>
             <q-item-section>
               <q-item-label>
