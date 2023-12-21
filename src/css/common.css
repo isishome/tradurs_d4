@@ -180,7 +180,8 @@
 }
 
 .card-item.editable,
-.card-item.dialog {
+.card-item.dialog,
+.party-form.dialog {
   width: 800px;
   max-width: 100vw;
 }

@@ -110,6 +110,7 @@ export interface Awards {
 
 export interface AwardsPick {
   itemId: number,
+  hardcore: boolean,
   ladder: boolean
 }
 
@@ -121,7 +122,7 @@ export interface IStorage {
   presets: Array<IPreset>
 }
 
-interface IFilter {
+export interface IFilter {
   onlyCurrency: boolean,
   favorite: boolean,
   quality: Array<string>,
@@ -308,7 +309,9 @@ export const useItemStore = defineStore('item', {
       return (type: string, attribute: string): boolean => type && attribute ? state.affixes.data.filter(a => a.type === type && a.label.trim() === attribute).length > 0 : false
     },
     equalDefaultFilter: (state) => {
-      return !(state.filter.favorite === false &&
+      return !(
+        state.filter.onlyCurrency === false &&
+        state.filter.favorite === false &&
         state.filter.quality.length === 0 &&
         state.filter.status === 'all' &&
         state.filter.mine === false &&

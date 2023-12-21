@@ -2,8 +2,13 @@ import { boot } from 'quasar/wrappers'
 import axios, { AxiosInstance } from 'axios'
 import { Notify } from 'quasar'
 import { useAccountStore } from 'stores/account-store'
+import { useItemStore } from 'stores/item-store'
+import { useGlobalStore } from 'stores/global-store'
+import { usePartyStore } from 'stores/party-store'
 import { User } from 'src/types/user'
 import { i18n } from './i18n'
+import { initMessenger } from 'src/sockets/messenger'
+import { initParty } from 'src/sockets/party'
 
 let api: AxiosInstance
 
@@ -32,7 +37,7 @@ export default boot(({ app, ssrContext, store, router }/* { app, router, ... } *
       const url = status === 401 ? `${import.meta.env.VITE_APP_TRADURS}/sign?redirect=${encodeURIComponent(document.location.href)}` : `${import.meta.env.VITE_APP_TRADURS}/info`
       Notify.create({
         progress: true,
-        icon: 'img:/images/icons/alert.svg',
+        icon: 'img:/images/icons/warning.svg',
         classes: 'no-invert',
         color: 'warning',
         textColor: 'dark',
@@ -42,7 +47,7 @@ export default boot(({ app, ssrContext, store, router }/* { app, router, ... } *
         actions: [
           {
             label: i18n.global.t('btn.move'), color: 'dark', handler: () => {
-              document.location.href = url
+              document.location.replace(url)
             }
           }
         ]
@@ -68,9 +73,29 @@ export default boot(({ app, ssrContext, store, router }/* { app, router, ... } *
 
   if (process.env.SERVER && ssrContext?.req.headers.cookie)
     api.defaults.headers.common['cookie'] = ssrContext?.req.headers.cookie
-  router.beforeEach((to, from, next) => {
+
+  router.beforeEach(async (to, from, next) => {
     api.defaults.headers.common['Accept-Language'] = to.params.lang || ssrContext?.req.headers['Accept-Language'] || 'ko'
-    next()
+
+    const gs = useGlobalStore(store)
+    const as = useAccountStore(store)
+    const is = useItemStore(store)
+    const ps = usePartyStore(store)
+    const requireAuth = to.matched.find(route => route.meta.requireAuth)
+
+    if (to.params.lang?.length === 2 && !gs.localeOptions.map(lo => lo.value).includes(to.params.lang as string) && to.name !== 'pnf')
+      return next({ name: 'pnf' })
+
+    if (requireAuth && !as.info.id)
+      return next({ name: 'tradeList', params: { lang: to.params.lang } })
+
+    if (as.info.id && (as.messenger === null || is.socket === null || ps.party === null)) {
+      await initMessenger(as, is)
+      await initParty(as, ps)
+      await as.unreadMessages()
+    }
+
+    return next()
   })
 
   app.provide('axios', api)

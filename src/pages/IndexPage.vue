@@ -242,7 +242,7 @@ const getList = (filter?: any) => {
 
   rewardItem.value = undefined
 
-  const awardsPick = is.awardsPick.filter((ap: AwardsPick) => ap.ladder === is.storage.data.ladder)
+  const awardsPick = is.awardsPick.filter((ap: AwardsPick) => ap.hardcore === is.storage.data.hardcore && ap.ladder === is.storage.data.ladder)
   if (awardsPick.length > 0) {
     const pickItemId = awardsPick[Math.floor(Math.random() * awardsPick.length)].itemId.toString()
     is.getItems(1, pickItemId)
@@ -346,7 +346,8 @@ defineExpose({ getList })
 <template>
   <div>
     <div class="row justify-center items-center">
-      <D4Items ref="itemsRef" class="item-list" :items="items" :reward-item="rewardItem" @upsert-item="upsertItem"
+      <D4Items ref="itemsRef" class="item-list" :items="items"
+        :reward-item="(page === 1 && !expanded) ? rewardItem : undefined" @upsert-item="upsertItem"
         @delete-item="deleteItem" @relist-item="relistItem" @status-item="statusItem" @update-only="updateOnly"
         @copy="copy" @favorite="favorite" />
     </div>

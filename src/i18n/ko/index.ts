@@ -11,7 +11,7 @@ export default {
   page: {
     tradeList: '거래 목록',
     itemInfo: '아이템 정보',
-    party: '파티',
+    party: '파티 플레이',
     awards: '어워즈',
     mySpace: '내 공간',
     messages: '메시지',
@@ -155,7 +155,10 @@ export default {
     block: '차단',
     unblock: '차단 해제',
     bulkUnblock: '일괄 차단 해제',
-    showMore: '더보기'
+    showMore: '더보기',
+    leave: '나가기',
+    open: '만들기',
+    join: '입장'
   },
   attribute: {
     request: '{attr} 추가 요청',
@@ -191,10 +194,12 @@ export default {
   },
   price: {
     title: '가격',
+    cost: '비용',
     currency: '화폐 유형',
     quantity: '수량',
     getOffer: '제안받기',
-    restrictGold: '아이템 판매/구매 가격은 최저 100,000 금화 이상 설정해야 합니다'
+    coop: '협동',
+    restrictGold: '판매/구매 가격은 최저 100,000 금화 이상 설정해야 합니다'
   },
   offer: {
     title: '가격 제안',
@@ -403,7 +408,7 @@ export default {
         { type: 'image', contents: '08_battletag' },
         { type: 'text', contents: '8. 로그인 후 트레이더스 디아블로® IV 페이지로 이동하면 배틀태그 입력 화면이 나타납니다. (정상적인 사용을 위해 사용 중인 배틀태그를 입력하시면 됩니다.)' },
         { type: 'image', contents: '09_battletag' },
-        { type: 'text', contents: '9.1. 사용자 정보 변경 페이지에서 배틀태그 수정이 가능합니다. (이미 인증된 배틀 태그가 존재하는 경우 변경 불가)\n인증 버튼을 통해 배틀태그를 인증할 수 있습니다.' },
+        { type: 'text', contents: '9.1. 사용자 정보 변경 페이지에서 배틀태그 수정이 가능합니다. (이미 인증된 배틀태그가 존재하는 경우 변경 불가)\n인증 버튼을 통해 배틀태그를 인증할 수 있습니다.' },
         { type: 'image', contents: '0901_battletag' },
         { type: 'text', contents: '9.2. 로그인 상태인 경우 사용자 툴팁에 배틀태그 인증 여부가 표시됩니다.' },
         { type: 'image', contents: '10_withdrawal' },
@@ -488,7 +493,7 @@ export default {
         { type: 'image', contents: '11_proceed_trade' },
         { type: 'text', contents: '11. 구매자에게 제안 수락 알림이 표시되고, 이동 링크를 클릭하면 제안 카드가 \'거래 진행 상태\'(완료 처리화면)로 변경 됩니다.' },
         { type: 'image', contents: '12_proceed_trade' },
-        { type: 'text', contents: '12. 판매자 역시 제안 카드가 \'거래 진행 상태\'(완료 처리화면)로 변경 됩니다.\n이제 구매자의 배틀 태그가 표시됩니다.\n클릭 하면 배틀태그가 클립보드로 복사됩니다.' },
+        { type: 'text', contents: '12. 판매자 역시 제안 카드가 \'거래 진행 상태\'(완료 처리화면)로 변경 됩니다.\n이제 구매자의 배틀태그가 표시됩니다.\n클릭 하면 배틀태그가 클립보드로 복사됩니다.' },
         { type: 'image', contents: '13_proceed_trade' },
         { type: 'text', contents: '13. 구매자 역시 아이템 카드에 판매자의 배틀태그가 표시됩니다.\n클릭 하면 배틀태그가 클립보드로 복사됩니다.\n이제 서로의 배틀태그를 통해 아이템 거래를 진행합니다.\n아이템 상태가 \'거래 진행 중\'으로 변경되면 *24시간 이내에 거래 완료 처리*를 해야하며,\n*24시간이 지나면 해당 아이템은 자동으로\'거래 완료\' 상태로 변경* 됩니다.\n(* 자동 처리 시 매너온도 1도 고정 하락에 유의)' },
         { type: 'image', contents: '1401_evaluation' },
@@ -536,5 +541,50 @@ export default {
       desc: ''
     },
     noData: '수상 내역이 없습니다'
+  },
+  socket: {
+    '0900': '알림 또는 채팅 정보 인증이 실패했습니다',
+    '0901': '다른 디바이스에서 접속하여 파티 플레이가 비활성화 되었습니다',
+    '0902': '너무 빠른 메시지 전송입니다',
+    '0903': '접속 중인 다른 참여자가 없습니다',
+    '0904': '방을 나가는데 실패했습니다',
+    '0905': '방을 나가는 중 문제가 발생했습니다',
+    '0906': '내보내기가 실패했습니다',
+    '0907': '회원을 내보내는 중 문제가 발생했습니다',
+  },
+  party: {
+    service: {
+      title: '서비스',
+      sell: '판매',
+      buy: '구매'
+    },
+    info: {
+      region: '지역',
+      name: '방 이름',
+      type: '유형',
+      category: '항목',
+      runs: '회차',
+      people: '인원',
+      time: '시간',
+      notes: '설명',
+      endTime: '종료 시간'
+    },
+    category: {
+      chat: '채팅',
+      info: '정보'
+    },
+    chat: {
+      me: '나'
+    },
+    member: {
+      title: '참여자',
+      copy: '배틀태그 복사',
+      kick: '내보내기'
+    },
+    leave: {
+      title: '파티 나가기',
+      message: '파티를 떠나시겠습니까?',
+      description: '방장인 경우 다른 사람에게 권한이 승계됩니다'
+    }
   }
 }

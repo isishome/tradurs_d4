@@ -10,7 +10,7 @@ export default {
   },
   page: {
     tradeList: 'Trade List',
-    party: 'Party',
+    party: 'Party Play',
     itemInfo: 'Item Information',
     awards: 'Awards',
     mySpace: 'My Space',
@@ -155,7 +155,10 @@ export default {
     block: 'Block',
     unblock: 'Unblock',
     bulkUnblock: 'Bulk Unblock',
-    showMore: 'Show More'
+    showMore: 'Show More',
+    leave: 'Leave',
+    open: 'Open',
+    join: 'Join'
   },
   attribute: {
     request: 'Request additional {attr}',
@@ -191,10 +194,12 @@ export default {
   },
   price: {
     title: 'Price',
+    cost: 'Cost',
     currency: 'Currency',
     quantity: 'Quantity',
     getOffer: 'Get An Offer',
-    restrictGold: 'Items must have a minimum sale/purchase price of 100,000 gold'
+    coop: 'CO-OP',
+    restrictGold: 'Must have a minimum sale/purchase price of 100,000 gold'
   },
   offer: {
     title: 'Get An Offer',
@@ -536,5 +541,50 @@ export default {
       desc: ''
     },
     noData: 'No awards'
+  },
+  socket: {
+    '0900': 'Notify or Chat information authentication failed',
+    '0901': 'Party play is disabled because you\'re logging in from a different device',
+    '0902': 'The message is sent too quickly',
+    '0903': 'There are no other members currently connected',
+    '0904': 'Failed to leave the room',
+    '0905': 'There was a problem leaving the room',
+    '0906': 'Failed to kick out a member',
+    '0907': 'There was a problem kicking out a member'
+  },
+  party: {
+    service: {
+      title: 'Service',
+      sell: 'Sell',
+      buy: 'Buy'
+    },
+    info: {
+      region: 'Region',
+      name: 'Room Name',
+      type: 'Type',
+      category: 'Category',
+      runs: 'Runs',
+      people: 'People',
+      time: 'Time',
+      notes: 'Description',
+      endTime: 'End Time'
+    },
+    category: {
+      chat: 'Chat',
+      info: 'Information'
+    },
+    chat: {
+      me: 'Me'
+    },
+    member: {
+      title: 'Member',
+      copy: 'Copy BattleTag™',
+      kick: 'Kick Out'
+    },
+    leave: {
+      title: 'Leaving a party',
+      message: 'Do you want to leave the party?',
+      description: 'If you\'re a room leader, your permissions will be passed on to someone else'
+    }
   }
 }

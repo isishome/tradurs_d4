@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import { ref, computed, reactive, nextTick } from 'vue'
-import { useItemStore } from 'stores/item-store'
+import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
 
+import { useItemStore } from 'stores/item-store'
 import { Price } from 'src/types/item'
 import { focus } from 'src/common'
 
 interface IProps {
   data: Price,
   offer?: boolean,
+  party?: boolean,
   editable?: boolean,
   disable?: boolean,
   progress?: boolean,
@@ -17,6 +19,7 @@ interface IProps {
 
 const props = withDefaults(defineProps<IProps>(), {
   offer: false,
+  party: false,
   editable: false,
   disable: false,
   progress: false,
@@ -26,8 +29,9 @@ const props = withDefaults(defineProps<IProps>(), {
 const emit = defineEmits(['update'])
 
 // common variable
-const store = useItemStore()
+const $q = useQuasar()
 const { t } = useI18n({ useScope: 'global' })
+const store = useItemStore()
 
 // variable
 const loading = computed(() => props.data.loading || props.progress)
@@ -36,10 +40,12 @@ const _priceError = ref<boolean>(false)
 const runes = store.filterRunesByType
 const currencies = store.currencies()
 const summonings = store.summonings
-const currencyValueImg = computed(() => props.data.currency === 'gold' ? '/images/items/currencies/gold.webp' : props.data.currency === 'summoning' ? `/images/items/consumables/summoning/${props.data.currencyValue}.webp` : '')
-const currencyValueName = computed(() => props.data.currency === 'gold' ? currencies.find(c => c.value === props.data.currency)?.label : props.data.currency === 'summoning' ? store.summonings.find(s => s.value === props.data.currencyValue)?.label : '')
+const currencyValueImg = computed(() => _price.currency === 'gold' ? '/images/items/currencies/gold.webp' : _price.currency === 'summoning' ? `/images/items/consumables/summoning/${_price.currencyValue}.webp` : '')
+const currencyValueName = computed(() => _price.currency === 'gold' ? currencies.find(c => c.value === _price.currency)?.label : _price.currency === 'summoning' ? store.summonings.find(s => s.value === _price.currencyValue)?.label : '')
 
-if (!props.offer)
+if (props.party)
+  currencies.unshift({ value: 'coop', label: t('price.coop') })
+else if (!props.offer)
   currencies.unshift({ value: 'offer', label: t('price.getOffer') })
 
 const update = (): void => {
@@ -69,7 +75,7 @@ const updateCurrency = (val: string | null): void => {
   <div v-if="editable">
     <div class="row justify-end items-center q-gutter-sm">
       <div style="min-width:30px">
-        {{ t('price.title') }}
+        {{ party ? t('price.cost') : t('price.title') }}
       </div>
       <div class="col-xs-3">
         <q-select v-model="_price.currency" :disable="disable || fixed" outlined dense no-error-icon hide-bottom-space
@@ -92,7 +98,7 @@ const updateCurrency = (val: string | null): void => {
           </template>
         </q-select>
       </div>
-      <div v-show="data.currency === 'rune'">
+      <div v-show="_price.currency === 'rune'">
         <q-select v-model="_price.currencyValue" :disable="disable" outlined dense no-error-icon hide-bottom-space
           emit-value map-options popup-content-class="scroll bordered" transition-show="none" transition-hide="none"
           :transition-duration="0" :options="runes()" dropdown-icon="img:/images/icons/dropdown.svg"
@@ -112,7 +118,7 @@ const updateCurrency = (val: string | null): void => {
           </template>
         </q-select>
       </div>
-      <div v-if="data.currency === 'gold'" class="col-xs-5 col-sm-3">
+      <div v-if="_price.currency === 'gold'" class="col-xs-5 col-sm-3">
         <q-input :disable="disable" dense no-error-icon hide-bottom-space outlined v-model.number="_price.currencyValue"
           maxlength="11" reverse-fill-mask unmasked-value debounce="500" :error="_priceError" @update:model-value="update"
           @focus="focus" @blur="_priceError = false" input-class="text-right"
@@ -124,7 +130,7 @@ const updateCurrency = (val: string | null): void => {
           </q-tooltip>
         </q-input>
       </div>
-      <div v-else-if="data.currency === 'summoning'" class="col-xs-3">
+      <div v-else-if="_price.currency === 'summoning'" class="col-xs-3">
         <q-select v-model="_price.currencyValue" :disable="disable || fixed" outlined dense no-error-icon
           hide-bottom-space emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0"
           :label="t('item.selectSummoning')" dropdown-icon="img:/images/icons/dropdown.svg" :options="summonings"
@@ -145,8 +151,8 @@ const updateCurrency = (val: string | null): void => {
           </template>
         </q-select>
       </div>
-      <D4Counter v-if="!['offer', 'gold'].includes(data.currency)" v-model="_price.quantity" :disable="disable"
-        @update:model-value="update" />
+      <D4Counter v-if="!['offer', 'gold', 'coop'].includes(_price.currency)" v-model="_price.quantity" :disable="disable"
+        @update:model-value="update" :no-button="$q.screen.lt.sm" />
     </div>
   </div>
   <div v-else class="row cursor-default">
@@ -161,25 +167,25 @@ const updateCurrency = (val: string | null): void => {
       </q-item-section>
     </q-item>
     <div v-show="!loading" class="price">
-      <div v-if="data.currency === 'offer'">
+      <div v-if="_price.currency === 'offer'">
         <div>{{ t('offer.title') }}</div>
       </div>
       <div v-else class="row items-center q-gutter-xs relative-position">
-        <!-- <template v-if="data.currency === 'rune'">
-          <img :src="(runes().find(r => r.value === data.currencyValue) || {}).img" width="24" height="24"
+        <!-- <template v-if="_price.currency === 'rune'">
+          <img :src="(runes().find(r => r.value === _price.currencyValue) || {}).img" width="24" height="24"
             alt="Tradurs Rune Image" />
-          <div class="q-ml-xs">{{ (runes().find(r => r.value === data.currencyValue) || {}).label }}</div>
+          <div class="q-ml-xs">{{ (runes().find(r => r.value === _price.currencyValue) || {}).label }}</div>
         </template> -->
-        <template v-if="data.currency === 'gold'">
+        <template v-if="_price.currency === 'gold'">
           <img :src="currencyValueImg" width="24" height="24" alt="Tradurs Price Icon" />
           <div>
-            {{ $n(Number.parseFloat(data.currencyValue ? data.currencyValue.toString() : '0'), 'decimal') }}
+            {{ $n(Number.parseFloat(_price.currencyValue ? _price.currencyValue.toString() : '0'), 'decimal') }}
           </div>
         </template>
         <template v-else>
           <img :src="currencyValueImg" width="24" height="24" alt="Tradurs Currency Image" />
           <div>x</div>
-          <div>{{ data.quantity }}</div>
+          <div>{{ _price.quantity }}</div>
         </template>
         <D4Tooltip padding="sm">
           <div class="break-keep text-caption" style="max-width:160px;">

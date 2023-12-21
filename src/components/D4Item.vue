@@ -420,7 +420,7 @@ defineExpose({ scrollEnd })
             </div>
           </template>
           <!-- Item Type Value Place ----------------------------------------------------------------------------------->
-          <D4Counter v-model="_quantity" :disable="disable" @update:model-value="update" />
+          <D4Counter v-model="_quantity" :disable="disable" @update:model-value="update" :no-button="$q.screen.lt.sm" />
         </div>
       </q-card-section>
       <q-card-section v-if="qualifiable">
@@ -460,7 +460,8 @@ defineExpose({ scrollEnd })
           <D4Counter v-model="_power" :label="t('item.power')" :max="9999" max-width="110px" allow-zero no-button
             :disable="disable" @update:model-value="update" />
           <D4Counter v-if="upgradeLimit" v-model="_upgrade" :label="t('item.upgrade', { u: _upgrade, ul: upgradeLimit })"
-            max-width="110px" :max="upgradeLimit" allow-zero :disable="disable" @update:model-value="update" />
+            max-width="110px" :max="upgradeLimit" allow-zero :no-button="$q.screen.lt.sm" :disable="disable"
+            @update:model-value="update" />
         </div>
         <D4Counter v-show="!noLevel" v-model="_level" class="col row justify-end" :label="t('item.level')"
           max-width="110px" :max="999" no-button :disable="disable || !qualifiable || noLevel"

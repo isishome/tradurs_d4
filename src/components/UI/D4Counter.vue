@@ -8,6 +8,7 @@ interface IProps {
   modelValue: number | string | null,
   label?: string | null,
   maxWidth?: string,
+  min?: number,
   max?: number,
   allowZero?: boolean,
   allowNull?: boolean,
@@ -20,6 +21,7 @@ interface IProps {
 const props = withDefaults(defineProps<IProps>(), {
   label: null,
   maxWidth: '50px',
+  min: 0,
   max: 999,
   allowZero: false,
   allowNull: false,
@@ -51,7 +53,7 @@ const validate = (n: string | number) => {
 
   if (q !== '') {
     q = parseInt(n.toString())
-    q = (q === 0 && !props.allowZero ? 1 : q > props.max ? props.max : q)
+    q = (q === 0 && !props.allowZero ? 1 : q >= props.max ? props.max : q <= props.min ? props.min : q)
   }
 
   return q
@@ -75,8 +77,8 @@ watch(() => props.modelValue, (val: number | string | null) => {
 
 <template>
   <div class="no-wrap row items-center">
-    <q-btn v-show="!$q.screen.lt.sm && !noButton" size="sm" flat dense round aria-label="Tradurs Remove Button"
-      :disable="disable || (!allowNull && parseInt((_quantity || '0').toString()) < (allowZero ? 1 : 2))"
+    <q-btn v-show="!noButton" size="sm" flat dense round aria-label="Tradurs Remove Button"
+      :disable="disable || (!allowNull && parseInt((_quantity || '0').toString()) < (min ? min + 1 : allowZero ? 1 : 2))"
       @click="counting('dec')">
       <img class="icon" width="17" height="17" src="/images/icons/remove.svg" alt="Tradurs Remove Icon" />
     </q-btn>
@@ -86,8 +88,9 @@ watch(() => props.modelValue, (val: number | string | null) => {
       :debounce="debounce"
       :rules="[(val: number | string) => ((typeof (val) === 'number' && (val > 0 || allowZero)) || (allowNull && val === '')) || '']"
       @update:model-value="update" @focus="focus" />
-    <q-btn v-show="!$q.screen.lt.sm && !noButton" size="sm" flat dense round aria-label="Tradurs Add Button"
-      :disable="disable || (!allowNull && parseInt((_quantity || '0').toString()) > (max - 1))" @click="counting('inc')">
+    <q-btn v-show="!noButton" size="sm" flat dense round aria-label="Tradurs Add Button"
+      :disable="disable || (!allowNull && parseInt((_quantity || '0').toString()) > (max - 1))"
+      @click="counting('inc')">
       <img class="icon" width="17" height="17" src="/images/icons/add.svg" alt="Tradurs Add Icon" />
     </q-btn>
   </div>

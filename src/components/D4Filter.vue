@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { QSelect, debounce } from 'quasar'
 import { useAccountStore } from 'src/stores/account-store'
-import { useItemStore } from 'src/stores/item-store'
+import { type IFilter, useItemStore } from 'src/stores/item-store'
 import { useI18n } from 'vue-i18n'
 import NotifyEn from '/images/filter/notify_en.webp'
 import NotifyKo from '/images/filter/notify_ko.webp'
@@ -22,6 +22,7 @@ const { t, locale } = useI18n({ useScope: 'global' })
 
 const preset = ref<number | null>(null)
 const presets = is.storage.data.presets
+const filter = reactive<IFilter>({} as IFilter)
 const filterQuality = is.filterQuality
 const filterTypes = is.filterTypes
 const findType = is.findType
@@ -31,8 +32,9 @@ const filterLoading = computed(() => is.filter.loading)
 const findProperty = computed(() => is.findProperty)
 const findAffix = computed(() => is.findAffix)
 const findRestriction = computed(() => is.findRestriction)
-
 const itemStatus = computed(() => [{ value: 'all', label: t('filter.all') }, ...is.itemStatus])
+
+Object.assign(filter, is.filter)
 
 // about property
 const propertyRef = ref<QSelect | null>(null)
@@ -52,9 +54,9 @@ const selectedProperty = (val: number): void => {
 }
 
 const removeProperty = (val: number): void => {
-  const findIndex = is.filter.properties.findIndex(p => p === val)
+  const findIndex = filter.properties.findIndex(p => p === val)
   if (findIndex !== -1) {
-    is.filter.properties.splice(findIndex, 1)
+    filter.properties.splice(findIndex, 1)
     update()
   }
 }
@@ -77,9 +79,9 @@ const selectedAffix = (val: number): void => {
 }
 
 const removeAffix = (val: number): void => {
-  const findIndex = is.filter.affixes.findIndex(a => a === val)
+  const findIndex = filter.affixes.findIndex(a => a === val)
   if (findIndex !== -1) {
-    is.filter.affixes.splice(findIndex, 1)
+    filter.affixes.splice(findIndex, 1)
     update()
   }
 }
@@ -102,16 +104,16 @@ const selectedRestriction = (val: number): void => {
 }
 
 const removeRestriction = (val: number): void => {
-  const findIndex = is.filter.restrictions.findIndex(r => r === val)
+  const findIndex = filter.restrictions.findIndex(r => r === val)
   if (findIndex !== -1) {
-    is.filter.restrictions.splice(findIndex, 1)
+    filter.restrictions.splice(findIndex, 1)
     update()
   }
 }
 
 const mine = () => {
-  if (!is.filter.mine)
-    is.filter.offered = false
+  if (!filter.mine)
+    filter.offered = false
 
   updateDebounce()
 }
@@ -119,18 +121,22 @@ const mine = () => {
 const clearFilter = () => {
   preset.value = null
   is.clearFilter(true)
-  is.filter.request--
+  Object.assign(filter, is.filter)
+  filter.request--
+  update()
 }
 
 const update = (quality?: Array<string>) => {
+
   if (quality) {
-    Object.keys(is.filter.itemTypeValues1).forEach((q: string) => {
+    Object.keys(filter.itemTypeValues1).forEach((q: string) => {
       if (!quality.includes(q))
-        delete is.filter.itemTypeValues1[q]
+        delete filter.itemTypeValues1[q]
     })
   }
 
-  is.filter.request++
+  filter.request++
+  Object.assign(is.filter, filter)
 }
 
 const updateDebounce = debounce((quality?: Array<string>) => {
@@ -141,11 +147,14 @@ const updateBasic = () => {
   if (as.signed) {
     is.setStorage()
       .then(() => {
-        is.filter.request++
+        filter.request++
+        Object.assign(is.filter, filter)
       })
   }
-  else
-    is.filter.request++
+  else {
+    filter.request++
+    Object.assign(is.filter, filter)
+  }
 }
 
 const updateBasicDebounce = debounce(() => {
@@ -156,7 +165,7 @@ const updatePreset = (id: number) => {
   const findPreset = is.findPreset(id)
 
   if (findPreset) {
-    Object.assign(is.filter, findPreset.filter)
+    Object.assign(filter, findPreset.filter)
     update()
   }
 }
@@ -228,32 +237,32 @@ const removePreset = ({ id, done, error }: { id: number, done: Function, error: 
       <q-item-label header>{{ t('filter.onlyForMe') }}</q-item-label>
       <q-item :disable="filterLoading">
         <q-item-section>
-          <q-checkbox dense :disable="filterLoading" size="xs" v-model="is.filter.mine" :label="t('filter.mine')"
+          <q-checkbox dense :disable="filterLoading" size="xs" v-model="filter.mine" :label="t('filter.mine')"
             @update:model-value="mine" />
         </q-item-section>
       </q-item>
       <q-slide-transition>
-        <div v-show="is.filter.mine" class="q-pl-lg row items-center q-gutter-xs">
+        <div v-show="filter.mine" class="q-pl-lg row items-center q-gutter-xs">
           <div class="tree"></div>
-          <q-checkbox dense :disable="filterLoading" size="xs" class="text-caption" v-model="is.filter.offered"
+          <q-checkbox dense :disable="filterLoading" size="xs" class="text-caption" v-model="filter.offered"
             :label="t('filter.offered')" @update:model-value="updateDebounce()" />
         </div>
       </q-slide-transition>
       <q-item :disable="filterLoading">
         <q-item-section>
-          <q-checkbox dense :disable="filterLoading" size="xs" v-model="is.filter.offer" :label="t('filter.offer')"
+          <q-checkbox dense :disable="filterLoading" size="xs" v-model="filter.offer" :label="t('filter.offer')"
             @update:model-value="updateDebounce()" />
         </q-item-section>
       </q-item>
       <q-item :disable="filterLoading">
         <q-item-section>
-          <q-checkbox dense :disable="filterLoading" size="xs" v-model="is.filter.onlyCurrency"
+          <q-checkbox dense :disable="filterLoading" size="xs" v-model="filter.onlyCurrency"
             :label="t('filter.onlyCurrency')" @update:model-value="updateDebounce()" />
         </q-item-section>
       </q-item>
       <q-item :disable="filterLoading">
         <q-item-section>
-          <q-checkbox dense :disable="filterLoading" v-model="is.filter.favorite" size="xs" :label="t('item.favorites')"
+          <q-checkbox dense :disable="filterLoading" v-model="filter.favorite" size="xs" :label="t('item.favorites')"
             @update:model-value="updateDebounce()" />
         </q-item-section>
       </q-item>
@@ -262,7 +271,7 @@ const removePreset = ({ id, done, error }: { id: number, done: Function, error: 
     <q-item-label header>{{ t('filter.status') }}</q-item-label>
     <q-item :disable="filterLoading">
       <q-item-section>
-        <q-select v-model="is.filter.status" :disable="filterLoading" outlined dense no-error-icon hide-bottom-space
+        <q-select v-model="filter.status" :disable="filterLoading" outlined dense no-error-icon hide-bottom-space
           emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0"
           :options="itemStatus" dropdown-icon="img:/images/icons/dropdown.svg" popup-content-class="scroll bordered"
           @update:model-value="update()" />
@@ -272,11 +281,11 @@ const removePreset = ({ id, done, error }: { id: number, done: Function, error: 
     <q-item :disable="filterLoading">
       <q-item-section>
         <div class="row justify-center no-wrap q-col-gutter-sm items-center">
-          <D4Counter :disable="filterLoading" v-model="is.filter.power[0]" :label="t('min')" :max="9999" allow-zero
-            no-button @update:model-value="update()" :debounce="1000" max-width="100%" />
+          <D4Counter :disable="filterLoading" v-model="filter.power[0]" :label="t('min')" :max="9999" allow-zero no-button
+            @update:model-value="update()" :debounce="1000" max-width="100%" />
           <div>-</div>
-          <D4Counter :disable="filterLoading" v-model="is.filter.power[1]" :label="t('max')" :max="9999" allow-zero
-            no-button @update:model-value="update()" :debounce="1000" max-width="100%" />
+          <D4Counter :disable="filterLoading" v-model="filter.power[1]" :label="t('max')" :max="9999" allow-zero no-button
+            @update:model-value="update()" :debounce="1000" max-width="100%" />
         </div>
       </q-item-section>
     </q-item>
@@ -284,11 +293,11 @@ const removePreset = ({ id, done, error }: { id: number, done: Function, error: 
     <q-item :disable="filterLoading">
       <q-item-section>
         <div class="row justify-center no-wrap q-col-gutter-sm items-center">
-          <D4Counter :disable="filterLoading" v-model="is.filter.level[0]" :label="t('min')" :max="999" allow-zero
-            no-button @update:model-value="update()" :debounce="1000" max-width="100%" />
+          <D4Counter :disable="filterLoading" v-model="filter.level[0]" :label="t('min')" :max="999" allow-zero no-button
+            @update:model-value="update()" :debounce="1000" max-width="100%" />
           <div>-</div>
-          <D4Counter :disable="filterLoading" v-model="is.filter.level[1]" :label="t('max')" :max="999" allow-zero
-            no-button @update:model-value="update()" :debounce="1000" max-width="100%" />
+          <D4Counter :disable="filterLoading" v-model="filter.level[1]" :label="t('max')" :max="999" allow-zero no-button
+            @update:model-value="update()" :debounce="1000" max-width="100%" />
         </div>
       </q-item-section>
     </q-item>
@@ -296,21 +305,20 @@ const removePreset = ({ id, done, error }: { id: number, done: Function, error: 
     <q-item :disable="filterLoading">
       <q-item-section>
         <q-option-group dense :disable="filterLoading" size="xs" inline
-          :options="filterQuality().map(fq => ({ ...fq, label: fq.fullName }))" type="checkbox"
-          v-model="is.filter.quality" @update:model-value="updateDebounce()" />
+          :options="filterQuality().map(fq => ({ ...fq, label: fq.fullName }))" type="checkbox" v-model="filter.quality"
+          @update:model-value="updateDebounce()" />
       </q-item-section>
     </q-item>
     <q-item-label header>{{ t('item.selectType') }}</q-item-label>
     <q-item :disable="filterLoading">
       <q-item-section>
         <q-option-group dense :disable="filterLoading" size="xs" inline :options="filterTypes()" type="checkbox"
-          v-model="is.filter.itemTypes" @update:model-value="val => update(val)" />
+          v-model="filter.itemTypes" @update:model-value="val => update(val)" />
       </q-item-section>
     </q-item>
-    <q-item :disable="filterLoading" v-for="itemType in is.filter.itemTypes.filter(it => it !== 'aspect')"
-      :key="itemType">
+    <q-item :disable="filterLoading" v-for="itemType in filter.itemTypes.filter(it => it !== 'aspect')" :key="itemType">
       <q-item-section>
-        <q-select :disable="filterLoading" v-model="is.filter.itemTypeValues1[itemType]"
+        <q-select :disable="filterLoading" v-model="filter.itemTypeValues1[itemType]"
           :options="findType(itemType)?.value === 'rune' ? filterRunes() : filterClasses(itemType)"
           :label="`${findType(itemType)?.label} ${t('filter.type')}`" outlined dense no-error-icon hide-bottom-space
           emit-value map-options multiple transition-show="none" transition-hide="none" :transition-duration="0"
@@ -340,7 +348,7 @@ const removePreset = ({ id, done, error }: { id: number, done: Function, error: 
     </q-item-label>
     <q-item :disable="filterLoading">
       <q-item-section class="no-wrap">
-        <q-select ref="propertyRef" v-model="is.filter.properties" :disable="filterLoading" max-values="3" outlined dense
+        <q-select ref="propertyRef" v-model="filter.properties" :disable="filterLoading" max-values="3" outlined dense
           no-error-icon use-input hide-bottom-space hide-selected emit-value map-options multiple transition-show="none"
           transition-hide="none" :transition-duration="0" :label="`${t('properties')} ${t('searchOrSelect')}`"
           :options="propertyOptions(propertyNeedle)" dropdown-icon="img:/images/icons/dropdown.svg"
@@ -367,7 +375,7 @@ const removePreset = ({ id, done, error }: { id: number, done: Function, error: 
         </q-select>
       </q-item-section>
     </q-item>
-    <q-item :disable="filterLoading" class="q-mx-md q-mb-xs" v-for="pid in is.filter.properties" :key="`${pid}`">
+    <q-item :disable="filterLoading" class="q-mx-md q-mb-xs" v-for="pid in filter.properties" :key="`${pid}`">
       <q-item-section>
         <q-item-label caption>
           {{ findProperty(pid as number)?.label }}
@@ -382,7 +390,7 @@ const removePreset = ({ id, done, error }: { id: number, done: Function, error: 
     </q-item>
     <q-item :disable="filterLoading">
       <q-item-section class="no-wrap">
-        <q-select ref="affixRef" v-model="is.filter.affixes" class="col" :disable="filterLoading" max-values="4" outlined
+        <q-select ref="affixRef" v-model="filter.affixes" class="col" :disable="filterLoading" max-values="4" outlined
           dense no-error-icon use-input hide-bottom-space hide-selected emit-value map-options multiple
           transition-show="none" transition-hide="none" :transition-duration="0"
           :label="`${t('affixes')} ${t('searchOrSelect')}`" :options="affixOptions(affixNeedle)"
@@ -409,7 +417,7 @@ const removePreset = ({ id, done, error }: { id: number, done: Function, error: 
         </q-select>
       </q-item-section>
     </q-item>
-    <q-item :disable="filterLoading" class="q-mx-md q-mb-xs" v-for="aid in is.filter.affixes" :key="`${aid}`">
+    <q-item :disable="filterLoading" class="q-mx-md q-mb-xs" v-for="aid in filter.affixes" :key="`${aid}`">
       <q-item-section>
         <q-item-label caption>
           {{ findAffix(aid as number)?.label }}
@@ -424,7 +432,7 @@ const removePreset = ({ id, done, error }: { id: number, done: Function, error: 
     </q-item>
     <q-item :disable="filterLoading">
       <q-item-section class="no-wrap">
-        <q-select ref="restrictionRef" v-model="is.filter.restrictions" :disable="filterLoading" max-values="3" outlined
+        <q-select ref="restrictionRef" v-model="filter.restrictions" :disable="filterLoading" max-values="3" outlined
           dense no-error-icon use-input hide-bottom-space hide-selected emit-value map-options multiple
           transition-show="none" transition-hide="none" :transition-duration="0"
           :label="`${t('restrictions')} ${t('searchOrSelect')}`" :options="restrictionOptions(restrictionNeedle)"
@@ -447,7 +455,7 @@ const removePreset = ({ id, done, error }: { id: number, done: Function, error: 
         </q-select>
       </q-item-section>
     </q-item>
-    <q-item :disable="filterLoading" class="q-mx-md q-mb-xs" v-for="rid  in  is.filter.restrictions" :key="`${rid}`">
+    <q-item :disable="filterLoading" class="q-mx-md q-mb-xs" v-for="rid in filter.restrictions" :key="`${rid}`">
       <q-item-section>
         <q-item-label caption>
           {{ findRestriction(rid as number)?.label }}

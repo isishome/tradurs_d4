@@ -160,11 +160,11 @@ watch(() => is.filter.name, (val) => {
     <q-drawer show-if-above no-swipe-open no-swipe-close no-swipe-backdrop bordered v-model="rightDrawerOpen" side="right"
       behavior="mobile" class="row justify-start no-scroll" :width="300">
       <div class="column fit">
-        <q-item class="row justify-end items-center q-py-lg q-gutter-x-xs icons">
-          <q-btn v-show="availableParty" round dense flat aria-label="Tradurs Chat Button" class="chat-color"
-            :ripple="!$q.dark.isActive" @click="ps.minimum = false">
-            <img :class="{ 'icon': !$q.dark.isActive }" width="24" height="24" src="/images/icons/chat.svg"
-              alt="Chat Icon" />
+        <q-item class="row justify-center items-center q-py-lg q-gutter-x-sm icons">
+          <q-btn v-show="availableParty" round dense flat aria-label="Tradurs Chat Button" :ripple="!$q.dark.isActive"
+            @click="ps.show">
+            <img class="icon" width="24" height="24" src="/images/icons/chat.svg" alt="Chat Icon" />
+            <q-badge v-show="ps.unseen > 0" color="red" floating rounded>{{ ps.unseen }}</q-badge>
           </q-btn>
           <q-btn round dense flat aria-label="Tradurs Discord Button" :ripple="!$q.dark.isActive" tag="a"
             href="https://discord.gg/dwRuWq4enx" target="_blank" rel="noopener noreferrer">
@@ -228,6 +228,7 @@ watch(() => is.filter.name, (val) => {
                 <q-item-label>
                   {{ t('page.party') }}
                 </q-item-label>
+                <q-badge floating label="B" color="blue-8" class="new-badge2" />
               </q-item-section>
             </q-item>
             <q-item v-ripple clickable :to="{ name: 'awards', params: { lang: route.params.lang } }" exact
@@ -379,7 +380,12 @@ watch(() => is.filter.name, (val) => {
                 :class="{ 'active': route.name === 'tradeList' }" :label="t('page.tradeList')"
                 :to="{ name: 'tradeList', params: { lang: route.params.lang } }" />
               <q-btn flat no-caps type="a" :ripple="false" class="no-hover" :class="{ 'active': route.name === 'party' }"
-                :label="t('page.party')" :to="{ name: 'party', params: { lang: route.params.lang } }" />
+                :to="{ name: 'party', params: { lang: route.params.lang } }">
+                <div class="relative-position">
+                  {{ t('page.party') }}
+                  <q-badge floating label="B" color="blue-8" class="new-badge2" style="top:-4px" />
+                </div>
+              </q-btn>
               <q-btn flat no-caps type="a" :ripple="false" class="no-hover" :class="{ 'active': route.name === 'awards' }"
                 :to="{ name: 'awards', params: { lang: route.params.lang } }">
                 <div class="relative-position">
@@ -434,10 +440,11 @@ watch(() => is.filter.name, (val) => {
           </q-btn>
         </div>
         <div class="gt-sm col-3 row justify-end items-center q-gutter-xs">
-          <q-btn v-show="availableParty" round dense flat aria-label="Tradurs Chat Button" class="chat-color"
-            :ripple="!$q.dark.isActive" @click="ps.minimum = false">
-            <img :class="{ 'icon': !$q.dark.isActive }" width="24" height="24"
-              :src="`/images/icons/${$q.dark.isActive ? 'chat_fill' : 'chat'}.svg`" alt="Chat Icon" />
+          <q-btn v-show="availableParty" round dense flat aria-label="Tradurs Chat Button" :ripple="!$q.dark.isActive"
+            @click="ps.show">
+            <img class="icon" width="24" height="24" :src="`/images/icons/${$q.dark.isActive ? 'chat_fill' : 'chat'}.svg`"
+              alt="Chat Icon" />
+            <q-badge v-show="ps.unseen > 0" color="red" floating rounded>{{ ps.unseen }}</q-badge>
           </q-btn>
           <q-btn round dense flat aria-label="Tradurs Discord Button" :ripple="!$q.dark.isActive" tag="a"
             href="https://discord.gg/dwRuWq4enx" target="_blank" rel="noopener noreferrer">
@@ -738,20 +745,5 @@ watch(() => is.filter.name, (val) => {
   .chat {
     margin-top: -42px;
   }
-}
-
-.body--dark .chat-color {
-  filter: invert(80%) sepia(77%) saturate(1168%) hue-rotate(357deg) brightness(103%) contrast(105%);
-}
-
-.body--light .chat-color::after {
-  content: '';
-  position: absolute;
-  top: 8px;
-  bottom: 12px;
-  left: 8px;
-  right: 8px;
-  background-color: #fee500;
-  z-index: -1;
 }
 </style>

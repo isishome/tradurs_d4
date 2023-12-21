@@ -883,7 +883,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                 </D4Tooltip>
               </q-icon>
               <D4Counter v-model.number="activatedItem.pacts.ferocity" max-width="40px" hide-label :max="5" allow-zero
-                allow-null :disable="disable" />
+                allow-null :no-button="$q.screen.lt.sm" :disable="disable" />
             </div>
             <div class="row items-center">
               <q-icon name="img:/images/season/002/divinity.webp" size="40px">
@@ -895,7 +895,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                 </D4Tooltip>
               </q-icon>
               <D4Counter v-model.number="activatedItem.pacts.divinity" max-width="40px" hide-label :max="5" allow-zero
-                allow-null :disable="disable" />
+                allow-null :no-button="$q.screen.lt.sm" :disable="disable" />
             </div>
             <div class="row items-center">
               <q-icon name="img:/images/season/002/eternity.webp" size="40px">
@@ -907,7 +907,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                 </D4Tooltip>
               </q-icon>
               <D4Counter v-model.number="activatedItem.pacts.eternity" max-width="40px" hide-label :max="5" allow-zero
-                allow-null :disable="disable" />
+                allow-null :no-button="$q.screen.lt.sm" :disable="disable" />
             </div>
           </div>
         </template>
@@ -1074,7 +1074,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
   top: -6px;
 }
 
-.body--light .item:deep(>div:after) {
+.body--light .item:not([data-itemid="advertise"]):deep(>div:after) {
   content: '';
   position: absolute;
   z-index: -1;

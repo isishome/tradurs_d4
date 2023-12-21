@@ -1,10 +1,14 @@
 <script setup lang="ts">
 import { ref, computed, nextTick } from 'vue'
-import { QInput, useQuasar, debounce, date } from 'quasar'
+import { QInput, useQuasar, debounce, date, format } from 'quasar'
+import { useI18n } from 'vue-i18n'
+import { clipboard } from 'src/common'
 import { useAccountStore } from 'src/stores/account-store'
 import { usePartyStore, PartyMessageTypes, type IPartyMessage, IPartyUser } from 'src/stores/party-store'
 
 // global variable
+const { pad } = format
+const { t } = useI18n({ useScope: 'global' })
 const $q = useQuasar()
 const as = useAccountStore()
 const ps = usePartyStore()
@@ -18,6 +22,14 @@ const position = computed(() => !$q.screen.lt.sm ? 'right' : 'bottom')
 const tShow = computed(() => !$q.screen.lt.sm ? 'slide-left' : 'slide-up')
 const tHide = computed(() => !$q.screen.lt.sm ? 'slide-right' : 'slide-down')
 const owner = computed(() => !!ps.partyMember.find((m: IPartyUser) => m.owner && m.battleTag === as.info.battleTag))
+const me = computed(() => (m: IPartyUser) => as.info.battleTag === m.battleTag)
+const sent = computed(() => (pm: IPartyMessage) => as.info.battleTag === pm.battleTag)
+const receive = computed(() => (pm: IPartyMessage) => as.info.battleTag !== pm.battleTag && pm.type === PartyMessageTypes.DEFAULT)
+const system = computed(() => (pm: IPartyMessage) => pm.type === PartyMessageTypes.SYSTEM)
+const remainProgress = computed(() => ps.remainSeconds / ps.totalSeconds)
+const remainColor = computed(() => ps.remainSeconds < 600 ? 'negative' : ps.remainSeconds < 1800 ? 'orange' : 'positive')
+const remainHour = computed(() => pad(Math.floor(ps.remainSeconds / 3600).toString(), 2))
+const remainTime = computed(() => date.formatDate((ps.remainSeconds % 3600) * 1000, 'mm:ss'))
 
 const send = () => {
   const message: IPartyMessage = { type: PartyMessageTypes.DEFAULT, battleTag: as.info.battleTag, message: text.value! }
@@ -46,26 +58,30 @@ const hide = () => {
   textRef.value?.nativeEl.removeEventListener('input', typing)
 }
 
+const copy = (battleTag?: string) => {
+  if (battleTag)
+    clipboard(battleTag, t('user.battleTag'))
+}
+
 const tab = ref<string>('chat')
 
 const leave = () => {
   $q.dialog({
-    title: '채팅방 나가기',
-    message: `<div class='column q-gutter-y-sm'><div>채팅방을 나가시겠습니까?</div><div class='text-caption text-negative'>방장인 경우 채팅방이 종료됩니다</div></div>`,
+    title: t('party.leave.title'),
+    message: `<div class='column q-gutter-y-sm'><div>${t('party.leave.message')}</div><div class='text-caption text-negative text-weight-bold'>${t('party.leave.description')}</div></div>`,
     html: true,
     ok: {
-      label: '나가기',
+      label: t('btn.leave'),
       color: 'negative'
     },
     cancel: {
-      label: '취소',
+      label: t('btn.cancel'),
       color: 'grey-6'
     },
   }).onOk(() => {
     ps.party?.emit('leave', { id: as.info.id }, (result: boolean) => {
-      if (result) {
+      if (result)
         ps.dispose()
-      }
     })
   })
 }
@@ -82,6 +98,14 @@ const kick = (battleTag: string) => {
   <q-dialog v-model="joined" :seamless="!$q.screen.lt.sm" :maximized="$q.screen.lt.sm" :position="position"
     :transition-show="tShow" :transition-hide="tHide" @show="show" @before-hide="hide">
     <q-card class="party-chat column" :class="$q.dark.isActive ? 'bg-grey-4 text-grey-9' : 'bg-grey-9 text-grey-4'">
+      <div class="column">
+        <q-tooltip v-for="(em, idx) in ps.errorMessages" :key="em.id" v-model="em.show" class="bg-transparent"
+          :transition-duration="500" :offset="[0, 0]">
+          <div class="text-caption error-message shadow-1">
+            {{ em.message }}
+          </div>
+        </q-tooltip>
+      </div>
       <q-card-section class="no-padding">
         <q-bar class="bg-primary text-white">
           <div>
@@ -90,8 +114,7 @@ const kick = (battleTag: string) => {
           <q-space />
           <div class="row justify-end q-gutter-x-xs">
             <q-btn unelevated dense aria-label="Tradurs Close Button" class="no-hover invert" :ripple="false">
-              <img src="/images/icons/minimize.svg" width="18" height="18" @click="ps.minimum = true"
-                alt="Tradurs Minimize Icon" />
+              <img src="/images/icons/minimize.svg" width="18" height="18" @click="ps.hide" alt="Tradurs Minimize Icon" />
             </q-btn>
             <q-btn unelevated dense aria-label="Tradurs Close Button" class="no-hover invert" :ripple="false">
               <img src="/images/icons/close.svg" width="18" height="18" @click="leave" alt="Tradurs Close Icon" />
@@ -99,25 +122,33 @@ const kick = (battleTag: string) => {
           </div>
         </q-bar>
       </q-card-section>
+      <q-card-section class="no-padding">
+        <q-linear-progress stripe size="20px" track-color="grey-5" :value="remainProgress" :color="remainColor">
+          <div class="absolute-full flex flex-center">
+            <q-badge color="white" text-color="black"
+              :label="remainHour !== '00' ? `${remainHour}:${remainTime}` : remainTime" />
+          </div>
+        </q-linear-progress>
+      </q-card-section>
       <q-tab-panels v-model="tab" class="col" animated
         :class="$q.dark.isActive ? 'bg-grey-4 text-grey-9' : 'bg-grey-9 text-grey-4'">
         <q-tab-panel name="chat" class="column q-pa-xs" :dark="false">
           <q-card-section class="q-pa-sm">
-            <div class="row q-gutter-xs">
-              <div>참여자</div>
+            <div class="row q-gutter-xs items-center">
+              <div class="q-mr-xs">{{ t('party.member.title') }}</div>
               <q-chip square v-for="member in ps.partyMember" class="text-caption member no-padding"
-                style="margin-bottom:0" :clickable="as.info.battleTag !== member.battleTag">
-                <div v-if="as.info.battleTag === member.battleTag" class="row items-center q-gutter-x-xs q-px-sm">
+                style="margin-bottom:0" :clickable="as.info.battleTag !== member.battleTag" :ripple="!me(member)">
+                <div v-if="me(member)" class="row items-center q-gutter-x-xs q-px-sm">
                   <div v-show="member.online">
                     <img src="/images/icons/online.svg" class="online" alt="Tradurs Online Status Icon" />
                   </div>
-                  <div>나</div>
+                  <div>{{ t('party.chat.me') }}</div>
                   <div v-if="member.owner">
                     <img class="crown" width="12" src="/images/icons/crown.svg" />
                   </div>
                 </div>
                 <q-btn-dropdown v-else flat dense class="no-hover q-px-sm" :ripple="false" :menu-offset="[0, -4]"
-                  :dropdown-icon="as.info.battleTag === member.battleTag ? 'none' : 'img:/images/icons/dropdown.svg'">
+                  :dropdown-icon="me(member) ? 'none' : 'img:/images/icons/dropdown.svg'">
                   <template #label>
                     <div class="row q-gutter-x-xs items-center">
                       <div v-show="member.online">
@@ -133,19 +164,19 @@ const kick = (battleTag: string) => {
                   </template>
                   <template v-if="member.battleTag !== as.info.battleTag" #default>
                     <q-list dense class="text-caption">
-                      <q-item clickable v-close-popup>
+                      <q-item clickable v-close-popup @click="copy(member.battleTag)">
                         <q-item-section>
-                          <q-item-label>배틀태그 복사</q-item-label>
+                          <q-item-label>{{ t('party.member.copy') }}</q-item-label>
                         </q-item-section>
                       </q-item>
-                      <q-item clickable v-close-popup>
+                      <!-- <q-item clickable v-close-popup>
                         <q-item-section>
                           <q-item-label>신고</q-item-label>
                         </q-item-section>
-                      </q-item>
+                      </q-item> -->
                       <q-item v-if="owner" clickable v-close-popup @click="kick(member.battleTag as string)">
                         <q-item-section>
-                          <q-item-label>내보내기</q-item-label>
+                          <q-item-label>{{ t('party.member.kick') }}</q-item-label>
                         </q-item-section>
                       </q-item>
                     </q-list>
@@ -158,24 +189,23 @@ const kick = (battleTag: string) => {
             <div ref="areaRef" class="rounded-borders message-area column reverse no-wrap scroll">
               <template v-for="pm in ps.partyMember" :key="pm.battleTag">
                 <q-chat-message v-show="pm.typing" text-color="black" bg-color="white" size="8" class="typing">
-                  <template v-slot:name>{{ pm.battleTag }}</template>
-                  <template v-slot:avatar>
+                  <template #name>{{ pm.battleTag }}</template>
+                  <template #avatar>
                     <img class="q-message-avatar q-message-avatar--received" :src="`/images/avatar/${pm.avatar}.webp`">
                   </template>
                   <q-spinner-dots size="2rem" />
                 </q-chat-message>
               </template>
-              <q-chat-message v-for="pm, idx in ps.partyMessages" :key="idx" :text="[pm.message]"
-                :sent="as.info.battleTag === pm.battleTag" text-color="black" bg-color="white" size="8"
-                :class="{ 'system': pm.type === PartyMessageTypes.SYSTEM }">
-                <template v-if="as.info.battleTag !== pm.battleTag && pm.type === PartyMessageTypes.DEFAULT" v-slot:name>
+              <q-chat-message v-for="pm, idx in ps.partyMessages" :key="idx" :text="[pm.message]" :sent="sent(pm)"
+                :text-color="receive(pm) || system(pm) ? 'black' : 'white'" :bg-color="receive(pm) ? 'white' : 'blue-7'"
+                size="8" :class="{ 'system': system(pm) }">
+                <template v-if="receive(pm)" #name>
                   <div class="text-caption">{{ pm.battleTag }}</div>
                 </template>
-                <template v-slot:stamp>
+                <template #stamp>
                   <div class="text-caption">{{ date.formatDate(pm.regDate, 'HH:mm:ss') }}</div>
                 </template>
-                <template v-if="as.info.battleTag !== pm.battleTag && pm.type === PartyMessageTypes.DEFAULT"
-                  v-slot:avatar>
+                <template v-if="receive(pm)" #avatar>
                   <img class="q-message-avatar q-message-avatar--received" :src="`/images/avatar/${pm.avatar}.webp`">
                 </template>
               </q-chat-message>
@@ -198,8 +228,8 @@ const kick = (battleTag: string) => {
       <q-separator :dark="!$q.dark.isActive" />
       <q-tabs v-model="tab" dense active-class="text-white bg-primary" class="shadow-2"
         :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-7'" indicator-color="transparent" align="justify">
-        <q-tab name="chat" label="채팅" />
-        <q-tab name="info" label="정보" />
+        <q-tab name="chat" :label="t('party.category.chat')" />
+        <q-tab name="info" :label="t('party.category.info')" />
       </q-tabs>
     </q-card>
   </q-dialog>
@@ -269,5 +299,21 @@ const kick = (battleTag: string) => {
 .message-area:deep(.system .q-message-container .q-message-text) {
   color: transparent !important;
   min-height: inherit !important;
+}
+
+.q-message-received:deep(.q-message-text--received) {
+  border-radius: 16px 16px 16px 0;
+}
+
+.q-message-sent:deep(.q-message-text--sent) {
+  border-radius: 16px 16px 0 16px;
+}
+
+.error-message {
+  border-radius: 4px;
+  background-color: var(--q-negative);
+  padding: 10px;
+  max-width: 300px;
+  word-break: keep-all;
 }
 </style>
