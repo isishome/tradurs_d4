@@ -346,7 +346,7 @@ export default {
       { type: 'link', label: '상세보기', name: 'support', params: { section: 'party' } },
       { type: 'space' },
       { type: 'image', value: '/images/notice/20231225/02_avatar.webp' },
-      { type: 'list', value: '아바타를 변경 기능이 추가됩니다.' },
+      { type: 'list', value: '아바타 변경 기능이 추가됩니다.' },
       { type: 'space' },
       { type: 'head', value: '◆ 변경 사항' },
       { type: 'list', value: '배틀 태그를 인증 한 경우 1개월간 변경이 불가능합니다.' },
