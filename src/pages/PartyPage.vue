@@ -57,7 +57,7 @@ const parties = reactive<Array<Party>>([])
 
 const reset = () => {
   partyInfo.service = PartyServiceTypes.SELL
-  partyInfo.region = (route.params.lang === 'ko' ? PartyRegionTypes.ASIA : PartyRegionTypes.AMERICAS)
+  partyInfo.region = (route.params.lang === 'ko' || !!!route.params.lang ? PartyRegionTypes.ASIA : PartyRegionTypes.AMERICAS)
   partyInfo.type = 'bosses'
   partyInfo.category = 'duriel'
   partyInfo.name = ''

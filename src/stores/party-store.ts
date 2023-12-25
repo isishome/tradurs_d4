@@ -188,7 +188,7 @@ export const usePartyStore = defineStore('party', () => {
   const filter = reactive<IFilter>(extend(false, defaultFilter))
   const partyInfo = ref<IPartyRoom>({} as IPartyRoom)
   const partyPage = ref<IPage>({
-    rows: 20,
+    rows: 1,
     over: false,
     more: false
   })
