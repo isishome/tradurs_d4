@@ -468,7 +468,7 @@ const removePreset = ({ id, done, error }: { id: number, done: Function, error: 
         </q-btn>
       </q-item-section>
     </q-item>
-    <q-separator inset />
+    <q-separator inset class="q-my-md" />
     <q-item :disable="filterLoading">
       <q-item-section>
         <q-btn outline aria-label="Tradurs Refresh Button" size="md" :ripple="false" class="no-hover"

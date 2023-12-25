@@ -2,7 +2,7 @@ import { i18n } from 'src/boot/i18n'
 import { Notify } from 'quasar'
 import { Manager } from 'socket.io-client'
 import { useAccountStore } from 'src/stores/account-store'
-import { usePartyStore, type IPartyMessage, type IPartyUser, PartyMessageTypes } from 'src/stores/party-store'
+import { usePartyStore, type IPartyMessage, type IPartyUser, type IPartyRoom, PartyMessageTypes } from 'src/stores/party-store'
 
 type AccountStore = ReturnType<typeof useAccountStore>
 type PartyStore = ReturnType<typeof usePartyStore>
@@ -21,8 +21,9 @@ export const initParty = async (as: AccountStore, ps: PartyStore) => {
   ps.party = manager.socket('/party')
 
   ps.party.on('connect', () => {
-    ps.party?.emit('check', as.info.id, (member?: Array<IPartyUser>, remainSeconds?: number, totalSeconds?: number) => {
-      if (member && remainSeconds && totalSeconds) {
+    ps.party?.emit('check', as.info.id, (info?: IPartyRoom, member?: Array<IPartyUser>, remainSeconds?: number, totalSeconds?: number) => {
+      if (info && member && remainSeconds && totalSeconds) {
+        ps.partyInfo = info!
         ps.partyMember = member!
         ps.remainSeconds = remainSeconds!
         ps.totalSeconds = totalSeconds!
@@ -79,7 +80,7 @@ export const initParty = async (as: AccountStore, ps: PartyStore) => {
       findUser.online = true
     else {
       ps.partyMember.push(data)
-      const message: IPartyMessage = { type: PartyMessageTypes.SYSTEM, battleTag: data.battleTag as string, message: `${data.battleTag}님이 방에 들어왔습니다.` }
+      const message: IPartyMessage = { type: PartyMessageTypes.SYSTEM, battleTag: data.battleTag as string, message: i18n.global.t('party.messages.enter', { btag: data.battleTag }) }
       ps.push(message)
     }
   })
@@ -91,7 +92,7 @@ export const initParty = async (as: AccountStore, ps: PartyStore) => {
   })
 
   ps.party.on('leave', (data: string) => {
-    const message: IPartyMessage = { type: PartyMessageTypes.SYSTEM, battleTag: data as string, message: `${data}님이 방을 나갔습니다.` }
+    const message: IPartyMessage = { type: PartyMessageTypes.SYSTEM, battleTag: data as string, message: i18n.global.t('party.messages.leave', { btag: data }) }
     const findUserIndex = ps.partyMember.findIndex((pm: IPartyUser) => pm.battleTag === data)
     if (findUserIndex !== -1) {
       ps.partyMember.splice(findUserIndex, 1)
@@ -100,13 +101,15 @@ export const initParty = async (as: AccountStore, ps: PartyStore) => {
   })
 
   ps.party.on('kick', (data: string) => {
-    const message: IPartyMessage = { type: PartyMessageTypes.SYSTEM, battleTag: data as string, message: `${data}님 방에서 쫓겨났습니다.` }
+    const message: IPartyMessage = { type: PartyMessageTypes.SYSTEM, battleTag: data as string, message: i18n.global.t('party.messages.kicked', { btag: data }) }
     const findUserIndex = ps.partyMember.findIndex((pm: IPartyUser) => pm.battleTag === data)
     if (findUserIndex !== -1) {
       ps.partyMember.splice(findUserIndex, 1)
 
-      if (as.info.battleTag === data)
+      if (as.info.battleTag === data) {
         ps.dispose()
+        ps.request++
+      }
       else
         ps.push(message)
     }
@@ -116,7 +119,7 @@ export const initParty = async (as: AccountStore, ps: PartyStore) => {
     const findUser = ps.partyMember.find((pm: IPartyUser) => pm.battleTag === data)
 
     if (findUser) {
-      const message: IPartyMessage = { type: PartyMessageTypes.SYSTEM, battleTag: findUser.battleTag as string, message: `${findUser.battleTag}님이 방장이 되었습니다.` }
+      const message: IPartyMessage = { type: PartyMessageTypes.SYSTEM, battleTag: findUser.battleTag as string, message: i18n.global.t('party.messages.owner', { btag: findUser.battleTag }) }
       findUser.owner = true
       ps.push(message)
     }

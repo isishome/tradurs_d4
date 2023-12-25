@@ -11,7 +11,7 @@ export default {
   page: {
     tradeList: '거래 목록',
     itemInfo: '아이템 정보',
-    party: '파티 플레이',
+    partyPlay: '파티 플레이',
     awards: '어워즈',
     mySpace: '내 공간',
     messages: '메시지',
@@ -42,7 +42,7 @@ export default {
     presetName: '프리셋 명',
     noPreset: '프리셋을 추가해 주세요',
     selectPreset: '프리셋을 선택하세요',
-    basicDescription: '기본 필터 정보는 사용자 저장소에 저장됩니다. 아이템 등록 시 하드코어와 시즌 여부는 기본 필터 정보에 의해 자동으로 설정됩니다.',
+    basicDescription: '기본 필터 정보는 사용자 저장소에 저장됩니다. 아이템 등록 또는 파티 플레이 생성 시 하드코어와 시즌 여부는 기본 필터 정보에 의해 자동으로 설정됩니다.',
     presetDescription: '현재 설정되어 있는 필터 값들을 저장해두는 기능입니다. 최대 5개의 프리셋을 저장할 수 있습니다.',
     affixDescription: '옵션 검색은 4개의 옵션 필터를 선택할 경우 4개 중 조합된 3개를 포함한 다른 아이템들도 함께 검색됩니다',
     description: {
@@ -158,7 +158,8 @@ export default {
     showMore: '더보기',
     leave: '나가기',
     open: '만들기',
-    join: '입장'
+    join: '입장',
+    allow: '광고 허용 방법'
   },
   attribute: {
     request: '{attr} 추가 요청',
@@ -337,11 +338,18 @@ export default {
   },
   notice: {
     title: '업데이트 안내',
-    top: '안녕하세요. 트레이더스입니다.\n\n새로운 업데이트 사항 안내입니다.',
+    top: '안녕하세요. 트레이더스입니다.\n\n추가된 사항 및 변경 사항 안내입니다.',
     contents: [
-      { type: 'head', value: '◆ 업데이트 사항' },
-      { type: 'image', value: '/images/notice/20231112/set.webp' },
-      { type: 'list', value: '소비용품 > 소환 재료 > 보스 소환 재료 세트 4종류가 추가됩니다.' },
+      { type: 'head', value: '◆ 추가 사항' },
+      { type: 'image', value: '/images/notice/20231225/01_menu.webp' },
+      { type: 'list', value: '파티 플레이(베타) 기능이 추가됩니다.' },
+      { type: 'link', label: '상세보기', name: 'support', params: { section: 'party' } },
+      { type: 'space' },
+      { type: 'image', value: '/images/notice/20231225/02_avatar.webp' },
+      { type: 'list', value: '아바타를 변경 기능이 추가됩니다.' },
+      { type: 'space' },
+      { type: 'head', value: '◆ 변경 사항' },
+      { type: 'list', value: '배틀 태그를 인증 한 경우 1개월간 변경이 불가능합니다.' },
       { type: 'space' }
     ],
     bottom: '감사합니다.',
@@ -512,11 +520,73 @@ export default {
       ]
     },
     {
+      id: 'party',
+      question: '파티 플레이는 어떻게 이용하나요?',
+      answer: [
+        { type: 'image', contents: '01_menu' },
+        { type: 'text', contents: '1. 상단에 파티 플레이를 선택합니다.' },
+        { type: 'image', contents: '02_open_01' },
+        { type: 'text', contents: '2.1. 우측 상단에 \'만들기\' 버튼을 클릭해 파티 플레이를 생성해 보겠습니다.' },
+        { type: 'image', contents: '02_open_02' },
+        { type: 'text', contents: '2.2. 1: 서비스(판매/구매)를 선택 > 2:지역 선택 > 3:파티 플레이 명 입력 > 4:파티 플레이 유형 선택 >\n5:파티 플레이 항목 선택 > 6:회차(반복) 입력 > 7:인원 입력 >\n8:시간(파티 플레이 유지 시간) 입력 >\n(* 1 ~ 12시간 선택 가능하며 시간당 1개의 yolk가 소모됩니다.)\n9:설명 입력 > 10:비용 선택 > 만들기 클릭' },
+        { type: 'image', contents: '03_opened' },
+        { type: 'text', contents: '3.1. 파티 플레이가 생성되면 우측에 채팅 창이 열리고,\n파티 플레이 리스트에 방금 생성한 파티 플레이가 표시됩니다.' },
+        { type: 'image', contents: '03_opened_02' },
+        { type: 'text', contents: '3.2. 설명을 클릭하면 파티 플레이 상세 설명을 확인할 수 있습니다.' },
+        { type: 'image', contents: '04_chat_01' },
+        { type: 'text', contents: '4.1. 위에서 아래 순서로 첫번 째로 파티 플레이 제목이 표시됩니다.\n두번 째로 파티 플레이 남은 시간과 진행 바가 표시됩니다.\n세번 째로 참여자 정보가 칩 형태로 표시되며, 네번 째에 일반적인 채팅 레이아웃이 표시됩니다. 가장 하단에는 채팅 / 정보 탭이 표시됩니다.' },
+        { type: 'image', contents: '04_chat_02' },
+        { type: 'text', contents: '4.2. 참여자를 클릭하면 서브 메뉴가 열리며 해당 참여자의 배틀태그를 복사하거나 내보내기(방장인 경우)를 할 수 있습니다.' },
+        { type: 'image', contents: '04_chat_03' },
+        { type: 'text', contents: '4.3. 참여자들과 자유롭게 채팅이 가능합니다.' },
+        { type: 'image', contents: '04_chat_04' },
+        { type: 'text', contents: '4.4. 해당 파티 플레이에 참여한 다른 사용자 화면' },
+        { type: 'image', contents: '04_chat_05' },
+        { type: 'text', contents: '4.5. 정보 탭에는 참여하고 있는 파티 플레이 정보가 표시됩니다.' },
+        { type: 'image', contents: '04_chat_06' },
+        { type: 'text', contents: '4.6. 최소화 아이콘을 클릭하면 채팅 창이 숨김 처리되며' },
+        { type: 'image', contents: '04_chat_07' },
+        { type: 'text', contents: '4.7. 상단에 채팅창을 열 수 있는 아이콘이 활성화됩니다.' },
+        { type: 'image', contents: '04_chat_07_02' },
+        { type: 'text', contents: '4.7.2 채팅창이 최소화 되더라도 새로운 메시지 여부를 확인할 수 있습니다.' },
+        { type: 'image', contents: '04_chat_08' },
+        { type: 'text', contents: '4.8. 닫기 아이콘을 클릭하면,' },
+        { type: 'image', contents: '04_chat_09' },
+        { type: 'text', contents: '4.9. 파티 플레이를 실제 떠나길 원하는지 여부를 묻고 \'나가기\'를 클릭하면\n파티 플레이를 떠날수 있습니다. (방장인 경우 권한이 다른 사람에게 승계됨)\n파티 플레이를 떠나지 않은 경우 언제든지 다시 접속하면 참여했던 파티플레이를 이용할 수 있습니다(파티 플레이 시간이 남은 경우)' },
+        { type: 'image', contents: '04_chat_10' },
+        { type: 'text', contents: '4.10. 방장이 파티 플레이를 떠나면서 권한을 승계받은 화면' },
+        { type: 'image', contents: '05_filter' },
+        { type: 'text', contents: '5. 좌측 파티 플레이 필터를 통해 원하는 파티 플레이를 검색할 수 있습니다.' },
+        { type: 'image', contents: '06_kick_01' },
+        { type: 'text', contents: '6.1. 파티 플레이 동료로 원하지 않는 참여자가 접속한 경우, 해당 참여자의 배틀 태그를 클릭하고\n\'내보내기\' 기능을 사용해 내보낼 수 있습니다.\n쫓겨난 사용자는 해당 파티플레이에 다시 참여할 수 없습니다.' },
+        { type: 'image', contents: '06_kick_02' },
+        { type: 'text', contents: '6.2. 상대방을 내보냈을 경우 시스템 메시지' }
+      ]
+    },
+    {
       id: 'yolk',
       question: '노른자(yolk)는 무엇인가요?',
       answer: [
         { type: 'image', contents: '01_yolk' },
         { type: 'text', contents: '우측 상단 사용자 아이콘\n(모바일 더보기 아이콘 > 사용자 아이콘)\n을 클릭하면 현재 보유한 노른자 개수를 확인할 수 있습니다.\n\n2023-07-01 현재,\n\n가입 시 30개의 노른자(yolk)가 부여됩니다.\n\n로그인 시 하루 10개의 노른자가 부여됩니다.\n\n판매되거나 사용자 사이에 나눠 가질 수 없습니다.\n\n아이템 등록, 끌어올림, 제안 등록 시 1개씩 소모되며,\n\n아이템 거래가 정상적으로 완료되면 회수됩니다.\n\n이는 무분별한 아이템 등록이나 \n제안 요청을 막고자 함이며 앞으로 사용 개수나 부여 개수는 변경될 수 있습니다.' },
+      ]
+    },
+    {
+      id: 'allow',
+      question: '광고 차단 프로그램에서 트레이더스를 어떻게 허용하나요?',
+      answer: [
+        { type: 'image', contents: '01_unicorn' },
+        { type: 'text', contents: '1. 유니콘' },
+        { type: 'text', contents: '유니콘 설정 > 화이트리스트 항목을 선택하여 tradurs.com 을 추가' },
+        { type: 'image', contents: '02_adblock' },
+        { type: 'text', contents: '2. 애드 블록' },
+        { type: 'text', contents: '애드 블록 확장 프로그램을 사용 중인 경우 트레이더스 사이트에 접속 중일 때 애드 블록 확장 프로그램 아이콘을 클릭하여 Always로 항상 허용' },
+        { type: 'image', contents: '03_adguard' },
+        { type: 'text', contents: '3. 애드 가드' },
+        { type: 'text', contents: '애드 가드 설정 > 허용 목록을 선택하여 tradurs.com을 추가' },
+        { type: 'image', contents: '04_ublock' },
+        { type: 'text', contents: '4. 유 블록' },
+        { type: 'text', contents: '유 블록 설정 > 제외 목록을 선택하여 tradurs.com을 추가' }
       ]
     }
   ],
@@ -560,7 +630,7 @@ export default {
     },
     info: {
       region: '지역',
-      name: '방 이름',
+      name: '파티 플레이 명',
       type: '유형',
       category: '항목',
       runs: '회차',
@@ -579,12 +649,23 @@ export default {
     member: {
       title: '참여자',
       copy: '배틀태그 복사',
-      kick: '내보내기'
+      kick: '내보내기',
     },
     leave: {
       title: '파티 나가기',
       message: '파티를 떠나시겠습니까?',
       description: '방장인 경우 다른 사람에게 권한이 승계됩니다'
+    },
+    messages: {
+      kick: '{btag}님을 방에서 내보냈습니다',
+      kicked: '{btag}님이 방에서 쫓겨났습니다',
+      owner: '{btag}님이 방장이 되었습니다',
+      leave: '{btag}님이 방을 나갔습니다',
+      enter: '{btag}님이 방에 들어왔습니다',
+      noData: '검색된 파티 플레이가 없습니다'
+    },
+    filter: {
+      all: '모두'
     }
   }
 }

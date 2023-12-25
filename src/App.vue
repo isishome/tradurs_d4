@@ -15,7 +15,7 @@ export default {
 <script setup lang="ts">
 import { ref, computed, onMounted, reactive } from 'vue'
 import { useQuasar, useMeta } from 'quasar'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute, useRouter, RouteRecordName, RouteParamsRaw } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useGlobalStore } from 'stores/global-store'
 import D4Chat from 'src/components/D4Chat.vue'
@@ -23,10 +23,11 @@ import D4Chat from 'src/components/D4Chat.vue'
 interface IParagraph {
   type: string,
   value?: string,
-  class?: string
+  class?: string,
+  label?: string,
+  name?: RouteRecordName,
+  params?: RouteParamsRaw
 }
-
-const prod: boolean = import.meta.env.PROD
 
 const $q = useQuasar()
 const route = useRoute()
@@ -81,64 +82,22 @@ useMeta(() => {
 })
 
 const notice = reactive<{ open: boolean, close: boolean }>({
-  open: false, //!$q.cookies.has('d4.update.20231112'),
+  open: !$q.cookies.has('d4.update.20231225'),
   close: false
 })
 
 const close = () => {
-  $q.cookies.set('d4.update.20231112', 'confirm', { expires: 1, path: '/' })
+  $q.cookies.set('d4.update.20231225', 'confirm', { expires: 1, path: '/' })
   notice.open = false
 }
 
-const adblock = reactive<{ open: Boolean, close: boolean }>({
-  open: false,
-  close: false
-})
-
 onMounted(() => {
   document.documentElement.setAttribute('lang', locale.value as string)
-
-  // if (prod) {
-  //   fetch('https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js').then(() => {
-  //     view.value = true
-  //   }).catch(() => {
-  //     adblock.open = true
-  //   })
-  // }
-  // else
   view.value = true
 })
 </script>
 
 <template>
-  <D4Dialog v-model="adblock.open" persistent>
-    <template #top>
-      <q-card-section class="row justify-center">
-        <div class="row justify-center items-center q-gutter-x-xs">
-          <q-avatar>
-            <q-img width="50px" src="/images/tradurs.svg" />
-          </q-avatar>
-          <div class="q-pa-md text-weight-bold" :class="$q.screen.gt.sm ? 'text-h6' : 'text-body1'">{{
-            t('adblock.title') }}</div>
-        </div>
-      </q-card-section>
-    </template>
-    <template #middle>
-      <q-card-section class="scroll" style="max-height:50vh">
-        <div class="q-pa-md column q-gutter-y-sm" :class="$q.screen.gt.sm ? 'text-body1' : 'text-caption'">
-          <div class="text-area text-weight-bold">{{ t('adblock.contents') }}</div>
-        </div>
-      </q-card-section>
-    </template>
-    <template #bottom>
-      <q-card-section>
-        <div class="q-pa-md text-right">
-          <q-btn outline no-caps :label="t('adblock.allow')" @click="() => router.go(0)"
-            aria-label="Tradurs Allow Button" />
-        </div>
-      </q-card-section>
-    </template>
-  </D4Dialog>
   <D4Dialog v-model="notice.open" persistent>
     <template #top>
       <q-card-section class="row no-wrap items-center justify-between">
@@ -164,6 +123,10 @@ onMounted(() => {
               <div v-else-if="c.type === 'list'" :class="['list', c.class]">{{ c.value }}</div>
               <div v-else-if="c.type === 'image'">
                 <img :src="c.value" :class="['image', c.class]" alt="Tradurs Notice Image" />
+              </div>
+              <div v-else-if="c.type === 'link'">
+                <q-btn :ripple="false" :label="c.label" :aria-label="c.label" class="link text-underline no-hover"
+                  :to="{ name: c.name, params: { lang: route.params.lang, ...c.params } }" dense no-caps v-close-popup />
               </div>
               <q-space v-else-if="c.type === 'space'" class="space" />
             </template>
@@ -236,6 +199,10 @@ onMounted(() => {
   max-height: 90%;
   box-shadow: 0 0 1px 0 currentColor;
   border-radius: 4px;
+}
+
+.notice:deep(.link) {
+  margin-left: 40px;
 }
 
 .notice:deep(.space) {

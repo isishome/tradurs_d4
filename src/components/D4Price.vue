@@ -14,7 +14,8 @@ interface IProps {
   editable?: boolean,
   disable?: boolean,
   progress?: boolean,
-  fixed?: boolean
+  fixed?: boolean,
+  dark?: boolean
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -40,8 +41,8 @@ const _priceError = ref<boolean>(false)
 const runes = store.filterRunesByType
 const currencies = store.currencies()
 const summonings = store.summonings
-const currencyValueImg = computed(() => _price.currency === 'gold' ? '/images/items/currencies/gold.webp' : _price.currency === 'summoning' ? `/images/items/consumables/summoning/${_price.currencyValue}.webp` : '')
-const currencyValueName = computed(() => _price.currency === 'gold' ? currencies.find(c => c.value === _price.currency)?.label : _price.currency === 'summoning' ? store.summonings.find(s => s.value === _price.currencyValue)?.label : '')
+const currencyValueImg = computed(() => _price.currency === 'gold' ? '/images/items/currencies/gold.webp' : _price.currency === 'summoning' ? `/images/items/consumables/summoning/${_price.currencyValue}.webp` : _price.currency === 'coop' ? '/images/items/currencies/coop.webp' : '')
+const currencyValueName = computed(() => _price.currency === 'gold' ? currencies.find(c => c.value === _price.currency)?.label : _price.currency === 'summoning' ? store.summonings.find(s => s.value === _price.currencyValue)?.label : _price.currency === 'coop' ? t('price.coop') : '')
 
 if (props.party)
   currencies.unshift({ value: 'coop', label: t('price.coop') })
@@ -176,10 +177,13 @@ const updateCurrency = (val: string | null): void => {
             alt="Tradurs Rune Image" />
           <div class="q-ml-xs">{{ (runes().find(r => r.value === _price.currencyValue) || {}).label }}</div>
         </template> -->
-        <template v-if="_price.currency === 'gold'">
+        <template v-if="['gold', 'coop'].includes(_price.currency)">
           <img :src="currencyValueImg" width="24" height="24" alt="Tradurs Price Icon" />
-          <div>
+          <div v-if="_price.currency === 'gold'">
             {{ $n(Number.parseFloat(_price.currencyValue ? _price.currencyValue.toString() : '0'), 'decimal') }}
+          </div>
+          <div v-else>
+            {{ currencyValueName }}
           </div>
         </template>
         <template v-else>
@@ -187,7 +191,7 @@ const updateCurrency = (val: string | null): void => {
           <div>x</div>
           <div>{{ _price.quantity }}</div>
         </template>
-        <D4Tooltip padding="sm">
+        <D4Tooltip padding="sm" :dark="dark">
           <div class="break-keep text-caption" style="max-width:160px;">
             {{ currencyValueName }}
           </div>

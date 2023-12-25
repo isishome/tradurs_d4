@@ -11,6 +11,7 @@ import { usePartyStore } from 'src/stores/party-store'
 import { checkName, scrollPosDirect } from 'src/common'
 
 import D4Filter from 'components/D4Filter.vue'
+import D4PartyFilter from 'components/D4PartyFilter.vue'
 import D4User from 'components/D4User.vue'
 
 
@@ -33,7 +34,8 @@ locale.value = props.lang || 'ko'
 
 const tradurs: string = import.meta.env.VITE_APP_TRADURS + (`/${props.lang || 'ko'}`)
 const mainKey = ref<number>(0)
-const filterLoading = computed(() => is.filter.loading)
+const filterLoading = computed(() => is.filter.loading || ps.filter.loading)
+const searchName = computed(() => route.name === 'partyPlay' ? t('party.info.name') : t('item.name'))
 const leftDrawerOpen = ref<boolean>(false)
 const rightDrawerOpen = ref<boolean>(false)
 const signed = computed<boolean | null>(() => as.signed)
@@ -95,9 +97,10 @@ const setDark = () => {
 
 const _name = ref<string>('')
 const search = () => {
-  if (checkName(_name.value)) {
-    is.filter.name = _name.value
-    is.filter.request++
+  if (!!!_name.value || checkName(_name.value)) {
+    const filter = route.name === 'partyPlay' ? ps.filter : is.filter
+    filter.name = _name.value
+    filter.request++
   }
 }
 const clear = () => {
@@ -143,7 +146,12 @@ watch(() => $q.screen.gt.sm, (val) => {
 })
 
 watch(() => is.filter.name, (val) => {
-  if (val === '')
+  if (!!!val)
+    _name.value = ''
+})
+
+watch(() => ps.filter.name, (val) => {
+  if (!!!val)
     _name.value = ''
 })
 </script>
@@ -155,7 +163,9 @@ watch(() => is.filter.name, (val) => {
 
     <q-drawer show-if-above no-swipe-open no-swipe-close no-swipe-backdrop bordered v-model="leftDrawerOpen" side="left"
       :behavior="screen.lt.md ? 'default' : 'desktop'" class="row justify-end" @before-show="beforeShow" :width="300">
-      <D4Filter :disable="route.name !== 'tradeList'" class="q-pa-lg" style="width:300px" />
+      <D4Filter v-if="route.name !== 'partyPlay'" :disable="route.name !== 'tradeList'" class="q-pa-lg"
+        style="width:300px" />
+      <D4PartyFilter v-if="route.name === 'partyPlay'" class="q-pa-lg" style="width:300px" />
     </q-drawer>
     <q-drawer show-if-above no-swipe-open no-swipe-close no-swipe-backdrop bordered v-model="rightDrawerOpen" side="right"
       behavior="mobile" class="row justify-start no-scroll" :width="300">
@@ -164,7 +174,7 @@ watch(() => is.filter.name, (val) => {
           <q-btn v-show="availableParty" round dense flat aria-label="Tradurs Chat Button" :ripple="!$q.dark.isActive"
             @click="ps.show">
             <img class="icon" width="24" height="24" src="/images/icons/chat.svg" alt="Chat Icon" />
-            <q-badge v-show="ps.unseen > 0" color="red" floating rounded>{{ ps.unseen }}</q-badge>
+            <q-badge v-show="ps.unseen > 0" color="red" floating>{{ ps.unseen }}</q-badge>
           </q-btn>
           <q-btn round dense flat aria-label="Tradurs Discord Button" :ripple="!$q.dark.isActive" tag="a"
             href="https://discord.gg/dwRuWq4enx" target="_blank" rel="noopener noreferrer">
@@ -222,11 +232,11 @@ watch(() => is.filter.name, (val) => {
                 </q-item-label>
               </q-item-section>
             </q-item>
-            <q-item v-ripple clickable :to="{ name: 'party', params: { lang: route.params.lang } }" exact
+            <q-item v-ripple clickable :to="{ name: 'partyPlay', params: { lang: route.params.lang } }" exact
               active-class="active">
               <q-item-section side>
                 <q-item-label>
-                  {{ t('page.party') }}
+                  {{ t('page.partyPlay') }}
                 </q-item-label>
                 <q-badge floating label="B" color="blue-8" class="new-badge2" />
               </q-item-section>
@@ -361,9 +371,9 @@ watch(() => is.filter.name, (val) => {
                   alt="Tradurs Light Logo Image" />
               </h1>
             </q-btn>
-            <q-input outlined dense no-error-icon hide-bottom-space class="col" v-model="_name" :label="t('item.name')"
-              :disable="filterLoading || $route.name !== 'tradeList'" :rules="[val => checkName(val) || '']"
-              @keyup.enter="search()">
+            <q-input outlined dense no-error-icon hide-bottom-space class="col" v-model="_name" :label="searchName"
+              :disable="filterLoading || !['tradeList', 'partyPlay'].includes(route.name as string)"
+              :rules="[val => (!!!val || checkName(val)) || '']" @keyup.enter="search()">
               <template #append>
                 <div style="width:24px">
                   <q-btn v-show="_name && _name !== ''" flat dense aria-label="Tradurs Clear Button" size="xs"
@@ -379,10 +389,11 @@ watch(() => is.filter.name, (val) => {
               <q-btn flat no-caps type="a" :ripple="false" class="no-hover"
                 :class="{ 'active': route.name === 'tradeList' }" :label="t('page.tradeList')"
                 :to="{ name: 'tradeList', params: { lang: route.params.lang } }" />
-              <q-btn flat no-caps type="a" :ripple="false" class="no-hover" :class="{ 'active': route.name === 'party' }"
-                :to="{ name: 'party', params: { lang: route.params.lang } }">
+              <q-btn flat no-caps type="a" :ripple="false" class="no-hover"
+                :class="{ 'active': route.name === 'partyPlay' }"
+                :to="{ name: 'partyPlay', params: { lang: route.params.lang } }">
                 <div class="relative-position">
-                  {{ t('page.party') }}
+                  {{ t('page.partyPlay') }}
                   <q-badge floating label="B" color="blue-8" class="new-badge2" style="top:-4px" />
                 </div>
               </q-btn>
@@ -444,7 +455,7 @@ watch(() => is.filter.name, (val) => {
             @click="ps.show">
             <img class="icon" width="24" height="24" :src="`/images/icons/${$q.dark.isActive ? 'chat_fill' : 'chat'}.svg`"
               alt="Chat Icon" />
-            <q-badge v-show="ps.unseen > 0" color="red" floating rounded>{{ ps.unseen }}</q-badge>
+            <q-badge v-show="ps.unseen > 0" color="red" floating>{{ ps.unseen }}</q-badge>
           </q-btn>
           <q-btn round dense flat aria-label="Tradurs Discord Button" :ripple="!$q.dark.isActive" tag="a"
             href="https://discord.gg/dwRuWq4enx" target="_blank" rel="noopener noreferrer">

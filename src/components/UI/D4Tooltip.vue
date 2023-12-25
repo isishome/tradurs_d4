@@ -41,7 +41,8 @@ interface IProps {
   offset?: [number, number],
   behavior?: 'desktop' | 'mobile' | 'auto',
   keep?: boolean,
-  padding?: string
+  padding?: string,
+  dark?: boolean
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -80,18 +81,21 @@ const beforeHide = () => {
     class="no-padding bg-transparent" :anchor="anchor" :self="self" :offset="offset" :transition-hide="transitionHide"
     :transition-show="transitionShow" :transition-duration="transitionDuration" @show="show" @before-hide="beforeHide">
     <div :data-tooltip-id="id" class="relative-position"
-      :class="[`q-pa-${padding}`, $q.dark.isActive ? 'bg-grey-4 text-grey-9' : 'bg-grey-9 text-grey-4', { keep }]">
+      :class="[`q-pa-${padding}`, ($q.dark.isActive && typeof (dark) === 'undefined') || !!dark ? 'bg-grey-4 text-grey-9' : 'bg-grey-9 text-grey-4', { keep }]">
       <div v-show="keep" class="keep-absolute">
         <div class="keep-fixed"></div>
       </div>
       <slot name="default">
       </slot>
+      <div v-show="keep" class="keep-absolute right">
+        <div class="keep-fixed right"></div>
+      </div>
     </div>
   </q-tooltip>
   <q-btn class="absolute fit" aria-label="Tradurs Tooltip Button" padding="0" flat v-else @click.stop>
     <q-popup-proxy>
       <div
-        :class="[`q-pa-${padding} rounded-borders`, $q.dark.isActive ? 'bg-grey-4 text-grey-9' : 'bg-grey-9 text-grey-4']">
+        :class="[`q-pa-${padding} rounded-borders`, ($q.dark.isActive && typeof (dark) === 'undefined') || !!dark ? 'bg-grey-4 text-grey-9' : 'bg-grey-9 text-grey-4']">
         <slot name="default">
         </slot>
       </div>
@@ -105,11 +109,20 @@ const beforeHide = () => {
   top: 50%;
 }
 
+.keep-absolute.right {
+  left: inherit;
+  right: 0;
+}
+
 .keep-fixed {
   position: fixed;
   width: 30px;
-  height: 30px;
+  height: 50px;
   transform: translate(-100%, -50%);
+}
+
+.keep-fixed.right {
+  transform: translate(0, -50%);
 }
 
 .keep {

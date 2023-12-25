@@ -30,7 +30,7 @@
   --q-unique: #D9A979;
   --q-light-unique: #B99959;
   --q-dark-unique: #4A361B;
-  --q-shadow: #000000;
+  --q-tiny: rgba(200, 200, 200, 0.1);
   --q-cloud: #99999916;
   --q-half: rgba(150, 150, 150, 0.2);
   --q-shadow: rgba(150, 150, 150, 0.6);
@@ -200,6 +200,10 @@ body.body--dark {
 
 .underline {
   border-bottom: solid 1px currentColor;
+}
+
+.text-underline {
+  text-decoration: underline;
 }
 
 .q-menu--dark {

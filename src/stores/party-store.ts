@@ -1,12 +1,13 @@
 import { defineStore } from 'pinia'
-import { ref, reactive, computed } from 'vue'
-import { uid, throttle } from 'quasar'
+import { ref, reactive, computed, Ref, ComputedRef } from 'vue'
+import { uid, throttle, date, extend } from 'quasar'
+import { i18n } from 'src/boot/i18n'
 import { api } from 'boot/axios'
 import { Socket } from 'socket.io-client'
-import { IUser } from 'src/types/user'
+import { type IUser, User } from 'src/types/user'
 
 import { useAccountStore } from './account-store'
-import { ILabel } from './item-store'
+import { useItemStore, type ILabel } from './item-store'
 import { Price } from 'src/types/item'
 
 export enum PartyMessageTypes {
@@ -20,6 +21,7 @@ export enum PartyServiceTypes {
 }
 
 export enum PartyRegionTypes {
+  ALL = '',
   ASIA = 'asia',
   AMERICAS = 'americas',
   EUROPE = 'europe'
@@ -41,6 +43,19 @@ export interface IParty {
   battleTag?: string,
   regDate?: string,
   expireDate?: string
+}
+
+export interface IPartyRoom extends IParty {
+  current: number,
+  remainSeconds?: Ref,
+  remainColor?: ComputedRef,
+  remain?: ComputedRef,
+  timer?: ReturnType<typeof setInterval>,
+  showNotes: boolean,
+  authorized: boolean,
+  user: User
+  set(): void,
+  clear(): void
 }
 
 export interface IPartyUser extends IUser {
@@ -68,7 +83,7 @@ export interface IErrorMessage {
   show?: boolean
 }
 
-interface IPartyRegion extends ILabel {
+export interface IPartyRegion extends ILabel {
   value: PartyRegionTypes
 }
 
@@ -85,13 +100,93 @@ interface IBase {
   request: number
 }
 
+interface IRange {
+  min: number,
+  max: number
+}
+
+export interface IFilter {
+  service: string,
+  region: string,
+  type: string,
+  category: string,
+  runs: IRange,
+  people: IRange,
+  cost: string,
+  name: string,
+  request: number,
+  loading: boolean
+}
+
+export class Party implements IPartyRoom {
+  service = PartyServiceTypes.SELL
+  region = PartyRegionTypes.ASIA
+  hardcore = false
+  ladder = true
+  type = 'bosses'
+  category = 'duriel'
+  name = ''
+  runs = 1
+  people = 2
+  time = 1
+  notes = ''
+  price = new Price()
+  battleTag?: string
+  regDate?: string
+  expireDate?: string
+  current = 0
+  timer?: NodeJS.Timeout
+  remainSeconds?: Ref
+  remainColor?: ComputedRef
+  remain?: ComputedRef
+  showNotes = false
+  authorized = false
+  user = new User()
+
+  constructor(party: IParty) {
+    Object.assign(this, party)
+    this.set()
+  }
+
+  set(): void {
+    this.remainSeconds = ref<number>(date.getDateDiff(this.expireDate ?? Date.now(), Date.now(), 'seconds'))
+    this.remainColor = computed(() => this.remainSeconds?.value < 600 ? 'negative' : this.remainSeconds?.value < 1800 ? 'orange' : 'positive')
+    this.remain = computed(() => `${Math.floor(this.remainSeconds?.value / 3600).toString()}:${date.formatDate((this.remainSeconds?.value % 3600) * 1000, 'mm:ss')}`)
+
+    this.timer = setInterval(() => {
+      if (this.remainSeconds?.value && this.remainSeconds?.value >= 1)
+        this.remainSeconds.value = this.remainSeconds?.value - 1
+      else
+        this.clear()
+    }, 1000)
+  }
+
+  clear(): void {
+    clearInterval(this.timer)
+  }
+}
+
+export const defaultFilter: IFilter = {
+  service: '',
+  region: '',
+  type: 'bosses',
+  category: 'duriel',
+  runs: { min: 1, max: 30 },
+  people: { min: 2, max: 8 },
+  cost: '',
+  name: '',
+  request: 0,
+  loading: false
+}
+
 export const usePartyStore = defineStore('party', () => {
   const party = ref<Socket | null>(null)
   const base = reactive<IBase>({
     loading: false,
     request: 0
   } as IBase)
-  const parties = ref<Array<IParty>>([])
+  const filter = reactive<IFilter>(extend(false, defaultFilter))
+  const partyInfo = ref<IPartyRoom>({} as IPartyRoom)
   const partyPage = ref<IPage>({
     rows: 20,
     over: false,
@@ -99,6 +194,7 @@ export const usePartyStore = defineStore('party', () => {
   })
   const joined = ref<boolean>(false)
   const minimum = ref<boolean>(false)
+  const request = ref<number>(0)
   const unseen = ref<number>(0)
   const partyMember = ref<Array<IPartyUser>>([])
   const remainSeconds = ref<number>(3600)
@@ -106,9 +202,11 @@ export const usePartyStore = defineStore('party', () => {
   const partyMessages = ref<Array<IPartyMessage>>([])
   const errorMessages = ref<Array<IErrorMessage>>([])
 
-  const getType = computed(() => (type: string) => base.partyTypes.find(pt => pt.value === type)?.label)
-  const getCategory = computed(() => (category: string) => base.partyCategories.find(pc => pc.value === category)?.label)
-  const getRegion = computed(() => (region: string) => base.regions.find(r => r.value === region)?.label)
+  const getRegion = computed(() => (region?: string): Array<IPartyRegion> => region ? base.regions.filter(r => r.value === region) : base.regions)
+  const getType = computed(() => (type?: string): Array<ILabel> => type ? base.partyTypes.filter(pt => pt.value === type) : base.partyTypes)
+  const getCategory = computed(() => (category?: string): Array<IPartyCategory> => category ? base.partyCategories.filter(pc => pc.value === category) : base.partyCategories)
+  const getCategoryByType = computed(() => (type?: string): Array<IPartyCategory> => type ? base.partyCategories.filter(pc => pc.party_type === type) : base.partyCategories)
+
 
   const show = () => {
     unseen.value = 0
@@ -142,11 +240,14 @@ export const usePartyStore = defineStore('party', () => {
     })
   }
 
-  const partyCategories = computed(() => (partyType: string) => base.partyCategories.filter(pc => pc.party_type === partyType))
+  const clearFilter = () => {
+    Object.assign(filter, defaultFilter)
+  }
 
-  const getParties = (page: number) => {
+  const getParties = (page: number, isFilter?: boolean) => {
     return new Promise<Array<IParty>>((resolve, reject) => {
-      api.post('/d4/party', { page, rows: partyPage.value.rows })
+      const is = useItemStore()
+      api.post('/d4/party', { page, rows: partyPage.value.rows, basicFilter: { hardcore: is.storage.data.hardcore, ladder: is.storage.data.ladder }, filter: isFilter ? filter : {} })
         .then((response) => {
           partyPage.value.over = page > 1
           partyPage.value.more = response.data.length > partyPage.value.rows
@@ -159,8 +260,24 @@ export const usePartyStore = defineStore('party', () => {
     })
   }
 
+  const getParty = (battleTag: string) => {
+    return new Promise<Array<IParty>>((resolve, reject) => {
+      const is = useItemStore()
+      api.post('/d4/party/info', { battleTag, basicFilter: { hardcore: is.storage.data.hardcore, ladder: is.storage.data.ladder } })
+        .then((response) => {
+          resolve(response.data)
+        })
+        .catch(() => {
+          reject()
+        })
+    })
+  }
+
   const openParty = (party: IParty) => {
     return new Promise<void>((resolve, reject) => {
+      const is = useItemStore()
+      party.hardcore = is.storage.data.hardcore
+      party.ladder = is.storage.data.ladder
       api.post('/d4/party/open', { party })
         .then(() => {
           resolve()
@@ -194,7 +311,7 @@ export const usePartyStore = defineStore('party', () => {
   const kick = (battleTag: string) => {
     const findPartyUserIndex = partyMember.value.findIndex((pm: IPartyUser) => pm.battleTag === battleTag)
     if (findPartyUserIndex !== -1) {
-      const message: IPartyMessage = { type: PartyMessageTypes.SYSTEM, battleTag, message: `${battleTag}님을 방에서 내보냈습니다.` }
+      const message: IPartyMessage = { type: PartyMessageTypes.SYSTEM, battleTag, message: i18n.global.t('party.messages.kick', { btag: battleTag }) }
       partyMember.value.splice(findPartyUserIndex, 1)
       push(message)
     }
@@ -248,21 +365,24 @@ export const usePartyStore = defineStore('party', () => {
   return {
     party,
     base,
-    partyCategories,
-    parties,
+    clearFilter,
+    filter,
+    partyInfo,
     partyPage,
     joined,
     minimum,
+    request,
     unseen,
     partyMember,
     remainSeconds,
     totalSeconds,
     partyMessages,
     errorMessages,
+    getRegion,
     getType,
     getCategory,
-    getRegion,
-    show, hide, getBase, getParties, openParty, joinParty, push, kick, setErrorMessage, startTimer, clearTimer, dispose
+    getCategoryByType,
+    show, hide, getBase, getParty, getParties, openParty, joinParty, push, kick, setErrorMessage, startTimer, clearTimer, dispose
   }
 
 })

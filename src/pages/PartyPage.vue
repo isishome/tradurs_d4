@@ -12,35 +12,33 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref, reactive, computed, defineAsyncComponent, onMounted, watch } from 'vue'
+import { ref, reactive, computed, defineAsyncComponent, onMounted, onUnmounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useQuasar, date } from 'quasar'
+import { useQuasar } from 'quasar'
 import { useRoute } from 'vue-router'
 import { useGlobalStore } from 'src/stores/global-store'
 import { useAccountStore } from 'stores/account-store'
-import { useItemStore } from 'src/stores/item-store'
-import { type IParty, type IPartyUser, PartyServiceTypes, PartyRegionTypes } from 'src/stores/party-store'
+import { type IParty, type IPartyUser, type IPartyRoom, Party, PartyServiceTypes, PartyRegionTypes } from 'src/stores/party-store'
 import { Price } from 'src/types/item'
 
 const D4Price = defineAsyncComponent(() => import('components/D4Price.vue'))
+const D4User = defineAsyncComponent(() => import('components/D4User.vue'))
 
 // init module
 const ps = usePartyStore()
 const gs = useGlobalStore()
 const as = useAccountStore()
-const is = useItemStore()
 const { t } = useI18n({ useScope: 'global' })
 const $q = useQuasar()
 const route = useRoute()
 
 // loading variable
-const completeList = ref(false)
 const progress = ref(false)
-const disabled = ref(false)
-const disable = computed(() => progress.value || disabled.value)
-const joined = computed(() => ps.joined)
+const disable = computed(() => progress.value || ps.filter.loading || ps.joined)
 
 // variable
+const request = computed(() => ps.request)
+const filter = computed(() => ps.filter.request)
 const serviceOptions = [
   {
     label: t('party.service.sell'),
@@ -55,13 +53,11 @@ const partyInfo = reactive<IParty>({} as IParty)
 const page = ref<number>(1)
 const over = computed(() => ps.partyPage.over)
 const more = computed(() => ps.partyPage.more)
-const parties = reactive<Array<IParty>>([])
+const parties = reactive<Array<Party>>([])
 
 const reset = () => {
   partyInfo.service = PartyServiceTypes.SELL
   partyInfo.region = (route.params.lang === 'ko' ? PartyRegionTypes.ASIA : PartyRegionTypes.AMERICAS)
-  partyInfo.hardcore = is.storage.data.hardcore
-  partyInfo.ladder = is.storage.data.ladder
   partyInfo.type = 'bosses'
   partyInfo.category = 'duriel'
   partyInfo.name = ''
@@ -70,29 +66,28 @@ const reset = () => {
   partyInfo.time = 1
   partyInfo.notes = ''
   partyInfo.price = new Price()
+  partyInfo.price.currency = 'coop'
 }
 
-const getParties = () => {
-  disabled.value = true
-  ps.getParties(page.value)
+const getParties = (isFilter?: boolean) => {
+  ps.filter.loading = true
+  parties.splice(0, parties.length)
+  ps.getParties(page.value, isFilter)
     .then((result) => {
-      parties.splice(0, parties.length)
-      parties.push(...result)
-      setTimeout(() => {
-        completeList.value = true
-      }, 100)
+      parties.push(...result.map(p => new Party(p)))
     })
     .catch(() => { })
     .then(() => {
-      disabled.value = false
+      ps.filter.loading = false
     })
 }
 
 const showForm = ref<boolean>(false)
 
 const check = () => {
-  ps.party?.emit('check', as.info.id, (member?: Array<IPartyUser>, remainSeconds?: number, totalSeconds?: number) => {
-    if (member && remainSeconds && totalSeconds) {
+  ps.party?.emit('check', as.info.id, (info?: IPartyRoom, member?: Array<IPartyUser>, remainSeconds?: number, totalSeconds?: number) => {
+    if (info && member && remainSeconds && totalSeconds) {
+      ps.partyInfo = info!
       ps.partyMember = member!
       ps.remainSeconds = remainSeconds!
       ps.totalSeconds = totalSeconds!
@@ -110,11 +105,11 @@ const open = () => {
       check()
       showForm.value = false
       getParties()
+      reset()
     })
     .catch(() => { })
     .then(() => {
       progress.value = false
-      reset()
     })
 }
 
@@ -123,11 +118,28 @@ const join = (battleTag: string) => {
   ps.joinParty(battleTag)
     .then(() => {
       check()
+      getParties()
     })
-    .catch(() => { })
+    .catch(() => {
+      getInfo(battleTag)
+    })
     .then(() => {
       progress.value = false
     })
+}
+
+const getInfo = (battleTag: string) => {
+  ps.getParty(battleTag).then((result: Array<IParty>) => {
+    if (result.length > 0) {
+      const updateParty = new Party(result[0])
+      const findParty = parties.find(p => p.user.battleTag === updateParty.user.battleTag)
+
+      if (findParty)
+        Object.assign(findParty, updateParty)
+    }
+    else
+      getParties()
+  })
 }
 
 const prev = () => {
@@ -145,7 +157,7 @@ const next = () => {
 }
 
 const updateType = (val: string) => {
-  partyInfo.category = ps.partyCategories(val)?.[0]?.value as string
+  partyInfo.category = ps.getCategoryByType(val)?.[0]?.value as string
 }
 
 const updatePrice = (price: Price) => {
@@ -154,10 +166,18 @@ const updatePrice = (price: Price) => {
   partyInfo.price.quantity = price.quantity
 }
 
-watch(joined, () => {
-  setTimeout(() => {
-    getParties()
-  }, 400)
+watch(request, (val, old) => {
+  if (val !== old) {
+    page.value = 1
+    getParties(true)
+  }
+})
+
+watch(filter, (val, old) => {
+  if (val !== old) {
+    page.value = 1
+    getParties(true)
+  }
 })
 
 onMounted(() => {
@@ -165,58 +185,111 @@ onMounted(() => {
   reset()
 })
 
+onUnmounted(() => {
+  parties.forEach(p => p.clear())
+})
+
 </script>
 
 <template>
   <div>
-    <q-list bordered separator class="rounded-borders">
-      <q-item>
-        <q-item-section>
-        </q-item-section>
-        <q-item-section side>
-          <q-btn no-caps push :disable="disable || progress" unelevated :aria-label="t('btn.open')" color="grey-8"
-            :label="t('btn.open')" @click="showForm = true" />
-        </q-item-section>
-      </q-item>
-      <q-item v-for="p in parties" :key="p.battleTag" class="no-padding">
-        <q-item-section top side>
-          <div class="card-title">{{ t(`party.service.${p.service}`) }}</div>
-        </q-item-section>
-        <q-item-section>
-          <div class="q-pa-md column q-gutter-xs">
-            <div> {{ t('party.info.region') }} : {{ ps.getRegion(p.region) }}</div>
-            <div> {{ t('party.info.name') }} : {{ p.name }}</div>
-            <div> {{ t('party.info.type') }} : {{ ps.getType(p.type) }}</div>
-            <div> {{ t('party.info.category') }} : {{ ps.getCategory(p.category) }}</div>
-            <div> {{ t('party.info.runs') }} : {{ p.runs }}</div>
-            <div> {{ t('party.info.people') }} : {{ p.people }}</div>
-            <div> {{ t('party.info.endTime') }} : {{ date.formatDate(p.expireDate, 'YYYY-MM-DD HH:mm:ss') }}</div>
-            <q-expansion-item dense expand-separator expand-icon="img:/images/icons/dropdown.svg"
-              :label="t('party.info.notes')">
-              <q-card>
-                <q-card-section>
-                  {{ p.notes }}
-                </q-card-section>
-              </q-card>
-            </q-expansion-item>
+    <q-bar class="bg-transparent q-my-sm">
+      <q-space />
+      <q-btn v-if="as.signed" no-caps push :disable="disable" unelevated :aria-label="t('btn.open')" color="grey-8"
+        :label="t('btn.open')" @click="showForm = true" />
+    </q-bar>
+    <div class="party-wrap">
+      <q-card flat class="party-card" v-show="parties.length === 0">
+        <q-card-section class="q-pa-xl text-center text-caption">
+          {{ t('party.messages.noData') }}
+        </q-card-section>
+      </q-card>
+      <q-card bordered class="party-card" v-for="p in parties" :key="p.user.battleTag">
+        <div class="card-title">{{ t(`party.service.${p.service}`) }}</div>
+        <div class="text-weight-bold ellipsis party-name" :class="$q.screen.lt.sm ? 'text-subtitle2' : 'text-subtitle1'">
+          {{ p.name }}
+        </div>
+        <q-card-section class="q-pt-xl q-pb-none">
+          <div class="text-caption row justify-end">
+            <div :class="`text-${p.remainColor}`">{{ p.remain }}</div>
           </div>
-        </q-item-section>
-        <q-item-section side>
-          <div class="q-pr-md q-py-md">
-            <q-btn :disable="disable" color="green-7" :label="t('btn.join')" @click="join(p.battleTag as string)" />
+        </q-card-section>
+        <q-card-section class="q-py-none">
+          <div class="text-caption row justify-end q-gutter-sm text-grey-6">
+            <q-breadcrumbs active-color="grey-6" gutter="xs">
+              <template v-slot:separator>
+                <q-icon class="icon" name="img:/images/icons/chevron_right.svg" size="16px" />
+              </template>
+              <q-breadcrumbs-el v-if="p.hardcore" :label="t('item.hardcore')" />
+              <q-breadcrumbs-el v-if="p.ladder" :label="t('item.ladder')" />
+              <q-breadcrumbs-el :label="ps.getRegion(p.region)?.[0]?.label" />
+            </q-breadcrumbs>
           </div>
-        </q-item-section>
-      </q-item>
-    </q-list>
+        </q-card-section>
+        <q-card-section class="q-py-none">
+          <div class="text-caption row justify-end q-gutter-sm text-grey-6">
+            <q-breadcrumbs active-color="grey-6" gutter="xs">
+              <template v-slot:separator>
+                <q-icon class="icon" name="img:/images/icons/chevron_right.svg" size="16px" />
+              </template>
+              <q-breadcrumbs-el :label="ps.getType(p.type)?.[0]?.label" />
+              <q-breadcrumbs-el :label="ps.getCategory(p.category)?.[0]?.label" />
+              <q-breadcrumbs-el>
+                {{ t('party.info.runs') }}<span class="q-ml-xs"
+                  :class="$q.dark.isActive ? 'text-grey-4' : 'text-grey-9'">{{ p.runs
+                  }}</span>
+              </q-breadcrumbs-el>
+              <q-breadcrumbs-el>
+                {{ t('party.info.people') }}<span class="q-ml-xs"
+                  :class="$q.dark.isActive ? 'text-grey-4' : 'text-grey-9'">
+                  {{ p.current }} / {{ p.people }}
+                </span>
+              </q-breadcrumbs-el>
+            </q-breadcrumbs>
+          </div>
+        </q-card-section>
+        <q-card-section class="q-py-none">
+          <div class="row justify-end items-center">
+            <D4Price :data="p.price" :disable="disable" />
+          </div>
+        </q-card-section>
+        <q-card-section class="q-pt-none">
+          <div class="row justify-end items-center">
+            <D4User :data="p.user" :disable="disable" :progress="progress" :authorized="p.authorized"
+              @update="getInfo(p.user.battleTag)" />
+          </div>
+        </q-card-section>
+        <q-card-section v-if="!!p.notes">
+          <q-expansion-item v-model="p.showNotes" dense dense-toggle expand-separator
+            expand-icon="img:/images/icons/dropdown.svg" :label="t('party.info.notes')"
+            class="overflow-hidden text-caption no-hover" style="border-radius: 10px"
+            :style="{ 'backgroundColor': 'var(--q-tiny)' }">
+            <div class="q-pa-sm text-grey-6">
+              {{ p.notes }}
+            </div>
+          </q-expansion-item>
+        </q-card-section>
+        <q-card-section class="q-py-md"></q-card-section>
+        <template v-if="p.user.battleTag !== as.info.battleTag && as.signed">
+          <q-separator />
+          <q-card-section>
+            <div class="row justify-end">
+              <q-btn unelevated :disable="disable || p.people === p.current" color="primary" :label="t('btn.join')"
+                :aria-label="t('btn.join')" @click="join(p.user.battleTag as string)" />
+            </div>
+          </q-card-section>
+        </template>
+      </q-card>
+    </div>
     <div class="row justify-between q-mt-md q-px-sm paging">
       <div>{{ t('message.page', { page }) }}</div>
       <div class="row justify-end items-center q-gutter-x-md">
-        <q-btn flat dense round padding="0" aria-label="Tradurs Prev Button" :disable="!over || disable"
-          :shadow="!$q.dark.isActive">
+        <q-btn flat dense round padding="0" aria-label="Tradurs Prev Button"
+          :disable="!over || progress || ps.filter.loading" :shadow="!$q.dark.isActive">
           <img src="/images/icons/prev.svg" width="24" height="24" class="icon" alt="Tradurs Prev Icon" @click="prev" />
         </q-btn>
-        <q-btn flat dense round padding="0" aria-label="Tradurs Next Button" :disable="!more || disable"
-          :shadow="!$q.dark.isActive" @click="next">
+        <q-btn flat dense round padding="0" aria-label="Tradurs Next Button"
+          :disable="!more || progress || ps.filter.loading" :shadow="!$q.dark.isActive" @click="next">
           <img src="/images/icons/next.svg" width="24" height="24" class="icon" alt="Tradurs Next Icon" />
         </q-btn>
       </div>
@@ -227,22 +300,12 @@ onMounted(() => {
         <q-form :class="{ 'full-height column': $q.screen.lt.sm }" @submit="open">
           <q-card-section>
             <div class="row justify-between items-center q-gutter-y-sm">
-              <div class="row justify-start items-center q-gutter-x-sm col-12 col-sm-6 overflow-hidden">
-                <q-select v-model="partyInfo.service" :disable="disable" outlined dense no-error-icon hide-bottom-space
-                  emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0"
-                  :options="serviceOptions" dropdown-icon="img:/images/icons/dropdown.svg"
-                  popup-content-class="scroll bordered" :label="t('party.service.title')"
-                  :rules="[val => !!val && serviceOptions.map(so => so.value).includes(val) || '']" />
-                <q-select v-model="partyInfo.region" :disable="disable" outlined dense no-error-icon hide-bottom-space
-                  emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0"
-                  :options="ps.base.regions" dropdown-icon="img:/images/icons/dropdown.svg"
-                  popup-content-class="scroll bordered" :label="t('party.info.region')"
-                  :rules="[val => !!val && ps.base.regions.map(r => r.value).includes(val) || '']" />
-              </div>
-              <div class="row justify-end items-center q-gutter-x-sm col-12 col-sm-6">
-                <q-checkbox :disable="disable" dense v-model="partyInfo.hardcore" :label="t('item.hardcore')" />
-                <q-checkbox :disable="disable" dense v-model="partyInfo.ladder" :label="t('item.ladder')" />
-              </div>
+              <q-option-group v-model="partyInfo.service" :options="serviceOptions" inline dense />
+              <q-select v-model="partyInfo.region" :disable="disable" outlined dense no-error-icon hide-bottom-space
+                emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0"
+                :options="ps.base.regions" dropdown-icon="img:/images/icons/dropdown.svg"
+                popup-content-class="scroll bordered" :label="t('party.info.region')"
+                :rules="[val => !!val && ps.base.regions.map(r => r.value).includes(val) || '']" />
             </div>
           </q-card-section>
           <q-separator inset />
@@ -261,15 +324,15 @@ onMounted(() => {
                   :rules="[val => !!val && ps.base.partyTypes.map(pt => pt.value).includes(val) || '']" />
                 <q-select v-model="partyInfo.category" :disable="disable" outlined dense no-error-icon hide-bottom-space
                   emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0"
-                  :options="ps.partyCategories(partyInfo.type)" dropdown-icon="img:/images/icons/dropdown.svg"
+                  :options="ps.getCategoryByType(partyInfo.type)" dropdown-icon="img:/images/icons/dropdown.svg"
                   popup-content-class="scroll bordered" :label="t('party.info.category')"
-                  :rules="[val => !!val && ps.partyCategories(partyInfo.type).map(pc => pc.value).includes(val) || '']" />
+                  :rules="[val => !!val && ps.getCategoryByType(partyInfo.type).map(pc => pc.value).includes(val) || '']" />
               </div>
               <div class="row justify-end items-center q-gutter-sm no-wrap">
-                <D4Counter v-model.number="partyInfo.runs" max-width="60px" :label="t('party.info.runs')" :max="5"
-                  :disable="disable" :no-button="false" />
+                <D4Counter v-model.number="partyInfo.runs" max-width="60px" :label="t('party.info.runs')" :min="1"
+                  :max="30" :disable="disable" :no-button="false" />
                 <D4Counter v-model.number="partyInfo.people" max-width="60px" :label="t('party.info.people')" :min="2"
-                  :max="5" :disable="disable" />
+                  :max="8" :disable="disable" />
                 <D4Counter v-model.number="partyInfo.time" max-width="60px" :label="t('party.info.time')" :min="1"
                   :max="12" :disable="disable" />
               </div>
@@ -286,32 +349,52 @@ onMounted(() => {
               @update="updatePrice" />
           </q-card-section>
           <q-separator />
-          <q-card-section class="row justify-between items-center">
-            <q-btn no-caps :disable="disable" :label="t('btn.close')" color="grey-9" :aria-label="t('btn.close')"
+          <q-card-section class="row justify-end items-center q-gutter-md">
+            <q-btn no-caps :disable="disable" :label="t('btn.close')" color="grey-7" :aria-label="t('btn.close')"
               @click="showForm = false" />
             <q-btn no-caps :label="t('btn.open')" color="primary" type="submit" :aria-label="t('btn.open')"
-              @progress="progress" />
+              :loading="progress" />
           </q-card-section>
         </q-form>
       </q-card>
     </q-dialog>
   </div>
   <div class="q-pt-xl"></div>
-  <template v-if="completeList">
-
-  </template>
 </template>
 
 <style scoped>
-.card-title {
-  margin: 4px 0 0 -12px;
-  padding: 4px 8px;
+.body--light .party-form {
+  background-color: var(--q-light);
+}
+
+.party-wrap:deep(.party-card:last-child) {
+  margin-bottom: 0;
+}
+
+.party-card {
   position: relative;
-  border-radius: 3px 5px 5px 0;
-  background: #d8e1e5;
-  color: #757575;
+  margin: 0 12px 64px 12px;
+  box-shadow: none;
+  border-radius: 12px;
+}
+
+.card-title {
+  position: absolute;
+  z-index: 1;
+  top: 20px;
+  margin: -8px;
+  padding: 4px;
+  border-radius: 3px 5px 5px 0 !important;
   font-size: 10px;
   letter-spacing: .7px;
+  background-color: var(--q-light);
+  color: var(--q-dark);
+  font-weight: 700;
+}
+
+.body--light .card-title {
+  background-color: var(--q-dark);
+  color: var(--q-light);
 }
 
 .card-title:after {
@@ -322,8 +405,26 @@ onMounted(() => {
   width: 0;
   height: 0;
   border: 0 solid transparent;
-  border-width: 9px 0 0 11px;
-  border-top-color: #b0c2ca;
+  border-width: 6px 0 0 7px;
+  border-top-color: var(--q-light);
+  opacity: .5;
+}
+
+.body--light .card-title:after {
+  border-top-color: var(--q-dark);
+}
+
+.party-name {
+  position: absolute;
+  top: 12px;
+  left: 30px;
+  width: 70%;
+}
+
+.notes {
+  background-color: var(--q-cloud);
+  border-radius: 10px;
+  padding: 10px;
 }
 
 .textarea {

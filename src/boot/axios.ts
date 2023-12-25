@@ -12,6 +12,8 @@ import { initParty } from 'src/sockets/party'
 
 let api: AxiosInstance
 
+const prod: boolean = import.meta.env.PROD
+
 // "async" is optional;
 // more info on params: https://v2.quasar.dev/quasar-cli/boot-files
 export default boot(({ app, ssrContext, store, router }/* { app, router, ... } */) => {
@@ -46,6 +48,9 @@ export default boot(({ app, ssrContext, store, router }/* { app, router, ... } *
         caption,
         actions: [
           {
+            noCaps: true,
+            dense: true,
+            class: 'no-hover text-underline',
             label: i18n.global.t('btn.move'), color: 'dark', handler: () => {
               document.location.replace(url)
             }
@@ -93,6 +98,33 @@ export default boot(({ app, ssrContext, store, router }/* { app, router, ... } *
       await initMessenger(as, is)
       await initParty(as, ps)
       await as.unreadMessages()
+    }
+
+    if (prod && to.name !== 'support' && to.params.section !== 'allow') {
+      fetch('https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js').then(() => {
+      }).catch(() => {
+        if (Math.random() > .7)
+          Notify.create({
+            progress: true,
+            icon: 'img:/images/icons/warning.svg',
+            classes: 'no-invert',
+            color: 'warning',
+            textColor: 'dark',
+            multiLine: true,
+            message: i18n.global.t('adblock.title'),
+            caption: i18n.global.t('adblock.contents'),
+            actions: [
+              {
+                noCaps: true,
+                dense: true,
+                class: 'no-hover text-underline',
+                label: i18n.global.t('btn.allow'), color: 'dark', handler: () => {
+                  router.push({ name: 'support', params: { lang: to.params.lang, section: 'allow' } })
+                }
+              }
+            ]
+          })
+      })
     }
 
     return next()

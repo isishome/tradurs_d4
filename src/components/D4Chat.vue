@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import { ref, computed, nextTick } from 'vue'
-import { QInput, useQuasar, debounce, date, format } from 'quasar'
+import { ref, computed, nextTick, defineAsyncComponent } from 'vue'
+import { QInput, useQuasar, debounce, date } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { clipboard } from 'src/common'
 import { useAccountStore } from 'src/stores/account-store'
 import { usePartyStore, PartyMessageTypes, type IPartyMessage, IPartyUser } from 'src/stores/party-store'
 
+const D4Price = defineAsyncComponent(() => import('components/D4Price.vue'))
+
 // global variable
-const { pad } = format
 const { t } = useI18n({ useScope: 'global' })
 const $q = useQuasar()
 const as = useAccountStore()
@@ -28,7 +29,7 @@ const receive = computed(() => (pm: IPartyMessage) => as.info.battleTag !== pm.b
 const system = computed(() => (pm: IPartyMessage) => pm.type === PartyMessageTypes.SYSTEM)
 const remainProgress = computed(() => ps.remainSeconds / ps.totalSeconds)
 const remainColor = computed(() => ps.remainSeconds < 600 ? 'negative' : ps.remainSeconds < 1800 ? 'orange' : 'positive')
-const remainHour = computed(() => pad(Math.floor(ps.remainSeconds / 3600).toString(), 2))
+const remainHour = computed(() => Math.floor(ps.remainSeconds / 3600).toString())
 const remainTime = computed(() => date.formatDate((ps.remainSeconds % 3600) * 1000, 'mm:ss'))
 
 const send = () => {
@@ -56,6 +57,7 @@ const show = () => {
 
 const hide = () => {
   textRef.value?.nativeEl.removeEventListener('input', typing)
+  tab.value = 'chat'
 }
 
 const copy = (battleTag?: string) => {
@@ -71,17 +73,21 @@ const leave = () => {
     message: `<div class='column q-gutter-y-sm'><div>${t('party.leave.message')}</div><div class='text-caption text-negative text-weight-bold'>${t('party.leave.description')}</div></div>`,
     html: true,
     ok: {
+      noCaps: true,
       label: t('btn.leave'),
       color: 'negative'
     },
     cancel: {
+      noCaps: true,
       label: t('btn.cancel'),
       color: 'grey-6'
     },
   }).onOk(() => {
     ps.party?.emit('leave', { id: as.info.id }, (result: boolean) => {
-      if (result)
+      if (result) {
         ps.dispose()
+        ps.request++
+      }
     })
   })
 }
@@ -99,17 +105,17 @@ const kick = (battleTag: string) => {
     :transition-show="tShow" :transition-hide="tHide" @show="show" @before-hide="hide">
     <q-card class="party-chat column" :class="$q.dark.isActive ? 'bg-grey-4 text-grey-9' : 'bg-grey-9 text-grey-4'">
       <div class="column">
-        <q-tooltip v-for="(em, idx) in ps.errorMessages" :key="em.id" v-model="em.show" class="bg-transparent"
+        <q-tooltip v-for="em in ps.errorMessages" :key="em.id" v-model="em.show" class="bg-transparent"
           :transition-duration="500" :offset="[0, 0]">
           <div class="text-caption error-message shadow-1">
             {{ em.message }}
           </div>
         </q-tooltip>
       </div>
-      <q-card-section class="no-padding">
-        <q-bar class="bg-primary text-white">
-          <div>
-            채팅방 이름
+      <q-card-section class="no-padding full-width">
+        <q-bar class="full-width bg-primary text-white">
+          <div class="col text-weight-bold ellipsis">
+            {{ ps.partyInfo.name }}
           </div>
           <q-space />
           <div class="row justify-end q-gutter-x-xs">
@@ -196,9 +202,9 @@ const kick = (battleTag: string) => {
                   <q-spinner-dots size="2rem" />
                 </q-chat-message>
               </template>
-              <q-chat-message v-for="pm, idx in ps.partyMessages" :key="idx" :text="[pm.message]" :sent="sent(pm)"
-                :text-color="receive(pm) || system(pm) ? 'black' : 'white'" :bg-color="receive(pm) ? 'white' : 'blue-7'"
-                size="8" :class="{ 'system': system(pm) }">
+              <q-chat-message v-for="pm, idx in  ps.partyMessages " :key="idx" :text="[pm.message]" :sent="sent(pm)"
+                :text-color="receive(pm) || (system(pm) && $q.dark.isActive) ? 'black' : 'white'"
+                :bg-color="receive(pm) ? 'white' : 'blue-7'" size="8" :class="{ 'system': system(pm) }">
                 <template v-if="receive(pm)" #name>
                   <div class="text-caption">{{ pm.battleTag }}</div>
                 </template>
@@ -214,7 +220,7 @@ const kick = (battleTag: string) => {
           <q-card-actions class="q-pa-sm">
             <div class="full-width">
               <q-form @submit="send" class="row justify-between items-center q-gutter-x-sm">
-                <q-input rounded autocomplete="off" ref="textRef" no-error-icon hide-bottom-space
+                <q-input rounded autocomplete="off" ref="textRef" color="grey-6" no-error-icon hide-bottom-space
                   :dark="!$q.dark.isActive" class="col" outlined borderless dense v-model="text"
                   :rules="[(val) => !!val && !!val.trim() || '']" />
               </q-form>
@@ -222,12 +228,69 @@ const kick = (battleTag: string) => {
           </q-card-actions>
         </q-tab-panel>
         <q-tab-panel name="info">
-          <q-card-section></q-card-section>
+          <q-card-section class="q-pt-none q-px-none">
+            {{ ps.partyInfo.name }}
+          </q-card-section>
+          <q-separator :dark="!$q.dark.isActive" />
+          <q-card-section class="q-px-none">
+            <div class="text-caption row justify-end q-gutter-sm text-grey-6">
+              <q-breadcrumbs active-color="grey-6" gutter="xs">
+                <template v-slot:separator>
+                  <q-icon :class="$q.dark.isActive ? '' : 'invert'" name="img:/images/icons/chevron_right.svg"
+                    size="16px" />
+                </template>
+                <q-breadcrumbs-el v-if="ps.partyInfo.hardcore" :label="t('item.hardcore')" />
+                <q-breadcrumbs-el v-if="ps.partyInfo.ladder" :label="t('item.ladder')" />
+                <q-breadcrumbs-el :label="ps.getRegion(ps.partyInfo.region)?.[0]?.label" />
+              </q-breadcrumbs>
+            </div>
+          </q-card-section>
+          <q-separator :dark="!$q.dark.isActive" />
+          <q-card-section class="q-px-none">
+            <div class="text-caption row justify-end q-gutter-sm text-grey-6">
+              <q-breadcrumbs active-color="grey-6" gutter="xs">
+                <template v-slot:separator>
+                  <q-icon :class="$q.dark.isActive ? '' : 'invert'" name="img:/images/icons/chevron_right.svg"
+                    size="16px" />
+                </template>
+                <q-breadcrumbs-el :label="ps.getType(ps.partyInfo.type)?.[0]?.label" />
+                <q-breadcrumbs-el :label="ps.getCategory(ps.partyInfo.category)?.[0]?.label" />
+                <q-breadcrumbs-el>
+                  {{ t('party.info.runs') }}<span class="q-ml-xs"
+                    :class="!$q.dark.isActive ? 'text-grey-4' : 'text-grey-9'">{{ ps.partyInfo.runs
+                    }}</span>
+                </q-breadcrumbs-el>
+                <q-breadcrumbs-el>
+                  {{ t('party.info.people') }}<span class="q-ml-xs"
+                    :class="!$q.dark.isActive ? 'text-grey-4' : 'text-grey-9'">{{ ps.partyInfo.people
+                    }}</span>
+                </q-breadcrumbs-el>
+              </q-breadcrumbs>
+            </div>
+          </q-card-section>
+          <q-separator :dark="!$q.dark.isActive" />
+          <q-card-section class="q-px-none">
+            <div class="row justify-end items-center">
+              <D4Price :data="ps.partyInfo.price" :dark="!$q.dark.isActive" />
+            </div>
+          </q-card-section>
+          <template v-if="!!ps.partyInfo.notes">
+            <q-separator :dark="!$q.dark.isActive" />
+            <q-card-section class="q-px-none q-pb-none">
+              <q-expansion-item :dark="!$q.dark.isActive" dense dense-toggle expand-separator
+                expand-icon="img:/images/icons/dropdown.svg" :label="t('party.info.notes')"
+                class="overflow-hidden text-caption no-hover" expand-icon-class="invert" style="border-radius: 10px"
+                :style="{ 'backgroundColor': 'var(--q-half)' }">
+                <div class="q-pa-sm" :class="$q.dark.isActive ? 'text-grey-7' : 'text-grey-6'">
+                  {{ ps.partyInfo.notes }}
+                </div>
+              </q-expansion-item>
+            </q-card-section>
+          </template>
         </q-tab-panel>
       </q-tab-panels>
-      <q-separator :dark="!$q.dark.isActive" />
-      <q-tabs v-model="tab" dense active-class="text-white bg-primary" class="shadow-2"
-        :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-7'" indicator-color="transparent" align="justify">
+      <q-tabs v-model="tab" dense :active-class="$q.dark.isActive ? 'text-white bg-grey-6' : 'text-black bg-grey-5'"
+        :class="$q.dark.isActive ? 'text-grey-6' : 'text-grey-7'" indicator-color="transparent" align="justify">
         <q-tab name="chat" :label="t('party.category.chat')" />
         <q-tab name="info" :label="t('party.category.info')" />
       </q-tabs>

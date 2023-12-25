@@ -10,7 +10,7 @@ export default {
   },
   page: {
     tradeList: 'Trade List',
-    party: 'Party Play',
+    partyPlay: 'Party Play',
     itemInfo: 'Item Information',
     awards: 'Awards',
     mySpace: 'My Space',
@@ -42,7 +42,7 @@ export default {
     presetName: 'Preset Name',
     noPreset: 'Add a preset',
     selectPreset: 'Select a preset',
-    basicDescription: 'The basic filter information is saved in your account storage. When you register an item, its hardcore and seasonal status is automatically set by the basic filter information.',
+    basicDescription: 'The basic filter information is saved in your account storage. When you register an item or opening a party play, its hardcore and seasonal status is automatically set by the basic filter information.',
     presetDescription: 'This feature saves the currently set filter values. Up to 3 presets can be saved.',
     affixDescription: 'Affixes search will also search for other items, including any combination of five of the four if you select the four affix filter.',
     description: {
@@ -158,7 +158,8 @@ export default {
     showMore: 'Show More',
     leave: 'Leave',
     open: 'Open',
-    join: 'Join'
+    join: 'Join',
+    allow: 'How to allow ads'
   },
   attribute: {
     request: 'Request additional {attr}',
@@ -337,11 +338,18 @@ export default {
   },
   notice: {
     title: 'Update information',
-    top: 'Hello. This is Tradurs.\n\nAnnouncement of new updates.',
+    top: 'Hello. This is Tradurs.\n\nInformation on additions and changes.',
     contents: [
-      { type: 'head', value: '◆ Updates' },
-      { type: 'image', value: '/images/notice/20231112/set.webp' },
-      { type: 'list', value: 'Consumables > Summonning Materials > Boss Summon Materials adds four new sets of materials.' },
+      { type: 'head', value: '◆ Additional information' },
+      { type: 'image', value: '/images/notice/20231225/01_menu.webp' },
+      { type: 'list', value: 'Party play (BETA) feature is added.' },
+      { type: 'link', label: 'Details', name: 'support', params: { section: 'party' } },
+      { type: 'space' },
+      { type: 'image', value: '/images/notice/20231225/02_avatar.webp' },
+      { type: 'list', value: 'Avatar change feature has been added.' },
+      { type: 'space' },
+      { type: 'head', value: '◆ Changes' },
+      { type: 'list', value: 'If the battle tag has been authenticated, it cannot be changed for 1 month.' },
       { type: 'space' }
     ],
     bottom: 'Thank you',
@@ -512,11 +520,75 @@ export default {
       ]
     },
     {
+      id: 'party',
+      question: 'How do I use Party Play?',
+      answer: [
+        { type: 'image', contents: '01_menu' },
+        { type: 'text', contents: '1. Select Party Play at the top.' },
+        { type: 'image', contents: '02_open_01' },
+        { type: 'text', contents: '2.1. Let\'s create a party play by clicking the \'Open\' button at the top right.' },
+        { type: 'image', contents: '02_open_02' },
+        { type: 'text', contents: '2.2. 1: Select service (sell/buy) > 2: Select region > 3: Enter party play name > 4: Select party play type >\n5: Select party play category > 6: Enter number of runs (rotate) > 7: Enter number of people >\n8: Enter time (party play keep time) >\n(* 1 to 12 hours can be selected, and 1 yolk is consumed per hour.)\n9: Enter description > 10: Select cost > Click Open' },
+        { type: 'image', contents: '03_opened' },
+        { type: 'text', contents: '3.1. When a party play is opened, a chat window opens on the right, and the party play just opened is displayed in the party play list.' },
+        { type: 'image', contents: '03_opened_02' },
+        { type: 'text', contents: '3.2. Click on the description to see a detailed description of party play.' },
+        { type: 'image', contents: '04_chat_01' },
+        { type: 'text', contents: '4.1. First, in order from top to bottom, the party play name is displayed.\nSecond, the remaining time for party play and a progress bar are displayed.\nThird, member information is displayed in the form of chips, and fourth is the general chat layout. At the bottom you will see the Chat/Info tab.' },
+        { type: 'image', contents: '04_chat_02' },
+        { type: 'text', contents: '4.2. When you click on a member, a submenu opens and you can copy or kick (if you are the host) that member\'s battle tag.' },
+        { type: 'image', contents: '04_chat_03' },
+        { type: 'text', contents: '4.3. You can freely chat with member.' },
+        { type: 'image', contents: '04_chat_04' },
+        { type: 'text', contents: '4.4. Screen of other member joining in the party play' },
+        { type: 'image', contents: '04_chat_05' },
+        { type: 'text', contents: '4.5. The information tab displays information about the party you are joining in.' },
+        { type: 'image', contents: '04_chat_06' },
+        { type: 'text', contents: '4.6. If you click the minimize icon, the chat window will be hidden' },
+        { type: 'image', contents: '04_chat_07' },
+        { type: 'text', contents: '4.7. An icon to open a chat window will be activated at the top.' },
+        { type: 'image', contents: '04_chat_07_02' },
+        { type: 'text', contents: '4.7.2 Even if the chat window is minimized, you can check whether there are new messages.' },
+        { type: 'image', contents: '04_chat_08' },
+        { type: 'text', contents: '4.8. When you click the close icon, ' },
+        { type: 'image', contents: '04_chat_09' },
+        { type: 'text', contents: '4.9. You can leave Party Play by clicking \'Leave\' when asked whether you actually want to leave Party Play. (If you are the host, the authority is passed on to another member.)\nIf you have not left the party play, you can reconnect at any time to use the party play you joined in (if there is party play time remaining)' },
+        { type: 'image', contents: '04_chat_10' },
+        { type: 'text', contents: '4.10. Screen where authority is inherited when the host leaves party play' },
+        { type: 'image', contents: '05_filter' },
+        { type: 'text', contents: '5. You can search for the party play you want through the party play filter on the left.' },
+        { type: 'image', contents: '06_kick_01' },
+        { type: 'text', contents: '6.1. If an unwanted member joins as a party play companion, you can kick it by clicking the member\'s battle tag and using the \'Kick out\' feature. Users who are kicked out cannot join in the party play again.' },
+        { type: 'image', contents: '06_kick_02' },
+        { type: 'text', contents: '6.2. System message when the other member has been kicked out' }
+      ]
+    },
+    {
       id: 'yolk',
       question: 'What is \'yolk\'?',
       answer: [
         { type: 'image', contents: '01_yolk' },
         { type: 'text', contents: 'Top-right user icon\n(Mobile More icon > User icon)\nto see how many yolks you currently have.\n\nAs of July 1, 2023,\n\nYou are granted 30 yolks when you sign up.\n\nYou are granted 10 yolks per day upon login.\n\nIt cannot be sold or shared between users.\n\nOne is consumed when listing, relisting, or offering an item,\n\nand is redeemed when the item trade is successfully completed.\n\nThis is to discourage frivolous item registrations or\nrequests for suggestions, and the number of uses or grants may change in the future.' },
+      ]
+    },
+    {
+      id: 'allow',
+      question: 'How do I allow Tradurs in my ad blocker?',
+      answer: [
+        { type: 'image', contents: '01_unicorn' },
+        { type: 'text', contents: '1. Unicorn' },
+        { type: 'text', contents: 'Add tradurs.com by selecting Unicorn Settings > Whitelist' },
+        { type: 'image', contents: '02_adblock' },
+        { type: 'text', contents: '2. AdBlock' },
+        {
+          type: 'text', contents: 'If you are using an ad block extension, click on the ad block extension icon when you are on the tradur\'s site and set it to Always'
+        },
+        { type: 'image', contents: '03_adguard' },
+        { type: 'text', contents: '3. AdGuard' },
+        { type: 'text', contents: 'Add tradurs.com by selecting AdGuard Settings > Whitelist' },
+        { type: 'image', contents: '04_ublock' },
+        { type: 'text', contents: '4. uBlock Origin' },
+        { type: 'text', contents: 'Add tradurs.com by selecting User Block Settings > Trusted sites' }
       ]
     }
   ],
@@ -560,7 +632,7 @@ export default {
     },
     info: {
       region: 'Region',
-      name: 'Room Name',
+      name: 'Party Play Name',
       type: 'Type',
       category: 'Category',
       runs: 'Runs',
@@ -585,6 +657,17 @@ export default {
       title: 'Leaving a party',
       message: 'Do you want to leave the party?',
       description: 'If you\'re a room leader, your permissions will be passed on to someone else'
+    },
+    messages: {
+      kick: '{btag} has been kicked out of the room',
+      kicked: '{btag} has been kicked from the room',
+      owner: '{btag} became the owner of the room',
+      leave: '{btag} has left the room',
+      enter: '{btag} has entered the room',
+      noData: 'No party play found'
+    },
+    filter: {
+      all: 'All'
     }
   }
 }
