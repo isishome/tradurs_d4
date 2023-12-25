@@ -168,7 +168,7 @@ const updateCurrency = (val: string | null): void => {
       </q-item-section>
     </q-item>
     <div v-show="!loading" class="price">
-      <div v-if="_price.currency === 'offer'">
+      <div v-if="data.currency === 'offer'">
         <div>{{ t('offer.title') }}</div>
       </div>
       <div v-else class="row items-center q-gutter-xs relative-position">
@@ -177,10 +177,10 @@ const updateCurrency = (val: string | null): void => {
             alt="Tradurs Rune Image" />
           <div class="q-ml-xs">{{ (runes().find(r => r.value === _price.currencyValue) || {}).label }}</div>
         </template> -->
-        <template v-if="['gold', 'coop'].includes(_price.currency)">
+        <template v-if="['gold', 'coop'].includes(data.currency)">
           <img :src="currencyValueImg" width="24" height="24" alt="Tradurs Price Icon" />
-          <div v-if="_price.currency === 'gold'">
-            {{ $n(Number.parseFloat(_price.currencyValue ? _price.currencyValue.toString() : '0'), 'decimal') }}
+          <div v-if="data.currency === 'gold'">
+            {{ $n(Number.parseFloat(data.currencyValue ? data.currencyValue.toString() : '0'), 'decimal') }}
           </div>
           <div v-else>
             {{ currencyValueName }}
@@ -189,7 +189,7 @@ const updateCurrency = (val: string | null): void => {
         <template v-else>
           <img :src="currencyValueImg" width="24" height="24" alt="Tradurs Currency Image" />
           <div>x</div>
-          <div>{{ _price.quantity }}</div>
+          <div>{{ data.quantity }}</div>
         </template>
         <D4Tooltip padding="sm" :dark="dark">
           <div class="break-keep text-caption" style="max-width:160px;">
