@@ -534,7 +534,7 @@ export default {
         { type: 'image', contents: '03_opened_02' },
         { type: 'text', contents: '3.2. Click on the description to see a detailed description of party play.' },
         { type: 'image', contents: '04_chat_01' },
-        { type: 'text', contents: '4.1. First, in order from top to bottom, the party play name is displayed.\nSecond, the remaining time for party play and a progress bar are displayed.\nThird, member information is displayed in the form of chips, and fourth is the general chat layout. At the bottom you will see the Chat/Info tab.' },
+        { type: 'text', contents: '4.1. First, in order from top to bottom, the party play name is displayed.\nSecond, the remaining time for party play and a progress bar are displayed.\nThird, member information is displayed in the form of chips, and fourth is the general chat UI. At the bottom you will see the Chat/Info tab.' },
         { type: 'image', contents: '04_chat_02' },
         { type: 'text', contents: '4.2. When you click on a member, a submenu opens and you can copy or kick (if you are the host) that member\'s battle tag.' },
         { type: 'image', contents: '04_chat_03' },
