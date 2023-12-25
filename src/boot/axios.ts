@@ -100,7 +100,7 @@ export default boot(({ app, ssrContext, store, router }/* { app, router, ... } *
       await as.unreadMessages()
     }
 
-    if (prod && to.name !== 'support' && to.params.section !== 'allow') {
+    if (prod && !process.env.SERVER && to.name !== 'support' && to.params.section !== 'allow') {
       fetch('https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js').then(() => {
       }).catch(() => {
         if (Math.random() > .7)
