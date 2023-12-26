@@ -24,7 +24,8 @@ const props = withDefaults(defineProps<IProps>(), {
   editable: false,
   disable: false,
   progress: false,
-  fixed: false
+  fixed: false,
+  dark: undefined
 })
 
 const emit = defineEmits(['update'])

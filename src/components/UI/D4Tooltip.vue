@@ -54,7 +54,8 @@ const props = withDefaults(defineProps<IProps>(), {
   offset: () => [10, 10],
   behavior: 'auto',
   keep: false,
-  padding: 'md'
+  padding: 'md',
+  dark: undefined
 })
 
 const $q = useQuasar()
@@ -80,6 +81,7 @@ const beforeHide = () => {
   <q-tooltip ref="tooltipRef" v-if="!$q.platform.is.mobile || behavior === 'desktop'" :target="target"
     class="no-padding bg-transparent" :anchor="anchor" :self="self" :offset="offset" :transition-hide="transitionHide"
     :transition-show="transitionShow" :transition-duration="transitionDuration" @show="show" @before-hide="beforeHide">
+    {{dark}}
     <div :data-tooltip-id="id" class="relative-position"
       :class="[`q-pa-${padding}`, ($q.dark.isActive && typeof (dark) === 'undefined') || !!dark ? 'bg-grey-4 text-grey-9' : 'bg-grey-9 text-grey-4', { keep }]">
       <div v-show="keep" class="keep-absolute">
