@@ -26,6 +26,10 @@ const serviceOptions = [
     value: ''
   },
   {
+    label: t('party.service.coop'),
+    value: PartyServiceTypes.COOP
+  },
+  {
     label: t('party.service.sell'),
     value: PartyServiceTypes.SELL
   },

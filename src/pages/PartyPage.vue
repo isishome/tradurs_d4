@@ -40,6 +40,10 @@ const disable = computed(() => progress.value || ps.filter.loading || ps.joined)
 const request = computed(() => ps.request)
 const filter = computed(() => ps.filter.request)
 const serviceOptions = [
+{
+    label: t('party.service.coop'),
+    value: PartyServiceTypes.COOP
+  },
   {
     label: t('party.service.sell'),
     value: PartyServiceTypes.SELL
@@ -56,7 +60,7 @@ const more = computed(() => ps.partyPage.more)
 const parties = reactive<Array<Party>>([])
 
 const reset = () => {
-  partyInfo.service = PartyServiceTypes.SELL
+  partyInfo.service = PartyServiceTypes.COOP
   partyInfo.region = (route.params.lang === 'ko' || !!!route.params.lang ? PartyRegionTypes.ASIA : PartyRegionTypes.AMERICAS)
   partyInfo.type = 'bosses'
   partyInfo.category = 'duriel'
@@ -66,7 +70,7 @@ const reset = () => {
   partyInfo.time = 1
   partyInfo.notes = ''
   partyInfo.price = new Price()
-  partyInfo.price.currency = 'coop'
+  partyInfo.price.currency = 'gold'
 }
 
 const getParties = (isFilter?: boolean) => {
@@ -209,7 +213,7 @@ onUnmounted(() => {
         <div class="text-weight-bold ellipsis party-name" :class="$q.screen.lt.sm ? 'text-subtitle2' : 'text-subtitle1'">
           {{ p.name }}
         </div>
-        <q-card-section class="q-pt-xl q-pb-none">
+        <q-card-section class="q-pt-lg q-pb-none">
           <div class="text-caption row justify-end">
             <div :class="`text-${p.remainColor}`">{{ p.remain }}</div>
           </div>
@@ -248,7 +252,7 @@ onUnmounted(() => {
             </q-breadcrumbs>
           </div>
         </q-card-section>
-        <q-card-section class="q-py-none">
+        <q-card-section v-if="p.service !== PartyServiceTypes.COOP" class="q-py-none">
           <div class="row justify-end items-center">
             <D4Price :data="p.price" :disable="disable" />
           </div>
@@ -269,7 +273,7 @@ onUnmounted(() => {
             </div>
           </q-expansion-item>
         </q-card-section>
-        <q-card-section class="q-py-md"></q-card-section>
+        <q-card-section class="q-py-xs"></q-card-section>
         <template v-if="p.user.battleTag !== as.info.battleTag && as.signed">
           <q-separator />
           <q-card-section>
@@ -343,11 +347,13 @@ onUnmounted(() => {
             <q-input :disable="disable" outlined class="textarea" input-class="scroll" type="textarea"
               v-model="partyInfo.notes" :label="t('party.info.notes')" maxlength="500" counter />
           </q-card-section>
-          <q-separator inset />
-          <q-card-section>
-            <D4Price party :data="partyInfo.price" editable :disable="disable" :progress="progress"
-              @update="updatePrice" />
-          </q-card-section>
+          <template  v-if="partyInfo.service !== PartyServiceTypes.COOP">
+            <q-separator inset />
+            <q-card-section>
+              <D4Price party :data="partyInfo.price" editable :disable="disable" :progress="progress"
+                @update="updatePrice" />
+            </q-card-section>
+          </template>
           <q-separator />
           <q-card-section class="row justify-end items-center q-gutter-md">
             <q-btn no-caps :disable="disable" :label="t('btn.close')" color="grey-7" :aria-label="t('btn.close')"

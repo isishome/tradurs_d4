@@ -4,7 +4,7 @@ import { QInput, useQuasar, debounce, date } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { clipboard } from 'src/common'
 import { useAccountStore } from 'src/stores/account-store'
-import { usePartyStore, PartyMessageTypes, type IPartyMessage, IPartyUser } from 'src/stores/party-store'
+import { usePartyStore, PartyMessageTypes, type IPartyMessage, IPartyUser, PartyServiceTypes } from 'src/stores/party-store'
 
 const D4Price = defineAsyncComponent(() => import('components/D4Price.vue'))
 
@@ -269,7 +269,7 @@ const kick = (battleTag: string) => {
             </div>
           </q-card-section>
           <q-separator :dark="!$q.dark.isActive" />
-          <q-card-section class="q-px-none">
+          <q-card-section  v-if="ps.partyInfo.service !== PartyServiceTypes.COOP" class="q-px-none">
             <div class="row justify-end items-center">
               <D4Price :data="ps.partyInfo.price" :dark="!$q.dark.isActive" />
             </div>

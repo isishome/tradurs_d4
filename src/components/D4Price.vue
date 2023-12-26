@@ -41,12 +41,10 @@ const _priceError = ref<boolean>(false)
 const runes = store.filterRunesByType
 const currencies = store.currencies()
 const summonings = store.summonings
-const currencyValueImg = computed(() => _price.currency === 'gold' ? '/images/items/currencies/gold.webp' : _price.currency === 'summoning' ? `/images/items/consumables/summoning/${_price.currencyValue}.webp` : _price.currency === 'coop' ? '/images/items/currencies/coop.webp' : '')
-const currencyValueName = computed(() => _price.currency === 'gold' ? currencies.find(c => c.value === _price.currency)?.label : _price.currency === 'summoning' ? store.summonings.find(s => s.value === _price.currencyValue)?.label : _price.currency === 'coop' ? t('price.coop') : '')
+const currencyValueImg = computed(() => _price.currency === 'gold' ? '/images/items/currencies/gold.webp' : _price.currency === 'summoning' ? `/images/items/consumables/summoning/${_price.currencyValue}.webp`  : '')
+const currencyValueName = computed(() => _price.currency === 'gold' ? currencies.find(c => c.value === _price.currency)?.label : _price.currency === 'summoning' ? store.summonings.find(s => s.value === _price.currencyValue)?.label : '')
 
-if (props.party)
-  currencies.unshift({ value: 'coop', label: t('price.coop') })
-else if (!props.offer)
+if (!props.offer)
   currencies.unshift({ value: 'offer', label: t('price.getOffer') })
 
 const update = (): void => {
@@ -152,7 +150,7 @@ const updateCurrency = (val: string | null): void => {
           </template>
         </q-select>
       </div>
-      <D4Counter v-if="!['offer', 'gold', 'coop'].includes(_price.currency)" v-model="_price.quantity" :disable="disable"
+      <D4Counter v-if="!['offer', 'gold'].includes(_price.currency)" v-model="_price.quantity" :disable="disable"
         @update:model-value="update" :no-button="$q.screen.lt.sm" />
     </div>
   </div>
@@ -177,7 +175,7 @@ const updateCurrency = (val: string | null): void => {
             alt="Tradurs Rune Image" />
           <div class="q-ml-xs">{{ (runes().find(r => r.value === _price.currencyValue) || {}).label }}</div>
         </template> -->
-        <template v-if="['gold', 'coop'].includes(data.currency)">
+        <template v-if="['gold'].includes(data.currency)">
           <img :src="currencyValueImg" width="24" height="24" alt="Tradurs Price Icon" />
           <div v-if="data.currency === 'gold'">
             {{ $n(Number.parseFloat(data.currencyValue ? data.currencyValue.toString() : '0'), 'decimal') }}

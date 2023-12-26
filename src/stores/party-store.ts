@@ -16,6 +16,7 @@ export enum PartyMessageTypes {
 }
 
 export enum PartyServiceTypes {
+  COOP = 'coop',
   SELL = 'sell',
   BUY = 'buy'
 }
@@ -188,7 +189,7 @@ export const usePartyStore = defineStore('party', () => {
   const filter = reactive<IFilter>(extend(false, defaultFilter))
   const partyInfo = ref<IPartyRoom>({} as IPartyRoom)
   const partyPage = ref<IPage>({
-    rows: 1,
+    rows: 20,
     over: false,
     more: false
   })

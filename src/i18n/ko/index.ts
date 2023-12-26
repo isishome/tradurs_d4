@@ -199,7 +199,6 @@ export default {
     currency: '화폐 유형',
     quantity: '수량',
     getOffer: '제안받기',
-    coop: '협동',
     restrictGold: '판매/구매 가격은 최저 100,000 금화 이상 설정해야 합니다'
   },
   offer: {
@@ -625,6 +624,7 @@ export default {
   party: {
     service: {
       title: '서비스',
+      coop: '협동',
       sell: '판매',
       buy: '구매'
     },

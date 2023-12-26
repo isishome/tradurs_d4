@@ -199,7 +199,6 @@ export default {
     currency: 'Currency',
     quantity: 'Quantity',
     getOffer: 'Get An Offer',
-    coop: 'CO-OP',
     restrictGold: 'Must have a minimum sale/purchase price of 100,000 gold'
   },
   offer: {
@@ -627,6 +626,7 @@ export default {
   party: {
     service: {
       title: 'Service',
+      coop: 'CO-OP',
       sell: 'Sell',
       buy: 'Buy'
     },
