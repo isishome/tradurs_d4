@@ -1,6 +1,7 @@
 <script setup lang="ts">
+import { reactive, computed, watch } from 'vue'
 import { useQuasar } from 'quasar'
-import { reactive, computed } from 'vue'
+import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useGlobalStore } from 'stores/global-store'
 import { useAccountStore } from 'stores/account-store'
@@ -26,6 +27,7 @@ const prod: boolean = import.meta.env.PROD
 const recaptchaApiKey = import.meta.env.VITE_APP_RECAPTCHA
 
 const $q = useQuasar()
+const route = useRoute()
 const { t, tm } = useI18n({ useScope: 'global' })
 const gs = useGlobalStore()
 const as = useAccountStore()
@@ -79,6 +81,15 @@ const close = () => {
   contact.contents = null
   contact.disable = false
 }
+
+watch(() => route.params.section, (val, old) => {
+  if (val !== old) {
+    support.value.forEach(s => { s.show = false })
+    const findSection = support.value.find(s => s.id === val)
+    if (findSection)
+      findSection.show = true
+  }
+})
 </script>
 
 <template>

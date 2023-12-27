@@ -172,14 +172,14 @@ const updateBasicDebounce = debounce(() => {
     </q-item>
     <q-item-label header>{{ t('party.info.runs') }}</q-item-label>
     <q-item :disable="filterLoading">
-      <q-item-section>
+      <q-item-section class="q-px-md">
         <q-range v-model="filter.runs" :track-color="$q.dark.isActive ? 'grey-8' : 'grey-5'" :dark="!$q.dark.isActive"
           :min="1" :max="30" :step="1" drag-range dense label markers snap @update:model-value="updateDebounce()" />
       </q-item-section>
     </q-item>
     <q-item-label header>{{ t('party.info.people') }}</q-item-label>
     <q-item :disable="filterLoading">
-      <q-item-section>
+      <q-item-section class="q-px-md">
         <q-range v-model="filter.people" :track-color="$q.dark.isActive ? 'grey-8' : 'grey-5'" :dark="!$q.dark.isActive"
           :min="2" :max="8" :step="1" drag-range dense label markers snap @update:model-value="updateDebounce()" />
       </q-item-section>

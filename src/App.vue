@@ -13,11 +13,12 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, reactive } from 'vue'
+import { ref, computed, onMounted, reactive, watch } from 'vue'
 import { useQuasar, useMeta } from 'quasar'
 import { useRoute, useRouter, RouteRecordName, RouteParamsRaw } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useGlobalStore } from 'stores/global-store'
+import { useAdBlock } from 'src/composables/adblock'
 import D4Chat from 'src/components/D4Chat.vue'
 
 interface IParagraph {
@@ -35,6 +36,7 @@ const router = useRouter()
 const as = useAccountStore()
 const gs = useGlobalStore()
 const { t, tm, locale } = useI18n({ useScope: 'global' })
+const { check } = useAdBlock()
 
 const view = ref<boolean>(false)
 const isDark = ref($q.cookies.has('d4.dark') ? $q.cookies.get('d4.dark') === 'true' : $q.dark.isActive)
@@ -43,6 +45,8 @@ $q.dark.set(isDark.value)
 const battleTag = ref<string>('')
 const showBT = computed(() => (as.signed !== null && as.signed as boolean && !(as.info.battleTag && as.info.battleTag !== '') && view.value))
 const loading = ref<boolean>(false)
+const reloadAdKey = computed(() => gs.reloadAdKey)
+
 const updateBattleTag = () => {
   as.updateBattleTag(battleTag.value)
     .then(() => {
@@ -90,6 +94,22 @@ const close = () => {
   $q.cookies.set('d4.update.20231225', 'confirm', { expires: 1, path: '/' })
   notice.open = false
 }
+
+watch(reloadAdKey, () => {
+  check({
+    actions: !(route.name === 'support' && route.params.section === 'allow') ? [
+      {
+        noCaps: true,
+        dense: true,
+        class: 'no-hover text-underline',
+        label: t('btn.allow'), color: 'dark', handler: () => {
+          router.push({ name: 'support', params: { lang: route.params.lang, section: 'allow' } })
+        }
+      }
+    ] : undefined
+  })
+})
+
 
 onMounted(() => {
   document.documentElement.setAttribute('lang', locale.value as string)

@@ -9,10 +9,9 @@ import { User } from 'src/types/user'
 import { i18n } from './i18n'
 import { initMessenger } from 'src/sockets/messenger'
 import { initParty } from 'src/sockets/party'
+import { useAdBlock } from 'src/composables/adblock'
 
 let api: AxiosInstance
-
-const prod: boolean = import.meta.env.PROD
 
 // "async" is optional;
 // more info on params: https://v2.quasar.dev/quasar-cli/boot-files
@@ -86,6 +85,7 @@ export default boot(({ app, ssrContext, store, router }/* { app, router, ... } *
     const as = useAccountStore(store)
     const is = useItemStore(store)
     const ps = usePartyStore(store)
+    const { check } = useAdBlock()
     const requireAuth = to.matched.find(route => route.meta.requireAuth)
 
     if (to.params.lang?.length === 2 && !gs.localeOptions.map(lo => lo.value).includes(to.params.lang as string) && to.name !== 'pnf')
@@ -100,32 +100,18 @@ export default boot(({ app, ssrContext, store, router }/* { app, router, ... } *
       await as.unreadMessages()
     }
 
-    if (prod && !process.env.SERVER && to.name !== 'support' && to.params.section !== 'allow') {
-      fetch('https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js').then(() => {
-      }).catch(() => {
-        if (Math.random() > .7)
-          Notify.create({
-            progress: true,
-            icon: 'img:/images/icons/warning.svg',
-            classes: 'no-invert',
-            color: 'warning',
-            textColor: 'dark',
-            multiLine: true,
-            message: i18n.global.t('adblock.title'),
-            caption: i18n.global.t('adblock.contents'),
-            actions: [
-              {
-                noCaps: true,
-                dense: true,
-                class: 'no-hover text-underline',
-                label: i18n.global.t('btn.allow'), color: 'dark', handler: () => {
-                  router.push({ name: 'support', params: { lang: to.params.lang, section: 'allow' } })
-                }
-              }
-            ]
-          })
-      })
-    }
+    check({
+      actions: !(to.name === 'support' && to.params.section === 'allow') ? [
+        {
+          noCaps: true,
+          dense: true,
+          class: 'no-hover text-underline',
+          label: i18n.global.t('btn.allow'), color: 'dark', handler: () => {
+            router.push({ name: 'support', params: { lang: to.params.lang, section: 'allow' } })
+          }
+        }
+      ] : undefined
+    })
 
     return next()
   })
