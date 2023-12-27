@@ -7,7 +7,7 @@ export function useAdBlock() {
   const check = ({ actions }: { actions?: Array<QNotifyAction> }) => {
     if (prod && !process.env.SERVER) {
       fetch('https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js').then(() => { }).catch(() => {
-        if (Math.random() > .5)
+        if (Math.random() > .8)
           Notify.create({
             progress: true,
             icon: 'img:/images/icons/warning.svg',

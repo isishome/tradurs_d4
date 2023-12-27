@@ -9,7 +9,6 @@ import { User } from 'src/types/user'
 import { i18n } from './i18n'
 import { initMessenger } from 'src/sockets/messenger'
 import { initParty } from 'src/sockets/party'
-import { useAdBlock } from 'src/composables/adblock'
 
 let api: AxiosInstance
 
@@ -85,7 +84,6 @@ export default boot(({ app, ssrContext, store, router }/* { app, router, ... } *
     const as = useAccountStore(store)
     const is = useItemStore(store)
     const ps = usePartyStore(store)
-    const { check } = useAdBlock()
     const requireAuth = to.matched.find(route => route.meta.requireAuth)
 
     if (to.params.lang?.length === 2 && !gs.localeOptions.map(lo => lo.value).includes(to.params.lang as string) && to.name !== 'pnf')
@@ -99,19 +97,6 @@ export default boot(({ app, ssrContext, store, router }/* { app, router, ... } *
       await initParty(as, ps)
       await as.unreadMessages()
     }
-
-    check({
-      actions: !(to.name === 'support' && to.params.section === 'allow') ? [
-        {
-          noCaps: true,
-          dense: true,
-          class: 'no-hover text-underline',
-          label: i18n.global.t('btn.allow'), color: 'dark', handler: () => {
-            router.push({ name: 'support', params: { lang: to.params.lang, section: 'allow' } })
-          }
-        }
-      ] : undefined
-    })
 
     return next()
   })

@@ -95,25 +95,33 @@ const close = () => {
   notice.open = false
 }
 
-watch(reloadAdKey, () => {
-  check({
-    actions: !(route.name === 'support' && route.params.section === 'allow') ? [
-      {
-        noCaps: true,
-        dense: true,
-        class: 'no-hover text-underline',
-        label: t('btn.allow'), color: 'dark', handler: () => {
-          router.push({ name: 'support', params: { lang: route.params.lang, section: 'allow' } })
+const checkAd = () => {
+  if (!(route.name === 'support' && route.params.section === 'allow')) {
+    check({
+      actions: [
+        {
+          noCaps: true,
+          dense: true,
+          class: 'no-hover text-underline',
+          label: t('btn.allow'), color: 'dark', handler: () => {
+            router.push({ name: 'support', params: { lang: route.params.lang, section: 'allow' } })
+          }
         }
-      }
-    ] : undefined
-  })
+      ]
+    })
+  }
+}
+
+watch(reloadAdKey, (val, old) => {
+  if (val !== old)
+    checkAd()
 })
 
 
 onMounted(() => {
   document.documentElement.setAttribute('lang', locale.value as string)
   view.value = true
+  checkAd()
 })
 </script>
 
