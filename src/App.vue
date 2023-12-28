@@ -117,7 +117,6 @@ watch(reloadAdKey, (val, old) => {
     checkAd()
 })
 
-
 onMounted(() => {
   document.documentElement.setAttribute('lang', locale.value as string)
   view.value = true

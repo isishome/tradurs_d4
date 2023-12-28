@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
-import { useGlobalStore } from 'src/stores/global-store'
 import { useItemStore, type OfferInfo, type AwardsPick } from 'stores/item-store'
 import { useAccountStore } from 'stores/account-store'
 import { ref, computed, defineAsyncComponent, onMounted, watch } from 'vue'
@@ -14,7 +13,6 @@ const D4Items = defineAsyncComponent(() => import('components/D4Items.vue'))
 // init module
 const route = useRoute()
 const router = useRouter()
-const gs = useGlobalStore()
 const is = useItemStore()
 const as = useAccountStore()
 const { t, n } = useI18n({ useScope: 'global' })
@@ -180,8 +178,6 @@ const create = (item?: Item) => {
 }
 
 const getList = () => {
-  is.clearSocket()
-  scrollPos(position.value.top)
   is.filter.loading = true
 
   items.value =
@@ -275,7 +271,6 @@ const move = (val: number) => {
 
 watch(() => route.query.page, (val, old) => {
   if (val !== old) {
-    gs.reloadAdKey++
     page.value = val ? parseInt(val as string) : 1
     getList()
   }

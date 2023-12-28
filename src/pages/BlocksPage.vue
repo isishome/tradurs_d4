@@ -4,12 +4,10 @@ import { useQuasar, date } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import { scrollPos } from 'src/common'
-import { useGlobalStore } from 'src/stores/global-store'
 import { useAccountStore } from 'src/stores/account-store'
 import { IBlock } from 'src/types/user'
 
 const $q = useQuasar()
-const gs = useGlobalStore()
 const as = useAccountStore()
 const { t } = useI18n({ useScope: 'global' })
 const route = useRoute()
@@ -93,7 +91,6 @@ const move = (val: number) => {
 
 watch(() => route.query.page, (val, old) => {
   if (val !== old) {
-    gs.reloadAdKey++
     page.value = val ? parseInt(val as string) : 1
     getList()
   }

@@ -16,7 +16,6 @@ import { ref, reactive, computed, defineAsyncComponent, onMounted, onUnmounted, 
 import { useI18n } from 'vue-i18n'
 import { useQuasar } from 'quasar'
 import { useRoute, useRouter } from 'vue-router'
-import { useGlobalStore } from 'src/stores/global-store'
 import { useAccountStore } from 'stores/account-store'
 import { type IParty, type IPartyUser, type IPartyRoom, Party, PartyServiceTypes, PartyRegionTypes } from 'src/stores/party-store'
 import { Price } from 'src/types/item'
@@ -26,7 +25,6 @@ const D4User = defineAsyncComponent(() => import('components/D4User.vue'))
 
 // init module
 const ps = usePartyStore()
-const gs = useGlobalStore()
 const as = useAccountStore()
 const { t } = useI18n({ useScope: 'global' })
 const $q = useQuasar()
@@ -180,7 +178,6 @@ const move = (val: number) => {
 
 watch(() => route.query.page, (val, old) => {
   if (val !== old) {
-    gs.reloadAdKey++
     page.value = val ? parseInt(val as string) : 1
     getParties()
   }

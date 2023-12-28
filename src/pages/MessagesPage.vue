@@ -128,7 +128,6 @@ const move = (val: number) => {
 
 watch(() => route.query.page, (val, old) => {
   if (val !== old) {
-    gs.reloadAdKey++
     page.value = val ? parseInt(val as string) : 1
     getList()
   }

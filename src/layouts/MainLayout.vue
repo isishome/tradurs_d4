@@ -112,12 +112,7 @@ const clear = () => {
 }
 
 const main = () => {
-  if (route.name === 'tradeList') {
-    is.clearFilter()
-    mainKey.value++
-  }
-  else
-    router.push({ name: 'tradeList', params: { lang: route.params.lang } })
+  router.push({ name: 'tradeList', params: { lang: route.params.lang }, query: { page: route.query.page as string === '1' ? undefined : 1 } })
 }
 
 const beforeShow = () => {
