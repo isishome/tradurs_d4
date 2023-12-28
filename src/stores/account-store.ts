@@ -48,13 +48,13 @@ export const useAccountStore = defineStore('account', {
       request: 0 as number
     },
     messagePage: {
-      rows: 6 as number,
+      rows: 20 as number,
       over: false as boolean,
       more: false as boolean,
       unread: 0 as number
     },
     blockPage: {
-      rows: 6 as number,
+      rows: 20 as number,
       over: false as boolean,
       more: false as boolean
     },
