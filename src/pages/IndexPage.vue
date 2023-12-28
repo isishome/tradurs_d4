@@ -226,6 +226,7 @@ const getList = () => {
       setTimeout(() => {
         completeList.value = true
       }, 100)
+      scrollPos()
     })
 
   rewardItem.value = undefined

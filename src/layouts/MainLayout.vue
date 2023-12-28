@@ -63,6 +63,7 @@ const sign = () => {
     as.sign().then((result: boolean) => {
       if (!result) {
         is.clearFilter()
+        ps.clearFilter()
         ps.dispose()
 
         if (route.name === 'tradeList')
