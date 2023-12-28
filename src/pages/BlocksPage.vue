@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useQuasar, date } from 'quasar'
 import { useI18n } from 'vue-i18n'
+import { useRoute, useRouter } from 'vue-router'
 import { scrollPos } from 'src/common'
 import { useGlobalStore } from 'src/stores/global-store'
 import { useAccountStore } from 'src/stores/account-store'
@@ -11,6 +12,8 @@ const $q = useQuasar()
 const gs = useGlobalStore()
 const as = useAccountStore()
 const { t } = useI18n({ useScope: 'global' })
+const route = useRoute()
+const router = useRouter()
 
 as.newMessages = false
 
@@ -19,7 +22,7 @@ const selected = ref<boolean>(false)
 const disable = computed(() => blocks.length === 0 || blocks.filter(b => !b.disable).length === 0)
 const loading = ref<boolean>(true)
 const progress = ref<boolean>(false)
-const page = ref<number>(1)
+const page = ref<number>(route.query.page ? parseInt(route.query.page as string) : 1)
 const over = computed(() => as.blockPage.over)
 const more = computed(() => as.blockPage.more)
 
@@ -84,19 +87,17 @@ const unblocks = () => {
   }
 }
 
-const prev = () => {
-  if (page.value > 1) {
-    gs.reloadAdKey++
-    page.value--
-    getList()
-  }
+const move = (val: number) => {
+  router.push({ name: 'blocks', params: { lang: route.params.lang }, query: { page: page.value + val } })
 }
 
-const next = () => {
-  gs.reloadAdKey++
-  page.value++
-  getList()
-}
+watch(() => route.query.page, (val, old) => {
+  if (val !== old) {
+    gs.reloadAdKey++
+    page.value = val ? parseInt(val as string) : 1
+    getList()
+  }
+})
 
 onMounted(() => {
   getList()
@@ -183,11 +184,11 @@ onMounted(() => {
       <div>{{ t('message.page', { page }) }}</div>
       <div class="row justify-end items-center q-gutter-x-md">
         <q-btn flat dense round padding="0" aria-label="Tradurs Prev Button" :disable="!over || loading"
-          :shadow="!$q.dark.isActive">
-          <img src="/images/icons/prev.svg" width="24" height="24" class="icon" alt="Tradurs Prev Icon" @click="prev" />
+          :shadow="!$q.dark.isActive" @click="move(-1)">
+          <img src="/images/icons/prev.svg" width="24" height="24" class="icon" alt="Tradurs Prev Icon" />
         </q-btn>
         <q-btn flat dense round padding="0" aria-label="Tradurs Next Button" :disable="!more || loading"
-          :shadow="!$q.dark.isActive" @click="next">
+          :shadow="!$q.dark.isActive" @click="move(1)">
           <img src="/images/icons/next.svg" width="24" height="24" class="icon" alt="Tradurs Next Icon" />
         </q-btn>
       </div>

@@ -245,10 +245,10 @@ export const usePartyStore = defineStore('party', () => {
     Object.assign(filter, defaultFilter)
   }
 
-  const getParties = (page: number, isFilter?: boolean) => {
+  const getParties = (page: number) => {
     return new Promise<Array<IParty>>((resolve, reject) => {
       const is = useItemStore()
-      api.post('/d4/party', { page, rows: partyPage.value.rows, basicFilter: { hardcore: is.storage.data.hardcore, ladder: is.storage.data.ladder }, filter: isFilter ? filter : {} })
+      api.post('/d4/party', { page, rows: partyPage.value.rows, basicFilter: { hardcore: is.storage.data.hardcore, ladder: is.storage.data.ladder }, filter })
         .then((response) => {
           partyPage.value.over = page > 1
           partyPage.value.more = response.data.length > partyPage.value.rows

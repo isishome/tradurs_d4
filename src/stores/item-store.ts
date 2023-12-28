@@ -541,9 +541,9 @@ export const useItemStore = defineStore('item', {
           resolve()
       })
     },
-    getItems(page: number, itemId?: string | string[], filter?: IFilter) {
+    getItems(page: number, itemId?: string | string[]) {
       return new Promise<Array<Item>>((resolve, reject) => {
-        api.post('/d4/item', { page, rows: this.itemPage.rows, itemId, basicFilter: itemId ? {} : { hardcore: this.storage.data.hardcore, ladder: this.storage.data.ladder }, filter })
+        api.post('/d4/item', { page, rows: this.itemPage.rows, itemId, basicFilter: itemId ? {} : { hardcore: this.storage.data.hardcore, ladder: this.storage.data.ladder }, filter: this.filter })
           .then((response) => {
             if (!itemId) {
               this.itemPage.over = page > 1

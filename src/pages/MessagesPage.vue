@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useQuasar, date } from 'quasar'
 import { useI18n } from 'vue-i18n'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { scrollPos } from 'src/common'
 import { useGlobalStore } from 'src/stores/global-store'
 import { useAccountStore } from 'src/stores/account-store'
@@ -15,13 +15,14 @@ const as = useAccountStore()
 const is = useItemStore()
 const { t, n } = useI18n({ useScope: 'global' })
 const route = useRoute()
+const router = useRouter()
 
 const messages = reactive<Array<IMessage>>([])
 const selected = ref<boolean>(false)
 const disable = computed(() => messages.filter(m => !m.readYn).length === 0)
 const loading = ref<boolean>(true)
 const progress = ref<boolean>(false)
-const page = ref<number>(1)
+const page = ref<number>(route.query.page ? parseInt(route.query.page as string) : 1)
 const over = computed(() => as.messagePage.over)
 const more = computed(() => as.messagePage.more)
 const newMessages = computed(() => as.newMessages)
@@ -85,11 +86,6 @@ const reads = () => {
   }
 }
 
-const refresh = () => {
-  page.value = 1
-  getList()
-}
-
 const answer = reactive<IAnswer>({
   open: false,
   loading: false,
@@ -126,19 +122,17 @@ const close = () => {
   answer.loading = false
 }
 
-const prev = () => {
-  if (page.value > 1) {
-    gs.reloadAdKey++
-    page.value--
-    getList()
-  }
+const move = (val: number) => {
+  router.push({ name: 'messages', params: { lang: route.params.lang }, query: { page: page.value + val } })
 }
 
-const next = () => {
-  gs.reloadAdKey++
-  page.value++
-  getList()
-}
+watch(() => route.query.page, (val, old) => {
+  if (val !== old) {
+    gs.reloadAdKey++
+    page.value = val ? parseInt(val as string) : 1
+    getList()
+  }
+})
 
 onMounted(() => {
   getList()
@@ -166,10 +160,10 @@ onMounted(() => {
           <q-separator />
           <div class="q-py-md">
             <q-btn color="secondary" v-show="newMessages" no-caps unelevated padding="6px" class="text-caption"
-              aria-label="Tradurs Refresh Button" @click="refresh">
+              aria-label="Tradurs Refresh Button"
+              :to="{ name: 'messages', params: { lang: route.params.lang }, query: { page: 1 } }">
               <div class="row items-center q-gutter-x-sm">
-                <img src="/images/icons/restore.svg" width="18" height="18" class="invert" alt="Tradurs Refresh Icon"
-                  @click="prev" />
+                <img src="/images/icons/restore.svg" width="18" height="18" class="invert" alt="Tradurs Refresh Icon" />
                 <div>
                   {{ t('btn.newMessages') }}
                 </div>
@@ -274,11 +268,11 @@ onMounted(() => {
       <div>{{ t('message.page', { page }) }}</div>
       <div class="row justify-end items-center q-gutter-x-md">
         <q-btn flat dense round padding="0" aria-label="Tradurs Prev Button" :disable="!over || loading"
-          :shadow="!$q.dark.isActive">
-          <img src="/images/icons/prev.svg" width="24" height="24" class="icon" alt="Tradurs Prev Icon" @click="prev" />
+          :shadow="!$q.dark.isActive" @click="move(-1)">
+          <img src="/images/icons/prev.svg" width="24" height="24" class="icon" alt="Tradurs Prev Icon" />
         </q-btn>
         <q-btn flat dense round padding="0" aria-label="Tradurs Next Button" :disable="!more || loading"
-          :shadow="!$q.dark.isActive" @click="next">
+          :shadow="!$q.dark.isActive" @click="move(1)">
           <img src="/images/icons/next.svg" width="24" height="24" class="icon" alt="Tradurs Next Icon" />
         </q-btn>
       </div>

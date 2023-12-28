@@ -51,7 +51,6 @@ const currencies = [
     label: t('party.filter.all'),
     value: ''
   },
-  { value: 'coop', label: t('price.coop') },
   ...is.currencies()
 ]
 

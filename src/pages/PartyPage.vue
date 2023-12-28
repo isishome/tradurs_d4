@@ -15,7 +15,7 @@ export default {
 import { ref, reactive, computed, defineAsyncComponent, onMounted, onUnmounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useQuasar } from 'quasar'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useGlobalStore } from 'src/stores/global-store'
 import { useAccountStore } from 'stores/account-store'
 import { type IParty, type IPartyUser, type IPartyRoom, Party, PartyServiceTypes, PartyRegionTypes } from 'src/stores/party-store'
@@ -31,6 +31,7 @@ const as = useAccountStore()
 const { t } = useI18n({ useScope: 'global' })
 const $q = useQuasar()
 const route = useRoute()
+const router = useRouter()
 
 // loading variable
 const progress = ref(false)
@@ -40,7 +41,7 @@ const disable = computed(() => progress.value || ps.filter.loading || ps.joined)
 const request = computed(() => ps.request)
 const filter = computed(() => ps.filter.request)
 const serviceOptions = [
-{
+  {
     label: t('party.service.coop'),
     value: PartyServiceTypes.COOP
   },
@@ -54,7 +55,7 @@ const serviceOptions = [
   }
 ]
 const partyInfo = reactive<IParty>({} as IParty)
-const page = ref<number>(1)
+const page = ref<number>(route.query.page ? parseInt(route.query.page as string) : 1)
 const over = computed(() => ps.partyPage.over)
 const more = computed(() => ps.partyPage.more)
 const parties = reactive<Array<Party>>([])
@@ -73,10 +74,10 @@ const reset = () => {
   partyInfo.price.currency = 'gold'
 }
 
-const getParties = (isFilter?: boolean) => {
+const getParties = () => {
   ps.filter.loading = true
   parties.splice(0, parties.length)
-  ps.getParties(page.value, isFilter)
+  ps.getParties(page.value)
     .then((result) => {
       parties.push(...result.map(p => new Party(p)))
     })
@@ -101,6 +102,13 @@ const check = () => {
   })
 }
 
+const reload = () => {
+  if (page.value === 1)
+    getParties()
+  else
+    router.push({ name: 'partyPlay', params: { lang: route.params.lang }, query: { page: 1 } })
+}
+
 const open = () => {
   progress.value = true
   ps.openParty(partyInfo)
@@ -108,8 +116,8 @@ const open = () => {
       as.retrieve()
       check()
       showForm.value = false
-      getParties()
-      reset()
+      ps.clearFilter()
+      reload()
     })
     .catch(() => { })
     .then(() => {
@@ -122,7 +130,7 @@ const join = (battleTag: string) => {
   ps.joinParty(battleTag)
     .then(() => {
       check()
-      getParties()
+      reload()
     })
     .catch(() => {
       getInfo(battleTag)
@@ -142,22 +150,8 @@ const getInfo = (battleTag: string) => {
         Object.assign(findParty, updateParty)
     }
     else
-      getParties()
+      reload()
   })
-}
-
-const prev = () => {
-  if (page.value > 1) {
-    gs.reloadAdKey++
-    page.value--
-    getParties()
-  }
-}
-
-const next = () => {
-  gs.reloadAdKey++
-  page.value++
-  getParties()
 }
 
 const updateType = (val: string) => {
@@ -171,22 +165,29 @@ const updatePrice = (price: Price) => {
 }
 
 watch(request, (val, old) => {
-  if (val !== old) {
-    page.value = 1
-    getParties(true)
-  }
+  if (val !== old)
+    reload()
 })
 
 watch(filter, (val, old) => {
+  if (val !== old)
+    reload()
+})
+
+const move = (val: number) => {
+  router.push({ name: 'partyPlay', params: { lang: route.params.lang }, query: { page: page.value + val } })
+}
+
+watch(() => route.query.page, (val, old) => {
   if (val !== old) {
-    page.value = 1
-    getParties(true)
+    gs.reloadAdKey++
+    page.value = val ? parseInt(val as string) : 1
+    getParties()
   }
 })
 
 onMounted(() => {
   getParties()
-  reset()
 })
 
 onUnmounted(() => {
@@ -289,17 +290,17 @@ onUnmounted(() => {
       <div>{{ t('message.page', { page }) }}</div>
       <div class="row justify-end items-center q-gutter-x-md">
         <q-btn flat dense round padding="0" aria-label="Tradurs Prev Button"
-          :disable="!over || progress || ps.filter.loading" :shadow="!$q.dark.isActive">
-          <img src="/images/icons/prev.svg" width="24" height="24" class="icon" alt="Tradurs Prev Icon" @click="prev" />
+          :disable="!over || progress || ps.filter.loading" :shadow="!$q.dark.isActive" @click="move(-1)">
+          <img src="/images/icons/prev.svg" width="24" height="24" class="icon" alt="Tradurs Prev Icon" />
         </q-btn>
         <q-btn flat dense round padding="0" aria-label="Tradurs Next Button"
-          :disable="!more || progress || ps.filter.loading" :shadow="!$q.dark.isActive" @click="next">
+          :disable="!more || progress || ps.filter.loading" :shadow="!$q.dark.isActive" @click="move(1)">
           <img src="/images/icons/next.svg" width="24" height="24" class="icon" alt="Tradurs Next Icon" />
         </q-btn>
       </div>
     </div>
     <q-dialog v-model="showForm" :maximized="$q.screen.lt.sm" transition-show="none" transition-hide="none"
-      transition-duration="0" persistent>
+      transition-duration="0" @before-show="reset" persistent>
       <q-card bordered class="party-form dialog">
         <q-form :class="{ 'full-height column': $q.screen.lt.sm }" @submit="open">
           <q-card-section>
@@ -347,7 +348,7 @@ onUnmounted(() => {
             <q-input :disable="disable" outlined class="textarea" input-class="scroll" type="textarea"
               v-model="partyInfo.notes" :label="t('party.info.notes')" maxlength="500" counter />
           </q-card-section>
-          <template  v-if="partyInfo.service !== PartyServiceTypes.COOP">
+          <template v-if="partyInfo.service !== PartyServiceTypes.COOP">
             <q-separator inset />
             <q-card-section>
               <D4Price party :data="partyInfo.price" editable :disable="disable" :progress="progress"
@@ -396,6 +397,7 @@ onUnmounted(() => {
   background-color: var(--q-light);
   color: var(--q-dark);
   font-weight: 700;
+  max-width: 30px;
 }
 
 .body--light .card-title {

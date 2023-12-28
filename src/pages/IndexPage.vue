@@ -37,10 +37,18 @@ const expanded = computed(() => is.equalDefaultFilter)
 const itemsRef = ref<typeof D4Items | null>(null)
 const items = ref<Array<Item>>([])
 const rewardItem = ref<Item | undefined>()
-const page = ref<number>(1)
+const page = ref<number>(route.query.page ? parseInt(route.query.page as string) : 1)
 const over = computed(() => is.itemPage.over)
 const more = computed(() => is.itemPage.more)
 const selectable = computed(() => is.filter.mine)
+
+const reload = () => {
+  if (page.value === 1)
+    getList()
+  else
+    router.push({ name: 'tradeList', params: { lang: route.params.lang }, query: { page: 1 } })
+}
+
 
 // insert or update item
 const upsertItem = (item: Item, done: Function) => {
@@ -58,8 +66,7 @@ const upsertItem = (item: Item, done: Function) => {
       else {
         as.retrieve()
         is.clearFilter()
-        page.value = 1
-        getList(is.filter)
+        reload()
       }
 
       itemsRef.value?.hideEditable()
@@ -100,8 +107,7 @@ const relistItem = (item: Item, done: Function) => {
         as.retrieve()
         itemsRef.value?.hideEditable()
         disable.value = false
-        page.value = 1
-        getList(is.filter)
+        reload()
       })
       .catch(() => {
         done()
@@ -169,25 +175,11 @@ const favorite = (itemId: string, favorite: boolean) => {
   }
 }
 
-const prev = () => {
-  if (page.value > 1) {
-    gs.reloadAdKey++
-    page.value--
-    getList(is.filter)
-  }
-}
-
-const next = () => {
-  gs.reloadAdKey++
-  page.value++
-  getList(is.filter)
-}
-
 const create = (item?: Item) => {
   itemsRef.value?.create(item)
 }
 
-const getList = (filter?: any) => {
+const getList = () => {
   is.clearSocket()
   scrollPos(position.value.top)
   is.filter.loading = true
@@ -202,7 +194,7 @@ const getList = (filter?: any) => {
       return item
     })
 
-  is.getItems(page.value, undefined, filter)
+  is.getItems(page.value)
     .then((result: Array<Item>) => {
 
       // auto expanded
@@ -277,14 +269,25 @@ const parseOfferPrice = (priceStr?: string) => {
   return { currencyName, currencyValue }
 }
 
+const move = (val: number) => {
+  router.push({ name: 'tradeList', params: { lang: route.params.lang }, query: { page: page.value + val } })
+}
+
+watch(() => route.query.page, (val, old) => {
+  if (val !== old) {
+    gs.reloadAdKey++
+    page.value = val ? parseInt(val as string) : 1
+    getList()
+  }
+})
+
 watch(newItems, (val: number) => {
   if (val > 0)
     notify('newItems', t('messages.newItems', val), '', t('btn.refresh'), () => {
       itemsRef.value?.hideEditable()
       itemsRef.value?.hideOffers()
       is.clearFilter()
-      page.value = 1
-      getList(is.filter)
+      reload()
     })
 })
 
@@ -330,18 +333,14 @@ watch(complete, (val: OfferInfo | null) => {
 })
 
 watch(filter, (val, old) => {
-  if (Number.isInteger(val) && val !== old) {
-    page.value = 1
-    getList(is.filter)
-  }
+  if (Number.isInteger(val) && val !== old)
+    reload()
 })
 
 onMounted(() => {
   as.position = { top: 0, left: 0 }
-  getList(is.filter)
+  getList()
 })
-
-defineExpose({ getList })
 </script>
 <template>
   <div>
@@ -367,10 +366,10 @@ defineExpose({ getList })
       <D4Btn v-else style="visibility: hidden;" />
     </div>
     <div class="row q-gutter-xs items-center paging">
-      <D4Btn round @click="prev" color="var(--q-light-magic)" :disable="!over || disable" :shadow="!$q.dark.isActive">
+      <D4Btn round @click="move(-1)" color="var(--q-light-magic)" :disable="!over || disable" :shadow="!$q.dark.isActive">
         <img src="/images/icons/prev.svg" width="24" height="24" class="invert" alt="Tradurs Prev Icon" />
       </D4Btn>
-      <D4Btn round @click="next" color="var(--q-light-magic)" :disable="!more || disable" :shadow="!$q.dark.isActive">
+      <D4Btn round @click="move(1)" color="var(--q-light-magic)" :disable="!more || disable" :shadow="!$q.dark.isActive">
         <img src="/images/icons/next.svg" width="24" height="24" class="invert" alt="Tradurs Next Icon" />
       </D4Btn>
     </div>

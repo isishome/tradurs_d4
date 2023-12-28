@@ -527,7 +527,7 @@ export default {
         { type: 'image', contents: '02_open_01' },
         { type: 'text', contents: '2.1. Let\'s create a party play by clicking the \'Open\' button at the top right.' },
         { type: 'image', contents: '02_open_02' },
-        { type: 'text', contents: '2.2. 1: Select service (CO-OP/sell/buy) > 2: Select region > 3: Enter party play name > 4: Select party play type >\n5: Select party play category > 6: Enter number of runs (rotate) > 7: Enter number of people >\n8: Enter time (party play keep time) >\n(* 1 to 12 hours can be selected, and 1 yolk is consumed per hour.)\n9: Enter description > 10: Select cost(If the service is a sell/buy) > Click Open' },
+        { type: 'text', contents: '2.2. 1: Select service (coop/sell/buy) > 2: Select region > 3: Enter party play name > 4: Select party play type >\n5: Select party play category > 6: Enter number of runs (rotate) > 7: Enter number of people >\n8: Enter time (party play keep time) >\n(* 1 to 12 hours can be selected, and 1 yolk is consumed per hour.)\n9: Enter description > 10: Select cost(If the service is a sell/buy) > Click Open' },
         { type: 'image', contents: '03_opened' },
         { type: 'text', contents: '3.1. When a party play is opened, a chat window opens on the right, and the party play just opened is displayed in the party play list.' },
         { type: 'image', contents: '03_opened_02' },
@@ -626,7 +626,7 @@ export default {
   party: {
     service: {
       title: 'Service',
-      coop: 'CO-OP',
+      coop: 'Co-',
       sell: 'Sell',
       buy: 'Buy'
     },
