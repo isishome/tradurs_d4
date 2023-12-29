@@ -166,7 +166,7 @@ watch(() => ps.filter.name, (val) => {
     <q-drawer show-if-above no-swipe-open no-swipe-close no-swipe-backdrop bordered v-model="rightDrawerOpen" side="right"
       behavior="mobile" class="row justify-start no-scroll" :width="300">
       <div class="column fit">
-        <q-item class="row justify-center items-center q-py-lg q-gutter-x-sm icons">
+        <q-item class="row justify-end items-center q-py-lg q-gutter-x-sm icons">
           <q-btn v-show="availableParty" round dense flat aria-label="Tradurs Chat Button" :ripple="!$q.dark.isActive"
             @click="ps.show">
             <img class="icon" width="24" height="24" src="/images/icons/chat.svg" alt="Chat Icon" />
