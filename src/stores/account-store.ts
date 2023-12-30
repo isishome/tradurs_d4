@@ -4,7 +4,7 @@ import { User, type INotify } from 'src/types/user'
 import { Socket } from 'socket.io-client'
 import { type ILabel } from 'src/stores/item-store'
 import { IItem } from 'src/types/item'
-import { usePartyStore } from './party-store'
+import { Party, usePartyStore } from './party-store'
 
 export interface IEvaluation extends ILabel {
   type: string
@@ -23,6 +23,7 @@ export interface IHistory extends IItem {
   typeName: string,
   actionName: string,
   contents: IContents,
+  partyInfo?: Party,
   description: string | null,
   regDate: string,
   price_currency: string,

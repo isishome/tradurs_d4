@@ -1,6 +1,5 @@
 <script lang="ts">
 import { usePartyStore } from 'src/stores/party-store'
-import { checkName } from 'src/common'
 
 export default {
   preFetch({ store }) {
@@ -20,9 +19,10 @@ import { scrollPos } from 'src/common'
 import { useAccountStore } from 'stores/account-store'
 import { type IParty, type IPartyUser, type IPartyRoom, Party, PartyServiceTypes, PartyRegionTypes } from 'src/stores/party-store'
 import { Price } from 'src/types/item'
+import { checkName } from 'src/common'
 
 const D4Price = defineAsyncComponent(() => import('components/D4Price.vue'))
-const D4User = defineAsyncComponent(() => import('components/D4User.vue'))
+const D4Party = defineAsyncComponent(() => import('components/D4Party.vue'))
 
 // init module
 const ps = usePartyStore()
@@ -208,82 +208,8 @@ onUnmounted(() => {
           {{ t('party.messages.noData') }}
         </q-card-section>
       </q-card>
-      <q-card bordered class="party-card" v-for="p in parties" :key="p.user.battleTag">
-        <div class="card-title">{{ t(`party.service.${p.service}`) }}</div>
-        <div class="text-weight-bold ellipsis party-name" :class="$q.screen.lt.sm ? 'text-subtitle2' : 'text-subtitle1'">
-          {{ p.name }}
-        </div>
-        <q-card-section class="q-pt-lg q-pb-none">
-          <div class="text-caption row justify-end">
-            <div :class="`text-${p.remainColor}`">{{ p.remain }}</div>
-          </div>
-        </q-card-section>
-        <q-card-section class="q-py-none">
-          <div class="text-caption row justify-end q-gutter-sm text-grey-6">
-            <q-breadcrumbs active-color="grey-6" gutter="xs">
-              <template v-slot:separator>
-                <q-icon class="icon" name="img:/images/icons/chevron_right.svg" size="16px" />
-              </template>
-              <q-breadcrumbs-el v-if="p.hardcore" :label="t('item.hardcore')" />
-              <q-breadcrumbs-el v-if="p.ladder" :label="t('item.ladder')" />
-              <q-breadcrumbs-el :label="ps.getRegion(p.region)?.[0]?.label" />
-            </q-breadcrumbs>
-          </div>
-        </q-card-section>
-        <q-card-section class="q-py-none">
-          <div class="text-caption row justify-end q-gutter-sm text-grey-6">
-            <q-breadcrumbs active-color="grey-6" gutter="xs">
-              <template v-slot:separator>
-                <q-icon class="icon" name="img:/images/icons/chevron_right.svg" size="16px" />
-              </template>
-              <q-breadcrumbs-el :label="ps.getType(p.type)?.[0]?.label" />
-              <q-breadcrumbs-el :label="ps.getCategory(p.category)?.[0]?.label" />
-              <q-breadcrumbs-el>
-                {{ t('party.info.runs') }}<span class="q-ml-xs"
-                  :class="$q.dark.isActive ? 'text-grey-4' : 'text-grey-9'">{{ p.runs
-                  }}</span>
-              </q-breadcrumbs-el>
-              <q-breadcrumbs-el>
-                {{ t('party.info.people') }}<span class="q-ml-xs"
-                  :class="$q.dark.isActive ? 'text-grey-4' : 'text-grey-9'">
-                  {{ p.current }} / {{ p.people }}
-                </span>
-              </q-breadcrumbs-el>
-            </q-breadcrumbs>
-          </div>
-        </q-card-section>
-        <q-card-section v-if="p.service !== PartyServiceTypes.COOP" class="q-py-none">
-          <div class="row justify-end items-center">
-            <D4Price :data="p.price" :disable="disable" />
-          </div>
-        </q-card-section>
-        <q-card-section class="q-pt-none">
-          <div class="row justify-end items-center">
-            <D4User :data="p.user" :disable="disable" :progress="progress" :authorized="p.authorized"
-              @update="getInfo(p.user.battleTag)" />
-          </div>
-        </q-card-section>
-        <q-card-section v-if="!!p.notes">
-          <q-expansion-item v-model="p.showNotes" dense dense-toggle expand-separator
-            expand-icon="img:/images/icons/dropdown.svg" :label="t('party.info.notes')"
-            class="overflow-hidden text-caption no-hover" style="border-radius: 10px"
-            :style="{ 'backgroundColor': 'var(--q-tiny)' }">
-            <div class="q-pa-sm text-grey-6">
-              {{ p.notes }}
-            </div>
-          </q-expansion-item>
-        </q-card-section>
-        <q-card-section class="q-py-xs"></q-card-section>
-        <template v-if="p.user.battleTag !== as.info.battleTag && as.signed">
-          <q-separator />
-          <q-card-section>
-            <div class="row justify-end">
-              <q-btn unelevated :disable="disable || p.people === p.current" color="primary" :label="t('btn.join')"
-                :aria-label="t('btn.join')" @click="join(p.user.battleTag as string)" />
-            </div>
-          </q-card-section>
-        </template>
-      </q-card>
+      <D4Party v-for="p in parties" :key="p.user.battleTag" :data="p" :disable="disable" :progress="progress"
+        @update="getInfo" @join="join" />
     </div>
     <div class="row justify-between q-mt-md q-px-sm paging">
       <div>{{ t('message.page', { page }) }}</div>
@@ -369,14 +295,6 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-.body--light .party-form {
-  background-color: var(--q-light);
-}
-
-.party-wrap:deep(.party-card:last-child) {
-  margin-bottom: 0;
-}
-
 .party-card {
   position: relative;
   margin: 0 12px 64px 12px;
@@ -384,54 +302,12 @@ onUnmounted(() => {
   border-radius: 12px;
 }
 
-.card-title {
-  position: absolute;
-  z-index: 1;
-  top: 20px;
-  margin: -8px;
-  padding: 4px;
-  border-radius: 3px 5px 5px 0 !important;
-  font-size: 10px;
-  letter-spacing: .7px;
+.body--light .party-form {
   background-color: var(--q-light);
-  color: var(--q-dark);
-  font-weight: 700;
-  max-width: 30px;
 }
 
-.body--light .card-title {
-  background-color: var(--q-dark);
-  color: var(--q-light);
-}
-
-.card-title:after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 0;
-  width: 0;
-  height: 0;
-  border: 0 solid transparent;
-  border-width: 6px 0 0 7px;
-  border-top-color: var(--q-light);
-  opacity: .5;
-}
-
-.body--light .card-title:after {
-  border-top-color: var(--q-dark);
-}
-
-.party-name {
-  position: absolute;
-  top: 12px;
-  left: 30px;
-  width: 70%;
-}
-
-.notes {
-  background-color: var(--q-cloud);
-  border-radius: 10px;
-  padding: 10px;
+.party-wrap:deep(.party-card:last-child) {
+  margin-bottom: 0;
 }
 
 .textarea {

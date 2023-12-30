@@ -31,7 +31,7 @@ const retractedOffer = computed(() => is.socket.retractedOffer)
 const turnedDownOffer = computed(() => is.socket.turnedDownOffer)
 const complete = computed(() => is.socket.complete)
 const filter = computed(() => is.filter.request)
-const expanded = computed(() => is.equalDefaultFilter)
+const isDefaultFilter = computed(() => is.equalDefaultFilter)
 const itemsRef = ref<typeof D4Items | null>(null)
 const items = ref<Array<Item>>([])
 const rewardItem = ref<Item | undefined>()
@@ -195,7 +195,7 @@ const getList = () => {
 
       // auto expanded
       result.forEach((i: Item) => {
-        i.expanded = expanded.value
+        i.expanded = isDefaultFilter.value
       })
 
       let i = 0
@@ -231,13 +231,15 @@ const getList = () => {
 
   rewardItem.value = undefined
 
-  const awardsPick = is.awardsPick.filter((ap: AwardsPick) => ap.hardcore === is.storage.data.hardcore && ap.ladder === is.storage.data.ladder)
-  if (awardsPick.length > 0) {
-    const pickItemId = awardsPick[Math.floor(Math.random() * awardsPick.length)].itemId.toString()
-    is.getItems(1, pickItemId)
-      .then((pick: Array<Item>) => {
-        rewardItem.value = pick.map((p: Item) => ({ ...p, reward: true }))?.[0]
-      })
+  if (page.value === 1 && !isDefaultFilter.value) {
+    const awardsPick = is.awardsPick.filter((ap: AwardsPick) => ap.hardcore === is.storage.data.hardcore && ap.ladder === is.storage.data.ladder)
+    if (awardsPick.length > 0) {
+      const pickItemId = awardsPick[Math.floor(Math.random() * awardsPick.length)].itemId.toString()
+      is.getItems(1, pickItemId)
+        .then((pick: Array<Item>) => {
+          rewardItem.value = pick.map((p: Item) => ({ ...p, reward: true }))?.[0]
+        })
+    }
   }
 }
 
@@ -341,8 +343,7 @@ onMounted(() => {
 <template>
   <div>
     <div class="row justify-center items-center">
-      <D4Items ref="itemsRef" class="item-list" :items="items"
-        :reward-item="(page === 1 && !expanded) ? rewardItem : undefined" @upsert-item="upsertItem"
+      <D4Items ref="itemsRef" class="item-list" :items="items" :reward-item="rewardItem" @upsert-item="upsertItem"
         @delete-item="deleteItem" @relist-item="relistItem" @status-item="statusItem" @update-only="updateOnly"
         @copy="copy" @favorite="favorite" />
     </div>

@@ -54,7 +54,7 @@ export interface IPartyRoom extends IParty {
   timer?: ReturnType<typeof setInterval>,
   showNotes: boolean,
   authorized: boolean,
-  user: User
+  user?: User
   set(): void,
   clear(): void
 }
