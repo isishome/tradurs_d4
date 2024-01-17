@@ -18,8 +18,10 @@ withDefaults(defineProps<IProps>(), {
 const insRef = ref()
 
 const render = () => {
-  if (window?.adsbygoogle && insRef.value?.clientWidth + insRef.value?.clientHeight > 0)
+  if (window?.adsbygoogle && insRef.value?.clientWidth + insRef.value?.clientHeight > 0) {
+    console.log('complete push adsense!');
     (window.adsbygoogle || []).push({})
+  }
 }
 
 onMounted(() => {
