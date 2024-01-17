@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 
 interface IProps {
   dataAdClient: string,
@@ -16,16 +16,19 @@ withDefaults(defineProps<IProps>(), {
 })
 
 const insRef = ref()
+const available = computed(() => !!window?.adsbygoogle && (insRef.value?.clientWidth ?? 0) + (insRef.value?.clientHeight ?? 0) > 0)
 
 const render = () => {
-  if (window?.adsbygoogle && insRef.value?.clientWidth + insRef.value?.clientHeight > 0) {
-    console.log('complete push adsense!');
-    (window.adsbygoogle || []).push({})
-  }
+  (window.adsbygoogle || []).push({})
 }
 
+watch(available, (val, old) => {
+  if (val && val !== old)
+    render()
+})
+
 onMounted(() => {
-  if (!window?.adsbygoogle)
+  if (document.readyState !== 'complete')
     window.addEventListener('load', render)
   else
     render()
