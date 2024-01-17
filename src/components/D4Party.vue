@@ -28,7 +28,7 @@ const as = useAccountStore()
 const ps = usePartyStore()
 </script>
 <template>
-  <q-card bordered class="party-card">
+  <q-card bordered class="party-card" :class="{ 'history': history }">
     <div class="card-title">{{ t(`party.service.${data.service}`) }}</div>
     <div class="text-weight-bold ellipsis party-name" :class="$q.screen.lt.sm ? 'text-subtitle2' : 'text-subtitle1'">
       {{ data.name }}
@@ -111,6 +111,10 @@ const ps = usePartyStore()
   margin: 0 12px 64px 12px;
   box-shadow: none;
   border-radius: 12px;
+}
+
+.party-card.history {
+  margin-bottom: 0;
 }
 
 .card-title {

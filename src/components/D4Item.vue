@@ -770,7 +770,8 @@ defineExpose({ scrollEnd })
         </div>
       </q-card-section>
       <D4Separator v-show="qualifiable" type="left" />
-      <q-card-section
+      <!-- D4 season2
+        <q-card-section
         v-if="store.storage.data.ladder && data.itemType === 'armor' && !history && Object.values(data.pacts).reduce((a: number, b: number) => a + b, 0) > 0">
         <div class="row justify-start items-center" :class="!$q.screen.lt.sm ? 'q-gutter-x-xl' : 'q-gutter-x-md'">
           <div v-show="data.pacts.ferocity" class="row items-center q-gutter-x-sm">
@@ -807,7 +808,7 @@ defineExpose({ scrollEnd })
             <div>{{ data.pacts.eternity }}</div>
           </div>
         </div>
-      </q-card-section>
+      </q-card-section> -->
       <q-card-section v-show="loading || (!loading && (data.itemType === 'rune' || data.properties?.length > 0))">
         <div v-show="data.itemType === 'rune'" class="q-px-sm">
           <q-item v-show="loading" style="min-height:10px;padding:3px">

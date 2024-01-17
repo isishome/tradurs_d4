@@ -37,6 +37,7 @@ const progress = ref(false)
 const disable = computed(() => progress.value || ps.filter.loading || ps.joined)
 
 // variable
+let timer: ReturnType<typeof setTimeout>
 const request = computed(() => ps.request)
 const filter = computed(() => ps.filter.request)
 const serviceOptions = [
@@ -58,7 +59,10 @@ const page = ref<number>(route.query.page ? parseInt(route.query.page as string)
 const over = computed(() => ps.partyPage.over)
 const more = computed(() => ps.partyPage.more)
 const parties = reactive<Array<Party>>([])
+const notice = ref<number>(0)
+const isNotice = computed(() => notice.value > 0)
 
+// function
 const reset = () => {
   partyInfo.service = PartyServiceTypes.COOP
   partyInfo.region = (route.params.lang === 'ko' || !!!route.params.lang ? PartyRegionTypes.ASIA : PartyRegionTypes.AMERICAS)
@@ -71,6 +75,7 @@ const reset = () => {
   partyInfo.notes = ''
   partyInfo.price = new Price()
   partyInfo.price.currency = 'gold'
+  notice.value = 0
 }
 
 const getParties = () => {
@@ -178,6 +183,13 @@ const move = (val: number) => {
   router.push({ name: 'partyPlay', params: { lang: route.params.lang }, query: { page: page.value + val } })
 }
 
+const addNotice = () => {
+  notice.value++
+  timer = setTimeout(() => {
+    notice.value--
+  }, 3000)
+}
+
 watch(() => route.query.page, (val, old) => {
   if (val !== old) {
     page.value = val ? parseInt(val as string) : 1
@@ -187,10 +199,12 @@ watch(() => route.query.page, (val, old) => {
 
 onMounted(() => {
   getParties()
+
 })
 
 onUnmounted(() => {
   parties.forEach(p => p.clear())
+  clearTimeout(timer)
 })
 
 </script>
@@ -264,7 +278,12 @@ onUnmounted(() => {
                 <D4Counter v-model.number="partyInfo.people" max-width="60px" :label="t('party.info.people')" :min="2"
                   :max="8" :disable="disable" />
                 <D4Counter v-model.number="partyInfo.time" max-width="60px" :label="t('party.info.time')" :min="1"
-                  :max="12" :disable="disable" />
+                  :max="12" :disable="disable" @click="addNotice">
+                  <q-tooltip v-model="isNotice" :target="isNotice" no-parent-event transition-show="none"
+                    transition-hide="none" anchor="top end" self="bottom end" class="bg-negative">
+                    <div class="tooltip text-caption">{{ t('party.messages.notice') }}</div>
+                  </q-tooltip>
+                </D4Counter>
               </div>
             </div>
           </q-card-section>
@@ -326,5 +345,19 @@ onUnmounted(() => {
   .party-form:deep(.q-card__section--vert) {
     padding: 8px;
   }
+}
+
+.tooltip {
+  max-width: 120px;
+}
+
+.tooltip::after {
+  content: '';
+  position: fixed;
+  width: 16px;
+  height: 16px;
+  transform: translateY(14px) rotate(45deg);
+  z-index: -1;
+  background-color: var(--q-negative);
 }
 </style>

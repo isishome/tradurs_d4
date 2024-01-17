@@ -82,15 +82,17 @@ watch(() => props.modelValue, (val: number | string | null) => {
       @click="counting('dec')">
       <img class="icon" width="17" height="17" src="/images/icons/remove.svg" alt="Tradurs Remove Icon" />
     </q-btn>
-    <q-input v-model.number="_quantity" :label="hideLabel ? undefined : label || t('price.quantity')"
-      :style="`max-width:${maxWidth}`" input-class="text-center" :disable="disable" dense hide-bottom-space hide-hint
-      no-error-icon outlined :maxlength="max.toString().length" :mask="''.padStart(max.toString().length, '#')"
-      :debounce="debounce"
-      :rules="[(val: number | string) => ((typeof (val) === 'number' && (val > 0 || allowZero)) || (allowNull && val === '')) || '']"
-      @update:model-value="update" @focus="focus" />
+    <div>
+      <slot></slot>
+      <q-input v-model.number="_quantity" :label="hideLabel ? undefined : label || t('price.quantity')"
+        :style="`max-width:${maxWidth}`" input-class="text-center" :disable="disable" dense hide-bottom-space hide-hint
+        no-error-icon outlined :maxlength="max.toString().length" :mask="''.padStart(max.toString().length, '#')"
+        :debounce="debounce"
+        :rules="[(val: number | string) => ((typeof (val) === 'number' && (val > 0 || allowZero)) || (allowNull && val === '')) || '']"
+        @update:model-value="update" @focus="focus" />
+    </div>
     <q-btn v-show="!noButton" size="sm" flat dense round aria-label="Tradurs Add Button"
-      :disable="disable || (!allowNull && parseInt((_quantity || '0').toString()) > (max - 1))"
-      @click="counting('inc')">
+      :disable="disable || (!allowNull && parseInt((_quantity || '0').toString()) > (max - 1))" @click="counting('inc')">
       <img class="icon" width="17" height="17" src="/images/icons/add.svg" alt="Tradurs Add Icon" />
     </q-btn>
   </div>

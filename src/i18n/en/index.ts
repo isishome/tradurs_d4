@@ -664,7 +664,8 @@ export default {
       owner: '{btag} became the owner of the room',
       leave: '{btag} has left the room',
       enter: '{btag} has entered the room',
-      noData: 'No party play found'
+      noData: 'No party play found',
+      notice: 'One yolk is consumed per hour'
     },
     filter: {
       all: 'All'

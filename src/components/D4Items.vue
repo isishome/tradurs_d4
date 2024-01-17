@@ -861,7 +861,8 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
           <D4Restriction v-for="restriction in activatedItem.restrictions" :key="restriction.valueId || uid()"
             :data="restriction" editable :disable="disable" @update="updateRestriction" @remove="removeRestriction" />
         </template>
-        <template v-if="is.storage.data.ladder && activatedItem.itemType === 'armor'" #base-end>
+        <!-- D4 season2
+          <template v-if="is.storage.data.ladder && activatedItem.itemType === 'armor'" #base-end>
           <div class="row justify-around items-center">
             <div class="relative-position">
               <q-spinner-puff :color="$q.dark.isActive ? 'yellow-6' : 'black'" class="absolute-center" size="52px" />
@@ -910,7 +911,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                 allow-null :no-button="$q.screen.lt.sm" :disable="disable" />
             </div>
           </div>
-        </template>
+        </template> -->
         <template #actions>
           <div v-if="activatedItem.authorized || activatedItem.itemId === ''"
             class="row justify-between items-center q-py-xs">

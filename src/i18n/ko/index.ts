@@ -662,7 +662,8 @@ export default {
       owner: '{btag}님이 방장이 되었습니다',
       leave: '{btag}님이 방을 나갔습니다',
       enter: '{btag}님이 방에 들어왔습니다',
-      noData: '검색된 파티 플레이가 없습니다'
+      noData: '검색된 파티 플레이가 없습니다',
+      notice: '시간당 1개의 노른자가 소모됩니다'
     },
     filter: {
       all: '모두'
