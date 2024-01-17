@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { onMounted, onUnmounted } from 'vue'
 
 interface IProps {
   dataAdClient: string,
@@ -15,15 +15,12 @@ withDefaults(defineProps<IProps>(), {
   dataFullWidthResponsive: undefined
 })
 
-const insRef = ref()
-
 const render = () => {
-  if (window?.adsbygoogle && insRef.value?.clientWidth + insRef.value?.clientHeight > 0)
-    (window.adsbygoogle || []).push({})
+  (window.adsbygoogle || []).push({})
 }
 
 onMounted(() => {
-  if (!window?.adsbygoogle)
+  if (document.readyState !== 'complete')
     window.addEventListener('load', render)
   else
     render()
@@ -35,9 +32,8 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <ins ref="insRef" class="adsbygoogle ins" :data-ad-client="dataAdClient" :data-ad-slot="dataAdSlot"
-    :data-ad-format="dataAdFormat" :data-adtest="dataAdtest ? 'on' : null"
-    :data-full-width-responsive="dataFullWidthResponsive"></ins>
+  <ins class="adsbygoogle ins" :data-ad-client="dataAdClient" :data-ad-slot="dataAdSlot" :data-ad-format="dataAdFormat"
+    :data-adtest="dataAdtest ? 'on' : null" :data-full-width-responsive="dataFullWidthResponsive"></ins>
 </template>
 
 <style scoped>
