@@ -16,10 +16,9 @@ withDefaults(defineProps<IProps>(), {
 })
 
 const insRef = ref()
-const available = computed(() => !!window?.adsbygoogle && (insRef.value?.clientWidth ?? 0) + (insRef.value?.clientHeight ?? 0) > 0)
+const available = computed(() => !!window?.adsbygoogle && (insRef.value?.clientWidth ?? 0) + (insRef.value?.clientHeight ?? 0) > 0 && !!!insRef.value?.hasChildNodes())
 
 const render = () => {
-  console.log('childNodes', insRef.value?.hasChildNodes());
   (window.adsbygoogle || []).push({})
 }
 
