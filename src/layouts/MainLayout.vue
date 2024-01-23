@@ -158,7 +158,8 @@ watch(() => ps.filter.name, (val) => {
     </div>
 
     <q-drawer show-if-above no-swipe-open no-swipe-close no-swipe-backdrop bordered v-model="leftDrawerOpen" side="left"
-      :behavior="screen.lt.md ? 'default' : 'desktop'" class="row justify-end" @before-show="beforeShow" :width="300">
+      :behavior="screen.lt.lg ? 'default' : 'desktop'" class="row justify-end" @before-show="beforeShow" :width="300"
+      :breakpoint="1100">
       <D4Filter v-if="route.name !== 'partyPlay'" :disable="route.name !== 'tradeList'" class="q-pa-lg"
         style="width:300px" />
       <D4PartyFilter v-if="route.name === 'partyPlay'" class="q-pa-lg" style="width:300px" />
