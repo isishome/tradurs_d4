@@ -56,6 +56,15 @@ const routes: RouteRecordRaw[] = [
         path: 'support/:section([a-z]{0,})?',
         component: () => import('pages/SupportPage.vue'),
         props: true
+      },
+      {
+        name: 'admin',
+        path: 'admin',
+        component: () => import('pages/AdminPage.vue'),
+        props: true,
+        meta: {
+          onlyAdmin: true
+        }
       }
     ]
   },

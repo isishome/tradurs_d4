@@ -18,6 +18,7 @@ export default {
     blocks: '차단 관리',
     history: '활동 내역',
     support: '도움말',
+    admin: '관리자',
     pnf: '페이지를 찾을 수 없습니다'
   },
   battlenet: {

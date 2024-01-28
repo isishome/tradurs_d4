@@ -18,6 +18,7 @@ export default {
     blocks: 'Blocks',
     history: 'History',
     support: 'Help',
+    admin: 'Admin',
     pnf: 'Page not found'
   },
   battlenet: {

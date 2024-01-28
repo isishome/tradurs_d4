@@ -30,6 +30,7 @@ const is = useItemStore()
 const ps = usePartyStore()
 const { t, locale } = useI18n({ useScope: 'global' })
 
+$q.screen.setSizes({ lg: 1100 })
 locale.value = props.lang || 'ko'
 
 const tradurs: string = import.meta.env.VITE_APP_TRADURS + (`/${props.lang || 'ko'}`)
@@ -45,6 +46,7 @@ const offsetTop = ref<number>(0)
 const asideHeight = computed<string>(() => `calc(100vh - ${screen.value.gt.sm ? offsetTop.value : 0}px)`)
 const asideTop = computed<string>(() => `${offsetTop.value + 10}px`)
 const newAwards = computed(() => (is.awards > 0 && (new Date()).getDay() === 1 && (new Date()).getHours() >= 9) || (new Date()).getDay() === 2)
+const isNarrow = computed(() => $q.screen.width <= 1100)
 
 const myTweak = (offset: number): void => {
   offsetTop.value = offset || 0
@@ -345,7 +347,7 @@ watch(() => ps.filter.name, (val) => {
     <q-header :elevated="!$q.dark.isActive" class="q-py-sm header row justify-center">
       <q-toolbar class="toolbar">
         <div :style="$q.screen.gt.sm ? 'min-width:120px' : ''">
-          <q-btn class="gt-sm no-hover q-ml-lg" dense flat aria-label="Tradurs Home Button" padding="0"
+          <q-btn v-show="!isNarrow" class="no-hover q-ml-lg" dense flat aria-label="Tradurs Home Button" padding="0"
             :ripple="!$q.dark.isActive" @click="main">
             <h1 class="h1">
               <img v-show="$q.dark.isActive" src="/images/logo.webp" width="48" height="48" alt="Tradurs Logo Image" />
@@ -354,14 +356,14 @@ watch(() => ps.filter.name, (val) => {
               <span class="blind">{{ t('seo.title') }}</span>
             </h1>
           </q-btn>
-          <q-btn flat round aria-label="Tradurs Filter Button" class="lt-md" :ripple="!$q.dark.isActive"
+          <q-btn v-show="isNarrow" flat round aria-label="Tradurs Filter Button" :ripple="!$q.dark.isActive"
             @click="leftDrawerOpen = !leftDrawerOpen">
             <img src="/images/icons/filter.svg" class="icon" width="24" height="24" alt="Tradurs Filter Icon" />
           </q-btn>
         </div>
-        <div class="col row items-center" :class="$q.screen.lt.md ? 'justify-center' : 'justify-between'">
-          <div class="col-9 col-md-5 row no-wrap items-center q-gutter-md">
-            <q-btn v-if="$q.screen.lt.md" flat padding="0" :ripple="false" @click="main">
+        <div class="col row items-center" :class="isNarrow ? 'justify-center' : 'justify-between'">
+          <div :class="isNarrow ? 'col-9' : 'col-5'" class="row no-wrap items-center q-gutter-md">
+            <q-btn v-show="isNarrow" flat padding="0" :ripple="false" @click="main">
               <h1 class="h1">
                 <img v-show="$q.dark.isActive" src="/images/logo.webp" width="36" height="36" alt="Tradurs Logo Image" />
                 <img v-show="!$q.dark.isActive" src="/images/logo_light.webp" width="36" height="36"
@@ -382,7 +384,7 @@ watch(() => ps.filter.name, (val) => {
             </q-input>
           </div>
           <div>
-            <q-toolbar class="gt-sm nav">
+            <q-toolbar v-show="!isNarrow" class="nav">
               <q-btn flat no-caps type="a" :ripple="false" class="no-hover"
                 :class="{ 'active': route.name === 'tradeList' }" :label="t('page.tradeList')"
                 :to="{ name: 'tradeList', params: { lang: route.params.lang } }" />
@@ -441,13 +443,13 @@ watch(() => ps.filter.name, (val) => {
             </q-toolbar>
           </div>
         </div>
-        <div class="lt-md col-1 col-md-3 row justify-end q-gutter-sm">
+        <div v-show="isNarrow" class="col-1 col-lg-3 row justify-end q-gutter-sm">
           <q-btn round flat aria-label="Tradurs Morevert Button" :ripple="!$q.dark.isActive"
             @click="rightDrawerOpen = !rightDrawerOpen">
             <img class="icon" width="24" height="24" src="/images/icons/morevert.svg" alt="Tradurs More Vertical Icon" />
           </q-btn>
         </div>
-        <div class="gt-sm col-3 row justify-end items-center q-gutter-xs">
+        <div v-show="!isNarrow" class="col-3 row justify-end items-center q-gutter-xs">
           <q-btn v-show="availableParty" round dense flat aria-label="Tradurs Chat Button" :ripple="!$q.dark.isActive"
             @click="ps.show">
             <img class="icon" width="24" height="24" :src="`/images/icons/${$q.dark.isActive ? 'chat_fill' : 'chat'}.svg`"
@@ -513,8 +515,8 @@ watch(() => ps.filter.name, (val) => {
               <RouterView />
             </div>
             <div class="q-py-xl"></div>
-            <Adsense style="display:block" data-ad-client="ca-pub-5110777286519562" data-ad-slot="6163086381"
-              :data-adtest="!prod" data-ad-format="auto" data-full-width-responsive="true"
+            <Adsense v-if="$q.screen.width <= 1439" style="display:block" data-ad-client="ca-pub-5110777286519562"
+              data-ad-slot="6163086381" :data-adtest="!prod" data-ad-format="auto" data-full-width-responsive="true"
               :key="`bottom-${gs.reloadAdKey}`" />
             <div class="q-py-md"></div>
             <q-separator />

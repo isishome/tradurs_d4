@@ -7,7 +7,7 @@ export default {
     const as = useAccountStore(store);
     const is = useItemStore(store);
 
-    return Promise.all([as.checkSign(), as.getHistoryTypes(), as.getEvaluations(), is.getStorage(), is.getBase(), is.getProperties(), is.getAffixes(), is.getRestrictions(), is.getPacts()]);
+    return Promise.all([as.getHistoryTypes(), as.getEvaluations(), is.getStorage(), is.getBase(), is.getProperties(), is.getAffixes(), is.getRestrictions(), is.getPacts()]);
   }
 }
 </script>

@@ -103,7 +103,7 @@ export const useAccountStore = defineStore('account', {
         api.get('/account/signOut')
           .then(() => {
             const ps = usePartyStore()
-            this.signed = false
+            this.signed = null
             this.info = {} as User
             this.messenger?.disconnect()
             this.messenger = null

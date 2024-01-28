@@ -191,7 +191,7 @@ const addNotice = () => {
 }
 
 watch(() => route.query.page, (val, old) => {
-  if (val !== old) {
+  if (val !== old && route.name === 'partyPlay') {
     page.value = val ? parseInt(val as string) : 1
     getParties()
   }

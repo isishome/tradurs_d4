@@ -13,7 +13,8 @@ export interface IUser extends INotify {
   temperature: number,
   online: boolean,
   blockable: boolean,
-  unblockable: boolean
+  unblockable: boolean,
+  isAdmin?: boolean
 }
 
 export interface IMessage {
@@ -61,6 +62,7 @@ export class User implements IUser {
   public notifyPrivate = true
   public notifyEmail = true
   public loading = false
+  public isAdmin = false
   constructor(id?: string) {
     this.id = id || null
   }

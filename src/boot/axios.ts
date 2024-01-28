@@ -84,18 +84,20 @@ export default boot(({ app, ssrContext, store, router }/* { app, router, ... } *
     const as = useAccountStore(store)
     const is = useItemStore(store)
     const ps = usePartyStore(store)
-    const requireAuth = to.matched.find(route => route.meta.requireAuth)
+    const onlyAdmin = !!to.matched.find(route => route.meta.onlyAdmin)
+    const requireAuth = !!to.matched.find(route => route.meta.requireAuth)
 
-    if (to.params.lang?.length === 2 && !gs.localeOptions.map(lo => lo.value).includes(to.params.lang as string) && to.name !== 'pnf')
+    if (as.signed === null)
+      await as.checkSign()
+
+    if ((to.params.lang?.length === 2 && !gs.localeOptions.map(lo => lo.value).includes(to.params.lang as string) || (onlyAdmin && !as.info.isAdmin)) && to.name !== 'pnf')
       return next({ name: 'pnf' })
 
     if (requireAuth && !as.info.id)
       return next({ name: 'tradeList', params: { lang: to.params.lang } })
 
     if (as.info.id && (as.messenger === null || is.socket === null || ps.party === null)) {
-      await initMessenger(as, is)
-      await initParty(as, ps)
-      await as.unreadMessages()
+      Promise.all([initMessenger(as, is), initParty(as, ps), as.unreadMessages()])
     }
 
     return next()
