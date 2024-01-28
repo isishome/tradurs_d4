@@ -2,10 +2,12 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useQuasar } from 'quasar'
 import { type IUser, useAdminStore } from 'stores/admin-store'
+import { onUnmounted } from 'vue';
 
 const $q = useQuasar()
 const as = useAdminStore()
 
+let timer: ReturnType<typeof setTimeout>
 const disable = ref<boolean>(false)
 const selectAll = ref<boolean>(false)
 const low = ref<number>(0)
@@ -34,12 +36,18 @@ const enhance = async (identities: Array<string>) => {
   if (!!!result)
     $q.notify({ message: '실패' })
 
-  await Promise.all([getLow(), getUsers()])
-  disable.value = false
+  timer = setTimeout(async () => {
+    await Promise.all([getLow(), getUsers()])
+    disable.value = false
+  }, 5000)
 }
 
 onMounted(async () => {
   await Promise.all([getLow(), getUsers()])
+})
+
+onUnmounted(() => {
+  clearTimeout(timer)
 })
 </script>
 <template>
