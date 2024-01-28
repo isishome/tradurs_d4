@@ -10,7 +10,7 @@ export type IUser = {
 }
 
 export const useAdminStore = defineStore('admin', () => {
-  const rows = 100
+  const rows = 500
   const over = ref<boolean>(false)
   const more = ref<boolean>(false)
   const getLow = () => {
