@@ -10,18 +10,9 @@ const as = useAdminStore()
 let timer: ReturnType<typeof setTimeout>
 const disable = ref<boolean>(false)
 const selectAll = ref<boolean>(false)
-const low = ref<number>(0)
-const total = ref<number>(0)
-const complete = computed(() => total.value === 0 ? 0 : Math.round(low.value / total.value * 100))
 const status = computed(() => (state: string) => state === '000' ? '신규' : state === '001' ? '활성' : '비 활성')
 const users = reactive<Array<IUser>>([])
 const selected = computed(() => users.filter(u => u.selected).map(u => u.identity))
-
-const getLow = async () => {
-  const { low: resultLow, total: resultTotal } = await as.getLow()
-  low.value = resultLow
-  total.value = resultTotal
-}
 
 const getUsers = async () => {
   users.splice(0, users.length)
@@ -29,21 +20,8 @@ const getUsers = async () => {
   users.push(...result)
 }
 
-const enhance = async (identities: Array<string>) => {
-  disable.value = true
-  const result = await as.enhance(identities)
-
-  if (!!!result)
-    $q.notify({ message: '실패' })
-
-  timer = setTimeout(async () => {
-    await Promise.all([getLow(), getUsers()])
-    disable.value = false
-  }, 5000)
-}
-
 onMounted(async () => {
-  await Promise.all([getLow(), getUsers()])
+  await Promise.all([getUsers()])
 })
 
 onUnmounted(() => {
@@ -52,10 +30,6 @@ onUnmounted(() => {
 </script>
 <template>
   <div>
-    <div class="row justify-end q-gutter-sm full-width">
-      <div>{{ low }} / {{ total }}</div>
-      <q-chip square dense color="blue-7" :label="`${complete}%`" />
-    </div>
     <q-markup-table flat bordered dense class="users">
       <thead>
         <tr>
@@ -65,8 +39,7 @@ onUnmounted(() => {
           <th>이메일</th>
           <th>상태</th>
           <th class="text-center">
-            <q-btn dense :disable="selected.length === 0" :loading="disable" color="primary" label="일괄 처리"
-              @click="enhance(selected)" />
+            <q-btn dense :disable="selected.length === 0" :loading="disable" color="primary" label="일괄 처리" />
           </th>
         </tr>
       </thead>
@@ -83,7 +56,7 @@ onUnmounted(() => {
           </td>
           <td>{{ status(user.status) }}</td>
           <td class="text-center">
-            <q-btn dense color="positive" label="변경" @click="enhance([user.identity])" />
+            <q-btn dense color="positive" label="변경" />
           </td>
         </tr>
       </tbody>

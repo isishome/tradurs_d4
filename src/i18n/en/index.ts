@@ -338,18 +338,11 @@ export default {
   },
   notice: {
     title: 'Update information',
-    top: 'Hello. This is Tradurs.\n\nInformation on additions and changes.',
+    top: 'Hello. This is Tradurs.\n\nInformation on additions.',
     contents: [
       { type: 'head', value: '◆ Additional information' },
-      { type: 'image', value: '/images/notice/20231225/01_menu.webp' },
-      { type: 'list', value: 'Party play (BETA) feature is added.' },
-      { type: 'link', label: 'Details', name: 'support', params: { section: 'party' } },
-      { type: 'space' },
-      { type: 'image', value: '/images/notice/20231225/02_avatar.webp' },
-      { type: 'list', value: 'Avatar change feature has been added.' },
-      { type: 'space' },
-      { type: 'head', value: '◆ Changes' },
-      { type: 'list', value: 'If the battle tag has been authenticated, it cannot be changed for 1 month.' },
+      { type: 'image', value: '/images/notice/20240130/malphas.webp' },
+      { type: 'list', value: 'Added the Igneous Core and Set of Malphas Mats items to Consumables > Summoning Materials.' },
       { type: 'space' }
     ],
     bottom: 'Thank you',

@@ -338,18 +338,11 @@ export default {
   },
   notice: {
     title: '업데이트 안내',
-    top: '안녕하세요. 트레이더스입니다.\n\n추가된 사항 및 변경 사항 안내입니다.',
+    top: '안녕하세요. 트레이더스입니다.\n\n추가된 사항 안내입니다.',
     contents: [
       { type: 'head', value: '◆ 추가 사항' },
-      { type: 'image', value: '/images/notice/20231225/01_menu.webp' },
-      { type: 'list', value: '파티 플레이(베타) 기능이 추가됩니다.' },
-      { type: 'link', label: '상세보기', name: 'support', params: { section: 'party' } },
-      { type: 'space' },
-      { type: 'image', value: '/images/notice/20231225/02_avatar.webp' },
-      { type: 'list', value: '아바타 변경 기능이 추가됩니다.' },
-      { type: 'space' },
-      { type: 'head', value: '◆ 변경 사항' },
-      { type: 'list', value: '배틀 태그를 인증 한 경우 1개월간 변경이 불가능합니다.' },
+      { type: 'image', value: '/images/notice/20240130/malphas.webp' },
+      { type: 'list', value: '소비용품 > 소환 재료에 화성암 핵 및 말파스 재료 항목이 추가됩니다.' },
       { type: 'space' }
     ],
     bottom: '감사합니다.',

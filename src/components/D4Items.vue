@@ -657,7 +657,7 @@ const openOffers = (itemId: string) => {
 }
 
 // about screen size
-const size = computed(() => $q.screen.width < 728 ? 'display:inline-block;width:320px;max-height:100px;' : 'display:inline-block;width:728px;height:90px;')
+const size = computed(() => $q.screen.width < 728 ? 'display:inline-block;width:300px;max-height:100px;' : 'display:inline-block;width:728px;height:90px;')
 
 defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
 </script>
