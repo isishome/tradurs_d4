@@ -359,7 +359,7 @@ export default {
   support: [
     {
       id: 'basic',
-      question: '기본 정보',
+      question: 'Basic Information',
       answer: [
         { type: 'question', contents: '1. Can I trade for cash?' },
         { type: 'answer', contents: '→ Tradurs only allows trading using in-game currency and item, and does not allow cash trading.' },
