@@ -9,7 +9,8 @@ import { useScript } from 'src/composables/script'
 
 interface Answer {
   type: string,
-  contents: string
+  contents: string,
+  name?: string
 }
 
 interface Support {
@@ -36,7 +37,7 @@ if (prod)
   useScript(`https://www.google.com/recaptcha/api.js?render=${recaptchaApiKey}`, { async: true })
 
 const support = computed(() => tm('support') as Array<Support>)
-const findSection = support.value.find(s => s.id === (props.section || 'qna'))
+const findSection = support.value.find(s => s.id === (props.section || 'basic'))
 if (findSection)
   findSection.show = true
 
@@ -116,6 +117,8 @@ watch(() => route.params.section, (val, old) => {
                 <div v-else-if="a.type === 'answer'" class="text-area text-body2 q-ma-sm text-left">
                   {{ a.contents }}
                 </div>
+                <a v-else-if="a.type === 'link'" :href="a.contents" target="_blank" rel="noopener noreferrer">{{ a.name
+                }}</a>
               </q-intersection>
               <div class="q-py-lg q-my-lg"></div>
             </q-item-label>
@@ -183,5 +186,9 @@ watch(() => route.params.section, (val, old) => {
   overflow: hidden;
   border-radius: 4px;
   box-shadow: 0 0 1px 1px currentColor;
+}
+
+.answer:deep(a) {
+  color: var(--q-secondary);
 }
 </style>

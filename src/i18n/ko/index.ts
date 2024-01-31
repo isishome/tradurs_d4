@@ -358,6 +358,24 @@ export default {
   },
   support: [
     {
+      id: 'basic',
+      question: '기본 정보',
+      answer: [
+        { type: 'question', contents: '1. 현금 거래도 가능한가요?' },
+        { type: 'answer', contents: '→ 트레이더스는 게임 내 재화를 이용한 거래만 허용되며, 현금 거래를 허용하지 않습니다.' },
+        { type: 'question', contents: '2. 어떤 정보가 데이터에 저장되나요?' },
+        { type: 'answer', contents: '→ 기본적으로 거래에 사용될 고유 정보인 이메일과 배틀태그, 이중으로 암호화 된 비밀번호가 저장됩니다.' },
+        { type: 'question', contents: '3. 사이트는 안전한가요?' },
+        { type: 'answer', contents: '→ 사이트 설계 시 단순히 거래만이 아닌 보안에도 중점을 두고 개발되었습니다.' },
+        { type: 'image', contents: 'mozilla' },
+        { type: 'link', contents: 'https://observatory.mozilla.org/analyze/d4.tradurs.com', name: 'Mozilla Observatory - D4 Tradurs' },
+        { type: 'text', contents: '모질라(Mozilla)에서 제공하는 보안 체크를 \'B\' 등급으로 통과하였습니다.' },
+        { type: 'image', contents: 'w3' },
+        { type: 'link', contents: 'https://validator.w3.org/nu/?doc=https%3A%2F%2Fd4.tradurs.com%2F', name: 'W3C Markup Validation - D4 Tradurs' },
+        { type: 'text', contents: 'W3C에서 제공하는 웹 표준 체크에 1건의 체크 항목만 표시됩니다.' }
+      ]
+    },
+    {
       id: 'qna',
       question: '자주 묻는 질문',
       answer: [

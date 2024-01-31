@@ -358,6 +358,24 @@ export default {
   },
   support: [
     {
+      id: 'basic',
+      question: '기본 정보',
+      answer: [
+        { type: 'question', contents: '1. Can I trade for cash?' },
+        { type: 'answer', contents: '→ Tradurs only allows trading using in-game currency and item, and does not allow cash trading.' },
+        { type: 'question', contents: '2. What information is stored in the data?' },
+        { type: 'answer', contents: '→ By default, we store your email, battle tag, and double-encrypted password, which are unique information that will be used for transactions.' },
+        { type: 'question', contents: '3. Is the site secure?' },
+        { type: 'answer', contents: '→ The site was designed with security in mind, not just transactions.' },
+        { type: 'image', contents: 'mozilla' },
+        { type: 'link', contents: 'https://observatory.mozilla.org/analyze/d4.tradurs.com', name: 'Mozilla Observatory - D4 Tradurs' },
+        { type: 'text', contents: 'Passed the security checks provided by Mozilla with a grade of \'B\'' },
+        { type: 'image', contents: 'w3' },
+        { type: 'link', contents: 'https://validator.w3.org/nu/?doc=https%3A%2F%2Fd4.tradurs.com%2F', name: 'W3C Markup Validation - D4 Tradurs' },
+        { type: 'text', contents: 'The web standards check provided by W3C shows only 1 checked item.' }
+      ]
+    },
+    {
       id: 'qna',
       question: 'Frequently asked questions',
       answer: [
