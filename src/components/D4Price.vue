@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, reactive, nextTick } from 'vue'
+import { ref, computed, reactive, nextTick, watch } from 'vue'
 import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
 
@@ -42,7 +42,7 @@ const _priceError = ref<boolean>(false)
 const runes = store.filterRunesByType
 const currencies = store.currencies()
 const summonings = store.summonings
-const currencyValueImg = computed(() => _price.currency === 'gold' ? '/images/items/currencies/gold.webp' : _price.currency === 'summoning' ? `/images/items/consumables/summoning/${_price.currencyValue}.webp`  : '')
+const currencyValueImg = computed(() => _price.currency === 'gold' ? '/images/items/currencies/gold.webp' : _price.currency === 'summoning' ? `/images/items/consumables/summoning/${_price.currencyValue}.webp` : '')
 const currencyValueName = computed(() => _price.currency === 'gold' ? currencies.find(c => c.value === _price.currency)?.label : _price.currency === 'summoning' ? store.summonings.find(s => s.value === _price.currencyValue)?.label : '')
 
 if (!props.offer)
@@ -69,6 +69,13 @@ const updateCurrency = (val: string | null): void => {
   _price.quantity = 1
   update()
 }
+
+watch(() => props.data, (val) => {
+  const price = new Price(val.currency, val.currencyValue, val.quantity)
+  Object.assign(_price, price)
+}, {
+  deep: true
+})
 </script>
 
 <template>
