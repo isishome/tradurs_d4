@@ -533,8 +533,9 @@ watch(() => ps.filter.name, (val) => {
           <div class="gt-md col">
             <div class="full-height q-px-lg q-py-xl" :style="`width:280px;height:${asideHeight}`">
               <div :style="`position:sticky;top:${asideTop}`" class="column">
-                <Adsense style="display:inline-block;width:160px;height:600px" data-ad-client="ca-pub-5110777286519562"
-                  data-ad-slot="6751896285" :data-adtest="!prod" :key="`right-${gs.reloadAdKey}`" />
+                <Adsense v-if="$q.screen.width > 1439" style="display:inline-block;width:160px;height:600px"
+                  data-ad-client="ca-pub-5110777286519562" data-ad-slot="6751896285" :data-adtest="!prod"
+                  :key="`right-${gs.reloadAdKey}`" />
                 <div class="q-mt-xl">
                   <div class="column items-start useful">
                     <q-btn flat no-caps padding="0" :ripple="false" class="text-overline no-hover" type="a"

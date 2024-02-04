@@ -708,14 +708,10 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
         </div>
       </div>
       <q-intersection v-for="item, idx in (items as Array<Item>)" :key="item.itemId" :data-itemid="item.itemId"
-        class="item" :style="`min-height:${item.itemId === 'advertise' ? '100%' : `${itemHeight}px`};height:${item.expanded ? '100%' :
+        class="item" :style="`min-height:${itemHeight}px;height:${item.expanded ? '100%' :
           `${itemHeight}px`}`" transition="fade" ssr-prerender once @visibility="(val: boolean) => visible(val, item)">
-        <div v-if="item.itemId === 'advertise' && $q.screen.lt.lg" class="row justify-center items-center">
-          <Adsense :style="size" data-ad-client="ca-pub-5110777286519562" data-ad-slot="1830333287" :data-adtest="!prod"
-            :key="`gap-${gs.reloadAdKey}`" />
-        </div>
-        <D4Item v-else-if="item.itemId !== 'advertise'" :data="item" :loading="item.loading" @favorite="favorite"
-          @copy="copy" @update-only="(val: string) => emit('update-only', val)">
+        <D4Item :data="item" :loading="item.loading" @favorite="favorite" @copy="copy"
+          @update-only="(val: string) => emit('update-only', val)">
           <template #top-right>
           </template>
           <template v-if="requestProperties > 0" #properties>
@@ -1075,7 +1071,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
   top: -6px;
 }
 
-.body--light .item:not([data-itemid="advertise"]):deep(>div:after) {
+.body--light .item:deep(>div:after) {
   content: '';
   position: absolute;
   z-index: -1;
