@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { nextTick } from 'vue';
-import { onMounted } from 'vue'
+import { nextTick, onMounted } from 'vue'
 
 interface IProps {
   dataAdClient: string,
