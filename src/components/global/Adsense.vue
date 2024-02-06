@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted } from 'vue'
+import { nextTick } from 'vue';
+import { onMounted } from 'vue'
 
 interface IProps {
   dataAdClient: string,
@@ -21,13 +22,11 @@ const render = () => {
 
 onMounted(() => {
   if (document.readyState !== 'complete')
-    window.addEventListener('load', render)
+    nextTick(() => {
+      render()
+    })
   else
     render()
-})
-
-onUnmounted(() => {
-  window.removeEventListener('load', render)
 })
 </script>
 
