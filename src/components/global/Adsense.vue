@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { nextTick, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 
 interface IProps {
   dataAdClient: string,
@@ -15,23 +15,33 @@ withDefaults(defineProps<IProps>(), {
   dataFullWidthResponsive: undefined
 })
 
+// variable
+const insRef = ref<HTMLElement>()
+
+// function
 const render = () => {
-  (window.adsbygoogle || []).push({})
+  try {
+    (window.adsbygoogle || []).push({})
+  }
+  catch { }
+  finally {
+    console.log(insRef.value?.getAttribute('data-ad-status'))
+  }
 }
 
+// etc
 onMounted(() => {
   if (document.readyState !== 'complete')
-    nextTick(() => {
-      render()
-    })
+    window.addEventListener('load', render)
   else
     render()
 })
 </script>
 
 <template>
-  <ins class="adsbygoogle ins" :data-ad-client="dataAdClient" :data-ad-slot="dataAdSlot" :data-ad-format="dataAdFormat"
-    :data-adtest="dataAdtest ? 'on' : null" :data-full-width-responsive="dataFullWidthResponsive"></ins>
+  <ins ref="insRef" class="adsbygoogle ins" :data-ad-client="dataAdClient" :data-ad-slot="dataAdSlot"
+    :data-ad-format="dataAdFormat" :data-adtest="dataAdtest ? 'on' : null"
+    :data-full-width-responsive="dataFullWidthResponsive"></ins>
 </template>
 
 <style scoped>
@@ -60,5 +70,9 @@ onMounted(() => {
 
 .body--light .ins::after {
   color: #1a1a1a;
+}
+
+.ins[data-ad-status="unfilled"] {
+  display: none !important;
 }
 </style>

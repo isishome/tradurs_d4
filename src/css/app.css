@@ -269,7 +269,3 @@ body.body--dark {
 .cursor-default {
   cursor: default;
 }
-
-ins.adsbygoogle[data-ad-status="unfilled"] {
-  display: none !important;
-}
