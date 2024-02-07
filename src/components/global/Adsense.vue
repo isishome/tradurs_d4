@@ -20,13 +20,7 @@ const insRef = ref<HTMLElement>()
 
 // function
 const render = () => {
-  try {
-    (window.adsbygoogle || []).push({})
-  }
-  catch { }
-  finally {
-    console.log(insRef.value?.getAttribute('data-ad-status'))
-  }
+  (window.adsbygoogle || []).push({})
 }
 
 // etc
