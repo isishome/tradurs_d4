@@ -8,7 +8,9 @@ export const useGlobalStore = defineStore('global', {
       { value: 'en', label: 'English' }
     ],
     itemName: null as string | null,
-    accessTimeStamp: Date.now(),
+    topAccessTimeStamp: Date.now(),
+    bottomAccessTimeStamp: Date.now(),
+    rightAccessTimeStamp: Date.now(),
     reloadAdKey: 0 as number
   }),
   getters: {},

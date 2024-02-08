@@ -150,14 +150,20 @@ watch([size, () => $q.screen.gt.md], ([new1, new2], [old1, old2]) => {
 })
 
 watch(() => gs.reloadAdKey, () => {
-  if (Date.now() - gs.accessTimeStamp > 1000 || (topAdRef.value?.$el as HTMLElement).getAttribute('data-ad-status') === 'unfilled')
+  if (Date.now() - gs.topAccessTimeStamp > 1000 || topAdRef.value?.$el.getAttribute('data-ad-status') === 'unfilled') {
     topAdKey.value++
+    gs.topAccessTimeStamp = Date.now()
+  }
 
-  if (Date.now() - gs.accessTimeStamp > 1000 || (bottomAdRef.value?.$el as HTMLElement).getAttribute('data-ad-status') === 'unfilled')
+  if (Date.now() - gs.bottomAccessTimeStamp > 1000 || bottomAdRef.value?.$el.getAttribute('data-ad-status') === 'unfilled') {
     bottomAdKey.value++
+    gs.bottomAccessTimeStamp = Date.now()
+  }
 
-  if (Date.now() - gs.accessTimeStamp > 1000 || (rightAdRef.value?.$el as HTMLElement).getAttribute('data-ad-status') === 'unfilled')
+  if (Date.now() - gs.rightAccessTimeStamp > 1000 || rightAdRef.value?.$el.getAttribute('data-ad-status') === 'unfilled') {
     rightAdKey.value++
+    gs.rightAccessTimeStamp = Date.now()
+  }
 })
 
 watch(() => $q.screen.gt.sm, (val) => {
