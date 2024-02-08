@@ -14,6 +14,8 @@ import D4Filter from 'components/D4Filter.vue'
 import D4PartyFilter from 'components/D4PartyFilter.vue'
 import D4User from 'components/D4User.vue'
 
+import Adsense from 'components/global/Adsense.vue'
+
 
 const props = defineProps<{
   lang: string
@@ -35,6 +37,12 @@ locale.value = props.lang || 'ko'
 
 const tradurs: string = import.meta.env.VITE_APP_TRADURS + (`/${props.lang || 'ko'}`)
 const mainKey = ref<number>(0)
+const topAdRef = ref<InstanceType<typeof Adsense>>()
+const bottomAdRef = ref<InstanceType<typeof Adsense>>()
+const rightAdRef = ref<InstanceType<typeof Adsense>>()
+const topAdKey = ref<number>(0)
+const bottomAdKey = ref<number>(0)
+const rightAdKey = ref<number>(0)
 const filterLoading = computed(() => is.filter.loading || ps.filter.loading)
 const searchName = computed(() => route.name === 'partyPlay' ? t('party.info.name') : t('item.name'))
 const leftDrawerOpen = ref<boolean>(false)
@@ -134,8 +142,22 @@ const size = computed(() => $q.screen.width < 728 ? 'display:inline-block;width:
 const availableParty = computed(() => as.signed && ps.joined && ps.minimum)
 
 watch([size, () => $q.screen.gt.md], ([new1, new2], [old1, old2]) => {
-  if (new1 !== old1 || new2 !== old2)
-    gs.reloadAdKey++
+  if (new1 !== old1 || new2 !== old2) {
+    topAdKey.value++
+    bottomAdKey.value++
+    rightAdKey.value++
+  }
+})
+
+watch(() => gs.reloadAdKey, () => {
+  if (Date.now() - gs.accessTimeStamp > 1000 || (topAdRef.value?.$el as HTMLElement).getAttribute('data-ad-status') === 'unfilled')
+    topAdKey.value++
+
+  if (Date.now() - gs.accessTimeStamp > 1000 || (bottomAdRef.value?.$el as HTMLElement).getAttribute('data-ad-status') === 'unfilled')
+    bottomAdKey.value++
+
+  if (Date.now() - gs.accessTimeStamp > 1000 || (rightAdRef.value?.$el as HTMLElement).getAttribute('data-ad-status') === 'unfilled')
+    rightAdKey.value++
 })
 
 watch(() => $q.screen.gt.sm, (val) => {
@@ -509,15 +531,15 @@ watch(() => ps.filter.name, (val) => {
           <div :class="screen.lt.sm ? 'q-pa-sm' : 'q-pa-xl'" :style="screen.lt.sm ? 'width:100%' : 'width:830px'">
             <div class="view max-width">
               <div class="row justify-center top-ads">
-                <Adsense :style="size" data-ad-client="ca-pub-5110777286519562" data-ad-slot="7137983054"
-                  :data-adtest="!prod" :key="`top-${gs.reloadAdKey}`" />
+                <Adsense ref="topAdRef" :style="size" data-ad-client="ca-pub-5110777286519562" data-ad-slot="7137983054"
+                  :data-adtest="!prod" :key="`top-${topAdKey}`" />
               </div>
               <RouterView />
             </div>
             <div class="q-py-xl"></div>
-            <Adsense v-if="$q.screen.width <= 1439" style="display:block" data-ad-client="ca-pub-5110777286519562"
-              data-ad-slot="6163086381" :data-adtest="!prod" data-ad-format="auto" data-full-width-responsive="true"
-              :key="`bottom-${gs.reloadAdKey}`" />
+            <Adsense ref="bottomAdRef" v-if="$q.screen.width <= 1439" style="display:block"
+              data-ad-client="ca-pub-5110777286519562" data-ad-slot="6163086381" :data-adtest="!prod"
+              data-ad-format="auto" data-full-width-responsive="true" :key="`bottom-${bottomAdKey}`" />
             <div class="q-py-md"></div>
             <q-separator />
             <div class="q-pt-lg">
@@ -533,9 +555,9 @@ watch(() => ps.filter.name, (val) => {
           <div class="gt-md col">
             <div class="full-height q-px-lg q-py-xl" :style="`width:280px;height:${asideHeight}`">
               <div :style="`position:sticky;top:${asideTop}`" class="column">
-                <Adsense v-if="$q.screen.width > 1439" style="display:inline-block;width:160px;height:600px"
-                  data-ad-client="ca-pub-5110777286519562" data-ad-slot="6751896285" :data-adtest="!prod"
-                  :key="`right-${gs.reloadAdKey}`" />
+                <Adsense ref="rightAdRef" v-if="$q.screen.width > 1439"
+                  style="display:inline-block;width:160px;height:600px" data-ad-client="ca-pub-5110777286519562"
+                  data-ad-slot="6751896285" :data-adtest="!prod" :key="`right-${rightAdKey}`" />
                 <div class="q-mt-xl">
                   <div class="column items-start useful">
                     <q-btn flat no-caps padding="0" :ripple="false" class="text-overline no-hover" type="a"

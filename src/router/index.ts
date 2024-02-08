@@ -39,6 +39,7 @@ export default route(function ({ store }/* { store, ssrContext } */) {
   Router.afterEach((to, from) => {
     if (from.name && to.name && (to.name !== from.name || to.query.page !== from.query.page)) {
       const gs = useGlobalStore(store)
+      gs.accessTimeStamp = Date.now()
       gs.reloadAdKey++
     }
   })
