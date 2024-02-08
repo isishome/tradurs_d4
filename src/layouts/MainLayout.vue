@@ -146,6 +146,9 @@ watch([size, () => $q.screen.gt.md], ([new1, new2], [old1, old2]) => {
     topAdKey.value++
     bottomAdKey.value++
     rightAdKey.value++
+    gs.topAccessTimeStamp = Date.now()
+    gs.bottomAccessTimeStamp = Date.now()
+    gs.rightAccessTimeStamp = Date.now()
   }
 })
 
