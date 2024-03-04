@@ -92,6 +92,10 @@ const updateBasic = () => {
 const updateBasicDebounce = debounce(() => {
   updateBasic()
 }, 400)
+
+defineExpose({
+  clearFilter
+})
 </script>
 
 <template>
@@ -145,10 +149,10 @@ const updateBasicDebounce = debounce(() => {
     <q-item-label header>{{ t('party.info.type') }}</q-item-label>
     <q-item :disable="filterLoading">
       <q-item-section>
-        <q-select v-model="filter.type" :disable="filterLoading" outlined dense no-error-icon hide-bottom-space emit-value
-          map-options transition-show="none" transition-hide="none" :transition-duration="0" :options="ps.base.partyTypes"
-          dropdown-icon="img:/images/icons/dropdown.svg" popup-content-class="scroll bordered"
-          @update:model-value="updateType" />
+        <q-select v-model="filter.type" :disable="filterLoading" outlined dense no-error-icon hide-bottom-space
+          emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0"
+          :options="ps.base.partyTypes" dropdown-icon="img:/images/icons/dropdown.svg"
+          popup-content-class="scroll bordered" @update:model-value="updateType" />
       </q-item-section>
     </q-item>
     <q-item-label header>{{ t('party.info.category') }}</q-item-label>
@@ -163,9 +167,9 @@ const updateBasicDebounce = debounce(() => {
     <q-item-label header>{{ t('price.cost') }}</q-item-label>
     <q-item :disable="filterLoading">
       <q-item-section>
-        <q-select v-model="filter.cost" :disable="filterLoading" outlined dense no-error-icon hide-bottom-space emit-value
-          map-options transition-show="none" transition-hide="none" :transition-duration="0" :options="currencies"
-          dropdown-icon="img:/images/icons/dropdown.svg" popup-content-class="scroll bordered"
+        <q-select v-model="filter.cost" :disable="filterLoading" outlined dense no-error-icon hide-bottom-space
+          emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0"
+          :options="currencies" dropdown-icon="img:/images/icons/dropdown.svg" popup-content-class="scroll bordered"
           @update:model-value="update" />
       </q-item-section>
     </q-item>
@@ -189,7 +193,7 @@ const updateBasicDebounce = debounce(() => {
         <q-btn outline aria-label="Tradurs Refresh Button" size="md" :ripple="false" class="no-hover"
           :disable="filterLoading" @click="clearFilter">
           <div class="row items-center q-gutter-xs">
-            <div>{{ t('btn.resetSearch') }}</div>
+            <div>{{ t('btn.resetFilter') }}</div>
             <q-icon class="icon" name="img:/images/icons/restore.svg" size="xs" />
           </div>
         </q-btn>

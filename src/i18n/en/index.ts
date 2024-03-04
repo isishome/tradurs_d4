@@ -51,6 +51,13 @@ export default {
       advanced2: 'Occasionally, sellers may incorrectly enter \'Characteristics\' and \'Affixes\', so consider filtering'
     }
   },
+  sort: {
+    options: [
+      { value: 'date_desc', label: 'Newest' },
+      { value: 'price_desc', label: 'Highest price' },
+      { value: 'price_asc', label: 'Lowest price' }
+    ]
+  },
   preset: {
     title: 'Delete Preset',
     message: 'Do you want to delete this preset?'

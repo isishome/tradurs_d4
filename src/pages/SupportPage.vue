@@ -90,7 +90,7 @@ const afterShow = () => {
     const el = supportRefs.value[findSectionIndex].$el
     const scrollTarget = getScrollTarget(el)
     const offset = el.offsetTop
-    setVerticalScrollPosition(scrollTarget, offset, 300)
+    setVerticalScrollPosition(scrollTarget, offset, 0)
   }
 }
 

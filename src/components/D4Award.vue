@@ -67,14 +67,19 @@ withDefaults(defineProps<IProps>(), {
   border-radius: 20px;
   margin-bottom: 10%;
   padding: 20px;
-  width: 400px;
-  max-width: 90%;
+  width: 100%;
   overflow: hidden;
   box-shadow: inset 0 0 0 1px rgba(50, 50, 50, 1), 0 10px 0 1px rgba(20, 30, 30, .6) !important;
 }
 
 .body--light .award {
   box-shadow: inset 0 0 0 1px rgba(255, 200, 0, 1), 0 10px 0 1px rgba(255, 200, 0, .6) !important;
+}
+
+@media (max-width:600px) {
+  .award {
+    width: 90%;
+  }
 }
 
 .award::before {

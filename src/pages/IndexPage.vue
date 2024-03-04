@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
-import { useItemStore, type OfferInfo, type AwardsPick } from 'stores/item-store'
+import { useItemStore, type OfferInfo, type AwardsPick, Sort } from 'stores/item-store'
 import { useAccountStore } from 'stores/account-store'
-import { ref, computed, defineAsyncComponent, onMounted, watch } from 'vue'
+import { ref, computed, defineAsyncComponent, onMounted, watch, reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useQuasar, uid } from 'quasar'
 import { scrollPos } from 'src/common'
@@ -15,7 +15,7 @@ const route = useRoute()
 const router = useRouter()
 const is = useItemStore()
 const as = useAccountStore()
-const { t, n } = useI18n({ useScope: 'global' })
+const { t, tm, n } = useI18n({ useScope: 'global' })
 const $q = useQuasar()
 
 // loading variable
@@ -39,6 +39,12 @@ const page = ref<number>(route.query.page ? parseInt(route.query.page as string)
 const over = computed(() => is.itemPage.over)
 const more = computed(() => is.itemPage.more)
 const selectable = computed(() => is.filter.mine)
+const sortOptions = reactive(tm('sort.options'))
+
+const updateSort = (sortValue: Sort) => {
+  is.sort = sortValue
+  reload()
+}
 
 const reload = () => {
   if (page.value === 1)
@@ -333,7 +339,25 @@ onMounted(() => {
   getList()
 })
 </script>
+
 <template>
+  <div class="row justify-end items-center">
+    <q-btn v-show="items.length > 0" round dense flat aria-label="Tradurs Sort Button" :ripple="false" class="no-hover"
+      :disable="disable">
+      <img class="icon" width="24" height="24" src="/images/icons/sort.svg" alt="Tradurs Sort Icon" />
+      <q-menu auto-close class="no-shadow" anchor="bottom end" self="top end" transition-show="none"
+        transition-hide="none" :transition-duration="0">
+        <q-list bordered class="rounded-borders">
+          <q-item v-for="option in sortOptions as Array<{ value: Sort, label: string }>" :key="option.value"
+            :clickable="option.value !== is.sort" :active="option.value === is.sort" @click="updateSort(option.value)">
+            <q-item-section>
+              {{ option.label }}
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </q-menu>
+    </q-btn>
+  </div>
   <div>
     <div class="row justify-center items-center">
       <D4Items ref="itemsRef" class="item-list" :items="items" :reward-item="rewardItem" @upsert-item="upsertItem"
@@ -356,10 +380,12 @@ onMounted(() => {
       <D4Btn v-else style="visibility: hidden;" />
     </div>
     <div class="row q-gutter-xs items-center paging">
-      <D4Btn round @click="move(-1)" color="var(--q-light-magic)" :disable="!over || disable" :shadow="!$q.dark.isActive">
+      <D4Btn round @click="move(-1)" color="var(--q-light-magic)" :disable="!over || disable"
+        :shadow="!$q.dark.isActive">
         <img src="/images/icons/prev.svg" width="24" height="24" class="invert" alt="Tradurs Prev Icon" />
       </D4Btn>
-      <D4Btn round @click="move(1)" color="var(--q-light-magic)" :disable="!more || disable" :shadow="!$q.dark.isActive">
+      <D4Btn round @click="move(1)" color="var(--q-light-magic)" :disable="!more || disable"
+        :shadow="!$q.dark.isActive">
         <img src="/images/icons/next.svg" width="24" height="24" class="invert" alt="Tradurs Next Icon" />
       </D4Btn>
     </div>

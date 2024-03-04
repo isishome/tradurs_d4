@@ -51,6 +51,13 @@ export default {
       advanced2: '간혹 판매자가 \'고유 특성\'과 \'옵션\'을 잘못 입력하는 경우가 있으니 고려하여 필터 하세요'
     }
   },
+  sort: {
+    options: [
+      { value: 'date_desc', label: '신규 아이템순' },
+      { value: 'price_desc', label: '높은 가격순' },
+      { value: 'price_asc', label: '낮은 가격순' }
+    ]
+  },
   preset: {
     title: '프리셋 삭제',
     message: '해당 프리셋을 삭제할까요?'
@@ -140,7 +147,7 @@ export default {
     move: '이동',
     complete: '완료 처리',
     submit: '제출하기',
-    resetSearch: '검색 초기화',
+    resetFilter: '검색 초기화',
     favorite: '관심 목록에 추가',
     unfavorite: '관심 목록에서 삭제',
     copy: '템플릿 복사',

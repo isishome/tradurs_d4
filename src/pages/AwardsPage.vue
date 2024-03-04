@@ -52,6 +52,7 @@ is.getAwards()
     loading.value = false
   })
 </script>
+
 <template>
   <div class="column items-center">
     <!-- <D4Note label="test" class="full-width">
@@ -61,6 +62,7 @@ is.getAwards()
       <template #category>
         {{ t('awards.highPriced.category') }}
       </template>
+
       <template #item-name>
         <div class="row justify-center">
           <q-item dense class="rounded-borders item-name text-body1 text-weight-bold text-amber-8"
@@ -71,9 +73,9 @@ is.getAwards()
             <q-item-section>
               <q-item-label>
                 {{
-                  itemName(awards.highPriced[0]?.itemName, awards.highPriced[0]?.itemTypeValue1,
-                    awards.highPriced[0]?.itemTypeValue2)
-                }}
+      itemName(awards.highPriced[0]?.itemName, awards.highPriced[0]?.itemTypeValue1,
+        awards.highPriced[0]?.itemTypeValue2)
+    }}
               </q-item-label>
             </q-item-section>
             <q-item-section side>
@@ -82,14 +84,17 @@ is.getAwards()
           </q-item>
         </div>
       </template>
+
       <template #detail>
         <div class="text-h6 text-center text-weight-bold">
           {{ $n(Number.parseFloat(awards.highPriced[0]?.price as string), 'decimal', { notation: 'compact' }) }}
         </div>
       </template>
+
       <template #battleTag>
         {{ awards.highPriced[0]?.ranking }}. {{ awards.highPriced[0]?.battleTag }}
       </template>
+
       <template #etc>
         <q-separator />
         <q-list separator class="rounded-borders">
@@ -98,77 +103,93 @@ is.getAwards()
             <q-item-section>
               <q-item-label>
                 {{ ranker?.ranking }}. {{ itemName(ranker?.itemName, ranker?.itemTypeValue1,
-                  ranker?.itemTypeValue2) }}
+      ranker?.itemTypeValue2) }}
               </q-item-label>
               <q-item-label class="text-right">{{ ranker?.battleTag }}</q-item-label>
               <q-item-label caption class="text-right">{{ $n(Number.parseFloat(ranker?.price as string), 'decimal', {
-                notation: 'compact'
-              })
-              }}</q-item-label>
+      notation: 'compact'
+    })
+                }}</q-item-label>
             </q-item-section>
           </q-item>
         </q-list>
       </template>
+
       <template #desc>
         {{ t('awards.bestManners.desc') }}
       </template>
     </D4Award>
     <D4Award v-if="awards.bestManners.length > 0" :loading="loading">
+
       <template #category>
         {{ t('awards.bestManners.category') }}
       </template>
+
       <template #detail>
         + {{ awards.bestManners[0]?.good }}&#8451
       </template>
+
       <template #battleTag>
         1. {{ awards.bestManners[0]?.battleTag }}
       </template>
+
       <template #etc>
         <div class="text-overline etc" v-for="ranker, idx in awards.bestManners.slice(1, awards.bestManners.length) "
           :key="idx">
           {{ ranker?.ranking }}. {{ ranker?.battleTag }} + {{ ranker?.good }}&#8451
         </div>
       </template>
+
       <template #desc>
         {{ t('awards.bestManners.desc') }}
       </template>
     </D4Award>
     <D4Award v-if="awards.mostSold.length > 0" :loading="loading">
+
       <template #category>
         {{ t('awards.mostSold.category') }}
       </template>
+
       <template #detail>
         {{ awards.mostSold[0]?.items }}{{ t('awards.mostSold.unit') }}
       </template>
+
       <template #battleTag>
         1. {{ awards.mostSold[0]?.battleTag }}
       </template>
+
       <template #etc>
         <div class="text-overline etc" v-for="ranker, idx in awards.mostSold.slice(1, awards.mostSold.length) "
           :key="idx">
           {{ ranker?.ranking }}. {{ ranker?.battleTag }} - {{ ranker?.items }}{{ t('awards.mostSold.unit') }}
         </div>
       </template>
+
       <template #desc>
         {{ t('awards.mostSold.desc') }}
       </template>
     </D4Award>
     <D4Award v-if="awards.mostPurchased.length > 0" :loading="loading">
+
       <template #category>
         {{ t('awards.mostPurchased.category') }}
       </template>
+
       <template #detail>
         {{ awards.mostPurchased[0]?.items }}{{ t('awards.mostPurchased.unit') }}
       </template>
+
       <template #battleTag>
         1. {{ awards.mostPurchased[0]?.battleTag }}
       </template>
+
       <template #etc>
-        <div class="text-overline etc" v-for="ranker, idx in awards.mostPurchased.slice(1, awards.mostPurchased.length) "
-          :key="idx">
+        <div class="text-overline etc"
+          v-for="ranker, idx in awards.mostPurchased.slice(1, awards.mostPurchased.length) " :key="idx">
           {{ ranker?.ranking }}. {{ ranker?.battleTag }} - {{ ranker?.items }}{{ t('awards.mostPurchased.unit') }}
         </div>
       </template>
+
       <template #desc>
         {{ t('awards.mostPurchased.desc') }}
       </template>
@@ -177,6 +198,7 @@ is.getAwards()
       {{ t('awards.noData') }}</div>
   </div>
 </template>
+
 <style scoped>
 .etc {
   line-height: 1.2;

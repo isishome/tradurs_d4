@@ -123,6 +123,7 @@ const clear = () => {
 }
 
 const main = () => {
+  is.sort = 'date_desc'
   router.push({ name: 'tradeList', params: { lang: route.params.lang }, query: { page: route.query.page as string === '1' ? undefined : 1 } })
 }
 
@@ -184,6 +185,7 @@ watch(() => ps.filter.name, (val) => {
     _name.value = ''
 })
 </script>
+
 <template>
   <q-layout view="hHh lpR lFf" :key="mainKey">
     <div v-show="['tradeList', 'itemInfo'].includes(route.name as string) && is.storage.data.ladder" class="bg-season"
@@ -197,8 +199,8 @@ watch(() => ps.filter.name, (val) => {
         style="width:300px" />
       <D4PartyFilter v-if="route.name === 'partyPlay'" class="q-pa-lg" style="width:300px" />
     </q-drawer>
-    <q-drawer show-if-above no-swipe-open no-swipe-close no-swipe-backdrop bordered v-model="rightDrawerOpen" side="right"
-      behavior="mobile" class="row justify-start no-scroll" :width="300">
+    <q-drawer show-if-above no-swipe-open no-swipe-close no-swipe-backdrop bordered v-model="rightDrawerOpen"
+      side="right" behavior="mobile" class="row justify-start no-scroll" :width="300">
       <div class="column fit">
         <q-item class="row justify-end items-center q-py-lg q-gutter-x-sm icons">
           <q-btn v-show="availableParty" round dense flat aria-label="Tradurs Chat Button" :ripple="!$q.dark.isActive"
@@ -241,8 +243,8 @@ watch(() => ps.filter.name, (val) => {
                 <template #actions>
                   <q-btn no-caps unelevated :disable="progressSign" aria-label="Tradurs Info Button" color="grey-9"
                     :label="t('user.info')" @click="info" v-close-popup />
-                  <q-btn no-caps unelevated :loading="progressSign" aria-label="Tradurs Signout Button" color="secondary"
-                    :label="t('user.signout')" @click="sign" v-close-popup />
+                  <q-btn no-caps unelevated :loading="progressSign" aria-label="Tradurs Signout Button"
+                    color="secondary" :label="t('user.signout')" @click="sign" v-close-popup />
                 </template>
               </D4User>
             </q-menu>
@@ -281,6 +283,7 @@ watch(() => ps.filter.name, (val) => {
             </q-item>
             <q-expansion-item v-if="as.signed" v-model="expanded" expand-icon="img:/images/icons/dropdown.svg"
               :default-opened="isMySpace" :class="expanded ? 'expanded rounded-borders' : ''">
+
               <template #header>
                 <q-item-section>
                   <div>
@@ -300,8 +303,8 @@ watch(() => ps.filter.name, (val) => {
                     <div v-show="newMessages" class="alert"></div>
                   </q-item-section>
                 </q-item>
-                <q-item :inset-level=".4" v-ripple clickable :to="{ name: 'blocks', params: { lang: route.params.lang } }"
-                  exact active-class="active">
+                <q-item :inset-level=".4" v-ripple clickable
+                  :to="{ name: 'blocks', params: { lang: route.params.lang } }" exact active-class="active">
                   <q-item-section side>
                     <q-item-label>
                       {{ t('page.blocks') }}
@@ -395,7 +398,8 @@ watch(() => ps.filter.name, (val) => {
           <div :class="isNarrow ? 'col-9' : 'col-5'" class="row no-wrap items-center q-gutter-md">
             <q-btn v-show="isNarrow" flat padding="0" :ripple="false" @click="main">
               <h1 class="h1">
-                <img v-show="$q.dark.isActive" src="/images/logo.webp" width="36" height="36" alt="Tradurs Logo Image" />
+                <img v-show="$q.dark.isActive" src="/images/logo.webp" width="36" height="36"
+                  alt="Tradurs Logo Image" />
                 <img v-show="!$q.dark.isActive" src="/images/logo_light.webp" width="36" height="36"
                   alt="Tradurs Light Logo Image" />
               </h1>
@@ -403,6 +407,7 @@ watch(() => ps.filter.name, (val) => {
             <q-input outlined dense no-error-icon hide-bottom-space class="col" v-model="_name" :label="searchName"
               :disable="filterLoading || !['tradeList', 'partyPlay'].includes(route.name as string)"
               :rules="[val => (!!!val || checkName(val)) || '']" @keyup.enter="search()">
+
               <template #append>
                 <div style="width:24px">
                   <q-btn v-show="_name && _name !== ''" flat dense aria-label="Tradurs Clear Button" size="xs"
@@ -425,7 +430,8 @@ watch(() => ps.filter.name, (val) => {
                   {{ t('page.partyPlay') }}
                 </div>
               </q-btn>
-              <q-btn flat no-caps type="a" :ripple="false" class="no-hover" :class="{ 'active': route.name === 'awards' }"
+              <q-btn flat no-caps type="a" :ripple="false" class="no-hover"
+                :class="{ 'active': route.name === 'awards' }"
                 :to="{ name: 'awards', params: { lang: route.params.lang } }">
                 <div class="relative-position">
                   {{ t('page.awards') }}
@@ -435,6 +441,7 @@ watch(() => ps.filter.name, (val) => {
               <q-btn-dropdown v-if="as.signed" flat content-class="no-shadow" no-caps :ripple="false" class="no-hover"
                 transition-show="none" transition-hide="none" transition-duration="0"
                 dropdown-icon="img:/images/icons/dropdown.svg">
+
                 <template #label>
                   <div class="relative-position">
                     {{ t('page.mySpace') }}
@@ -475,14 +482,15 @@ watch(() => ps.filter.name, (val) => {
         <div v-show="isNarrow" class="col-1 col-lg-3 row justify-end q-gutter-sm">
           <q-btn round flat aria-label="Tradurs Morevert Button" :ripple="!$q.dark.isActive"
             @click="rightDrawerOpen = !rightDrawerOpen">
-            <img class="icon" width="24" height="24" src="/images/icons/morevert.svg" alt="Tradurs More Vertical Icon" />
+            <img class="icon" width="24" height="24" src="/images/icons/morevert.svg"
+              alt="Tradurs More Vertical Icon" />
           </q-btn>
         </div>
         <div v-show="!isNarrow" class="col-3 row justify-end items-center q-gutter-xs">
           <q-btn v-show="availableParty" round dense flat aria-label="Tradurs Chat Button" :ripple="!$q.dark.isActive"
             @click="ps.show">
-            <img class="icon" width="24" height="24" :src="`/images/icons/${$q.dark.isActive ? 'chat_fill' : 'chat'}.svg`"
-              alt="Chat Icon" />
+            <img class="icon" width="24" height="24"
+              :src="`/images/icons/${$q.dark.isActive ? 'chat_fill' : 'chat'}.svg`" alt="Chat Icon" />
             <q-badge v-show="ps.unseen > 0" color="red" floating>{{ ps.unseen }}</q-badge>
           </q-btn>
           <q-btn round dense flat aria-label="Tradurs Discord Button" :ripple="!$q.dark.isActive" tag="a"
@@ -517,11 +525,12 @@ watch(() => ps.filter.name, (val) => {
             <q-menu anchor="bottom end" self="top end" transition-show="none" transition-hide="none"
               :transition-duration="0" style="min-width:280px">
               <D4User :data="as.info" info>
+
                 <template #actions>
                   <q-btn no-caps unelevated :disable="progressSign" aria-label="Tradurs Info Button" color="grey-9"
                     :label="t('user.info')" @click="info" v-close-popup />
-                  <q-btn no-caps unelevated :loading="progressSign" aria-label="Tradurs Signout Button" color="secondary"
-                    :label="t('user.signout')" @click="sign" v-close-popup />
+                  <q-btn no-caps unelevated :loading="progressSign" aria-label="Tradurs Signout Button"
+                    color="secondary" :label="t('user.signout')" @click="sign" v-close-popup />
                 </template>
               </D4User>
             </q-menu>
@@ -575,7 +584,8 @@ watch(() => ps.filter.name, (val) => {
                       href="https://d4builds.gg/build-planner" label="D4Builds.gg" target="_blank"
                       rel="noopener noreferrer" />
                     <q-btn flat no-caps padding="0" :ripple="false" class="text-overline no-hover" type="a"
-                      href="https://maxroll.gg/d4" label="maxroll Diablo IV" target="_blank" rel="noopener noreferrer" />
+                      href="https://maxroll.gg/d4" label="maxroll Diablo IV" target="_blank"
+                      rel="noopener noreferrer" />
                     <q-btn flat no-caps padding="0" :ripple="false" class="text-overline no-hover" type="a"
                       href="https://aziraell3.github.io/GAME/D4/?job=dru" label="Aspect Simulator" target="_blank"
                       rel="noopener noreferrer" />
@@ -586,8 +596,8 @@ watch(() => ps.filter.name, (val) => {
                     {{ t('contact.inquiries') }}
                   </div>
                   <div>
-                    <q-btn flat no-caps padding="0" :ripple="false" color="primary" class="no-hover" type="a" size="12px"
-                      href="mailto:serasomething@gmail.com" label="serasomething@gmail.com" />
+                    <q-btn flat no-caps padding="0" :ripple="false" color="primary" class="no-hover" type="a"
+                      size="12px" href="mailto:serasomething@gmail.com" label="serasomething@gmail.com" />
                   </div>
                 </div>
               </div>
@@ -598,6 +608,7 @@ watch(() => ps.filter.name, (val) => {
     </q-page-container>
   </q-layout>
 </template>
+
 <style scoped>
 .header {
   background-color: var(--q-dark);
@@ -718,12 +729,12 @@ watch(() => ps.filter.name, (val) => {
 }
 
 .top-ads {
-  margin-bottom: 48px;
+  margin-bottom: 30px;
 }
 
 @media (max-width:600px) {
   .top-ads {
-    margin: 12px 0 18px 0;
+    margin-top: 12px;
   }
 }
 

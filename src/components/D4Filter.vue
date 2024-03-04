@@ -196,6 +196,10 @@ const removePreset = ({ id, done, error }: { id: number, done: Function, error: 
       done()
     })
 }
+
+defineExpose({
+  clearFilter
+})
 </script>
 
 <template>
@@ -233,6 +237,7 @@ const removePreset = ({ id, done, error }: { id: number, done: Function, error: 
         @add="addPreset" @remove="removePreset" />
       <q-separator inset />
     </template>
+
     <template v-if="as.signed">
       <q-item-label header>{{ t('filter.onlyForMe') }}</q-item-label>
       <q-item :disable="filterLoading">
@@ -281,11 +286,11 @@ const removePreset = ({ id, done, error }: { id: number, done: Function, error: 
     <q-item :disable="filterLoading">
       <q-item-section>
         <div class="row justify-center no-wrap q-col-gutter-sm items-center">
-          <D4Counter :disable="filterLoading" v-model="filter.power[0]" :label="t('min')" :max="9999" allow-zero no-button
-            @update:model-value="update()" :debounce="1000" max-width="100%" />
+          <D4Counter :disable="filterLoading" v-model="filter.power[0]" :label="t('min')" :max="9999" allow-zero
+            no-button @update:model-value="update()" :debounce="1000" max-width="100%" />
           <div>-</div>
-          <D4Counter :disable="filterLoading" v-model="filter.power[1]" :label="t('max')" :max="9999" allow-zero no-button
-            @update:model-value="update()" :debounce="1000" max-width="100%" />
+          <D4Counter :disable="filterLoading" v-model="filter.power[1]" :label="t('max')" :max="9999" allow-zero
+            no-button @update:model-value="update()" :debounce="1000" max-width="100%" />
         </div>
       </q-item-section>
     </q-item>
@@ -293,11 +298,11 @@ const removePreset = ({ id, done, error }: { id: number, done: Function, error: 
     <q-item :disable="filterLoading">
       <q-item-section>
         <div class="row justify-center no-wrap q-col-gutter-sm items-center">
-          <D4Counter :disable="filterLoading" v-model="filter.level[0]" :label="t('min')" :max="999" allow-zero no-button
-            @update:model-value="update()" :debounce="1000" max-width="100%" />
+          <D4Counter :disable="filterLoading" v-model="filter.level[0]" :label="t('min')" :max="999" allow-zero
+            no-button @update:model-value="update()" :debounce="1000" max-width="100%" />
           <div>-</div>
-          <D4Counter :disable="filterLoading" v-model="filter.level[1]" :label="t('max')" :max="999" allow-zero no-button
-            @update:model-value="update()" :debounce="1000" max-width="100%" />
+          <D4Counter :disable="filterLoading" v-model="filter.level[1]" :label="t('max')" :max="999" allow-zero
+            no-button @update:model-value="update()" :debounce="1000" max-width="100%" />
         </div>
       </q-item-section>
     </q-item>
@@ -354,17 +359,19 @@ const removePreset = ({ id, done, error }: { id: number, done: Function, error: 
           :options="propertyOptions(propertyNeedle)" dropdown-icon="img:/images/icons/dropdown.svg"
           popup-content-class="scroll bordered limit-select" @update:model-value="selectedProperty"
           @input-value="filterProperties">
+
           <template #option="scope">
             <q-item v-bind="scope.itemProps">
               <q-item-section side>
-                <q-icon class="icon" :class="{ 'rotate-45': ['standard'].includes(scope.opt.type as string) }" size="14px"
-                  :name="`img:/images/attribute_types/${scope.opt.type || 'standard'}.svg`" />
+                <q-icon class="icon" :class="{ 'rotate-45': ['standard'].includes(scope.opt.type as string) }"
+                  size="14px" :name="`img:/images/attribute_types/${scope.opt.type || 'standard'}.svg`" />
               </q-item-section>
               <q-item-section>
                 <q-item-label lines="3">{{ scope.opt.label }}</q-item-label>
               </q-item-section>
             </q-item>
           </template>
+
           <template #no-option>
             <q-item>
               <q-item-section class="text-grey">
@@ -396,17 +403,19 @@ const removePreset = ({ id, done, error }: { id: number, done: Function, error: 
           :label="`${t('affixes')} ${t('searchOrSelect')}`" :options="affixOptions(affixNeedle)"
           dropdown-icon="img:/images/icons/dropdown.svg" popup-content-class="scroll bordered limit-select"
           @update:model-value="selectedAffix" @input-value="filterAffixes">
+
           <template #option="scope">
             <q-item v-bind="scope.itemProps">
               <q-item-section side>
-                <q-icon class="icon" :class="{ 'rotate-45': ['standard'].includes(scope.opt.type as string) }" size="14px"
-                  :name="`img:/images/attribute_types/${scope.opt.type || 'standard'}.svg`" />
+                <q-icon class="icon" :class="{ 'rotate-45': ['standard'].includes(scope.opt.type as string) }"
+                  size="14px" :name="`img:/images/attribute_types/${scope.opt.type || 'standard'}.svg`" />
               </q-item-section>
               <q-item-section>
                 <q-item-label :class="scope.opt.color">{{ scope.opt.label }}</q-item-label>
               </q-item-section>
             </q-item>
           </template>
+
           <template #no-option>
             <q-item>
               <q-item-section class="text-grey">
@@ -438,6 +447,7 @@ const removePreset = ({ id, done, error }: { id: number, done: Function, error: 
           :label="`${t('restrictions')} ${t('searchOrSelect')}`" :options="restrictionOptions(restrictionNeedle)"
           dropdown-icon="img:/images/icons/dropdown.svg" popup-content-class="scroll bordered limit-select"
           @update:model-value="selectedRestriction" @input-value="filterRestrictions">
+
           <template #option="scope">
             <q-item v-bind="scope.itemProps">
               <q-item-section>
@@ -445,6 +455,7 @@ const removePreset = ({ id, done, error }: { id: number, done: Function, error: 
               </q-item-section>
             </q-item>
           </template>
+
           <template #no-option>
             <q-item>
               <q-item-section class="text-grey">
@@ -474,7 +485,7 @@ const removePreset = ({ id, done, error }: { id: number, done: Function, error: 
         <q-btn outline aria-label="Tradurs Refresh Button" size="md" :ripple="false" class="no-hover"
           :disable="filterLoading" @click="clearFilter">
           <div class="row items-center q-gutter-xs">
-            <div>{{ t('btn.resetSearch') }}</div>
+            <div>{{ t('btn.resetFilter') }}</div>
             <q-icon class="icon" name="img:/images/icons/restore.svg" size="xs" />
           </div>
         </q-btn>

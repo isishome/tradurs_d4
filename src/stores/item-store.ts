@@ -148,6 +148,8 @@ export interface IPreset extends ILabel {
   filter: IFilter
 }
 
+export type Sort = 'date_desc' | 'price_desc' | 'price_asc'
+
 export const useItemStore = defineStore('item', {
   state: () => ({
     storage: {
@@ -202,6 +204,7 @@ export const useItemStore = defineStore('item', {
       turnedDownOffer: null as OfferInfo | null,
       complete: null as OfferInfo | null
     },
+    sort: 'date_desc' as Sort,
     filter: {
       onlyCurrency: false,
       favorite: false,
@@ -543,7 +546,7 @@ export const useItemStore = defineStore('item', {
     },
     getItems(page: number, itemId?: string | string[]) {
       return new Promise<Array<Item>>((resolve, reject) => {
-        api.post('/d4/item', { page, rows: this.itemPage.rows, itemId, basicFilter: itemId ? {} : { hardcore: this.storage.data.hardcore, ladder: this.storage.data.ladder }, filter: this.filter })
+        api.post('/d4/item', { page, rows: this.itemPage.rows, itemId, basicFilter: itemId ? {} : { hardcore: this.storage.data.hardcore, ladder: this.storage.data.ladder }, filter: this.filter, sort: this.sort })
           .then((response) => {
             if (!itemId) {
               this.itemPage.over = page > 1
