@@ -147,7 +147,7 @@ export default {
     move: 'Move',
     complete: 'Complete',
     submit: 'Submit',
-    resetSearch: 'Reset Filter',
+    resetFilter: 'Reset Filter',
     favorite: 'Add to Favorites',
     unfavorite: 'Remove to Favorites',
     copy: 'Copy Template',
