@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { reactive, computed, watch } from 'vue'
-import { useQuasar } from 'quasar'
-import { useRoute } from 'vue-router'
+import { ref, reactive, computed, watch, onMounted, nextTick } from 'vue'
+import { useQuasar, scroll, QExpansionItem } from 'quasar'
+import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useGlobalStore } from 'stores/global-store'
 import { useAccountStore } from 'stores/account-store'
@@ -28,7 +28,9 @@ const prod: boolean = import.meta.env.PROD
 const recaptchaApiKey = import.meta.env.VITE_APP_RECAPTCHA
 
 const $q = useQuasar()
+const { getScrollTarget, setVerticalScrollPosition } = scroll
 const route = useRoute()
+const router = useRouter()
 const { t, tm } = useI18n({ useScope: 'global' })
 const gs = useGlobalStore()
 const as = useAccountStore()
@@ -36,11 +38,9 @@ const as = useAccountStore()
 if (prod)
   useScript(`https://www.google.com/recaptcha/api.js?render=${recaptchaApiKey}`, { async: true })
 
+const supportRefs = ref<Array<QExpansionItem>>([])
 const support = computed(() => tm('support') as Array<Support>)
-const findSection = support.value.find(s => s.id === (props.section || 'basic'))
-if (findSection)
-  findSection.show = true
-
+const findSection = ref<string>(props.section ?? 'basic')
 const contact = reactive<{ show: boolean, open: boolean, contents: string | null, disable: boolean }>({
   show: true,
   open: false,
@@ -83,13 +83,32 @@ const close = () => {
   contact.disable = false
 }
 
-watch(() => route.params.section, (val, old) => {
-  if (val !== old) {
-    support.value.forEach(s => { s.show = false })
-    const findSection = support.value.find(s => s.id === val)
-    if (findSection)
-      findSection.show = true
+const afterShow = () => {
+  const findSectionIndex = support.value.findIndex(s => s.id === findSection.value)
+
+  if (findSectionIndex !== -1 && supportRefs.value[findSectionIndex]) {
+    const el = supportRefs.value[findSectionIndex].$el
+    const scrollTarget = getScrollTarget(el)
+    const offset = el.offsetTop
+    setVerticalScrollPosition(scrollTarget, offset, 300)
   }
+}
+
+const selectSection = async (s: Support) => {
+  if (s.show)
+    await router.push({ name: 'support', params: { lang: route.params.lang, section: s.id } })
+}
+
+watch(() => route.params.section, (val, old) => {
+  if (val !== old && route.name === 'support') {
+    findSection.value = val as string ?? 'basic'
+  }
+})
+
+onMounted(() => {
+  const activeSection = support.value.find(s => s.id === findSection.value)
+  if (activeSection)
+    activeSection.show = true
 })
 </script>
 
@@ -98,8 +117,9 @@ watch(() => route.params.section, (val, old) => {
     <q-list bordered class="rounded-borders">
       <template v-for="s, idx in (support as Array<Support>)" :key="idx">
         <q-separator v-show="idx !== 0" />
-        <q-expansion-item v-model="s.show" :class="{ 'no-hover': s.show }" expand-icon="img:/images/icons/dropdown.svg"
-          :label="s.question">
+        <q-expansion-item ref="supportRefs" v-model="s.show" :class="{ 'no-hover': s.show }"
+          expand-icon="img:/images/icons/dropdown.svg" :label="s.question" @update:model-value="selectSection(s)"
+          @after-show="afterShow">
           <q-item class="row justify-center items-center" :class="$q.screen.lt.sm ? 'q-px-md' : 'q-px-xl'"
             style="background-color: var(--q-cloud);">
             <q-item-label>
@@ -118,13 +138,14 @@ watch(() => route.params.section, (val, old) => {
                   {{ a.contents }}
                 </div>
                 <a v-else-if="a.type === 'link'" :href="a.contents" target="_blank" rel="noopener noreferrer">{{ a.name
-                }}</a>
+                  }}</a>
               </q-intersection>
               <div class="q-py-lg q-my-lg"></div>
             </q-item-label>
           </q-item>
         </q-expansion-item>
       </template>
+
       <template v-if="as.signed">
         <q-separator />
         <q-expansion-item v-model="contact.show" :class="{ 'no-hover': contact.show }"
@@ -137,11 +158,13 @@ watch(() => route.params.section, (val, old) => {
       </template>
     </q-list>
     <D4Dialog v-model="contact.open" @submit="send" @hide="close" :persistent="contact.disable">
+
       <template #top>
         <div class="q-pa-md text-h6">
           {{ t('contact.title') }}
         </div>
       </template>
+
       <template #middle>
         <div class="q-pa-md">
           <q-input outlined dense no-error-icon hide-bottom-space :disable="contact.disable"
@@ -154,6 +177,7 @@ watch(() => route.params.section, (val, old) => {
           </q-input>
         </div>
       </template>
+
       <template #bottom>
         <div class="row justify-end q-pa-md q-gutter-sm">
           <D4Btn :label="t('btn.cancel')" :disable="contact.disable" color="rgb(150,150,150)"
@@ -164,6 +188,7 @@ watch(() => route.params.section, (val, old) => {
     </D4Dialog>
   </div>
 </template>
+
 <style scoped>
 .answer.text {
   min-height: 22px;

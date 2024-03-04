@@ -268,7 +268,6 @@ watch(() => ps.filter.name, (val) => {
                 <q-item-label>
                   {{ t('page.partyPlay') }}
                 </q-item-label>
-                <q-badge floating label="B" color="blue-8" class="new-badge2" />
               </q-item-section>
             </q-item>
             <q-item v-ripple clickable :to="{ name: 'awards', params: { lang: route.params.lang } }" exact
@@ -424,7 +423,6 @@ watch(() => ps.filter.name, (val) => {
                 :to="{ name: 'partyPlay', params: { lang: route.params.lang } }">
                 <div class="relative-position">
                   {{ t('page.partyPlay') }}
-                  <q-badge floating label="B" color="blue-8" class="new-badge2" style="top:-4px" />
                 </div>
               </q-btn>
               <q-btn flat no-caps type="a" :ripple="false" class="no-hover" :class="{ 'active': route.name === 'awards' }"
