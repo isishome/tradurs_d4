@@ -729,13 +729,12 @@ watch(() => ps.filter.name, (val) => {
 }
 
 .top-ads {
-  margin-bottom: 24px;
+  margin-bottom: 48px;
 }
 
 @media (max-width:600px) {
   .top-ads {
-    margin-top: 28px;
-    margin-bottom: 8px;
+    margin: 28px 0 36px 0;
   }
 }
 

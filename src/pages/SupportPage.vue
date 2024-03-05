@@ -89,8 +89,8 @@ const afterShow = () => {
   if (findSectionIndex !== -1 && supportRefs.value[findSectionIndex]) {
     const el = supportRefs.value[findSectionIndex].$el
     const scrollTarget = getScrollTarget(el)
-    const offset = el.offsetTop
-    setVerticalScrollPosition(scrollTarget, offset, 0)
+    const offset = findSection.value === 'basic' ? 0 : el.offsetTop
+    setVerticalScrollPosition(scrollTarget, offset, 100)
   }
 }
 

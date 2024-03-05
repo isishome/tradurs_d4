@@ -342,7 +342,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="row justify-end items-center">
+  <div class="row justify-end items-center absolute full-width" style="transform: translateY(-100%);">
     <q-select v-model="is.sort" :disable="disable" dense no-error-icon hide-bottom-space emit-value map-options
       options-dense borderless transition-show="none" transition-hide="none" :transition-duration="0"
       :options="sortOptions" menu-anchor="bottom end" menu-self="top end" dropdown-icon="img:/images/icons/dropdown.svg"
