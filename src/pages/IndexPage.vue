@@ -39,7 +39,7 @@ const page = ref<number>(route.query.page ? parseInt(route.query.page as string)
 const over = computed(() => is.itemPage.over)
 const more = computed(() => is.itemPage.more)
 const selectable = computed(() => is.filter.mine)
-const sortOptions = reactive(tm('sort.options'))
+const sortOptions = reactive<Array<{ value: string, label: string }>>(tm('sort.options'))
 
 const updateSort = (sortValue: Sort) => {
   is.sort = sortValue
@@ -342,21 +342,10 @@ onMounted(() => {
 
 <template>
   <div class="row justify-end items-center">
-    <q-btn v-show="items.length > 0" round dense flat aria-label="Tradurs Sort Button" :ripple="false" class="no-hover"
-      :disable="disable">
-      <img class="icon" width="24" height="24" src="/images/icons/sort.svg" alt="Tradurs Sort Icon" />
-      <q-menu auto-close class="no-shadow" anchor="bottom end" self="top end" transition-show="none"
-        transition-hide="none" :transition-duration="0">
-        <q-list bordered class="rounded-borders">
-          <q-item v-for="option in sortOptions as Array<{ value: Sort, label: string }>" :key="option.value"
-            :clickable="option.value !== is.sort" :active="option.value === is.sort" @click="updateSort(option.value)">
-            <q-item-section>
-              {{ option.label }}
-            </q-item-section>
-          </q-item>
-        </q-list>
-      </q-menu>
-    </q-btn>
+    <q-select v-model="is.sort" :disable="disable" dense no-error-icon hide-bottom-space emit-value map-options
+      options-dense borderless transition-show="none" transition-hide="none" :transition-duration="0"
+      :options="sortOptions" menu-anchor="bottom end" menu-self="top end" dropdown-icon="img:/images/icons/dropdown.svg"
+      class="sort text-caption" popup-content-class="scroll bordered text-caption" @update:model-value="updateSort" />
   </div>
   <div>
     <div class="row justify-center items-center">
@@ -393,6 +382,19 @@ onMounted(() => {
 </template>
 
 <style scoped>
+.sort:deep(.q-field__control:before) {
+  background-color: inherit;
+}
+
+.sort:deep(.q-field__control-container),
+.sort:deep(.q-field__control),
+.sort:deep(.q-field__native),
+.sort:deep(.q-field__marginal) {
+  height: 30px !important;
+  min-height: 30px !important;
+  padding: 0 !important;
+}
+
 .sticky-place {
   position: sticky;
   bottom: 8%;

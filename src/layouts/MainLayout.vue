@@ -380,7 +380,7 @@ watch(() => ps.filter.name, (val) => {
     <q-header :elevated="!$q.dark.isActive" class="q-py-sm header row justify-center">
       <q-toolbar class="toolbar">
         <div :style="$q.screen.gt.sm ? 'min-width:120px' : ''">
-          <q-btn v-show="!isNarrow" class="no-hover q-ml-lg" dense flat aria-label="Tradurs Home Button" padding="0"
+          <q-btn v-if="!isNarrow" class="no-hover q-ml-lg" dense flat aria-label="Tradurs Home Button" padding="0"
             :ripple="!$q.dark.isActive" @click="main">
             <h1 class="h1">
               <img v-show="$q.dark.isActive" src="/images/logo.webp" width="48" height="48" alt="Tradurs Logo Image" />
@@ -396,7 +396,7 @@ watch(() => ps.filter.name, (val) => {
         </div>
         <div class="col row items-center" :class="isNarrow ? 'justify-center' : 'justify-between'">
           <div :class="isNarrow ? 'col-9' : 'col-5'" class="row no-wrap items-center q-gutter-md">
-            <q-btn v-show="isNarrow" flat padding="0" :ripple="false" @click="main">
+            <q-btn v-if="isNarrow" flat padding="0" :ripple="false" class="no-hover" @click="main">
               <h1 class="h1">
                 <img v-show="$q.dark.isActive" src="/images/logo.webp" width="36" height="36"
                   alt="Tradurs Logo Image" />
@@ -729,12 +729,13 @@ watch(() => ps.filter.name, (val) => {
 }
 
 .top-ads {
-  margin-bottom: 30px;
+  margin-bottom: 24px;
 }
 
 @media (max-width:600px) {
   .top-ads {
-    margin-top: 12px;
+    margin-top: 28px;
+    margin-bottom: 8px;
   }
 }
 
