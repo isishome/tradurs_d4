@@ -185,6 +185,7 @@ const create = (item?: Item) => {
 
 const getList = () => {
   is.filter.loading = true
+  disable.value = true
 
   items.value =
     Array.from({ length: items.value.length || is.itemPage.rows }, () => {

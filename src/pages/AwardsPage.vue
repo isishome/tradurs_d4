@@ -2,6 +2,7 @@
 import { ref, computed, reactive, defineAsyncComponent } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
+import { scrollPos } from 'src/common'
 import { type Awards, type Award, type Gem, type Elixir, useItemStore, Summoning } from 'src/stores/item-store'
 
 const D4Award = defineAsyncComponent(() => import('components/D4Award.vue'))
@@ -50,6 +51,7 @@ is.getAwards()
   .catch(() => { { } })
   .then(() => {
     loading.value = false
+    scrollPos()
   })
 </script>
 
