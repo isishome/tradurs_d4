@@ -40,7 +40,7 @@ if (prod)
 
 const supportRefs = ref<Array<QExpansionItem>>([])
 const support = computed(() => tm('support') as Array<Support>)
-const findSection = ref<string>(props.section ?? 'basic')
+const findSection = ref<string>(props.section || 'basic')
 const contact = reactive<{ show: boolean, open: boolean, contents: string | null, disable: boolean }>({
   show: true,
   open: false,
@@ -107,6 +107,7 @@ watch(() => route.params.section, (val, old) => {
 
 onMounted(() => {
   const activeSection = support.value.find(s => s.id === findSection.value)
+
   if (activeSection)
     activeSection.show = true
 })
