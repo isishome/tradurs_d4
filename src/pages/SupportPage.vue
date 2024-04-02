@@ -124,8 +124,7 @@ onMounted(() => {
           <q-item class="row justify-center items-center" :class="$q.screen.lt.sm ? 'q-px-md' : 'q-px-xl'"
             style="background-color: var(--q-cloud);">
             <q-item-label>
-              <q-intersection v-for="a, aIdx in s.answer" :key="aIdx" transition="fade" class="answer text-center"
-                :class="a.type" ssr-prerender once>
+              <div v-for="a, aIdx in s.answer" :key="aIdx" class="answer text-center" :class="a.type">
                 <img v-if="a.type === 'image'" :src="`/images/help/${s.id}/${a.contents}.webp`"
                   alt="Tradurs Notice Image" />
                 <div v-else-if="a.type === 'text'" class="text-area">
@@ -140,7 +139,7 @@ onMounted(() => {
                 </div>
                 <a v-else-if="a.type === 'link'" :href="a.contents" target="_blank" rel="noopener noreferrer">{{ a.name
                   }}</a>
-              </q-intersection>
+              </div>
               <div class="q-py-lg q-my-lg"></div>
             </q-item-label>
           </q-item>

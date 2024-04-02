@@ -20,13 +20,7 @@ export default route(function ({ store }/* { store, ssrContext } */) {
 
   const Router = createRouter({
     scrollBehavior(to, from, savedPosition) {
-      const as = useAccountStore(store)
-      let result = { left: 0, top: 0 }
-
-      if (savedPosition)
-        result = savedPosition
-
-      return result
+      return savedPosition || { left: 0, top: 0 }
     },
     routes,
 

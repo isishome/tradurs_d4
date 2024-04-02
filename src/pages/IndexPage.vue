@@ -5,7 +5,6 @@ import { useAccountStore } from 'stores/account-store'
 import { ref, computed, defineAsyncComponent, onMounted, watch, reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useQuasar, uid } from 'quasar'
-import { scrollPos } from 'src/common'
 import { Item, IPrice } from 'src/types/item'
 
 const D4Items = defineAsyncComponent(() => import('components/D4Items.vue'))
@@ -57,9 +56,6 @@ const reload = () => {
 const upsertItem = (item: Item, done: Function) => {
   const findIndex = items.value.findIndex((i) => i.itemId === item.itemId)
 
-  if (findIndex === -1)
-    scrollPos()
-
   disable.value = true
   is[item.itemId !== '' ? 'updateItem' : 'addItem'](item)
     .then((response) => {
@@ -103,7 +99,6 @@ const deleteItem = (item: Item, done: Function) => {
 const relistItem = (item: Item, done: Function) => {
   const findIndex = items.value.findIndex((i) => i.itemId === item.itemId)
   if (findIndex !== -1) {
-    scrollPos()
     disable.value = true
     is.relistItem(item.itemId)
       .then(() => {
@@ -185,7 +180,6 @@ const create = (item?: Item) => {
 const getList = () => {
   is.filter.loading = true
   disable.value = true
-  scrollPos()
 
   items.value =
     Array.from({ length: items.value.length || is.itemPage.rows }, () => {

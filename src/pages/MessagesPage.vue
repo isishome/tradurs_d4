@@ -3,7 +3,6 @@ import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useQuasar, date } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
-import { scrollPos } from 'src/common'
 import { useGlobalStore } from 'src/stores/global-store'
 import { useAccountStore } from 'src/stores/account-store'
 import { useItemStore } from 'src/stores/item-store'
@@ -39,7 +38,6 @@ const getList = () => {
     .catch(() => { })
     .then(() => {
       loading.value = false
-      scrollPos()
     })
 }
 

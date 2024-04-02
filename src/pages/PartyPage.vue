@@ -15,7 +15,6 @@ import { ref, reactive, computed, defineAsyncComponent, onMounted, onUnmounted, 
 import { useI18n } from 'vue-i18n'
 import { useQuasar } from 'quasar'
 import { useRoute, useRouter } from 'vue-router'
-import { scrollPos } from 'src/common'
 import { useAccountStore } from 'stores/account-store'
 import { type IParty, type IPartyUser, type IPartyRoom, Party, PartyServiceTypes, PartyRegionTypes } from 'src/stores/party-store'
 import { Price } from 'src/types/item'
@@ -88,7 +87,6 @@ const getParties = () => {
     .catch(() => { })
     .then(() => {
       ps.filter.loading = false
-      scrollPos()
     })
 }
 

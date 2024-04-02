@@ -3,7 +3,6 @@ import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useQuasar, date } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
-import { scrollPos } from 'src/common'
 import { useAccountStore } from 'src/stores/account-store'
 import { IBlock } from 'src/types/user'
 
@@ -35,7 +34,6 @@ const getList = () => {
     .catch(() => { })
     .then(() => {
       loading.value = false
-      scrollPos()
     })
 }
 
@@ -113,8 +111,8 @@ onMounted(() => {
         <q-item-section>
         </q-item-section>
         <q-item-section side>
-          <q-btn no-caps push :disable="disable || progress" unelevated :aria-label="t('btn.bulkUnblock')" color="grey-8"
-            :label="t('btn.bulkUnblock')" @click="unblocks" />
+          <q-btn no-caps push :disable="disable || progress" unelevated :aria-label="t('btn.bulkUnblock')"
+            color="grey-8" :label="t('btn.bulkUnblock')" @click="unblocks" />
         </q-item-section>
       </q-item>
       <template v-for="block in blocks" :key="block.battleTag">
@@ -136,7 +134,7 @@ onMounted(() => {
           <q-item-section side top class="column items-end q-gutter-y-sm">
             <q-item-label lines="2" style="max-width:60px" class="text-right">
               {{ date.isSameDate(block.regDate, Date.now(), 'date') ? date.formatDate(block.regDate, 'HH:mm') :
-                date.formatDate(block.regDate, 'YY.MM.DD HH:mm') }}
+      date.formatDate(block.regDate, 'YY.MM.DD HH:mm') }}
             </q-item-label>
             <q-btn no-caps unelevated :title="t('blockUser.caption')" aria-label="Tradurs UnBlock Button" size="12px"
               color="positive" :disable="disable || block.disable" :progress="progress" @click="unblock(block)">

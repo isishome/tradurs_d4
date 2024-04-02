@@ -633,11 +633,6 @@ const failedAnalyze = (msg: string) => {
   })
 }
 
-// Execute function if an item is visible (adsense)
-const visible = (isVisible: boolean, item: Item): void => {
-
-}
-
 const create = () => {
   activatedItem.value.hardcore = is.storage.data.hardcore
   activatedItem.value.ladder = is.storage.data.ladder
@@ -666,7 +661,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
   <div class="col-12" :style="`max-width:${width}px`">
     <div :class="$q.screen.lt.sm ? 'q-gutter-y-xl' : 'q-gutter-y-xxl'">
       <div v-if="rewardItem" class="item relative-position reward" :style="`min-height:${height as number - ($q.screen.lt.sm ? 50 : 0)}px;height:${rewardItem.expanded ? '100%' :
-        `${height as number - ($q.screen.lt.sm ? 50 : 0)}px`}`" data-itemid="reward-item">
+    `${height as number - ($q.screen.lt.sm ? 50 : 0)}px`}`" data-itemid="reward-item">
         <div>
           <D4Item :data="rewardItem" :loading="rewardItem.loading" @favorite="favorite" @copy="copy"
             @update-only="(val: string) => emit('update-only', val)">
@@ -707,9 +702,9 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
           </D4Item>
         </div>
       </div>
-      <q-intersection v-for="item, idx in (items as Array<Item>)" :key="item.itemId" :data-itemid="item.itemId"
-        class="item" :style="`min-height:${itemHeight}px;height:${item.expanded ? '100%' :
-          `${itemHeight}px`}`" transition="fade" ssr-prerender once @visibility="(val: boolean) => visible(val, item)">
+      <div v-for="item, idx in (items as Array<Item>)" :key="item.itemId" :data-itemid="item.itemId" class="item"
+        :style="`min-height:${itemHeight}px;height:${item.expanded ? '100%' :
+    `${itemHeight}px`}`">
         <D4Item :data="item" :loading="item.loading" @favorite="favorite" @copy="copy"
           @update-only="(val: string) => emit('update-only', val)">
           <template #top-right>
@@ -746,7 +741,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
             </q-btn>
           </template>
         </D4Item>
-      </q-intersection>
+      </div>
       <div v-show="items.length === 0" class="column q-gutter-y-sm justify-center items-center" style="min-height:30vh">
         <div>{{ t(route.name === 'tradeList' ? 'noFilterdItems' : 'noItem') }}</div>
         <div class="text-caption">{{ route.name === 'tradeList' ? t('noFilterdItemsDesc') : '' }}</div>
@@ -926,12 +921,12 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                       :disable="!['000', '002'].includes(activatedItem.statusCode) || activatedItem.offers > 0 || disable"
                       clickable @click="statusItem">
                       <q-item-section>{{ activatedItem.statusCode === '002' ? t('btn.resume') :
-                        t('btn.suspend')
-                      }}</q-item-section>
+    t('btn.suspend')
+                        }}</q-item-section>
                     </q-item>
                     <q-item clickable :disable="activatedItem.offers > 0 || disable" @click="deleteConfirm()">
                       <q-item-section class="text-negative text-weight-bold">{{ t('btn.delete')
-                      }}</q-item-section>
+                        }}</q-item-section>
                     </q-item>
                   </q-list>
                 </q-menu>
@@ -941,8 +936,8 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                 @start="startAnalyze" @end="endAnalyze" @failed="failedAnalyze" />
             </div>
             <div class="row justify-between items-center q-gutter-sm">
-              <D4Btn :label="t('btn.cancel')" :loading="activatedItem.loading" :disable="disable" color="rgb(150,150,150)"
-                @click="activateShow = false" />
+              <D4Btn :label="t('btn.cancel')" :loading="activatedItem.loading" :disable="disable"
+                color="rgb(150,150,150)" @click="activateShow = false" />
               <D4Btn :label="t('btn.apply')" :loading="activatedItem.loading"
                 :disable="activatedItem.offers > 0 || ['001', '004'].includes(activatedItem.statusCode) || disable"
                 :progress="progress" type="submit" />
@@ -955,7 +950,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
       <template #top>
         <q-card-section class="row items-center q-ml-md">
           <div class="name">{{ t('attribute.request', { attr: t(add.category as string) })
-          }}
+            }}
           </div>
         </q-card-section>
       </template>
@@ -1006,8 +1001,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
           :style="$q.screen.lt.sm ? 'height:100%' : 'min-height:40vh !important;max-height:80vh !important'">
           <div class="q-pb-xl full-height">
             <div class="row items-center q-col-gutter-lg">
-              <q-intersection v-for="offer, idx in (offers as Array<Offer>)" :key="`offers_${idx}`"
-                class="col-12 col-sm-6" transition="fade" once>
+              <div v-for="offer, idx in (offers as Array<Offer>)" :key="`offers_${idx}`" class="col-12 col-sm-6">
                 <q-card flat bordered class="card-item expanded"
                   :class="{ 'unique': offer.statusCode === '003', 'set': offer.statusCode === '001', 'magic': offer.authorized }">
                   <div class="inner">
@@ -1017,10 +1011,10 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                       @reload="openMakingOffer(offerItem as Item)" />
                   </div>
                 </q-card>
-              </q-intersection>
+              </div>
             </div>
             <div v-show="offers.length === 0" class="absolute-center">{{
-              t('offer.noOffer') }}</div>
+    t('offer.noOffer') }}</div>
           </div>
         </q-card-section>
       </template>

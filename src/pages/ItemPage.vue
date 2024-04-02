@@ -1,7 +1,6 @@
 <script lang="ts">
 import { useGlobalStore } from 'src/stores/global-store'
 import { useItemStore, type OfferInfo } from 'stores/item-store'
-import { scrollPos } from 'src/common'
 import { Item, IPrice } from 'src/types/item'
 
 export default {
@@ -313,8 +312,6 @@ watch(complete, (val: { itemName: string, itemId: string } | null) => {
 })
 
 onMounted(() => {
-  scrollPos()
-
   if (history.state.offers) {
     itemsRef.value?.openOffers(props.itemid)
     history.state.offers = false
