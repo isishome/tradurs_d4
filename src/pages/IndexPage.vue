@@ -23,7 +23,6 @@ const completeList = ref(false)
 const disable = ref(false)
 
 // variable
-const position = computed(() => as.position)
 const newItems = computed(() => is.socket.newItems)
 const newOffer = computed(() => is.socket.newOffer)
 const acceptedOffer = computed(() => is.socket.acceptedOffer)
@@ -186,6 +185,7 @@ const create = (item?: Item) => {
 const getList = () => {
   is.filter.loading = true
   disable.value = true
+  scrollPos()
 
   items.value =
     Array.from({ length: items.value.length || is.itemPage.rows }, () => {
@@ -226,7 +226,6 @@ const getList = () => {
       setTimeout(() => {
         completeList.value = true
       }, 100)
-      scrollPos()
     })
 
   rewardItem.value = undefined
@@ -336,7 +335,6 @@ watch(filter, (val, old) => {
 })
 
 onMounted(() => {
-  as.position = { top: 0, left: 0 }
   getList()
 })
 </script>

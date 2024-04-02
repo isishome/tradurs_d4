@@ -553,9 +553,11 @@ watch(() => ps.filter.name, (val) => {
               <RouterView />
             </div>
             <div class="q-py-xl"></div>
-            <Adsense ref="bottomAdRef" v-if="$q.screen.width <= 1439" style="display:block"
-              data-ad-client="ca-pub-5110777286519562" data-ad-slot="6163086381" :data-adtest="!prod"
-              data-ad-format="auto" data-full-width-responsive="true" :key="`bottom-${bottomAdKey}`" />
+            <div class="row justify-center">
+              <Adsense ref="bottomAdRef" v-if="$q.screen.width <= 1439" style="display:block"
+                data-ad-client="ca-pub-5110777286519562" data-ad-slot="6163086381" :data-adtest="!prod"
+                data-ad-format="auto" data-full-width-responsive="true" :key="`bottom-${bottomAdKey}`" />
+            </div>
             <div class="q-py-md"></div>
             <q-separator />
             <div class="q-pt-lg">

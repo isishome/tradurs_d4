@@ -35,7 +35,6 @@ export const useAccountStore = defineStore('account', {
   state: () => ({
     signed: null as boolean | null,
     info: {} as User,
-    position: { left: 0, top: 0 },
     messenger: null as Socket | null,
     newMessages: false as boolean,
     historyTypes: {

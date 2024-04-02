@@ -185,8 +185,9 @@ onMounted(() => {
           </q-item-section>
           <q-item-section>
             <q-item-label class="text-weight-bold" lines="1">
-              {{ ['900', '999'].includes(message.msgType) ? 'Tradurs' : `${message.itemName}${message.itemQuantity !== 1 ?
-                ` x ${message.itemQuantity}` : ''}` }}
+              {{ ['900', '999'].includes(message.msgType) ? 'Tradurs' : `${message.itemName}${message.itemQuantity !== 1
+      ?
+      ` x ${message.itemQuantity}` : ''}` }}
             </q-item-label>
             <q-item-label caption lines="2">
               {{ t(`messages.title${message.msgType}`) }}
@@ -201,7 +202,7 @@ onMounted(() => {
           <q-item-section side top>
             <q-item-label lines="2" style="max-width:60px" class="text-right">
               {{ date.isSameDate(message.regDate, Date.now(), 'date') ? date.formatDate(message.regDate, 'HH:mm') :
-                date.formatDate(message.regDate, 'YY.MM.DD HH:mm') }}
+      date.formatDate(message.regDate, 'YY.MM.DD HH:mm') }}
             </q-item-label>
           </q-item-section>
         </q-item>
@@ -286,8 +287,8 @@ onMounted(() => {
         <div class="q-pa-md">
           <q-input outlined dense no-error-icon hide-bottom-space :disable="answer.loading"
             :autofocus="$q.platform.is.desktop" rows="6" type="textarea" class="col" input-class="scroll"
-            :label="t('contact.answerContents')" v-model="answer.contents" :rules="[val => val && val.length > 10 || '']"
-            maxlength="500"><template #counter>
+            :label="t('contact.answerContents')" v-model="answer.contents"
+            :rules="[val => val && val.length > 10 || '']" maxlength="500"><template #counter>
               {{ answer.contents ? answer.contents.length : 0 }} / 500
             </template>
           </q-input>

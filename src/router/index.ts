@@ -26,7 +26,7 @@ export default route(function ({ store }/* { store, ssrContext } */) {
       if (savedPosition)
         result = savedPosition
 
-      as.position = result
+      return result
     },
     routes,
 

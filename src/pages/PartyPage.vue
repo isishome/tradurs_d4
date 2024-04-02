@@ -254,8 +254,8 @@ onUnmounted(() => {
           </q-card-section>
           <q-separator inset />
           <q-card-section>
-            <q-input outlined dense no-error-icon hide-bottom-space v-model="partyInfo.name" :label="t('party.info.name')"
-              :rules="[val => !!val && checkName(val) || '']" maxlength="256" />
+            <q-input outlined dense no-error-icon hide-bottom-space v-model="partyInfo.name"
+              :label="t('party.info.name')" :rules="[val => !!val && checkName(val) || '']" maxlength="256" />
           </q-card-section>
           <q-separator inset />
           <q-card-section>
