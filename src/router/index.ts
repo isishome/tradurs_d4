@@ -1,7 +1,6 @@
 import { route } from 'quasar/wrappers'
 import { createMemoryHistory, createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
 import routes from './routes'
-import { useAccountStore } from 'src/stores/account-store'
 import { useGlobalStore } from 'src/stores/global-store'
 
 /*
@@ -20,6 +19,9 @@ export default route(function ({ store }/* { store, ssrContext } */) {
 
   const Router = createRouter({
     scrollBehavior(to, from, savedPosition) {
+      if (!!history.state.noScrollTop)
+        return
+
       return savedPosition || { left: 0, top: 0 }
     },
     routes,

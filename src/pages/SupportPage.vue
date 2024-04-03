@@ -96,7 +96,7 @@ const afterShow = () => {
 
 const selectSection = async (s: Support) => {
   if (s.show)
-    await router.push({ name: 'support', params: { lang: route.params.lang, section: s.id } })
+    await router.push({ name: 'support', params: { lang: route.params.lang, section: s.id }, state: { noScrollTop: true } })
 }
 
 watch(() => route.params.section, (val, old) => {

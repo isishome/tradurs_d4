@@ -306,6 +306,8 @@ const checkAttributes = (tArray: string[], index: number, id: number, label: str
       else
         break
     }
+    else if (similar >= .4 && text.length < label.length)
+      l++
     else
       break
   }
@@ -348,7 +350,7 @@ const checkProperties = (tArray: string[]) => {
       let maxIL: [number, number] = [0, 0]
       matchAttribute.forEach((ma: ISimilar) => {
         ma.match.sort((a, b) => b.rate - a.rate)
-        const matchValues = tArray.slice(ma.index + ma.match[0]?.length, tArray.length).join('-').match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv)) || []
+        const matchValues = tArray.slice(ma.index, ma.index + (ma.match[0]?.length || 0) + 1).join('-').match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv)) || []
 
         if (item.properties.filter(p => p.propertyId === ma.match[0]?.id).length === 0) {
           maxIL = maxIL[0] < ma.index ? [ma.index, ma.match[0].length + 1] : maxIL
@@ -595,11 +597,12 @@ const beforeHideDropBox = () => {
       </template>
       <template #middle>
         <div class="q-pa-lg">
-          <q-option-group v-model="checkedItem" disable :options="checkList" color="primary" class="check-item" size="xs"
-            type="checkbox">
+          <q-option-group v-model="checkedItem" disable :options="checkList" color="primary" class="check-item"
+            size="xs" type="checkbox">
             <template #label="opt">
               <div class="row items-center q-gutter-x-sm" :class="{ 'checked': checkedItem.includes(opt.value) }">
-                <div class="text-body2" :class="{ 'text-weight-bold': currentCheck === opt.value }">{{ opt.label }}</div>
+                <div class="text-body2" :class="{ 'text-weight-bold': currentCheck === opt.value }">{{ opt.label }}
+                </div>
                 <q-spinner-dots v-show="opt.value === currentCheck" size="18px" />
               </div>
             </template>
@@ -607,7 +610,8 @@ const beforeHideDropBox = () => {
         </div>
       </template>
     </D4Dialog>
-    <D4Dialog v-model="dropBox.show" width="600px" max-width="80vw" @show="showDropBox" @before-hide="beforeHideDropBox">
+    <D4Dialog v-model="dropBox.show" width="600px" max-width="80vw" @show="showDropBox"
+      @before-hide="beforeHideDropBox">
       <template #middle>
         <div ref="dropArea" class="drop-area q-ma-xl q-pa-xl column items-center q-gutter-y-sm text-h6"
           :class="{ 'enter': dropBox.enter > 0 }" @dragenter.prevent="dropBox.enter++"
