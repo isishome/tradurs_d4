@@ -293,7 +293,8 @@ const checkAttributes = (tArray: string[], index: number, id: number, label: str
   const result: Array<IMatch> = []
 
   let l = 0
-  while (l < 3) {
+  let prevSimilar = 0
+  while (l < 4) {
     const text = tArray.slice(index, index + l + 1).join(' ').replace(/\([^\)]*\)?/g, '').replace(new RegExp(`[^${phase}]`, 'g'), '')
     const similar = similarity(text, label)
 
@@ -306,8 +307,10 @@ const checkAttributes = (tArray: string[], index: number, id: number, label: str
       else
         break
     }
-    else if (similar >= .4 && text.length < label.length)
+    else if ((similar >= .2 || similar > prevSimilar) && text.length < label.length) {
+      prevSimilar = similar
       l++
+    }
     else
       break
   }
@@ -327,7 +330,7 @@ const checkProperties = (tArray: string[]) => {
       let cut = 0
       for (let pi = 0; pi < findClass.properties.length; pi++) {
         const pid = findClass.properties[pi]
-        const propertyLabel = is.findProperty(pid)?.label.replace(/{x}/g, '').replace(/[ \+\-%\[\]]/g, '') as string
+        const propertyLabel = is.findProperty(pid)?.label.replace(/{x}/g, '').replace(/[ \+\-%\[\]\:]/g, '') as string
 
         for (let i = 0; i < tArray.length; i++) {
           const result = checkAttributes(tArray, i + cut, pid, propertyLabel)
@@ -347,10 +350,12 @@ const checkProperties = (tArray: string[]) => {
         }
       }
 
-      let maxIL: [number, number] = [0, 0]
+      let maxIL: [number, number] = [0, 1]
       matchAttribute.forEach((ma: ISimilar) => {
         ma.match.sort((a, b) => b.rate - a.rate)
-        const matchValues = tArray.slice(ma.index, ma.index + (ma.match[0]?.length || 0) + 1).join('-').match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv)) || []
+
+        const xLen = (is.findProperty(ma.match?.[0]?.id)?.label.split(/{x}/)?.length ?? 1) - 1
+        const matchValues = tArray.slice(ma.index + (ma.match[0]?.length || 0), tArray.length).join('-').match(/[0-9.]{1,}/g)?.splice(0, xLen).map(mv => parseFloat(mv)) || []
 
         if (item.properties.filter(p => p.propertyId === ma.match[0]?.id).length === 0) {
           maxIL = maxIL[0] < ma.index ? [ma.index, ma.match[0].length + 1] : maxIL
@@ -382,7 +387,7 @@ const checkAffixes = (tArray: string[]) => {
     const matchAttribute: Array<ISimilar> = []
 
     for (const affix of is.availableAffixes()) {
-      const affixLabel = affix.label.replace(/{x}/g, '').replace(/[ \+\-%]/g, '') as string
+      const affixLabel = affix.label.replace(/{x}/g, '').replace(/[ \+\-%\:]/g, '') as string
 
       for (let i = 0; i < tArray.length; i++) {
         const result = checkAttributes(tArray, i, affix.value as number, affixLabel)
@@ -401,8 +406,8 @@ const checkAffixes = (tArray: string[]) => {
     matchAttribute.forEach((ma: ISimilar) => {
       ma.match.sort((a, b) => b.rate - a.rate)
 
-      const matchMinMax = tArray.slice(ma.index + ma.match[0]?.length, tArray.length).join('-').match(/[\[]{1}[0-9.]{1,}[^\-\[]*[\-]*[^\-\[]*[0-9.]{0,}[\]]?/g)?.map(mmm => mmm.replace(/[^0-9.-]/g, '').split(/[\-]{1,2}/).map(mm => !isNaN(parseFloat(mm)) ? parseFloat(mm) : 0))
-      const matchValues = tArray.slice(ma.index, tArray.length).join('-').replace(/[\[]{1}[0-9.]{1,}[^\-\[]*[\-]*[^\-\[]*[0-9.]{0,}[\]]?/g, '').match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv))?.slice(0, is.findAffix(ma.match[0]?.id)?.label.split(/{x}/).length as number - 1)
+      const matchMinMax = tArray.slice(ma.index, tArray.length).join('-').match(/[\[]{1}[0-9.]{1,}[^\-\[]*[\-]*[0-9.]{1,}[\]]?/g)?.map(mmm => mmm.replace(/[^0-9.-]/g, '').split(/[\-]{1,2}/).map(mm => !isNaN(parseFloat(mm)) ? parseFloat(mm) : 0))
+      const matchValues = tArray.slice(ma.index, tArray.length).join('-').replace(/[\[]{1}[0-9.]{1,}[^\-\[]*[\-]*[0-9.]{1,}[\]]?/g, '').match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv))?.slice(0, is.findAffix(ma.match[0]?.id)?.label.split(/{x}/).length as number - 1)
       const a: Affix = { valueId: uid(), affixId: ma.match[0]?.id as number, affixValues: [], action: 2 }
 
       matchValues?.forEach((mv: number, idx: number) => {
@@ -433,7 +438,7 @@ const checkRestrictions = () => {
     const matchAttribute: Array<ISimilar> = []
 
     for (const restriction of is.restrictions.data) {
-      const restrictLabel = restriction.label.replace(/{x}/g, '').replace(/[ \+\-%\[\]]/g, '') as string
+      const restrictLabel = restriction.label.replace(/{x}/g, '').replace(/[ \+\-%\[\]\:]/g, '') as string
 
       for (let i = 0; i < restrictionsPhase.length; i++) {
         const result = checkAttributes(restrictionsPhase, i, restriction.value as number, restrictLabel)
@@ -511,7 +516,8 @@ const filtering = (f: File) => {
           ctx.fillRect(0, 0, canvas.width, canvas.height)
         }
 
-        ctx.filter = isTransparent ? 'contrast(1.4) blur(.4px)' : 'invert(1) contrast(1.4) blur(.4px)'
+        //ctx.filter = isTransparent ? 'contrast(1.4) blur(.4px)' : 'invert(1) contrast(1.4) blur(.4px)'
+        ctx.filter = 'invert(1) contrast(1.4) blur(.4px)'
         ctx.drawImage(image, 0, 0, iWidth - predictItem, predictItem, 0, 0, (iWidth - predictItem) * ratio, predictItem * ratio)
         ctx.drawImage(image, 0, predictItem, iWidth, iHeight - predictItem, 0, predictItem * ratio, iWidth * ratio, (iHeight - predictItem) * ratio)
 

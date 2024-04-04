@@ -58,7 +58,8 @@ const remove = (): void => {
         </template>
         <template v-if="!editable">
           <div v-if="comp.type === 'variable'" class="figure">{{ comp.value }}</div>
-          <div v-if="comp.type === 'min' && Number(comp.value) + Number(affixInfo[k + 1].value) > 0" class="minmax-text">
+          <div v-if="comp.type === 'min' && Number(comp.value) + Number(affixInfo[k + 1].value) > 0"
+            class="minmax-text">
             [{{ comp.value }}
             - {{ affixInfo[k + 1].value }}]</div>
         </template>

@@ -746,10 +746,12 @@ export const useItemStore = defineStore('item', {
       })
     },
     async recognize(image: ImageLike, lang: string) {
-      const locale = lang === 'ko' ? 'kor' : 'eng'
-      const worker = await createWorker()
-      await worker.loadLanguage(locale)
-      await worker.initialize(locale)
+      const locale = (lang === 'ko') ? 'kor' : 'eng'
+      const worker = await createWorker(locale, 1, {
+        workerPath: 'https://cdn.jsdelivr.net/npm/tesseract.js@v5.0.0/dist/worker.min.js',
+        langPath: 'https://tessdata.projectnaptha.com/4.0.0',
+        corePath: 'https://cdn.jsdelivr.net/npm/tesseract.js-core@v5.0.0',
+      })
       await worker.setParameters({
         preserve_interword_spaces: '1'
       })
