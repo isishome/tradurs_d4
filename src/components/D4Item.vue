@@ -217,8 +217,8 @@ defineExpose({ scrollEnd })
           <div class="row items-center no-wrap justify-between q-col-gutter-sm full-width q-pt-sm">
             <div>
               <div class="row no-wrap items-center q-gutter-xs quality">
-                <q-btn :ripple="!$q.dark.isActive" v-for="t in store.tiers" :key="t.value" :disable="disable || !tierable"
-                  round unelevated aria-label="Tradurs Tier Button"
+                <q-btn :ripple="!$q.dark.isActive" v-for="t in store.tiers" :key="t.value"
+                  :disable="disable || !tierable" round unelevated aria-label="Tradurs Tier Button"
                   :class="['text-weight-bold', { 'active': _tier === t.value }]" :label="t.label"
                   @click="updateTier(t.value as string)" />
               </div>
@@ -262,8 +262,9 @@ defineExpose({ scrollEnd })
           <div class="col" v-if="_type === 'rune'">
             <q-select v-model="_typeValue1" :disable="disable" outlined dense no-error-icon hide-bottom-space emit-value
               map-options transition-show="none" transition-hide="none" :transition-duration="0"
-              :label="t('item.selectRune')" :options="filterRunesByType()" dropdown-icon="img:/images/icons/dropdown.svg"
-              popup-content-class="scroll bordered limit-select" @update:model-value="update">
+              :label="t('item.selectRune')" :options="filterRunesByType()"
+              dropdown-icon="img:/images/icons/dropdown.svg" popup-content-class="scroll bordered limit-select"
+              @update:model-value="update">
               <template #selected-item="scope">
                 <div class="ellipsis">{{ scope.opt.label }}</div>
               </template>
@@ -292,7 +293,8 @@ defineExpose({ scrollEnd })
               <template #option="scope">
                 <q-item clickable v-bind="scope.itemProps">
                   <q-item-section avatar>
-                    <img height="48" :src="`/images/items/${_type}/${scope.opt.value}.webp`" alt="Tradurs Aspect Image" />
+                    <img height="48" :src="`/images/items/${_type}/${scope.opt.value}.webp`"
+                      alt="Tradurs Aspect Image" />
                   </q-item-section>
                   <q-item-section>
                     <q-item-label>{{ scope.opt.label }}</q-item-label>
@@ -303,8 +305,8 @@ defineExpose({ scrollEnd })
           </div>
           <template v-else>
             <div class="col">
-              <q-select v-model="_typeValue1" :disable="disable" outlined dense no-error-icon hide-bottom-space emit-value
-                map-options transition-show="none" transition-hide="none" :transition-duration="0"
+              <q-select v-model="_typeValue1" :disable="disable" outlined dense no-error-icon hide-bottom-space
+                emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0"
                 :label="t('item.selectClass', { type: findType(data.itemType)?.label })"
                 dropdown-icon="img:/images/icons/dropdown.svg" :options="filterClasses(_type)"
                 popup-content-class="scroll bordered" @update:model-value="updateTypeValue1">
@@ -314,8 +316,8 @@ defineExpose({ scrollEnd })
               </q-select>
             </div>
             <div class="col" v-if="_typeValue1 === 'gem'">
-              <q-select v-model="_typeValue2" :disable="disable" outlined dense no-error-icon hide-bottom-space emit-value
-                map-options transition-show="none" transition-hide="none" :transition-duration="0"
+              <q-select v-model="_typeValue2" :disable="disable" outlined dense no-error-icon hide-bottom-space
+                emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0"
                 :label="t('item.selectGem')" dropdown-icon="img:/images/icons/dropdown.svg" :options="store.gems"
                 popup-content-class="scroll bordered limit-select" options-dense @update:model-value="updateTypeValue2"
                 exact-active>
@@ -338,8 +340,8 @@ defineExpose({ scrollEnd })
               </q-select>
             </div>
             <div class="col" v-else-if="_typeValue1 === 'elixir'">
-              <q-select v-model="_typeValue2" :disable="disable" outlined dense no-error-icon hide-bottom-space emit-value
-                map-options transition-show="none" transition-hide="none" :transition-duration="0"
+              <q-select v-model="_typeValue2" :disable="disable" outlined dense no-error-icon hide-bottom-space
+                emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0"
                 :label="t('item.selectElixir')" dropdown-icon="img:/images/icons/dropdown.svg" :options="store.elixirs"
                 popup-content-class="scroll bordered limit-select" options-dense @update:model-value="updateTypeValue2">
                 <template #selected-item="scope">
@@ -360,8 +362,8 @@ defineExpose({ scrollEnd })
               </q-select>
             </div>
             <div class="col" v-else-if="_typeValue1 === 'summoning'">
-              <q-select v-model="_typeValue2" :disable="disable" outlined dense no-error-icon hide-bottom-space emit-value
-                map-options transition-show="none" transition-hide="none" :transition-duration="0"
+              <q-select v-model="_typeValue2" :disable="disable" outlined dense no-error-icon hide-bottom-space
+                emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0"
                 :label="t('item.selectSummoning')" dropdown-icon="img:/images/icons/dropdown.svg"
                 :options="store.summonings" popup-content-class="scroll bordered limit-select" options-dense
                 @update:model-value="updateTypeValue2">
@@ -435,7 +437,7 @@ defineExpose({ scrollEnd })
           </q-item-section>
           <q-item-section>
             <q-item-label>
-              <q-skeleton type="text" width="20%" />
+              <q-skeleton type="rect" width="20%" />
             </q-item-label>
           </q-item-section>
         </q-item>
@@ -450,7 +452,7 @@ defineExpose({ scrollEnd })
           </q-item-section>
           <q-item-section>
             <q-item-label>
-              <q-skeleton type="text" width="65%" />
+              <q-skeleton type="rect" width="65%" :height="$q.screen.lt.sm ? '14px' : '18px'" />
             </q-item-label>
           </q-item-section>
         </q-item>
@@ -459,9 +461,9 @@ defineExpose({ scrollEnd })
         <div v-show="tierable" class="row items-center q-gutter-x-sm">
           <D4Counter v-model="_power" :label="t('item.power')" :max="9999" max-width="110px" allow-zero no-button
             :disable="disable" @update:model-value="update" />
-          <D4Counter v-if="upgradeLimit" v-model="_upgrade" :label="t('item.upgrade', { u: _upgrade, ul: upgradeLimit })"
-            max-width="110px" :max="upgradeLimit" allow-zero :no-button="$q.screen.lt.sm" :disable="disable"
-            @update:model-value="update" />
+          <D4Counter v-if="upgradeLimit" v-model="_upgrade"
+            :label="t('item.upgrade', { u: _upgrade, ul: upgradeLimit })" max-width="110px" :max="upgradeLimit"
+            allow-zero :no-button="$q.screen.lt.sm" :disable="disable" @update:model-value="update" />
         </div>
         <D4Counter v-show="!noLevel" v-model="_level" class="col row justify-end" :label="t('item.level')"
           max-width="110px" :max="999" no-button :disable="disable || !qualifiable || noLevel"
@@ -501,7 +503,7 @@ defineExpose({ scrollEnd })
                     </q-item-section>
                     <q-item-section>
                       <q-item-label>
-                        <q-skeleton type="text" width="65%" />
+                        <q-skeleton type="rect" width="65%" :height="$q.screen.lt.sm ? '14px' : '18px'" />
                       </q-item-label>
                     </q-item-section>
                   </q-item>
@@ -522,7 +524,7 @@ defineExpose({ scrollEnd })
                     </q-item-section>
                     <q-item-section>
                       <q-item-label>
-                        <q-skeleton type="text" width="65%" />
+                        <q-skeleton type="rect" width="65%" :height="$q.screen.lt.sm ? '14px' : '18px'" />
                       </q-item-label>
                     </q-item-section>
                   </q-item>
@@ -543,7 +545,7 @@ defineExpose({ scrollEnd })
                     </q-item-section>
                     <q-item-section>
                       <q-item-label>
-                        <q-skeleton type="text" width="65%" />
+                        <q-skeleton type="rect" width="65%" :height="$q.screen.lt.sm ? '14px' : '18px'" />
                       </q-item-label>
                     </q-item-section>
                   </q-item>
@@ -575,7 +577,7 @@ defineExpose({ scrollEnd })
                       </q-item-section>
                       <q-item-section>
                         <q-item-label>
-                          <q-skeleton type="text" width="65%" />
+                          <q-skeleton type="rect" width="65%" :height="$q.screen.lt.sm ? '14px' : '18px'" />
                         </q-item-label>
                       </q-item-section>
                     </q-item>
@@ -596,7 +598,7 @@ defineExpose({ scrollEnd })
                       </q-item-section>
                       <q-item-section>
                         <q-item-label>
-                          <q-skeleton type="text" width="65%" />
+                          <q-skeleton type="rect" width="65%" :height="$q.screen.lt.sm ? '14px' : '18px'" />
                         </q-item-label>
                       </q-item-section>
                     </q-item>
@@ -617,7 +619,7 @@ defineExpose({ scrollEnd })
                       </q-item-section>
                       <q-item-section>
                         <q-item-label>
-                          <q-skeleton type="text" width="65%" />
+                          <q-skeleton type="rect" width="65%" :height="$q.screen.lt.sm ? '14px' : '18px'" />
                         </q-item-label>
                       </q-item-section>
                     </q-item>
@@ -633,7 +635,8 @@ defineExpose({ scrollEnd })
           <q-card-section v-if="attrMobile.show">
             <q-btn no-caps :label="t('attribute.close')" :aria-label="t('attribute.close')"
               class="lt-md attribute full-width" size="lg" @click="attrMobile.show = false">
-              <img width="24" height="24" class="icon q-ml-sm" src="/images/icons/shrink.svg" alt="Tradurs Expand Icon" />
+              <img width="24" height="24" class="icon q-ml-sm" src="/images/icons/shrink.svg"
+                alt="Tradurs Expand Icon" />
             </q-btn>
           </q-card-section>
         </q-card>
@@ -656,9 +659,12 @@ defineExpose({ scrollEnd })
         <div class="user-area row justify-end">
           <div class="item-image">
             <q-img v-show="!loading" class="item-image" :src="imgSrc" alt="Tradurs Item Image" />
+            <div v-show="loading" class="fit row justify-center items-center">
+              <q-skeleton type="circle" width="60px" height="60px" />
+            </div>
           </div>
           <div class="column justify-center items-end" :class="{ 'q-gutter-xs': !$q.screen.lt.sm || loading }">
-            <q-skeleton v-show="loading" width="50px" :height="$q.screen.lt.sm ? '16px' : '18px'" />
+            <q-skeleton v-show="loading" width="100%" :height="$q.screen.lt.sm ? '16px' : '18px'" />
             <div v-show="!loading" class="row items-center q-gutter-x-sm">
               <template v-if="!data.forDisplay && !history">
                 <div v-if="['000', '002', '003'].includes(data.statusCode)" class="date" :class="remainColor">
@@ -683,7 +689,8 @@ defineExpose({ scrollEnd })
               :progress="loading" :authorized="data.authorized" @update="emit('update-only', data.itemId)" />
           </div>
         </div>
-        <div class="column items-start q-pa-sm relative-position" :class="{ 'q-gutter-xs': !$q.screen.lt.sm || loading }">
+        <div class="column items-start q-pa-sm relative-position"
+          :class="{ 'q-gutter-xs': !$q.screen.lt.sm || loading }">
           <div v-show="!loading" class="hardcore-ladder row justify-end items-center">
             <div class="text-secondary">{{ data.hardcore ? '&#10074;' : '' }}</div>
             <div class="text-primary">{{ data.ladder ? '&#10074;' : '' }}</div>
@@ -695,7 +702,8 @@ defineExpose({ scrollEnd })
             <div v-show="!loading" class="row items-center q-gutter-xs q-mb-xs no-wrap">
               <!-- <q-checkbox v-if="selectable" v-model="data.selected" dense :size="$q.screen.lt.sm ? 'xs' : 'sm'" /> -->
               <div v-show="data.itemTypeValue1 === 'rune'" class="row items-center q-gutter-sm">
-                <div class="name">{{ (filterRunesByType().find(r => r.value === data.itemTypeValue1) || {}).label }}</div>
+                <div class="name">{{ (filterRunesByType().find(r => r.value === data.itemTypeValue1) || {}).label }}
+                </div>
                 <div>{{ findRuneType(findRune(data.itemTypeValue1)?.type)?.label }}
                 </div>
               </div>
@@ -727,25 +735,25 @@ defineExpose({ scrollEnd })
                       :dense="$q.screen.lt.sm" clickable @click="$emit('favorite', data.itemId, !data.favorite)">
                       <q-item-section side>
                         <img :class="{ 'invert': !$q.dark.isActive }"
-                          :src="data.favorite ? '/images/icons/unfavorite.svg' : '/images/icons/favorite.svg'" width="24"
-                          height="24" alt="Tradurs Favorite Icon" />
+                          :src="data.favorite ? '/images/icons/unfavorite.svg' : '/images/icons/favorite.svg'"
+                          width="24" height="24" alt="Tradurs Favorite Icon" />
                       </q-item-section>
                       <q-item-section>{{ data.favorite ? t('btn.unfavorite') : t('btn.favorite')
-                      }}</q-item-section>
+                        }}</q-item-section>
                     </q-item>
                     <q-item v-if="as.signed" :class="[$q.dark.isActive ? 'text-grey-9' : 'text-grey-4']"
                       :dense="$q.screen.lt.sm" clickable @click="$emit('copy', data.itemId)">
                       <q-item-section side>
-                        <img :class="{ 'invert': !$q.dark.isActive }" src="/images/icons/copy.svg" width="24" height="24"
-                          alt="Tradurs Copy Icon" />
+                        <img :class="{ 'invert': !$q.dark.isActive }" src="/images/icons/copy.svg" width="24"
+                          height="24" alt="Tradurs Copy Icon" />
                       </q-item-section>
                       <q-item-section>{{ t('btn.copy') }}</q-item-section>
                     </q-item>
-                    <q-item :class="[$q.dark.isActive ? 'text-grey-9' : 'text-grey-4']" :dense="$q.screen.lt.sm" clickable
-                      @click="copy">
+                    <q-item :class="[$q.dark.isActive ? 'text-grey-9' : 'text-grey-4']" :dense="$q.screen.lt.sm"
+                      clickable @click="copy">
                       <q-item-section side>
-                        <img :class="{ 'invert': !$q.dark.isActive }" src="/images/icons/share.svg" width="24" height="24"
-                          alt="Tradurs Share Icon" />
+                        <img :class="{ 'invert': !$q.dark.isActive }" src="/images/icons/share.svg" width="24"
+                          height="24" alt="Tradurs Share Icon" />
                       </q-item-section>
                       <q-item-section>{{ t('btn.share') }}</q-item-section>
                     </q-item>
@@ -766,6 +774,9 @@ defineExpose({ scrollEnd })
           </div>
           <div v-show="data.upgrade > 0" class="stress">
             {{ t('item.upgrade', { u: data.upgrade, ul: upgradeLimit }) }}
+          </div>
+          <div v-show="loading">
+            <q-skeleton width="130px" :height="$q.screen.lt.sm ? '16px' : '18px'" />
           </div>
         </div>
       </q-card-section>
@@ -817,7 +828,7 @@ defineExpose({ scrollEnd })
             </q-item-section>
             <q-item-section>
               <q-item-label>
-                <q-skeleton type="text" width="20%" height="24px" />
+                <q-skeleton type="rect" width="20%" height="24px" />
               </q-item-label>
             </q-item-section>
           </q-item>
@@ -834,7 +845,7 @@ defineExpose({ scrollEnd })
             </q-item-section>
             <q-item-section>
               <q-item-label>
-                <q-skeleton type="text" width="65%" />
+                <q-skeleton type="rect" width="65%" :height="$q.screen.lt.sm ? '14px' : '18px'" />
               </q-item-label>
             </q-item-section>
           </q-item>
@@ -854,7 +865,7 @@ defineExpose({ scrollEnd })
             </q-item-section>
             <q-item-section>
               <q-item-label>
-                <q-skeleton type="text" width="65%" />
+                <q-skeleton type="rect" width="65%" :height="$q.screen.lt.sm ? '14px' : '18px'" />
               </q-item-label>
             </q-item-section>
           </q-item>
@@ -869,16 +880,20 @@ defineExpose({ scrollEnd })
         class="q-my-lg"></q-card-section>
       <q-card-section class="row justify-end">
         <div class="q-px-sm">
-          <q-item v-show="loading" v-for="c in 3" :key="c" style="min-height:10px;padding:3px">
+          <q-item v-show="loading" v-for="c in 2" :key="c" style="min-height:10px;padding:3px">
             <q-item-section>
-              <q-item-label>
-                <q-skeleton type="text" width="65%" />
+              <q-item-label class="row justify-end">
+                <q-skeleton type="rect" width="85%" :height="$q.screen.lt.sm ? '14px' : '18px'" />
               </q-item-label>
             </q-item-section>
           </q-item>
-          <div v-show="data.itemTypeValue1 !== 'summoning'" class="column" :class="{ 'q-gutter-y-xs': !$q.screen.lt.sm }">
+          <div v-show="data.itemTypeValue1 !== 'summoning'" class="column"
+            :class="{ 'q-gutter-y-xs': !$q.screen.lt.sm }">
             <div class="text-right q-pt-sm">
-              {{ t('item.level') }}: {{ data.level }}
+              <template v-if="!loading">
+                {{ t('item.level') }}: {{ data.level }}
+              </template>
+              <q-skeleton v-else type="rect" width="100px" :height="$q.screen.lt.sm ? '14px' : '18px'" />
             </div>
             <slot v-if="slots.restrictions && !loading && data.restrictions.length > 0" name="restrictions">
             </slot>
@@ -890,7 +905,7 @@ defineExpose({ scrollEnd })
       </q-card-section>
       <D4Separator v-show="slots.actions" />
       <q-card-section v-if="slots.actions">
-        <slot v-if="!loading" name="actions"></slot>
+        <slot name="actions"></slot>
       </q-card-section>
     </div>
     <slot name="more" :loading="loading"></slot>

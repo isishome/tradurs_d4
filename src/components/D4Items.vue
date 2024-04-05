@@ -661,7 +661,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
   <div class="col-12" :style="`max-width:${width}px`">
     <div :class="$q.screen.lt.sm ? 'q-gutter-y-xl' : 'q-gutter-y-xxl'">
       <div v-if="rewardItem" class="item relative-position reward" :style="`min-height:${height as number - ($q.screen.lt.sm ? 50 : 0)}px;height:${rewardItem.expanded ? '100%' :
-    `${height as number - ($q.screen.lt.sm ? 50 : 0)}px`}`" data-itemid="reward-item">
+        `${height as number - ($q.screen.lt.sm ? 50 : 0)}px`}`" data-itemid="reward-item">
         <div>
           <D4Item :data="rewardItem" :loading="rewardItem.loading" @favorite="favorite" @copy="copy"
             @update-only="(val: string) => emit('update-only', val)">
@@ -702,9 +702,9 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
           </D4Item>
         </div>
       </div>
-      <div v-for="item, idx in (items as Array<Item>)" :key="item.itemId" :data-itemid="item.itemId" class="item"
-        :style="`min-height:${itemHeight}px;height:${item.expanded ? '100%' :
-    `${itemHeight}px`}`">
+      <div v-for="item, idx in (items as Array<Item>)" :key="item.itemId" :data-itemid="item.itemId"
+        class="item relative-position" :style="`min-height:${itemHeight}px;height:${item.expanded ? '100%' :
+          `${itemHeight}px`}`">
         <D4Item :data="item" :loading="item.loading" @favorite="favorite" @copy="copy"
           @update-only="(val: string) => emit('update-only', val)">
           <template #top-right>
@@ -921,7 +921,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                       :disable="!['000', '002'].includes(activatedItem.statusCode) || activatedItem.offers > 0 || disable"
                       clickable @click="statusItem">
                       <q-item-section>{{ activatedItem.statusCode === '002' ? t('btn.resume') :
-    t('btn.suspend')
+                        t('btn.suspend')
                         }}</q-item-section>
                     </q-item>
                     <q-item clickable :disable="activatedItem.offers > 0 || disable" @click="deleteConfirm()">
@@ -1014,7 +1014,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
               </div>
             </div>
             <div v-show="offers.length === 0" class="absolute-center">{{
-    t('offer.noOffer') }}</div>
+              t('offer.noOffer') }}</div>
           </div>
         </q-card-section>
       </template>
@@ -1035,7 +1035,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
   </div>
 </template>
 <style scoped>
-.item:deep(>div) {
+.item {
   height: inherit;
 }
 
@@ -1065,7 +1065,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
   top: -6px;
 }
 
-.body--light .item:deep(>div:after) {
+.body--light .item:after {
   content: '';
   position: absolute;
   z-index: -1;

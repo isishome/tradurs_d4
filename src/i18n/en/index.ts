@@ -199,7 +199,8 @@ export default {
     gold: 'Gold',
     url: 'Item URL',
     favorites: 'Favorite Items',
-    forDisplay: 'For Display'
+    forDisplay: 'For Display',
+    expanded: 'Always expand item'
   },
   price: {
     title: 'Price',

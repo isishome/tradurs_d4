@@ -21,6 +21,8 @@ export default route(function ({ store }/* { store, ssrContext } */) {
     scrollBehavior(to, from, savedPosition) {
       if (!!history.state.noScrollTop)
         return
+      else if (!!history.state.scrollTop)
+        return { left: 0, top: 0 }
 
       return savedPosition || { left: 0, top: 0 }
     },

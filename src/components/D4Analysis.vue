@@ -30,7 +30,7 @@ const { t } = useI18n({ useScope: 'global' })
 const is = useItemStore()
 
 const lang: string = route.params.lang as string || 'ko'
-const similarRate = .7
+const similarRate = .8
 const phase = is.analyze.lang[lang as keyof typeof is.analyze.lang]
 const timeout = 400
 const showProgress = ref<boolean>(false)
@@ -294,7 +294,7 @@ const checkAttributes = (tArray: string[], index: number, id: number, label: str
 
   let l = 0
   let prevSimilar = 0
-  while (l < 4) {
+  while (l < 5) {
     const text = tArray.slice(index, index + l + 1).join(' ').replace(/\([^\)]*\)?/g, '').replace(new RegExp(`[^${phase}]`, 'g'), '')
     const similar = similarity(text, label)
 
@@ -302,12 +302,14 @@ const checkAttributes = (tArray: string[], index: number, id: number, label: str
       result.push({ id, length: l, rate: similar })
       l++
 
-      if (text.length < label.length)
+      if (text.length < label.length) {
+        prevSimilar = similar
         continue
+      }
       else
         break
     }
-    else if ((similar >= .2 || similar > prevSimilar) && text.length < label.length) {
+    else if (similar > prevSimilar && text.length < label.length) {
       prevSimilar = similar
       l++
     }
@@ -330,7 +332,7 @@ const checkProperties = (tArray: string[]) => {
       let cut = 0
       for (let pi = 0; pi < findClass.properties.length; pi++) {
         const pid = findClass.properties[pi]
-        const propertyLabel = is.findProperty(pid)?.label.replace(/{x}/g, '').replace(/[ \+\-%\[\]\:]/g, '') as string
+        const propertyLabel = is.findProperty(pid)?.label.replace(/{x}/g, '').replace(/[ \+\-%\[\]\:,0-9]/g, '').replace(/\([a-zA-Z가-힣 ]*\)/g, '') as string
 
         for (let i = 0; i < tArray.length; i++) {
           const result = checkAttributes(tArray, i + cut, pid, propertyLabel)
@@ -387,7 +389,7 @@ const checkAffixes = (tArray: string[]) => {
     const matchAttribute: Array<ISimilar> = []
 
     for (const affix of is.availableAffixes()) {
-      const affixLabel = affix.label.replace(/{x}/g, '').replace(/[ \+\-%\:]/g, '') as string
+      const affixLabel = affix.label.replace(/{x}/g, '').replace(/[ \+\-%\:,0-9]/g, '').replace(/\([a-zA-Z가-힣 ]*\)/g, '') as string
 
       for (let i = 0; i < tArray.length; i++) {
         const result = checkAttributes(tArray, i, affix.value as number, affixLabel)
@@ -438,7 +440,7 @@ const checkRestrictions = () => {
     const matchAttribute: Array<ISimilar> = []
 
     for (const restriction of is.restrictions.data) {
-      const restrictLabel = restriction.label.replace(/{x}/g, '').replace(/[ \+\-%\[\]\:]/g, '') as string
+      const restrictLabel = restriction.label.replace(/{x}/g, '').replace(/[ \+\-%\[\]\:,0-9]/g, '').replace(/\([a-zA-Z가-힣 ]*\)/g, '') as string
 
       for (let i = 0; i < restrictionsPhase.length; i++) {
         const result = checkAttributes(restrictionsPhase, i, restriction.value as number, restrictLabel)

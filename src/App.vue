@@ -86,12 +86,12 @@ useMeta(() => {
 })
 
 const notice = reactive<{ open: boolean, close: boolean }>({
-  open: false,//!$q.cookies.has('d4.update.20240130'),
+  open: !$q.cookies.has('d4.update.20240405'),
   close: false
 })
 
 const close = () => {
-  $q.cookies.set('d4.update.20240130', 'confirm', { expires: 1, path: '/' })
+  $q.cookies.set('d4.update.20240405', 'confirm', { expires: 1, path: '/' })
   notice.open = false
 }
 
@@ -130,7 +130,7 @@ onMounted(() => {
       <q-card-section class="row no-wrap items-center justify-between">
         <div>
           <div class="text-weight-bold" :class="$q.screen.gt.sm ? 'q-pa-md text-h6' : 'q-pa-sm text-body2'">{{
-    t('notice.title') }}</div>
+            t('notice.title') }}</div>
         </div>
         <q-btn unelevated aria-label="Tradurs Close Button" class="no-hover icon" :ripple="false"
           @click="notice.open = false">
@@ -143,9 +143,9 @@ onMounted(() => {
         <div class="q-pa-md column q-gutter-y-sm" :class="$q.screen.gt.sm ? 'text-body2' : 'text-caption'">
           <div class="text-area">{{ t('notice.top') }}</div>
           <div>
-            <template v-for="(c, i) in  (tm('notice.contents') as Array<IParagraph>) " :key="i">
+            <template v-for="(c, i) in (tm('notice.contents') as Array<IParagraph>) " :key="i">
               <div v-if="c.type === 'head'" :class="['q-pt-md q-pb-sm text-subtitle2 text-primary', c.class]">{{
-    c.value }}
+                c.value }}
               </div>
               <div v-else-if="c.type === 'list'" :class="['list', c.class]">{{ c.value }}</div>
               <div v-else-if="c.type === 'image'">

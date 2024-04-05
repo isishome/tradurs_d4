@@ -6,6 +6,7 @@ import { ref, computed, defineAsyncComponent, onMounted, watch, reactive } from 
 import { useI18n } from 'vue-i18n'
 import { useQuasar, uid } from 'quasar'
 import { Item, IPrice } from 'src/types/item'
+import { scrollPos } from 'src/common'
 
 const D4Items = defineAsyncComponent(() => import('components/D4Items.vue'))
 
@@ -38,6 +39,7 @@ const over = computed(() => is.itemPage.over)
 const more = computed(() => is.itemPage.more)
 const selectable = computed(() => is.filter.mine)
 const sortOptions = reactive<Array<{ value: string, label: string }>>(tm('sort.options'))
+const isExpanded = ref($q.cookies.has('d4.expanded') && $q.cookies.get('d4.expanded') === 'true')
 
 const updateSort = (sortValue: Sort) => {
   is.sort = sortValue
@@ -46,9 +48,9 @@ const updateSort = (sortValue: Sort) => {
 
 const reload = () => {
   if (page.value === 1)
-    getList()
+    getList(true)
   else
-    router.push({ name: 'tradeList', params: { lang: route.params.lang }, query: { page: 1 } })
+    router.push({ name: 'tradeList', params: { lang: route.params.lang }, query: { page: 1 }, state: { scrollTop: true } })
 }
 
 
@@ -177,7 +179,7 @@ const create = (item?: Item) => {
   itemsRef.value?.create(item)
 }
 
-const getList = () => {
+const getList = async (scrollTop?: boolean) => {
   is.filter.loading = true
   disable.value = true
 
@@ -186,6 +188,7 @@ const getList = () => {
       const item = new Item()
       item.quality = 'normal'
       item.loading = true
+      item.expanded = isExpanded.value
       item.user.loading = true
       item.price.loading = true
       return item
@@ -211,6 +214,7 @@ const getList = () => {
         }
       }
       items.value.push(...result)
+      items.value.forEach(i => i.expanded = isExpanded.value)
 
     }).catch(() => {
       items.value = []
@@ -219,6 +223,8 @@ const getList = () => {
       disable.value = false
       setTimeout(() => {
         completeList.value = true
+        if (!!scrollTop)
+          scrollPos()
       }, 100)
     })
 
@@ -263,6 +269,11 @@ const parseOfferPrice = (priceStr?: string) => {
 
 const move = (val: number) => {
   router.push({ name: 'tradeList', params: { lang: route.params.lang }, query: { page: page.value + val } })
+}
+
+const updateExpanded = (val: boolean) => {
+  $q.cookies.set('d4.expanded', val.toString(), { path: '/' })
+  items.value.forEach(i => i.expanded = val)
 }
 
 watch(() => route.query.page, (val, old) => {
@@ -334,7 +345,9 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="row justify-end items-center absolute full-width" style="transform: translateY(-100%);">
+  <div class="row justify-between items-center absolute full-width" style="transform: translateY(-100%);">
+    <q-checkbox v-model="isExpanded" :label="t('item.expanded')" dense size="xs" class="text-caption"
+      @update:model-value="updateExpanded" />
     <q-select v-model="is.sort" :disable="disable" dense no-error-icon hide-bottom-space emit-value map-options
       options-dense borderless transition-show="none" transition-hide="none" :transition-duration="0"
       :options="sortOptions" menu-anchor="bottom end" menu-self="top end" dropdown-icon="img:/images/icons/dropdown.svg"

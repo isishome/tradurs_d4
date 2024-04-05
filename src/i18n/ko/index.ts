@@ -199,7 +199,8 @@ export default {
     gold: '금화',
     url: '아이템 주소',
     favorites: '관심 아이템',
-    forDisplay: '전시용'
+    forDisplay: '전시용',
+    expanded: '항상 아이템 확장'
   },
   price: {
     title: '가격',
@@ -345,11 +346,26 @@ export default {
   },
   notice: {
     title: '업데이트 안내',
-    top: '안녕하세요. 트레이더스입니다.\n\n추가된 사항 안내입니다.',
+    top: '안녕하세요. 트레이더스입니다.\n\n업데이트 사항 안내입니다.',
     contents: [
-      { type: 'head', value: '◆ 추가 사항' },
-      { type: 'image', value: '/images/notice/20240130/malphas.webp' },
-      { type: 'list', value: '소비용품 > 소환 재료에 화성암 핵 및 말파스 재료 항목이 추가됩니다.' },
+      { type: 'head', value: '◆ 업데이트 사항' },
+      { type: 'list', value: '아이템 목록 우측 상단에 아이템 정렬 기능이 추가되었습니다' },
+      { type: 'space' },
+      { type: 'image', value: '/images/notice/20240405/sort.webp' },
+      { type: 'space' },
+      { type: 'space' },
+      { type: 'list', value: '아이템 목록 좌측 상단에 \'항상 아이템 확장\' 기능이 추가되었습니다' },
+      { type: 'list', value: '활성화된 경우 아이템 모든 정보가 항상 노출됩니다.' },
+      { type: 'space' },
+      { type: 'image', value: '/images/notice/20240405/expand.webp' },
+      { type: 'space' },
+      { type: 'space' },
+      { type: 'list', value: '시즌 4 대비 전설, 고유 아이템의 고유 특성 및 옵션 데이터가 업데이트 되었습니다.' },
+      { type: 'list', value: '아이템 입력 시 잘못된 속성으로 인해 아이템이 등록되지 않는 문제가 수정되었습니다.' },
+      { type: 'list', value: '이미지 분석 관련 API와 인식률이 향상되었습니다.' },
+      { type: 'space' },
+      { type: 'image', value: '/images/notice/20240405/unique.webp' },
+      { type: 'image', value: '/images/notice/20240405/legendary.webp' },
       { type: 'space' }
     ],
     bottom: '감사합니다.',
