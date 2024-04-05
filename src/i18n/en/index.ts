@@ -200,7 +200,7 @@ export default {
     url: 'Item URL',
     favorites: 'Favorite Items',
     forDisplay: 'For Display',
-    expanded: 'Always expand item'
+    expanded: 'Always expand items'
   },
   price: {
     title: 'Price',
@@ -346,11 +346,26 @@ export default {
   },
   notice: {
     title: 'Update information',
-    top: 'Hello. This is Tradurs.\n\nInformation on additions.',
+    top: 'Hello. This is Traders.\n\nThis is an update information.',
     contents: [
-      { type: 'head', value: '◆ Additional information' },
-      { type: 'image', value: '/images/notice/20240130/malphas.webp' },
-      { type: 'list', value: 'Added the Igneous Core and Set of Malphas Mats items to Consumables > Summoning Materials.' },
+      { type: 'head', value: '◆ Update details' },
+      { type: 'list', value: 'An item sorting function has been added to the top right of the item list' },
+      { type: 'space' },
+      { type: 'image', value: '/images/notice/20240405/sort.webp' },
+      { type: 'space' },
+      { type: 'space' },
+      { type: 'list', value: 'The \'Always expand item\' function has been added to the top left of the item list' },
+      { type: 'list', value: 'If activated, all item information is always exposed.' },
+      { type: 'space' },
+      { type: 'image', value: '/images/notice/20240405/expand.webp' },
+      { type: 'space' },
+      { type: 'space' },
+      { type: 'list', value: 'The unique characteristics and affixes data of legendary and unique items have been updated compared to Season 4.' },
+      { type: 'list', value: 'The issue where items were not registered due to incorrect properties when entering items has been fixed.' },
+      { type: 'list', value: 'Image analysis-related API updates and item information recognition rate improved.' },
+      { type: 'space' },
+      { type: 'image', value: '/images/notice/20240405/unique.webp' },
+      { type: 'image', value: '/images/notice/20240405/legendary.webp' },
       { type: 'space' }
     ],
     bottom: 'Thank you',

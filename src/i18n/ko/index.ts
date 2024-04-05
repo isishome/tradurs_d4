@@ -362,7 +362,7 @@ export default {
       { type: 'space' },
       { type: 'list', value: '시즌 4 대비 전설, 고유 아이템의 고유 특성 및 옵션 데이터가 업데이트 되었습니다.' },
       { type: 'list', value: '아이템 입력 시 잘못된 속성으로 인해 아이템이 등록되지 않는 문제가 수정되었습니다.' },
-      { type: 'list', value: '이미지 분석 관련 API와 인식률이 향상되었습니다.' },
+      { type: 'list', value: '이미지 분석 관련 API 업데이트 및 아이템 정보 인식률이 향상되었습니다.' },
       { type: 'space' },
       { type: 'image', value: '/images/notice/20240405/unique.webp' },
       { type: 'image', value: '/images/notice/20240405/legendary.webp' },
