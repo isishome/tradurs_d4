@@ -138,6 +138,7 @@ const isMySpace = computed(() => ['messages', 'blocks', 'history'].includes(rout
 
 // about screen size
 const size = computed(() => $q.screen.width < 728 ? 'display:inline-block;width:300px;max-height:100px;' : 'display:inline-block;width:728px;height:90px;')
+const sizeBottom = computed(() => $q.screen.width < 300 ? 'display:inline-block;width:250px;height:250px;' : $q.screen.width < 336 ? 'display:inline-block;width:300px;height:250px;' : $q.screen.width < 468 ? 'display:inline-block;width:336px;height:280px;' : $q.screen.width < 728 ? 'display:inline-block;width:468px;height:60px;' : 'display:inline-block;width:728px;height:90px;')
 
 // party
 const availableParty = computed(() => as.signed && ps.joined && ps.minimum)
@@ -555,9 +556,8 @@ watch(() => ps.filter.name, (val) => {
             <div class="q-py-xl"></div>
             <div v-if="$q.screen.width <= 1439" class="row justify-center">
               <div class="full-width">
-                <Adsense ref="bottomAdRef" style="display:block" data-ad-client="ca-pub-5110777286519562"
-                  data-ad-slot="6163086381" :data-adtest="!prod" data-ad-format="auto" data-full-width-responsive="true"
-                  :key="`bottom-${bottomAdKey}`" />
+                <Adsense ref="bottomAdRef" :style="sizeBottom" data-ad-client="ca-pub-5110777286519562"
+                  data-ad-slot="6163086381" :data-adtest="!prod" :key="`bottom-${bottomAdKey}`" />
               </div>
             </div>
             <div class="q-py-md"></div>

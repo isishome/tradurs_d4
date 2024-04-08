@@ -236,7 +236,7 @@ const getList = async (scrollTop?: boolean) => {
       const pickItemId = awardsPick[Math.floor(Math.random() * awardsPick.length)].itemId.toString()
       is.getItems(1, pickItemId)
         .then((pick: Array<Item>) => {
-          rewardItem.value = pick.map((p: Item) => ({ ...p, reward: true }))?.[0]
+          rewardItem.value = pick.map((p: Item) => ({ ...p, reward: true, expanded: isExpanded.value }))?.[0]
         })
     }
   }
@@ -274,6 +274,9 @@ const move = (val: number) => {
 const updateExpanded = (val: boolean) => {
   $q.cookies.set('d4.expanded', val.toString(), { path: '/' })
   items.value.forEach(i => i.expanded = val)
+
+  if (rewardItem.value)
+    rewardItem.value.expanded = val
 }
 
 watch(() => route.query.page, (val, old) => {

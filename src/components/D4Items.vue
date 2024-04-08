@@ -660,51 +660,49 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
 <template>
   <div class="col-12" :style="`max-width:${width}px`">
     <div :class="$q.screen.lt.sm ? 'q-gutter-y-xl' : 'q-gutter-y-xxl'">
-      <div v-if="rewardItem" class="item relative-position reward" :style="`min-height:${height as number - ($q.screen.lt.sm ? 50 : 0)}px;height:${rewardItem.expanded ? '100%' :
-        `${height as number - ($q.screen.lt.sm ? 50 : 0)}px`}`" data-itemid="reward-item">
-        <div>
-          <D4Item :data="rewardItem" :loading="rewardItem.loading" @favorite="favorite" @copy="copy"
-            @update-only="(val: string) => emit('update-only', val)">
-            <template #top-right>
-            </template>
-            <template v-if="requestProperties > 0" #properties>
-              <D4Property v-for="property in rewardItem.properties" :key="property.valueId" :data="property" />
-            </template>
-            <template v-if="requestAffixes > 0" #affixes>
-              <D4Affix v-for="affix in rewardItem.affixes" :key="affix.valueId" :data="affix" />
-            </template>
-            <template v-if="requestRestrictions > 0" #restrictions>
-              <D4Restriction v-for="restriction in rewardItem.restrictions" :key="restriction.valueId"
-                :data="restriction" />
-            </template>
-            <template #actions>
-              <div v-show="rewardItem.expanded" class="row justify-between items-center q-pt-lg">
-                <div>
-                  <D4Btn v-if="rewardItem.authorized && !['001', '004'].includes(rewardItem.statusCode)"
-                    :label="t('btn.edit')" color="var(--q-secondary)" :loading="rewardItem.loading"
-                    @click="editItem(rewardItem as Item)" />
-                </div>
-                <div>
-                  <D4Btn
-                    :label="rewardItem.authorized || !as.signed || rewardItem.statusCode !== '000' ? t('offer.list') : t('btn.makeOffer')"
-                    :loading="rewardItem.loading" :disable="rewardItem.forDisplay"
-                    @click="openMakingOffer(rewardItem as Item)" />
-                </div>
+      <div v-if="rewardItem" class="item relative-position reward" :style="`min-height:${itemHeight}px;height:${rewardItem.expanded ? '100%' :
+    `${itemHeight}px`}`" data-itemid="reward-item">
+        <D4Item :data="rewardItem" :loading="rewardItem.loading" @favorite="favorite" @copy="copy"
+          @update-only="(val: string) => emit('update-only', val)">
+          <template #top-right>
+          </template>
+          <template v-if="requestProperties > 0" #properties>
+            <D4Property v-for="property in rewardItem.properties" :key="property.valueId" :data="property" />
+          </template>
+          <template v-if="requestAffixes > 0" #affixes>
+            <D4Affix v-for="affix in rewardItem.affixes" :key="affix.valueId" :data="affix" />
+          </template>
+          <template v-if="requestRestrictions > 0" #restrictions>
+            <D4Restriction v-for="restriction in rewardItem.restrictions" :key="restriction.valueId"
+              :data="restriction" />
+          </template>
+          <template #actions>
+            <div v-show="rewardItem.expanded" class="row justify-between items-center q-pt-lg">
+              <div>
+                <D4Btn v-if="rewardItem.authorized && !['001', '004'].includes(rewardItem.statusCode)"
+                  :label="t('btn.edit')" color="var(--q-secondary)" :loading="rewardItem.loading"
+                  @click="editItem(rewardItem as Item)" />
               </div>
-            </template>
-            <template #more="{ loading }">
-              <q-btn v-if="!rewardItem.expanded && !loading" flat aria-label="Tradurs More Button" text-color="black"
-                class="more no-hover full-width" padding="10px" @click="expanded(rewardItem as Item, true)">
-                <img class="icon" :width="$q.screen.lt.sm ? 24 : 36" :height="$q.screen.lt.sm ? 24 : 36"
-                  src="/images/icons/more.svg" alt="Tradurs More Icon" />
-              </q-btn>
-            </template>
-          </D4Item>
-        </div>
+              <div>
+                <D4Btn
+                  :label="rewardItem.authorized || !as.signed || rewardItem.statusCode !== '000' ? t('offer.list') : t('btn.makeOffer')"
+                  :loading="rewardItem.loading" :disable="rewardItem.forDisplay"
+                  @click="openMakingOffer(rewardItem as Item)" />
+              </div>
+            </div>
+          </template>
+          <template #more="{ loading }">
+            <q-btn v-if="!rewardItem.expanded && !loading" flat aria-label="Tradurs More Button" text-color="black"
+              class="more no-hover full-width" padding="10px" @click="expanded(rewardItem as Item, true)">
+              <img class="icon" :width="$q.screen.lt.sm ? 24 : 36" :height="$q.screen.lt.sm ? 24 : 36"
+                src="/images/icons/more.svg" alt="Tradurs More Icon" />
+            </q-btn>
+          </template>
+        </D4Item>
       </div>
       <div v-for="item, idx in (items as Array<Item>)" :key="item.itemId" :data-itemid="item.itemId"
         class="item relative-position" :style="`min-height:${itemHeight}px;height:${item.expanded ? '100%' :
-          `${itemHeight}px`}`">
+    `${itemHeight}px`}`">
         <D4Item :data="item" :loading="item.loading" @favorite="favorite" @copy="copy"
           @update-only="(val: string) => emit('update-only', val)">
           <template #top-right>
@@ -921,7 +919,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                       :disable="!['000', '002'].includes(activatedItem.statusCode) || activatedItem.offers > 0 || disable"
                       clickable @click="statusItem">
                       <q-item-section>{{ activatedItem.statusCode === '002' ? t('btn.resume') :
-                        t('btn.suspend')
+    t('btn.suspend')
                         }}</q-item-section>
                     </q-item>
                     <q-item clickable :disable="activatedItem.offers > 0 || disable" @click="deleteConfirm()">
@@ -1014,7 +1012,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
               </div>
             </div>
             <div v-show="offers.length === 0" class="absolute-center">{{
-              t('offer.noOffer') }}</div>
+    t('offer.noOffer') }}</div>
           </div>
         </q-card-section>
       </template>
