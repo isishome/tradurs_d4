@@ -555,10 +555,8 @@ watch(() => ps.filter.name, (val) => {
             </div>
             <div class="q-py-xl"></div>
             <div v-if="$q.screen.width <= 1439" class="row justify-center">
-              <div class="full-width">
-                <Adsense ref="bottomAdRef" :style="sizeBottom" data-ad-client="ca-pub-5110777286519562"
-                  data-ad-slot="6163086381" :data-adtest="!prod" :key="`bottom-${bottomAdKey}`" />
-              </div>
+              <Adsense ref="bottomAdRef" :style="sizeBottom" data-ad-client="ca-pub-5110777286519562"
+                data-ad-slot="6163086381" :data-adtest="!prod" :key="`bottom-${bottomAdKey}`" />
             </div>
             <div class="q-py-md"></div>
             <q-separator />
