@@ -86,7 +86,7 @@ useMeta(() => {
 })
 
 const notice = reactive<{ open: boolean, close: boolean }>({
-  open: !$q.cookies.has('d4.update.20240405'),
+  open: false,//!$q.cookies.has('d4.update.20240405'),
   close: false
 })
 
@@ -130,7 +130,7 @@ onMounted(() => {
       <q-card-section class="row no-wrap items-center justify-between">
         <div>
           <div class="text-weight-bold" :class="$q.screen.gt.sm ? 'q-pa-md text-h6' : 'q-pa-sm text-body2'">{{
-            t('notice.title') }}</div>
+    t('notice.title') }}</div>
         </div>
         <q-btn unelevated aria-label="Tradurs Close Button" class="no-hover icon" :ripple="false"
           @click="notice.open = false">
@@ -145,7 +145,7 @@ onMounted(() => {
           <div>
             <template v-for="(c, i) in (tm('notice.contents') as Array<IParagraph>) " :key="i">
               <div v-if="c.type === 'head'" :class="['q-pt-md q-pb-sm text-subtitle2 text-primary', c.class]">{{
-                c.value }}
+    c.value }}
               </div>
               <div v-else-if="c.type === 'list'" :class="['list', c.class]">{{ c.value }}</div>
               <div v-else-if="c.type === 'image'">
