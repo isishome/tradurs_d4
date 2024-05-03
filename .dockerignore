@@ -1,0 +1,10 @@
+.quasar
+.vscode
+node_modules
+.dockerignore
+.editorconfig
+.env.deveopment
+.env.local
+
+Dockerfile
+*.md

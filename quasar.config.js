@@ -50,7 +50,7 @@ module.exports = configure(function (/* ctx */) {
     build: {
       target: {
         browser: ['es2019', 'edge88', 'firefox78', 'chrome87', 'safari13.1'],
-        node: 'node16'
+        node: 'node18'
       },
 
       vueRouterMode: 'history', // available values: 'hash', 'history'
@@ -69,7 +69,9 @@ module.exports = configure(function (/* ctx */) {
       // polyfillModulePreload: true,
       // distDir
 
-      // extendViteConf (viteConf) {},
+      extendViteConf(viteConf) {
+        viteConf.define.__VUE_PROD_HYDRATION_MISMATCH_DETAILS__ = false
+      },
       // viteVuePluginOptions: {},
 
       vitePlugins: [
