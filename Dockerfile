@@ -20,7 +20,7 @@ RUN npm install && \
 # 빌드 정리
     mkdir -p /d4 && \
     cp -r * /d4 && \
-    rm -rf /d4-proj && \
+    rm -rf /d4-proj
 
 # 서버 구동 준비
 WORKDIR /d4
