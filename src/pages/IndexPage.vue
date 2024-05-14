@@ -1,19 +1,28 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
-import { useItemStore, type OfferInfo, type AwardsPick, Sort } from 'stores/item-store'
+import { useGlobalStore } from 'stores/global-store'
+import { useItemStore, type OfferInfo, type AwardsPick, type IErrorItem, Sort } from 'stores/item-store'
 import { useAccountStore } from 'stores/account-store'
-import { ref, computed, defineAsyncComponent, onMounted, watch, reactive } from 'vue'
+import { ref, computed, onMounted, watch, reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useQuasar, uid } from 'quasar'
 import { Item, IPrice } from 'src/types/item'
 import { scrollPos } from 'src/common'
 
-const D4Items = defineAsyncComponent(() => import('components/D4Items.vue'))
+import D4Items from 'components/D4Items.vue'
+import D4Filter from 'components/D4Filter.vue'
+
+interface IProps {
+  filter?: InstanceType<typeof D4Filter>
+}
+
+const props = withDefaults(defineProps<IProps>(), {})
 
 // init module
 const route = useRoute()
 const router = useRouter()
 const is = useItemStore()
+const gs = useGlobalStore()
 const as = useAccountStore()
 const { t, tm, n } = useI18n({ useScope: 'global' })
 const $q = useQuasar()
@@ -37,9 +46,16 @@ const rewardItem = ref<Item | undefined>()
 const page = ref<number>(route.query.page ? parseInt(route.query.page as string) : 1)
 const over = computed(() => is.itemPage.over)
 const more = computed(() => is.itemPage.more)
-const selectable = computed(() => is.filter.mine)
+const selectedAll = ref<boolean>(false)
 const sortOptions = reactive<Array<{ value: string, label: string }>>(tm('sort.options'))
-const isExpanded = ref($q.cookies.has('d4.expanded') && $q.cookies.get('d4.expanded') === 'true')
+const isExpanded = computed(() => is.storage.data.expanded)
+const noSelected = computed(() => items.value.filter(i => i.selected).length === 0)
+const selectAction = ref<boolean>(false)
+const errorInfo = reactive<{ show: boolean, title: string, items: Array<IErrorItem> }>({
+  show: false,
+  title: '',
+  items: []
+})
 
 const updateSort = (sortValue: Sort) => {
   is.sort = sortValue
@@ -60,13 +76,17 @@ const upsertItem = (item: Item, done: Function) => {
 
   disable.value = true
   is[item.itemId !== '' ? 'updateItem' : 'addItem'](item)
-    .then((response) => {
-      Object.assign(item, response)
-      if (findIndex !== -1)
-        items.value.splice(findIndex, 1, item)
+    .then(() => {
+      if (findIndex !== -1) {
+        is.getItems(1, item.itemId)
+          .then((result: Array<Item>) => {
+            if (result.length > 0)
+              items.value.splice(findIndex, 1, result[0])
+          })
+      }
       else {
         as.retrieve()
-        is.clearFilter()
+        props.filter?.clearFilter()
         reload()
       }
 
@@ -77,25 +97,6 @@ const upsertItem = (item: Item, done: Function) => {
       done()
       disable.value = false
     })
-}
-
-const deleteItem = (item: Item, done: Function) => {
-  const findIndex = items.value.findIndex((i) => i.itemId === item.itemId)
-
-  if (findIndex !== -1) {
-    disable.value = true
-    is.deleteItem(item.itemId)
-      .then(() => {
-        items.value.splice(findIndex, 1)
-        itemsRef.value?.hideEditable()
-        disable.value = false
-      })
-      .catch(() => {
-        done()
-        updateOnly(item.itemId)
-        disable.value = false
-      })
-  }
 }
 
 const relistItem = (item: Item, done: Function) => {
@@ -124,6 +125,44 @@ const statusItem = (item: Item, done: Function) => {
     is.statusItem(item.itemId)
       .then(() => {
         findItem.statusCode = findItem.statusCode === '000' ? '002' : '000'
+        itemsRef.value?.hideEditable()
+        disable.value = false
+      })
+      .catch(() => {
+        done()
+        updateOnly(item.itemId)
+        disable.value = false
+      })
+  }
+}
+
+const reRegisterItem = (item: Item, done: Function) => {
+  const findIndex = items.value.findIndex((i) => i.itemId === item.itemId)
+  if (findIndex !== -1) {
+    disable.value = true
+    is.reRegisterItem(item.itemId)
+      .then(() => {
+        as.retrieve()
+        itemsRef.value?.hideEditable()
+        disable.value = false
+        reload()
+      })
+      .catch(() => {
+        done()
+        updateOnly(item.itemId)
+        disable.value = false
+      })
+  }
+}
+
+const deleteItem = (item: Item, done: Function) => {
+  const findIndex = items.value.findIndex((i) => i.itemId === item.itemId)
+
+  if (findIndex !== -1) {
+    disable.value = true
+    is.deleteItem(item.itemId)
+      .then(() => {
+        items.value.splice(findIndex, 1)
         itemsRef.value?.hideEditable()
         disable.value = false
       })
@@ -271,12 +310,184 @@ const move = (val: number) => {
   router.push({ name: 'tradeList', params: { lang: route.params.lang }, query: { page: page.value + val } })
 }
 
-const updateExpanded = (val: boolean) => {
-  $q.cookies.set('d4.expanded', val.toString(), { path: '/' })
-  items.value.forEach(i => i.expanded = val)
+const selectAll = (val: boolean) => {
+  items.value.forEach(i => i.selected = val)
 
   if (rewardItem.value)
-    rewardItem.value.expanded = val
+    rewardItem.value.selected = val
+}
+
+const itemInfo = (item?: Item) => {
+  return {
+    name: item?.itemTypeValue1 === 'gem' ? is.gems.find(g => g.value === item?.itemTypeValue2)?.label ?? '' :
+      item?.itemTypeValue1 === 'elixir' ? is.elixirs.find(e => e.value === item?.itemTypeValue2)?.label ?? '' :
+        item?.itemTypeValue1 === 'summoning' ? is.summonings.find(s => s.value === item?.itemTypeValue2)?.label ?? '' :
+          item?.name ?? '',
+    quality: item?.quality
+  }
+}
+
+const relistItems = () => {
+  $q.dialog({
+    title: t('relistItems.title'),
+    message: `<div class="text-subtitle1">${t('relistItems.subTitle')}</div><div class="q-mt-xs text-caption text-red-6">${t('relistItems.message')}</div>`,
+    html: true,
+    persistent: true,
+    cancel: { label: t('btn.cancel'), noCaps: true, color: 'grey', outline: true },
+    ok: { label: t('btn.accept'), noCaps: true, color: 'primary', unelevated: true, class: 'text-weight-bold invert-icon' },
+    transitionShow: 'fade',
+    transitionHide: 'fade',
+    noRouteDismiss: true,
+    class: 'q-pa-sm'
+  }).onOk(() => {
+    gs.loading = true
+    disable.value = true
+    is.filter.loading = true
+    selectAction.value = false
+    is.relistItems(items.value.filter(i => i.selected).map(i => i.itemId))
+      .then((erroritems: Array<IErrorItem>) => {
+        if (erroritems.length > 0) {
+          errorInfo.title = t('relistItems.failedTitle')
+          errorInfo.show = true
+          errorInfo.items.splice(0, errorInfo.items.length)
+          errorInfo.items.push(...erroritems.map(i => ({ ...i, ...itemInfo(items.value.find(it => it.itemId === i.itemId.toString())) })))
+        }
+      })
+      .catch(() => { })
+      .then(() => {
+        as.retrieve()
+
+        is.filter.loading = false
+        disable.value = false
+        gs.loading = false
+
+        selectAll(false)
+        selectedAll.value = false
+        reload()
+      })
+  })
+}
+
+const statusItems = (status: string) => {
+  const statusWord = t(`btn.${status}`)
+  $q.dialog({
+    title: t('statusItems.title', { type: statusWord }),
+    message: `<div class="text-subtitle1">${t('statusItems.subTitle', { type: statusWord })}</div><div class="q-mt-xs text-caption text-red-6">${t('statusItems.message', { type: statusWord })}</div>`,
+    html: true,
+    persistent: true,
+    cancel: { label: t('btn.cancel'), noCaps: true, color: 'grey', outline: true },
+    ok: { label: t('btn.accept'), noCaps: true, color: 'primary', unelevated: true, class: 'text-weight-bold invert-icon' },
+    transitionShow: 'fade',
+    transitionHide: 'fade',
+    noRouteDismiss: true,
+    class: 'q-pa-sm'
+  }).onOk(() => {
+    gs.loading = true
+    disable.value = true
+    is.filter.loading = true
+    selectAction.value = false
+    is.statusItems(items.value.filter(i => i.selected).map(i => i.itemId), status)
+      .then((erroritems: Array<IErrorItem>) => {
+        if (erroritems.length > 0) {
+          errorInfo.title = t('statusItems.failedTitle', { type: statusWord })
+          errorInfo.show = true
+          errorInfo.items.splice(0, errorInfo.items.length)
+          errorInfo.items.push(...erroritems.map(i => ({ ...i, ...itemInfo(items.value.find(it => it.itemId === i.itemId.toString())) })))
+        }
+      })
+      .catch(() => { })
+      .then(() => {
+        is.filter.loading = false
+        disable.value = false
+        gs.loading = false
+
+        selectAll(false)
+        selectedAll.value = false
+        reload()
+      })
+  })
+}
+
+const reRegisterItems = () => {
+  $q.dialog({
+    title: t('reRegisterItems.title'),
+    message: `<div class="text-subtitle1">${t('reRegisterItems.subTitle')}</div><div class="q-mt-xs text-caption text-red-6">${t('reRegisterItems.message')}</div>`,
+    html: true,
+    persistent: true,
+    cancel: { label: t('btn.cancel'), noCaps: true, color: 'grey', outline: true },
+    ok: { label: t('btn.accept'), noCaps: true, color: 'primary', unelevated: true, class: 'text-weight-bold invert-icon' },
+    transitionShow: 'fade',
+    transitionHide: 'fade',
+    noRouteDismiss: true,
+    class: 'q-pa-sm'
+  }).onOk(() => {
+    gs.loading = true
+    disable.value = true
+    is.filter.loading = true
+    selectAction.value = false
+    is.reRegisterItems(items.value.filter(i => i.selected).map(i => i.itemId))
+      .then((erroritems: Array<IErrorItem>) => {
+        if (erroritems.length > 0) {
+          errorInfo.title = t('reRegisterItems.failedTitle')
+          errorInfo.show = true
+          errorInfo.items.splice(0, errorInfo.items.length)
+          errorInfo.items.push(...erroritems.map(i => ({ ...i, ...itemInfo(items.value.find(it => it.itemId === i.itemId.toString())) })))
+        }
+      })
+      .catch(() => { })
+      .then(() => {
+        as.retrieve()
+
+        is.filter.loading = false
+        disable.value = false
+        gs.loading = false
+
+        selectAll(false)
+        selectedAll.value = false
+        reload()
+      })
+  })
+}
+
+const deleteItems = () => {
+  $q.dialog({
+    title: t('deleteItems.title'),
+    message: `<div class="text-subtitle1">${t('deleteItems.subTitle')}</div><div class="q-mt-xs text-caption text-red-6">${t('deleteItems.message')}</div>`,
+    html: true,
+    persistent: true,
+    cancel: { label: t('btn.cancel'), noCaps: true, color: 'grey', outline: true },
+    ok: { label: t('btn.delete'), noCaps: true, color: 'negative', unelevated: true, class: 'text-weight-bold invert-icon' },
+    transitionShow: 'fade',
+    transitionHide: 'fade',
+    noRouteDismiss: true,
+    class: 'q-pa-sm'
+  }).onOk(() => {
+    gs.loading = true
+    disable.value = true
+    is.filter.loading = true
+    selectAction.value = false
+    is.deleteItems(items.value.filter(i => i.selected).map(i => i.itemId))
+      .then((erroritems: Array<IErrorItem>) => {
+        if (erroritems.length > 0) {
+          errorInfo.title = t('deleteItems.failedTitle')
+          errorInfo.show = true
+          errorInfo.items.splice(0, errorInfo.items.length)
+          errorInfo.items.push(...erroritems.map(i => ({ ...i, ...itemInfo(items.value.find(it => it.itemId === i.itemId.toString())) })))
+        }
+      })
+      .catch(() => { })
+      .then(() => {
+        as.retrieve()
+
+        is.filter.loading = false
+        disable.value = false
+        gs.loading = false
+
+        selectAll(false)
+        selectedAll.value = false
+        reload()
+      })
+  })
 }
 
 watch(() => route.query.page, (val, old) => {
@@ -291,7 +502,7 @@ watch(newItems, (val: number) => {
     notify('newItems', t('messages.newItems', val), '', t('btn.refresh'), () => {
       itemsRef.value?.hideEditable()
       itemsRef.value?.hideOffers()
-      is.clearFilter()
+      props.filter?.clearFilter()
       reload()
     })
 })
@@ -348,49 +559,160 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="row justify-between items-center absolute full-width" style="transform: translateY(-100%);">
-    <q-checkbox v-model="isExpanded" :label="t('item.expanded')" dense size="xs" class="text-caption"
-      @update:model-value="updateExpanded" />
-    <q-select v-model="is.sort" :disable="disable" dense no-error-icon hide-bottom-space emit-value map-options
-      options-dense borderless transition-show="none" transition-hide="none" :transition-duration="0"
-      :options="sortOptions" menu-anchor="bottom end" menu-self="top end" dropdown-icon="img:/images/icons/dropdown.svg"
-      class="sort text-caption" popup-content-class="scroll bordered text-caption" @update:model-value="updateSort" />
-  </div>
   <div>
-    <div class="row justify-center items-center">
-      <D4Items ref="itemsRef" class="item-list" :items="items" :reward-item="rewardItem" @upsert-item="upsertItem"
-        @delete-item="deleteItem" @relist-item="relistItem" @status-item="statusItem" @update-only="updateOnly"
-        @copy="copy" @favorite="favorite" />
+    <div class="row justify-between items-start absolute full-width q-px-md list-header"
+      :class="{ scroll: (gs.scrollTop ?? 0) > ($q.screen.lt.md ? 100 : 150) }">
+      <div class="row items-center q-gutter-x-sm">
+        <q-btn-dropdown v-if="as.signed && is.filter.mine" v-model="selectAction" :disable="disable" flat dense
+          unelevated no-caps auto-close :ripple="false" class="no-hover"
+          :content-style="{ 'borderRadius': '0 0 4px 4px', 'boxShadow': 'none' }" :class="{ active: selectAction }"
+          transition-show="none" transition-hide="none" transition-duration="0"
+          dropdown-icon="img:/images/icons/dropdown.svg">
+          <template #label>
+            <q-checkbox :dark="(!$q.dark.isActive && selectAction) || ($q.dark.isActive && !selectAction)"
+              v-model="selectedAll" :label="t('selectAll')" dense size="xs" class="text-caption"
+              @update:model-value="selectAll" />
+            <q-separator :dark="(!$q.dark.isActive && selectAction) || ($q.dark.isActive && !selectAction)" vertical
+              class="q-ml-md q-my-xs" />
+          </template>
+          <q-list :bordered="!$q.screen.lt.sm" class="text-caption no-border"
+            :class="[{ 'cursor-not-allowed': noSelected }, $q.dark.isActive ? 'bg-grey-4 text-grey-9' : 'bg-grey-9 text-grey-4']"
+            dense>
+            <q-item :dark="false" :class="{ 'no-pointer-events disabled': noSelected }" clickable @click="relistItems">
+              <q-item-section>{{ t('btn.relist') }}</q-item-section>
+            </q-item>
+            <q-item :dark="false" :class="{ 'no-pointer-events disabled': noSelected }" clickable
+              @click="statusItems('suspend')">
+              <q-item-section>{{ t('btn.suspend') }}</q-item-section>
+            </q-item>
+            <q-item :dark="false" :class="{ 'no-pointer-events disabled': noSelected }" clickable
+              @click="statusItems('resume')">
+              <q-item-section>{{ t('btn.resume') }}</q-item-section>
+            </q-item>
+            <q-item :dark="false" :class="{ 'no-pointer-events disabled': noSelected }" clickable
+              @click="reRegisterItems">
+              <q-item-section>{{ t('btn.reRegister') }}</q-item-section>
+            </q-item>
+            <q-item :dark="false" :class="{ 'no-pointer-events disabled': noSelected }" clickable @click="deleteItems">
+              <q-item-section class="text-red-6 text-weight-bold">{{ t('btn.delete')
+                }}</q-item-section>
+            </q-item>
+          </q-list>
+        </q-btn-dropdown>
+      </div>
+      <q-select v-model="is.sort" :disable="disable" dense no-error-icon hide-bottom-space emit-value map-options
+        options-dense borderless transition-show="none" transition-hide="none" :transition-duration="0"
+        :options="sortOptions" menu-anchor="bottom end" menu-self="top end"
+        dropdown-icon="img:/images/icons/dropdown.svg" class="sort text-caption"
+        popup-content-class="scroll bordered text-caption" @update:model-value="updateSort" />
     </div>
-  </div>
-  <div class="q-pt-xl"></div>
-  <template v-if="completeList">
-    <div class="sticky-place row justify-end">
-      <div v-if="as.signed" class="row items-center q-gutter-x-xs relative-position">
-        <!-- <D4Btn v-if="selectable" round @click="create" color="var(--q-info)"
-          :disable="disable || items.filter((item: Item) => item.selected).length === 0">
-          <img src="/images/icons/remove.svg" width="24" height="24" class="invert" alt="Tradurs Add Icon" />
-        </D4Btn> -->
-        <D4Btn round @click="create" color="var(--q-secondary)" :disable="disable" shadow shadow-depth="deep">
-          <img src="/images/icons/add.svg" width="24" height="24" class="invert" alt="Tradurs Add Icon" />
+    <div>
+      <div class="row justify-center items-center">
+        <D4Items ref="itemsRef" class="item-list" :items="items" :reward-item="rewardItem" @upsert-item="upsertItem"
+          @delete-item="deleteItem" @relist-item="relistItem" @status-item="statusItem"
+          @reregister-item="reRegisterItem" @update-only="updateOnly" @copy="copy" @favorite="favorite" />
+      </div>
+    </div>
+    <div class="q-pt-xl"></div>
+    <template v-if="completeList">
+      <div class="sticky-place row justify-end">
+        <div v-if="as.signed" class="row items-center q-gutter-x-xs relative-position">
+          <D4Btn round @click="create" color="var(--q-secondary)" :disable="disable" shadow shadow-depth="deep">
+            <img src="/images/icons/add.svg" width="24" height="24" class="invert" alt="Tradurs Add Icon" />
+          </D4Btn>
+        </div>
+        <D4Btn v-else style="visibility: hidden;" />
+      </div>
+      <div class="row q-gutter-xs items-center paging">
+        <D4Btn round @click="move(-1)" color="var(--q-light-magic)" :disable="!over || disable"
+          :shadow="!$q.dark.isActive">
+          <img src="/images/icons/prev.svg" width="24" height="24" class="invert" alt="Tradurs Prev Icon" />
+        </D4Btn>
+        <D4Btn round @click="move(1)" color="var(--q-light-magic)" :disable="!more || disable"
+          :shadow="!$q.dark.isActive">
+          <img src="/images/icons/next.svg" width="24" height="24" class="invert" alt="Tradurs Next Icon" />
         </D4Btn>
       </div>
-      <D4Btn v-else style="visibility: hidden;" />
-    </div>
-    <div class="row q-gutter-xs items-center paging">
-      <D4Btn round @click="move(-1)" color="var(--q-light-magic)" :disable="!over || disable"
-        :shadow="!$q.dark.isActive">
-        <img src="/images/icons/prev.svg" width="24" height="24" class="invert" alt="Tradurs Prev Icon" />
-      </D4Btn>
-      <D4Btn round @click="move(1)" color="var(--q-light-magic)" :disable="!more || disable"
-        :shadow="!$q.dark.isActive">
-        <img src="/images/icons/next.svg" width="24" height="24" class="invert" alt="Tradurs Next Icon" />
-      </D4Btn>
-    </div>
-  </template>
+    </template>
+    <D4Dialog v-model="errorInfo.show">
+      <template #top>
+        <q-card-section>
+          <div class="q-pa-md text-h6 text-weight-bold">{{ errorInfo.title }}</div>
+        </q-card-section>
+      </template>
+      <template #middle>
+        <q-card-section>
+          <div class="q-py-sm" :class="$q.screen.gt.sm ? 'text-body1' : 'text-body2'">
+            <ul class="q-gutter-y-sm">
+              <li v-for="item in errorInfo.items" :key="item.itemId">
+                <div class="column items-start">
+                  <div class="text-weight-bold" :style="`color:var(--q-light-${item.quality})`">
+                    {{ item.name }}
+                  </div>
+                  <div class="text-caption">{{ item.message }}</div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </q-card-section>
+      </template>
+      <template #bottom>
+        <q-card-section :class="{ 'col-1': $q.screen.lt.sm }">
+          <div class="row justify-end items-center q-gutter-sm q-px-md" :class="{ 'q-pt-lg': $q.screen.lt.sm }">
+            <D4Btn :label="t('btn.confirm')" @click="() => errorInfo.show = false" />
+          </div>
+        </q-card-section>
+      </template>
+    </D4Dialog>
+  </div>
 </template>
 
 <style scoped>
+.list-header {
+  position: sticky;
+  z-index: 2000;
+  top: 66px;
+  border-radius: 0 0 10px 10px;
+}
+
+.list-header.scroll {
+  background-color: var(--q-dark);
+  box-shadow: 0 -1px 1px 0 var(--q-dark), 0 1px 1px 0 rgb(100, 100, 100), 1px 0 1px 0 var(--q-dark-border), -1px 0 1px 0 var(--q-dark-border);
+}
+
+.body--light .list-header.scroll {
+  background-color: var(--q-light);
+  box-shadow: 0 -1px 1px 0 var(--q-light), 0 4px 4px 2px rgba(0, 0, 0, 0.1), 0 4px 4px rgba(0, 0, 0, 0.14);
+}
+
+@media (max-width:1100px) {
+  .list-header {
+    top: 58px;
+  }
+}
+
+.list-header:deep(.active) {
+  background-color: #e0e0e0;
+  color: #424242;
+}
+
+.body--light .list-header:deep(.active) {
+  background-color: #424242;
+  color: #e0e0e0;
+}
+
+.list-header:deep(button.active) {
+  border-radius: 4px 4px 0 0;
+}
+
+.body--light .list-header:deep(.active .q-btn-dropdown__arrow img) {
+  filter: invert(100) !important;
+}
+
+.body--dark .list-header:deep(.active .q-btn-dropdown__arrow img) {
+  filter: invert(0) !important;
+}
+
 .sort:deep(.q-field__control:before) {
   background-color: inherit;
 }

@@ -32,6 +32,7 @@ const is = useItemStore()
 const lang: string = route.params.lang as string || 'ko'
 const similarRate = .8
 const phase = is.analyze.lang[lang as keyof typeof is.analyze.lang]
+const replaces = is.analyze.replaces[lang as keyof typeof is.analyze.replaces]
 const timeout = 400
 const showProgress = ref<boolean>(false)
 const checkedItem = reactive<string[]>([])
@@ -185,7 +186,12 @@ const checkInfo = (textArray: string[]) => {
   if (typeValueIndex === -1)
     return failedScan(t('analyze.typeNotFound'))
 
-  const typeValue = qualityPhase.splice(typeValueIndex, qualityPhase.length).join(' ').replace(new RegExp(`[^${phase}]`, 'gi'), '').trim()
+  let typeValue = qualityPhase.splice(typeValueIndex, qualityPhase.length).join(' ').replace(new RegExp(`[^${phase}]`, 'gi'), '').trim()
+
+  // replace for each language  
+  replaces.forEach((r => {
+    typeValue = typeValue.replace(new RegExp(`${r[0]}`, 'gi'), r[1])
+  }))
 
   if (!typeValue || typeValue === '')
     return failedScan(t('analyze.typeNotFound'))
@@ -269,8 +275,7 @@ const checkInfo = (textArray: string[]) => {
   if (indexLost !== -1)
     textArray.splice(indexLost, textArray.length)
 
-  let tArray = textArray.map((ta: string) => ta.replace(/[\+ ]/g, '').replace(/([0-9]*?)(\,)([0-9.]{1,})/g, '$1$3').replace(/[\[]{2,}/g, '[').replace(/[\]]{2,}/g, ']').replace(/1\[/g, '[').replace(/\]1/g, ']'))
-  //.replace(/(\[)([0-9.]{1,})(\-?)([0-9.]*)(\]?)/g, '[$2$3$4]'))
+  let tArray = textArray.map((ta: string) => ta.replace(/[\+ ]/g, '').replace(/([0-9]*?)(\,)([0-9.]{1,})/g, '$1$3').replace(/[\[]{2,}/g, '[').replace(/[\]]{2,}/g, ']').replace(/\]1/g, ']'))
 
   setTimeout(() => {
     checkedItem.push('info')
@@ -356,12 +361,19 @@ const checkProperties = (tArray: string[]) => {
       matchAttribute.forEach((ma: ISimilar) => {
         ma.match.sort((a, b) => b.rate - a.rate)
 
-        const xLen = (is.findProperty(ma.match?.[0]?.id)?.label.split(/{x}/)?.length ?? 1) - 1
-        const matchValues = tArray.slice(ma.index + (ma.match[0]?.length || 0), tArray.length).join('-').match(/[0-9.]{1,}/g)?.splice(0, xLen).map(mv => parseFloat(mv)) || []
+        const attrStr = tArray.slice(ma.index, ma.index + (ma.match[0]?.length ?? 0) + 1).join('-')
+        const matchValues = attrStr.match(/[0-9.]{1,}/g)?.filter(mv => !isNaN(parseFloat(mv))).map(mv => parseFloat(mv))
+        const plainMatch = is.findProperty(ma.match[0]?.id)?.label.match(/[0-9]{1,}[.]?[0-9]*|\{x\}/g)
+        const values: Array<number> = []
+
+        plainMatch?.forEach((pm: number | string, index: number) => {
+          if (pm === '{x}' && matchValues?.[index])
+            values.push(matchValues?.[index])
+        })
 
         if (item.properties.filter(p => p.propertyId === ma.match[0]?.id).length === 0) {
           maxIL = maxIL[0] < ma.index ? [ma.index, ma.match[0].length + 1] : maxIL
-          item.properties.push({ valueId: uid(), propertyId: ma.match[0]?.id, propertyValues: matchValues, action: 2 })
+          item.properties.push({ valueId: uid(), propertyId: ma.match[0]?.id, propertyValues: values, action: 2 })
         }
       })
 
@@ -408,11 +420,20 @@ const checkAffixes = (tArray: string[]) => {
     matchAttribute.forEach((ma: ISimilar) => {
       ma.match.sort((a, b) => b.rate - a.rate)
 
-      const matchMinMax = tArray.slice(ma.index, tArray.length).join('-').match(/[\[]{1}[0-9.]{1,}[^\-\[]*[\-]*[0-9.]{1,}[\]]?/g)?.map(mmm => mmm.replace(/[^0-9.-]/g, '').split(/[\-]{1,2}/).map(mm => !isNaN(parseFloat(mm)) ? parseFloat(mm) : 0))
-      const matchValues = tArray.slice(ma.index, tArray.length).join('-').replace(/[\[]{1}[0-9.]{1,}[^\-\[]*[\-]*[0-9.]{1,}[\]]?/g, '').match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv))?.slice(0, is.findAffix(ma.match[0]?.id)?.label.split(/{x}/).length as number - 1)
+      const attrStr = tArray.slice(ma.index, ma.index + (ma.match[0]?.length ?? 0) + 1).join('-')
+      const matchMinMax = attrStr.match(/[\[]{1}[0-9.]{1,}[^\-\[]*[\-]*[0-9.]{1,}[\]]?/g)?.map(mmm => mmm.replace(/[^0-9.-]/g, '').split(/[\-]{1,2}/).map(mm => !isNaN(parseFloat(mm)) ? parseFloat(mm) : 0))
+      const matchValues = attrStr.replace(/[\[]{1}[0-9.]{1,}[^\-\[]*[\-]*[0-9.]{1,}[\]]?/g, '').match(/[0-9.]{1,}/g)?.filter(mv => !isNaN(parseFloat(mv))).map(mv => parseFloat(mv))
+      const plainMatch = is.findAffix(ma.match[0]?.id)?.label.match(/[0-9]{1,}[.]?[0-9]*|\{x\}/g)
+      const values: Array<number> = []
+
+      plainMatch?.forEach((pm: number | string, index: number) => {
+        if (pm === '{x}' && matchValues?.[index])
+          values.push(matchValues?.[index])
+      })
+
       const a: Affix = { valueId: uid(), affixId: ma.match[0]?.id as number, affixValues: [], action: 2 }
 
-      matchValues?.forEach((mv: number, idx: number) => {
+      values.forEach((mv: number, idx: number) => {
         a.affixValues.push({ valueRangeId: uid(), value: mv, min: matchMinMax?.[idx]?.[0] as number, max: matchMinMax?.[idx]?.[1] || matchMinMax?.[idx]?.[0] as number })
       })
 

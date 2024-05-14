@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { reactive, computed, defineAsyncComponent } from 'vue'
+import { reactive, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useQuasar } from 'quasar'
 import { Offer, type Price } from 'src/types/item'
 import { useAccountStore } from 'src/stores/account-store'
 import { useItemStore } from 'src/stores/item-store'
 
-const D4User = defineAsyncComponent(() => import('components/D4User.vue'))
-const D4Price = defineAsyncComponent(() => import('components/D4Price.vue'))
+import D4User from 'components/D4User.vue'
+import D4Price from 'components/D4Price.vue'
 
 interface IProps {
   data: Offer,
@@ -132,7 +132,8 @@ const parsEvaluations = computed(() => props.owner ? as.filterEvaluations(props.
   <q-form v-if="make" @submit="makeOffer" class="q-pt-md row justify-end items-center q-col-gutter-sm q-pa-md"
     :class="{ 'q-pt-lg': !$q.screen.lt.sm }">
     <div class="col">
-      <D4Price offer :fixed="fixed" :data="_offer.price" editable :disable="disable || progress" @update="updatePrice" />
+      <D4Price offer :fixed="fixed" :data="_offer.price" editable :disable="disable || progress"
+        @update="updatePrice" />
     </div>
     <D4Btn :label="t('btn.offer')" :loading="data.loading" :disable="disable" :progress="progress" type="submit" />
   </q-form>

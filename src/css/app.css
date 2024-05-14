@@ -8,7 +8,7 @@
   --q-light-border: #DDDDDD;
   --q-dark: #1a1a1a;
   --q-dark-page: #040404;
-  --q-dark-border: #222222;
+  --q-dark-border: #333333;
   --q-positive: #21BA45;
   --q-negative: #C10015;
   --q-info: #31CCEC;
@@ -27,9 +27,9 @@
   --q-legendary: #F78003;
   --q-light-legendary: #C76003;
   --q-dark-legendary: #471B0B;
-  --q-unique: #D9A979;
-  --q-light-unique: #B99959;
-  --q-dark-unique: #4A361B;
+  --q-unique: #D9A879;
+  --q-light-unique: #6c4a00;
+  --q-dark-unique: #20211C;
   --q-tiny: rgba(200, 200, 200, 0.1);
   --q-cloud: #99999916;
   --q-half: rgba(150, 150, 150, 0.2);
@@ -90,17 +90,30 @@ body.body--dark {
 .q-drawer::before {
   content: '';
   position: absolute;
-  z-index: -1;
+  z-index: -2;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
   background-image: url('/images/back.webp');
   background-size: 550px;
-  background-repeat: repeat;
+  background-repeat:repeat;
 }
 
-.body--light .q-drawer::before {
+.q-drawer::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-image: linear-gradient(90deg, #000000 0%, rgba(0, 0, 0, 0) calc(70% - 180px), rgba(0, 0, 0, 0) 100%), linear-gradient(0deg, rgba(0, 0, 0, 0.24), rgba(0, 0, 0, 0.24));
+  background-size: 100%;
+  background-repeat:repeat;
+}
+
+.body--light .q-drawer::before, .body--light .q-drawer::after {
   background-image: none;
   background-color: var(--q-light);
 }

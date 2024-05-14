@@ -45,7 +45,7 @@ export default {
     selectPreset: 'Select a preset',
     basicDescription: 'The basic filter information is saved in your account storage. When you register an item or opening a party play, its hardcore and seasonal status is automatically set by the basic filter information.',
     presetDescription: 'This feature saves the currently set filter values. Up to 3 presets can be saved.',
-    affixDescription: 'Affixes search will also search for other items, including any combination of five of the four if you select the four affix filter.',
+    affixDescription: 'Affixes search allows you to select up to 6 affix filters, and if you select 5, other items including 4 of the 5 combined will also be searched.',
     description: {
       advanced: 'When using advanced filters, distinguish between \'Characteristics\' and \'Affixes\'',
       advanced2: 'Occasionally, sellers may incorrectly enter \'Characteristics\' and \'Affixes\', so consider filtering'
@@ -55,15 +55,17 @@ export default {
     options: [
       { value: 'date_desc', label: 'Newest' },
       { value: 'price_desc', label: 'Highest price' },
-      { value: 'price_asc', label: 'Lowest price' }
+      { value: 'price_asc', label: 'Lowest price' },
+      { value: 'popular_desc', label: 'Many offered' },
     ]
   },
+  selectAll: 'Select All',
   preset: {
     title: 'Delete Preset',
     message: 'Do you want to delete this preset?'
   },
   season: {
-    bg: '/images/season/003/season_emblem_en.webp',
+    bg: '/images/season/004/season_emblem_en.webp',
     first: {
       socket: 'During Season of the Malignant, the more accurately you select the socket type in the accessory item affixes, the more often your items will be seen',
     },
@@ -103,19 +105,47 @@ export default {
   properties: 'Characteristics',
   affixes: 'Affixes',
   restrictions: 'Restrictions',
-  deleteItem: {
-    title: 'Delete Item',
-    message: 'Are you sure you want to delete the post?'
-  },
   relistItem: {
     title: 'Relist Item',
-    message: 'Are you sure you want to relist the post?'
+    message: 'Are you sure you want to relist the item?'
+  },
+  relistItems: {
+    title: 'Relist items',
+    subTitle: 'Do you want to relist all selected items?',
+    message: 'If items are selected that cannot be relisted, they will be excluded during processing',
+    failedTitle: 'Failed to relist items'
   },
   statusItem: {
     suspendTitle: 'Suspend Sale',
     suspendMessage: 'Are you sure you want to suspend sale?',
     resumeTitle: 'Resume Sale',
     resumeMessage: 'Are you sure you want to resume sale?'
+  },
+  statusItems: {
+    title: '{type}',
+    subTitle: 'Do you want to {type} all selected items?',
+    message: 'If items are selected that cannot be {type}, they will be excluded during processing',
+    failedTitle: 'Failed to {type}'
+  },
+  reRegisterItem: {
+    title: 'Re-Register item',
+    message: 'Do you want to re-register this item?'
+  },
+  reRegisterItems: {
+    title: 'Re-Register items',
+    subTitle: 'Do you want to re-register all selected items?',
+    message: 'If items are selected that cannot be re-registered, they will be excluded during processing',
+    failedTitle: 'Failed to re-register items'
+  },
+  deleteItem: {
+    title: 'Delete Item',
+    message: 'Are you sure you want to delete the item?'
+  },
+  deleteItems: {
+    title: 'Delete items',
+    subTitle: 'Do you want to delete all selected items?',
+    message: 'If items are selected that cannot be deleted, they will be excluded during processing',
+    failedTitle: 'Failed to delete items'
   },
   blockUser: {
     title: 'Block user',
@@ -167,7 +197,9 @@ export default {
     leave: 'Leave',
     open: 'Open',
     join: 'Join',
-    allow: 'How to allow ads'
+    allow: 'How to allow ads',
+    confirm: 'Confirm',
+    reRegister: 'Re-Register'
   },
   attribute: {
     request: 'Request additional {attr}',
@@ -182,7 +214,7 @@ export default {
   },
   item: {
     hardcore: 'Hardcore',
-    ladder: 'Season of Construct',
+    ladder: 'Loot Reborn',
     quality: 'Item Quality',
     selectType: 'Item Type',
     selectClass: 'Select {type}',
@@ -345,27 +377,29 @@ export default {
     close: 'Do not open for 24 hours'
   },
   notice: {
-    title: 'Update information',
-    top: 'Hello. This is Traders.\n\nThis is an update information.',
+    title: 'Loot Rebirth (Season 4) Update Announcement',
+    top: 'Hello. This is Tradurs.\n\nWe would like to inform you of the updates to Loot Rebirth (Season 4)',
     contents: [
-      { type: 'head', value: '◆ Update details' },
-      { type: 'list', value: 'An item sorting function has been added to the top right of the item list' },
+      { type: 'head', value: '◆ Updates' },
+      { type: 'image', value: '/images/notice/20240514/emblem.webp' },
+      { type: 'list', value: 'With the availability of trading legendary and common unique items, we\'ve made additional modifications to the affixes related to them.' },
       { type: 'space' },
-      { type: 'image', value: '/images/notice/20240405/sort.webp' },
+      { type: 'image', value: '/images/notice/20240514/expanded.webp' },
+      { type: 'list', value: 'The \'Always expand items\' feature, which was located in the top left of the item list, has been moved to the Basic Filters group.' },
       { type: 'space' },
+      { type: 'image', value: '/images/notice/20240514/sort.webp' },
+      { type: 'list', value: 'Added \'Many offered\' to the top-right sorting of the item list.' },
       { type: 'space' },
-      { type: 'list', value: 'The \'Always expand item\' function has been added to the top left of the item list' },
-      { type: 'list', value: 'If activated, all item information is always exposed.' },
+      { type: 'image', value: '/images/notice/20240514/unique.webp' },
+      { type: 'list', value: 'The default color for unique items has been changed.' },
       { type: 'space' },
-      { type: 'image', value: '/images/notice/20240405/expand.webp' },
-      { type: 'space' },
-      { type: 'space' },
-      { type: 'list', value: 'The unique characteristics and affixes data of legendary and unique items have been updated compared to Season 4.' },
-      { type: 'list', value: 'The issue where items were not registered due to incorrect properties when entering items has been fixed.' },
-      { type: 'list', value: 'Image analysis-related API updates and item information recognition rate improved.' },
-      { type: 'space' },
-      { type: 'image', value: '/images/notice/20240405/unique.webp' },
-      { type: 'image', value: '/images/notice/20240405/legendary.webp' },
+      { type: 'image', value: '/images/notice/20240514/dropdown.webp' },
+      { type: 'list', value: 'When you select \'My Items\' for the \Only For Me\' group in the filter,' },
+      { type: 'list', value: 'The item batch change UI is activated at the top left of the item list,' },
+      { type: 'list', value: 'A checkbox is added to the left of the item name so that you can select the item.' },
+      { type: 'list', value: 'Now you can Relist, Suspend sale, Resume sale, Re-Register, and Delete selected items in batch.' },
+      { type: 'list', value: 'Please refer to the link below for detailed usage instructions.' },
+      { type: 'link', label: 'How to use the batch processing feature', name: 'support', params: { section: 'batch' } },
       { type: 'space' }
     ],
     bottom: 'Thank you',
@@ -554,6 +588,26 @@ export default {
       ]
     },
     {
+      id: 'batch',
+      question: 'How do I use the item batch processing feature?',
+      answer: [
+        { type: 'image', contents: '01_filter' },
+        { type: 'text', contents: '1. First, to use the batch processing feature, activate the \'My Items\' item in the \'Only For Me\' group.' },
+        { type: 'image', contents: '02_active' },
+        { type: 'text', contents: '2. The batch processing feature is displayed at the top of the item list,\n and a checkbox is added to the left of the \'item name\' of the item item.' },
+        { type: 'image', contents: '03_select' },
+        { type: 'text', contents: '3. Select the items you want to batch process.\n Even if you scroll the item list, the batch processing feature UI remains fixed at the top.' },
+        { type: 'image', contents: '04_01_dropdown' },
+        { type: 'text', contents: '4.1. Once item selection is complete, select the \'drop-down icon\' on the right side of the batch processing feature UI.' },
+        { type: 'image', contents: '04_02_dropdown' },
+        { type: 'text', contents: '4.2. Select the desired function: Relist, Suspend Sale, Resume Sale, Re-Register or Delete.' },
+        { type: 'image', contents: '05_confirm' },
+        { type: 'text', contents: '5. A confirmation window will appear asking if you want to proceed with batch processing, and when you click \'Accept\', batch processing will begin.' },
+        { type: 'image', contents: '06_failed' },
+        { type: 'text', contents: '6. When batch processing is completed, the items that failed to process and the reason for failure are displayed.\n(If all were processed normally, failed items will not be displayed.) ' }
+      ]
+    },
+    {
       id: 'party',
       question: 'How do I use Party Play?',
       answer: [
@@ -614,9 +668,7 @@ export default {
         { type: 'text', contents: 'Add tradurs.com by selecting Unicorn Settings > Whitelist' },
         { type: 'image', contents: '02_adblock' },
         { type: 'text', contents: '2. AdBlock' },
-        {
-          type: 'text', contents: 'If you are using an ad block extension, click on the ad block extension icon when you are on the tradur\'s site and set it to Always'
-        },
+        { type: 'text', contents: 'If you are using an ad block extension, click on the ad block extension icon when you are on the tradur\'s site and set it to Always' },
         { type: 'image', contents: '03_adguard' },
         { type: 'text', contents: '3. AdGuard' },
         { type: 'text', contents: 'Add tradurs.com by selecting AdGuard Settings > Whitelist' },

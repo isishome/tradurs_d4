@@ -119,6 +119,7 @@ export type OfferInfo = { itemName: string, itemId: string, price?: string }
 export interface IStorage {
   hardcore: boolean,
   ladder: boolean,
+  expanded: boolean,
   presets: Array<IPreset>
 }
 
@@ -146,6 +147,13 @@ export interface IFilter {
 
 export interface IPreset extends ILabel {
   filter: IFilter
+}
+
+export type IErrorItem = {
+  itemId: string
+  name: string
+  message: string
+  quality: string | undefined
 }
 
 export type Sort = 'date_desc' | 'price_desc' | 'price_asc'
@@ -238,6 +246,9 @@ export const useItemStore = defineStore('item', {
         en: `a-zA-Z`,
         ja: `ぁ-ゔァ-ヴー々〆〤`,
         zh: `一-龥`
+      },
+      replaces: {
+        ko: [[`낮`, `낫`]]
       }
     }
   }),
@@ -364,10 +375,10 @@ export const useItemStore = defineStore('item', {
         this.filter.loading = false
       }
     },
-    getStorage() {
+    getStorage(isForced: boolean = false) {
       return new Promise<void>((resolve, reject) => {
         let error: unknown = null
-        if (this.storage.request === 0) {
+        if (this.storage.request === 0 || isForced) {
           api.get('/d4/account/storage')
             .then((response) => {
               this.storage.data = response.data
@@ -391,7 +402,7 @@ export const useItemStore = defineStore('item', {
     },
     setStorage() {
       return new Promise<void>((resolve, reject) => {
-        api.post('/d4/account/storage/update', { hardcore: this.storage.data.hardcore, ladder: this.storage.data.ladder })
+        api.post('/d4/account/storage/update', { hardcore: this.storage.data.hardcore, ladder: this.storage.data.ladder, expanded: this.storage.data.expanded })
           .then(() => {
             resolve()
           })
@@ -581,10 +592,10 @@ export const useItemStore = defineStore('item', {
       })
     },
     updateItem(item: Item) {
-      return new Promise<Item>((resolve, reject) => {
+      return new Promise<void>((resolve, reject) => {
         api.post('/d4/item/update', { item })
-          .then((response) => {
-            resolve(response.data)
+          .then(() => {
+            resolve()
           })
           .catch((e) => {
             reject(e)
@@ -593,9 +604,64 @@ export const useItemStore = defineStore('item', {
     },
     relistItem(itemId: string) {
       return new Promise<void>((resolve, reject) => {
-        api.post('/d4/item/relist', { itemId: itemId })
+        api.post('/d4/item/relist', { itemId })
           .then(() => {
             resolve()
+          })
+          .catch((e) => {
+            reject(e)
+          })
+      })
+    },
+    relistItems(itemIds: Array<string>) {
+      return new Promise<Array<IErrorItem>>((resolve, reject) => {
+        api.post('/d4/item/relist/batch', { itemIds })
+          .then((response) => {
+            resolve(response.data)
+          })
+          .catch((e) => {
+            reject(e)
+          })
+      })
+    },
+    statusItem(itemId: string) {
+      return new Promise<void>((resolve, reject) => {
+        api.post('/d4/item/status', { itemId: itemId })
+          .then(() => {
+            resolve()
+          })
+          .catch((e) => {
+            reject(e)
+          })
+      })
+    },
+    statusItems(itemIds: Array<string>, status: string) {
+      return new Promise<Array<IErrorItem>>((resolve, reject) => {
+        api.post('/d4/item/status/batch', { itemIds, status })
+          .then((response) => {
+            resolve(response.data)
+          })
+          .catch((e) => {
+            reject(e)
+          })
+      })
+    },
+    reRegisterItem(itemId: string) {
+      return new Promise<void>((resolve, reject) => {
+        api.post('/d4/item/reregister', { itemId })
+          .then(() => {
+            resolve()
+          })
+          .catch((e) => {
+            reject(e)
+          })
+      })
+    },
+    reRegisterItems(itemIds: Array<string>) {
+      return new Promise<Array<IErrorItem>>((resolve, reject) => {
+        api.post('/d4/item/reregister/batch', { itemIds })
+          .then((response) => {
+            resolve(response.data)
           })
           .catch((e) => {
             reject(e)
@@ -613,11 +679,11 @@ export const useItemStore = defineStore('item', {
           })
       })
     },
-    statusItem(itemId: string) {
-      return new Promise<void>((resolve, reject) => {
-        api.post('/d4/item/status', { itemId: itemId })
-          .then(() => {
-            resolve()
+    deleteItems(itemIds: Array<string>) {
+      return new Promise<Array<IErrorItem>>((resolve, reject) => {
+        api.post('/d4/item/delete/batch', { itemIds })
+          .then((response) => {
+            resolve(response.data)
           })
           .catch((e) => {
             reject(e)
@@ -747,11 +813,12 @@ export const useItemStore = defineStore('item', {
     },
     async recognize(image: ImageLike, lang: string) {
       const locale = (lang === 'ko') ? 'kor' : 'eng'
-      const worker = await createWorker(locale, 1, {
-        workerPath: 'https://cdn.jsdelivr.net/npm/tesseract.js@v5.0.0/dist/worker.min.js',
-        langPath: 'https://tessdata.projectnaptha.com/4.0.0',
-        corePath: 'https://cdn.jsdelivr.net/npm/tesseract.js-core@v5.0.0',
-      })
+      const worker = await createWorker(locale)
+      // const worker = await createWorker(locale, 1, {
+      //   workerPath: 'https://cdn.jsdelivr.net/npm/tesseract.js@v5.0.0/dist/worker.min.js',
+      //   langPath: 'https://tessdata.projectnaptha.com/4.0.0',
+      //   corePath: 'https://cdn.jsdelivr.net/npm/tesseract.js-core@v5.0.0',
+      // })
       await worker.setParameters({
         preserve_interword_spaces: '1'
       })

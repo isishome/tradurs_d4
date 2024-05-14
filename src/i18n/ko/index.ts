@@ -45,7 +45,7 @@ export default {
     selectPreset: '프리셋을 선택하세요',
     basicDescription: '기본 필터 정보는 사용자 저장소에 저장됩니다. 아이템 등록 또는 파티 플레이 생성 시 하드코어와 시즌 여부는 기본 필터 정보에 의해 자동으로 설정됩니다.',
     presetDescription: '현재 설정되어 있는 필터 값들을 저장해두는 기능입니다. 최대 5개의 프리셋을 저장할 수 있습니다.',
-    affixDescription: '옵션 검색은 4개의 옵션 필터를 선택할 경우 4개 중 조합된 3개를 포함한 다른 아이템들도 함께 검색됩니다',
+    affixDescription: '옵션 검색은 최대 6개의 옵션 필터를 선택할 수 있고, 만약 5개를 선택한 경우 5개 중 조합된 4개를 포함한 다른 아이템들도 함께 검색됩니다',
     description: {
       advanced: '고급 필터 사용 시 \'고유 특성\'과 \'옵션\'을 구분해서 사용하세요',
       advanced2: '간혹 판매자가 \'고유 특성\'과 \'옵션\'을 잘못 입력하는 경우가 있으니 고려하여 필터 하세요'
@@ -55,15 +55,17 @@ export default {
     options: [
       { value: 'date_desc', label: '신규 아이템순' },
       { value: 'price_desc', label: '높은 가격순' },
-      { value: 'price_asc', label: '낮은 가격순' }
+      { value: 'price_asc', label: '낮은 가격순' },
+      { value: 'popular_desc', label: '제안 많은 순' },
     ]
   },
+  selectAll: '전체 선택',
   preset: {
     title: '프리셋 삭제',
     message: '해당 프리셋을 삭제할까요?'
   },
   season: {
-    bg: '/images/season/003/season_emblem_ko.webp',
+    bg: '/images/season/004/season_emblem_ko.webp',
     first: {
       socket: '악의 종자 시즌에는 장신구 아이템 옵션의 홈 유형을 정확하게 선택할수록 아이템의 노출 빈도가 높아집니다'
     },
@@ -103,19 +105,47 @@ export default {
   properties: '고유 특성',
   affixes: '옵션',
   restrictions: '제약 조건',
-  deleteItem: {
-    title: '아이템 삭제',
-    message: '해당 아이템을 삭제할까요?'
-  },
   relistItem: {
     title: '아이템 끌어올림',
     message: '해당 아이템을 끌어올림 할까요?'
+  },
+  relistItems: {
+    title: '아이템 일괄 끌어올림',
+    subTitle: '선택한 아이템을 모두 일괄 끌어올림 할까요?',
+    message: '끌어올림 할 수 없는 아이템이 선택된 경우 처리 중 제외됩니다.',
+    failedTitle: '아이템 일괄 끌어올림 실패 항목'
   },
   statusItem: {
     suspendTitle: '아이템 판매 보류',
     suspendMessage: '해당 아이템을 판매 보류 할까요?',
     resumeTitle: '아이템 판매 재개',
     resumeMessage: '해당 아이템을 판매 재개 할까요?'
+  },
+  statusItems: {
+    title: '아이템 일괄 {type}',
+    subTitle: '선택한 아이템을 모두 일괄 {type}할까요?',
+    message: '{type}할 수 없는 아이템이 선택된 경우 처리 중 제외됩니다.',
+    failedTitle: '아이템 일괄 {type} 실패 항목'
+  },
+  reRegisterItem: {
+    title: '아이템 재등록',
+    message: '해당 아이템을 재등록할까요?'
+  },
+  reRegisterItems: {
+    title: '아이템 일괄 재등록',
+    subTitle: '선택한 아이템을 모두 재등록 할까요?',
+    message: '재등록할 수 없는 아이템이 선택된 경우 처리 중 제외됩니다.',
+    failedTitle: '아이템 일괄 재등록 실패 항목'
+  },
+  deleteItem: {
+    title: '아이템 삭제',
+    message: '해당 아이템을 삭제할까요?'
+  },
+  deleteItems: {
+    title: '아이템 일괄 삭제',
+    subTitle: '선택한 아이템을 모두 일괄 삭제할까요?',
+    message: '삭제할 수 없는 아이템이 선택된 경우 처리 중 제외됩니다.',
+    failedTitle: '아이템 일괄 삭제 실패 항목'
   },
   blockUser: {
     title: '사용자 차단',
@@ -167,7 +197,9 @@ export default {
     leave: '나가기',
     open: '만들기',
     join: '입장',
-    allow: '광고 허용 방법'
+    allow: '광고 허용 방법',
+    confirm: '확인',
+    reRegister: '재등록'
   },
   attribute: {
     request: '{attr} 추가 요청',
@@ -182,7 +214,7 @@ export default {
   },
   item: {
     hardcore: '하드코어',
-    ladder: '피조물의 시즌',
+    ladder: '전리품의 재탄생',
     quality: '아이템 등급',
     selectType: '아이템 유형',
     selectClass: '{type} 선택',
@@ -345,27 +377,29 @@ export default {
     close: '24시간 동안 열지 않기'
   },
   notice: {
-    title: '업데이트 안내',
-    top: '안녕하세요. 트레이더스입니다.\n\n업데이트 사항 안내입니다.',
+    title: '전리품의 재탄생(시즌4) 업데이트 안내',
+    top: '안녕하세요. 트레이더스입니다.\n\n전리품의 재탄생(시즌4)을 맞이하여 업데이트 된 사항 안내드립니다.',
     contents: [
       { type: 'head', value: '◆ 업데이트 사항' },
-      { type: 'list', value: '아이템 목록 우측 상단에 아이템 정렬 기능이 추가되었습니다' },
+      { type: 'image', value: '/images/notice/20240514/emblem.webp' },
+      { type: 'list', value: '전설 및 일반 고유 아이템 거래가 가능해짐에 따라 관련 옵션들이 추가 수정되었습니다.' },
       { type: 'space' },
-      { type: 'image', value: '/images/notice/20240405/sort.webp' },
+      { type: 'image', value: '/images/notice/20240514/expanded.webp' },
+      { type: 'list', value: '아이템 목록 좌측 상단에 있던 \'항상 아이템 확장\' 기능이 기본 필터 그룹으로 이동되었습니다.' },
       { type: 'space' },
+      { type: 'image', value: '/images/notice/20240514/sort.webp' },
+      { type: 'list', value: '아이템 목록 우측 상단 정렬 방식에 \'제안 많은 순\' 항목이 추가되었습니다.' },
       { type: 'space' },
-      { type: 'list', value: '아이템 목록 좌측 상단에 \'항상 아이템 확장\' 기능이 추가되었습니다' },
-      { type: 'list', value: '활성화된 경우 아이템 모든 정보가 항상 노출됩니다.' },
+      { type: 'image', value: '/images/notice/20240514/unique.webp' },
+      { type: 'list', value: '고유 아이템의 기본 색상이 변경되었습니다.' },
       { type: 'space' },
-      { type: 'image', value: '/images/notice/20240405/expand.webp' },
-      { type: 'space' },
-      { type: 'space' },
-      { type: 'list', value: '시즌 4 대비 전설, 고유 아이템의 고유 특성 및 옵션 데이터가 업데이트 되었습니다.' },
-      { type: 'list', value: '아이템 입력 시 잘못된 속성으로 인해 아이템이 등록되지 않는 문제가 수정되었습니다.' },
-      { type: 'list', value: '이미지 분석 관련 API 업데이트 및 아이템 정보 인식률이 향상되었습니다.' },
-      { type: 'space' },
-      { type: 'image', value: '/images/notice/20240405/unique.webp' },
-      { type: 'image', value: '/images/notice/20240405/legendary.webp' },
+      { type: 'image', value: '/images/notice/20240514/dropdown.webp' },
+      { type: 'list', value: '필터에서 \'나만의 검색\' 그룹에 \'내 아이템\'을 선택하면,' },
+      { type: 'list', value: '아이템 목록 좌측 상단에 아이템 일괄 변경 UI가 활성화되며,' },
+      { type: 'list', value: '아이템을 선택할 수 있도록 아이템 명 좌측에 선택 박스가 추가됩니다.' },
+      { type: 'list', value: '이제 선택된 아이템들을 일괄적으로 끌어올림, 판매 보류, 판매 재개, 재등록 및 삭제할 수 있습니다.' },
+      { type: 'list', value: '자세한 이용 방법은 아래 링크를 참고하시기 바랍니다.' },
+      { type: 'link', label: '일괄 처리 기능 사용법', name: 'support', params: { section: 'batch' } },
       { type: 'space' }
     ],
     bottom: '감사합니다.',
@@ -411,7 +445,7 @@ export default {
         { type: 'answer', contents: '→ 로그인한 상태에서 좌측 필터 > 나만의 검색 항목 > \'내 아이템\', \'제안 요청 아이템\' 중 원하는 필터값을 체크해서 사용하시면 됩니다.' },
         { type: 'answer', contents: '→ 내 아이템\'을 체크하면 서브 체크 항목인 \'제안받은 아이템\' 필터가 활성화되며, 내 아이템 중 제안 요청이 있는 아이템만 필터가 가능합니다.' },
         { type: 'question', contents: '4. 거래가 무산된 경우 재 판매 설정을 할 수 있나요?' },
-        { type: 'answer', contents: '→ 제안이 수락된 이후에는 거래를 취소할 수 없습니다. 상대방 과실이 있을 경우 비 매너 평가해 주시고 도움말 메뉴에 나온 \'템플릿 복사\' 기능을 이용해 아이템을 재 등록해 주셔야 합니다.' },
+        { type: 'answer', contents: '→ 제안이 수락된 이후에는 거래를 취소할 수 없습니다. 상대방 과실이 있을 경우 비 매너 평가해 주시고 도움말 메뉴에 나온 \'템플릿 복사\' 기능을 이용해 아이템을 재등록해 주셔야 합니다.' },
         { type: 'question', contents: '5. 비 매너 평가자에게 페널티는 없나요?' },
         { type: 'answer', contents: '→ 비 매너 평가 점수가 일정 기간 동안 기준을 초과한 경우 페널티를 줄 예정입니다.' },
         { type: 'question', contents: '6. 아이템 가격 제안을 없앨 수 없나요?' },
@@ -544,13 +578,33 @@ export default {
         { type: 'image', contents: '15_evaluation' },
         { type: 'text', contents: '15. 서로의 완료 처리가 끝나면 상대방이 남긴 매너 평가를 확인할 수 있습니다.' },
         { type: 'image', contents: '16_copy' },
-        { type: 'text', contents: '16. 거래가 무산된 경우 아이템 카드 > 아이템 명 우측 > 더보기에 있는  \'템플릿 복사\' 기능을 사용하여 손쉽게 아이템 재 등록이 가능합니다.' },
+        { type: 'text', contents: '16. 거래가 무산된 경우 아이템 카드 > 아이템 명 우측 > 더보기에 있는  \'템플릿 복사\' 기능을 사용하여 손쉽게 아이템 재등록이 가능합니다.' },
         { type: 'image', contents: '1701_sound' },
         { type: 'text', contents: '17.1. 메시지 수신 알림음을 듣고싶은 경우 브라우저(크롬) 주소창 좌측을 클릭하고,' },
         { type: 'image', contents: '1702_sound' },
         { type: 'text', contents: '17.2. \'사이트 설정\'을 선택합니다.' },
         { type: 'image', contents: '1703_sound' },
         { type: 'text', contents: '17.3. \'소리\' 탭 값을 \'허용\'으로 변경하면 이제 알림음을 들을 수 있습니다.' }
+      ]
+    },
+    {
+      id: 'batch',
+      question: '아이템 일괄 처리 기능은 어떻게 사용하나요?',
+      answer: [
+        { type: 'image', contents: '01_filter' },
+        { type: 'text', contents: '1. 먼저 일괄 처리 기능을 사용하기 위해서 \'나만의 검색\' 그룹의 \'내 아이템\' 항목을 활성화합니다.' },
+        { type: 'image', contents: '02_active' },
+        { type: 'text', contents: '2. 아이템 목록 상단에 일괄 처리 기능이 표시되며,\n 아이템 항목의 \'아이템 명\' 좌측에 체크박스가 추가됩니다.' },
+        { type: 'image', contents: '03_select' },
+        { type: 'text', contents: '3. 일괄 처리를 원하는 아이템들을 선택합니다.\n 아이템 목록의 스크롤을 이동해도 일괄 처리 기능 UI는 상단에 고정됩니다.' },
+        { type: 'image', contents: '04_01_dropdown' },
+        { type: 'text', contents: '4.1. 아이템 선택이 완료되면, 일괄 처리 기능 UI 우측에 \'드롭 다운 아이콘\'을 선택합니다.' },
+        { type: 'image', contents: '04_02_dropdown' },
+        { type: 'text', contents: '4.2. 끌어올림, 판매 보류, 판매 재개, 재등록, 삭제 중 원하는 기능을 선택합니다.' },
+        { type: 'image', contents: '05_confirm' },
+        { type: 'text', contents: '5. 일괄 처리 진행 여부에 대한 확인 창이 표시되고 \'수락\'을 누르면 일괄 처리가 시작됩니다.' },
+        { type: 'image', contents: '06_failed' },
+        { type: 'text', contents: '6. 일괄 처리가 완료되면 처리가 실패한 아이템과 실패 원인이 표시됩니다.\n(모두 정상적으로 처리된 경우 실패 항목은 표시되지 않습니다.) ' }
       ]
     },
     {

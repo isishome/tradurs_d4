@@ -47,7 +47,7 @@ watch(() => props.modelValue, (val) => {
       <q-form class="inner column" :class="{ 'full-height': maximized }" @submit="emit('submit')">
         <slot v-if="$slots.top" name="top">
         </slot>
-        <q-separator v-if="$slots.top" />
+        <q-separator v-if="$slots.top && $slots.middle" />
         <slot v-if="$slots.middle" name="middle">
         </slot>
         <q-separator v-if="$slots.bottom" inset />

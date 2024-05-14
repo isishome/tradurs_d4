@@ -13,9 +13,7 @@ import { checkName, scrollPosDirect } from 'src/common'
 import D4Filter from 'components/D4Filter.vue'
 import D4PartyFilter from 'components/D4PartyFilter.vue'
 import D4User from 'components/D4User.vue'
-
 import Adsense from 'components/global/Adsense.vue'
-
 
 const props = defineProps<{
   lang: string
@@ -43,6 +41,7 @@ const rightAdRef = ref<InstanceType<typeof Adsense>>()
 const topAdKey = ref<number>(0)
 const bottomAdKey = ref<number>(0)
 const rightAdKey = ref<number>(0)
+const loading = computed(() => gs.loading)
 const filterLoading = computed(() => is.filter.loading || ps.filter.loading)
 const searchName = computed(() => route.name === 'partyPlay' ? t('party.info.name') : t('item.name'))
 const leftDrawerOpen = ref<boolean>(false)
@@ -55,6 +54,8 @@ const asideHeight = computed<string>(() => `calc(100vh - ${screen.value.gt.sm ? 
 const asideTop = computed<string>(() => `${offsetTop.value + 10}px`)
 const newAwards = computed(() => (is.awards > 0 && (new Date()).getDay() === 1 && (new Date()).getHours() >= 9) || (new Date()).getDay() === 2)
 const isNarrow = computed(() => $q.screen.width <= 1100)
+const d4Filter = ref<InstanceType<typeof D4Filter>>()
+const d4PartyFilter = ref<InstanceType<typeof D4PartyFilter>>()
 
 const myTweak = (offset: number): void => {
   offsetTop.value = offset || 0
@@ -70,11 +71,12 @@ const sign = () => {
     document.location.href = `${tradurs}/sign?redirect=${encodeURIComponent(document.location.href)}`
   else {
     progressSign.value = true
-    as.sign().then((result: boolean) => {
+    as.sign().then(async (result: boolean) => {
       if (!result) {
-        is.clearFilter()
-        ps.clearFilter()
+        d4Filter.value?.clearFilter()
+        d4PartyFilter.value?.clearFilter()
         ps.dispose()
+        await is.getStorage(true)
 
         if (route.name === 'tradeList')
           mainKey.value++
@@ -130,6 +132,31 @@ const main = () => {
 const beforeShow = () => {
   if ($q.platform.is.mobile)
     scrollPosDirect()
+}
+
+const onScroll = (details: {
+  /**
+   * Scroll offset from top (vertical)
+   */
+  position: number;
+  /**
+   * Direction of scroll
+   */
+  direction: "up" | "down";
+  /**
+   * Has scroll direction changed since event was last emitted?
+   */
+  directionChanged: boolean;
+  /**
+   * Vertical delta distance since event was last emitted
+   */
+  delta: number;
+  /**
+   * Scroll offset from top (vertical)
+   */
+  inflectionPoint: number;
+}) => {
+  gs.scrollTop = details.position
 }
 
 // drawer expansion item
@@ -188,7 +215,7 @@ watch(() => ps.filter.name, (val) => {
 </script>
 
 <template>
-  <q-layout view="hHh lpR lFf" :key="mainKey">
+  <q-layout view="hHh lpR lFf" :key="mainKey" @scroll="onScroll">
     <div v-show="['tradeList', 'itemInfo'].includes(route.name as string) && is.storage.data.ladder" class="bg-season"
       :style="`--tradurs-season-image:url('${t('season.bg')}');`">
     </div>
@@ -196,9 +223,9 @@ watch(() => ps.filter.name, (val) => {
     <q-drawer show-if-above no-swipe-open no-swipe-close no-swipe-backdrop bordered v-model="leftDrawerOpen" side="left"
       :behavior="screen.lt.lg ? 'default' : 'desktop'" class="row justify-end" @before-show="beforeShow" :width="300"
       :breakpoint="1100">
-      <D4Filter v-if="route.name !== 'partyPlay'" :disable="route.name !== 'tradeList'" class="q-pa-lg"
+      <D4Filter ref="d4Filter" v-if="route.name !== 'partyPlay'" :disable="route.name !== 'tradeList'" class="q-pa-lg"
         style="width:300px" />
-      <D4PartyFilter v-if="route.name === 'partyPlay'" class="q-pa-lg" style="width:300px" />
+      <D4PartyFilter ref="d4PartyFilter" v-if="route.name === 'partyPlay'" class="q-pa-lg" style="width:300px" />
     </q-drawer>
     <q-drawer show-if-above no-swipe-open no-swipe-close no-swipe-backdrop bordered v-model="rightDrawerOpen"
       side="right" behavior="mobile" class="row justify-start no-scroll" :width="300">
@@ -544,6 +571,8 @@ watch(() => ps.filter.name, (val) => {
     </q-header>
     <q-page-container>
       <q-page :style-fn="myTweak">
+        <q-inner-loading :showing="loading" class="fixed" color="primary" size="50px"
+          style="z-index: 9999;position: fixed;" />
         <div class="row justify-center">
           <div :class="screen.lt.sm ? 'q-pa-sm' : 'q-pa-xl'" :style="screen.lt.sm ? 'width:100%' : 'width:830px'">
             <div class="view max-width">
@@ -551,7 +580,7 @@ watch(() => ps.filter.name, (val) => {
                 <Adsense ref="topAdRef" :style="size" data-ad-client="ca-pub-5110777286519562" data-ad-slot="7137983054"
                   :data-adtest="!prod" :key="`top-${topAdKey}`" />
               </div>
-              <RouterView />
+              <RouterView :filter="d4Filter" :party-filter="d4PartyFilter" />
             </div>
             <div class="q-py-xl"></div>
             <div v-if="$q.screen.width <= 1439" class="row justify-center">
@@ -731,12 +760,12 @@ watch(() => ps.filter.name, (val) => {
 }
 
 .top-ads {
-  margin-bottom: 48px;
+  margin-bottom: 24px;
 }
 
 @media (max-width:600px) {
   .top-ads {
-    margin: 28px 0 36px 0;
+    margin: 28px 0 10px 0;
   }
 }
 
@@ -766,11 +795,23 @@ watch(() => ps.filter.name, (val) => {
   height: 100vh;
   background-image: var(--tradurs-season-image);
   background-repeat: no-repeat;
-  background-position: center 40%;
+  background-position: 49.5% 40%;
+}
+
+@media (max-width:1439px) {
+  .bg-season::before {
+    background-position: calc(49% + 150px) 40%;
+  }
+}
+
+@media (max-width:1079px) {
+  .bg-season::before {
+    background-position: 48.5% 40%;
+  }
 }
 
 .body--light .bg-season::before {
-  filter: grayscale(1);
+  filter: invert(1) grayscale(1);
 }
 
 .h1 {

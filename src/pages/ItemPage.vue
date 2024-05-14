@@ -39,10 +39,13 @@ import { ref, computed, watch, onUnmounted, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useQuasar, uid } from 'quasar'
 import { useAccountStore } from 'stores/account-store'
+
 import D4Items from 'components/D4Items.vue'
+import D4Filter from 'components/D4Filter.vue'
 
 const props = defineProps<{
-  itemid: string
+  itemid: string,
+  filter?: InstanceType<typeof D4Filter>
 }>()
 
 // init module
@@ -73,11 +76,16 @@ const upsertItem = (item: Item, done: Function) => {
 
   is[item.itemId !== '' ? 'updateItem' : 'addItem'](item)
     .then((response) => {
-      if (item.itemId !== '')
-        is.detailItem.splice(0, 1, response)
+      if (item.itemId !== '') {
+        is.getItems(1, item.itemId)
+          .then((result: Array<Item>) => {
+            if (result.length > 0)
+              is.detailItem.splice(0, 1, result[0])
+          })
+      }
       else {
         as.retrieve()
-        is.clearFilter()
+        props.filter?.clearFilter()
         router.push({ name: 'tradeList', params: { lang: route.params.lang } })
       }
 
@@ -88,19 +96,6 @@ const upsertItem = (item: Item, done: Function) => {
     })
     .catch(() => {
       done()
-      disable.value = false
-    })
-}
-
-const deleteItem = (item: Item, done: Function) => {
-  disable.value = true
-  is.deleteItem(item.itemId)
-    .then(() => {
-      router.push({ name: 'tradeList', params: { lang: route.params.lang } })
-    })
-    .catch(() => {
-      done()
-      updateOnly(item.itemId)
       disable.value = false
     })
 }
@@ -127,6 +122,33 @@ const statusItem = (item: Item, done: Function) => {
         is.detailItem[0].statusCode = is.detailItem[0].statusCode === '000' ? '002' : '000'
       itemsRef.value?.hideEditable()
       disable.value = false
+    })
+    .catch(() => {
+      done()
+      updateOnly(item.itemId)
+      disable.value = false
+    })
+}
+
+const reRegisterItem = (item: Item, done: Function) => {
+  disable.value = true
+  is.reRegisterItem(item.itemId)
+    .then(() => {
+      as.retrieve()
+      router.push({ name: 'tradeList', params: { lang: route.params.lang } })
+    })
+    .catch(() => {
+      done()
+      updateOnly(item.itemId)
+      disable.value = false
+    })
+}
+
+const deleteItem = (item: Item, done: Function) => {
+  disable.value = true
+  is.deleteItem(item.itemId)
+    .then(() => {
+      router.push({ name: 'tradeList', params: { lang: route.params.lang } })
     })
     .catch(() => {
       done()
@@ -332,8 +354,8 @@ onUnmounted(() => {
   <div>
     <div class="row justify-center items-center">
       <D4Items ref="itemsRef" :items="is.detailItem" @upsert-item="upsertItem" @delete-item="deleteItem"
-        @relist-item="relistItem" @status-item="statusItem" @update-only="updateOnly" @copy="copy"
-        @favorite="favorite" />
+        @relist-item="relistItem" @status-item="statusItem" @reregister-item="reRegisterItem" @update-only="updateOnly"
+        @copy="copy" @favorite="favorite" />
     </div>
     <div class="q-py-lg"></div>
     <D4Btn v-if="completeInfo" round :to="{ name: 'tradeList', params: { lang: route.params.lang } }" class="sticky-btn"

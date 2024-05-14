@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { ref, computed, nextTick, defineAsyncComponent } from 'vue'
+import { ref, computed, nextTick } from 'vue'
 import { QInput, useQuasar, debounce, date } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { clipboard } from 'src/common'
 import { useAccountStore } from 'src/stores/account-store'
 import { usePartyStore, PartyMessageTypes, type IPartyMessage, IPartyUser, PartyServiceTypes } from 'src/stores/party-store'
 
-const D4Price = defineAsyncComponent(() => import('components/D4Price.vue'))
+import D4Price from 'components/D4Price.vue'
 
 // global variable
 const { t } = useI18n({ useScope: 'global' })
@@ -120,7 +120,8 @@ const kick = (battleTag: string) => {
           <q-space />
           <div class="row justify-end q-gutter-x-xs">
             <q-btn unelevated dense aria-label="Tradurs Close Button" class="no-hover invert" :ripple="false">
-              <img src="/images/icons/minimize.svg" width="18" height="18" @click="ps.hide" alt="Tradurs Minimize Icon" />
+              <img src="/images/icons/minimize.svg" width="18" height="18" @click="ps.hide"
+                alt="Tradurs Minimize Icon" />
             </q-btn>
             <q-btn unelevated dense aria-label="Tradurs Close Button" class="no-hover invert" :ripple="false">
               <img src="/images/icons/close.svg" width="18" height="18" @click="leave" alt="Tradurs Close Icon" />
@@ -257,8 +258,9 @@ const kick = (battleTag: string) => {
                 <q-breadcrumbs-el :label="ps.getCategory(ps.partyInfo.category)?.[0]?.label" />
                 <q-breadcrumbs-el>
                   {{ t('party.info.runs') }}<span class="q-ml-xs"
-                    :class="!$q.dark.isActive ? 'text-grey-4' : 'text-grey-9'">{{ ps.partyInfo.runs
-                    }}</span>
+                    :class="!$q.dark.isActive ? 'text-grey-4' : 'text-grey-9'">{{
+    ps.partyInfo.runs
+  }}</span>
                 </q-breadcrumbs-el>
                 <q-breadcrumbs-el>
                   {{ t('party.info.people') }}<span class="q-ml-xs"
@@ -269,7 +271,7 @@ const kick = (battleTag: string) => {
             </div>
           </q-card-section>
           <q-separator :dark="!$q.dark.isActive" />
-          <q-card-section  v-if="ps.partyInfo.service !== PartyServiceTypes.COOP" class="q-px-none">
+          <q-card-section v-if="ps.partyInfo.service !== PartyServiceTypes.COOP" class="q-px-none">
             <div class="row justify-end items-center">
               <D4Price :data="ps.partyInfo.price" :dark="!$q.dark.isActive" />
             </div>

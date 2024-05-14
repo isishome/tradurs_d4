@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { defineAsyncComponent } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAccountStore } from 'src/stores/account-store'
-import { usePartyStore, PartyServiceTypes, Party, type IParty } from 'src/stores/party-store'
+import { usePartyStore, PartyServiceTypes, Party } from 'src/stores/party-store'
 
-const D4Price = defineAsyncComponent(() => import('components/D4Price.vue'))
-const D4User = defineAsyncComponent(() => import('components/D4User.vue'))
+import D4Price from 'components/D4Price.vue'
+import D4User from 'components/D4User.vue'
 
 interface IProps {
   data: Party,
@@ -60,8 +59,8 @@ const ps = usePartyStore()
           <q-breadcrumbs-el :label="ps.getCategory(data.category)?.[0]?.label" />
           <q-breadcrumbs-el>
             {{ t('party.info.runs') }}<span class="q-ml-xs" :class="$q.dark.isActive ? 'text-grey-4' : 'text-grey-9'">{{
-              data.runs
-            }}</span>
+    data.runs
+  }}</span>
           </q-breadcrumbs-el>
           <q-breadcrumbs-el>
             {{ t('party.info.people') }}<span class="q-ml-xs" :class="$q.dark.isActive ? 'text-grey-4' : 'text-grey-9'">

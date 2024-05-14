@@ -82,6 +82,10 @@ const click = () => {
   filter: contrast(40%) opacity(.7);
 }
 
+.body--dark .disable {
+  filter: contrast(80%) brightness(30%);
+}
+
 .progress {
   cursor: wait;
 }
@@ -219,7 +223,7 @@ const click = () => {
 }
 
 .body--light .shadow-depth-5 {
-  box-shadow: rgb(38, 57, 77) 0 20px 30px 0;
+  box-shadow: rgb(38, 57, 77) 0 16px 30px 0;
 }
 
 .body--light .shadow-depth-1 {
@@ -235,7 +239,7 @@ const click = () => {
 }
 
 .body--light .shadow-depth-deep {
-  box-shadow: rgb(38, 57, 77) 0 20px 30px 0, rgb(38, 57, 77) 0 20px 30px 0 !important;
+  box-shadow: rgb(38, 57, 77) 0 16px 30px 0, rgb(38, 57, 77) 0 16px 30px 0 !important;
 }
 
 

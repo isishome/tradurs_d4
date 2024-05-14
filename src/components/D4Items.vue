@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { ref, computed, reactive, nextTick, defineAsyncComponent } from 'vue'
+import { ref, computed, reactive, nextTick } from 'vue'
 import { useQuasar, QInput, QSelect, uid } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 
-import { useGlobalStore } from 'src/stores/global-store'
 import { useAccountStore } from 'stores/account-store'
 import { useItemStore } from 'stores/item-store'
 import { checkAttribute, scrollPos } from 'src/common'
@@ -12,12 +11,13 @@ import { itemImgs } from 'src/common/items'
 import { Item, Offer, type AffixValue, type IItem, Price, type Property, type Affix, type Restriction } from 'src/types/item'
 import { User } from 'src/types/user'
 
-const D4Item = defineAsyncComponent(() => import('components/D4Item.vue'))
-const D4Property = defineAsyncComponent(() => import('components/D4Property.vue'))
-const D4Affix = defineAsyncComponent(() => import('components/D4Affix.vue'))
-const D4Restriction = defineAsyncComponent(() => import('components/D4Restriction.vue'))
-const D4Offer = defineAsyncComponent(() => import('components/D4Offer.vue'))
-const D4User = defineAsyncComponent(() => import('components/D4User.vue'))
+import D4Item from 'components/D4Item.vue'
+import D4Property from 'components/D4Property.vue'
+import D4Affix from 'components/D4Affix.vue'
+import D4Restriction from 'components/D4Restriction.vue'
+import D4Offer from 'components/D4Offer.vue'
+import D4User from 'components/D4User.vue'
+import D4Analysis from 'components/D4Analysis.vue'
 
 interface IProps {
   items: Array<Item>,
@@ -31,20 +31,16 @@ const props = withDefaults(defineProps<IProps>(), {
   height: '200'
 })
 
-const emit = defineEmits(['upsert-item', 'delete-item', 'relist-item', 'status-item', 'update-only', 'copy', 'favorite'])
+const emit = defineEmits(['upsert-item', 'delete-item', 'relist-item', 'status-item', 'reregister-item', 'update-only', 'copy', 'favorite'])
 
 const prod: boolean = import.meta.env.PROD
 
 // init module
 const $q = useQuasar()
-const gs = useGlobalStore()
 const as = useAccountStore()
 const is = useItemStore()
 const { t } = useI18n({ useScope: 'global' })
 const route = useRoute()
-
-// lazy loading components
-const D4Analysis = defineAsyncComponent(() => import('components/D4Analysis.vue'))
 
 // common variable
 const requestProperties = computed<number>(() => is.properties.request)
@@ -153,23 +149,6 @@ const hideEditable = () => {
   activateShow.value = false
 }
 
-const deleteConfirm = (deleteItem?: Item) => {
-  $q.dialog({
-    title: t('deleteItem.title'),
-    message: t('deleteItem.message'),
-    persistent: true,
-    cancel: { label: t('btn.cancel'), color: 'grey', outline: true },
-    ok: { label: t('deleteItem.title'), color: 'negative', unelevated: true, class: 'text-weight-bold invert-icon' },
-    transitionShow: 'fade',
-    transitionHide: 'fade',
-    noRouteDismiss: true,
-    class: 'q-pa-sm'
-  }).onOk(() => {
-    disable.value = true
-    emit('delete-item', deleteItem || activatedItem.value, done)
-  })
-}
-
 const relistItem = () => {
   $q.dialog({
     title: t('relistItem.title'),
@@ -203,6 +182,40 @@ const statusItem = () => {
   }).onOk(() => {
     disable.value = true
     emit('status-item', activatedItem.value, done)
+  })
+}
+
+const reRegisterItem = (reRegisterItem?: Item) => {
+  $q.dialog({
+    title: t('reRegisterItem.title'),
+    message: t('reRegisterItem.message'),
+    persistent: true,
+    cancel: { label: t('btn.cancel'), color: 'grey', outline: true },
+    ok: { label: t('reRegisterItem.title'), color: 'primary', unelevated: true, class: 'text-weight-bold invert-icon' },
+    transitionShow: 'fade',
+    transitionHide: 'fade',
+    noRouteDismiss: true,
+    class: 'q-pa-sm'
+  }).onOk(() => {
+    disable.value = true
+    emit('reregister-item', reRegisterItem || activatedItem.value, done)
+  })
+}
+
+const deleteConfirm = (deleteItem?: Item) => {
+  $q.dialog({
+    title: t('deleteItem.title'),
+    message: t('deleteItem.message'),
+    persistent: true,
+    cancel: { label: t('btn.cancel'), color: 'grey', outline: true },
+    ok: { label: t('deleteItem.title'), color: 'negative', unelevated: true, class: 'text-weight-bold invert-icon' },
+    transitionShow: 'fade',
+    transitionHide: 'fade',
+    noRouteDismiss: true,
+    class: 'q-pa-sm'
+  }).onOk(() => {
+    disable.value = true
+    emit('delete-item', deleteItem || activatedItem.value, done)
   })
 }
 
@@ -679,7 +692,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
           <template #actions>
             <div v-show="rewardItem.expanded" class="row justify-between items-center q-pt-lg">
               <div>
-                <D4Btn v-if="rewardItem.authorized && !['001', '004'].includes(rewardItem.statusCode)"
+                <D4Btn v-if="rewardItem.authorized && !['001', '003', '004'].includes(rewardItem.statusCode)"
                   :label="t('btn.edit')" color="var(--q-secondary)" :loading="rewardItem.loading"
                   @click="editItem(rewardItem as Item)" />
               </div>
@@ -719,10 +732,14 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
           <template #actions>
             <div v-show="item.expanded" class="row justify-between items-center q-pt-lg">
               <div>
-                <D4Btn v-if="item.authorized && ['004'].includes(item.statusCode)" :label="t('btn.delete')"
-                  color="var(--q-secondary)" :loading="item.loading" @click="deleteConfirm(item)" />
-                <D4Btn v-else-if="item.authorized && !['001', '004'].includes(item.statusCode)" :label="t('btn.edit')"
-                  color="var(--q-light-set)" :loading="item.loading" @click="editItem(item)" />
+                <div class="row items-center q-gutter-x-sm" v-if="item.authorized && ['004'].includes(item.statusCode)">
+                  <D4Btn :label="t('btn.delete')" color="var(--q-secondary)" :loading="item.loading"
+                    @click="deleteConfirm(item)" />
+                  <D4Btn :label="t('btn.reRegister')" color="var(--q-light-magic)" :loading="item.loading"
+                    @click="reRegisterItem(item)" />
+                </div>
+                <D4Btn v-else-if="item.authorized && !['001', '003', '004'].includes(item.statusCode)"
+                  :label="t('btn.edit')" color="var(--q-light-set)" :loading="item.loading" @click="editItem(item)" />
               </div>
               <div>
                 <D4Btn
@@ -906,7 +923,8 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
             class="row justify-between items-center q-py-xs">
             <div class="row items-center q-gutter-sm">
               <D4Btn v-if="activatedItem.itemId" :label="!$q.screen.lt.sm ? t('btn.moreActions') : ''"
-                :loading="activatedItem.loading" :disable="disable" color="var(--q-secondary)">
+                :loading="activatedItem.loading" :disable="disable || activatedItem.statusCode === '003'"
+                color="var(--q-secondary)">
                 <q-icon class="invert" :class="{ 'q-ml-xs': !$q.screen.lt.sm }" size="24px"
                   :name="`img:/images/icons/${!$q.screen.lt.sm ? 'dropdown.svg' : 'morehoriz.svg'}`" />
                 <q-menu fit anchor="bottom middle" self="top middle" auto-close class="no-shadow scroll rounded-borders"

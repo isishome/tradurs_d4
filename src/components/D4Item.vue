@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref, computed, defineAsyncComponent, useSlots, nextTick, onUnmounted, ComputedRef, onMounted } from 'vue'
+import { reactive, ref, computed, useSlots, nextTick, onUnmounted, ComputedRef, onMounted } from 'vue'
 import { QCard, useQuasar, date } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
@@ -10,9 +10,9 @@ import { Item, Price } from 'src/types/item'
 import { checkName, clipboard } from 'src/common'
 import { itemImgs } from 'src/common/items'
 
-const D4Price = defineAsyncComponent(() => import('components/D4Price.vue'))
-const D4User = defineAsyncComponent(() => import('components/D4User.vue'))
-const D4Separator = defineAsyncComponent(() => import('components/D4Separator.vue'))
+import D4Price from 'components/D4Price.vue'
+import D4User from 'components/D4User.vue'
+import D4Separator from 'components/D4Separator.vue'
 
 interface IProps {
   data: Item,
@@ -52,7 +52,7 @@ const imgSrc = computed(() =>
 
 const _name = ref<string>(props.data.name)
 const _quantity = ref<number>(props.data.quantity || 1)
-const selectable = computed(() => props.data.authorized && store.filter.mine && !['001', '003'].includes(props.data.statusCode) && props.data.offers === 0)
+const selectable = computed(() => props.data.authorized && store.filter.mine)
 const endDate = new Date(props.data.endDate)
 const expDate = new Date(props.data.expDate)
 const remainDate = ref<number>(date.getDateDiff(['000', '002'].includes(props.data.statusCode) ? endDate : expDate, new Date(), 'seconds'))
@@ -392,9 +392,9 @@ defineExpose({ scrollEnd })
                   <template #top>
                     <q-card-section class="row justify-between items-center q-ml-md">
                       <div class="name">{{ t('item.selectImage', {
-                        tv:
-                          findClass(data.itemTypeValue1)?.label || findType(data.itemType)?.label
-                      }) }}
+    tv: findClass(data.itemTypeValue1)?.label ||
+      findType(data.itemType)?.label
+  }) }}
                       </div>
                       <q-btn unelevated aria-label="Tradurs Close Button" class="no-hover icon" :ripple="false">
                         <img src="/images/icons/close.svg" width="24" height="24" @click="showItemImages = false"
@@ -653,18 +653,15 @@ defineExpose({ scrollEnd })
     <slot name="more" :loading="loading"></slot>
   </q-card>
   <q-card v-else class="card-item non-selectable no-scroll full-height overflow-hidden"
-    :class="[data.expanded ? 'expanded' : 'no-expanded', data.quality, `status-${data.statusCode}`]">
+    :class="[data.expanded ? 'expanded' : 'no-expanded', data.quality, data.itemType, `status-${data.statusCode}`]">
     <div class="inner">
       <q-card-section>
         <div class="user-area row justify-end">
           <div class="item-image">
             <q-img v-show="!loading" class="item-image" :src="imgSrc" alt="Tradurs Item Image" />
-            <div v-show="loading" class="fit row justify-center items-center">
-              <q-skeleton type="circle" width="60px" height="60px" />
-            </div>
           </div>
           <div class="column justify-center items-end" :class="{ 'q-gutter-xs': !$q.screen.lt.sm || loading }">
-            <q-skeleton v-show="loading" width="100%" :height="$q.screen.lt.sm ? '16px' : '18px'" />
+            <q-skeleton v-show="loading" width="40px" :height="$q.screen.lt.sm ? '16px' : '18px'" />
             <div v-show="!loading" class="row items-center q-gutter-x-sm">
               <template v-if="!data.forDisplay && !history">
                 <div v-if="['000', '002', '003'].includes(data.statusCode)" class="date" :class="remainColor">
@@ -700,27 +697,51 @@ defineExpose({ scrollEnd })
           </div>
           <div class="name-place">
             <div v-show="!loading" class="row items-center q-gutter-xs q-mb-xs no-wrap">
-              <!-- <q-checkbox v-if="selectable" v-model="data.selected" dense :size="$q.screen.lt.sm ? 'xs' : 'sm'" /> -->
-              <div v-show="data.itemTypeValue1 === 'rune'" class="row items-center q-gutter-sm">
-                <div class="name">{{ (filterRunesByType().find(r => r.value === data.itemTypeValue1) || {}).label }}
+              <q-checkbox v-if="selectable" v-model="data.selected" dense size="xs" class="text-caption">
+                <div v-show="data.itemTypeValue1 === 'rune'" class="row items-center q-gutter-sm">
+                  <div class="name">{{ (filterRunesByType().find(r => r.value === data.itemTypeValue1) || {}).label }}
+                  </div>
+                  <div>{{ findRuneType(findRune(data.itemTypeValue1)?.type)?.label }}
+                  </div>
                 </div>
-                <div>{{ findRuneType(findRune(data.itemTypeValue1)?.type)?.label }}
+                <div class="name stress ellipsis-2-lines">
+                  <span v-show="qualifiable">
+                    {{ data.name }}
+                  </span>
+                  <span v-show="data.itemTypeValue1 === 'gem'">
+                    {{ store.gems.find(g => g.value === data.itemTypeValue2)?.label }}
+                  </span>
+                  <span v-show="data.itemTypeValue1 === 'elixir'">
+                    {{ store.elixirs.find(e => e.value === data.itemTypeValue2)?.label }}
+                  </span>
+                  <span v-show="data.itemTypeValue1 === 'summoning'">
+                    {{ store.summonings.find(s => s.value === data.itemTypeValue2)?.label }}
+                  </span>
                 </div>
-              </div>
-              <div class="name stress ellipsis-2-lines">
-                <span v-show="qualifiable">
-                  {{ data.name }}
-                </span>
-                <span v-show="data.itemTypeValue1 === 'gem'">
-                  {{ store.gems.find(g => g.value === data.itemTypeValue2)?.label }}
-                </span>
-                <span v-show="data.itemTypeValue1 === 'elixir'">
-                  {{ store.elixirs.find(e => e.value === data.itemTypeValue2)?.label }}
-                </span>
-                <span v-show="data.itemTypeValue1 === 'summoning'">
-                  {{ store.summonings.find(s => s.value === data.itemTypeValue2)?.label }}
-                </span>
-              </div>
+              </q-checkbox>
+              <template v-else>
+                <div v-show="data.itemTypeValue1 === 'rune'" class="row items-center q-gutter-sm">
+                  <div class="name">{{ (filterRunesByType().find(r => r.value === data.itemTypeValue1) || {}).label }}
+                  </div>
+                  <div>{{ findRuneType(findRune(data.itemTypeValue1)?.type)?.label }}
+                  </div>
+                </div>
+                <div class="name stress ellipsis-2-lines">
+                  <span v-show="qualifiable">
+                    {{ data.name }}
+                  </span>
+                  <span v-show="data.itemTypeValue1 === 'gem'">
+                    {{ store.gems.find(g => g.value === data.itemTypeValue2)?.label }}
+                  </span>
+                  <span v-show="data.itemTypeValue1 === 'elixir'">
+                    {{ store.elixirs.find(e => e.value === data.itemTypeValue2)?.label }}
+                  </span>
+                  <span v-show="data.itemTypeValue1 === 'summoning'">
+                    {{ store.summonings.find(s => s.value === data.itemTypeValue2)?.label }}
+                  </span>
+                </div>
+              </template>
+
               <div v-if="data.quantity > 1" class="row items-center q-gutter-x-xs no-wrap">
                 <div class="text-lowercase">x</div>
                 <div>{{ data.quantity }}</div>
@@ -766,7 +787,7 @@ defineExpose({ scrollEnd })
             <q-skeleton width="100px" :height="$q.screen.lt.sm ? '16px' : '18px'" />
           </div>
           <div v-show="!loading && qualifiable" class="stress" style="opacity:.6">{{ findTier(data.tier)?.fullName }} {{
-            findQuality(data.quality)?.fullName }}
+    findQuality(data.quality)?.fullName }}
             {{ findClass(data.itemTypeValue1)?.label || findType(data.itemType)?.label }}
           </div>
           <div v-show="data.power > 0">
@@ -954,6 +975,15 @@ defineExpose({ scrollEnd })
 
 .card-item.unique:deep(.stress) {
   font-weight: 700;
+}
+
+.body--dark .card-item.magic:deep(.stress),
+.body--dark .card-item.consumables:deep(.stress) {
+  color: var(--q-magic);
+}
+
+.body--dark .card-item.rare:deep(.stress) {
+  color: var(--q-rare);
 }
 
 .body--dark .card-item.legendary:deep(.stress) {

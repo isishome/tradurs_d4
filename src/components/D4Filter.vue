@@ -144,17 +144,13 @@ const updateDebounce = debounce((quality?: Array<string>) => {
 }, 800)
 
 const updateBasic = () => {
-  if (as.signed) {
-    is.setStorage()
-      .then(() => {
-        filter.request++
-        Object.assign(is.filter, filter)
-      })
-  }
-  else {
-    filter.request++
-    Object.assign(is.filter, filter)
-  }
+  is.setStorage()
+    .then(() => { })
+    .catch(() => { })
+    .then(() => {
+      filter.request++
+      Object.assign(is.filter, filter)
+    })
 }
 
 const updateBasicDebounce = debounce(() => {
@@ -229,6 +225,12 @@ defineExpose({
       <q-item-section>
         <q-checkbox dense :disable="filterLoading" size="xs" v-model="is.storage.data.ladder" :label="t('item.ladder')"
           @update:model-value="updateBasicDebounce()" />
+      </q-item-section>
+    </q-item>
+    <q-item :disable="filterLoading">
+      <q-item-section>
+        <q-checkbox dense :disable="filterLoading" size="xs" v-model="is.storage.data.expanded"
+          :label="t('item.expanded')" @update:model-value="updateBasic()" />
       </q-item-section>
     </q-item>
     <q-separator inset />
@@ -397,7 +399,7 @@ defineExpose({
     </q-item>
     <q-item :disable="filterLoading">
       <q-item-section class="no-wrap">
-        <q-select ref="affixRef" v-model="filter.affixes" class="col" :disable="filterLoading" max-values="4" outlined
+        <q-select ref="affixRef" v-model="filter.affixes" class="col" :disable="filterLoading" max-values="6" outlined
           dense no-error-icon use-input hide-bottom-space hide-selected emit-value map-options multiple
           transition-show="none" transition-hide="none" :transition-duration="0"
           :label="`${t('affixes')} ${t('searchOrSelect')}`" :options="affixOptions(affixNeedle)"
