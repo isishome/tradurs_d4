@@ -361,7 +361,7 @@ const checkProperties = (tArray: string[]) => {
       matchAttribute.forEach((ma: ISimilar) => {
         ma.match.sort((a, b) => b.rate - a.rate)
 
-        const attrStr = tArray.slice(ma.index, ma.index + (ma.match[0]?.length ?? 0) + 1).join('-')
+        const attrStr = tArray.slice(ma.index, ma.index + (ma.match[0]?.length ?? 0) + 2).join('-')
         const matchValues = attrStr.match(/[0-9.]{1,}/g)?.filter(mv => !isNaN(parseFloat(mv))).map(mv => parseFloat(mv))
         const plainMatch = is.findProperty(ma.match[0]?.id)?.label.match(/[0-9]{1,}[.]?[0-9]*|\{x\}/g)
         const values: Array<number> = []
@@ -420,7 +420,7 @@ const checkAffixes = (tArray: string[]) => {
     matchAttribute.forEach((ma: ISimilar) => {
       ma.match.sort((a, b) => b.rate - a.rate)
 
-      const attrStr = tArray.slice(ma.index, ma.index + (ma.match[0]?.length ?? 0) + 1).join('-')
+      const attrStr = tArray.slice(ma.index, ma.index + (ma.match[0]?.length ?? 0) + 2).join('-')
       const matchMinMax = attrStr.match(/[\[]{1}[0-9.]{1,}[^\-\[]*[\-]*[0-9.]{1,}[\]]?/g)?.map(mmm => mmm.replace(/[^0-9.-]/g, '').split(/[\-]{1,2}/).map(mm => !isNaN(parseFloat(mm)) ? parseFloat(mm) : 0))
       const matchValues = attrStr.replace(/[\[]{1}[0-9.]{1,}[^\-\[]*[\-]*[0-9.]{1,}[\]]?/g, '').match(/[0-9.]{1,}/g)?.filter(mv => !isNaN(parseFloat(mv))).map(mv => parseFloat(mv))
       const plainMatch = is.findAffix(ma.match[0]?.id)?.label.match(/[0-9]{1,}[.]?[0-9]*|\{x\}/g)

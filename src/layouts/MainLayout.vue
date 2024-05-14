@@ -219,18 +219,17 @@ watch(() => ps.filter.name, (val) => {
     <div v-show="['tradeList', 'itemInfo'].includes(route.name as string) && is.storage.data.ladder" class="bg-season"
       :style="`--tradurs-season-image:url('${t('season.bg')}');`">
     </div>
-
     <q-drawer show-if-above no-swipe-open no-swipe-close no-swipe-backdrop bordered v-model="leftDrawerOpen" side="left"
-      :behavior="screen.lt.lg ? 'default' : 'desktop'" class="row justify-end" @before-show="beforeShow" :width="300"
-      :breakpoint="1100">
+      :behavior="screen.lt.lg ? 'default' : 'desktop'" class="row justify-end" style="overflow-x: hidden;"
+      @before-show="beforeShow">
       <D4Filter ref="d4Filter" v-if="route.name !== 'partyPlay'" :disable="route.name !== 'tradeList'" class="q-pa-lg"
         style="width:300px" />
       <D4PartyFilter ref="d4PartyFilter" v-if="route.name === 'partyPlay'" class="q-pa-lg" style="width:300px" />
     </q-drawer>
     <q-drawer show-if-above no-swipe-open no-swipe-close no-swipe-backdrop bordered v-model="rightDrawerOpen"
-      side="right" behavior="mobile" class="row justify-start no-scroll" :width="300">
+      side="right" behavior="mobile" class="row justify-start no-scroll" style="overflow-x: hidden;">
       <div class="column fit">
-        <q-item class="row justify-end items-center q-py-lg q-gutter-x-sm icons">
+        <q-item class="row justify-center items-center q-py-lg q-gutter-x-sm icons">
           <q-btn v-show="availableParty" round dense flat aria-label="Tradurs Chat Button" :ripple="!$q.dark.isActive"
             @click="ps.show">
             <img class="icon" width="24" height="24" src="/images/icons/chat.svg" alt="Chat Icon" />
@@ -311,7 +310,6 @@ watch(() => ps.filter.name, (val) => {
             </q-item>
             <q-expansion-item v-if="as.signed" v-model="expanded" expand-icon="img:/images/icons/dropdown.svg"
               :default-opened="isMySpace" :class="expanded ? 'expanded rounded-borders' : ''">
-
               <template #header>
                 <q-item-section>
                   <div>
