@@ -214,7 +214,7 @@ export default {
   },
   item: {
     hardcore: '하드코어',
-    ladder: '전리품의 재탄생',
+    ladder: '전리품의 재탄생 시즌',
     quality: '아이템 등급',
     selectType: '아이템 유형',
     selectClass: '{type} 선택',

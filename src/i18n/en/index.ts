@@ -214,7 +214,7 @@ export default {
   },
   item: {
     hardcore: 'Hardcore',
-    ladder: 'Loot Reborn',
+    ladder: 'Loot Reborn Season',
     quality: 'Item Quality',
     selectType: 'Item Type',
     selectClass: 'Select {type}',

@@ -244,27 +244,29 @@ const checkInfo = (textArray: string[]) => {
   }
 
   // check item upgrades
-  const upgradesText = `업그레이드|upgrades`
-  const indexUpgrades = textArray.findIndex(ta => (new RegExp(upgradesText, 'gi')).test(ta))
+  // const upgradesText = `업그레이드|upgrades`
+  // const indexUpgrades = textArray.findIndex(ta => (new RegExp(upgradesText, 'gi')).test(ta))
 
-  if (indexUpgrades !== -1) {
-    const numPhase = textArray[indexUpgrades].replace(/[^0-9\/]/gi, '').replace(/^([0-9]*)(\/?[0-9]*)$/gi, '$1')
-    if (!isNaN(parseFloat(numPhase)))
-      item.upgrade = parseFloat(numPhase)
+  // if (indexUpgrades !== -1) {
+  //   const numPhase = textArray[indexUpgrades].replace(/[^0-9\/]/gi, '').replace(/^([0-9]*)(\/?[0-9]*)$/gi, '$1')
+  //   if (!isNaN(parseFloat(numPhase)))
+  //     item.upgrade = parseFloat(numPhase)
 
-    textArray.splice(0, indexUpgrades + 1)
-  }
+  //   textArray.splice(0, indexUpgrades + 1)
+  // }
 
   // check item Requires Level
   const requiresText = `요구.*레벨|requires.*level`
   const indexRequires = textArray.findIndex(ta => (new RegExp(requiresText, 'gi')).test(ta))
 
-  if (indexRequires === -1)
-    return failedScan(t('analyze.requireNotFound'))
+  // if (indexRequires === -1)
+  //   return failedScan(t('analyze.requireNotFound'))
 
-  const levelPhase = textArray[indexRequires].replace(/[^0-9]/gi, '')
-  if (!isNaN(parseFloat(levelPhase)))
-    item.level = parseFloat(levelPhase)
+  if (indexRequires !== -1) {
+    const levelPhase = textArray[indexRequires].replace(/[^0-9]/gi, '')
+    if (!isNaN(parseFloat(levelPhase)))
+      item.level = parseFloat(levelPhase)
+  }
 
   restrictionsPhase = textArray.splice(indexRequires, textArray.length).map((ta: string) => ta.replace(/[\+ ]/g, ''))
 

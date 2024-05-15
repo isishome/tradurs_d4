@@ -461,9 +461,9 @@ defineExpose({ scrollEnd })
         <div v-show="tierable" class="row items-center q-gutter-x-sm">
           <D4Counter v-model="_power" :label="t('item.power')" :max="9999" max-width="110px" allow-zero no-button
             :disable="disable" @update:model-value="update" />
-          <D4Counter v-if="upgradeLimit" v-model="_upgrade"
+          <!-- <D4Counter v-if="upgradeLimit" v-model="_upgrade"
             :label="t('item.upgrade', { u: _upgrade, ul: upgradeLimit })" max-width="110px" :max="upgradeLimit"
-            allow-zero :no-button="$q.screen.lt.sm" :disable="disable" @update:model-value="update" />
+            allow-zero :no-button="$q.screen.lt.sm" :disable="disable" @update:model-value="update" /> -->
         </div>
         <D4Counter v-show="!noLevel" v-model="_level" class="col row justify-end" :label="t('item.level')"
           max-width="110px" :max="999" no-button :disable="disable || !qualifiable || noLevel"
@@ -793,9 +793,9 @@ defineExpose({ scrollEnd })
           <div v-show="data.power > 0">
             {{ t('item.power', { p: data.power, u: data.upgrade ? ` + ${data.upgrade * 5}` : '' }) }}
           </div>
-          <div v-show="data.upgrade > 0" class="stress">
+          <!-- <div v-show="data.upgrade > 0" class="stress">
             {{ t('item.upgrade', { u: data.upgrade, ul: upgradeLimit }) }}
-          </div>
+          </div> -->
           <div v-show="loading">
             <q-skeleton width="130px" :height="$q.screen.lt.sm ? '16px' : '18px'" />
           </div>
