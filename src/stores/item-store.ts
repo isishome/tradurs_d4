@@ -241,6 +241,10 @@ export const useItemStore = defineStore('item', {
       more: false as boolean
     },
     analyze: {
+      similarRate: {
+        ko: .8,
+        en: .7
+      },
       lang: {
         ko: `가-힣`,
         en: `a-zA-Z`,
@@ -248,7 +252,8 @@ export const useItemStore = defineStore('item', {
         zh: `一-龥`
       },
       replaces: {
-        ko: [[`낮`, `낫`]]
+        ko: [[`낮`, `낫`]],
+        en: []
       }
     }
   }),

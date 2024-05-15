@@ -30,7 +30,7 @@ const { t } = useI18n({ useScope: 'global' })
 const is = useItemStore()
 
 const lang: string = route.params.lang as string || 'ko'
-const similarRate = .8
+const similarRate = is.analyze.similarRate[lang as keyof typeof is.analyze.similarRate]
 const phase = is.analyze.lang[lang as keyof typeof is.analyze.lang]
 const replaces = is.analyze.replaces[lang as keyof typeof is.analyze.replaces]
 const timeout = 400
