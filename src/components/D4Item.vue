@@ -241,7 +241,7 @@ defineExpose({ scrollEnd })
             <q-select v-model="_type" :disable="disable" outlined dense no-error-icon hide-bottom-space emit-value
               map-options transition-show="none" transition-hide="none" :transition-duration="0"
               :label="t('item.selectType')" dropdown-icon="img:/images/icons/dropdown.svg" :options="filterTypes()"
-              popup-content-class="scroll bordered" @update:model-value="updateType">
+              popup-content-class="scroll bordered limit-select" @update:model-value="updateType">
               <!-- Season 1 accessory notify -->
               <!-- <template v-if="store.storage.data.ladder && _type === 'accessory'" #prepend>
                     <q-icon class="caution" size="19px">
@@ -309,7 +309,7 @@ defineExpose({ scrollEnd })
                 emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0"
                 :label="t('item.selectClass', { type: findType(data.itemType)?.label })"
                 dropdown-icon="img:/images/icons/dropdown.svg" :options="filterClasses(_type)"
-                popup-content-class="scroll bordered" @update:model-value="updateTypeValue1">
+                popup-content-class="scroll bordered limit-select" @update:model-value="updateTypeValue1">
                 <template #selected-item="scope">
                   <div class="ellipsis">{{ scope.opt.label }}</div>
                 </template>

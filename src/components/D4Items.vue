@@ -5,7 +5,7 @@ import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 
 import { useAccountStore } from 'stores/account-store'
-import { useItemStore } from 'stores/item-store'
+import { useItemStore, Affix as IAffix } from 'stores/item-store'
 import { checkAttribute, scrollPos } from 'src/common'
 import { itemImgs } from 'src/common/items'
 import { Item, Offer, type AffixValue, type IItem, Price, type Property, type Affix, type Restriction } from 'src/types/item'
@@ -324,9 +324,11 @@ const propertyId = ref<number | null>(null)
 const propertyOptions = is.filterProperties
 const propertyNeedle = ref<string>()
 
-const filterProperties = (val: string): void => {
+const filterProperties = (e: KeyboardEvent): void => {
+  const val = (e.target as HTMLInputElement).value.toLowerCase()
   propertyRef.value?.showPopup()
-  propertyNeedle.value = val.toLowerCase()
+  propertyRef.value?.updateInputValue(val)
+  propertyNeedle.value = (e.target as HTMLInputElement).value
 }
 
 const selectedProperty = (val: number): void => {
@@ -364,9 +366,11 @@ const affixId = ref<number | null>(null)
 const affixOptions = is.filterAffixes
 const affixNeedle = ref<string>()
 
-const filterAffixes = (val: string): void => {
+const filterAffixes = (e: KeyboardEvent) => {
+  const val = (e.target as HTMLInputElement).value.toLowerCase()
   affixRef.value?.showPopup()
-  affixNeedle.value = val.toLowerCase()
+  affixRef.value?.updateInputValue(val)
+  affixNeedle.value = (e.target as HTMLInputElement).value
 }
 
 const selectedAffix = (val: number): void => {
@@ -413,9 +417,11 @@ const restrictId = ref<number | null>(null)
 const restrictionOptions = is.filterRestrictions
 const restrictionNeedle = ref<string>()
 
-const filterRestrictions = (val: string): void => {
+const filterRestrictions = (e: KeyboardEvent): void => {
+  const val = (e.target as HTMLInputElement).value.toLowerCase()
   restrictionRef.value?.showPopup()
-  restrictionNeedle.value = val.toLowerCase()
+  restrictionRef.value?.updateInputValue(val)
+  restrictionNeedle.value = (e.target as HTMLInputElement).value
 }
 
 const selectedRestriction = (val: number): void => {
@@ -773,8 +779,8 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
               use-input hide-bottom-space hide-selected emit-value map-options transition-show="none"
               transition-hide="none" :transition-duration="0" class="col" :label="t('searchOrSelect')"
               :options="propertyOptions(propertyNeedle)" dropdown-icon="img:/images/icons/dropdown.svg"
-              popup-content-class="scroll bordered" @update:model-value="selectedProperty"
-              @input-value="filterProperties">
+              popup-content-class="scroll bordered limit-select" @update:model-value="selectedProperty"
+              @input.stop="filterProperties">
               <template #option="scope">
                 <q-item v-bind="scope.itemProps">
                   <q-item-section side>
@@ -807,7 +813,8 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
               use-input hide-bottom-space hide-selected emit-value map-options transition-show="none"
               transition-hide="none" :transition-duration="0" class="col" :label="t('searchOrSelect')"
               :options="affixOptions(affixNeedle)" dropdown-icon="img:/images/icons/dropdown.svg"
-              popup-content-class="scroll bordered" @update:model-value="selectedAffix" @input-value="filterAffixes">
+              popup-content-class="scroll bordered limit-select" @update:model-value="selectedAffix"
+              @input.stop="filterAffixes">
               <template #option="scope">
                 <q-item v-bind="scope.itemProps">
                   <q-item-section side>
@@ -844,8 +851,8 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
               use-input hide-bottom-space hide-selected emit-value map-options transition-show="none"
               transition-hide="none" :transition-duration="0" class="col" :label="t('searchOrSelect')"
               :options="restrictionOptions(restrictionNeedle)" dropdown-icon="img:/images/icons/dropdown.svg"
-              popup-content-class="scroll bordered" @update:model-value="selectedRestriction"
-              @input-value="filterRestrictions">
+              popup-content-class="scroll bordered limit-select" @update:model-value="selectedRestriction"
+              @input.stop="filterRestrictions">
               <template #option="scope">
                 <q-item v-bind="scope.itemProps">
                   <q-item-section>
