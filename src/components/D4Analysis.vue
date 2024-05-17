@@ -405,16 +405,21 @@ const checkAffixes = (tArray: string[]) => {
     for (const affix of is.availableAffixes()) {
       const affixLabel = affix.label.replace(/{x}/g, '').replace(/[ \+\-%\:,0-9]/g, '').replace(/\([a-zA-Z가-힣 ]*\)/g, '') as string
 
+      let cut = 0
       for (let i = 0; i < tArray.length; i++) {
-        const result = checkAttributes(tArray, i, affix.value as number, affixLabel)
+        const result = checkAttributes(tArray, i + cut, affix.value as number, affixLabel)
 
         if (result.length > 0) {
-          const findAttribute = matchAttribute.find((ma: ISimilar) => ma.index === i)
+          const findAttribute = matchAttribute.find((ma: ISimilar) => ma.index === i + cut)
 
           if (findAttribute)
             findAttribute.match.push(...result)
           else
             matchAttribute.push({ index: i, match: result })
+
+          cut++
+
+          break
         }
       }
     }
@@ -465,16 +470,21 @@ const checkRestrictions = () => {
     for (const restriction of is.restrictions.data) {
       const restrictLabel = restriction.label.replace(/{x}/g, '').replace(/[ \+\-%\[\]\:,0-9]/g, '').replace(/\([a-zA-Z가-힣 ]*\)/g, '') as string
 
+      let cut = 0
       for (let i = 0; i < restrictionsPhase.length; i++) {
-        const result = checkAttributes(restrictionsPhase, i, restriction.value as number, restrictLabel)
+        const result = checkAttributes(restrictionsPhase, i + cut, restriction.value as number, restrictLabel)
 
         if (result.length > 0) {
-          const findAttribute = matchAttribute.find((ma: ISimilar) => ma.index === i)
+          const findAttribute = matchAttribute.find((ma: ISimilar) => ma.index === i + cut)
 
           if (findAttribute)
             findAttribute.match.push(...result)
           else
             matchAttribute.push({ index: i, match: result })
+
+          cut++
+
+          break
         }
       }
     }
