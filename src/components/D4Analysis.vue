@@ -361,7 +361,7 @@ const checkProperties = (tArray: string[]) => {
 
       let maxIL: [number, number] = [0, 1]
       matchAttribute.forEach((ma: ISimilar) => {
-        ma.match.sort((a, b) => b.rate - a.rate)
+        ma.match.sort((a, b) => b.rate - a.rate || b.length - a.length)
 
         const attrStr = tArray.slice(ma.index, ma.index + (ma.match[0]?.length ?? 0) + 2).join('-')
         const matchValues = attrStr.match(/[0-9.]{1,}/g)?.filter(mv => !isNaN(parseFloat(mv))).map(mv => parseFloat(mv))
@@ -402,32 +402,32 @@ const checkAffixes = (tArray: string[]) => {
   try {
     const matchAttribute: Array<ISimilar> = []
 
-    for (const affix of is.availableAffixes()) {
-      const affixLabel = affix.label.replace(/{x}/g, '').replace(/[ \+\-%\:,0-9]/g, '').replace(/\([a-zA-Z가-힣 ]*\)/g, '') as string
+    for (let i = 0; i < tArray.length; i++) {
+      for (const affix of is.availableAffixes()) {
+        const affixLabel = affix.label.replace(/{x}/g, '').replace(/[ \+\-%\:,0-9]/g, '').replace(/\([a-zA-Z가-힣 ]*\)/g, '') as string
 
-      let cut = 0
-      for (let i = 0; i < tArray.length; i++) {
-        const result = checkAttributes(tArray, i + cut, affix.value as number, affixLabel)
+        const result = checkAttributes(tArray, i, affix.value as number, affixLabel)
 
         if (result.length > 0) {
-          const findAttribute = matchAttribute.find((ma: ISimilar) => ma.index === i + cut)
+          const findAttribute = matchAttribute.find((ma: ISimilar) => ma.index === i)
 
           if (findAttribute)
             findAttribute.match.push(...result)
           else
             matchAttribute.push({ index: i, match: result })
-
-          cut++
-
-          break
         }
       }
+
+      const findMatch = matchAttribute.find(ma => ma.index === i)
+      if (findMatch)
+        i = i + findMatch.match[0]?.length
     }
 
     matchAttribute.forEach((ma: ISimilar) => {
-      ma.match.sort((a, b) => b.rate - a.rate)
+      ma.match.sort((a, b) => b.rate - a.rate || b.length - a.length)
 
-      const attrStr = tArray.slice(ma.index, ma.index + (ma.match[0]?.length ?? 0) + 2).join('-')
+      const end = matchAttribute.map(m => m.index).includes(ma.index + (ma.match[0]?.length ?? 0) + 1) ? ma.index + (ma.match[0]?.length ?? 0) + 1 : ma.index + (ma.match[0]?.length ?? 0) + 2
+      const attrStr = tArray.slice(ma.index, end).join('-')
       const matchMinMax = attrStr.match(/[\[]{1}[0-9.]{1,}[^\-\[]*[\-]*[0-9.]{1,}[\]]?/g)?.map(mmm => mmm.replace(/[^0-9.-]/g, '').split(/[\-]{1,2}/).map(mm => !isNaN(parseFloat(mm)) ? parseFloat(mm) : 0))
       const matchValues = attrStr.replace(/[\[]{1}[0-9.]{1,}[^\-\[]*[\-]*[0-9.]{1,}[\]]?/g, '').match(/[0-9.]{1,}/g)?.filter(mv => !isNaN(parseFloat(mv))).map(mv => parseFloat(mv))
       const plainMatch = is.findAffix(ma.match[0]?.id)?.label.match(/[0-9]{1,}[.]?[0-9]*|\{x\}/g)
@@ -490,7 +490,7 @@ const checkRestrictions = () => {
     }
 
     matchAttribute.forEach((ma: ISimilar) => {
-      ma.match.sort((a, b) => b.rate - a.rate)
+      ma.match.sort((a, b) => b.rate - a.rate || b.length - a.length)
 
       const matchValues = restrictionsPhase.slice(ma.index + ma.match[0]?.length, restrictionsPhase.length).join('-').match(/[0-9.]{1,}/g)?.map(mv => parseFloat(mv)) || []
       item.restrictions.push({ valueId: uid(), restrictId: ma.match[0]?.id, restrictValues: matchValues, action: 2 })
@@ -538,10 +538,11 @@ const filtering = (f: File) => {
     image.src = fr.result as string
     image.onload = () => {
       const isTransparent = f.name.toLowerCase().match(/\.(png|webp)/g)
-      const ratio = Math.round(430 / image.width * 10000) / 10000
+      const ratio = Math.round(1000 / image.width * 10000) / 10000
       const iWidth = image.width
       const iHeight = image.height
-      const predictItem = Math.ceil(iWidth * 0.28)
+      const predictWidth = Math.ceil(iWidth * 0.32)
+      const predictHeight = Math.ceil(iWidth * 0.36)
       canvas.width = iWidth * ratio
       canvas.height = iHeight * ratio
 
@@ -551,10 +552,10 @@ const filtering = (f: File) => {
           ctx.fillRect(0, 0, canvas.width, canvas.height)
         }
 
-        //ctx.filter = isTransparent ? 'contrast(1.4) blur(.4px)' : 'invert(1) contrast(1.4) blur(.4px)'
-        ctx.filter = 'invert(1) contrast(1.4) blur(.4px)'
-        ctx.drawImage(image, 0, 0, iWidth - predictItem, predictItem, 0, 0, (iWidth - predictItem) * ratio, predictItem * ratio)
-        ctx.drawImage(image, 0, predictItem, iWidth, iHeight - predictItem, 0, predictItem * ratio, iWidth * ratio, (iHeight - predictItem) * ratio)
+        ctx.drawImage(image, 0, 0, iWidth - predictWidth, predictHeight, 0, 0, Math.round((iWidth - predictWidth) * ratio), Math.round(predictHeight * ratio))
+        ctx.drawImage(image, 0, predictHeight, iWidth, iHeight - predictHeight, 0, Math.round(predictHeight * ratio), iWidth * ratio, Math.round((iHeight - predictHeight) * ratio))
+        ctx.filter = 'brightness(1.6) contrast(1.4) blur(.6px)'
+        ctx.drawImage(canvas, 0, 0)
 
         is.recognize(canvas, lang)
           .then((text) => {
