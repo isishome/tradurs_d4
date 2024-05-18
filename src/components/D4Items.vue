@@ -139,10 +139,12 @@ const updateItem = ({ name, quantity, tier, quality, itemType, itemTypeValue1, i
 
 const disable = ref<boolean>(false)
 const progress = ref<boolean>(false)
+
 const done = () => {
   disable.value = false
   progress.value = false
 }
+
 const hideEditable = () => {
   done()
   activatedItem.value = new Item('')
@@ -232,7 +234,6 @@ const apply = () => {
   activatedItem.value.restrictions.forEach(r => {
     r.action = is.findRestriction(r.restrictId)?.label.match(/\{x\}/g) && [0, NaN].includes(r.restrictValues.reduce((pv: number, cv: number) => pv + cv, 0)) ? 8 : r.action
   })
-
   emit('upsert-item', activatedItem.value, done)
 }
 
@@ -394,10 +395,11 @@ const createAffix = (): void => {
   add.show = true
 }
 
-const updateAffix = ({ valueId, affixValues }: { valueId: string, affixValues: Array<AffixValue> }): void => {
+const updateAffix = ({ valueId, affixGreater, affixValues }: { valueId: string, affixGreater: boolean, affixValues: Array<AffixValue> }): void => {
   const findAffix = activatedItem.value.affixes.find(a => a.valueId === valueId)
   if (findAffix) {
     findAffix.action = findAffix.action !== 2 ? 4 : 2
+    findAffix.affixGreater = affixGreater
     findAffix.affixValues = affixValues
   }
 }

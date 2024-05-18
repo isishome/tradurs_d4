@@ -22,6 +22,7 @@ export interface AffixValue {
 
 export interface Affix extends Attribute {
   affixId: number,
+  affixGreater?: boolean,
   affixValues: Array<AffixValue>
 }
 

@@ -554,6 +554,7 @@ const filtering = (f: File) => {
 
         ctx.drawImage(image, 0, 0, iWidth - predictWidth, predictHeight, 0, 0, Math.round((iWidth - predictWidth) * ratio), Math.round(predictHeight * ratio))
         ctx.drawImage(image, 0, predictHeight, iWidth, iHeight - predictHeight, 0, Math.round(predictHeight * ratio), iWidth * ratio, Math.round((iHeight - predictHeight) * ratio))
+
         ctx.filter = 'brightness(1.6) contrast(1.4) blur(.6px)'
         ctx.drawImage(canvas, 0, 0)
 

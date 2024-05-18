@@ -53,6 +53,7 @@ const imgSrc = computed(() =>
 const _name = ref<string>(props.data.name)
 const _quantity = ref<number>(props.data.quantity || 1)
 const selectable = computed(() => props.data.authorized && store.filter.mine)
+const greaterCount = computed(() => props.data.affixes.filter(a => a.affixGreater).length)
 const endDate = new Date(props.data.endDate)
 const expDate = new Date(props.data.expDate)
 const remainDate = ref<number>(date.getDateDiff(['000', '002'].includes(props.data.statusCode) ? endDate : expDate, new Date(), 'seconds'))
@@ -720,6 +721,12 @@ defineExpose({ scrollEnd })
                 </div>
               </q-checkbox>
               <template v-else>
+                <div v-show="greaterCount > 0" class="greater-mark">
+                  <div class="row items-center q-gutter-xs">
+                    <q-icon v-for="(gc, idx) in greaterCount" :key="idx" class="icon greater q-ml-xs"
+                      :name="`img:/images/attribute_types/${$q.dark.isActive ? 'greater' : 'greater_invert'}.svg`" />
+                  </div>
+                </div>
                 <div v-show="data.itemTypeValue1 === 'rune'" class="row items-center q-gutter-sm">
                   <div class="name">{{ (filterRunesByType().find(r => r.value === data.itemTypeValue1) || {}).label }}
                   </div>
@@ -741,7 +748,6 @@ defineExpose({ scrollEnd })
                   </span>
                 </div>
               </template>
-
               <div v-if="data.quantity > 1" class="row items-center q-gutter-x-xs no-wrap">
                 <div class="text-lowercase">x</div>
                 <div>{{ data.quantity }}</div>
@@ -1080,7 +1086,7 @@ defineExpose({ scrollEnd })
 .item-image {
   position: absolute;
   top: 0;
-  right: 46%;
+  right: 48%;
   width: 90px;
   max-width: 80%;
   z-index: 2;
@@ -1094,6 +1100,7 @@ defineExpose({ scrollEnd })
   }
 
   .item-image {
+    right: 40%;
     max-width: 50%;
   }
 }

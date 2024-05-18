@@ -36,7 +36,7 @@ const remove = () => {
 <template>
   <div class="row no-wrap items-baseline q-gutter-xs" :class="{ disable }" :data-id="data.valueId">
     <div>
-      <q-icon class="icon" :class="{ 'rotate-45': ['standard'].includes(findProperty?.type as string) }" size="13px"
+      <q-icon class="icon" :class="{ 'rotate-45': ['standard'].includes(findProperty?.type as string) }" size="10px"
         :name="`img:/images/attribute_types/${findProperty?.type || 'standard'}.svg`" />
     </div>
     <div class="row items-center q-gutter-x-xs"
@@ -47,9 +47,10 @@ const remove = () => {
           </div>
         </template>
         <div v-else-if="!editable && comp.type === 'variable'" class="figure">{{ comp.value }}</div>
-        <q-input v-else-if="comp.type === 'variable'" class="var" input-class="text-center text-caption no-padding" dense
-          hide-bottom-space hide-hint no-error-icon outlined v-model.number="comp.value" maxlength="6" debounce="500"
-          :disable="disable" :rules="[val => !disable && (parseFloat(val) % 1 !== 0 || parseInt(val) % 1 === 0) || '']"
+        <q-input v-else-if="comp.type === 'variable'" class="var" input-class="text-center text-caption no-padding"
+          dense hide-bottom-space hide-hint no-error-icon outlined v-model.number="comp.value" maxlength="6"
+          debounce="500" :disable="disable"
+          :rules="[val => !disable && (parseFloat(val) % 1 !== 0 || parseInt(val) % 1 === 0) || '']"
           @update:model-value="update" @focus="focus" />
       </template>
       <q-btn v-show="editable" :disable="disable" dense unelevated flat round aria-label="Tradurs Remove/Restore Button"

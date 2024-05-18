@@ -820,9 +820,9 @@ export const useItemStore = defineStore('item', {
       const locale = (lang === 'ko') ? 'kor' : 'eng'
       const worker = await createWorker(locale)
       // const worker = await createWorker(locale, 1, {
-      //   workerPath: 'https://cdn.jsdelivr.net/npm/tesseract.js@v5.0.0/dist/worker.min.js',
-      //   langPath: 'https://tessdata.projectnaptha.com/4.0.0',
-      //   corePath: 'https://cdn.jsdelivr.net/npm/tesseract.js-core@v5.0.0',
+      //   workerPath: 'https://cdn.jsdelivr.net/npm/tesseract.js@v5.1.0/dist/worker.min.js',
+      //   langPath: 'https://raw.githubusercontent.com/naptha/tessdata/gh-pages/4.0.0_best/kor.traineddata.gz',
+      //   corePath: 'https://cdn.jsdelivr.net/npm/tesseract.js-core@v5.1.0',
       // })
       await worker.setParameters({
         preserve_interword_spaces: '1'

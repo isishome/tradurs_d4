@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { QInput, uid } from 'quasar'
+import { ref, computed } from 'vue'
+import { useQuasar, QInput, uid } from 'quasar'
 import { useItemStore } from 'stores/item-store'
 import { type Attribute, parseAffix, splitArray, focus } from 'src/common'
 import { AffixValue } from 'src/types/item'
@@ -22,20 +22,34 @@ const props = defineProps({
 
 const emit = defineEmits(['update', 'remove'])
 
+const $q = useQuasar()
 const is = useItemStore()
 
 const findAffix = computed(() => is.findAffix(props.data.affixId))
+const affixGreater = computed(() => props.data.affixGreater ?? false)
+const _affixGreater = ref<boolean>(props.data.affixGreater ?? false)
 const affixInfo = computed(() => parseAffix(findAffix.value?.label, props.data.affixValues))
 const affixColor = computed(() => findAffix.value?.color || (['legendary', 'unique'].includes(findAffix.value?.type as string) ? 'stress' : findAffix.value?.type === 'socket' ? 'text-grey-6' : ''))
+const isStandard = computed(() => ['standard'].includes(findAffix.value?.type ?? ''))
+const isToggle = computed(() => props.editable && ['standard'].includes(findAffix.value?.type ?? ''))
+const icon = computed(() => `img:/images/attribute_types/${findAffix.value?.type === 'socket' && findAffix.value?.color ? 'socket_malignant' : affixGreater.value && $q.dark.isActive ? 'greater' : affixGreater.value && !$q.dark.isActive ? 'greater_invert' : findAffix.value?.type}.svg`)
 
 const update = (): void => {
-  const av: { valueId: number, affixValues: Array<AffixValue> } = { valueId: props.data.valueId, affixValues: [] }
+  const av: { valueId: number, affixGreater: boolean, affixValues: Array<AffixValue> } = { valueId: props.data.valueId, affixGreater: _affixGreater.value, affixValues: [] }
   const minmax = splitArray(affixInfo.value.filter(i => i.type === 'min' || i.type === 'max').map(i => i.value as number), 2)
   affixInfo.value.filter(i => i.type === 'variable').forEach((attr: Attribute, idx: number) => {
     av.affixValues.push({ valueRangeId: uid(), value: parseFloat(attr.value.toString()) as number, min: parseFloat(minmax[idx][0].toString()), max: parseFloat(minmax[idx][1].toString()) })
   })
 
   emit('update', av)
+}
+
+const toggleGreater = () => {
+  if (!isToggle.value)
+    return
+
+  _affixGreater.value = !_affixGreater.value
+  update()
 }
 
 const remove = (): void => {
@@ -46,8 +60,8 @@ const remove = (): void => {
 <template>
   <div class="row no-wrap items-baseline q-gutter-xs" :class="[disable, affixColor]" :data-id="data.valueId">
     <div>
-      <q-icon class="icon" :class="{ 'rotate-45': ['standard'].includes(findAffix?.type as string) }" size="13px"
-        :name="`img:/images/attribute_types/${findAffix?.type === 'socket' && findAffix?.color ? 'socket_malignant' : findAffix?.type}.svg`" />
+      <q-icon class="icon" :class="{ 'rotate-45': isStandard, 'cursor-pointer': isToggle, 'greater': affixGreater }"
+        size="10px" :name="icon" @click="toggleGreater" />
     </div>
     <div class="row items-center q-gutter-x-xs"
       :class="[{ 'filtered': is.filter.affixes.includes(findAffix?.value as number) }, findAffix?.color, { 'text-shadow': findAffix?.color }]">

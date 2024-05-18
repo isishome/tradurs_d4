@@ -71,6 +71,65 @@ body.body--dark {
   filter: invert(100%) !important;
 }
 
+.icon.greater {
+  transform: rotate(-22.5deg);
+}
+
+.icon.greater::after {
+  content: '';
+  position: fixed;
+  width: 2px;
+  height: 2px;
+  box-shadow: 0 0 3px 3px rgb(0, 112, 204), 0 0 2px 2px rgb(0, 109, 182);
+  z-index: -1;
+}
+
+.body--light .icon.greater::after {
+  box-shadow: none;
+}
+
+.greater-mark {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  transform: translate(8px, -20px);
+}
+
+.body--light .greater-mark {
+  transform: translate(-22px, -14px);
+}
+
+.greater-mark .icon.greater::after {
+  box-shadow: 0 0 7px 7px rgb(0, 112, 204), 0 0 4px 4px rgb(0, 109, 182);
+}
+
+.body--light .greater-mark .icon.greater::after {
+  box-shadow: none;
+}
+
+
+.greater-mark i {
+  font-size: 16px;
+}
+
+@media (max-width:600px) {
+  .greater-mark {
+    transform: translate(10px, -16px);
+  }
+
+  .body--light .greater-mark {
+    transform: translate(-18px, -14px);
+  }
+
+  .greater-mark .icon.greater::after {
+    box-shadow: 0 0 6px 6px rgb(0, 112, 204), 0 0 3px 3px rgb(0, 109, 182);
+  }
+
+  .greater-mark i {
+    font-size: 12px;
+  }
+}
+
 .q-focus-helper {
   opacity: .05 !important;
 }
