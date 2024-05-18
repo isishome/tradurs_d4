@@ -46,6 +46,8 @@ const rewardItem = ref<Item | undefined>()
 const page = ref<number>(route.query.page ? parseInt(route.query.page as string) : 1)
 const over = computed(() => is.itemPage.over)
 const more = computed(() => is.itemPage.more)
+const listHeaderRef = ref<HTMLDivElement | undefined>()
+const stickyTop = computed(() => (listHeaderRef.value?.offsetTop ?? 0) - 50)
 const selectedAll = ref<boolean>(false)
 const sortOptions = reactive<Array<{ value: string, label: string }>>(tm('sort.options'))
 const isExpanded = computed(() => is.storage.data.expanded)
@@ -559,9 +561,9 @@ onMounted(() => {
 </script>
 
 <template>
-  <div>
+  <div ref="listHeaderRef">
     <div class="row justify-between items-start absolute full-width q-px-md list-header"
-      :class="{ scroll: (gs.scrollTop ?? 0) > ($q.screen.lt.md ? 100 : 150) }">
+      :class="{ scroll: (gs.scrollTop ?? 0) > ($q.screen.lt.md ? 100 : 150) }" :style="`top:${stickyTop}px`">
       <div class="row items-center q-gutter-x-sm">
         <q-btn-dropdown v-if="as.signed && is.filter.mine" v-model="selectAction" :disable="disable" flat dense
           unelevated no-caps auto-close :ripple="false" class="no-hover"
@@ -671,7 +673,6 @@ onMounted(() => {
 .list-header {
   position: sticky;
   z-index: 2000;
-  top: 66px;
   border-radius: 0 0 10px 10px;
 }
 
@@ -683,12 +684,6 @@ onMounted(() => {
 .body--light .list-header.scroll {
   background-color: var(--q-light);
   box-shadow: 0 -1px 1px 0 var(--q-light), 0 4px 4px 2px rgba(0, 0, 0, 0.1), 0 4px 4px rgba(0, 0, 0, 0.14);
-}
-
-@media (max-width:1100px) {
-  .list-header {
-    top: 58px;
-  }
 }
 
 .list-header:deep(.active) {

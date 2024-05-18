@@ -59,11 +59,10 @@ const remove = (): void => {
 
 <template>
   <div class="row no-wrap items-baseline q-gutter-xs" :class="[disable, affixColor]" :data-id="data.valueId">
-    <div>
-      <q-icon class="icon" :class="{ 'rotate-45': isStandard, 'cursor-pointer': isToggle, 'greater': affixGreater }"
-        size="10px" :name="icon" @click="toggleGreater" />
+    <div class="text-center" :class="{ 'cursor-pointer': isToggle }" style="width:21px" @click="toggleGreater">
+      <q-icon class="icon" :class="{ 'rotate-45': isStandard, 'greater': affixGreater }" size="10px" :name="icon" />
     </div>
-    <div class="row items-center q-gutter-x-xs"
+    <div class="row items-center q-gutter-x-xs q-ml-none col"
       :class="[{ 'filtered': is.filter.affixes.includes(findAffix?.value as number) }, findAffix?.color, { 'text-shadow': findAffix?.color }]">
       <template v-for="(comp, k) in affixInfo" :key="k">
         <template v-if="comp.type === 'text'">

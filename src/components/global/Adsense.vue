@@ -65,8 +65,4 @@ onMounted(() => {
 .body--light .ins::after {
   color: #1a1a1a;
 }
-
-.ins[data-ad-status="unfilled"] {
-  display: none !important;
-}
 </style>

@@ -653,162 +653,165 @@ defineExpose({ scrollEnd })
     </q-form>
     <slot name="more" :loading="loading"></slot>
   </q-card>
-  <q-card v-else class="card-item non-selectable no-scroll full-height overflow-hidden"
-    :class="[data.expanded ? 'expanded' : 'no-expanded', data.quality, data.itemType, `status-${data.statusCode}`]">
-    <div class="inner">
-      <q-card-section>
-        <div class="user-area row justify-end">
-          <div class="item-image">
-            <q-img v-show="!loading" class="item-image" :src="imgSrc" alt="Tradurs Item Image" />
-          </div>
-          <div class="column justify-center items-end" :class="{ 'q-gutter-xs': !$q.screen.lt.sm || loading }">
-            <q-skeleton v-show="loading" width="40px" :height="$q.screen.lt.sm ? '16px' : '18px'" />
-            <div v-show="!loading" class="row items-center q-gutter-x-sm">
-              <template v-if="!data.forDisplay && !history">
-                <div v-if="['000', '002', '003'].includes(data.statusCode)" class="date" :class="remainColor">
-                  {{ remainHours }}:{{ remainMinutes }}:{{ remainSeconds }}
-                </div>
-                <div v-else-if="data.statusCode === '001'" class="date complete">
-                  {{ date.formatDate(data.updDate, 'YY.MM.DD') }}
-                </div>
-                <div>
-                  {{ findStatus(data.statusCode)?.label }}
-                </div>
-              </template>
-              <div v-else-if="data.forDisplay">
-                {{ t('item.forDisplay') }}
-              </div>
+  <template v-else>
+    <div v-show="greaterCount > 0" class="greater-mark">
+      <div class="row items-center q-gutter-xs">
+        <q-icon v-for="(gc, idx) in greaterCount" :key="idx" class="icon greater q-ml-xs"
+          :name="`img:/images/attribute_types/${$q.dark.isActive ? 'greater' : 'greater_invert'}.svg`" />
+      </div>
+    </div>
+    <q-card class="card-item non-selectable no-scroll full-height overflow-hidden"
+      :class="[data.expanded ? 'expanded' : 'no-expanded', data.quality, data.itemType, `status-${data.statusCode}`]">
+      <div class="inner">
+        <q-card-section>
+          <div class="user-area row justify-end">
+            <div class="item-image">
+              <q-img v-show="!loading" class="item-image" :src="imgSrc" alt="Tradurs Item Image" />
             </div>
-            <div v-if="slots['top-right']">
-              <slot name="top-right"></slot>
-            </div>
-            <D4Price :data="data.price" :progress="loading" />
-            <D4User v-if="!data.forDisplay && !history" :data="data.user" :label="t('seller')" :disable="disable"
-              :progress="loading" :authorized="data.authorized" @update="emit('update-only', data.itemId)" />
-          </div>
-        </div>
-        <div class="column items-start q-pa-sm relative-position"
-          :class="{ 'q-gutter-xs': !$q.screen.lt.sm || loading }">
-          <div v-show="!loading" class="hardcore-ladder row justify-end items-center">
-            <div class="text-secondary">{{ data.hardcore ? '&#10074;' : '' }}</div>
-            <div class="text-primary">{{ data.ladder ? '&#10074;' : '' }}</div>
-          </div>
-          <div v-show="loading">
-            <q-skeleton width="150px" :height="$q.screen.lt.sm ? '16px' : '24px'" />
-          </div>
-          <div class="name-place">
-            <div v-show="!loading" class="row items-center q-gutter-xs q-mb-xs no-wrap">
-              <q-checkbox v-if="selectable" v-model="data.selected" dense size="xs" class="text-caption">
-                <div v-show="data.itemTypeValue1 === 'rune'" class="row items-center q-gutter-sm">
-                  <div class="name">{{ (filterRunesByType().find(r => r.value === data.itemTypeValue1) || {}).label }}
+            <div class="column justify-center items-end" :class="{ 'q-gutter-xs': !$q.screen.lt.sm || loading }">
+              <q-skeleton v-show="loading" width="40px" :height="$q.screen.lt.sm ? '16px' : '18px'" />
+              <div v-show="!loading" class="row items-center q-gutter-x-sm">
+                <template v-if="!data.forDisplay && !history">
+                  <div v-if="['000', '002', '003'].includes(data.statusCode)" class="date" :class="remainColor">
+                    {{ remainHours }}:{{ remainMinutes }}:{{ remainSeconds }}
                   </div>
-                  <div>{{ findRuneType(findRune(data.itemTypeValue1)?.type)?.label }}
+                  <div v-else-if="data.statusCode === '001'" class="date complete">
+                    {{ date.formatDate(data.updDate, 'YY.MM.DD') }}
                   </div>
-                </div>
-                <div class="name stress ellipsis-2-lines">
-                  <span v-show="qualifiable">
-                    {{ data.name }}
-                  </span>
-                  <span v-show="data.itemTypeValue1 === 'gem'">
-                    {{ store.gems.find(g => g.value === data.itemTypeValue2)?.label }}
-                  </span>
-                  <span v-show="data.itemTypeValue1 === 'elixir'">
-                    {{ store.elixirs.find(e => e.value === data.itemTypeValue2)?.label }}
-                  </span>
-                  <span v-show="data.itemTypeValue1 === 'summoning'">
-                    {{ store.summonings.find(s => s.value === data.itemTypeValue2)?.label }}
-                  </span>
-                </div>
-              </q-checkbox>
-              <template v-else>
-                <div v-show="greaterCount > 0" class="greater-mark">
-                  <div class="row items-center q-gutter-xs">
-                    <q-icon v-for="(gc, idx) in greaterCount" :key="idx" class="icon greater q-ml-xs"
-                      :name="`img:/images/attribute_types/${$q.dark.isActive ? 'greater' : 'greater_invert'}.svg`" />
+                  <div>
+                    {{ findStatus(data.statusCode)?.label }}
                   </div>
+                </template>
+                <div v-else-if="data.forDisplay">
+                  {{ t('item.forDisplay') }}
                 </div>
-                <div v-show="data.itemTypeValue1 === 'rune'" class="row items-center q-gutter-sm">
-                  <div class="name">{{ (filterRunesByType().find(r => r.value === data.itemTypeValue1) || {}).label }}
-                  </div>
-                  <div>{{ findRuneType(findRune(data.itemTypeValue1)?.type)?.label }}
-                  </div>
-                </div>
-                <div class="name stress ellipsis-2-lines">
-                  <span v-show="qualifiable">
-                    {{ data.name }}
-                  </span>
-                  <span v-show="data.itemTypeValue1 === 'gem'">
-                    {{ store.gems.find(g => g.value === data.itemTypeValue2)?.label }}
-                  </span>
-                  <span v-show="data.itemTypeValue1 === 'elixir'">
-                    {{ store.elixirs.find(e => e.value === data.itemTypeValue2)?.label }}
-                  </span>
-                  <span v-show="data.itemTypeValue1 === 'summoning'">
-                    {{ store.summonings.find(s => s.value === data.itemTypeValue2)?.label }}
-                  </span>
-                </div>
-              </template>
-              <div v-if="data.quantity > 1" class="row items-center q-gutter-x-xs no-wrap">
-                <div class="text-lowercase">x</div>
-                <div>{{ data.quantity }}</div>
               </div>
-              <div v-if="!history" class="more-action">
-                <q-btn dense flat aria-label="Tradurs More Button" :ripple="false" class="no-hover" padding="0">
-                  <img class="icon" src="/images/icons/morevert.svg" :width="$q.screen.lt.sm ? 16 : 22"
-                    :height="$q.screen.lt.sm ? 16 : 22" alt="Tradurs More Icon" />
-                  <q-menu auto-close class="no-shadow" anchor="top end" self="bottom start"
-                    :class="[$q.dark.isActive ? 'bg-grey-4' : 'bg-grey-9']">
-                    <q-item v-if="as.signed" :class="[$q.dark.isActive ? 'text-grey-9' : 'text-grey-4']"
-                      :dense="$q.screen.lt.sm" clickable @click="$emit('favorite', data.itemId, !data.favorite)">
-                      <q-item-section side>
-                        <img :class="{ 'invert': !$q.dark.isActive }"
-                          :src="data.favorite ? '/images/icons/unfavorite.svg' : '/images/icons/favorite.svg'"
-                          width="24" height="24" alt="Tradurs Favorite Icon" />
-                      </q-item-section>
-                      <q-item-section>{{ data.favorite ? t('btn.unfavorite') : t('btn.favorite')
-                        }}</q-item-section>
-                    </q-item>
-                    <q-item v-if="as.signed" :class="[$q.dark.isActive ? 'text-grey-9' : 'text-grey-4']"
-                      :dense="$q.screen.lt.sm" clickable @click="$emit('copy', data.itemId)">
-                      <q-item-section side>
-                        <img :class="{ 'invert': !$q.dark.isActive }" src="/images/icons/copy.svg" width="24"
-                          height="24" alt="Tradurs Copy Icon" />
-                      </q-item-section>
-                      <q-item-section>{{ t('btn.copy') }}</q-item-section>
-                    </q-item>
-                    <q-item :class="[$q.dark.isActive ? 'text-grey-9' : 'text-grey-4']" :dense="$q.screen.lt.sm"
-                      clickable @click="copy">
-                      <q-item-section side>
-                        <img :class="{ 'invert': !$q.dark.isActive }" src="/images/icons/share.svg" width="24"
-                          height="24" alt="Tradurs Share Icon" />
-                      </q-item-section>
-                      <q-item-section>{{ t('btn.share') }}</q-item-section>
-                    </q-item>
-                  </q-menu>
-                </q-btn>
+              <div v-if="slots['top-right']">
+                <slot name="top-right"></slot>
               </div>
+              <D4Price :data="data.price" :progress="loading" />
+              <D4User v-if="!data.forDisplay && !history" :data="data.user" :label="t('seller')" :disable="disable"
+                :progress="loading" :authorized="data.authorized" @update="emit('update-only', data.itemId)" />
             </div>
           </div>
-          <div v-show="loading">
-            <q-skeleton width="100px" :height="$q.screen.lt.sm ? '16px' : '18px'" />
-          </div>
-          <div v-show="!loading && qualifiable" class="stress" style="opacity:.6">{{ findTier(data.tier)?.fullName }} {{
+          <div class="column items-start q-pa-sm relative-position"
+            :class="{ 'q-gutter-xs': !$q.screen.lt.sm || loading }">
+            <div v-show="!loading" class="hardcore-ladder row justify-end items-center">
+              <div class="text-secondary">{{ data.hardcore ? '&#10074;' : '' }}</div>
+              <div class="text-primary">{{ data.ladder ? '&#10074;' : '' }}</div>
+            </div>
+            <div v-show="loading">
+              <q-skeleton width="150px" :height="$q.screen.lt.sm ? '16px' : '24px'" />
+            </div>
+            <div class="name-place">
+              <div v-show="!loading" class="row items-center q-gutter-xs q-mb-xs no-wrap">
+                <q-checkbox v-if="selectable" v-model="data.selected" dense size="xs" class="text-caption">
+                  <div v-show="data.itemTypeValue1 === 'rune'" class="row items-center q-gutter-sm">
+                    <div class="name">{{ (filterRunesByType().find(r => r.value === data.itemTypeValue1) || {}).label }}
+                    </div>
+                    <div>{{ findRuneType(findRune(data.itemTypeValue1)?.type)?.label }}
+                    </div>
+                  </div>
+                  <div class="name stress ellipsis-2-lines">
+                    <span v-show="qualifiable">
+                      {{ data.name }}
+                    </span>
+                    <span v-show="data.itemTypeValue1 === 'gem'">
+                      {{ store.gems.find(g => g.value === data.itemTypeValue2)?.label }}
+                    </span>
+                    <span v-show="data.itemTypeValue1 === 'elixir'">
+                      {{ store.elixirs.find(e => e.value === data.itemTypeValue2)?.label }}
+                    </span>
+                    <span v-show="data.itemTypeValue1 === 'summoning'">
+                      {{ store.summonings.find(s => s.value === data.itemTypeValue2)?.label }}
+                    </span>
+                  </div>
+                </q-checkbox>
+                <template v-else>
+
+                  <div v-show="data.itemTypeValue1 === 'rune'" class="row items-center q-gutter-sm">
+                    <div class="name">{{ (filterRunesByType().find(r => r.value === data.itemTypeValue1) || {}).label }}
+                    </div>
+                    <div>{{ findRuneType(findRune(data.itemTypeValue1)?.type)?.label }}
+                    </div>
+                  </div>
+                  <div class="name stress ellipsis-2-lines">
+                    <span v-show="qualifiable">
+                      {{ data.name }}
+                    </span>
+                    <span v-show="data.itemTypeValue1 === 'gem'">
+                      {{ store.gems.find(g => g.value === data.itemTypeValue2)?.label }}
+                    </span>
+                    <span v-show="data.itemTypeValue1 === 'elixir'">
+                      {{ store.elixirs.find(e => e.value === data.itemTypeValue2)?.label }}
+                    </span>
+                    <span v-show="data.itemTypeValue1 === 'summoning'">
+                      {{ store.summonings.find(s => s.value === data.itemTypeValue2)?.label }}
+                    </span>
+                  </div>
+                </template>
+                <div v-if="data.quantity > 1" class="row items-center q-gutter-x-xs no-wrap">
+                  <div class="text-lowercase">x</div>
+                  <div>{{ data.quantity }}</div>
+                </div>
+                <div v-if="!history" class="more-action">
+                  <q-btn dense flat aria-label="Tradurs More Button" :ripple="false" class="no-hover" padding="0">
+                    <img class="icon" src="/images/icons/morevert.svg" :width="$q.screen.lt.sm ? 16 : 22"
+                      :height="$q.screen.lt.sm ? 16 : 22" alt="Tradurs More Icon" />
+                    <q-menu auto-close class="no-shadow" anchor="top end" self="bottom start"
+                      :class="[$q.dark.isActive ? 'bg-grey-4' : 'bg-grey-9']">
+                      <q-item v-if="as.signed" :class="[$q.dark.isActive ? 'text-grey-9' : 'text-grey-4']"
+                        :dense="$q.screen.lt.sm" clickable @click="$emit('favorite', data.itemId, !data.favorite)">
+                        <q-item-section side>
+                          <img :class="{ 'invert': !$q.dark.isActive }"
+                            :src="data.favorite ? '/images/icons/unfavorite.svg' : '/images/icons/favorite.svg'"
+                            width="24" height="24" alt="Tradurs Favorite Icon" />
+                        </q-item-section>
+                        <q-item-section>{{ data.favorite ? t('btn.unfavorite') : t('btn.favorite')
+                          }}</q-item-section>
+                      </q-item>
+                      <q-item v-if="as.signed" :class="[$q.dark.isActive ? 'text-grey-9' : 'text-grey-4']"
+                        :dense="$q.screen.lt.sm" clickable @click="$emit('copy', data.itemId)">
+                        <q-item-section side>
+                          <img :class="{ 'invert': !$q.dark.isActive }" src="/images/icons/copy.svg" width="24"
+                            height="24" alt="Tradurs Copy Icon" />
+                        </q-item-section>
+                        <q-item-section>{{ t('btn.copy') }}</q-item-section>
+                      </q-item>
+                      <q-item :class="[$q.dark.isActive ? 'text-grey-9' : 'text-grey-4']" :dense="$q.screen.lt.sm"
+                        clickable @click="copy">
+                        <q-item-section side>
+                          <img :class="{ 'invert': !$q.dark.isActive }" src="/images/icons/share.svg" width="24"
+                            height="24" alt="Tradurs Share Icon" />
+                        </q-item-section>
+                        <q-item-section>{{ t('btn.share') }}</q-item-section>
+                      </q-item>
+                    </q-menu>
+                  </q-btn>
+                </div>
+              </div>
+            </div>
+            <div v-show="loading">
+              <q-skeleton width="100px" :height="$q.screen.lt.sm ? '16px' : '18px'" />
+            </div>
+            <div v-show="!loading && qualifiable" class="stress" style="opacity:.6">{{ findTier(data.tier)?.fullName }}
+              {{
     findQuality(data.quality)?.fullName }}
-            {{ findClass(data.itemTypeValue1)?.label || findType(data.itemType)?.label }}
-          </div>
-          <div v-show="data.power > 0">
-            {{ t('item.power', { p: data.power, u: data.upgrade ? ` + ${data.upgrade * 5}` : '' }) }}
-          </div>
-          <!-- <div v-show="data.upgrade > 0" class="stress">
+              {{ findClass(data.itemTypeValue1)?.label || findType(data.itemType)?.label }}
+            </div>
+            <div v-show="data.power > 0">
+              {{ t('item.power', { p: data.power, u: data.upgrade ? ` + ${data.upgrade * 5}` : '' }) }}
+            </div>
+            <!-- <div v-show="data.upgrade > 0" class="stress">
             {{ t('item.upgrade', { u: data.upgrade, ul: upgradeLimit }) }}
           </div> -->
-          <div v-show="loading">
-            <q-skeleton width="130px" :height="$q.screen.lt.sm ? '16px' : '18px'" />
+            <div v-show="loading">
+              <q-skeleton width="130px" :height="$q.screen.lt.sm ? '16px' : '18px'" />
+            </div>
           </div>
-        </div>
-      </q-card-section>
-      <D4Separator v-show="qualifiable" type="left" />
-      <!-- D4 season2
+        </q-card-section>
+        <D4Separator v-show="qualifiable" type="left" />
+        <!-- D4 season2
         <q-card-section
         v-if="store.storage.data.ladder && data.itemType === 'armor' && !history && Object.values(data.pacts).reduce((a: number, b: number) => a + b, 0) > 0">
         <div class="row justify-start items-center" :class="!$q.screen.lt.sm ? 'q-gutter-x-xl' : 'q-gutter-x-md'">
@@ -847,96 +850,97 @@ defineExpose({ scrollEnd })
           </div>
         </div>
       </q-card-section> -->
-      <q-card-section v-show="loading || (!loading && (data.itemType === 'rune' || data.properties?.length > 0))">
-        <div v-show="data.itemType === 'rune'" class="q-px-sm">
-          <q-item v-show="loading" style="min-height:10px;padding:3px">
-            <q-item-section side class="q-pr-sm">
-              <q-skeleton type="circle" size="24px" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>
-                <q-skeleton type="rect" width="20%" height="24px" />
-              </q-item-label>
-            </q-item-section>
-          </q-item>
-          <div v-show="!loading" class="row no-wrap items-baseline q-gutter-xs">
-            <q-icon class="icon rotate-45" size="13px" name="img:/images/attribute_types/standard.svg" />
-            <div>{{ (filterRunesByType().find(r => r.value === data.itemTypeValue1) || {}).attribute }}
+        <q-card-section v-show="loading || (!loading && (data.itemType === 'rune' || data.properties?.length > 0))">
+          <div v-show="data.itemType === 'rune'" class="q-px-sm">
+            <q-item v-show="loading" style="min-height:10px;padding:3px">
+              <q-item-section side class="q-pr-sm">
+                <q-skeleton type="circle" size="24px" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>
+                  <q-skeleton type="rect" width="20%" height="24px" />
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+            <div v-show="!loading" class="row no-wrap items-baseline q-gutter-xs">
+              <q-icon class="icon rotate-45" size="13px" name="img:/images/attribute_types/standard.svg" />
+              <div>{{ (filterRunesByType().find(r => r.value === data.itemTypeValue1) || {}).attribute }}
+              </div>
             </div>
           </div>
-        </div>
-        <div class="q-px-sm">
-          <q-item v-show="loading" v-for="c in 2" :key="c" style="min-height:10px;padding:3px">
-            <q-item-section side class="q-pr-sm">
-              <q-skeleton type="circle" width="10px" height="10px" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>
-                <q-skeleton type="rect" width="65%" :height="$q.screen.lt.sm ? '14px' : '18px'" />
-              </q-item-label>
-            </q-item-section>
-          </q-item>
-          <div v-if="slots.properties && !loading" class="column" :class="{ 'q-gutter-y-xs': !$q.screen.lt.sm }"
-            style="min-height:25px;">
-            <slot name="properties">
-            </slot>
-          </div>
-        </div>
-      </q-card-section>
-      <D4Separator v-show="loading || (!loading && data.properties?.length > 0 && data.affixes?.length > 0)" />
-      <q-card-section v-show="loading || (!loading && data.affixes?.length > 0)">
-        <div class="q-px-sm">
-          <q-item v-show="loading" v-for="c in 3" :key="c" style="min-height:10px;padding:3px">
-            <q-item-section side class="q-pr-sm">
-              <q-skeleton type="circle" width="10px" height="10px" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>
-                <q-skeleton type="rect" width="65%" :height="$q.screen.lt.sm ? '14px' : '18px'" />
-              </q-item-label>
-            </q-item-section>
-          </q-item>
-          <div v-if="slots.affixes && !loading" class="column" :class="{ 'q-gutter-y-xs': !$q.screen.lt.sm }"
-            style="min-height:25px;">
-            <slot name="affixes">
-            </slot>
-          </div>
-        </div>
-      </q-card-section>
-      <q-card-section v-show="!loading && data.properties?.length === 0 && data.affixes?.length === 0"
-        class="q-my-lg"></q-card-section>
-      <q-card-section class="row justify-end">
-        <div class="q-px-sm">
-          <q-item v-show="loading" v-for="c in 2" :key="c" style="min-height:10px;padding:3px">
-            <q-item-section>
-              <q-item-label class="row justify-end">
-                <q-skeleton type="rect" width="85%" :height="$q.screen.lt.sm ? '14px' : '18px'" />
-              </q-item-label>
-            </q-item-section>
-          </q-item>
-          <div v-show="data.itemTypeValue1 !== 'summoning'" class="column"
-            :class="{ 'q-gutter-y-xs': !$q.screen.lt.sm }">
-            <div class="text-right q-pt-sm">
-              <template v-if="!loading">
-                {{ t('item.level') }}: {{ data.level }}
-              </template>
-              <q-skeleton v-else type="rect" width="100px" :height="$q.screen.lt.sm ? '14px' : '18px'" />
+          <div class="q-px-sm">
+            <q-item v-show="loading" v-for="c in 2" :key="c" style="min-height:10px;padding:3px">
+              <q-item-section side class="q-pr-sm">
+                <q-skeleton type="circle" width="10px" height="10px" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>
+                  <q-skeleton type="rect" width="65%" :height="$q.screen.lt.sm ? '14px' : '18px'" />
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+            <div v-if="slots.properties && !loading" class="column" :class="{ 'q-gutter-y-xs': !$q.screen.lt.sm }"
+              style="min-height:25px;">
+              <slot name="properties">
+              </slot>
             </div>
-            <slot v-if="slots.restrictions && !loading && data.restrictions.length > 0" name="restrictions">
-            </slot>
           </div>
-        </div>
-      </q-card-section>
-      <q-card-section v-if="history" :class="{ 'q-my-md': $q.screen.gt.sm && noLevel }">
-        <div :class="{ 'q-py-md': $q.screen.gt.sm && noLevel }"></div>
-      </q-card-section>
-      <D4Separator v-show="slots.actions" />
-      <q-card-section v-if="slots.actions">
-        <slot name="actions"></slot>
-      </q-card-section>
-    </div>
-    <slot name="more" :loading="loading"></slot>
-  </q-card>
+        </q-card-section>
+        <D4Separator v-show="loading || (!loading && data.properties?.length > 0 && data.affixes?.length > 0)" />
+        <q-card-section v-show="loading || (!loading && data.affixes?.length > 0)">
+          <div class="q-px-sm">
+            <q-item v-show="loading" v-for="c in 3" :key="c" style="min-height:10px;padding:3px">
+              <q-item-section side class="q-pr-sm">
+                <q-skeleton type="circle" width="10px" height="10px" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>
+                  <q-skeleton type="rect" width="65%" :height="$q.screen.lt.sm ? '14px' : '18px'" />
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+            <div v-if="slots.affixes && !loading" class="column" :class="{ 'q-gutter-y-xs': !$q.screen.lt.sm }"
+              style="min-height:25px;">
+              <slot name="affixes">
+              </slot>
+            </div>
+          </div>
+        </q-card-section>
+        <q-card-section v-show="!loading && data.properties?.length === 0 && data.affixes?.length === 0"
+          class="q-my-lg"></q-card-section>
+        <q-card-section class="row justify-end">
+          <div class="q-px-sm">
+            <q-item v-show="loading" v-for="c in 2" :key="c" style="min-height:10px;padding:3px">
+              <q-item-section>
+                <q-item-label class="row justify-end">
+                  <q-skeleton type="rect" width="85%" :height="$q.screen.lt.sm ? '14px' : '18px'" />
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+            <div v-show="data.itemTypeValue1 !== 'summoning'" class="column"
+              :class="{ 'q-gutter-y-xs': !$q.screen.lt.sm }">
+              <div class="text-right q-pt-sm">
+                <template v-if="!loading">
+                  {{ t('item.level') }}: {{ data.level }}
+                </template>
+                <q-skeleton v-else type="rect" width="100px" :height="$q.screen.lt.sm ? '14px' : '18px'" />
+              </div>
+              <slot v-if="slots.restrictions && !loading && data.restrictions.length > 0" name="restrictions">
+              </slot>
+            </div>
+          </div>
+        </q-card-section>
+        <q-card-section v-if="history" :class="{ 'q-my-md': $q.screen.gt.sm && noLevel }">
+          <div :class="{ 'q-py-md': $q.screen.gt.sm && noLevel }"></div>
+        </q-card-section>
+        <D4Separator v-show="slots.actions" />
+        <q-card-section v-if="slots.actions">
+          <slot name="actions"></slot>
+        </q-card-section>
+      </div>
+      <slot name="more" :loading="loading"></slot>
+    </q-card>
+  </template>
 </template>
 <style scoped>
 .date {

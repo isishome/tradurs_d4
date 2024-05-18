@@ -231,3 +231,63 @@
   width: 50px;
   height: 50px;
 }
+
+
+
+.icon.greater {
+  transform: rotate(-22.5deg);
+}
+
+.icon.greater::after {
+  content: '';
+  position: fixed;
+  width: 2px;
+  height: 2px;
+  box-shadow: 0 0 1px 1px rgb(0, 17, 255), 0 0 4px 4px rgb(0, 180, 204);
+  z-index: -1;
+}
+
+.body--light .icon.greater::after {
+  box-shadow: 0 0 5px 5px rgb(255, 255, 200);
+}
+
+.greater-mark {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  transform: translate(36px, 6px);
+}
+
+.body--light .greater-mark {
+  transform: translate(36px, -5px);
+}
+
+.greater-mark .icon.greater::after {
+  box-shadow: 0 0 3px 3px rgb(0, 17, 255), 0 0 7px 7px rgb(0, 180, 204);
+}
+
+.body--light .greater-mark .icon.greater::after {
+  box-shadow: 0 0 8px 8px rgb(255, 255, 200);
+}
+
+.greater-mark i {
+  font-size: 16px;
+}
+
+@media (max-width:600px) {
+  .greater-mark {
+    transform: translate(30px, 9px);
+  }
+
+  .body--light .greater-mark {
+    transform: translate(30px, -3px);
+  }
+
+  .greater-mark .icon.greater::after {
+    box-shadow: 0 0 2px 2px rgb(0, 17, 255), 0 0 6px 6px rgb(0, 180, 204);
+  }
+
+  .greater-mark i {
+    font-size: 12px;
+  }
+}

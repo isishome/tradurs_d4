@@ -35,11 +35,11 @@ const remove = () => {
 
 <template>
   <div class="row no-wrap items-baseline q-gutter-xs" :class="{ disable }" :data-id="data.valueId">
-    <div>
+    <div class="text-center" style="width:21px">
       <q-icon class="icon" :class="{ 'rotate-45': ['standard'].includes(findProperty?.type as string) }" size="10px"
         :name="`img:/images/attribute_types/${findProperty?.type || 'standard'}.svg`" />
     </div>
-    <div class="row items-center q-gutter-x-xs"
+    <div class="row items-center q-gutter-x-xs q-ml-none col"
       :class="{ 'filtered': is.filter.properties.includes(findProperty?.value as number) }">
       <template v-for="(comp, k) in propertyInfo" :key="k">
         <template v-if="comp.type === 'text'">
