@@ -232,8 +232,6 @@
   height: 50px;
 }
 
-
-
 .icon.greater {
   transform: rotate(-22.5deg);
 }
@@ -248,7 +246,7 @@
 }
 
 .body--light .icon.greater::after {
-  box-shadow: 0 0 5px 5px rgb(255, 255, 200);
+  box-shadow: none;
 }
 
 .greater-mark {
@@ -259,7 +257,7 @@
 }
 
 .body--light .greater-mark {
-  transform: translate(36px, -5px);
+  transform: translate(36px, -7px);
 }
 
 .greater-mark .icon.greater::after {
@@ -267,11 +265,15 @@
 }
 
 .body--light .greater-mark .icon.greater::after {
-  box-shadow: 0 0 8px 8px rgb(255, 255, 200);
+  box-shadow: none;
 }
 
 .greater-mark i {
   font-size: 16px;
+}
+
+.body--light .greater-mark i {
+  font-size: 20px;
 }
 
 @media (max-width:600px) {

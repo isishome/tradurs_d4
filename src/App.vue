@@ -157,6 +157,7 @@ onMounted(() => {
                   v-close-popup />
               </div>
               <q-space v-else-if="c.type === 'space'" class="space" />
+              <q-separator v-else-if="c.type === 'separator'" />
             </template>
           </div>
           <div class="text-area">{{ t('notice.bottom') }}</div>
