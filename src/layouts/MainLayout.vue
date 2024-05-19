@@ -49,16 +49,15 @@ const rightDrawerOpen = ref<boolean>(false)
 const signed = computed<boolean | null>(() => as.signed)
 const newMessages = computed<boolean>(() => as.newMessages || as.messagePage.unread > 0)
 const screen = computed<Screen>(() => $q.screen)
-const offsetTop = ref<number>(0)
-const asideHeight = computed<string>(() => `calc(100vh - ${screen.value.gt.sm ? offsetTop.value : 0}px)`)
-const asideTop = computed<string>(() => `${offsetTop.value + 10}px`)
+const asideHeight = computed<string>(() => `calc(100vh - ${screen.value.gt.sm ? gs.offsetTop : 0}px)`)
+const asideTop = computed<string>(() => `${gs.offsetTop + 10}px`)
 const newAwards = computed(() => (is.awards > 0 && (new Date()).getDay() === 1 && (new Date()).getHours() >= 9) || (new Date()).getDay() === 2)
 const isNarrow = computed(() => $q.screen.width <= 1100)
 const d4Filter = ref<InstanceType<typeof D4Filter>>()
 const d4PartyFilter = ref<InstanceType<typeof D4PartyFilter>>()
 
 const myTweak = (offset: number): void => {
-  offsetTop.value = offset || 0
+  gs.offsetTop = offset ?? 0
 }
 
 const info = () => {
@@ -134,28 +133,7 @@ const beforeShow = () => {
     scrollPosDirect()
 }
 
-const onScroll = (details: {
-  /**
-   * Scroll offset from top (vertical)
-   */
-  position: number;
-  /**
-   * Direction of scroll
-   */
-  direction: "up" | "down";
-  /**
-   * Has scroll direction changed since event was last emitted?
-   */
-  directionChanged: boolean;
-  /**
-   * Vertical delta distance since event was last emitted
-   */
-  delta: number;
-  /**
-   * Scroll offset from top (vertical)
-   */
-  inflectionPoint: number;
-}) => {
+const onScroll = (details: { position: number, direction: "up" | "down", directionChanged: boolean, delta: number, inflectionPoint: number }) => {
   gs.scrollTop = details.position
 }
 

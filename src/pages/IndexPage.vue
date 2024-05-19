@@ -47,7 +47,7 @@ const page = ref<number>(route.query.page ? parseInt(route.query.page as string)
 const over = computed(() => is.itemPage.over)
 const more = computed(() => is.itemPage.more)
 const listHeaderRef = ref<HTMLDivElement | undefined>()
-const stickyTop = computed(() => (listHeaderRef.value?.offsetTop ?? 0) - 50)
+const stickyTop = ref<number>(0)
 const selectedAll = ref<boolean>(false)
 const sortOptions = reactive<Array<{ value: string, label: string }>>(tm('sort.options'))
 const isExpanded = computed(() => is.storage.data.expanded)
@@ -556,6 +556,7 @@ watch(filter, (val, old) => {
 })
 
 onMounted(() => {
+  stickyTop.value = listHeaderRef.value?.getBoundingClientRect().top ?? 0
   getList()
 })
 </script>
@@ -563,7 +564,7 @@ onMounted(() => {
 <template>
   <div ref="listHeaderRef">
     <div class="row justify-between items-start absolute full-width q-px-md list-header"
-      :class="{ scroll: (gs.scrollTop ?? 0) > ($q.screen.lt.md ? 100 : 150) }" :style="`top:${stickyTop}px`">
+      :class="{ scroll: gs.scrollTop > stickyTop - gs.offsetTop }" :style="`top:${gs.offsetTop}px`">
       <div class="row items-center q-gutter-x-sm">
         <q-btn-dropdown v-if="as.signed && is.filter.mine" v-model="selectAction" :disable="disable" flat dense
           unelevated no-caps auto-close :ripple="false" class="no-hover"
