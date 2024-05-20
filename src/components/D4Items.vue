@@ -1066,28 +1066,27 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
 
 @keyframes awards {
   0% {
-    transform: translateY(-8px);
+    transform: translate(-2px, -8px);
     opacity: 0;
   }
 }
 
-.reward::after {
+.reward::before {
+  z-index: 2;
   animation: awards .6s ease;
   content: '';
   background: url('/images/awards/blood.webp');
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1), rgba(0, 0, 0, .8) 20%,
+      rgba(0, 0, 0, .6));
+  color: red;
   background-size: contain;
   background-repeat: no-repeat;
   width: 80px;
   height: 46px;
   position: absolute;
   top: 0;
-  left: 0;
-  transform: translate(2px, -4px);
-  opacity: .8;
-}
-
-.body--light .reward::after {
-  top: -6px;
+  right: 0;
+  transform: translate(-2px, -5px);
 }
 
 .body--light .item:after {
@@ -1125,6 +1124,12 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
 @media (max-width:600px) {
   .more {
     padding: 4px !important;
+  }
+
+  .reward::before {
+    transform: translate(-2px, -4px);
+    width: 60px;
+    height: 34.5px;
   }
 }
 

@@ -79,11 +79,15 @@ const upsertItem = (item: Item, done: Function) => {
   disable.value = true
   is[item.itemId !== '' ? 'updateItem' : 'addItem'](item)
     .then(() => {
-      if (findIndex !== -1) {
+      if (findIndex !== -1 || rewardItem.value?.itemId === item.itemId) {
         is.getItems(1, item.itemId)
           .then((result: Array<Item>) => {
-            if (result.length > 0)
-              items.value.splice(findIndex, 1, result[0])
+            if (result.length > 0) {
+              if (findIndex !== -1)
+                items.value.splice(findIndex, 1, result[0])
+              if (rewardItem.value?.itemId === item.itemId)
+                rewardItem.value = result[0]
+            }
           })
       }
       else {
@@ -272,7 +276,12 @@ const getList = async (scrollTop?: boolean) => {
   rewardItem.value = undefined
 
   if (page.value === 1 && !isDefaultFilter.value) {
-    const awardsPick = is.awardsPick.filter((ap: AwardsPick) => ap.hardcore === is.storage.data.hardcore && ap.ladder === is.storage.data.ladder)
+    //const awardsPick = is.awardsPick.filter((ap: AwardsPick) => ap.hardcore === is.storage.data.hardcore && ap.ladder === is.storage.data.ladder)
+    const awardsPick = [
+      {
+        "itemId": "232"
+      }
+    ]
     if (awardsPick.length > 0) {
       const pickItemId = awardsPick[Math.floor(Math.random() * awardsPick.length)].itemId.toString()
       is.getItems(1, pickItemId)
