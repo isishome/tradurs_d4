@@ -11,7 +11,7 @@
 
 const { configure } = require('quasar/wrappers');
 const path = require('path');
-const { mergeConfig } = require('vite')
+// const { mergeConfig } = require('vite')
 
 module.exports = configure(function (/* ctx */) {
   return {
@@ -72,20 +72,20 @@ module.exports = configure(function (/* ctx */) {
 
       extendViteConf(viteConf) {
         viteConf.define.__VUE_PROD_HYDRATION_MISMATCH_DETAILS__ = false
-        viteConf.build = mergeConfig(viteConf.build, {
-          rollupOptions:{
-            output: {
-              inlineDynamicImports: false,
-              manualChunks: (id) => {
-                 if (id.includes('D4')) 
-                   return 'd4'
-                 if (id.includes('quasar')) 
-                   return 'quasar'
-                 if (id.includes('node_modules')) 
-                   return 'vendor'
-              }
-            }}
-          })
+        // viteConf.build = mergeConfig(viteConf.build, {
+        //   rollupOptions:{
+        //     output: {
+        //       inlineDynamicImports: false,
+        //       manualChunks: (id) => {
+        //          if (id.includes('D4')) 
+        //            return 'd4'
+        //          if (id.includes('quasar')) 
+        //            return 'quasar'
+        //          if (id.includes('node_modules')) 
+        //            return 'vendor'
+        //       }
+        //     }}
+        //   })
       },
       // viteVuePluginOptions: {},
 
