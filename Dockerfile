@@ -1,5 +1,5 @@
-# alpine 18 버전 기반
-FROM node:18-alpine
+# alpine 16 버전 기반
+FROM node:16-alpine
 
 # 작업 디렉토리
 WORKDIR /d4-proj
