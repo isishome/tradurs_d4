@@ -22,7 +22,7 @@ const loading = ref<boolean>(false)
 const loadingItem = new Item()
 loadingItem.quality = 'normal'
 const historyType = ref<string>('item')
-const historyTypes = as.historyTypes.data
+const historyTypes = computed(() => as.historyTypes.data)
 const period = ref<number>(0)
 const today = new Date()
 const periodOptions = Array.from({ length: 3 }, (_, i) => ({ value: i, label: date.formatDate(date.subtractFromDate(today, { months: i }), 'YYYY-MM') }))
@@ -60,10 +60,9 @@ const request = (reset: boolean = false) => {
     })
 }
 
-onMounted(() => {
-  ps.getBase().then(() => {
-    request()
-  }).catch(() => { })
+onMounted(async () => {
+  Promise.all([as.getHistoryTypes(), ps.getBase()])
+  request()
 })
 
 onUnmounted(() => {
@@ -104,11 +103,11 @@ onUnmounted(() => {
               <div>{{ h.actionName }}</div>
               <div v-if="historyType === 'temperature'">
                 {{ h.contents.degree as number > 0 ? t('history.temperatureRise', { degree: h.contents.degree }) :
-                  t('history.temperatureDrop', { degree: h.contents.degree }) }}
+      t('history.temperatureDrop', { degree: h.contents.degree }) }}
               </div>
               <div v-else-if="historyType === 'yolk'">
                 {{ h.contents.amount as number > 0 ? t('history.yolkRise', { amount: h.contents.amount }) :
-                  t('history.yolkDrop', { amount: h.contents.amount }) }}
+      t('history.yolkDrop', { amount: h.contents.amount }) }}
               </div>
             </div>
           </template>

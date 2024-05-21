@@ -90,10 +90,7 @@ const sign = () => {
 }
 
 const setLang = (lang: string) => {
-  const params: { lang?: string, section?: string } = { lang }
-
-  if (route.params.section)
-    params.section = route.params.section as string
+  const params: { lang?: string, section?: string | string[] } = { lang, section: route.params.section ?? undefined }
 
   router.replace({ name: route.name as string, params })
     .catch(() => { })

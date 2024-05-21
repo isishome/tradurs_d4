@@ -7,15 +7,15 @@
   "private": true,
   "scripts": {
     "test": "echo \"No test specified\" && exit 0",
-    "dev":"npx quasar dev -m ssr -p 6090 --debug",
-    "cypress":"npx cypress open"
+    "dev": "npx quasar dev -m ssr -p 6090 --debug",
+    "cypress": "npx cypress open"
   },
   "dependencies": {
     "@quasar/extras": "^1.16.4",
     "axios": "^1.2.1",
     "pinia": "^2.0.11",
     "quasar": "^2.16.0",
-    "socket.io-client": "^4.6.1",
+    "socket.io-client": "^4.7.5",
     "tesseract.js": "^5.1.0",
     "vue": "^3.4.18",
     "vue-i18n": "^9.2.2",

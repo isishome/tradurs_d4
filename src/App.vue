@@ -7,7 +7,8 @@ export default {
     const as = useAccountStore(store);
     const is = useItemStore(store);
 
-    return Promise.all([as.getHistoryTypes(), as.getEvaluations(), is.getStorage(), is.getBase(), is.getProperties(), is.getAffixes(), is.getRestrictions(), is.getPacts()])
+    //return Promise.all([as.getHistoryTypes(), as.getEvaluations(), is.getStorage(), is.getBase(), is.getProperties(), is.getAffixes(), is.getRestrictions, is.getPacts()])
+    return Promise.all([is.getStorage(), is.getBase(), is.getProperties(), is.getAffixes(), is.getRestrictions()])
   }
 }
 </script>
@@ -121,6 +122,7 @@ onMounted(() => {
   document.documentElement.setAttribute('lang', locale.value as string)
   view.value = true
   checkAd()
+  as.getEvaluations()
 })
 </script>
 

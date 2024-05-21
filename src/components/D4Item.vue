@@ -1,3 +1,9 @@
+<script lang="ts">
+export default {
+  inheritAttrs: false
+}
+</script>
+
 <script setup lang="ts">
 import { reactive, ref, computed, useSlots, nextTick, onUnmounted, ComputedRef, onMounted } from 'vue'
 import { QCard, useQuasar, date } from 'quasar'
@@ -53,7 +59,7 @@ const imgSrc = computed(() =>
 const _name = ref<string>(props.data.name)
 const _quantity = ref<number>(props.data.quantity || 1)
 const selectable = computed(() => props.data.authorized && store.filter.mine)
-const greaterCount = computed(() => props.data.affixes.filter(a => a.affixGreater).length)
+const greaterCount = computed(() => props.data.affixes?.filter(a => a.affixGreater).length)
 const endDate = new Date(props.data.endDate)
 const expDate = new Date(props.data.expDate)
 const remainDate = ref<number>(date.getDateDiff(['000', '002'].includes(props.data.statusCode) ? endDate : expDate, new Date(), 'seconds'))
@@ -661,7 +667,8 @@ defineExpose({ scrollEnd })
       </div>
     </div>
     <q-card class="card-item non-selectable no-scroll full-height overflow-hidden"
-      :class="[data.expanded ? 'expanded' : 'no-expanded', data.quality, data.itemType, `status-${data.statusCode}`]">
+      :class="[data.expanded ? 'expanded' : 'no-expanded', data.quality, data.itemType, `status-${data.statusCode}`]"
+      v-bind="$attrs">
       <div class="inner">
         <q-card-section>
           <div class="user-area row justify-end">
