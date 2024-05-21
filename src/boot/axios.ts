@@ -30,6 +30,7 @@ export default boot(({ app, ssrContext, store, router }/* { app, router, ... } *
     const caption = typeof (message) === 'object' && message.caption || ''
     message = typeof (message) === 'object' && message.body || message
 
+
     if (process.env.SERVER)
       return
 
