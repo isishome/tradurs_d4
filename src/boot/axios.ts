@@ -30,11 +30,15 @@ export default boot(({ app, ssrContext, store, router }/* { app, router, ... } *
     const caption = typeof (message) === 'object' && message.caption || ''
     message = typeof (message) === 'object' && message.body || message
 
+    if (process.env.SERVER)
+      return
+
     if ([401, 403].includes(status)) {
       const accountStore = useAccountStore(store)
       accountStore.signed = false
       accountStore.info = new User()
       const url = status === 401 ? `${import.meta.env.VITE_APP_TRADURS}/sign?redirect=${encodeURIComponent(document.location.href)}` : `${import.meta.env.VITE_APP_TRADURS}/info`
+
       Notify.create({
         progress: true,
         icon: 'img:/images/icons/warning.svg',
