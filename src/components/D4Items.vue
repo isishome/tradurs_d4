@@ -329,7 +329,7 @@ const filterProperties = (e: KeyboardEvent): void => {
   const val = (e.target as HTMLInputElement).value.toLowerCase()
   propertyRef.value?.showPopup()
   propertyRef.value?.updateInputValue(val)
-  propertyNeedle.value = (e.target as HTMLInputElement).value
+  propertyNeedle.value = val
 }
 
 const selectedProperty = (val: number): void => {
@@ -368,10 +368,11 @@ const affixOptions = is.filterAffixes
 const affixNeedle = ref<string>()
 
 const filterAffixes = (e: KeyboardEvent) => {
+  affixNeedle
   const val = (e.target as HTMLInputElement).value.toLowerCase()
   affixRef.value?.showPopup()
   affixRef.value?.updateInputValue(val)
-  affixNeedle.value = (e.target as HTMLInputElement).value
+  affixNeedle.value = val
 }
 
 const selectedAffix = (val: number): void => {
@@ -423,7 +424,7 @@ const filterRestrictions = (e: KeyboardEvent): void => {
   const val = (e.target as HTMLInputElement).value.toLowerCase()
   restrictionRef.value?.showPopup()
   restrictionRef.value?.updateInputValue(val)
-  restrictionNeedle.value = (e.target as HTMLInputElement).value
+  restrictionNeedle.value = val
 }
 
 const selectedRestriction = (val: number): void => {

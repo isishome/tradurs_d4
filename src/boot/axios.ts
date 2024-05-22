@@ -110,9 +110,8 @@ export default boot(({ app, ssrContext, store, router }/* { app, router, ... } *
     if (requireAuth && !as.info.id)
       return next({ name: 'tradeList', params: { lang: to.params.lang } })
 
-    if (as.info.id && (as.messenger === null || is.socket === null || ps.party === null)) {
+    if (as.info.id && (as.messenger === null || is.socket === null || ps.party === null))
       Promise.all([initMessenger(as, is), initParty(as, ps), as.unreadMessages()]).then(() => { }).catch(() => { })
-    }
 
     return next()
   })

@@ -14,7 +14,6 @@ export const initMessenger = async (as: AccountStore, is: ItemStore) => {
     return
 
   const manager = new Manager(import.meta.env.VITE_APP_SOCKET, {
-    reconnectionDelayMax: 10000,
     withCredentials: prod
   })
 

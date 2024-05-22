@@ -14,7 +14,6 @@ export const initParty = async (as: AccountStore, ps: PartyStore) => {
     return
 
   const manager = new Manager(import.meta.env.VITE_APP_SOCKET, {
-    reconnectionDelayMax: 10000,
     withCredentials: prod
   })
 

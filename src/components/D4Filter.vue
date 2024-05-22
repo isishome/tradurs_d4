@@ -41,15 +41,18 @@ const propertyRef = ref<QSelect | null>(null)
 const propertyOptions = is.filterProperties
 const propertyNeedle = ref<string>()
 
-const filterProperties = (val: string): void => {
+const filterProperties = (e: KeyboardEvent) => {
+  const val = (e.target as HTMLInputElement).value.toLowerCase()
   propertyRef.value?.showPopup()
-  propertyNeedle.value = val.toLowerCase()
+  propertyRef.value?.updateInputValue(val)
+  propertyNeedle.value = val
 }
 
 const selectedProperty = (val: number): void => {
   if (val) {
     propertyRef.value?.hidePopup()
     update()
+    propertyNeedle.value = undefined
   }
 }
 
@@ -66,15 +69,18 @@ const affixRef = ref<QSelect | null>(null)
 const affixOptions = is.filterAffixes
 const affixNeedle = ref<string>()
 
-const filterAffixes = (val: string): void => {
+const filterAffixes = (e: KeyboardEvent) => {
+  const val = (e.target as HTMLInputElement).value.toLowerCase()
   affixRef.value?.showPopup()
-  affixNeedle.value = val.toLowerCase()
+  affixRef.value?.updateInputValue(val)
+  affixNeedle.value = val
 }
 
 const selectedAffix = (val: number): void => {
   if (val) {
     affixRef.value?.hidePopup()
     update()
+    affixNeedle.value = undefined
   }
 }
 
@@ -91,15 +97,18 @@ const restrictionRef = ref<QSelect | null>(null)
 const restrictionOptions = is.filterRestrictions
 const restrictionNeedle = ref<string>()
 
-const filterRestrictions = (val: string): void => {
+const filterRestrictions = (e: KeyboardEvent) => {
+  const val = (e.target as HTMLInputElement).value.toLowerCase()
   restrictionRef.value?.showPopup()
-  restrictionNeedle.value = val.toLowerCase()
+  restrictionRef.value?.updateInputValue(val)
+  restrictionNeedle.value = val
 }
 
 const selectedRestriction = (val: number): void => {
   if (val) {
     restrictionRef.value?.hidePopup()
     update()
+    restrictionNeedle.value = undefined
   }
 }
 
@@ -360,7 +369,7 @@ defineExpose({
           transition-hide="none" :transition-duration="0" :label="`${t('properties')} ${t('searchOrSelect')}`"
           :options="propertyOptions(propertyNeedle)" dropdown-icon="img:/images/icons/dropdown.svg"
           popup-content-class="scroll bordered limit-select" @update:model-value="selectedProperty"
-          @input-value="filterProperties">
+          @input.stop="filterProperties">
 
           <template #option="scope">
             <q-item v-bind="scope.itemProps">
@@ -384,19 +393,22 @@ defineExpose({
         </q-select>
       </q-item-section>
     </q-item>
-    <q-item :disable="filterLoading" class="q-mx-md q-mb-xs" v-for="pid in filter.properties" :key="`${pid}`">
-      <q-item-section>
-        <q-item-label caption>
-          {{ findProperty(pid as number)?.label }}
-        </q-item-label>
-      </q-item-section>
-      <q-item-section side>
-        <q-btn :disable="filterLoading" dense unelevated flat round aria-label="Tradurs Close Button" size="xs"
-          :tabindex="-1" class="q-ml-sm" @click="removeProperty(pid)">
-          <img class="icon" width="13" height="13" src="/images/icons/close.svg" alt="Tradurs Close Icon" />
-        </q-btn>
-      </q-item-section>
-    </q-item>
+    <template v-for="(pid, idx) in filter.properties" :key="`${pid}`">
+      <q-separator v-show="idx !== 0" inset />
+      <q-item :disable="filterLoading" class="q-mx-md q-mb-xs">
+        <q-item-section>
+          <q-item-label caption>
+            {{ findProperty(pid as number)?.label }}
+          </q-item-label>
+        </q-item-section>
+        <q-item-section side>
+          <q-btn :disable="filterLoading" dense unelevated flat round aria-label="Tradurs Close Button" size="xs"
+            :tabindex="-1" class="q-ml-sm" @click="removeProperty(pid)">
+            <img class="icon" width="13" height="13" src="/images/icons/close.svg" alt="Tradurs Close Icon" />
+          </q-btn>
+        </q-item-section>
+      </q-item>
+    </template>
     <q-item :disable="filterLoading">
       <q-item-section class="no-wrap">
         <q-select ref="affixRef" v-model="filter.affixes" class="col" :disable="filterLoading" max-values="6" outlined
@@ -404,7 +416,7 @@ defineExpose({
           transition-show="none" transition-hide="none" :transition-duration="0"
           :label="`${t('affixes')} ${t('searchOrSelect')}`" :options="affixOptions(affixNeedle)"
           dropdown-icon="img:/images/icons/dropdown.svg" popup-content-class="scroll bordered limit-select"
-          @update:model-value="selectedAffix" @input-value="filterAffixes">
+          @update:model-value="selectedAffix" @input.stop="filterAffixes">
 
           <template #option="scope">
             <q-item v-bind="scope.itemProps">
@@ -428,19 +440,22 @@ defineExpose({
         </q-select>
       </q-item-section>
     </q-item>
-    <q-item :disable="filterLoading" class="q-mx-md q-mb-xs" v-for="aid in filter.affixes" :key="`${aid}`">
-      <q-item-section>
-        <q-item-label caption>
-          {{ findAffix(aid as number)?.label }}
-        </q-item-label>
-      </q-item-section>
-      <q-item-section side>
-        <q-btn :disable="filterLoading" dense unelevated flat round aria-label="Tradurs Close Button" size="xs"
-          :tabindex="-1" class="q-ml-sm" @click="removeAffix(aid)">
-          <img class="icon" width="13" height="13" src="/images/icons/close.svg" alt="Tradurs Close Icon" />
-        </q-btn>
-      </q-item-section>
-    </q-item>
+    <template v-for="(aid, idx) in filter.affixes" :key="`${aid}`">
+      <q-separator v-show="idx !== 0" inset />
+      <q-item :disable="filterLoading" class="q-mx-md q-mb-xs">
+        <q-item-section>
+          <q-item-label caption>
+            {{ findAffix(aid as number)?.label }}
+          </q-item-label>
+        </q-item-section>
+        <q-item-section side>
+          <q-btn :disable="filterLoading" dense unelevated flat round aria-label="Tradurs Close Button" size="xs"
+            :tabindex="-1" class="q-ml-sm" @click="removeAffix(aid)">
+            <img class="icon" width="13" height="13" src="/images/icons/close.svg" alt="Tradurs Close Icon" />
+          </q-btn>
+        </q-item-section>
+      </q-item>
+    </template>
     <q-item :disable="filterLoading">
       <q-item-section class="no-wrap">
         <q-select ref="restrictionRef" v-model="filter.restrictions" :disable="filterLoading" max-values="3" outlined
@@ -448,7 +463,7 @@ defineExpose({
           transition-show="none" transition-hide="none" :transition-duration="0"
           :label="`${t('restrictions')} ${t('searchOrSelect')}`" :options="restrictionOptions(restrictionNeedle)"
           dropdown-icon="img:/images/icons/dropdown.svg" popup-content-class="scroll bordered limit-select"
-          @update:model-value="selectedRestriction" @input-value="filterRestrictions">
+          @update:model-value="selectedRestriction" @input.stop="filterRestrictions">
 
           <template #option="scope">
             <q-item v-bind="scope.itemProps">
@@ -468,19 +483,22 @@ defineExpose({
         </q-select>
       </q-item-section>
     </q-item>
-    <q-item :disable="filterLoading" class="q-mx-md q-mb-xs" v-for="rid in filter.restrictions" :key="`${rid}`">
-      <q-item-section>
-        <q-item-label caption>
-          {{ findRestriction(rid as number)?.label }}
-        </q-item-label>
-      </q-item-section>
-      <q-item-section side>
-        <q-btn :disable="filterLoading" dense unelevated flat round aria-label="Tradurs Close Button" size="xs"
-          :tabindex="-1" class="q-ml-sm" @click="removeRestriction(rid)">
-          <img class="icon" width="13" height="13" src="/images/icons/close.svg" alt="Tradurs Close Icon" />
-        </q-btn>
-      </q-item-section>
-    </q-item>
+    <template v-for="(rid, idx) in filter.restrictions" :key="`${rid}`">
+      <q-separator v-show="idx !== 0" inset />
+      <q-item :disable="filterLoading" class="q-mx-md q-mb-xs">
+        <q-item-section>
+          <q-item-label caption>
+            {{ findRestriction(rid as number)?.label }}
+          </q-item-label>
+        </q-item-section>
+        <q-item-section side>
+          <q-btn :disable="filterLoading" dense unelevated flat round aria-label="Tradurs Close Button" size="xs"
+            :tabindex="-1" class="q-ml-sm" @click="removeRestriction(rid)">
+            <img class="icon" width="13" height="13" src="/images/icons/close.svg" alt="Tradurs Close Icon" />
+          </q-btn>
+        </q-item-section>
+      </q-item>
+    </template>
     <q-separator inset class="q-my-md" />
     <q-item :disable="filterLoading">
       <q-item-section>

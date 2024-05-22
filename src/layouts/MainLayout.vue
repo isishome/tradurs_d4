@@ -77,8 +77,10 @@ const sign = () => {
         ps.dispose()
         await is.getStorage(true)
 
-        if (route.name === 'tradeList')
+        if (route.name === 'tradeList') {
+          gs.scrollTop = 0
           mainKey.value++
+        }
         else
           router.push({ name: 'tradeList', params: { lang: route.params.lang } })
       }

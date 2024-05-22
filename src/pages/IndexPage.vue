@@ -51,6 +51,7 @@ const selectedAll = ref<boolean>(false)
 const sortOptions = reactive<Array<{ value: string, label: string }>>(tm('sort.options'))
 const isExpanded = computed(() => is.storage.data.expanded)
 const noSelected = computed(() => items.value.filter(i => i.selected).length === 0)
+const isScroll = computed(() => gs.scrollTop > gs.elemnetTop - gs.offsetTop)
 const selectAction = ref<boolean>(false)
 const errorInfo = reactive<{ show: boolean, title: string, items: Array<IErrorItem> }>({
   show: false,
@@ -559,8 +560,7 @@ watch(filter, (val, old) => {
 })
 
 onMounted(() => {
-  if (gs.stickyTop <= 0)
-    gs.stickyTop = listHeaderRef.value?.offsetTop ?? 0
+  gs.elemnetTop = listHeaderRef.value?.getBoundingClientRect().top ?? 0
 
   getList()
 })
@@ -568,9 +568,9 @@ onMounted(() => {
 
 <template>
   <div ref="listHeaderRef">
-    <div class="row justify-between items-start absolute full-width q-px-md list-header"
-      :class="{ scroll: gs.scrollTop > gs.stickyTop - gs.offsetTop }" :style="`top:${gs.offsetTop}px`">
-      <div class="row items-center q-gutter-x-sm">
+    <div class="row justify-between items-start absolute full-width q-px-md list-header" :class="{ scroll: isScroll }"
+      :style="`top:${gs.offsetTop}px`">
+      <div class="col row items-center q-gutter-x-sm">
         <q-btn-dropdown v-if="as.signed && is.filter.mine" v-model="selectAction" :disable="disable" flat dense
           unelevated no-caps auto-close :ripple="false" class="no-hover"
           :content-style="{ 'borderRadius': '0 0 4px 4px', 'boxShadow': 'none' }" :class="{ active: selectAction }"
@@ -608,11 +608,13 @@ onMounted(() => {
           </q-list>
         </q-btn-dropdown>
       </div>
-      <q-select v-model="is.sort" :disable="disable" dense no-error-icon hide-bottom-space emit-value map-options
-        options-dense borderless transition-show="none" transition-hide="none" :transition-duration="0"
-        :options="sortOptions" menu-anchor="bottom end" menu-self="top end"
-        dropdown-icon="img:/images/icons/dropdown.svg" class="sort text-caption"
-        popup-content-class="scroll bordered text-caption" @update:model-value="updateSort" />
+      <div class="col row justify-end items-center overflow-hidden">
+        <q-select v-model="is.sort" :disable="disable" dense no-error-icon hide-bottom-space emit-value map-options
+          options-dense borderless transition-show="none" transition-hide="none" :transition-duration="0"
+          :options="sortOptions" menu-anchor="bottom end" menu-self="top end"
+          dropdown-icon="img:/images/icons/dropdown.svg" class="sort text-caption"
+          popup-content-class="scroll bordered text-caption" @update:model-value="updateSort" />
+      </div>
     </div>
     <div>
       <div class="row justify-center items-center">
