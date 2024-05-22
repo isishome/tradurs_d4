@@ -88,7 +88,6 @@ module.exports = configure(function (/* ctx */) {
         //       }
         //     }}
         //   })
-        
       },
       // viteVuePluginOptions: {},
 
