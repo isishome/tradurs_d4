@@ -10,6 +10,7 @@ export const useGlobalStore = defineStore('global', {
     itemName: null as string | null,
     offsetTop: 0 as number,
     scrollTop: 0 as number,
+    stickyTop: 0 as number,
     topAccessTimeStamp: Date.now(),
     bottomAccessTimeStamp: Date.now(),
     rightAccessTimeStamp: Date.now(),
@@ -18,6 +19,17 @@ export const useGlobalStore = defineStore('global', {
   }),
   getters: {},
   actions: {
+    checkHealth() {
+      return new Promise<void>((resolve, reject) => {
+        api.get('/d4/system/health')
+          .then(() => {
+            resolve()
+          })
+          .catch(() => {
+            reject()
+          })
+      })
+    },
     contactUs(token: string, contents: string | null) {
       return new Promise<void>((resolve, reject) => {
         api.post('/d4/contact', { token, contents })

@@ -91,8 +91,18 @@ export default boot(({ app, ssrContext, store, router }/* { app, router, ... } *
     const onlyAdmin = !!to.matched.find(route => route.meta.onlyAdmin)
     const requireAuth = !!to.matched.find(route => route.meta.requireAuth)
 
+    if (!['pnf', 'ftc'].includes(to.name as string)) {
+      let error = false
+      await gs.checkHealth().then(() => { }).catch(() => {
+        error = true
+      })
+
+      if (error)
+        return next({ name: 'ftc' })
+    }
+
     if (as.signed === null)
-      await as.checkSign()
+      await as.checkSign().then(() => { }).catch(() => { })
 
     if ((to.params.lang?.length === 2 && !gs.localeOptions.map(lo => lo.value).includes(to.params.lang as string) || (onlyAdmin && !as.info.isAdmin)) && to.name !== 'pnf')
       return next({ name: 'pnf' })
@@ -101,7 +111,7 @@ export default boot(({ app, ssrContext, store, router }/* { app, router, ... } *
       return next({ name: 'tradeList', params: { lang: to.params.lang } })
 
     if (as.info.id && (as.messenger === null || is.socket === null || ps.party === null)) {
-      Promise.all([initMessenger(as, is), initParty(as, ps), as.unreadMessages()])
+      Promise.all([initMessenger(as, is), initParty(as, ps), as.unreadMessages()]).then(() => { }).catch(() => { })
     }
 
     return next()

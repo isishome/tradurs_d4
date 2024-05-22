@@ -19,7 +19,8 @@ export default {
     history: 'History',
     support: 'Help',
     admin: 'Admin',
-    pnf: 'Page not found'
+    pnf: 'Page not found',
+    ftc: 'A problem has occurred with the data server.'
   },
   battlenet: {
     title: 'Enter BattleTag™',

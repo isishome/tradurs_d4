@@ -75,6 +75,11 @@ const routes: RouteRecordRaw[] = [
     name: 'pnf',
     path: '/:catchAll(.*)*',
     component: () => import('pages/PageNotFound.vue')
+  },
+  {
+    name: 'ftc',
+    path: '/:catchAll(.*)*',
+    component: () => import('pages/FailedToConnection.vue')
   }
 ]
 

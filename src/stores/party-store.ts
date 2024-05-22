@@ -183,6 +183,9 @@ export const defaultFilter: IFilter = {
 export const usePartyStore = defineStore('party', () => {
   const party = ref<Socket | null>(null)
   const base = reactive<IBase>({
+    regions: [],
+    partyTypes: [],
+    partyCategories: [],
     loading: false,
     request: 0
   } as IBase)

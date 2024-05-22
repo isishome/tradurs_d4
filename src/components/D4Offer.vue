@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, computed } from 'vue'
+import { reactive, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useQuasar } from 'quasar'
 import { Offer, type Price } from 'src/types/item'
@@ -126,6 +126,10 @@ const isTradeable = computed(() => (props.data.statusCode === '003' && props.dat
 const existsEvaluation = computed(() => (props.data.statusCode === '001' && props.owner) || (props.data.statusCode === '001' && props.data.authorized))
 const status = computed(() => is.findOfferStatus(props.data.statusCode)?.label)
 const parsEvaluations = computed(() => props.owner ? as.filterEvaluations(props.evaluations) : props.data.authorized ? as.filterEvaluations(props.data.evaluations) : [])
+
+onMounted(async () => {
+  await as.getEvaluations()
+})
 </script>
 
 <template>

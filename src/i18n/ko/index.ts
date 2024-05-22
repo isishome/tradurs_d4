@@ -19,7 +19,8 @@ export default {
     history: '활동 내역',
     support: '도움말',
     admin: '관리자',
-    pnf: '페이지를 찾을 수 없습니다'
+    pnf: '페이지를 찾을 수 없습니다',
+    ftc: '데이터 서버에 문제가 발생했습니다.'
   },
   battlenet: {
     title: 'BattleTag™ 입력',

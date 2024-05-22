@@ -1,21 +1,10 @@
-<script lang="ts">
-import { usePartyStore } from 'src/stores/party-store'
-
-export default {
-  preFetch({ store }) {
-    const ps = usePartyStore(store);
-
-    return ps.getBase()
-  }
-}
-</script>
-
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useQuasar } from 'quasar'
 import { useRoute, useRouter } from 'vue-router'
 import { useAccountStore } from 'stores/account-store'
+import { usePartyStore } from 'src/stores/party-store'
 import { type IParty, type IPartyUser, type IPartyRoom, Party, PartyServiceTypes, PartyRegionTypes } from 'src/stores/party-store'
 import { Price } from 'src/types/item'
 import { checkName } from 'src/common'
@@ -205,7 +194,6 @@ watch(() => route.query.page, (val, old) => {
 
 onMounted(() => {
   getParties()
-
 })
 
 onUnmounted(() => {

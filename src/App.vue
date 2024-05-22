@@ -1,14 +1,14 @@
 <script lang="ts">
-import { useAccountStore } from 'stores/account-store'
 import { useItemStore } from 'stores/item-store'
+import { usePartyStore } from 'stores/party-store'
 
 export default {
-  preFetch({ store }) {
-    const as = useAccountStore(store);
-    const is = useItemStore(store);
+  async preFetch({ store }) {
+    const is = useItemStore(store)
+    const ps = usePartyStore(store)
 
     //return Promise.all([as.getHistoryTypes(), as.getEvaluations(), is.getStorage(), is.getBase(), is.getProperties(), is.getAffixes(), is.getRestrictions, is.getPacts()])
-    return Promise.all([is.getStorage(), is.getBase(), is.getProperties(), is.getAffixes(), is.getRestrictions()])
+    return Promise.all([is.getStorage(), is.getBase(), is.getProperties(), is.getAffixes(), is.getRestrictions(), ps.getBase()]).then(() => { }).catch(() => { })
   }
 }
 </script>
@@ -19,6 +19,7 @@ import { useQuasar, useMeta } from 'quasar'
 import { useRoute, useRouter, RouteRecordName, RouteParamsRaw } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useGlobalStore } from 'stores/global-store'
+import { useAccountStore } from 'stores/account-store'
 import { useAdBlock } from 'src/composables/adblock'
 import D4Chat from 'src/components/D4Chat.vue'
 
@@ -122,7 +123,6 @@ onMounted(() => {
   document.documentElement.setAttribute('lang', locale.value as string)
   view.value = true
   checkAd()
-  as.getEvaluations()
 })
 </script>
 

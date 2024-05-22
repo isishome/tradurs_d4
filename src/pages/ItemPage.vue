@@ -4,7 +4,7 @@ import { useItemStore, type OfferInfo } from 'stores/item-store'
 import { Item, IPrice } from 'src/types/item'
 
 export default {
-  preFetch({ store, currentRoute }) {
+  async preFetch({ store, currentRoute }) {
     const is = useItemStore(store)
     const gs = useGlobalStore(store)
 
