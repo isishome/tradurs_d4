@@ -11,7 +11,7 @@
 
 const { configure } = require('quasar/wrappers');
 const path = require('path');
-const { mergeConfig } = require('vite')
+//const { mergeConfig } = require('vite')
 
 module.exports = configure(function (/* ctx */) {
   return {
@@ -51,7 +51,7 @@ module.exports = configure(function (/* ctx */) {
     build: {
       target: {
         browser: ['es2019', 'edge88', 'firefox78', 'chrome87', 'safari13.1'],
-        node: 'node18'
+        node: 'node20'
       },
 
       vueRouterMode: 'history', // available values: 'hash', 'history'
@@ -72,22 +72,22 @@ module.exports = configure(function (/* ctx */) {
 
       extendViteConf(viteConf) {
         viteConf.define.__VUE_PROD_HYDRATION_MISMATCH_DETAILS__ = false
-        viteConf.build = mergeConfig(viteConf.build, {
-          rollupOptions:{
-            output: {
-              inlineDynamicImports: false,
-              manualChunks: (id) => {
-                if (id.includes('d4/src/components')) 
-                  return 'd4_component'
-                if (id.includes('d4/src/pages')) 
-                  return 'd4_pages'
-                if (id.includes('node_modules/@quasar') || id.includes('node_modules/quasar')) 
-                  return 'quasar'
-                if (id.includes('node_modules')) 
-                  return 'vendor'
-              }
-            }}
-          })
+        // viteConf.build = mergeConfig(viteConf.build, {
+        //   rollupOptions:{
+        //     output: {
+        //       inlineDynamicImports: false,
+        //       manualChunks: (id) => {
+        //         if (id.includes('d4/src/components')) 
+        //           return 'd4_component'
+        //         if (id.includes('d4/src/pages')) 
+        //           return 'd4_pages'
+        //         if (id.includes('node_modules/@quasar') || id.includes('node_modules/quasar')) 
+        //           return 'quasar'
+        //         if (id.includes('node_modules')) 
+        //           return 'vendor'
+        //       }
+        //     }}
+        //   })
       },
       // viteVuePluginOptions: {},
 

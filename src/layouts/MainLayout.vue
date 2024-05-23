@@ -77,10 +77,8 @@ const sign = () => {
         ps.dispose()
         await is.getStorage(true)
 
-        if (route.name === 'tradeList') {
-          gs.scrollTop = 0
+        if (route.name === 'tradeList')
           mainKey.value++
-        }
         else
           router.push({ name: 'tradeList', params: { lang: route.params.lang } })
       }
@@ -138,7 +136,10 @@ const onScroll = (details: { position: number, direction: "up" | "down", directi
 
 // drawer expansion item
 const expanded = ref<boolean>(false)
+const expandedMobile = ref<boolean>(false)
 const isMySpace = computed(() => ['messages', 'blocks', 'history'].includes(route.name as string))
+const expandedAdmin = ref<boolean>(false)
+const isAdmin = computed(() => ['adminUser', 'adminData'].includes(route.name as string))
 
 // about screen size
 const size = computed(() => $q.screen.width < 728 ? 'display:inline-block;width:300px;max-height:100px;' : 'display:inline-block;width:728px;height:90px;')
@@ -259,7 +260,7 @@ watch(() => ps.filter.name, (val) => {
         </q-item>
         <q-separator />
         <div class="col scroll">
-          <q-list class="q-pa-md page">
+          <q-list class="q-pa-md page q-gutter-y-sm">
             <q-item v-ripple clickable :to="{ name: 'tradeList', params: { lang: route.params.lang } }" exact
               active-class="active">
               <q-item-section side>
@@ -286,12 +287,13 @@ watch(() => ps.filter.name, (val) => {
               </q-item-section>
             </q-item>
             <q-expansion-item v-if="as.signed" v-model="expanded" expand-icon="img:/images/icons/dropdown.svg"
-              :default-opened="isMySpace" :class="expanded ? 'expanded rounded-borders' : ''">
+              :default-opened="isMySpace" :header-class="{ active: isMySpace }"
+              :class="expanded ? 'expanded rounded-borders' : ''">
               <template #header>
                 <q-item-section>
                   <div>
                     <span class="relative-position">{{ t('page.mySpace') }}
-                      <div v-show="newMessages" class="alert" style="top:-6px"></div>
+                      <div v-show="newMessages && !expanded" class="alert" style="top:-6px"></div>
                     </span>
                   </div>
                 </q-item-section>
@@ -319,6 +321,33 @@ watch(() => ps.filter.name, (val) => {
                   <q-item-section side>
                     <q-item-label>
                       {{ t('page.history') }}
+                    </q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-expansion-item>
+            <q-expansion-item v-if="as.signed && !!as.info.isAdmin" v-model="expandedAdmin"
+              expand-icon="img:/images/icons/dropdown.svg" :default-opened="isAdmin" :header-class="{ active: isAdmin }"
+              :class="expandedAdmin ? 'expanded rounded-borders' : ''">
+              <template #header>
+                <q-item-section>
+                  {{ t('page.admin') }}
+                </q-item-section>
+              </template>
+              <q-list bordered class="sub rounded-borders">
+                <q-item :inset-level=".4" v-ripple clickable
+                  :to="{ name: 'adminUser', params: { lang: route.params.lang } }" exact active-class="active">
+                  <q-item-section side>
+                    <q-item-label>
+                      {{ t('page.adminUser') }}
+                    </q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item :inset-level=".4" v-ripple clickable
+                  :to="{ name: 'adminData', params: { lang: route.params.lang } }" exact active-class="active">
+                  <q-item-section side>
+                    <q-item-label>
+                      {{ t('page.adminData') }}
                     </q-item-label>
                   </q-item-section>
                 </q-item>
@@ -441,14 +470,13 @@ watch(() => ps.filter.name, (val) => {
                   <q-badge v-show="newAwards" floating label="N" color="orange-8" class="new-badge2" style="top:-4px" />
                 </div>
               </q-btn>
-              <q-btn-dropdown v-if="as.signed" flat content-class="no-shadow" no-caps :ripple="false" class="no-hover"
-                transition-show="none" transition-hide="none" transition-duration="0"
-                dropdown-icon="img:/images/icons/dropdown.svg">
-
+              <q-btn-dropdown v-if="as.signed" v-model="expandedMobile" flat content-class="no-shadow" no-caps
+                :ripple="false" class="no-hover" :class="{ active: isMySpace }" transition-show="none"
+                transition-hide="none" transition-duration="0" dropdown-icon="img:/images/icons/dropdown.svg">
                 <template #label>
                   <div class="relative-position">
                     {{ t('page.mySpace') }}
-                    <div v-show="newMessages" class="alert" style="top:-2px"></div>
+                    <div v-show="newMessages && !expandedMobile" class="alert" style="top:-2px"></div>
                   </div>
                 </template>
                 <q-list bordered class="page rounded-borders">
@@ -474,6 +502,31 @@ watch(() => ps.filter.name, (val) => {
                     <q-item-section side>
                       <q-item-label>
                         {{ t('page.history') }}
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </q-btn-dropdown>
+              <q-btn-dropdown v-if="as.signed && !!as.info.isAdmin" flat content-class="no-shadow" no-caps
+                :ripple="false" class="no-hover" :class="{ active: isAdmin }" transition-show="none"
+                transition-hide="none" transition-duration="0" dropdown-icon="img:/images/icons/dropdown.svg">
+                <template #label>
+                  {{ t('page.admin') }}
+                </template>
+                <q-list bordered class="page rounded-borders">
+                  <q-item v-ripple clickable :to="{ name: 'adminUser', params: { lang: route.params.lang } }" exact
+                    active-class="active">
+                    <q-item-section side>
+                      <q-item-label>
+                        {{ t('page.adminUser') }}
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <q-item v-ripple clickable :to="{ name: 'adminData', params: { lang: route.params.lang } }" exact
+                    active-class="active">
+                    <q-item-section side>
+                      <q-item-label>
+                        {{ t('page.adminData') }}
                       </q-item-label>
                     </q-item-section>
                   </q-item>
@@ -549,7 +602,7 @@ watch(() => ps.filter.name, (val) => {
         <q-inner-loading :showing="loading" class="fixed" color="primary" size="50px"
           style="z-index: 9999;position: fixed;" />
         <div class="row justify-center">
-          <div :class="screen.lt.sm ? 'q-pa-sm' : 'q-pa-xl'" :style="screen.lt.sm ? 'width:100%' : 'width:830px'">
+          <div :class="screen.lt.sm ? 'q-pa-sm' : 'q-pa-xl'" :style="screen.lt.sm ? 'width:100%' : 'width:760px'">
             <div class="view max-width">
               <div class="row justify-center top-ads">
                 <Adsense ref="topAdRef" :style="size" data-ad-client="ca-pub-5110777286519562" data-ad-slot="7137983054"
@@ -680,6 +733,9 @@ watch(() => ps.filter.name, (val) => {
 
 .page:deep(.expanded>div>.q-item:first-child) {
   box-shadow: inset 0 0 0 1px rgba(100, 100, 100, 1);
+}
+
+.page:deep(.expanded>div>.q-item:first-child.active) {
   opacity: 1;
 }
 

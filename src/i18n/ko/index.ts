@@ -19,6 +19,8 @@ export default {
     history: '활동 내역',
     support: '도움말',
     admin: '관리자',
+    adminUser: '사용자 관리',
+    adminData: '데이터 관리',
     pnf: '페이지를 찾을 수 없습니다',
     ftc: '데이터 서버에 문제가 발생했습니다.'
   },

@@ -19,6 +19,8 @@ export default {
     history: 'History',
     support: 'Help',
     admin: 'Admin',
+    adminUser: 'Manage User',
+    adminData: 'Manage Data',
     pnf: 'Page not found',
     ftc: 'A problem has occurred with the data server.'
   },

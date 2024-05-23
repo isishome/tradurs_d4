@@ -51,7 +51,6 @@ const selectedAll = ref<boolean>(false)
 const sortOptions = reactive<Array<{ value: string, label: string }>>(tm('sort.options'))
 const isExpanded = computed(() => is.storage.data.expanded)
 const noSelected = computed(() => items.value.filter(i => i.selected).length === 0)
-const isScroll = computed(() => gs.scrollTop > gs.elemnetTop - gs.offsetTop)
 const selectAction = ref<boolean>(false)
 const errorInfo = reactive<{ show: boolean, title: string, items: Array<IErrorItem> }>({
   show: false,
@@ -496,6 +495,12 @@ const deleteItems = () => {
   })
 }
 
+const butted = ref<boolean>(false)
+const onIntersection = (entry: IntersectionObserverEntry) => {
+  butted.value = !entry.isIntersecting
+  return true
+}
+
 watch(() => route.query.page, (val, old) => {
   if (val !== old && route.name === 'tradeList') {
     page.value = val ? parseInt(val as string) : 1
@@ -560,15 +565,14 @@ watch(filter, (val, old) => {
 })
 
 onMounted(() => {
-  gs.elemnetTop = listHeaderRef.value?.getBoundingClientRect().top ?? 0
-
   getList()
 })
 </script>
 
 <template>
   <div ref="listHeaderRef">
-    <div class="row justify-between items-start absolute full-width q-px-md list-header" :class="{ scroll: isScroll }"
+    <div v-intersection="onIntersection" :style="`transform: translateY(-${gs.offsetTop}px);`"></div>
+    <div class="row justify-between items-start absolute full-width q-px-md list-header" :class="{ scroll: butted }"
       :style="`top:${gs.offsetTop}px`">
       <div class="col row items-center q-gutter-x-sm">
         <q-btn-dropdown v-if="as.signed && is.filter.mine" v-model="selectAction" :disable="disable" flat dense

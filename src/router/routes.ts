@@ -60,11 +60,23 @@ const routes: RouteRecordRaw[] = [
       {
         name: 'admin',
         path: 'admin',
-        component: () => import('pages/AdminPage.vue'),
         props: true,
         meta: {
           onlyAdmin: true
-        }
+        },
+        redirect: { name: 'adminUser' },
+        children: [
+          {
+            name: 'adminUser',
+            path: 'user',
+            component: () => import('pages/admin/UserPage.vue')
+          },
+          {
+            name: 'adminData',
+            path: 'data',
+            component: () => import('pages/admin/DataPage.vue')
+          }
+        ]
       }
     ]
   },

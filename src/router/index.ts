@@ -38,7 +38,6 @@ export default route(function ({ store }/* { store, ssrContext } */) {
     if (from.name && to.name && (to.name !== from.name || to.query.page !== from.query.page)) {
       const gs = useGlobalStore(store)
       gs.reloadAdKey++
-      gs.scrollTop = 0
     }
   })
 
