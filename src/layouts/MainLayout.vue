@@ -269,14 +269,14 @@ watch(() => ps.filter.name, (val) => {
                 </q-item-label>
               </q-item-section>
             </q-item>
-            <q-item v-ripple clickable :to="{ name: 'partyPlay', params: { lang: route.params.lang } }" exact
+            <!-- <q-item v-ripple clickable :to="{ name: 'partyPlay', params: { lang: route.params.lang } }" exact
               active-class="active">
               <q-item-section side>
                 <q-item-label>
                   {{ t('page.partyPlay') }}
                 </q-item-label>
               </q-item-section>
-            </q-item>
+            </q-item> -->
             <q-item v-ripple clickable :to="{ name: 'awards', params: { lang: route.params.lang } }" exact
               active-class="active">
               <q-item-section side>
@@ -455,13 +455,13 @@ watch(() => ps.filter.name, (val) => {
               <q-btn flat no-caps type="a" :ripple="false" class="no-hover"
                 :class="{ 'active': route.name === 'tradeList' }" :label="t('page.tradeList')"
                 :to="{ name: 'tradeList', params: { lang: route.params.lang } }" />
-              <q-btn flat no-caps type="a" :ripple="false" class="no-hover"
+              <!-- <q-btn flat no-caps type="a" :ripple="false" class="no-hover"
                 :class="{ 'active': route.name === 'partyPlay' }"
                 :to="{ name: 'partyPlay', params: { lang: route.params.lang } }">
                 <div class="relative-position">
                   {{ t('page.partyPlay') }}
                 </div>
-              </q-btn>
+              </q-btn> -->
               <q-btn flat no-caps type="a" :ripple="false" class="no-hover"
                 :class="{ 'active': route.name === 'awards' }"
                 :to="{ name: 'awards', params: { lang: route.params.lang } }">

@@ -110,8 +110,11 @@ export default boot(({ app, ssrContext, store, router }/* { app, router, ... } *
     if (requireAuth && !as.info.id)
       return next({ name: 'tradeList', params: { lang: to.params.lang } })
 
-    if (!!as.info.id && !['pnf', 'ftc'].includes(to.name as string) && (as.messenger === null || ps.party === null))
-      Promise.all([initMessenger(as, is), initParty(as, ps), as.unreadMessages()]).then(() => { }).catch(() => { })
+    // if (!!as.info.id && !['pnf', 'ftc'].includes(to.name as string) && (as.messenger === null || ps.party === null))
+    //   Promise.all([initMessenger(as, is), initParty(as, ps), as.unreadMessages()]).then(() => { }).catch(() => { })
+
+    if (!!as.info.id && !['pnf', 'ftc'].includes(to.name as string) && (as.messenger === null))
+      Promise.all([initMessenger(as, is), as.unreadMessages()]).then(() => { }).catch(() => { })
 
     return next()
   })

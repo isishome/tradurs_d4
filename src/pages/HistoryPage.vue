@@ -61,7 +61,7 @@ const request = (reset: boolean = false) => {
 }
 
 onMounted(async () => {
-  Promise.all([as.getHistoryTypes(), ps.getBase()])
+  await as.getHistoryTypes()
   request()
 })
 
