@@ -180,8 +180,7 @@
 }
 
 .card-item.editable,
-.card-item.dialog,
-.party-form.dialog {
+.card-item.dialog {
   width: 800px;
   max-width: 100vw;
 }
@@ -189,13 +188,6 @@
 @media (max-width:600px) {
   .card-item .inner {
     padding: 6px;
-  }
-
-  .q-dialog__inner:has(.party-chat) {
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
   }
 }
 

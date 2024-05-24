@@ -10,7 +10,6 @@ import { focus } from 'src/common'
 interface IProps {
   data: Price,
   offer?: boolean,
-  party?: boolean,
   editable?: boolean,
   disable?: boolean,
   progress?: boolean,
@@ -20,7 +19,6 @@ interface IProps {
 
 const props = withDefaults(defineProps<IProps>(), {
   offer: false,
-  party: false,
   editable: false,
   disable: false,
   progress: false,
@@ -82,7 +80,7 @@ watch(() => props.data, (val) => {
   <div v-if="editable">
     <div class="row justify-end items-center q-gutter-sm">
       <div style="min-width:30px">
-        {{ party ? t('price.cost') : t('price.title') }}
+        {{ t('price.title') }}
       </div>
       <div class="col-xs-3">
         <q-select v-model="_price.currency" :disable="disable || fixed" outlined dense no-error-icon hide-bottom-space
@@ -127,8 +125,8 @@ watch(() => props.data, (val) => {
       </div>
       <div v-if="_price.currency === 'gold'" class="col-xs-5 col-sm-3">
         <q-input :disable="disable" dense no-error-icon hide-bottom-space outlined v-model.number="_price.currencyValue"
-          maxlength="11" reverse-fill-mask unmasked-value debounce="500" :error="_priceError" @update:model-value="update"
-          @focus="focus" @blur="_priceError = false" input-class="text-right"
+          maxlength="11" reverse-fill-mask unmasked-value debounce="500" :error="_priceError"
+          @update:model-value="update" @focus="focus" @blur="_priceError = false" input-class="text-right"
           :label="$n(Number.parseFloat(_price.currencyValue && Number.isInteger(parseInt(_price.currencyValue as string)) ? _price.currencyValue.toString() : '0'), 'decimal', { notation: 'compact' })"
           :rules="[val => Number.isInteger(parseInt(val)) && parseInt(val) > 0 && parseInt(val) % 100000 === 0 || '']">
           <q-tooltip v-model="_priceError" :target="_priceError" no-parent-event transition-show="none"
@@ -139,9 +137,10 @@ watch(() => props.data, (val) => {
       </div>
       <div v-else-if="_price.currency === 'summoning'" class="col-xs-3">
         <q-select v-model="_price.currencyValue" :disable="disable || fixed" outlined dense no-error-icon
-          hide-bottom-space emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0"
-          :label="t('item.selectSummoning')" dropdown-icon="img:/images/icons/dropdown.svg" :options="summonings"
-          popup-content-class="scroll bordered limit-select" options-dense @update:model-value="update">
+          hide-bottom-space emit-value map-options transition-show="none" transition-hide="none"
+          :transition-duration="0" :label="t('item.selectSummoning')" dropdown-icon="img:/images/icons/dropdown.svg"
+          :options="summonings" popup-content-class="scroll bordered limit-select" options-dense
+          @update:model-value="update">
           <template #selected-item="scope">
             <div class="ellipsis">{{ scope.opt.label }}</div>
           </template>

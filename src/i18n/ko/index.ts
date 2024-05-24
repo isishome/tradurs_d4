@@ -11,7 +11,6 @@ export default {
   page: {
     tradeList: '거래 목록',
     itemInfo: '아이템 정보',
-    partyPlay: '파티 플레이',
     awards: '어워즈',
     mySpace: '내 공간',
     messages: '메시지',
@@ -46,7 +45,7 @@ export default {
     presetName: '프리셋 명',
     noPreset: '프리셋을 추가해 주세요',
     selectPreset: '프리셋을 선택하세요',
-    basicDescription: '기본 필터 정보는 사용자 저장소에 저장됩니다. 아이템 등록 또는 파티 플레이 생성 시 하드코어와 시즌 여부는 기본 필터 정보에 의해 자동으로 설정됩니다.',
+    basicDescription: '기본 필터 정보는 사용자 저장소에 저장됩니다. 아이템 등록 시 하드코어와 시즌 여부는 기본 필터 정보에 의해 자동으로 설정됩니다.',
     presetDescription: '현재 설정되어 있는 필터 값들을 저장해두는 기능입니다. 최대 5개의 프리셋을 저장할 수 있습니다.',
     affixDescription: '옵션 검색은 최대 6개의 옵션 필터를 선택할 수 있고, 만약 5개를 선택한 경우 5개 중 조합된 4개를 포함한 다른 아이템들도 함께 검색됩니다',
     description: {
@@ -239,7 +238,6 @@ export default {
   },
   price: {
     title: '가격',
-    cost: '비용',
     currency: '화폐 유형',
     quantity: '수량',
     getOffer: '제안받기',
@@ -455,7 +453,9 @@ export default {
         { type: 'question', contents: '9. 아이템 상태를 구분해서 볼 수 없나요?' },
         { type: 'answer', contents: '→ 좌측 필터 > \'아이템 상태\' 선택 상자를 이용해 필터 가능합니다.' },
         { type: 'question', contents: '10. 새 시즌이 시작되면 기존 거래 아이템들은 어떻게 되나요?' },
-        { type: 'answer', contents: '→ 시즌이 새로 시작될 때마다 시즌 아이템은 영원의 영역(스탠더드)로 이동됩니다.' }
+        { type: 'answer', contents: '→ 시즌이 새로 시작될 때마다 시즌 아이템은 영원의 영역(스탠더드)로 이동됩니다.' },
+        { type: 'question', contents: '11. 아이템 상급 속성은 어떻게 지정하나요?' },
+        { type: 'answer', contents: '→ 상급 속성은 아이템 인식으로 처리할 수 없어 직접 속성 추가, 수정 시 속성 좌측의 아이콘을 클릭하여 활성화하시면 됩니다.' }
       ]
     },
     {
@@ -605,50 +605,6 @@ export default {
       ]
     },
     {
-      id: 'party',
-      question: '파티 플레이는 어떻게 이용하나요?',
-      answer: [
-        { type: 'image', contents: '01_menu' },
-        { type: 'text', contents: '1. 상단에 파티 플레이를 선택합니다.' },
-        { type: 'image', contents: '02_open_01' },
-        { type: 'text', contents: '2.1. 우측 상단에 \'만들기\' 버튼을 클릭해 파티 플레이를 생성해 보겠습니다.' },
-        { type: 'image', contents: '02_open_02' },
-        { type: 'text', contents: '2.2. 1: 서비스(협동/판매/구매)를 선택 > 2:지역 선택 > 3:파티 플레이 명 입력 > 4:파티 플레이 유형 선택 >\n5:파티 플레이 항목 선택 > 6:회차(반복) 입력 > 7:인원 입력 >\n8:시간(파티 플레이 유지 시간) 입력 >\n(* 1 ~ 12시간 선택 가능하며 시간당 1개의 yolk가 소모됩니다.)\n9:설명 입력 > 10:비용 선택(서비스가 판매/구매인 경우) > 만들기 클릭' },
-        { type: 'image', contents: '03_opened' },
-        { type: 'text', contents: '3.1. 파티 플레이가 생성되면 우측에 채팅 창이 열리고,\n파티 플레이 리스트에 방금 생성한 파티 플레이가 표시됩니다.' },
-        { type: 'image', contents: '03_opened_02' },
-        { type: 'text', contents: '3.2. 설명을 클릭하면 파티 플레이 상세 설명을 확인할 수 있습니다.' },
-        { type: 'image', contents: '04_chat_01' },
-        { type: 'text', contents: '4.1. 위에서 아래 순서대로 첫번 째 파티 플레이 제목이 표시됩니다.\n두번 째 파티 플레이 남은 시간과 진행 바가 표시됩니다.\n세번 째 참여자 정보가 칩 형태로 표시되며, 네번 째 일반적인 채팅 UI가 표시됩니다. 가장 하단에는 채팅 / 정보 탭이 표시됩니다.' },
-        { type: 'image', contents: '04_chat_02' },
-        { type: 'text', contents: '4.2. 참여자를 클릭하면 서브 메뉴가 열리며 해당 참여자의 배틀태그를 복사하거나 내보내기(방장인 경우)를 할 수 있습니다.' },
-        { type: 'image', contents: '04_chat_03' },
-        { type: 'text', contents: '4.3. 참여자들과 자유롭게 채팅이 가능합니다.' },
-        { type: 'image', contents: '04_chat_04' },
-        { type: 'text', contents: '4.4. 해당 파티 플레이에 참여한 다른 사용자 화면' },
-        { type: 'image', contents: '04_chat_05' },
-        { type: 'text', contents: '4.5. 정보 탭에는 참여하고 있는 파티 플레이 정보가 표시됩니다.' },
-        { type: 'image', contents: '04_chat_06' },
-        { type: 'text', contents: '4.6. 최소화 아이콘을 클릭하면 채팅 창이 숨김 처리되며' },
-        { type: 'image', contents: '04_chat_07' },
-        { type: 'text', contents: '4.7. 상단에 채팅창을 열 수 있는 아이콘이 활성화됩니다.' },
-        { type: 'image', contents: '04_chat_07_02' },
-        { type: 'text', contents: '4.7.2 채팅창이 최소화 되더라도 새로운 메시지 여부를 확인할 수 있습니다.' },
-        { type: 'image', contents: '04_chat_08' },
-        { type: 'text', contents: '4.8. 닫기 아이콘을 클릭하면,' },
-        { type: 'image', contents: '04_chat_09' },
-        { type: 'text', contents: '4.9. 파티 플레이를 실제 떠나길 원하는지 여부를 묻고 \'나가기\'를 클릭하면\n파티 플레이를 떠날수 있습니다. (방장인 경우 권한이 다른 사람에게 승계됨)\n파티 플레이를 떠나지 않은 경우 언제든지 다시 접속하면 참여했던 파티플레이를 이용할 수 있습니다(파티 플레이 시간이 남은 경우)' },
-        { type: 'image', contents: '04_chat_10' },
-        { type: 'text', contents: '4.10. 방장이 파티 플레이를 떠나면서 권한을 승계받은 화면' },
-        { type: 'image', contents: '05_filter' },
-        { type: 'text', contents: '5. 좌측 파티 플레이 필터를 통해 원하는 파티 플레이를 검색할 수 있습니다.' },
-        { type: 'image', contents: '06_kick_01' },
-        { type: 'text', contents: '6.1. 파티 플레이 동료로 원하지 않는 참여자가 접속한 경우, 해당 참여자의 배틀 태그를 클릭하고\n\'내보내기\' 기능을 사용해 내보낼 수 있습니다.\n쫓겨난 사용자는 해당 파티플레이에 다시 참여할 수 없습니다.' },
-        { type: 'image', contents: '06_kick_02' },
-        { type: 'text', contents: '6.2. 상대방을 내보냈을 경우 시스템 메시지' }
-      ]
-    },
-    {
       id: 'yolk',
       question: '노른자(yolk)는 무엇인가요?',
       answer: [
@@ -698,61 +654,6 @@ export default {
     noData: '수상 내역이 없습니다'
   },
   socket: {
-    '0900': '알림 또는 채팅 정보 인증이 실패했습니다',
-    '0901': '다른 디바이스에서 접속하여 파티 플레이가 비활성화 되었습니다',
-    '0902': '너무 빠른 메시지 전송입니다',
-    '0903': '접속 중인 다른 참여자가 없습니다',
-    '0904': '방을 나가는데 실패했습니다',
-    '0905': '방을 나가는 중 문제가 발생했습니다',
-    '0906': '내보내기가 실패했습니다',
-    '0907': '회원을 내보내는 중 문제가 발생했습니다',
-  },
-  party: {
-    service: {
-      title: '서비스',
-      coop: '협동',
-      sell: '판매',
-      buy: '구매'
-    },
-    info: {
-      region: '지역',
-      name: '파티 플레이 명',
-      type: '유형',
-      category: '항목',
-      runs: '회차',
-      people: '인원',
-      time: '시간',
-      notes: '설명',
-      endTime: '종료 시간'
-    },
-    category: {
-      chat: '채팅',
-      info: '정보'
-    },
-    chat: {
-      me: '나'
-    },
-    member: {
-      title: '참여자',
-      copy: '배틀태그 복사',
-      kick: '내보내기',
-    },
-    leave: {
-      title: '파티 나가기',
-      message: '파티를 떠나시겠습니까?',
-      description: '방장인 경우 다른 사람에게 권한이 승계됩니다'
-    },
-    messages: {
-      kick: '{btag}님을 방에서 내보냈습니다',
-      kicked: '{btag}님이 방에서 쫓겨났습니다',
-      owner: '{btag}님이 방장이 되었습니다',
-      leave: '{btag}님이 방을 나갔습니다',
-      enter: '{btag}님이 방에 들어왔습니다',
-      noData: '검색된 파티 플레이가 없습니다',
-      notice: '시간당 1개의 노른자가 소모됩니다'
-    },
-    filter: {
-      all: '모두'
-    }
+    '0900': '알림 정보 인증이 실패했습니다'
   }
 }

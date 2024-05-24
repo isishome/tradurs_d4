@@ -1,14 +1,17 @@
 <script lang="ts">
+import { useAccountStore } from 'stores/account-store'
 import { useItemStore } from 'stores/item-store'
-import { usePartyStore } from 'stores/party-store'
 
 export default {
   async preFetch({ store }) {
+    const as = useAccountStore(store)
     const is = useItemStore(store)
-    const ps = usePartyStore(store)
+    const promises = [is.getStorage(), is.getBase(), is.getProperties(), is.getAffixes(), is.getRestrictions()]
 
-    //return Promise.all([as.getHistoryTypes(), as.getEvaluations(), is.getStorage(), is.getBase(), is.getProperties(), is.getAffixes(), is.getRestrictions, is.getPacts()])
-    return Promise.all([is.getStorage(), is.getBase(), is.getProperties(), is.getAffixes(), is.getRestrictions(), ps.getBase()]).then(() => { }).catch(() => { })
+    if (!!as.info.id)
+      promises.push(as.unreadMessages())
+
+    return Promise.all(promises).then(() => { }).catch(() => { })
   }
 }
 </script>
@@ -19,9 +22,7 @@ import { useQuasar, useMeta } from 'quasar'
 import { useRoute, useRouter, RouteRecordName, RouteParamsRaw } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useGlobalStore } from 'stores/global-store'
-import { useAccountStore } from 'stores/account-store'
 import { useAdBlock } from 'src/composables/adblock'
-import D4Chat from 'src/components/D4Chat.vue'
 
 interface IParagraph {
   type: string,
@@ -211,7 +212,6 @@ onMounted(() => {
       </q-card-section>
     </template>
   </D4Dialog>
-  <D4Chat />
   <router-view v-if="!showBT && view" />
 </template>
 

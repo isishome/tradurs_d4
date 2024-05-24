@@ -4,18 +4,15 @@ import { useQuasar, date } from 'quasar'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAccountStore, type IHistory } from 'src/stores/account-store'
-import { usePartyStore } from 'src/stores/party-store'
 import { Item, Price } from 'src/types/item'
 import { sleep } from 'src/common'
 
 const D4Item = defineAsyncComponent(() => import('components/D4Item.vue'))
-const D4Party = defineAsyncComponent(() => import('components/D4Party.vue'))
 
 const $q = useQuasar()
 const route = useRoute()
 const { t } = useI18n({ useScope: 'global' })
 const as = useAccountStore()
-const ps = usePartyStore()
 
 const lang = route.params.lang || 'ko'
 const loading = ref<boolean>(false)
@@ -115,7 +112,6 @@ onUnmounted(() => {
             {{ (new Date(h.regDate)).toLocaleString(lang) }}
           </template>
           <D4Item v-if="h.itemId" :data="h" history />
-          <D4Party v-else-if="h.partyInfo" :data="h.partyInfo" history />
         </q-timeline-entry>
         <q-timeline-entry v-if="!loading && history.length === 0" heading tag="div" class="text-center q-pb-xl">
           {{ t('history.noData') }}

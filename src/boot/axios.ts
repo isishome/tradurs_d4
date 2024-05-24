@@ -4,11 +4,9 @@ import { Notify } from 'quasar'
 import { useAccountStore } from 'stores/account-store'
 import { useItemStore } from 'stores/item-store'
 import { useGlobalStore } from 'stores/global-store'
-import { usePartyStore } from 'stores/party-store'
 import { User } from 'src/types/user'
 import { i18n } from './i18n'
 import { initMessenger } from 'src/sockets/messenger'
-import { initParty } from 'src/sockets/party'
 
 let api: AxiosInstance
 
@@ -87,18 +85,16 @@ export default boot(({ app, ssrContext, store, router }/* { app, router, ... } *
     const gs = useGlobalStore(store)
     const as = useAccountStore(store)
     const is = useItemStore(store)
-    const ps = usePartyStore(store)
     const onlyAdmin = !!to.matched.find(route => route.meta.onlyAdmin)
     const requireAuth = !!to.matched.find(route => route.meta.requireAuth)
 
     if (!['pnf', 'ftc'].includes(to.name as string)) {
-      let error = false
-      await gs.checkHealth().then(() => { }).catch(() => {
-        error = true
-      })
-
-      if (error)
+      try {
+        await gs.checkHealth()
+      }
+      catch {
         return next({ name: 'ftc' })
+      }
     }
 
     if (as.signed === null)
@@ -110,11 +106,14 @@ export default boot(({ app, ssrContext, store, router }/* { app, router, ... } *
     if (requireAuth && !as.info.id)
       return next({ name: 'tradeList', params: { lang: to.params.lang } })
 
-    // if (!!as.info.id && !['pnf', 'ftc'].includes(to.name as string) && (as.messenger === null || ps.party === null))
-    //   Promise.all([initMessenger(as, is), initParty(as, ps), as.unreadMessages()]).then(() => { }).catch(() => { })
-
-    if (!!as.info.id && !['pnf', 'ftc'].includes(to.name as string) && (as.messenger === null))
-      Promise.all([initMessenger(as, is), as.unreadMessages()]).then(() => { }).catch(() => { })
+    if (!!as.info.id && as.messenger === null && !['pnf', 'ftc'].includes(to.name as string)) {
+      try {
+        await initMessenger(as, is)
+      }
+      catch {
+        return next({ name: 'ftc' })
+      }
+    }
 
     return next()
   })

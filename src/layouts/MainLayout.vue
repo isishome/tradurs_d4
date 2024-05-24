@@ -7,11 +7,9 @@ import { useI18n } from 'vue-i18n'
 import { useGlobalStore } from 'src/stores/global-store'
 import { useAccountStore } from 'stores/account-store'
 import { useItemStore } from 'stores/item-store'
-import { usePartyStore } from 'src/stores/party-store'
 import { checkName, scrollPosDirect } from 'src/common'
 
 import D4Filter from 'components/D4Filter.vue'
-import D4PartyFilter from 'components/D4PartyFilter.vue'
 import D4User from 'components/D4User.vue'
 import Adsense from 'components/global/Adsense.vue'
 
@@ -27,7 +25,6 @@ const $q = useQuasar()
 const gs = useGlobalStore()
 const as = useAccountStore()
 const is = useItemStore()
-const ps = usePartyStore()
 const { t, locale } = useI18n({ useScope: 'global' })
 
 $q.screen.setSizes({ lg: 1100 })
@@ -42,8 +39,8 @@ const topAdKey = ref<number>(0)
 const bottomAdKey = ref<number>(0)
 const rightAdKey = ref<number>(0)
 const loading = computed(() => gs.loading)
-const filterLoading = computed(() => is.filter.loading || ps.filter.loading)
-const searchName = computed(() => route.name === 'partyPlay' ? t('party.info.name') : t('item.name'))
+const filterLoading = computed(() => is.filter.loading)
+const searchName = computed(() => t('item.name'))
 const leftDrawerOpen = ref<boolean>(false)
 const rightDrawerOpen = ref<boolean>(false)
 const signed = computed<boolean | null>(() => as.signed)
@@ -54,7 +51,6 @@ const asideTop = computed<string>(() => `${gs.offsetTop + 10}px`)
 const newAwards = computed(() => (is.awards > 0 && (new Date()).getDay() === 1 && (new Date()).getHours() >= 9) || (new Date()).getDay() === 2)
 const isNarrow = computed(() => $q.screen.width <= 1100)
 const d4Filter = ref<InstanceType<typeof D4Filter>>()
-const d4PartyFilter = ref<InstanceType<typeof D4PartyFilter>>()
 
 const myTweak = (offset: number): void => {
   gs.offsetTop = offset ?? 0
@@ -73,8 +69,6 @@ const sign = () => {
     as.sign().then(async (result: boolean) => {
       if (!result) {
         d4Filter.value?.clearFilter()
-        d4PartyFilter.value?.clearFilter()
-        ps.dispose()
         await is.getStorage(true)
 
         if (route.name === 'tradeList')
@@ -107,7 +101,7 @@ const setDark = () => {
 const _name = ref<string>('')
 const search = () => {
   if (!!!_name.value || checkName(_name.value)) {
-    const filter = route.name === 'partyPlay' ? ps.filter : is.filter
+    const filter = is.filter
     filter.name = _name.value
     filter.request++
   }
@@ -144,9 +138,6 @@ const isAdmin = computed(() => ['adminUser', 'adminData'].includes(route.name as
 // about screen size
 const size = computed(() => $q.screen.width < 728 ? 'display:inline-block;width:300px;max-height:100px;' : 'display:inline-block;width:728px;height:90px;')
 const sizeBottom = computed(() => $q.screen.width < 300 ? 'display:inline-block;width:250px;height:250px;' : $q.screen.width < 336 ? 'display:inline-block;width:300px;height:250px;' : $q.screen.width < 468 ? 'display:inline-block;width:336px;height:280px;' : $q.screen.width < 728 ? 'display:inline-block;width:468px;height:60px;' : 'display:inline-block;width:728px;height:90px;')
-
-// party
-const availableParty = computed(() => as.signed && ps.joined && ps.minimum)
 
 watch([size, () => $q.screen.gt.md], ([new1, new2], [old1, old2]) => {
   if (new1 !== old1 || new2 !== old2) {
@@ -185,11 +176,6 @@ watch(() => is.filter.name, (val) => {
   if (!!!val)
     _name.value = ''
 })
-
-watch(() => ps.filter.name, (val) => {
-  if (!!!val)
-    _name.value = ''
-})
 </script>
 
 <template>
@@ -200,19 +186,12 @@ watch(() => ps.filter.name, (val) => {
     <q-drawer show-if-above no-swipe-open no-swipe-close no-swipe-backdrop bordered v-model="leftDrawerOpen" side="left"
       :behavior="screen.gt.md ? 'desktop' : 'mobile'" class="row justify-end" style="overflow-x: hidden;"
       @before-show="beforeShow">
-      <D4Filter ref="d4Filter" v-if="route.name !== 'partyPlay'" :disable="route.name !== 'tradeList'" class="q-pa-lg"
-        style="width:300px" />
-      <D4PartyFilter ref="d4PartyFilter" v-if="route.name === 'partyPlay'" class="q-pa-lg" style="width:300px" />
+      <D4Filter ref="d4Filter" :disable="route.name !== 'tradeList'" class="q-pa-lg" style="width:300px" />
     </q-drawer>
     <q-drawer show-if-above no-swipe-open no-swipe-close no-swipe-backdrop bordered v-model="rightDrawerOpen"
       side="right" behavior="mobile" class="row justify-start no-scroll" style="overflow-x: hidden;">
       <div class="column fit">
         <q-item class="row justify-center items-center q-py-lg q-gutter-x-sm icons">
-          <q-btn v-show="availableParty" round dense flat aria-label="Tradurs Chat Button" :ripple="!$q.dark.isActive"
-            @click="ps.show">
-            <img class="icon" width="24" height="24" src="/images/icons/chat.svg" alt="Chat Icon" />
-            <q-badge v-show="ps.unseen > 0" color="red" floating>{{ ps.unseen }}</q-badge>
-          </q-btn>
           <q-btn round dense flat aria-label="Tradurs Discord Button" :ripple="!$q.dark.isActive" tag="a"
             href="https://discord.gg/dwRuWq4enx" target="_blank" rel="noopener noreferrer">
             <img class="icon" width="24" height="24" style="padding:1px" src="/images/icons/discord.svg"
@@ -269,14 +248,6 @@ watch(() => ps.filter.name, (val) => {
                 </q-item-label>
               </q-item-section>
             </q-item>
-            <!-- <q-item v-ripple clickable :to="{ name: 'partyPlay', params: { lang: route.params.lang } }" exact
-              active-class="active">
-              <q-item-section side>
-                <q-item-label>
-                  {{ t('page.partyPlay') }}
-                </q-item-label>
-              </q-item-section>
-            </q-item> -->
             <q-item v-ripple clickable :to="{ name: 'awards', params: { lang: route.params.lang } }" exact
               active-class="active">
               <q-item-section side>
@@ -437,9 +408,8 @@ watch(() => ps.filter.name, (val) => {
               </h1>
             </q-btn>
             <q-input outlined dense no-error-icon hide-bottom-space class="col" v-model="_name" :label="searchName"
-              :disable="filterLoading || !['tradeList', 'partyPlay'].includes(route.name as string)"
+              :disable="filterLoading || !['tradeList'].includes(route.name as string)"
               :rules="[val => (!!!val || checkName(val)) || '']" @keyup.enter="search()">
-
               <template #append>
                 <div style="width:24px">
                   <q-btn v-show="_name && _name !== ''" flat dense aria-label="Tradurs Clear Button" size="xs"
@@ -455,13 +425,6 @@ watch(() => ps.filter.name, (val) => {
               <q-btn flat no-caps type="a" :ripple="false" class="no-hover"
                 :class="{ 'active': route.name === 'tradeList' }" :label="t('page.tradeList')"
                 :to="{ name: 'tradeList', params: { lang: route.params.lang } }" />
-              <!-- <q-btn flat no-caps type="a" :ripple="false" class="no-hover"
-                :class="{ 'active': route.name === 'partyPlay' }"
-                :to="{ name: 'partyPlay', params: { lang: route.params.lang } }">
-                <div class="relative-position">
-                  {{ t('page.partyPlay') }}
-                </div>
-              </q-btn> -->
               <q-btn flat no-caps type="a" :ripple="false" class="no-hover"
                 :class="{ 'active': route.name === 'awards' }"
                 :to="{ name: 'awards', params: { lang: route.params.lang } }">
@@ -543,12 +506,6 @@ watch(() => ps.filter.name, (val) => {
           </q-btn>
         </div>
         <div v-show="!isNarrow" class="col-3 row justify-end items-center q-gutter-xs">
-          <q-btn v-show="availableParty" round dense flat aria-label="Tradurs Chat Button" :ripple="!$q.dark.isActive"
-            @click="ps.show">
-            <img class="icon" width="24" height="24"
-              :src="`/images/icons/${$q.dark.isActive ? 'chat_fill' : 'chat'}.svg`" alt="Chat Icon" />
-            <q-badge v-show="ps.unseen > 0" color="red" floating>{{ ps.unseen }}</q-badge>
-          </q-btn>
           <q-btn round dense flat aria-label="Tradurs Discord Button" :ripple="!$q.dark.isActive" tag="a"
             href="https://discord.gg/dwRuWq4enx" target="_blank" rel="noopener noreferrer">
             <img class="icon" width="24" height="24" style="padding:1px" src="/images/icons/discord.svg"
@@ -608,7 +565,7 @@ watch(() => ps.filter.name, (val) => {
                 <Adsense ref="topAdRef" :style="size" data-ad-client="ca-pub-5110777286519562" data-ad-slot="7137983054"
                   :data-adtest="!prod" :key="`top-${topAdKey}`" />
               </div>
-              <RouterView :filter="d4Filter" :party-filter="d4PartyFilter" />
+              <RouterView :filter="d4Filter" />
             </div>
             <div class="q-py-xl"></div>
             <div v-if="$q.screen.width <= 1439" class="row justify-center">
@@ -860,15 +817,5 @@ watch(() => ps.filter.name, (val) => {
   height: 1px;
   margin: -1px;
   overflow: hidden;
-}
-
-.chat {
-  margin-top: -50px;
-}
-
-@media (max-width:600px) {
-  .chat {
-    margin-top: -42px;
-  }
 }
 </style>

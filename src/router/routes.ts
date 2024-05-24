@@ -18,14 +18,6 @@ const routes: RouteRecordRaw[] = [
         props: true
       },
       {
-        name: 'partyPlay',
-        path: 'party',
-        component: () => import('pages/PartyPage.vue'),
-        meta: {
-          onlyAdmin: true
-        }
-      },
-      {
         name: 'awards',
         path: 'awards',
         component: () => import('pages/AwardsPage.vue')

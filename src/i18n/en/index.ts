@@ -10,7 +10,6 @@ export default {
   },
   page: {
     tradeList: 'Trade List',
-    partyPlay: 'Party Play',
     itemInfo: 'Item Information',
     awards: 'Awards',
     mySpace: 'My Space',
@@ -46,7 +45,7 @@ export default {
     presetName: 'Preset Name',
     noPreset: 'Add a preset',
     selectPreset: 'Select a preset',
-    basicDescription: 'The basic filter information is saved in your account storage. When you register an item or opening a party play, its hardcore and seasonal status is automatically set by the basic filter information.',
+    basicDescription: 'The basic filter information is saved in your account storage. When you register an item, its hardcore and seasonal status is automatically set by the basic filter information.',
     presetDescription: 'This feature saves the currently set filter values. Up to 3 presets can be saved.',
     affixDescription: 'Affixes search allows you to select up to 6 affix filters, and if you select 5, other items including 4 of the 5 combined will also be searched.',
     description: {
@@ -239,7 +238,6 @@ export default {
   },
   price: {
     title: 'Price',
-    cost: 'Cost',
     currency: 'Currency',
     quantity: 'Quantity',
     getOffer: 'Get An Offer',
@@ -455,7 +453,9 @@ export default {
         { type: 'question', contents: '9. Why can\'t I see item states separately?' },
         { type: 'answer', contents: '→ You can filter using the left filter > \'Item status\' selection box.' },
         { type: 'question', contents: '10. What happens to my existing trade items when a new season starts?' },
-        { type: 'answer', contents: '→ With each new season, seasonal items are moved to the Eternal Realm (Standard).' }
+        { type: 'answer', contents: '→ With each new season, seasonal items are moved to the Eternal Realm (Standard).' },
+        { type: 'question', contents: '11. How do I assign greater affixes to an item?' },
+        { type: 'answer', contents: '→ Greater affixes cannot be handled by item recognition, so you can add or edit them manually by clicking the icon on the left side of the affix to activate it.' }
       ]
     },
     {
@@ -605,50 +605,6 @@ export default {
       ]
     },
     {
-      id: 'party',
-      question: 'How do I use Party Play?',
-      answer: [
-        { type: 'image', contents: '01_menu' },
-        { type: 'text', contents: '1. Select Party Play at the top.' },
-        { type: 'image', contents: '02_open_01' },
-        { type: 'text', contents: '2.1. Let\'s create a party play by clicking the \'Open\' button at the top right.' },
-        { type: 'image', contents: '02_open_02' },
-        { type: 'text', contents: '2.2. 1: Select service (coop/sell/buy) > 2: Select region > 3: Enter party play name > 4: Select party play type >\n5: Select party play category > 6: Enter number of runs (rotate) > 7: Enter number of people >\n8: Enter time (party play keep time) >\n(* 1 to 12 hours can be selected, and 1 yolk is consumed per hour.)\n9: Enter description > 10: Select cost(If the service is a sell/buy) > Click Open' },
-        { type: 'image', contents: '03_opened' },
-        { type: 'text', contents: '3.1. When a party play is opened, a chat window opens on the right, and the party play just opened is displayed in the party play list.' },
-        { type: 'image', contents: '03_opened_02' },
-        { type: 'text', contents: '3.2. Click on the description to see a detailed description of party play.' },
-        { type: 'image', contents: '04_chat_01' },
-        { type: 'text', contents: '4.1. First, in order from top to bottom, the party play name is displayed.\nSecond, the remaining time for party play and a progress bar are displayed.\nThird, member information is displayed in the form of chips, and fourth is the general chat UI. At the bottom you will see the Chat/Info tab.' },
-        { type: 'image', contents: '04_chat_02' },
-        { type: 'text', contents: '4.2. When you click on a member, a submenu opens and you can copy or kick (if you are the host) that member\'s battle tag.' },
-        { type: 'image', contents: '04_chat_03' },
-        { type: 'text', contents: '4.3. You can freely chat with member.' },
-        { type: 'image', contents: '04_chat_04' },
-        { type: 'text', contents: '4.4. Screen of other member joining in the party play' },
-        { type: 'image', contents: '04_chat_05' },
-        { type: 'text', contents: '4.5. The information tab displays information about the party you are joining in.' },
-        { type: 'image', contents: '04_chat_06' },
-        { type: 'text', contents: '4.6. If you click the minimize icon, the chat window will be hidden' },
-        { type: 'image', contents: '04_chat_07' },
-        { type: 'text', contents: '4.7. An icon to open a chat window will be activated at the top.' },
-        { type: 'image', contents: '04_chat_07_02' },
-        { type: 'text', contents: '4.7.2 Even if the chat window is minimized, you can check whether there are new messages.' },
-        { type: 'image', contents: '04_chat_08' },
-        { type: 'text', contents: '4.8. When you click the close icon, ' },
-        { type: 'image', contents: '04_chat_09' },
-        { type: 'text', contents: '4.9. You can leave Party Play by clicking \'Leave\' when asked whether you actually want to leave Party Play. (If you are the host, the authority is passed on to another member.)\nIf you have not left the party play, you can reconnect at any time to use the party play you joined in (if there is party play time remaining)' },
-        { type: 'image', contents: '04_chat_10' },
-        { type: 'text', contents: '4.10. Screen where authority is inherited when the host leaves party play' },
-        { type: 'image', contents: '05_filter' },
-        { type: 'text', contents: '5. You can search for the party play you want through the party play filter on the left.' },
-        { type: 'image', contents: '06_kick_01' },
-        { type: 'text', contents: '6.1. If an unwanted member joins as a party play companion, you can kick it by clicking the member\'s battle tag and using the \'Kick out\' feature. Users who are kicked out cannot join in the party play again.' },
-        { type: 'image', contents: '06_kick_02' },
-        { type: 'text', contents: '6.2. System message when the other member has been kicked out' }
-      ]
-    },
-    {
       id: 'yolk',
       question: 'What is \'yolk\'?',
       answer: [
@@ -698,61 +654,6 @@ export default {
     noData: 'No awards'
   },
   socket: {
-    '0900': 'Notify or Chat information authentication failed',
-    '0901': 'Party play is disabled because you\'re logging in from a different device',
-    '0902': 'The message is sent too quickly',
-    '0903': 'There are no other members currently connected',
-    '0904': 'Failed to leave the room',
-    '0905': 'There was a problem leaving the room',
-    '0906': 'Failed to kick out a member',
-    '0907': 'There was a problem kicking out a member'
-  },
-  party: {
-    service: {
-      title: 'Service',
-      coop: 'Co-',
-      sell: 'Sell',
-      buy: 'Buy'
-    },
-    info: {
-      region: 'Region',
-      name: 'Party Play Name',
-      type: 'Type',
-      category: 'Category',
-      runs: 'Runs',
-      people: 'People',
-      time: 'Time',
-      notes: 'Description',
-      endTime: 'End Time'
-    },
-    category: {
-      chat: 'Chat',
-      info: 'Information'
-    },
-    chat: {
-      me: 'Me'
-    },
-    member: {
-      title: 'Member',
-      copy: 'Copy BattleTag™',
-      kick: 'Kick Out'
-    },
-    leave: {
-      title: 'Leaving a party',
-      message: 'Do you want to leave the party?',
-      description: 'If you\'re a room leader, your permissions will be passed on to someone else'
-    },
-    messages: {
-      kick: '{btag} has been kicked out of the room',
-      kicked: '{btag} has been kicked from the room',
-      owner: '{btag} became the owner of the room',
-      leave: '{btag} has left the room',
-      enter: '{btag} has entered the room',
-      noData: 'No party play found',
-      notice: 'One yolk is consumed per hour'
-    },
-    filter: {
-      all: 'All'
-    }
+    '0900': 'Notify information authentication failed'
   }
 }
