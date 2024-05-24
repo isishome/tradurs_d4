@@ -919,7 +919,7 @@ defineExpose({ scrollEnd })
           </div>
         </q-card-section>
         <q-card-section v-show="!loading && data.properties?.length === 0 && data.affixes?.length === 0"
-          class="q-my-lg"></q-card-section>
+          :class="$q.screen.lt.sm ? '' : $q.screen.lt.md ? 'q-my-md' : 'q-my-lg'"></q-card-section>
         <q-card-section class="row justify-end">
           <div class="q-px-sm">
             <q-item v-show="loading" v-for="c in 2" :key="c" style="min-height:10px;padding:3px">
