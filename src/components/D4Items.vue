@@ -692,6 +692,12 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
           <template v-if="requestProperties > 0" #properties>
             <D4Property v-for="property in rewardItem.properties" :key="property.valueId" :data="property" />
           </template>
+          <template
+            v-if="rewardItem.itemTypeValue1 === 'summoning' && descriptions(rewardItem.itemTypeValue2).length > 0"
+            #description>
+            <D4Material v-for="material in descriptions(rewardItem.itemTypeValue2)" :key="material.value"
+              :data="material" />
+          </template>
           <template v-if="requestAffixes > 0" #affixes>
             <D4Affix v-for="affix in rewardItem.affixes" :key="affix.valueId" :data="affix" />
           </template>
