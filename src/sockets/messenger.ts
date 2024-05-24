@@ -42,6 +42,7 @@ export const initMessenger = async (as: AccountStore, is: ItemStore) => {
 
   const notify = () => {
     as.newMessages = true
+    as.messagePage.unread++
     const sound = new Audio('/sounds/notify.wav')
     sound.play()
   }

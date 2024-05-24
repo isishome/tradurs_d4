@@ -104,13 +104,13 @@ export default boot(({ app, ssrContext, store, router }/* { app, router, ... } *
     if (as.signed === null)
       await as.checkSign().then(() => { }).catch(() => { })
 
-    if ((to.params.lang?.length === 2 && !gs.localeOptions.map(lo => lo.value).includes(to.params.lang as string) || (onlyAdmin && !as.info.isAdmin)) && to.name !== 'pnf')
+    if (((to.params.lang?.length === 2 && !gs.localeOptions.map(lo => lo.value).includes(to.params.lang as string)) || (onlyAdmin && !as.info.isAdmin)) && to.name !== 'pnf')
       return next({ name: 'pnf' })
 
     if (requireAuth && !as.info.id)
       return next({ name: 'tradeList', params: { lang: to.params.lang } })
 
-    if (as.info.id && (as.messenger === null || is.socket === null || ps.party === null))
+    if (!!as.info.id && !['pnf', 'ftc'].includes(to.name as string) && (as.messenger === null || ps.party === null))
       Promise.all([initMessenger(as, is), initParty(as, ps), as.unreadMessages()]).then(() => { }).catch(() => { })
 
     return next()
