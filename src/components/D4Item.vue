@@ -898,7 +898,7 @@ defineExpose({ scrollEnd })
           </div>
         </q-card-section>
         <D4Separator
-          v-show="loading || (!loading && (data.properties?.length > 0 || data.itemTypeValue1 === 'summoning') && data.affixes?.length > 0)" />
+          v-show="loading || (!loading && (data.properties?.length > 0 || !!slots.description) && data.affixes?.length > 0)" />
         <q-card-section v-show="loading || (!loading && data.affixes?.length > 0)">
           <div class="q-px-sm">
             <q-item v-show="loading" v-for="c in 3" :key="c" style="min-height:10px;padding:3px">
@@ -918,7 +918,8 @@ defineExpose({ scrollEnd })
             </div>
           </div>
         </q-card-section>
-        <q-card-section v-show="!loading && data.properties?.length === 0 && data.affixes?.length === 0"
+        <q-card-section
+          v-show="!loading && data.properties?.length === 0 && data.affixes?.length === 0 && !!!slots.description"
           :class="$q.screen.lt.sm ? '' : $q.screen.lt.md ? 'q-my-md' : 'q-my-lg'"></q-card-section>
         <q-card-section class="row justify-end">
           <div class="q-px-sm">
