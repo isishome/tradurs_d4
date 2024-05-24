@@ -673,7 +673,8 @@ defineExpose({ scrollEnd })
         <q-card-section>
           <div class="user-area row justify-end">
             <div class="item-image">
-              <q-img v-show="!loading" class="item-image" :src="imgSrc" alt="Tradurs Item Image" />
+              <q-img v-show="!loading" class="item-image" :class="{ larger: data.itemTypeValue2.includes('_set') }"
+                :src="imgSrc" alt="Tradurs Item Image" />
             </div>
             <div class="column justify-center items-end" :class="{ 'q-gutter-xs': !$q.screen.lt.sm || loading }">
               <q-skeleton v-show="loading" width="40px" :height="$q.screen.lt.sm ? '16px' : '18px'" />
@@ -857,7 +858,8 @@ defineExpose({ scrollEnd })
           </div>
         </div>
       </q-card-section> -->
-        <q-card-section v-show="loading || (!loading && (data.itemType === 'rune' || data.properties?.length > 0))">
+        <q-card-section
+          v-show="loading || (!loading && (data.itemType === 'rune' || data.properties?.length > 0 || data.itemTypeValue1 === 'summoning'))">
           <div v-show="data.itemType === 'rune'" class="q-px-sm">
             <q-item v-show="loading" style="min-height:10px;padding:3px">
               <q-item-section side class="q-pr-sm">
@@ -886,14 +888,17 @@ defineExpose({ scrollEnd })
                 </q-item-label>
               </q-item-section>
             </q-item>
-            <div v-if="slots.properties && !loading" class="column" :class="{ 'q-gutter-y-xs': !$q.screen.lt.sm }"
-              style="min-height:25px;">
+            <div v-if="(slots.properties || slots.description) && !loading" class="column"
+              :class="{ 'q-gutter-y-xs': !$q.screen.lt.sm }" style="min-height:25px;">
               <slot name="properties">
+              </slot>
+              <slot name="description">
               </slot>
             </div>
           </div>
         </q-card-section>
-        <D4Separator v-show="loading || (!loading && data.properties?.length > 0 && data.affixes?.length > 0)" />
+        <D4Separator
+          v-show="loading || (!loading && (data.properties?.length > 0 || data.itemTypeValue1 === 'summoning') && data.affixes?.length > 0)" />
         <q-card-section v-show="loading || (!loading && data.affixes?.length > 0)">
           <div class="q-px-sm">
             <q-item v-show="loading" v-for="c in 3" :key="c" style="min-height:10px;padding:3px">

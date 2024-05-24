@@ -11,7 +11,7 @@ export type IUser = {
 }
 
 export const useAdminStore = defineStore('admin', () => {
-  const rows = 30
+  const rows = 20
   const over = ref<boolean>(false)
   const more = ref<boolean>(false)
 
@@ -42,7 +42,7 @@ export const useAdminStore = defineStore('admin', () => {
     })
   }
 
-  const resetCore = (identity: string) => {
+  const resetCore = () => {
     return new Promise<void>((resolve, reject) => {
       api.get('/d4/admin/data/core/reset')
         .then(() => {

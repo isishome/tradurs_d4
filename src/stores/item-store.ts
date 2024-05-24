@@ -48,7 +48,10 @@ export interface Elixir extends ILabel {
   level: number | null
 }
 
-export interface Summoning extends ILabel { }
+export interface Summoning extends ILabel {
+  summoningGroup?: string,
+  quantity?: number
+}
 
 export interface ItemType extends ILabel {
   attribute: string,
@@ -179,6 +182,7 @@ export const useItemStore = defineStore('item', {
     gems: [] as Array<Gem>,
     elixirs: [] as Array<Elixir>,
     summonings: [] as Array<Summoning>,
+    materials: [] as Array<Summoning>,
     types: [] as Array<ItemType>,
     classes: [] as Array<EquipmentClass>,
     attributeTypes: [] as Array<AttributeType>,
@@ -327,6 +331,9 @@ export const useItemStore = defineStore('item', {
     matchAffixes: (state) => {
       return (type: string, attribute: string): boolean => type && attribute ? state.affixes.data.filter(a => a.type === type && a.label.trim() === attribute).length > 0 : false
     },
+    filterMaterials: (state) => {
+      return (summoning: string): Array<Summoning> => summoning ? state.materials.filter(m => m.summoningGroup === summoning) : []
+    },
     equalDefaultFilter: (state) => {
       return !(
         state.filter.onlyCurrency === false &&
@@ -433,6 +440,7 @@ export const useItemStore = defineStore('item', {
               this.gems = response.data.gems
               this.elixirs = response.data.elixirs
               this.summonings = response.data.summonings
+              this.materials = response.data.materials
               this.types = response.data.types
               this.classes = response.data.classes
               this.attributeTypes = response.data.attributeTypes
@@ -562,7 +570,7 @@ export const useItemStore = defineStore('item', {
     },
     getItems(page: number, itemId?: string | string[]) {
       return new Promise<Array<Item>>((resolve, reject) => {
-        api.post('/d4/item', { page, rows: this.itemPage.rows, itemId, basicFilter: itemId ? {} : { hardcore: this.storage.data.hardcore, ladder: this.storage.data.ladder }, filter: this.filter, sort: this.sort })
+        api.post('/d4/item', { page, rows: this.itemPage.rows, itemId, basicFilter: { hardcore: this.storage.data.hardcore, ladder: this.storage.data.ladder }, filter: this.filter, sort: this.sort })
           .then((response) => {
             if (!itemId) {
               this.itemPage.over = page > 1

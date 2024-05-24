@@ -369,7 +369,7 @@ defineExpose({
           transition-hide="none" :transition-duration="0" :label="`${t('properties')} ${t('searchOrSelect')}`"
           :options="propertyOptions(propertyNeedle)" dropdown-icon="img:/images/icons/dropdown.svg"
           popup-content-class="scroll bordered limit-select" @update:model-value="selectedProperty"
-          @input.stop="filterProperties">
+          @input.stop="filterProperties" @blur="() => propertyNeedle = undefined">
 
           <template #option="scope">
             <q-item v-bind="scope.itemProps">
@@ -416,7 +416,7 @@ defineExpose({
           transition-show="none" transition-hide="none" :transition-duration="0"
           :label="`${t('affixes')} ${t('searchOrSelect')}`" :options="affixOptions(affixNeedle)"
           dropdown-icon="img:/images/icons/dropdown.svg" popup-content-class="scroll bordered limit-select"
-          @update:model-value="selectedAffix" @input.stop="filterAffixes">
+          @update:model-value="selectedAffix" @input.stop="filterAffixes" @blur="() => affixNeedle = undefined">
 
           <template #option="scope">
             <q-item v-bind="scope.itemProps">
@@ -463,7 +463,8 @@ defineExpose({
           transition-show="none" transition-hide="none" :transition-duration="0"
           :label="`${t('restrictions')} ${t('searchOrSelect')}`" :options="restrictionOptions(restrictionNeedle)"
           dropdown-icon="img:/images/icons/dropdown.svg" popup-content-class="scroll bordered limit-select"
-          @update:model-value="selectedRestriction" @input.stop="filterRestrictions">
+          @update:model-value="selectedRestriction" @input.stop="filterRestrictions"
+          @blur="() => restrictionNeedle = undefined">
 
           <template #option="scope">
             <q-item v-bind="scope.itemProps">

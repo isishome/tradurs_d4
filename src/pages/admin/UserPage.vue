@@ -4,7 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { type IUser, useAdminStore } from 'stores/admin-store'
-import { onUnmounted } from 'vue';
+import { clipboard } from 'src/common'
 
 const route = useRoute()
 const router = useRouter()
@@ -12,7 +12,6 @@ const $q = useQuasar()
 const as = useAdminStore()
 const { t } = useI18n({ useScope: 'global' })
 
-let timer: ReturnType<typeof setTimeout>
 const disable = ref<boolean>(true)
 const selectAll = ref<boolean>(false)
 const page = ref<number>(route.query.page ? parseInt(route.query.page as string) : 1)
@@ -21,7 +20,10 @@ const colors = computed(() => (state: string) => state === '000' ? 'yellow-9' : 
 const users = reactive<Array<IUser>>([])
 const selected = computed(() => users.filter(u => u.selected).map(u => u.identity))
 
-const getUsers = async () => {
+const getUsers = async (p?: number) => {
+  if (!!p && p !== page.value)
+    return router.push({ name: 'adminUser', params: { lang: route.params.lang }, query: { page: p } })
+
   disable.value = true
   users.splice(0, users.length)
   const result = await as.getUsers(page.value, searchInfo.value)
@@ -54,9 +56,6 @@ onMounted(async () => {
   await Promise.all([getUsers()])
 })
 
-onUnmounted(() => {
-  clearTimeout(timer)
-})
 </script>
 <template>
   <div>
@@ -64,7 +63,7 @@ onUnmounted(() => {
       <div></div>
       <div class="row justify-end items-center q-gutter-x-sm">
         <q-input dense outlined v-model="searchInfo" />
-        <q-btn unelevated dense color="primary" label="검색" @click="getUsers" />
+        <q-btn unelevated dense color="primary" label="검색" @click="getUsers(1)" />
       </div>
     </div>
     <q-markup-table flat bordered dense class="users overflow-hidden">
@@ -83,14 +82,20 @@ onUnmounted(() => {
       <tbody>
         <tr v-for="user in users" :key="user.identity">
           <td><q-checkbox v-model="user.selected" dense /></td>
-          <td class="ellipsis" style="max-width:50px">{{ user.identity }}
-            <q-tooltip>
+          <td class="ellipsis" style="max-width:50px">
+            <span class="cursor-pointer underline" @click="clipboard(user.identity, '사용자 고유값')">
               {{ user.identity }}
-            </q-tooltip>
+            </span>
           </td>
-          <td class="ellipsis" style="max-width:50px">{{ user.email }}
+          <td class="ellipsis cursor-pointer" style="max-width:50px">
+            <span class="cursor-pointer underline" @click="clipboard(user.identity, '사용자 이메일')">
+              {{ user.email }}
+            </span>
           </td>
-          <td class="ellipsis" style="max-width:50px">{{ user.battleTag }}
+          <td class="ellipsis cursor-pointer" style="max-width:50px">
+            <span class="cursor-pointer underline" @click="clipboard(user.battleTag, '사용자 배틀 태그')">
+              {{ user.battleTag }}
+            </span>
           </td>
           <td :class="`text-${colors(user.status)}`">{{ status(user.status) }}</td>
           <td>

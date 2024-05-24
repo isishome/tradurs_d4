@@ -266,11 +266,11 @@ body.body--dark {
 
 .limit-select {
   max-height: 40vh !important;
-  max-width: min-content;
+  max-width: min-content !important;
 }
 
 .mobile .limit-select {
-  max-width: inherit;
+  max-width: inherit !important;
 }
 
 .keep-tooltip {

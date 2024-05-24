@@ -13,6 +13,7 @@ import { User } from 'src/types/user'
 
 import D4Item from 'components/D4Item.vue'
 import D4Property from 'components/D4Property.vue'
+import D4Material from 'components/D4Material.vue'
 import D4Affix from 'components/D4Affix.vue'
 import D4Restriction from 'components/D4Restriction.vue'
 import D4Offer from 'components/D4Offer.vue'
@@ -44,6 +45,7 @@ const route = useRoute()
 
 // common variable
 const requestProperties = computed<number>(() => is.properties.request)
+const descriptions = computed(() => (itemTypeValue2: string) => is.filterMaterials(itemTypeValue2))
 const requestAffixes = computed<number>(() => is.affixes.request)
 const requestRestrictions = computed<number>(() => is.restrictions.request)
 const itemHeight = computed(() => parseInt(props.height.toString()) - ($q.screen.lt.sm ? 50 : 0))
@@ -368,7 +370,6 @@ const affixOptions = is.filterAffixes
 const affixNeedle = ref<string>()
 
 const filterAffixes = (e: KeyboardEvent) => {
-  affixNeedle
   const val = (e.target as HTMLInputElement).value.toLowerCase()
   affixRef.value?.showPopup()
   affixRef.value?.updateInputValue(val)
@@ -392,7 +393,7 @@ const selectedAffix = (val: number): void => {
 
 const createAffix = (): void => {
   add.category = 'affixes'
-  add.type = filterAttributeTypes.value?.[0].value as string
+  add.type = filterAttributeTypes.value?.[0]?.value as string
   add.show = true
 }
 
@@ -732,6 +733,9 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
           <template v-if="requestProperties > 0" #properties>
             <D4Property v-for="property in item.properties" :key="property.valueId" :data="property" />
           </template>
+          <template v-if="item.itemTypeValue1 === 'summoning'" #description>
+            <D4Material v-for="material in descriptions(item.itemTypeValue2)" :key="material.value" :data="material" />
+          </template>
           <template v-if="requestAffixes > 0" #affixes>
             <D4Affix v-for="affix in item.affixes" :key="affix.valueId" :data="affix" />
           </template>
@@ -783,7 +787,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
               transition-hide="none" :transition-duration="0" class="col" :label="t('searchOrSelect')"
               :options="propertyOptions(propertyNeedle)" dropdown-icon="img:/images/icons/dropdown.svg"
               popup-content-class="scroll bordered limit-select" @update:model-value="selectedProperty"
-              @input.stop="filterProperties">
+              @input.stop="filterProperties" @blur="() => propertyNeedle = undefined">
               <template #option="scope">
                 <q-item v-bind="scope.itemProps">
                   <q-item-section side>
@@ -817,7 +821,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
               transition-hide="none" :transition-duration="0" class="col" :label="t('searchOrSelect')"
               :options="affixOptions(affixNeedle)" dropdown-icon="img:/images/icons/dropdown.svg"
               popup-content-class="scroll bordered limit-select" @update:model-value="selectedAffix"
-              @input.stop="filterAffixes">
+              @input.stop="filterAffixes" @blur="() => affixNeedle = undefined">
               <template #option="scope">
                 <q-item v-bind="scope.itemProps">
                   <q-item-section side>
@@ -855,7 +859,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
               transition-hide="none" :transition-duration="0" class="col" :label="t('searchOrSelect')"
               :options="restrictionOptions(restrictionNeedle)" dropdown-icon="img:/images/icons/dropdown.svg"
               popup-content-class="scroll bordered limit-select" @update:model-value="selectedRestriction"
-              @input.stop="filterRestrictions">
+              @input.stop="filterRestrictions" @blur="() => restrictionNeedle = undefined">
               <template #option="scope">
                 <q-item v-bind="scope.itemProps">
                   <q-item-section>

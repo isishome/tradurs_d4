@@ -198,7 +198,7 @@ watch(() => ps.filter.name, (val) => {
       :style="`--tradurs-season-image:url('${t('season.bg')}');`">
     </div>
     <q-drawer show-if-above no-swipe-open no-swipe-close no-swipe-backdrop bordered v-model="leftDrawerOpen" side="left"
-      :behavior="screen.lt.lg ? 'default' : 'desktop'" class="row justify-end" style="overflow-x: hidden;"
+      :behavior="screen.gt.md ? 'desktop' : 'mobile'" class="row justify-end" style="overflow-x: hidden;"
       @before-show="beforeShow">
       <D4Filter ref="d4Filter" v-if="route.name !== 'partyPlay'" :disable="route.name !== 'tradeList'" class="q-pa-lg"
         style="width:300px" />
@@ -602,7 +602,7 @@ watch(() => ps.filter.name, (val) => {
         <q-inner-loading :showing="loading" class="fixed" color="primary" size="50px"
           style="z-index: 9999;position: fixed;" />
         <div class="row justify-center">
-          <div :class="screen.lt.sm ? 'q-pa-sm' : 'q-pa-xl'" :style="screen.lt.sm ? 'width:100%' : 'width:760px'">
+          <div :class="screen.lt.sm ? 'q-pa-sm' : 'q-pa-xl'" :style="screen.lt.sm ? 'width:100%' : 'width:830px'">
             <div class="view max-width">
               <div class="row justify-center top-ads">
                 <Adsense ref="topAdRef" :style="size" data-ad-client="ca-pub-5110777286519562" data-ad-slot="7137983054"
