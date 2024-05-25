@@ -66,7 +66,15 @@ onMounted(async () => {
         <q-btn unelevated dense color="primary" label="검색" @click="getUsers(1)" />
       </div>
     </div>
-    <q-markup-table flat bordered dense class="users overflow-hidden">
+    <q-markup-table flat bordered class="users overflow-hidden">
+      <colgroup>
+        <col style="width:48px" />
+        <col style="width:10%" />
+        <col />
+        <col />
+        <col style="width:20%" />
+        <col style="width:48px" />
+      </colgroup>
       <thead>
         <tr>
           <th><q-checkbox v-model="selectAll" @update:model-value="(val) => users.forEach(u => u.selected = val)"

@@ -228,6 +228,10 @@
   transform: rotate(-22.5deg);
 }
 
+.body--light .icon.greater {
+  transform: rotate(0deg);
+}
+
 .icon.greater::after {
   content: '';
   position: fixed;
@@ -238,7 +242,7 @@
 }
 
 .body--light .icon.greater::after {
-  box-shadow: none;
+  box-shadow: 0 0 3px 3px rgb(255, 230, 0), 0 0 6px 6px rgb(255, 255, 255);
 }
 
 .greater-mark {
@@ -257,7 +261,7 @@
 }
 
 .body--light .greater-mark .icon.greater::after {
-  box-shadow: none;
+  box-shadow: 0 0 4px 4px rgb(255, 230, 0), 0 0 10px 10px rgb(255, 255, 255);
 }
 
 .greater-mark i {

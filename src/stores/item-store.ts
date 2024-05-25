@@ -139,6 +139,7 @@ export interface IFilter {
   itemTypes: Array<string>,
   itemTypeValues1: { [key: string]: Array<number> },
   itemTypeValues2: { [key: string]: Array<number> },
+  greaterCount: number,
   properties: Array<number>,
   affixes: Array<number>,
   restrictions: Array<number>,
@@ -230,6 +231,7 @@ export const useItemStore = defineStore('item', {
       itemTypes: [],
       itemTypeValues1: {},
       itemTypeValues2: {},
+      greaterCount: 0,
       properties: [],
       affixes: [],
       restrictions: [],
@@ -350,6 +352,7 @@ export const useItemStore = defineStore('item', {
         state.filter.itemTypes.length === 0 &&
         Object.keys(state.filter.itemTypeValues1).length === 0 &&
         Object.keys(state.filter.itemTypeValues2).length === 0 &&
+        state.filter.greaterCount === 0 &&
         state.filter.properties.length === 0 &&
         state.filter.affixes.length === 0 &&
         state.filter.restrictions.length === 0 &&
@@ -379,6 +382,7 @@ export const useItemStore = defineStore('item', {
         this.filter.itemTypes = []
         this.filter.itemTypeValues1 = {}
         this.filter.itemTypeValues2 = {}
+        this.filter.greaterCount = 0
         this.filter.properties = []
         this.filter.affixes = []
         this.filter.restrictions = []

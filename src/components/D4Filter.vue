@@ -202,6 +202,8 @@ const removePreset = ({ id, done, error }: { id: number, done: Function, error: 
     })
 }
 
+const affixCount = ref<number>(0)
+
 defineExpose({
   clearFilter
 })
@@ -343,24 +345,30 @@ defineExpose({
         </q-select>
       </q-item-section>
     </q-item>
-    <q-item-label header class="row items-center q-gutter-sm">
-      <div>
-        {{ t('filter.advanced') }}
-      </div>
-      <q-icon class="icon" name="img:/images/icons/help.svg" size="19px">
-        <D4Tooltip self="bottom left">
-          <div style="max-width:240px">
-            <div class="text-subtitle2 text-weight-bold">{{ t('filter.description.advanced') }} </div>
-            <div class="text-center full-width">
-              <img class="q-py-lg" :src="locale === 'ko' ? NotifyKo : NotifyEn" width="200" />
+    <q-item-label header class="row justify-between items-center">
+      <div class="row items-center q-gutter-sm">
+        <div>
+          {{ t('filter.advanced') }}
+        </div>
+        <q-icon class="icon" name="img:/images/icons/help.svg" size="19px">
+          <D4Tooltip self="bottom left">
+            <div style="max-width:240px">
+              <div class="text-subtitle2 text-weight-bold">{{ t('filter.description.advanced') }} </div>
+              <div class="text-center full-width">
+                <img class="q-py-lg" :src="locale === 'ko' ? NotifyKo : NotifyEn" width="200" />
+              </div>
+              <ul class="text-caption text-weight-bold q-px-sm q-gutter-y-sm">
+                <li>{{ t('filter.description.advanced2') }}</li>
+                <li>{{ t('filter.affixDescription') }}</li>
+              </ul>
             </div>
-            <ul class="text-caption text-weight-bold q-px-sm q-gutter-y-sm">
-              <li>{{ t('filter.description.advanced2') }}</li>
-              <li>{{ t('filter.affixDescription') }}</li>
-            </ul>
-          </div>
-        </D4Tooltip>
-      </q-icon>
+          </D4Tooltip>
+        </q-icon>
+      </div>
+      <div>
+        <q-rating v-model="filter.greaterCount" :disable="disable || filterLoading" size="18px" max="4"
+          icon="img:images/attribute_types/greater_invert.svg" @update:model-value="update()" />
+      </div>
     </q-item-label>
     <q-item :disable="filterLoading">
       <q-item-section class="no-wrap">
