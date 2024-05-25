@@ -46,7 +46,7 @@ const isDark = ref($q.cookies.has('d4.dark') ? $q.cookies.get('d4.dark') === 'tr
 $q.dark.set(isDark.value)
 
 const battleTag = ref<string>('')
-const showBT = computed(() => (as.signed !== null && as.signed as boolean && !(as.info.battleTag && as.info.battleTag !== '') && view.value))
+const showBT = ref<boolean>(false)
 const loading = ref<boolean>(false)
 const reloadAdKey = computed(() => gs.reloadAdKey)
 
@@ -54,6 +54,7 @@ const updateBattleTag = () => {
   as.updateBattleTag(battleTag.value)
     .then(() => {
       as.info.battleTag = battleTag.value
+      showBT.value = false
     })
 }
 
@@ -89,7 +90,7 @@ useMeta(() => {
 })
 
 const notice = reactive<{ open: boolean, close: boolean }>({
-  open: !$q.cookies.has('d4.update.20240524') && !showBT.value,
+  open: false,
   close: false
 })
 
@@ -123,6 +124,8 @@ watch(reloadAdKey, (val, old) => {
 onMounted(() => {
   document.documentElement.setAttribute('lang', locale.value as string)
   view.value = true
+  showBT.value = !!as.signed && !(as.info.battleTag && as.info.battleTag !== '')
+  notice.open = !$q.cookies.has('d4.update.20240524')
   checkAd()
 })
 </script>

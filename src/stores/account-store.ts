@@ -222,7 +222,7 @@ export const useAccountStore = defineStore('account', {
       return new Promise<void>((resolve) => {
         api.get('/account/messages/unread')
           .then((response) => {
-            this.messagePage.unread = response.data?.unread
+            this.messagePage.unread = response.data.unread
             resolve()
           })
       })
