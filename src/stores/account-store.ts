@@ -219,11 +219,14 @@ export const useAccountStore = defineStore('account', {
       })
     },
     unreadMessages() {
-      return new Promise<void>((resolve) => {
+      return new Promise<void>((resolve, reject) => {
         api.get('/account/messages/unread')
           .then((response) => {
             this.messagePage.unread = response.data.unread
             resolve()
+          })
+          .catch(() => {
+            reject()
           })
       })
     },

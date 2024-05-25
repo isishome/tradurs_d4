@@ -9,7 +9,7 @@ COPY . .
 
 # 의존성 설치 및 프로젝트 빌드
 RUN npm install \
-    && npx quasar build -m ssr -d
+    && npx quasar build -m ssr
 
 # ssr 의존성 설치 및 빌드 정리
 WORKDIR /d4-proj/dist/ssr
