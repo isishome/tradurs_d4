@@ -338,25 +338,14 @@ export const useItemStore = defineStore('item', {
     },
     equalDefaultFilter: (state) => {
       return !(
-        state.filter.onlyCurrency === false &&
-        state.filter.favorite === false &&
-        state.filter.quality.length === 0 &&
-        state.filter.status === 'all' &&
-        state.filter.mine === false &&
-        state.filter.offered === false &&
-        state.filter.offer === false &&
         state.filter.power[0] === 0 &&
         state.filter.power[1] === 9999 &&
         state.filter.level[0] === 0 &&
         state.filter.level[1] === 999 &&
-        state.filter.itemTypes.length === 0 &&
-        Object.keys(state.filter.itemTypeValues1).length === 0 &&
-        Object.keys(state.filter.itemTypeValues2).length === 0 &&
         state.filter.greaterCount === 0 &&
         state.filter.properties.length === 0 &&
         state.filter.affixes.length === 0 &&
-        state.filter.restrictions.length === 0 &&
-        state.filter.name === '')
+        state.filter.restrictions.length === 0)
     }
   },
   actions: {
@@ -373,7 +362,7 @@ export const useItemStore = defineStore('item', {
         this.filter.onlyCurrency = false
         this.filter.favorite = false
         this.filter.quality = []
-        this.filter.status = 'all'
+        this.filter.status = '000'
         this.filter.mine = false
         this.filter.offered = false
         this.filter.offer = false
