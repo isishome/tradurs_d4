@@ -382,8 +382,13 @@ export default {
     top: '안녕하세요. 트레이더스입니다. 업데이트 된 사항 안내드립니다.',
     contents: [
       { type: 'head', value: '◆ 업데이트 사항' },
+      { type: 'list', value: '이제 아이템 상태 필터가 기본적으로 \'판매중\'으로 설정됩니다.', class: 'text-weight-bold text-negative text-subtitle2' },
       { type: 'list', value: '아이템의 상급 속성 필터 기능이 추가되었습니다.', class: 'text-weight-bold text-orange text-subtitle2' },
       { type: 'list', value: '소환 재료 및 재료 셋이 삭제, 추가되었습니다.' },
+      { type: 'space' },
+      { type: 'separator' },
+      { type: 'head', value: '◆ 아이템 상태' },
+      { type: 'list', value: '이제 아이템 상태 필터 값이 기본적으로 \'판매중\'으로 설정되며, \'전체\' 필터 옵션은 삭제됩니다.' },
       { type: 'head', value: '◆ 상급 속성 필터 기능' },
       { type: 'image', value: '/images/notice/20240525/greater.webp' },
       { type: 'list', value: '이제 활성화된 상급 속성 필터 개수와 일치하는 아이템이 표시됩니다.' },
@@ -459,7 +464,12 @@ export default {
         { type: 'question', contents: '10. 새 시즌이 시작되면 기존 거래 아이템들은 어떻게 되나요?' },
         { type: 'answer', contents: '→ 시즌이 새로 시작될 때마다 시즌 아이템은 영원의 영역(스탠더드)로 이동됩니다.' },
         { type: 'question', contents: '11. 아이템 상급 속성은 어떻게 지정하나요?' },
-        { type: 'answer', contents: '→ 상급 속성은 아이템 인식으로 처리할 수 없어 직접 속성 추가, 수정 시 속성 좌측의 아이콘을 클릭하여 활성화하시면 됩니다.' }
+        { type: 'answer', contents: '→ 상급 속성은 아이템 인식으로 처리할 수 없어 직접 속성 추가, 수정 시 속성 좌측의 아이콘을 클릭하여 활성화하시면 됩니다.' },
+        { type: 'question', contents: '12. 배틀 태그 인증이 어떻게 하나요?' },
+        { type: 'answer', contents: '→ 트레이더스 정보 변경 페이지의 \'BattleTag™ 변경\' 항목에서 처리하면 됩니다.' },
+        { type: 'answer', contents: '1. 정보 변경 페이지에 지정한 배틀 태그명과 현재 로그인 되어 있거나 로그인할 배틀넷 계정이 일치하는지 확인합니다.' },
+        { type: 'answer', contents: '2. 배틀 태그 입력 필드 우측에 \'인증\' 버튼을 클릭하여 실제 배틀넷 계정 로그인을 진행하시면 인증이 완료됩니다.' },
+        { type: 'answer', contents: '3. 1번에서 확인한 배틀 태그가 일치하는데도 인증이 실패하는 경우 다른 브라우저에서 인증을 진행하거나, 배틀넷 계정을 로그아웃 한 이후 다시 트레이더스 배틀 태그 인증을 진행해 주세요.' }
       ]
     },
     {

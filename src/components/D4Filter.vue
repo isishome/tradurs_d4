@@ -32,7 +32,7 @@ const filterLoading = computed(() => is.filter.loading)
 const findProperty = computed(() => is.findProperty)
 const findAffix = computed(() => is.findAffix)
 const findRestriction = computed(() => is.findRestriction)
-const itemStatus = computed(() => [{ value: 'all', label: t('filter.all') }, ...is.itemStatus])
+const itemStatus = computed(() => is.itemStatus)
 
 Object.assign(filter, is.filter)
 
@@ -367,7 +367,7 @@ defineExpose({
       </div>
       <div>
         <q-rating v-model="filter.greaterCount" :disable="disable || filterLoading" size="18px" max="4"
-          icon="img:images/attribute_types/greater_invert.svg" @update:model-value="update()" />
+          icon="img:/images/attribute_types/greater_invert.svg" @update:model-value="update()" />
       </div>
     </q-item-label>
     <q-item :disable="filterLoading">

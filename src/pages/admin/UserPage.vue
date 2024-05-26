@@ -69,18 +69,16 @@ onMounted(async () => {
     <q-markup-table flat bordered class="users overflow-hidden">
       <colgroup>
         <col style="width:48px" />
-        <col style="width:10%" />
         <col />
         <col />
-        <col style="width:20%" />
+        <col />
         <col style="width:48px" />
       </colgroup>
       <thead>
         <tr>
-          <th><q-checkbox v-model="selectAll" @update:model-value="(val) => users.forEach(u => u.selected = val)"
-              dense />
+          <th>
+            <q-checkbox v-model="selectAll" @update:model-value="(val) => users.forEach(u => u.selected = val)" dense />
           </th>
-          <th>고유번호</th>
           <th>이메일</th>
           <th>배틀 태그</th>
           <th>상태</th>
@@ -90,11 +88,6 @@ onMounted(async () => {
       <tbody>
         <tr v-for="user in users" :key="user.identity">
           <td><q-checkbox v-model="user.selected" dense /></td>
-          <td class="ellipsis" style="max-width:50px">
-            <span class="cursor-pointer underline" @click="clipboard(user.identity, '사용자 고유값')">
-              {{ user.identity }}
-            </span>
-          </td>
           <td class="ellipsis cursor-pointer" style="max-width:50px">
             <span class="cursor-pointer underline" @click="clipboard(user.identity, '사용자 이메일')">
               {{ user.email }}

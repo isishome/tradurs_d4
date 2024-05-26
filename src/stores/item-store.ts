@@ -222,7 +222,7 @@ export const useItemStore = defineStore('item', {
       onlyCurrency: false,
       favorite: false,
       quality: [],
-      status: 'all',
+      status: '000',
       mine: false,
       offered: false,
       offer: false,

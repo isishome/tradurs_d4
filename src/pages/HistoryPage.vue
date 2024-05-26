@@ -5,7 +5,6 @@ import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAccountStore, type IHistory } from 'src/stores/account-store'
 import { Item, Price } from 'src/types/item'
-import { sleep } from 'src/common'
 
 const D4Item = defineAsyncComponent(() => import('components/D4Item.vue'))
 
@@ -49,11 +48,7 @@ const request = (reset: boolean = false) => {
     })
     .catch(() => { })
     .then(() => {
-      const timeout = history.length === 0 ? 1000 : 0
-
-      sleep(timeout).then(() => {
-        loading.value = false
-      })
+      loading.value = false
     })
 }
 

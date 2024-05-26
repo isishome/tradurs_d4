@@ -382,8 +382,13 @@ export default {
     top: 'Hello. This is Tradurs. Here\'s what\'s been updated.',
     contents: [
       { type: 'head', value: '◆ Updates' },
+      { type: 'list', value: 'Item Status filter now defaults to \'Sale\'', class: 'text-weight-bold text-red-8 text-subtitle2' },
       { type: 'list', value: 'greater affixes filter has been added.', class: 'text-weight-bold text-orange text-subtitle2' },
       { type: 'list', value: 'Summoning materials and materials sets have been deleted and added.' },
+      { type: 'space' },
+      { type: 'separator' },
+      { type: 'head', value: '◆ Item Status' },
+      { type: 'list', value: 'Item Status filter value will now default to \'Sale\' and the \'All\' filter option will be removed.' },
       { type: 'head', value: '◆ Greater affixes filter' },
       { type: 'image', value: '/images/notice/20240525/greater.webp' },
       { type: 'list', value: 'Items that match the number of greater affixes filters activated will now be displayed.' },
@@ -459,7 +464,12 @@ export default {
         { type: 'question', contents: '10. What happens to my existing trade items when a new season starts?' },
         { type: 'answer', contents: '→ With each new season, seasonal items are moved to the Eternal Realm (Standard).' },
         { type: 'question', contents: '11. How do I assign greater affixes to an item?' },
-        { type: 'answer', contents: '→ Greater affixes cannot be handled by item recognition, so you can add or edit them manually by clicking the icon on the left side of the affix to activate it.' }
+        { type: 'answer', contents: '→ Greater affixes cannot be handled by item recognition, so you can add or edit them manually by clicking the icon on the left side of the affix to activate it.' },
+        { type: 'question', contents: '12. How do I authenticate my battle tag?' },
+        { type: 'answer', contents: '→ You can process it in the \'Change BattleTag™\' section on the Tradurs Information Change page.' },
+        { type: 'answer', contents: '1. Check whether the battle tag name specified on the information change page matches the Battle.net account you are currently logged in or will be logging into.' },
+        { type: 'answer', contents: '2. To complete authentication, click the \'VERIFY\' button on the right side of the battle tag input field to log in to your actual Battle.net account.' },
+        { type: 'answer', contents: '3. If authentication fails even though the battle tag confirmed in step 1 matches, please proceed with authentication in another browser, or log out of your Battle.net account and proceed with Tradurs Battle Tag authentication again.' }
       ]
     },
     {
