@@ -39,7 +39,6 @@ const retractedOffer = computed(() => is.socket.retractedOffer)
 const turnedDownOffer = computed(() => is.socket.turnedDownOffer)
 const complete = computed(() => is.socket.complete)
 const filter = computed(() => is.filter.request)
-const isDefaultFilter = computed(() => is.equalDefaultFilter)
 const itemsRef = ref<typeof D4Items | null>(null)
 const items = ref<Array<Item>>([])
 const rewardItem = ref<Item | undefined>()
@@ -243,7 +242,7 @@ const getList = async (scrollTop?: boolean) => {
 
       // auto expanded
       result.forEach((i: Item) => {
-        i.expanded = isDefaultFilter.value || isExpanded.value
+        i.expanded = is.needExpand || isExpanded.value
       })
 
       let i = 0
@@ -274,8 +273,8 @@ const getList = async (scrollTop?: boolean) => {
 
   rewardItem.value = undefined
 
-  if (page.value === 1 && !isDefaultFilter.value) {
-    const awardsPick = is.awardsPick.filter((ap: AwardsPick) => ap.hardcore === is.storage.data.hardcore && ap.ladder === is.storage.data.ladder)
+  if (is.showRewardItem) {
+    const awardsPick = [{ itemId: 243 }]//is.awardsPick.filter((ap: AwardsPick) => ap.hardcore === is.storage.data.hardcore && ap.ladder === is.storage.data.ladder)
     if (awardsPick.length > 0) {
       const pickItemId = awardsPick[Math.floor(Math.random() * awardsPick.length)].itemId.toString()
       is.getItems(1, pickItemId)

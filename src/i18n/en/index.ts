@@ -440,7 +440,7 @@ export default {
       id: 'qna',
       question: 'Frequently asked questions',
       answer: [
-        { type: 'question', contents: '1. Which item appears as a sticky at the top of the item list?' },
+        { type: 'question', contents: '1. What is the fixed item at the top of the item list (blood mark in the upper right corner of the box)?' },
         { type: 'answer', contents: '→ One of the items from the top users in each category of the weekly awards will appear as a sticky.' },
         { type: 'question', contents: '2. Item editing and deletion, image analysis is disabled.' },
         { type: 'answer', contents: '→ The item has a suggestion request. Please be sure to check the item carefully when registering.' },

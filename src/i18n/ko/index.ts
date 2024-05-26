@@ -440,7 +440,7 @@ export default {
       id: 'qna',
       question: '자주 묻는 질문',
       answer: [
-        { type: 'question', contents: '1. 아이템 목록 최상단에 고정으로 나오는 아이템은 무엇인가요?' },
+        { type: 'question', contents: '1. 아이템 목록 최상단에 고정으로 나오는 아이템(박스 우측 상단 혈흔 표식)은 무엇인가요?' },
         { type: 'answer', contents: '→ 주간 어워즈 각 부문 1위 사용자들의 아이템 중 하나가 고정으로 표시됩니다.' },
         { type: 'question', contents: '2. 아이템 수정 및 삭제, 이미지 분석이 비 활성화입니다.' },
         { type: 'answer', contents: '→ 아이템에 제안 요청이 있는 경우입니다. 반드시 등록하실 때 항목을 꼼꼼히 확인하고 등록해 주세요.' },

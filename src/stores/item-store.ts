@@ -336,16 +336,32 @@ export const useItemStore = defineStore('item', {
     filterMaterials: (state) => {
       return (summoning: string): Array<Summoning> => summoning ? state.materials.filter(m => m.summoningGroup === summoning) : []
     },
-    equalDefaultFilter: (state) => {
+    needExpand: (state) => {
       return !(
-        state.filter.power[0] === 0 &&
-        state.filter.power[1] === 9999 &&
-        state.filter.level[0] === 0 &&
-        state.filter.level[1] === 999 &&
         state.filter.greaterCount === 0 &&
         state.filter.properties.length === 0 &&
         state.filter.affixes.length === 0 &&
         state.filter.restrictions.length === 0)
+    },
+    showRewardItem: (state) => {
+      return !(
+        state.filter.onlyCurrency === true ||
+        state.filter.favorite === true ||
+        state.filter.quality.length > 0 ||
+        state.filter.status !== '000' ||
+        state.filter.mine === true ||
+        state.filter.offered === true ||
+        state.filter.offer === true ||
+        state.filter.power[0] > 0 ||
+        state.filter.power[1] < 9999 ||
+        state.filter.level[0] > 0 ||
+        state.filter.level[1] < 999 ||
+        state.filter.itemTypes.length > 0 ||
+        state.filter.greaterCount > 0 &&
+        state.filter.properties.length > 0 ||
+        state.filter.affixes.length > 0 ||
+        state.filter.restrictions.length > 0 ||
+        state.filter.name !== '')
     }
   },
   actions: {
