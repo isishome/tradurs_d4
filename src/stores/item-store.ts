@@ -357,7 +357,7 @@ export const useItemStore = defineStore('item', {
         state.filter.level[0] > 0 ||
         state.filter.level[1] < 999 ||
         state.filter.itemTypes.length > 0 ||
-        state.filter.greaterCount > 0 &&
+        state.filter.greaterCount > 0 ||
         state.filter.properties.length > 0 ||
         state.filter.affixes.length > 0 ||
         state.filter.restrictions.length > 0 ||

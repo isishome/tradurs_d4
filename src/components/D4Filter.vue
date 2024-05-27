@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import { QSelect, debounce } from 'quasar'
 import { useAccountStore } from 'src/stores/account-store'
 import { type IFilter, useItemStore } from 'src/stores/item-store'
@@ -35,6 +35,9 @@ const findRestriction = computed(() => is.findRestriction)
 const itemStatus = computed(() => is.itemStatus)
 
 Object.assign(filter, is.filter)
+
+const isMine = computed(() => !!filter.mine || !!filter.offered || filter.onlyCurrency || filter.favorite)
+const expandMine = ref<boolean>(isMine.value)
 
 // about property
 const propertyRef = ref<QSelect | null>(null)
@@ -202,7 +205,9 @@ const removePreset = ({ id, done, error }: { id: number, done: Function, error: 
     })
 }
 
-const affixCount = ref<number>(0)
+watch(isMine, (val: boolean) => {
+  expandMine.value = val
+})
 
 defineExpose({
   clearFilter
@@ -250,40 +255,44 @@ defineExpose({
         @add="addPreset" @remove="removePreset" />
       <q-separator inset />
     </template>
-
     <template v-if="as.signed">
-      <q-item-label header>{{ t('filter.onlyForMe') }}</q-item-label>
-      <q-item :disable="filterLoading">
-        <q-item-section>
-          <q-checkbox dense :disable="filterLoading" size="xs" v-model="filter.mine" :label="t('filter.mine')"
-            @update:model-value="mine" />
-        </q-item-section>
-      </q-item>
-      <q-slide-transition>
-        <div v-show="filter.mine" class="q-pl-lg row items-center q-gutter-xs">
-          <div class="tree"></div>
-          <q-checkbox dense :disable="filterLoading" size="xs" class="text-caption" v-model="filter.offered"
-            :label="t('filter.offered')" @update:model-value="updateDebounce()" />
-        </div>
-      </q-slide-transition>
-      <q-item :disable="filterLoading">
-        <q-item-section>
-          <q-checkbox dense :disable="filterLoading" size="xs" v-model="filter.offer" :label="t('filter.offer')"
-            @update:model-value="updateDebounce()" />
-        </q-item-section>
-      </q-item>
-      <q-item :disable="filterLoading">
-        <q-item-section>
-          <q-checkbox dense :disable="filterLoading" size="xs" v-model="filter.onlyCurrency"
-            :label="t('filter.onlyCurrency')" @update:model-value="updateDebounce()" />
-        </q-item-section>
-      </q-item>
-      <q-item :disable="filterLoading">
-        <q-item-section>
-          <q-checkbox dense :disable="filterLoading" v-model="filter.favorite" size="xs" :label="t('item.favorites')"
-            @update:model-value="updateDebounce()" />
-        </q-item-section>
-      </q-item>
+      <q-expansion-item dense dense-toggle class="no-hover" v-model="expandMine"
+        expand-icon="img:/images/icons/dropdown.svg">
+        <template #header>
+          <q-item-label style="padding-left:0;" class="full-width" header>{{ t('filter.onlyForMe') }}</q-item-label>
+        </template>
+        <q-item :disable="filterLoading" dense>
+          <q-item-section>
+            <q-checkbox dense :disable="filterLoading" size="xs" v-model="filter.mine" :label="t('filter.mine')"
+              @update:model-value="mine" />
+          </q-item-section>
+        </q-item>
+        <q-slide-transition>
+          <div v-show="filter.mine" class="q-pl-lg row items-center q-gutter-xs">
+            <div class="tree"></div>
+            <q-checkbox dense :disable="filterLoading" size="xs" class="text-caption" v-model="filter.offered"
+              :label="t('filter.offered')" @update:model-value="updateDebounce()" />
+          </div>
+        </q-slide-transition>
+        <q-item :disable="filterLoading" dense>
+          <q-item-section>
+            <q-checkbox dense :disable="filterLoading" size="xs" v-model="filter.offer" :label="t('filter.offer')"
+              @update:model-value="updateDebounce()" />
+          </q-item-section>
+        </q-item>
+        <q-item :disable="filterLoading" dense>
+          <q-item-section>
+            <q-checkbox dense :disable="filterLoading" size="xs" v-model="filter.onlyCurrency"
+              :label="t('filter.onlyCurrency')" @update:model-value="updateDebounce()" />
+          </q-item-section>
+        </q-item>
+        <q-item :disable="filterLoading" dense>
+          <q-item-section>
+            <q-checkbox dense :disable="filterLoading" v-model="filter.favorite" size="xs" :label="t('item.favorites')"
+              @update:model-value="updateDebounce()" />
+          </q-item-section>
+        </q-item>
+      </q-expansion-item>
       <q-separator inset />
     </template>
     <q-item-label header>{{ t('filter.status') }}</q-item-label>

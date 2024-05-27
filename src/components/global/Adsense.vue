@@ -25,10 +25,10 @@ const render = () => {
 
 // etc
 onMounted(() => {
-  if (document.readyState !== 'complete')
-    window.addEventListener('load', render)
-  else
-    render()
+  //if (document.readyState !== 'complete')
+  //  window.addEventListener('load', render)
+  //else
+  render()
 })
 </script>
 
