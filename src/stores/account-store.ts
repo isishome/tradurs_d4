@@ -112,6 +112,7 @@ export const useAccountStore = defineStore('account', {
       return new Promise<void>((resolve, reject) => {
         let error: unknown = null
         if (this.historyTypes.request === 0) {
+          this.historyTypes.request++
           this.historyTypes.loading = true
           api.get('/history/types')
             .then((response) => {
@@ -122,7 +123,6 @@ export const useAccountStore = defineStore('account', {
             })
             .then(() => {
               this.historyTypes.loading = false
-              this.historyTypes.request++
 
               if (error)
                 reject()
@@ -138,6 +138,7 @@ export const useAccountStore = defineStore('account', {
       return new Promise<void>((resolve, reject) => {
         let error: unknown = null
         if (this.evaluations.request === 0) {
+          this.evaluations.request++
           this.evaluations.loading = true
           api.get('/account/evaluations')
             .then((response) => {
@@ -148,7 +149,6 @@ export const useAccountStore = defineStore('account', {
             })
             .then(() => {
               this.evaluations.loading = false
-              this.evaluations.request++
 
               if (error)
                 reject()

@@ -400,6 +400,7 @@ export const useItemStore = defineStore('item', {
       return new Promise<void>((resolve, reject) => {
         let error: unknown = null
         if (this.storage.request === 0 || isForced) {
+          this.storage.request++
           api.get('/d4/account/storage')
             .then((response) => {
               this.storage.data = response.data
@@ -409,7 +410,6 @@ export const useItemStore = defineStore('item', {
             })
             .then(() => {
               this.storage.loading = false
-              this.storage.request++
 
               if (error)
                 reject()
@@ -436,6 +436,7 @@ export const useItemStore = defineStore('item', {
       return new Promise<void>((resolve, reject) => {
         let error: unknown = null
         if (this.base.request === 0) {
+          this.base.request++
           this.base.loading = true
           api.get('/d4/item/base')
             .then((response) => {
@@ -461,7 +462,6 @@ export const useItemStore = defineStore('item', {
             })
             .then(() => {
               this.base.loading = false
-              this.base.request++
 
               if (error)
                 reject()
@@ -477,6 +477,7 @@ export const useItemStore = defineStore('item', {
       return new Promise<void>((resolve, reject) => {
         let error: unknown = null
         if (this.properties.request === 0) {
+          this.properties.request++
           this.properties.loading = true
           api.get('/d4/item/properties')
             .then((response) => {
@@ -487,7 +488,6 @@ export const useItemStore = defineStore('item', {
             })
             .then(() => {
               this.properties.loading = false
-              this.properties.request++
 
               if (error)
                 reject()
@@ -503,6 +503,7 @@ export const useItemStore = defineStore('item', {
       return new Promise<void>((resolve, reject) => {
         let error: unknown = null
         if (this.affixes.request === 0) {
+          this.affixes.request++
           this.affixes.loading = true
           api.get('/d4/item/affixes')
             .then((response) => {
@@ -513,7 +514,6 @@ export const useItemStore = defineStore('item', {
             })
             .then(() => {
               this.affixes.loading = false
-              this.affixes.request++
 
               if (error)
                 reject()
@@ -529,6 +529,7 @@ export const useItemStore = defineStore('item', {
       return new Promise<void>((resolve, reject) => {
         let error: unknown = null
         if (this.restrictions.request === 0) {
+          this.restrictions.request++
           this.restrictions.loading = true
           api.get('/d4/item/restrictions')
             .then((response) => {
@@ -539,7 +540,6 @@ export const useItemStore = defineStore('item', {
             })
             .then(() => {
               this.restrictions.loading = false
-              this.restrictions.request++
 
               if (error)
                 reject()
@@ -555,6 +555,7 @@ export const useItemStore = defineStore('item', {
       return new Promise<void>((resolve, reject) => {
         let error: unknown = null
         if (this.pacts.request === 0) {
+          this.pacts.request++
           this.pacts.loading = true
           api.get('/d4/item/pacts')
             .then((response) => {
@@ -565,7 +566,6 @@ export const useItemStore = defineStore('item', {
             })
             .then(() => {
               this.pacts.loading = false
-              this.pacts.request++
 
               if (error)
                 reject()

@@ -36,3 +36,6 @@ yarn-error.log*
 # cypress file
 /cypress
 cypress.config.ts
+
+# prettier
+.prettierrc

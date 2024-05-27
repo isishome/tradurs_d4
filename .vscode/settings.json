@@ -1,9 +1,12 @@
 {
-    "editor.defaultFormatter": "Vue.volar",
-    "[typescript]": {
-        "editor.defaultFormatter": "vscode.typescript-language-features"
-    },
-    "[css]": {
-        "editor.defaultFormatter": "vscode.css-language-features"
-    }
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[typescript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "[css]": {
+    "editor.defaultFormatter": "vscode.css-language-features"
+  },
+  "prettier.semi": false,
+  "typescript.format.insertSpaceAfterSemicolonInForStatements": true,
+  "javascript.format.insertSpaceAfterSemicolonInForStatements": true
 }
