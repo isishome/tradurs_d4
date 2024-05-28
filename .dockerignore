@@ -2,6 +2,7 @@
 .vscode
 cypress
 node_modules
+src-ssr
 .dockerignore
 .editorconfig
 .env.deveopment
