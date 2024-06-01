@@ -30,7 +30,7 @@ withDefaults(defineProps<IProps>(), {
   right: calc(50% + 14px);
   bottom: 0;
   position: absolute;
-  z-index: 1;
+  transform: translate(0, 0);
 }
 
 .separator::after {
@@ -44,7 +44,7 @@ withDefaults(defineProps<IProps>(), {
   left: calc(50% + 14px);
   right: 10px;
   position: absolute;
-  z-index: 2;
+  transform: translate(0, 0);
 }
 
 .separator.left {
@@ -57,6 +57,7 @@ withDefaults(defineProps<IProps>(), {
   right: 0;
   left: calc(50% - 23px);
   width: 28px;
+  transform: translate(0, 0);
 }
 
 @media (max-width: 600px) {

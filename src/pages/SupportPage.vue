@@ -130,6 +130,7 @@ onMounted(() => {
 
 <template>
   <div>
+    <div class="top-space"></div>
     <q-list bordered class="rounded-borders">
       <template v-for="s, idx in (support as Array<Support>)" :key="idx">
         <q-separator v-show="idx !== 0" />

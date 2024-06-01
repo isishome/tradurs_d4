@@ -17,25 +17,25 @@ export default {
     tempItem.price.loading = true
     is.detailItem.splice(0, 1, tempItem)
 
-    return is.getItems(1, currentRoute.params.itemid)
-      .then((result: Array<Item>) => {
+    return is.getItems(1, currentRoute.params.itemid).then(
+      (result: Array<Item>) => {
         if (result.length > 0) {
           result[0].expanded = true
           gs.itemName = result[0].name
           is.detailItem.splice(0, 1, result[0])
-        }
-        else
-          is.detailItem.splice(0, 1)
-      }, () => {
+        } else is.detailItem.splice(0, 1)
+      },
+      () => {
         is.detailItem.splice(0, 1)
-      })
+      }
+    )
   }
 }
 </script>
 
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
-import { ref, computed, watch, onUnmounted, onMounted } from 'vue'
+import { ref, computed, watch, onUnmounted, onMounted, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useQuasar, uid } from 'quasar'
 import { useAccountStore } from 'stores/account-store'
@@ -44,7 +44,7 @@ import D4Items from 'components/D4Items.vue'
 import D4Filter from 'components/D4Filter.vue'
 
 const props = defineProps<{
-  itemid: string,
+  itemid: string
   filter?: InstanceType<typeof D4Filter>
 }>()
 
@@ -77,13 +77,15 @@ const upsertItem = (item: Item, done: Function) => {
   is[item.itemId !== '' ? 'updateItem' : 'addItem'](item)
     .then((response) => {
       if (item.itemId !== '') {
-        is.getItems(1, item.itemId)
-          .then((result: Array<Item>) => {
-            if (result.length > 0)
+        is.getItems(1, item.itemId).then((result: Array<Item>) => {
+          if (result.length > 0) {
+            is.detailItem[0].itemId = 'ready'
+            nextTick(() => {
               is.detailItem.splice(0, 1, result[0])
-          })
-      }
-      else {
+            })
+          }
+        })
+      } else {
         as.retrieve()
         props.filter?.clearFilter()
         router.push({ name: 'tradeList', params: { lang: route.params.lang } })
@@ -119,7 +121,8 @@ const statusItem = (item: Item, done: Function) => {
   is.statusItem(item.itemId)
     .then(() => {
       if (is.detailItem.length > 0)
-        is.detailItem[0].statusCode = is.detailItem[0].statusCode === '000' ? '002' : '000'
+        is.detailItem[0].statusCode =
+          is.detailItem[0].statusCode === '000' ? '002' : '000'
       itemsRef.value?.hideEditable()
       disable.value = false
     })
@@ -166,11 +169,10 @@ const updateOnly = (itemId: string, cb?: Function) => {
         is.detailItem.splice(0, 1, result[0])
       }
 
-      if (cb)
-        cb(is.detailItem[0])
-
-    }).catch(() => {
-    }).then(() => {
+      if (cb) cb(is.detailItem[0])
+    })
+    .catch(() => {})
+    .then(() => {
       disable.value = false
     })
 }
@@ -180,11 +182,9 @@ const copy = (itemId: string) => {
     itemsRef.value?.copyItem(is.detailItem[0])
 }
 const favorite = (itemId: string, favorite: boolean) => {
-  is.favorite(itemId, favorite)
-    .then(() => {
-      if (is.detailItem.length > 0)
-        is.detailItem[0].favorite = favorite
-    })
+  is.favorite(itemId, favorite).then(() => {
+    if (is.detailItem.length > 0) is.detailItem[0].favorite = favorite
+  })
 }
 
 const getItem = () => {
@@ -206,9 +206,7 @@ const getItem = () => {
         result[0].price.loading = false
 
         is.detailItem.splice(0, 1, result[0])
-      }
-      else
-        is.detailItem.splice(0, 1)
+      } else is.detailItem.splice(0, 1)
     })
     .catch(() => {
       is.detailItem.splice(0, 1)
@@ -223,7 +221,13 @@ const getItem = () => {
     })
 }
 
-const notify = (group: string, message: string, caption: string, actionLabel: string, action: Function) => {
+const notify = (
+  group: string,
+  message: string,
+  caption: string,
+  actionLabel: string,
+  action: Function
+) => {
   const genGroup = group === '' ? uid() : group
 
   $q.notify({
@@ -234,7 +238,11 @@ const notify = (group: string, message: string, caption: string, actionLabel: st
     caption,
     actions: [
       {
-        label: actionLabel, color: 'white', handler: () => { action() }
+        label: actionLabel,
+        color: 'white',
+        handler: () => {
+          action()
+        }
       }
     ]
   })
@@ -242,95 +250,158 @@ const notify = (group: string, message: string, caption: string, actionLabel: st
 
 const parseOfferPrice = (priceStr?: string) => {
   const price: IPrice = JSON.parse(priceStr || '{}')
-  const currencyName = price.currency === 'gold' ? t('item.gold') : price.currency === 'summoning' ? is.summonings.find(s => s.value === price.currencyValue)?.label : ''
-  const currencyValue = price.currency === 'gold' ? ` : ${n(Number.parseFloat(price.currencyValue as string), 'decimal')}` : price.currency === 'summoning' ? ` x ${price.quantity}` : ''
+  const currencyName =
+    price.currency === 'gold'
+      ? t('item.gold')
+      : price.currency === 'summoning'
+      ? is.summonings.find((s) => s.value === price.currencyValue)?.label
+      : ''
+  const currencyValue =
+    price.currency === 'gold'
+      ? ` : ${n(Number.parseFloat(price.currencyValue as string), 'decimal')}`
+      : price.currency === 'summoning'
+      ? ` x ${price.quantity}`
+      : ''
 
   return { currencyName, currencyValue }
 }
 
-watch(() => props.itemid, (val, old) => {
-  if (val && val !== old)
-    getItem()
-})
+watch(
+  () => props.itemid,
+  (val, old) => {
+    if (val && val !== old) getItem()
+  }
+)
 
 watch(newItems, (val: number) => {
   if (val > 0)
-    notify('newItems', t('messages.newItems', val), '', t('btn.refresh'), () => {
-      router.push({ name: 'tradeList', params: { lang: route.params.lang } })
-    })
+    notify(
+      'newItems',
+      t('messages.newItems', val),
+      '',
+      t('btn.refresh'),
+      () => {
+        router.push({ name: 'tradeList', params: { lang: route.params.lang } })
+      }
+    )
 })
 
 watch(newOffer, (val: OfferInfo | null) => {
   if (val) {
     const parsing = parseOfferPrice(val.price)
-    notify('', t('messages.newOffer'), `[${val.itemName}] ${parsing.currencyName}${parsing.currencyValue}`, t('btn.move'), () => {
-      if (props.itemid === val.itemId) {
-        updateOnly(val.itemId, () => {
-          itemsRef.value?.openOffers(props.itemid)
-        })
+    notify(
+      '',
+      t('messages.newOffer'),
+      `[${val.itemName}] ${parsing.currencyName}${parsing.currencyValue}`,
+      t('btn.move'),
+      () => {
+        if (props.itemid === val.itemId) {
+          updateOnly(val.itemId, () => {
+            itemsRef.value?.openOffers(props.itemid)
+          })
+        } else
+          router.push({
+            name: 'itemInfo',
+            params: { lang: route.params.lang, itemid: val.itemId },
+            state: { offers: true }
+          })
       }
-      else
-        router.push({ name: 'itemInfo', params: { lang: route.params.lang, itemid: val.itemId }, state: { offers: true } })
-    })
+    )
   }
 })
 
 watch(acceptedOffer, (val: OfferInfo | null) => {
   if (val) {
     const parsing = parseOfferPrice(val.price)
-    notify('', t('messages.acceptedOffer'), `[${val.itemName}] ${parsing.currencyName}${parsing.currencyValue}`, t('btn.move'), () => {
-      if (props.itemid === val.itemId) {
-        updateOnly(val.itemId, () => {
-          itemsRef.value?.openOffers(props.itemid)
-        })
+    notify(
+      '',
+      t('messages.acceptedOffer'),
+      `[${val.itemName}] ${parsing.currencyName}${parsing.currencyValue}`,
+      t('btn.move'),
+      () => {
+        if (props.itemid === val.itemId) {
+          updateOnly(val.itemId, () => {
+            itemsRef.value?.openOffers(props.itemid)
+          })
+        } else
+          router.push({
+            name: 'itemInfo',
+            params: { lang: route.params.lang, itemid: val.itemId },
+            state: { offers: true }
+          })
       }
-      else
-        router.push({ name: 'itemInfo', params: { lang: route.params.lang, itemid: val.itemId }, state: { offers: true } })
-    })
+    )
   }
 })
 
 watch(retractedOffer, (val: OfferInfo | null) => {
   if (val) {
     const parsing = parseOfferPrice(val.price)
-    notify('', t('messages.retractedOffer'), `[${val.itemName}] ${parsing.currencyName}${parsing.currencyValue}`, t('btn.move'), () => {
-      if (props.itemid === val.itemId) {
-        updateOnly(val.itemId, () => {
-          itemsRef.value?.openOffers(props.itemid)
-        })
+    notify(
+      '',
+      t('messages.retractedOffer'),
+      `[${val.itemName}] ${parsing.currencyName}${parsing.currencyValue}`,
+      t('btn.move'),
+      () => {
+        if (props.itemid === val.itemId) {
+          updateOnly(val.itemId, () => {
+            itemsRef.value?.openOffers(props.itemid)
+          })
+        } else
+          router.push({
+            name: 'itemInfo',
+            params: { lang: route.params.lang, itemid: val.itemId },
+            state: { offers: true }
+          })
       }
-      else
-        router.push({ name: 'itemInfo', params: { lang: route.params.lang, itemid: val.itemId }, state: { offers: true } })
-    })
+    )
   }
 })
 
 watch(turnedDownOffer, (val: OfferInfo | null) => {
   if (val) {
     const parsing = parseOfferPrice(val.price)
-    notify('', t('messages.turnedDownOffer'), `[${val.itemName}] ${parsing.currencyName}${parsing.currencyValue}`, t('btn.move'), () => {
-      if (props.itemid === val.itemId) {
-        updateOnly(val.itemId, () => {
-          itemsRef.value?.openOffers(props.itemid)
-        })
+    notify(
+      '',
+      t('messages.turnedDownOffer'),
+      `[${val.itemName}] ${parsing.currencyName}${parsing.currencyValue}`,
+      t('btn.move'),
+      () => {
+        if (props.itemid === val.itemId) {
+          updateOnly(val.itemId, () => {
+            itemsRef.value?.openOffers(props.itemid)
+          })
+        } else
+          router.push({
+            name: 'itemInfo',
+            params: { lang: route.params.lang, itemid: val.itemId },
+            state: { offers: true }
+          })
       }
-      else
-        router.push({ name: 'itemInfo', params: { lang: route.params.lang, itemid: val.itemId }, state: { offers: true } })
-    })
+    )
   }
 })
 
-watch(complete, (val: { itemName: string, itemId: string } | null) => {
+watch(complete, (val: { itemName: string; itemId: string } | null) => {
   if (val)
-    notify('', t('messages.complete', { in: val.itemName }), '', t('btn.move'), () => {
-      if (props.itemid === val.itemId) {
-        updateOnly(props.itemid, () => {
-          itemsRef.value?.openOffers(props.itemid)
-        })
+    notify(
+      '',
+      t('messages.complete', { in: val.itemName }),
+      '',
+      t('btn.move'),
+      () => {
+        if (props.itemid === val.itemId) {
+          updateOnly(props.itemid, () => {
+            itemsRef.value?.openOffers(props.itemid)
+          })
+        } else
+          router.push({
+            name: 'itemInfo',
+            params: { lang: route.params.lang, itemid: val.itemId },
+            state: { offers: true }
+          })
       }
-      else
-        router.push({ name: 'itemInfo', params: { lang: route.params.lang, itemid: val.itemId }, state: { offers: true } })
-    })
+    )
 })
 
 onMounted(() => {
@@ -352,15 +423,37 @@ onUnmounted(() => {
 
 <template>
   <div>
+    <div class="top-space"></div>
     <div class="row justify-center items-center">
-      <D4Items ref="itemsRef" :items="is.detailItem" @upsert-item="upsertItem" @delete-item="deleteItem"
-        @relist-item="relistItem" @status-item="statusItem" @reregister-item="reRegisterItem" @update-only="updateOnly"
-        @copy="copy" @favorite="favorite" />
+      <D4Items
+        ref="itemsRef"
+        :items="is.detailItem"
+        @upsert-item="upsertItem"
+        @delete-item="deleteItem"
+        @relist-item="relistItem"
+        @status-item="statusItem"
+        @reregister-item="reRegisterItem"
+        @update-only="updateOnly"
+        @copy="copy"
+        @favorite="favorite"
+      />
     </div>
     <div class="q-py-lg"></div>
-    <D4Btn v-if="completeInfo" round :to="{ name: 'tradeList', params: { lang: route.params.lang } }" class="sticky-btn"
-      color="var(--q-light-normal)" shadow>
-      <img src="/images/icons/list.svg" width="20" height="20" class="invert" alt="Tradurs List Icon" />
+    <D4Btn
+      v-if="completeInfo"
+      round
+      :to="{ name: 'tradeList', params: { lang: route.params.lang } }"
+      class="sticky-btn"
+      color="var(--q-light-normal)"
+      shadow
+    >
+      <img
+        src="/images/icons/list.svg"
+        width="20"
+        height="20"
+        class="invert"
+        alt="Tradurs List Icon"
+      />
     </D4Btn>
   </div>
 </template>
@@ -373,7 +466,7 @@ onUnmounted(() => {
   z-index: 1;
 }
 
-@media (max-width:600px) {
+@media (max-width: 600px) {
   .sticky-btn {
     bottom: 10px;
   }

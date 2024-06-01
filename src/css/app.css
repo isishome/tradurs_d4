@@ -98,6 +98,7 @@ body.body--dark {
   background-image: url('/images/back.webp');
   background-size: 550px;
   background-repeat: repeat;
+  transform: translate(0, 0);
 }
 
 .q-drawer::after {
@@ -111,6 +112,7 @@ body.body--dark {
   background-image: linear-gradient(90deg, #000000 0%, rgba(0, 0, 0, 0) calc(70% - 180px), rgba(0, 0, 0, 0) 100%), linear-gradient(0deg, rgba(0, 0, 0, 0.24), rgba(0, 0, 0, 0.24));
   background-size: 100%;
   background-repeat: repeat;
+  transform: translate(0, 0);
 }
 
 .q-drawer.q-drawer--right::after {

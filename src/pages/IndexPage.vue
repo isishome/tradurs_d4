@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import { useRoute, useRouter } from "vue-router"
-import { useGlobalStore } from "stores/global-store"
+import { useRoute, useRouter } from 'vue-router'
+import { useGlobalStore } from 'stores/global-store'
 import {
   useItemStore,
   type OfferInfo,
   type AwardsPick,
   type IErrorItem,
   Sort
-} from "stores/item-store"
-import { useAccountStore } from "stores/account-store"
-import { ref, computed, onMounted, watch, reactive } from "vue"
-import { useI18n } from "vue-i18n"
-import { useQuasar, uid } from "quasar"
-import { Item, IPrice } from "src/types/item"
-import { scrollPos } from "src/common"
+} from 'stores/item-store'
+import { useAccountStore } from 'stores/account-store'
+import { ref, computed, onMounted, watch, reactive, nextTick } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useQuasar, uid } from 'quasar'
+import { Item, IPrice } from 'src/types/item'
+import { scrollPos } from 'src/common'
 
-import D4Items from "components/D4Items.vue"
-import D4Filter from "components/D4Filter.vue"
+import D4Items from 'components/D4Items.vue'
+import D4Filter from 'components/D4Filter.vue'
 
 interface IProps {
   filter?: InstanceType<typeof D4Filter>
@@ -30,7 +30,7 @@ const router = useRouter()
 const is = useItemStore()
 const gs = useGlobalStore()
 const as = useAccountStore()
-const { t, tm, n } = useI18n({ useScope: "global" })
+const { t, tm, n } = useI18n({ useScope: 'global' })
 const $q = useQuasar()
 
 // loading variable
@@ -56,7 +56,7 @@ const more = computed(() => is.itemPage.more)
 const listHeaderRef = ref<HTMLDivElement | undefined>()
 const selectedAll = ref<boolean>(false)
 const sortOptions = reactive<Array<{ value: string; label: string }>>(
-  tm("sort.options")
+  tm('sort.options')
 )
 const isExpanded = computed(() => is.storage.data.expanded)
 const noSelected = computed(
@@ -69,7 +69,7 @@ const errorInfo = reactive<{
   items: Array<IErrorItem>
 }>({
   show: false,
-  title: "",
+  title: '',
   items: []
 })
 
@@ -82,7 +82,7 @@ const reload = () => {
   if (page.value === 1) getList(true)
   else
     router.push({
-      name: "tradeList",
+      name: 'tradeList',
       params: { lang: route.params.lang },
       query: { page: 1 },
       state: { scrollTop: true }
@@ -94,14 +94,23 @@ const upsertItem = (item: Item, done: Function) => {
   const findIndex = items.value.findIndex((i) => i.itemId === item.itemId)
 
   disable.value = true
-  is[item.itemId !== "" ? "updateItem" : "addItem"](item)
+  is[item.itemId !== '' ? 'updateItem' : 'addItem'](item)
     .then(() => {
       if (findIndex !== -1 || rewardItem.value?.itemId === item.itemId) {
         is.getItems(1, item.itemId).then((result: Array<Item>) => {
           if (result.length > 0) {
-            if (findIndex !== -1) items.value.splice(findIndex, 1, result[0])
-            if (rewardItem.value?.itemId === item.itemId)
-              rewardItem.value = result[0]
+            if (findIndex !== -1) {
+              items.value[findIndex].itemId = 'ready'
+              nextTick(() => {
+                items.value.splice(findIndex, 1, result[0])
+              })
+            }
+            if (rewardItem.value?.itemId === item.itemId) {
+              rewardItem.value.itemId = 'ready'
+              nextTick(() => {
+                rewardItem.value = result[0]
+              })
+            }
           }
         })
       } else {
@@ -144,7 +153,7 @@ const statusItem = (item: Item, done: Function) => {
     disable.value = true
     is.statusItem(item.itemId)
       .then(() => {
-        findItem.statusCode = findItem.statusCode === "000" ? "002" : "000"
+        findItem.statusCode = findItem.statusCode === '000' ? '002' : '000'
         itemsRef.value?.hideEditable()
         disable.value = false
       })
@@ -243,7 +252,7 @@ const getList = async (scrollTop?: boolean) => {
     { length: items.value.length || is.itemPage.rows },
     () => {
       const item = new Item()
-      item.quality = "normal"
+      item.quality = 'normal'
       item.loading = true
       item.expanded = isExpanded.value
       item.user.loading = true
@@ -315,7 +324,7 @@ const notify = (
   actionLabel: string,
   action: Function
 ) => {
-  const genGroup = group === "" ? uid() : group
+  const genGroup = group === '' ? uid() : group
 
   $q.notify({
     group: genGroup,
@@ -326,7 +335,7 @@ const notify = (
     actions: [
       {
         label: actionLabel,
-        color: "white",
+        color: 'white',
         handler: () => {
           action()
         }
@@ -336,26 +345,26 @@ const notify = (
 }
 
 const parseOfferPrice = (priceStr?: string) => {
-  const price: IPrice = JSON.parse(priceStr || "{}")
+  const price: IPrice = JSON.parse(priceStr || '{}')
   const currencyName =
-    price.currency === "gold"
-      ? t("item.gold")
-      : price.currency === "summoning"
+    price.currency === 'gold'
+      ? t('item.gold')
+      : price.currency === 'summoning'
       ? is.summonings.find((s) => s.value === price.currencyValue)?.label
-      : ""
+      : ''
   const currencyValue =
-    price.currency === "gold"
-      ? ` : ${n(Number.parseFloat(price.currencyValue as string), "decimal")}`
-      : price.currency === "summoning"
+    price.currency === 'gold'
+      ? ` : ${n(Number.parseFloat(price.currencyValue as string), 'decimal')}`
+      : price.currency === 'summoning'
       ? ` x ${price.quantity}`
-      : ""
+      : ''
 
   return { currencyName, currencyValue }
 }
 
 const move = (val: number) => {
   router.push({
-    name: "tradeList",
+    name: 'tradeList',
     params: { lang: route.params.lang },
     query: { page: page.value + val }
   })
@@ -370,45 +379,45 @@ const selectAll = (val: boolean) => {
 const itemInfo = (item?: Item) => {
   return {
     name:
-      item?.itemTypeValue1 === "gem"
-        ? is.gems.find((g) => g.value === item?.itemTypeValue2)?.label ?? ""
-        : item?.itemTypeValue1 === "elixir"
-        ? is.elixirs.find((e) => e.value === item?.itemTypeValue2)?.label ?? ""
-        : item?.itemTypeValue1 === "summoning"
+      item?.itemTypeValue1 === 'gem'
+        ? is.gems.find((g) => g.value === item?.itemTypeValue2)?.label ?? ''
+        : item?.itemTypeValue1 === 'elixir'
+        ? is.elixirs.find((e) => e.value === item?.itemTypeValue2)?.label ?? ''
+        : item?.itemTypeValue1 === 'summoning'
         ? is.summonings.find((s) => s.value === item?.itemTypeValue2)?.label ??
-          ""
-        : item?.name ?? "",
+          ''
+        : item?.name ?? '',
     quality: item?.quality
   }
 }
 
 const relistItems = () => {
   $q.dialog({
-    title: t("relistItems.title"),
+    title: t('relistItems.title'),
     message: `<div class="text-subtitle1">${t(
-      "relistItems.subTitle"
+      'relistItems.subTitle'
     )}</div><div class="q-mt-xs text-caption text-red-6">${t(
-      "relistItems.message"
+      'relistItems.message'
     )}</div>`,
     html: true,
     persistent: true,
     cancel: {
-      label: t("btn.cancel"),
+      label: t('btn.cancel'),
       noCaps: true,
-      color: "grey",
+      color: 'grey',
       outline: true
     },
     ok: {
-      label: t("btn.accept"),
+      label: t('btn.accept'),
       noCaps: true,
-      color: "primary",
+      color: 'primary',
       unelevated: true,
-      class: "text-weight-bold invert-icon"
+      class: 'text-weight-bold invert-icon'
     },
-    transitionShow: "fade",
-    transitionHide: "fade",
+    transitionShow: 'fade',
+    transitionHide: 'fade',
     noRouteDismiss: true,
-    class: "q-pa-sm"
+    class: 'q-pa-sm'
   }).onOk(() => {
     gs.loading = true
     disable.value = true
@@ -417,7 +426,7 @@ const relistItems = () => {
     is.relistItems(items.value.filter((i) => i.selected).map((i) => i.itemId))
       .then((erroritems: Array<IErrorItem>) => {
         if (erroritems.length > 0) {
-          errorInfo.title = t("relistItems.failedTitle")
+          errorInfo.title = t('relistItems.failedTitle')
           errorInfo.show = true
           errorInfo.items.splice(0, errorInfo.items.length)
           errorInfo.items.push(
@@ -448,32 +457,32 @@ const relistItems = () => {
 const statusItems = (status: string) => {
   const statusWord = t(`btn.${status}`)
   $q.dialog({
-    title: t("statusItems.title", { type: statusWord }),
-    message: `<div class="text-subtitle1">${t("statusItems.subTitle", {
+    title: t('statusItems.title', { type: statusWord }),
+    message: `<div class="text-subtitle1">${t('statusItems.subTitle', {
       type: statusWord
     })}</div><div class="q-mt-xs text-caption text-red-6">${t(
-      "statusItems.message",
+      'statusItems.message',
       { type: statusWord }
     )}</div>`,
     html: true,
     persistent: true,
     cancel: {
-      label: t("btn.cancel"),
+      label: t('btn.cancel'),
       noCaps: true,
-      color: "grey",
+      color: 'grey',
       outline: true
     },
     ok: {
-      label: t("btn.accept"),
+      label: t('btn.accept'),
       noCaps: true,
-      color: "primary",
+      color: 'primary',
       unelevated: true,
-      class: "text-weight-bold invert-icon"
+      class: 'text-weight-bold invert-icon'
     },
-    transitionShow: "fade",
-    transitionHide: "fade",
+    transitionShow: 'fade',
+    transitionHide: 'fade',
     noRouteDismiss: true,
-    class: "q-pa-sm"
+    class: 'q-pa-sm'
   }).onOk(() => {
     gs.loading = true
     disable.value = true
@@ -485,7 +494,7 @@ const statusItems = (status: string) => {
     )
       .then((erroritems: Array<IErrorItem>) => {
         if (erroritems.length > 0) {
-          errorInfo.title = t("statusItems.failedTitle", { type: statusWord })
+          errorInfo.title = t('statusItems.failedTitle', { type: statusWord })
           errorInfo.show = true
           errorInfo.items.splice(0, errorInfo.items.length)
           errorInfo.items.push(
@@ -513,31 +522,31 @@ const statusItems = (status: string) => {
 
 const reRegisterItems = () => {
   $q.dialog({
-    title: t("reRegisterItems.title"),
+    title: t('reRegisterItems.title'),
     message: `<div class="text-subtitle1">${t(
-      "reRegisterItems.subTitle"
+      'reRegisterItems.subTitle'
     )}</div><div class="q-mt-xs text-caption text-red-6">${t(
-      "reRegisterItems.message"
+      'reRegisterItems.message'
     )}</div>`,
     html: true,
     persistent: true,
     cancel: {
-      label: t("btn.cancel"),
+      label: t('btn.cancel'),
       noCaps: true,
-      color: "grey",
+      color: 'grey',
       outline: true
     },
     ok: {
-      label: t("btn.accept"),
+      label: t('btn.accept'),
       noCaps: true,
-      color: "primary",
+      color: 'primary',
       unelevated: true,
-      class: "text-weight-bold invert-icon"
+      class: 'text-weight-bold invert-icon'
     },
-    transitionShow: "fade",
-    transitionHide: "fade",
+    transitionShow: 'fade',
+    transitionHide: 'fade',
     noRouteDismiss: true,
-    class: "q-pa-sm"
+    class: 'q-pa-sm'
   }).onOk(() => {
     gs.loading = true
     disable.value = true
@@ -548,7 +557,7 @@ const reRegisterItems = () => {
     )
       .then((erroritems: Array<IErrorItem>) => {
         if (erroritems.length > 0) {
-          errorInfo.title = t("reRegisterItems.failedTitle")
+          errorInfo.title = t('reRegisterItems.failedTitle')
           errorInfo.show = true
           errorInfo.items.splice(0, errorInfo.items.length)
           errorInfo.items.push(
@@ -578,31 +587,31 @@ const reRegisterItems = () => {
 
 const deleteItems = () => {
   $q.dialog({
-    title: t("deleteItems.title"),
+    title: t('deleteItems.title'),
     message: `<div class="text-subtitle1">${t(
-      "deleteItems.subTitle"
+      'deleteItems.subTitle'
     )}</div><div class="q-mt-xs text-caption text-red-6">${t(
-      "deleteItems.message"
+      'deleteItems.message'
     )}</div>`,
     html: true,
     persistent: true,
     cancel: {
-      label: t("btn.cancel"),
+      label: t('btn.cancel'),
       noCaps: true,
-      color: "grey",
+      color: 'grey',
       outline: true
     },
     ok: {
-      label: t("btn.delete"),
+      label: t('btn.delete'),
       noCaps: true,
-      color: "negative",
+      color: 'negative',
       unelevated: true,
-      class: "text-weight-bold invert-icon"
+      class: 'text-weight-bold invert-icon'
     },
-    transitionShow: "fade",
-    transitionHide: "fade",
+    transitionShow: 'fade',
+    transitionHide: 'fade',
     noRouteDismiss: true,
-    class: "q-pa-sm"
+    class: 'q-pa-sm'
   }).onOk(() => {
     gs.loading = true
     disable.value = true
@@ -611,7 +620,7 @@ const deleteItems = () => {
     is.deleteItems(items.value.filter((i) => i.selected).map((i) => i.itemId))
       .then((erroritems: Array<IErrorItem>) => {
         if (erroritems.length > 0) {
-          errorInfo.title = t("deleteItems.failedTitle")
+          errorInfo.title = t('deleteItems.failedTitle')
           errorInfo.show = true
           errorInfo.items.splice(0, errorInfo.items.length)
           errorInfo.items.push(
@@ -648,7 +657,7 @@ const onIntersection = (entry: IntersectionObserverEntry) => {
 watch(
   () => route.query.page,
   (val, old) => {
-    if (val !== old && route.name === "tradeList") {
+    if (val !== old && route.name === 'tradeList') {
       page.value = val ? parseInt(val as string) : 1
       getList()
     }
@@ -658,10 +667,10 @@ watch(
 watch(newItems, (val: number) => {
   if (val > 0)
     notify(
-      "newItems",
-      t("messages.newItems", val),
-      "",
-      t("btn.refresh"),
+      'newItems',
+      t('messages.newItems', val),
+      '',
+      t('btn.refresh'),
       () => {
         itemsRef.value?.hideEditable()
         itemsRef.value?.hideOffers()
@@ -675,13 +684,13 @@ watch(newOffer, (val: OfferInfo | null) => {
   if (val) {
     const parsing = parseOfferPrice(val.price)
     notify(
-      "",
-      t("messages.newOffer"),
+      '',
+      t('messages.newOffer'),
       `[${val.itemName}] ${parsing.currencyName}${parsing.currencyValue}`,
-      t("btn.move"),
+      t('btn.move'),
       () => {
         router.push({
-          name: "itemInfo",
+          name: 'itemInfo',
           params: { lang: route.params.lang, itemid: val.itemId },
           state: { offers: true }
         })
@@ -694,13 +703,13 @@ watch(acceptedOffer, (val: OfferInfo | null) => {
   if (val) {
     const parsing = parseOfferPrice(val.price)
     notify(
-      "",
-      t("messages.acceptedOffer", { in: val.itemName }),
+      '',
+      t('messages.acceptedOffer', { in: val.itemName }),
       `[${val.itemName}] ${parsing.currencyName}${parsing.currencyValue}`,
-      t("btn.move"),
+      t('btn.move'),
       () => {
         router.push({
-          name: "itemInfo",
+          name: 'itemInfo',
           params: { lang: route.params.lang, itemid: val.itemId },
           state: { offers: true }
         })
@@ -713,13 +722,13 @@ watch(retractedOffer, (val: OfferInfo | null) => {
   if (val) {
     const parsing = parseOfferPrice(val.price)
     notify(
-      "",
-      t("messages.retractedOffer", { in: val.itemName }),
+      '',
+      t('messages.retractedOffer', { in: val.itemName }),
       `[${val.itemName}] ${parsing.currencyName}${parsing.currencyValue}`,
-      t("btn.move"),
+      t('btn.move'),
       () => {
         router.push({
-          name: "itemInfo",
+          name: 'itemInfo',
           params: { lang: route.params.lang, itemid: val.itemId },
           state: { offers: true }
         })
@@ -732,13 +741,13 @@ watch(turnedDownOffer, (val: OfferInfo | null) => {
   if (val) {
     const parsing = parseOfferPrice(val.price)
     notify(
-      "",
-      t("messages.turnedDownOffer", { in: val.itemName }),
+      '',
+      t('messages.turnedDownOffer', { in: val.itemName }),
       `[${val.itemName}] ${parsing.currencyName}${parsing.currencyValue}`,
-      t("btn.move"),
+      t('btn.move'),
       () => {
         router.push({
-          name: "itemInfo",
+          name: 'itemInfo',
           params: { lang: route.params.lang, itemid: val.itemId },
           state: { offers: true }
         })
@@ -750,13 +759,13 @@ watch(turnedDownOffer, (val: OfferInfo | null) => {
 watch(complete, (val: OfferInfo | null) => {
   if (val)
     notify(
-      "",
-      t("messages.complete", { in: val.itemName }),
-      "",
-      t("btn.move"),
+      '',
+      t('messages.complete', { in: val.itemName }),
+      '',
+      t('btn.move'),
       () => {
         router.push({
-          name: "itemInfo",
+          name: 'itemInfo',
           params: { lang: route.params.lang, itemid: val.itemId },
           state: { offers: true }
         })
@@ -842,7 +851,7 @@ onMounted(() => {
               clickable
               @click="relistItems"
             >
-              <q-item-section>{{ t("btn.relist") }}</q-item-section>
+              <q-item-section>{{ t('btn.relist') }}</q-item-section>
             </q-item>
             <q-item
               :dark="false"
@@ -850,7 +859,7 @@ onMounted(() => {
               clickable
               @click="statusItems('suspend')"
             >
-              <q-item-section>{{ t("btn.suspend") }}</q-item-section>
+              <q-item-section>{{ t('btn.suspend') }}</q-item-section>
             </q-item>
             <q-item
               :dark="false"
@@ -858,7 +867,7 @@ onMounted(() => {
               clickable
               @click="statusItems('resume')"
             >
-              <q-item-section>{{ t("btn.resume") }}</q-item-section>
+              <q-item-section>{{ t('btn.resume') }}</q-item-section>
             </q-item>
             <q-item
               :dark="false"
@@ -866,7 +875,7 @@ onMounted(() => {
               clickable
               @click="reRegisterItems"
             >
-              <q-item-section>{{ t("btn.reRegister") }}</q-item-section>
+              <q-item-section>{{ t('btn.reRegister') }}</q-item-section>
             </q-item>
             <q-item
               :dark="false"
@@ -875,7 +884,7 @@ onMounted(() => {
               @click="deleteItems"
             >
               <q-item-section class="text-red-6 text-weight-bold">{{
-                t("btn.delete")
+                t('btn.delete')
               }}</q-item-section>
             </q-item>
           </q-list>

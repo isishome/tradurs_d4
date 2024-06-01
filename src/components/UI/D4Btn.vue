@@ -205,7 +205,7 @@ const click = () => {
   max-height: 100%;
   box-sizing: border-box;
   position: absolute;
-  z-index: 1;
+  z-index: 0;
   top: 0;
   bottom: 0;
   left: 0;
@@ -215,6 +215,7 @@ const click = () => {
   border-image: url("/images/frames/outer.webp") 30;
   filter: brightness(160%);
   pointer-events: none;
+  transform: translate(0, 0);
 }
 
 .body--light .btn-wrap::after {
@@ -225,7 +226,7 @@ const click = () => {
   box-shadow: none;
   content: "";
   position: absolute;
-  z-index: 2;
+  z-index: 1;
   top: 4px;
   bottom: 4px;
   left: 4px;
@@ -235,6 +236,7 @@ const click = () => {
   border-image-width: 30px;
   pointer-events: none;
   filter: invert(50%);
+  transform: translate(0, 0);
 }
 
 .body--dark .shadow-depth-5 {

@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import { ref, computed, watch } from "vue"
-import { useRoute, useRouter } from "vue-router"
-import { useQuasar, Screen, QBtnDropdown } from "quasar"
-import { useI18n } from "vue-i18n"
+import { ref, computed, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useQuasar, Screen, QBtnDropdown } from 'quasar'
+import { useI18n } from 'vue-i18n'
 
-import { useGlobalStore } from "src/stores/global-store"
-import { useAccountStore } from "stores/account-store"
-import { useItemStore } from "stores/item-store"
-import { checkName, scrollPosDirect } from "src/common"
+import { useGlobalStore } from 'src/stores/global-store'
+import { useAccountStore } from 'stores/account-store'
+import { useItemStore } from 'stores/item-store'
+import { checkName, scrollPosDirect } from 'src/common'
 
-import D4Filter from "components/D4Filter.vue"
-import D4User from "components/D4User.vue"
-import Adsense from "components/global/Adsense.vue"
+import D4Filter from 'components/D4Filter.vue'
+import D4User from 'components/D4User.vue'
+import Adsense from 'components/global/Adsense.vue'
 
 const props = defineProps<{
   lang: string
@@ -25,13 +25,13 @@ const $q = useQuasar()
 const gs = useGlobalStore()
 const as = useAccountStore()
 const is = useItemStore()
-const { t, locale } = useI18n({ useScope: "global" })
+const { t, locale } = useI18n({ useScope: 'global' })
 
 $q.screen.setSizes({ lg: 1100 })
-locale.value = props.lang || "ko"
+locale.value = props.lang || 'ko'
 
 const tradurs: string =
-  import.meta.env.VITE_APP_TRADURS + `/${props.lang || "ko"}`
+  import.meta.env.VITE_APP_TRADURS + `/${props.lang || 'ko'}`
 const mainKey = ref<number>(0)
 const topAdRef = ref<InstanceType<typeof Adsense>>()
 const bottomAdRef = ref<InstanceType<typeof Adsense>>()
@@ -41,7 +41,7 @@ const bottomAdKey = ref<number>(0)
 const rightAdKey = ref<number>(0)
 const loading = computed(() => gs.loading)
 const filterLoading = computed(() => is.filter.loading)
-const searchName = computed(() => t("item.name"))
+const searchName = computed(() => t('item.name'))
 const leftDrawerOpen = ref<boolean>(false)
 const rightDrawerOpen = ref<boolean>(false)
 const signed = computed<boolean | null>(() => as.signed)
@@ -85,10 +85,10 @@ const sign = () => {
           d4Filter.value?.clearFilter()
           await is.getStorage(true)
 
-          if (route.name === "tradeList") mainKey.value++
+          if (route.name === 'tradeList') mainKey.value++
           else
             router.push({
-              name: "tradeList",
+              name: 'tradeList',
               params: { lang: route.params.lang }
             })
         }
@@ -101,25 +101,25 @@ const sign = () => {
 }
 
 const setLang = (lang: string) => {
-  const params: { lang?: string; section?: string | string[] } = {
-    lang,
-    section: route.params.section ?? undefined
-  }
-
-  router
-    .replace({ name: route.name as string, params })
-    .catch(() => {})
-    .then(() => {
-      router.go(0)
-    })
+  const url = route.fullPath
+    .replace(
+      new RegExp(
+        `^\/(${gs.localeOptions.map((lo) => lo.value).join('|')})`,
+        'i'
+      ),
+      ''
+    )
+    .replace(/\/$/, '')
+  gs.loading = true
+  document.location.replace(`/${lang}${url}`)
 }
 
 const setDark = () => {
   $q.dark.set(!$q.dark.isActive)
-  $q.cookies.set("d4.dark", $q.dark.isActive.toString(), { path: "/" })
+  $q.cookies.set('d4.dark', $q.dark.isActive.toString(), { path: '/' })
 }
 
-const _name = ref<string>("")
+const _name = ref<string>('')
 const search = () => {
   if (!!!_name.value || checkName(_name.value)) {
     const filter = is.filter
@@ -128,19 +128,19 @@ const search = () => {
   }
 }
 const clear = () => {
-  _name.value = ""
-  if (is.filter.name !== "") {
+  _name.value = ''
+  if (is.filter.name !== '') {
     is.filter.name = _name.value
     is.filter.request++
   }
 }
 
 const main = () => {
-  is.sort = "date_desc"
+  is.sort = 'date_desc'
   router.push({
-    name: "tradeList",
+    name: 'tradeList',
     params: { lang: route.params.lang },
-    query: { page: (route.query.page as string) === "1" ? undefined : 1 }
+    query: { page: (route.query.page as string) === '1' ? undefined : 1 }
   })
 }
 
@@ -150,7 +150,7 @@ const beforeShow = () => {
 
 const onScroll = (details: {
   position: number
-  direction: "up" | "down"
+  direction: 'up' | 'down'
   directionChanged: boolean
   delta: number
   inflectionPoint: number
@@ -162,33 +162,33 @@ const onScroll = (details: {
 const expanded = ref<boolean>(false)
 const expandedMobile = ref<boolean>(false)
 const isMySpace = computed(() =>
-  ["messages", "blocks", "history"].includes(route.name as string)
+  ['messages', 'blocks', 'history'].includes(route.name as string)
 )
 const expandedAdmin = ref<boolean>(false)
 const isAdmin = computed(() =>
-  ["adminUser", "adminData"].includes(route.name as string)
+  ['adminUser', 'adminData'].includes(route.name as string)
 )
 
 // about screen size
 const size = computed(() =>
   $q.screen.width < 320
-    ? "width:300px;max-height:100px;"
+    ? 'width:300px;max-height:100px;'
     : $q.screen.width < 468
-    ? "width:320px;max-height:100px;"
+    ? 'width:320px;max-height:100px;'
     : $q.screen.width < 728
-    ? "width:468px;height:60px;"
-    : "width:728px;height:90px;"
+    ? 'width:468px;height:60px;'
+    : 'width:728px;height:90px;'
 )
 const sizeBottom = computed(() =>
   $q.screen.width < 300
-    ? "display:inline-block;width:250px;height:250px;"
+    ? 'display:inline-block;width:250px;height:250px;'
     : $q.screen.width < 336
-    ? "display:inline-block;width:300px;height:250px;"
+    ? 'display:inline-block;width:300px;height:250px;'
     : $q.screen.width < 468
-    ? "display:inline-block;width:336px;height:280px;"
+    ? 'display:inline-block;width:336px;height:280px;'
     : $q.screen.width < 728
-    ? "display:inline-block;width:468px;height:60px;"
-    : "display:inline-block;width:728px;height:90px;"
+    ? 'display:inline-block;width:468px;height:60px;'
+    : 'display:inline-block;width:728px;height:90px;'
 )
 
 watch([size, () => $q.screen.gt.md], ([new1, new2], [old1, old2]) => {
@@ -207,7 +207,7 @@ watch(
   () => {
     if (
       Date.now() - gs.topAccessTimeStamp > gs.timeLimit ||
-      topAdRef.value?.$el.getAttribute("data-ad-status") === "unfilled"
+      topAdRef.value?.$el.getAttribute('data-ad-status') === 'unfilled'
     ) {
       topAdKey.value++
       gs.topAccessTimeStamp = Date.now()
@@ -215,7 +215,7 @@ watch(
 
     if (
       Date.now() - gs.bottomAccessTimeStamp > gs.timeLimit ||
-      bottomAdRef.value?.$el.getAttribute("data-ad-status") === "unfilled"
+      bottomAdRef.value?.$el.getAttribute('data-ad-status') === 'unfilled'
     ) {
       bottomAdKey.value++
       gs.bottomAccessTimeStamp = Date.now()
@@ -223,7 +223,7 @@ watch(
 
     if (
       Date.now() - gs.rightAccessTimeStamp > gs.timeLimit ||
-      rightAdRef.value?.$el.getAttribute("data-ad-status") === "unfilled"
+      rightAdRef.value?.$el.getAttribute('data-ad-status') === 'unfilled'
     ) {
       rightAdKey.value++
       gs.rightAccessTimeStamp = Date.now()
@@ -241,7 +241,7 @@ watch(
 watch(
   () => is.filter.name,
   (val) => {
-    if (!!!val) _name.value = ""
+    if (!!!val) _name.value = ''
   }
 )
 </script>
@@ -466,7 +466,7 @@ watch(
             >
               <q-item-section side>
                 <q-item-label>
-                  {{ t("page.tradeList") }}
+                  {{ t('page.tradeList') }}
                 </q-item-label>
               </q-item-section>
             </q-item>
@@ -479,7 +479,7 @@ watch(
             >
               <q-item-section side>
                 <q-item-label>
-                  {{ t("page.awards") }}
+                  {{ t('page.awards') }}
                 </q-item-label>
                 <q-badge
                   v-show="newAwards"
@@ -502,7 +502,7 @@ watch(
                 <q-item-section>
                   <div>
                     <span class="relative-position"
-                      >{{ t("page.mySpace") }}
+                      >{{ t('page.mySpace') }}
                       <div
                         v-show="newMessages && !expanded"
                         class="alert"
@@ -526,7 +526,7 @@ watch(
                 >
                   <q-item-section side>
                     <q-item-label>
-                      {{ t("page.messages") }}
+                      {{ t('page.messages') }}
                     </q-item-label>
                     <div v-show="newMessages" class="alert"></div>
                   </q-item-section>
@@ -541,7 +541,7 @@ watch(
                 >
                   <q-item-section side>
                     <q-item-label>
-                      {{ t("page.blocks") }}
+                      {{ t('page.blocks') }}
                     </q-item-label>
                   </q-item-section>
                 </q-item>
@@ -555,7 +555,7 @@ watch(
                 >
                   <q-item-section side>
                     <q-item-label>
-                      {{ t("page.history") }}
+                      {{ t('page.history') }}
                     </q-item-label>
                   </q-item-section>
                 </q-item>
@@ -571,7 +571,7 @@ watch(
             >
               <template #header>
                 <q-item-section>
-                  {{ t("page.admin") }}
+                  {{ t('page.admin') }}
                 </q-item-section>
               </template>
               <q-list bordered class="sub rounded-borders">
@@ -588,7 +588,7 @@ watch(
                 >
                   <q-item-section side>
                     <q-item-label>
-                      {{ t("page.adminUser") }}
+                      {{ t('page.adminUser') }}
                     </q-item-label>
                   </q-item-section>
                 </q-item>
@@ -605,7 +605,7 @@ watch(
                 >
                   <q-item-section side>
                     <q-item-label>
-                      {{ t("page.adminData") }}
+                      {{ t('page.adminData') }}
                     </q-item-label>
                   </q-item-section>
                 </q-item>
@@ -677,7 +677,7 @@ watch(
           </q-list>
           <div class="column q-mt-lg q-mb-xl q-ml-lg q-pl-sm text-caption">
             <div>
-              {{ t("contact.inquiries") }}
+              {{ t('contact.inquiries') }}
             </div>
             <div>
               <q-btn
@@ -728,7 +728,7 @@ watch(
                 height="48"
                 alt="Tradurs Light Logo Image"
               />
-              <span class="blind">{{ t("seo.title") }}</span>
+              <span class="blind">{{ t('seo.title') }}</span>
             </h1>
           </q-btn>
           <q-btn
@@ -838,7 +838,7 @@ watch(
                 :to="{ name: 'awards', params: { lang: route.params.lang } }"
               >
                 <div class="relative-position">
-                  {{ t("page.awards") }}
+                  {{ t('page.awards') }}
                   <q-badge
                     v-show="newAwards"
                     floating
@@ -865,7 +865,7 @@ watch(
               >
                 <template #label>
                   <div class="relative-position">
-                    {{ t("page.mySpace") }}
+                    {{ t('page.mySpace') }}
                     <div
                       v-show="newMessages && !expandedMobile"
                       class="alert"
@@ -886,7 +886,7 @@ watch(
                   >
                     <q-item-section side>
                       <q-item-label>
-                        {{ t("page.messages") }}
+                        {{ t('page.messages') }}
                       </q-item-label>
                       <div v-show="newMessages" class="alert"></div>
                     </q-item-section>
@@ -903,7 +903,7 @@ watch(
                   >
                     <q-item-section side>
                       <q-item-label>
-                        {{ t("page.blocks") }}
+                        {{ t('page.blocks') }}
                       </q-item-label>
                     </q-item-section>
                   </q-item>
@@ -919,7 +919,7 @@ watch(
                   >
                     <q-item-section side>
                       <q-item-label>
-                        {{ t("page.history") }}
+                        {{ t('page.history') }}
                       </q-item-label>
                     </q-item-section>
                   </q-item>
@@ -939,7 +939,7 @@ watch(
                 dropdown-icon="img:/images/icons/dropdown.svg"
               >
                 <template #label>
-                  {{ t("page.admin") }}
+                  {{ t('page.admin') }}
                 </template>
                 <q-list bordered class="page rounded-borders">
                   <q-item
@@ -954,7 +954,7 @@ watch(
                   >
                     <q-item-section side>
                       <q-item-label>
-                        {{ t("page.adminUser") }}
+                        {{ t('page.adminUser') }}
                       </q-item-label>
                     </q-item-section>
                   </q-item>
@@ -970,7 +970,7 @@ watch(
                   >
                     <q-item-section side>
                       <q-item-label>
-                        {{ t("page.adminData") }}
+                        {{ t('page.adminData') }}
                       </q-item-label>
                     </q-item-section>
                   </q-item>
@@ -1314,7 +1314,7 @@ watch(
                 </div>
                 <div class="column q-py-xl q-pr-xl text-caption">
                   <div>
-                    {{ t("contact.inquiries") }}
+                    {{ t('contact.inquiries') }}
                   </div>
                   <div>
                     <q-btn
@@ -1490,7 +1490,7 @@ watch(
 }
 
 .bg-season::before {
-  content: "";
+  content: '';
   position: fixed;
   z-index: -1;
   opacity: 0.3;
@@ -1499,6 +1499,7 @@ watch(
   background-image: var(--tradurs-season-image);
   background-repeat: no-repeat;
   background-position: 49.5% 40%;
+  transform: translate(0, 0);
 }
 
 @media (max-width: 1439px) {

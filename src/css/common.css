@@ -140,7 +140,6 @@
 }
 
 .body--dark .inner::after {
-  z-index: -1;
   content: '';
   position: absolute;
   top: 4px;
@@ -154,6 +153,7 @@
   background-color: transparent !important;
   filter: brightness(0) saturate(100%);
   pointer-events: none;
+  transform: translate(0, 0);
 }
 
 .normal .inner::after {
@@ -293,4 +293,8 @@
   .body--light .greater-mark i {
     font-size: 14px;
   }
+}
+
+.top-space {
+  height: 30px;
 }

@@ -14,20 +14,20 @@ import {
   onUnmounted,
   ComputedRef,
   onMounted
-} from "vue"
-import { QCard, useQuasar, date } from "quasar"
-import { useI18n } from "vue-i18n"
-import { useRoute } from "vue-router"
+} from 'vue'
+import { QCard, useQuasar, date } from 'quasar'
+import { useI18n } from 'vue-i18n'
+import { useRoute } from 'vue-router'
 
-import { useAccountStore } from "stores/account-store"
-import { type Gem, type Elixir, useItemStore } from "stores/item-store"
-import { Item, Price } from "src/types/item"
-import { checkName, clipboard } from "src/common"
-import { itemImgs } from "src/common/items"
+import { useAccountStore } from 'stores/account-store'
+import { type Gem, type Elixir, useItemStore } from 'stores/item-store'
+import { Item, Price } from 'src/types/item'
+import { checkName, clipboard } from 'src/common'
+import { itemImgs } from 'src/common/items'
 
-import D4Price from "components/D4Price.vue"
-import D4User from "components/D4User.vue"
-import D4Separator from "components/D4Separator.vue"
+import D4Price from 'components/D4Price.vue'
+import D4User from 'components/D4User.vue'
+import D4Separator from 'components/D4Separator.vue'
 
 interface IProps {
   data: Item
@@ -44,14 +44,14 @@ const props = withDefaults(defineProps<IProps>(), {
   history: false
 })
 
-const emit = defineEmits(["update", "apply", "copy", "favorite", "update-only"])
+const emit = defineEmits(['update', 'apply', 'copy', 'favorite', 'update-only'])
 
 // common variable
 const $q = useQuasar()
 const slots = useSlots()
 const as = useAccountStore()
 const store = useItemStore()
-const { t } = useI18n({ useScope: "global" })
+const { t } = useI18n({ useScope: 'global' })
 const route = useRoute()
 
 // variable
@@ -60,13 +60,13 @@ const editWrap = ref<QCard | null>(null)
 const filterClasses = store.filterClasses
 const filterRunesByType = store.filterRunesByType
 const imgSrc = computed(() =>
-  props.data.itemType === "aspect"
+  props.data.itemType === 'aspect'
     ? `/images/items/${props.data.itemType}/${props.data.itemTypeValue1}.webp`
-    : ["gem", "summoning"].includes(props.data.itemTypeValue1)
+    : ['gem', 'summoning'].includes(props.data.itemTypeValue1)
     ? `/images/items/${props.data.itemType}/${props.data.itemTypeValue1}/${props.data.itemTypeValue2}.webp`
-    : props.data.itemTypeValue1 === "elixir"
+    : props.data.itemTypeValue1 === 'elixir'
     ? `/images/items/${props.data.itemType}/${props.data.itemTypeValue1}/${
-        props.data.itemTypeValue2.split("_")[1]
+        props.data.itemTypeValue2.split('_')[1]
       }.webp`
     : `/images/items/${props.data.itemType}/${props.data.itemTypeValue1}/${props.data.imageId}.webp`
 )
@@ -81,9 +81,9 @@ const endDate = new Date(props.data.endDate)
 const expDate = new Date(props.data.expDate)
 const remainDate = ref<number>(
   date.getDateDiff(
-    ["000", "002"].includes(props.data.statusCode) ? endDate : expDate,
+    ['000', '002'].includes(props.data.statusCode) ? endDate : expDate,
     new Date(),
-    "seconds"
+    'seconds'
   )
 )
 const hour = 60 * 60
@@ -91,20 +91,20 @@ const minute = 60
 const remainHours = computed(() =>
   Math.floor(Math.max(remainDate.value / hour, 0))
     .toString()
-    .padStart(2, "0")
+    .padStart(2, '0')
 )
 const remainMinutes = computed(() =>
   Math.floor(Math.max((remainDate.value % hour) / minute, 0))
     .toString()
-    .padStart(2, "0")
+    .padStart(2, '0')
 )
 const remainSeconds = computed(() =>
   Math.floor(Math.max((remainDate.value % hour) % minute, 0))
     .toString()
-    .padStart(2, "0")
+    .padStart(2, '0')
 )
 const remainColor = computed(() =>
-  remainDate.value < hour ? `text-red-6` : ""
+  remainDate.value < hour ? `text-red-6` : ''
 )
 let remainInterval: NodeJS.Timeout
 
@@ -115,25 +115,25 @@ const executeInterval = () => {
 }
 
 const _tier = ref<string | null>(props.data.tier)
-const _quality = ref<string>(props.data.quality || "rare")
+const _quality = ref<string>(props.data.quality || 'rare')
 const _type = ref<string>(
   props.data.itemType || (store.filterTypes()[0].value as string)
 )
 const _typeValue1 = ref<string>(
   props.data.itemTypeValue1 ||
-    (_type.value === "aspect"
+    (_type.value === 'aspect'
       ? (store.aspectCategories[0].value as string)
       : (filterClasses(_type.value)[0].value as string))
 )
 const _typeValue2 = ref<string>(
   props.data.itemTypeValue2 ||
-    (_typeValue1.value === "gem"
+    (_typeValue1.value === 'gem'
       ? (store.gems[0].value as string)
-      : _typeValue1.value === "elixir"
+      : _typeValue1.value === 'elixir'
       ? (store.elixirs[0].value as string)
-      : _typeValue1.value === "summoning"
+      : _typeValue1.value === 'summoning'
       ? (store.summonings[0].value as string)
-      : "")
+      : '')
 )
 const _power = ref<number>(props.data.power)
 const _upgrade = ref<number>(props.data.upgrade)
@@ -160,7 +160,7 @@ const hasProperties = computed(
 )
 
 const _image = ref<number>(
-  props.data.itemId !== ""
+  props.data.itemId !== ''
     ? props.data.imageId
     : Math.floor(
         Math.random() * itemImgs[_type.value]?.[_typeValue1.value as string]
@@ -170,7 +170,7 @@ const _price = reactive<Price>(
   new Price(
     props.data.price && props.data.price.currency
       ? props.data.price.currency
-      : "offer",
+      : 'offer',
     props.data.price && props.data.price.currencyValue
       ? props.data.price.currencyValue
       : null,
@@ -181,27 +181,27 @@ const _price = reactive<Price>(
 )
 
 const tierable = computed(
-  () => !["aspect", "inventory", "consumables"].includes(_type.value)
+  () => !['aspect', 'inventory', 'consumables'].includes(_type.value)
 )
 const qualifiable = computed(
-  () => !["inventory", "consumables"].includes(_type.value)
+  () => !['inventory', 'consumables'].includes(_type.value)
 )
-const noLevel = computed(() => ["summoning"].includes(_typeValue1.value))
+const noLevel = computed(() => ['summoning'].includes(_typeValue1.value))
 
 const attributes = computed(() =>
   [
-    { label: t("properties"), value: "properties", hide: !hasProperties.value },
-    { label: t("affixes"), value: "affixes" },
-    { label: t("restrictions"), value: "restrictions" }
+    { label: t('properties'), value: 'properties', hide: !hasProperties.value },
+    { label: t('affixes'), value: 'affixes' },
+    { label: t('restrictions'), value: 'restrictions' }
   ].filter((a) => !a.hide)
 )
 
 const copy = () => {
   clipboard(
-    `${document.location.origin}/${route.params.lang || "ko"}/item/${
+    `${document.location.origin}/${route.params.lang || 'ko'}/item/${
       props.data.itemId
     }`,
-    t("item.url")
+    t('item.url')
   )
 }
 
@@ -220,14 +220,14 @@ const updateQuality = (val: string) => {
 
 const updateType = (val: string) => {
   if (!tierable.value) {
-    _tier.value = ""
-    _name.value = ""
+    _tier.value = ''
+    _name.value = ''
   }
 
-  if (!qualifiable.value) _quality.value = "normal"
+  if (!qualifiable.value) _quality.value = 'normal'
 
   _typeValue1.value =
-    val === "aspect"
+    val === 'aspect'
       ? (store.aspectCategories[0].value as string)
       : (filterClasses(val)[0].value as string)
 
@@ -240,19 +240,19 @@ const updateTypeValue1 = (val: string) => {
       Math.random() * itemImgs[_type.value]?.[_typeValue1.value as string]
     ) || 0
   attribute.value =
-    findClass(val)?.properties.length !== 0 ? "properties" : "affixes"
+    findClass(val)?.properties.length !== 0 ? 'properties' : 'affixes'
   _typeValue2.value =
-    val === "gem"
+    val === 'gem'
       ? (store.gems[0].value as string)
-      : val === "elixir"
+      : val === 'elixir'
       ? (store.elixirs[0].value as string)
-      : val === "summoning"
+      : val === 'summoning'
       ? (store.summonings[0].value as string)
-      : ""
+      : ''
   _level.value =
-    val === "gem"
+    val === 'gem'
       ? store.gems[0].level
-      : val === "elixir"
+      : val === 'elixir'
       ? store.elixirs[0].level
       : _level.value
   updateTypeValue2(_typeValue2.value)
@@ -260,16 +260,16 @@ const updateTypeValue1 = (val: string) => {
 
 const updateTypeValue2 = (val: string) => {
   _level.value =
-    _typeValue1.value === "gem"
+    _typeValue1.value === 'gem'
       ? store.gems.find((g: Gem) => g.value === val)?.level || null
-      : _typeValue1.value === "elixir"
+      : _typeValue1.value === 'elixir'
       ? store.elixirs.find((e: Elixir) => e.value === val)?.level || null
       : null
   update()
 }
 
 const update = () => {
-  emit("update", {
+  emit('update', {
     name: _name,
     quantity: _quantity.value,
     tier: _tier.value,
@@ -299,17 +299,17 @@ const affixRef = ref<HTMLDivElement | null>(null)
 const restrictionRef = ref<HTMLDivElement | null>(null)
 const scrollEnd = (pType: string, valueId: string) => {
   nextTick(() => {
-    if (pType === "properties" && propertyRef.value) {
+    if (pType === 'properties' && propertyRef.value) {
       const findValue = propertyRef.value.querySelector(
         `div[data-id="${valueId}"] input`
       ) as HTMLInputElement
       findValue?.focus()
-    } else if (pType === "affixes" && affixRef.value) {
+    } else if (pType === 'affixes' && affixRef.value) {
       const findValue = affixRef.value.querySelector(
         `div[data-id="${valueId}"] input`
       ) as HTMLInputElement
       findValue?.focus()
-    } else if (pType === "restrictions" && restrictionRef.value) {
+    } else if (pType === 'restrictions' && restrictionRef.value) {
       const findValue = restrictionRef.value.querySelector(
         `div[data-id="${valueId}"] input`
       ) as HTMLInputElement
@@ -318,14 +318,14 @@ const scrollEnd = (pType: string, valueId: string) => {
   })
 }
 const apply = () => {
-  emit("apply")
+  emit('apply')
 }
 
 // item images
 const showItemImages = ref<boolean>(false)
 
 // attribute tabs
-const attribute = ref<string>(hasProperties.value ? "properties" : "affixes")
+const attribute = ref<string>(hasProperties.value ? 'properties' : 'affixes')
 
 // attribute mobile
 const attrMobile = reactive<{ is: ComputedRef<boolean>; show: boolean }>({
@@ -334,7 +334,7 @@ const attrMobile = reactive<{ is: ComputedRef<boolean>; show: boolean }>({
 })
 
 onMounted(() => {
-  if (["000", "002", "003"].includes(props.data.statusCode)) executeInterval()
+  if (['000', '002', '003'].includes(props.data.statusCode)) executeInterval()
 })
 
 onUnmounted(() => {
@@ -696,7 +696,7 @@ defineExpose({ scrollEnd })
                     >
                       <div class="name">
                         {{
-                          t("item.selectImage", {
+                          t('item.selectImage', {
                             tv:
                               findClass(data.itemTypeValue1)?.label ||
                               findType(data.itemType)?.label
@@ -1239,14 +1239,14 @@ defineExpose({ scrollEnd })
                     v-else-if="data.statusCode === '001'"
                     class="date complete"
                   >
-                    {{ date.formatDate(data.updDate, "YY.MM.DD") }}
+                    {{ date.formatDate(data.updDate, 'YY.MM.DD') }}
                   </div>
                   <div>
                     {{ findStatus(data.statusCode)?.label }}
                   </div>
                 </template>
                 <div v-else-if="data.forDisplay">
-                  {{ t("item.forDisplay") }}
+                  {{ t('item.forDisplay') }}
                 </div>
               </div>
               <div v-if="slots['top-right']">
@@ -1273,10 +1273,10 @@ defineExpose({ scrollEnd })
               class="hardcore-ladder row justify-end items-center"
             >
               <div class="text-secondary">
-                {{ data.hardcore ? "&#10074;" : "" }}
+                {{ data.hardcore ? '&#10074;' : '' }}
               </div>
               <div class="text-primary">
-                {{ data.ladder ? "&#10074;" : "" }}
+                {{ data.ladder ? '&#10074;' : '' }}
               </div>
             </div>
             <div v-show="loading">
@@ -1442,8 +1442,8 @@ defineExpose({ scrollEnd })
                         </q-item-section>
                         <q-item-section>{{
                           data.favorite
-                            ? t("btn.unfavorite")
-                            : t("btn.favorite")
+                            ? t('btn.unfavorite')
+                            : t('btn.favorite')
                         }}</q-item-section>
                       </q-item>
                       <q-item
@@ -1464,7 +1464,7 @@ defineExpose({ scrollEnd })
                             alt="Tradurs Copy Icon"
                           />
                         </q-item-section>
-                        <q-item-section>{{ t("btn.copy") }}</q-item-section>
+                        <q-item-section>{{ t('btn.copy') }}</q-item-section>
                       </q-item>
                       <q-item
                         :class="[
@@ -1483,7 +1483,7 @@ defineExpose({ scrollEnd })
                             alt="Tradurs Share Icon"
                           />
                         </q-item-section>
-                        <q-item-section>{{ t("btn.share") }}</q-item-section>
+                        <q-item-section>{{ t('btn.share') }}</q-item-section>
                       </q-item>
                     </q-menu>
                   </q-btn>
@@ -1510,9 +1510,9 @@ defineExpose({ scrollEnd })
             </div>
             <div v-show="data.power > 0">
               {{
-                t("item.power", {
+                t('item.power', {
                   p: data.power,
-                  u: data.upgrade ? ` + ${data.upgrade * 5}` : ""
+                  u: data.upgrade ? ` + ${data.upgrade * 5}` : ''
                 })
               }}
             </div>
@@ -1715,7 +1715,7 @@ defineExpose({ scrollEnd })
             >
               <div class="text-right q-pt-sm">
                 <template v-if="!loading">
-                  {{ t("item.level") }}: {{ data.level }}
+                  {{ t('item.level') }}: {{ data.level }}
                 </template>
                 <q-skeleton
                   v-else
@@ -1865,7 +1865,7 @@ defineExpose({ scrollEnd })
 }
 
 .no-expanded::after {
-  content: "";
+  content: '';
   position: absolute;
   top: 82%;
   bottom: -16%;
