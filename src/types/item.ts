@@ -102,7 +102,7 @@ export class Item implements IItem {
   public name = ''
   public quantity = 1
   public tier = ''
-  public quality = 'rare'
+  public quality = 'legendary'
   public itemType = ''
   public itemTypeValue1 = ''
   public itemTypeValue2 = ''

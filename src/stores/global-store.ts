@@ -10,6 +10,7 @@ export const useGlobalStore = defineStore('global', {
     itemName: null as string | null,
     offsetTop: 0 as number,
     scrollTop: 0 as number,
+    timeLimit: 0 as number,
     topAccessTimeStamp: Date.now(),
     bottomAccessTimeStamp: Date.now(),
     rightAccessTimeStamp: Date.now(),

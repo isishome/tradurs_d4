@@ -336,7 +336,7 @@ export default {
   },
   contact: {
     inquiries: '광고 및 제휴 문의',
-    title: '문의 하기',
+    title: '디스코드로 문의 하기',
     contents: '문의 내용',
     answer: '답변 하기',
     answerContents: '답변 내용',
@@ -616,6 +616,16 @@ export default {
         { type: 'text', contents: '5. 일괄 처리 진행 여부에 대한 확인 창이 표시되고 \'수락\'을 누르면 일괄 처리가 시작됩니다.' },
         { type: 'image', contents: '06_failed' },
         { type: 'text', contents: '6. 일괄 처리가 완료되면 처리가 실패한 아이템과 실패 원인이 표시됩니다.\n(모두 정상적으로 처리된 경우 실패 항목은 표시되지 않습니다.) ' }
+      ]
+    },
+    {
+      id: 'greater',
+      question: '상급 속성은 어떻게 활성화하나요?',
+      answer: [
+        { type: 'image', contents: '01_greater' },
+        { type: 'text', contents: '아이템 등록 또는 수정 시 속성 > 옵션 탭에 추가된 속성 중 상급 상태로 변경을 원하는 속성의 좌측 아이콘을 클릭하면,' },
+        { type: 'image', contents: '02_greater' },
+        { type: 'text', contents: '상급 속성으로 활성화됩니다.' },
       ]
     },
     {

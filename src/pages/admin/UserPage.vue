@@ -5,6 +5,7 @@ import { useQuasar } from "quasar"
 import { useI18n } from "vue-i18n"
 import { type IUser, useAdminStore } from "stores/admin-store"
 import { clipboard } from "src/common"
+import { after } from "cypress/types/lodash"
 
 const route = useRoute()
 const router = useRouter()
@@ -70,6 +71,40 @@ const sendVerifyEmail = (identity: string) => {
     })
 }
 
+const deactivate = (identity: string) => {
+  disable.value = true
+  as.deactivate(identity)
+    .then(() => {
+      $q.notify({
+        message: "계정 비활성화가 완료되었습니다.",
+        color: "positive",
+        classes: ""
+      })
+    })
+    .catch(() => {})
+    .then(async () => {
+      disable.value = false
+      await getUsers()
+    })
+}
+
+const activate = (identity: string) => {
+  disable.value = true
+  as.activate(identity)
+    .then(() => {
+      $q.notify({
+        message: "계정 활성화가 완료되었습니다.",
+        color: "positive",
+        classes: ""
+      })
+    })
+    .catch(() => {})
+    .then(async () => {
+      disable.value = false
+      await getUsers()
+    })
+}
+
 watch(
   () => route.query.page,
   async (val, old) => {
@@ -89,7 +124,27 @@ onMounted(async () => {
     <div class="row justify-between items-center q-mb-sm">
       <div></div>
       <div class="row justify-end items-center q-gutter-x-sm">
-        <q-input dense outlined v-model="searchInfo" />
+        <q-input dense outlined v-model="searchInfo" @keyup.enter="getUsers(1)">
+          <template #append>
+            <q-btn
+              :class="{ invisible: !!!searchInfo }"
+              flat
+              dense
+              size="sm"
+              :ripple="false"
+              class="no-hover icon"
+              padding="0"
+              icon="img:/images/icons/close.svg"
+              :disable="!!!searchInfo"
+              @click="
+                () => {
+                  searchInfo = ''
+                  getUsers(1)
+                }
+              "
+            />
+          </template>
+        </q-input>
         <q-btn
           unelevated
           dense
@@ -111,8 +166,7 @@ onMounted(async () => {
               dense
             />
           </th>
-          <th>이메일</th>
-          <th>배틀 태그</th>
+          <th>이메일 / 배틀 태그</th>
           <th>상태</th>
           <th>기능</th>
         </tr>
@@ -120,21 +174,21 @@ onMounted(async () => {
       <tbody>
         <tr v-for="user in users" :key="user.identity">
           <td><q-checkbox v-model="user.selected" dense /></td>
-          <td class="ellipsis cursor-pointer" style="max-width: 50px">
-            <span
-              class="cursor-pointer underline"
-              @click="clipboard(user.email, '사용자 이메일')"
-            >
-              {{ user.email }}
-            </span>
-          </td>
-          <td class="ellipsis cursor-pointer" style="max-width: 50px">
-            <span
-              class="cursor-pointer underline"
-              @click="clipboard(user.battleTag, '사용자 배틀 태그')"
-            >
-              {{ user.battleTag }}
-            </span>
+          <td style="max-width: 50px">
+            <div class="column items-start q-gutter-y-md">
+              <div
+                class="cursor-pointer underline"
+                @click="clipboard(user.email, '사용자 이메일')"
+              >
+                {{ user.email }}
+              </div>
+              <div
+                class="cursor-pointer underline"
+                @click="clipboard(user.battleTag, '사용자 배틀 태그')"
+              >
+                {{ user.battleTag }}
+              </div>
+            </div>
           </td>
           <td :class="`text-${colors(user.status)}`">
             {{ status(user.status) }}
@@ -152,12 +206,33 @@ onMounted(async () => {
             >
               <q-list dense>
                 <q-item
+                  v-if="user.status === '000'"
                   clickable
                   v-close-popup
                   @click="sendVerifyEmail(user.identity)"
                 >
                   <q-item-section>
                     <q-item-label>인증 메일 재 전송</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item
+                  v-if="user.status === '001'"
+                  clickable
+                  v-close-popup
+                  @click="deactivate(user.identity)"
+                >
+                  <q-item-section>
+                    <q-item-label>계정 비활성화</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item
+                  v-if="user.status === '002'"
+                  clickable
+                  v-close-popup
+                  @click="activate(user.identity)"
+                >
+                  <q-item-section>
+                    <q-item-label>계정 활성화</q-item-label>
                   </q-item-section>
                 </q-item>
               </q-list>

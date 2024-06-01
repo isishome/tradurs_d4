@@ -1695,10 +1695,10 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
     rgba(0, 0, 0, 0.6)
   );
   color: red;
-  background-size: contain;
+  background-size: 90px;
   background-repeat: no-repeat;
-  width: 80px;
-  height: 46px;
+  width: 90px;
+  height: 52px;
   position: absolute;
   top: 0;
   right: 0;

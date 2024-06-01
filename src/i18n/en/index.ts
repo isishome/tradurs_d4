@@ -211,8 +211,8 @@ export default {
     exists: 'Already exists {attr}',
     continuous: 'continuous addition',
     complete: 'Your request to add an affix is complete',
-    open: 'Open Attribute',
-    close: 'Close Attribute'
+    open: 'Open Attributes',
+    close: 'Close Attributes'
   },
   item: {
     hardcore: 'Hardcore',
@@ -336,7 +336,7 @@ export default {
   },
   contact: {
     inquiries: 'Advertising / Partnership',
-    title: 'Contact US',
+    title: 'Contact Discord',
     question: 'Do you need any other help?',
     contents: 'Content of inquiry',
     answer: 'Answer Inquiry',
@@ -616,6 +616,16 @@ export default {
         { type: 'text', contents: '5. A confirmation window will appear asking if you want to proceed with batch processing, and when you click \'Accept\', batch processing will begin.' },
         { type: 'image', contents: '06_failed' },
         { type: 'text', contents: '6. When batch processing is completed, the items that failed to process and the reason for failure are displayed.\n(If all were processed normally, failed items will not be displayed.) ' }
+      ]
+    },
+    {
+      id: 'greater',
+      question: 'How do I activate greater affixes?',
+      answer: [
+        { type: 'image', contents: '01_greater' },
+        { type: 'text', contents: 'When registering or modifying an item, click the icon on the left of the affix you want to change to greater status among the affixes added to the Attributes > Affixes tab,' },
+        { type: 'image', contents: '02_greater' },
+        { type: 'text', contents: 'to activated it as a greater affix.' },
       ]
     },
     {

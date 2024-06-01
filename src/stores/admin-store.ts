@@ -11,7 +11,7 @@ export type IUser = {
 }
 
 export const useAdminStore = defineStore('admin', () => {
-  const rows = 20
+  const rows = 10
   const over = ref<boolean>(false)
   const more = ref<boolean>(false)
 
@@ -32,7 +32,31 @@ export const useAdminStore = defineStore('admin', () => {
 
   const resendVerify = (identity: string) => {
     return new Promise<void>((resolve, reject) => {
-      api.get('/d4/admin/user/verify/resend', { params: { identity } })
+      api.post('/d4/admin/user/verify/resend', { identity })
+        .then(() => {
+          resolve()
+        })
+        .catch(() => {
+          reject()
+        })
+    })
+  }
+
+  const deactivate = (identity: string, hour = 24 as number, description = '관리자' as string) => {
+    return new Promise<void>((resolve, reject) => {
+      api.post('/d4/admin/user/deactivate', { identity, hour, description })
+        .then(() => {
+          resolve()
+        })
+        .catch(() => {
+          reject()
+        })
+    })
+  }
+
+  const activate = (identity: string, description = '관리자' as string) => {
+    return new Promise<void>((resolve, reject) => {
+      api.post('/d4/admin/user/activate', { identity, description })
         .then(() => {
           resolve()
         })
@@ -60,6 +84,8 @@ export const useAdminStore = defineStore('admin', () => {
     more,
     getUsers,
     resendVerify,
+    deactivate,
+    activate,
     resetCore
   }
 })
