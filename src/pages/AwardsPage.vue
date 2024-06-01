@@ -55,6 +55,7 @@ is.getAwards()
 
 <template>
   <div class="column items-center">
+    <div class="top-space full-width"></div>
     <!-- <D4Note label="test" class="full-width">
       <p class="text-caption no-padding">{{ t('awards.description') }}</p>
     </D4Note> -->
