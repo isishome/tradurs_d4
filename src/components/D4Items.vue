@@ -1743,6 +1743,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
   }
 
   .reward::before {
+    background-size: 60px;
     transform: translate(-2px, -4px);
     width: 60px;
     height: 34.5px;

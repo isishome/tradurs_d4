@@ -1,12 +1,11 @@
 <script setup lang="ts">
 interface IProps {
-  type?: 'left' | 'full'
+  type?: "left" | "full"
 }
 
 withDefaults(defineProps<IProps>(), {
-  type: 'full'
+  type: "full"
 })
-
 </script>
 <template>
   <div class="separator relative-position" :class="type"></div>
@@ -15,35 +14,37 @@ withDefaults(defineProps<IProps>(), {
 .separator {
   width: 100%;
   height: 10px;
-  background-image: url('/images/frames/separator_center.webp');
+  background-image: url("/images/frames/separator_center.webp");
   background-repeat: no-repeat;
   background-size: auto 100%;
   background-position-x: center;
 }
 
 .separator::before {
-  background-image: url('/images/frames/separator_left.webp');
+  background-image: url("/images/frames/separator_left.webp");
   background-repeat: no-repeat;
   background-size: 100% 100%;
-  content: '';
+  content: "";
   top: 0;
   left: 10px;
   right: calc(50% + 14px);
   bottom: 0;
   position: absolute;
+  z-index: 1;
 }
 
 .separator::after {
-  background-image: url('/images/frames/separator_right.webp');
+  background-image: url("/images/frames/separator_right.webp");
   background-repeat: no-repeat;
   background-size: 100% 100%;
   overflow: hidden;
-  content: '';
+  content: "";
   top: 0;
   bottom: 0;
   left: calc(50% + 14px);
   right: 10px;
   position: absolute;
+  z-index: 2;
 }
 
 .separator.left {
@@ -51,7 +52,7 @@ withDefaults(defineProps<IProps>(), {
 }
 
 .separator.left::after {
-  background-image: url('/images/frames/separator_center.webp');
+  background-image: url("/images/frames/separator_center.webp");
   background-position: 9px;
   right: 0;
   left: calc(50% - 23px);
@@ -79,6 +80,6 @@ withDefaults(defineProps<IProps>(), {
 }
 
 .body--light .separator {
-  opacity: .4;
+  opacity: 0.4;
 }
 </style>

@@ -140,6 +140,7 @@
 }
 
 .body--dark .inner::after {
+  z-index: -1;
   content: '';
   position: absolute;
   top: 4px;

@@ -1,26 +1,26 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { RouteLocationRaw, useRouter } from 'vue-router'
-import { useQuasar } from 'quasar'
-import { useI18n } from 'vue-i18n'
+import { computed } from "vue"
+import { RouteLocationRaw, useRouter } from "vue-router"
+import { useQuasar } from "quasar"
+import { useI18n } from "vue-i18n"
 
 interface IProps {
-  type?: 'button' | 'submit' | 'reset',
-  label?: string,
-  color?: string,
-  textColor?: string,
-  round?: boolean,
-  shadow?: boolean,
-  shadowDepth?: number | string,
-  to?: RouteLocationRaw,
-  loading?: boolean,
-  disable?: boolean,
-  progress?: boolean,
+  type?: "button" | "submit" | "reset"
+  label?: string
+  color?: string
+  textColor?: string
+  round?: boolean
+  shadow?: boolean
+  shadowDepth?: number | string
+  to?: RouteLocationRaw
+  loading?: boolean
+  disable?: boolean
+  progress?: boolean
   noCaps?: boolean
 }
 
 const props = withDefaults(defineProps<IProps>(), {
-  type: 'button',
+  type: "button",
   shadowDepth: 5,
   loading: false,
   disable: false,
@@ -28,43 +28,70 @@ const props = withDefaults(defineProps<IProps>(), {
   noCaps: true
 })
 
-const emit = defineEmits(['click'])
+const emit = defineEmits(["click"])
 
 const router = useRouter()
 const $q = useQuasar()
-const { locale } = useI18n({ useScope: 'global' })
-const fontWidthGt = computed(() => locale.value === 'ko' ? 14 : 8)
-const fontWidthLt = computed(() => locale.value === 'ko' ? 12 : 7)
-const padding = computed(() => $q.screen.width > 600 ? 40 : 20)
-const textWidth = computed(() => $q.screen.width > 600 ? fontWidthGt.value : fontWidthLt.value)
-const textHeight = computed(() => $q.screen.width > 600 ? 37 : 30)
-const bg = computed<string>(() => $q.dark.isActive ? `background: radial-gradient(ellipse at top, ${props.color ? props.color : 'var(--q-primary)'}, 30%, var(--q-dark-page));` : `background-color: ${props.color ? props.color : 'var(--q-primary)'};`)
-const tc = computed<string>(() => `color:${props.textColor ? props.textColor : 'var(--q-light-page)'};`)
+const { locale } = useI18n({ useScope: "global" })
+const fontWidthGt = computed(() => (locale.value === "ko" ? 14 : 8))
+const fontWidthLt = computed(() => (locale.value === "ko" ? 12 : 7))
+const padding = computed(() => ($q.screen.width > 600 ? 40 : 20))
+const textWidth = computed(() =>
+  $q.screen.width > 600 ? fontWidthGt.value : fontWidthLt.value
+)
+const textHeight = computed(() => ($q.screen.width > 600 ? 37 : 30))
+const bg = computed<string>(() =>
+  $q.dark.isActive
+    ? `background: radial-gradient(ellipse at top, ${
+        props.color ? props.color : "var(--q-primary)"
+      }, 30%, var(--q-dark-page));`
+    : `background-color: ${props.color ? props.color : "var(--q-primary)"};`
+)
+const tc = computed<string>(
+  () => `color:${props.textColor ? props.textColor : "var(--q-light-page)"};`
+)
 
 const click = () => {
-  if (props.loading || props.disable || props.progress)
-    return
-  else if (props.to)
-    router.push(props.to)
-  else
-    emit('click')
+  if (props.loading || props.disable || props.progress) return
+  else if (props.to) router.push(props.to)
+  else emit("click")
 }
 </script>
 
 <template>
   <div :class="{ disable }" class="no-pointer-events inline-block">
-    <q-skeleton v-show="loading" :type="$q.dark.isActive ? 'rect' : 'QChip'"
-      :width="`${label ? label.length * textWidth + padding : 0}px`" :height="`${textHeight}px`"
-      class="btn all-pointer-events" :class="{ round }" />
-    <div v-show="!loading" class="btn-wrap" :class="{ 'frame': !round }">
-      <button :type="type" aria-label="Tradurs Button" class="btn row items-center no-wrap all-pointer-events"
-        :class="[{ round }, shadow ? `shadow-depth-${shadowDepth}` : '', props.progress ? 'progress' : 'cursor-pointer']"
-        :style="`${bg}${tc}`" @click="click">
+    <q-skeleton
+      v-show="loading"
+      :type="$q.dark.isActive ? 'rect' : 'QChip'"
+      :width="`${label ? label.length * textWidth + padding : 0}px`"
+      :height="`${textHeight}px`"
+      class="btn all-pointer-events"
+      :class="{ round }"
+    />
+    <div v-show="!loading" class="btn-wrap" :class="{ frame: !round }">
+      <button
+        :type="type"
+        aria-label="Tradurs Button"
+        class="btn row items-center no-wrap all-pointer-events"
+        :class="[
+          { round },
+          shadow ? `shadow-depth-${shadowDepth}` : '',
+          props.progress ? 'progress' : 'cursor-pointer'
+        ]"
+        :style="`${bg}${tc}`"
+        @click="click"
+      >
         <div class="label relative-position">
-          <div v-show="progress" class="fit absolute-center" :style="`z-index: 1;`">
+          <div
+            v-show="progress"
+            class="fit absolute-center"
+            :style="`z-index: 1;`"
+          >
             <q-spinner />
           </div>
-          <div :class="{ 'text-transparent': progress, 'text-uppercase': !noCaps }">
+          <div
+            :class="{ 'text-transparent': progress, 'text-uppercase': !noCaps }"
+          >
             {{ label }}
           </div>
         </div>
@@ -79,7 +106,7 @@ const click = () => {
   user-select: none;
   pointer-events: none;
   position: relative;
-  filter: contrast(40%) opacity(.7);
+  filter: contrast(40%) opacity(0.7);
 }
 
 .body--dark .disable {
@@ -91,7 +118,7 @@ const click = () => {
 }
 
 .disable::after {
-  content: '';
+  content: "";
   position: absolute;
   z-index: 1;
   top: 0;
@@ -112,7 +139,7 @@ const click = () => {
   position: relative;
   padding: 8px 20px;
   border: none;
-  transition: filter .3s ease;
+  transition: filter 0.3s ease;
   font-weight: 500;
   outline: 0;
   width: 100%;
@@ -130,7 +157,7 @@ const click = () => {
   padding: 10px !important;
 }
 
-@media (max-width:600px) {
+@media (max-width: 600px) {
   .btn {
     padding: 4px 10px;
   }
@@ -174,18 +201,18 @@ const click = () => {
 }
 
 .body--dark .frame::after {
-  content: '';
+  content: "";
   max-height: 100%;
   box-sizing: border-box;
   position: absolute;
-  z-index: 0;
+  z-index: 1;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
   border-style: solid;
   border-image-width: 9px;
-  border-image: url('/images/frames/outer.webp') 30;
+  border-image: url("/images/frames/outer.webp") 30;
   filter: brightness(160%);
   pointer-events: none;
 }
@@ -196,15 +223,15 @@ const click = () => {
 
 .body--dark .frame::before {
   box-shadow: none;
-  content: '';
+  content: "";
   position: absolute;
-  z-index: 1;
+  z-index: 2;
   top: 4px;
   bottom: 4px;
   left: 4px;
   right: 4px;
   border-style: solid;
-  border-image: url('/images/frames/inner.webp') 36;
+  border-image: url("/images/frames/inner.webp") 36;
   border-image-width: 30px;
   pointer-events: none;
   filter: invert(50%);
@@ -242,19 +269,18 @@ const click = () => {
   box-shadow: rgb(38, 57, 77) 0 16px 30px 0, rgb(38, 57, 77) 0 16px 30px 0 !important;
 }
 
-
 .body--dark .round::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
   border-radius: inherit;
-  box-shadow: inset 0 0 0 1px var(--q-dark), inset 0 0 0 2px var(--q-dark-normal);
+  box-shadow: inset 0 0 0 1px var(--q-dark),
+    inset 0 0 0 2px var(--q-dark-normal);
   border: double 2px var(--q-dark-normal);
 }
-
 
 .label {
   width: 100%;
