@@ -287,12 +287,11 @@ const getList = async (scrollTop?: boolean) => {
   rewardItem.value = undefined
 
   if (is.showRewardItem) {
-    // const awardsPick = is.awardsPick.filter(
-    //   (ap: AwardsPick) =>
-    //     ap.hardcore === is.storage.data.hardcore &&
-    //     ap.ladder === is.storage.data.ladder
-    // )
-    const awardsPick = [{ itemId: 263 }]
+    const awardsPick = is.awardsPick.filter(
+      (ap: AwardsPick) =>
+        ap.hardcore === is.storage.data.hardcore &&
+        ap.ladder === is.storage.data.ladder
+    )
     if (awardsPick.length > 0) {
       const pickItemId =
         awardsPick[
