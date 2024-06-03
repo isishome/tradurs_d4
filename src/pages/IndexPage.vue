@@ -302,17 +302,15 @@ const getList = async (scrollTop?: boolean) => {
         ap.ladder === is.storage.data.ladder
     )
     if (awardsPick.length > 0) {
-      const pickItemId =
-        awardsPick[
-          Math.floor(Math.random() * awardsPick.length)
-        ].itemId.toString()
-      is.getItems(1, pickItemId).then((pick: Array<Item>) => {
-        rewardItem.value = pick.map((p: Item) => ({
-          ...p,
-          reward: true,
-          expanded: isExpanded.value
-        }))?.[0]
-      })
+      is.getItems(1, awardsPick[0].itemId.toString()).then(
+        (pick: Array<Item>) => {
+          rewardItem.value = pick.map((p: Item) => ({
+            ...p,
+            reward: true,
+            expanded: isExpanded.value
+          }))?.[0]
+        }
+      )
     }
   }
 }

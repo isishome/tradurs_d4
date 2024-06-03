@@ -36,7 +36,10 @@ const itemStatus = computed(() => is.itemStatus)
 
 Object.assign(filter, is.filter)
 
-const isMine = computed(() => !!filter.mine || !!filter.offered || filter.onlyCurrency || filter.favorite)
+const isMine = computed(
+  () =>
+    !!filter.mine || !!filter.offered || filter.onlyCurrency || filter.favorite
+)
 const expandMine = ref<boolean>(isMine.value)
 
 // about property
@@ -60,7 +63,7 @@ const selectedProperty = (val: number): void => {
 }
 
 const removeProperty = (val: number): void => {
-  const findIndex = filter.properties.findIndex(p => p === val)
+  const findIndex = filter.properties.findIndex((p) => p === val)
   if (findIndex !== -1) {
     filter.properties.splice(findIndex, 1)
     update()
@@ -88,7 +91,7 @@ const selectedAffix = (val: number): void => {
 }
 
 const removeAffix = (val: number): void => {
-  const findIndex = filter.affixes.findIndex(a => a === val)
+  const findIndex = filter.affixes.findIndex((a) => a === val)
   if (findIndex !== -1) {
     filter.affixes.splice(findIndex, 1)
     update()
@@ -116,7 +119,7 @@ const selectedRestriction = (val: number): void => {
 }
 
 const removeRestriction = (val: number): void => {
-  const findIndex = filter.restrictions.findIndex(r => r === val)
+  const findIndex = filter.restrictions.findIndex((r) => r === val)
   if (findIndex !== -1) {
     filter.restrictions.splice(findIndex, 1)
     update()
@@ -124,8 +127,7 @@ const removeRestriction = (val: number): void => {
 }
 
 const mine = () => {
-  if (!filter.mine)
-    filter.offered = false
+  if (!filter.mine) filter.offered = false
 
   updateDebounce()
 }
@@ -139,11 +141,9 @@ const clearFilter = () => {
 }
 
 const update = (quality?: Array<string>) => {
-
   if (quality) {
     Object.keys(filter.itemTypeValues1).forEach((q: string) => {
-      if (!quality.includes(q))
-        delete filter.itemTypeValues1[q]
+      if (!quality.includes(q)) delete filter.itemTypeValues1[q]
     })
   }
 
@@ -157,8 +157,8 @@ const updateDebounce = debounce((quality?: Array<string>) => {
 
 const updateBasic = () => {
   is.setStorage()
-    .then(() => { })
-    .catch(() => { })
+    .then(() => {})
+    .catch(() => {})
     .then(() => {
       filter.request++
       Object.assign(is.filter, filter)
@@ -178,7 +178,15 @@ const updatePreset = (id: number) => {
   }
 }
 
-const addPreset = ({ name, done, error }: { name: string, done: Function, error: Function }) => {
+const addPreset = ({
+  name,
+  done,
+  error
+}: {
+  name: string
+  done: Function
+  error: Function
+}) => {
   is.addPreset(name)
     .then((id: number) => {
       preset.value = id
@@ -191,11 +199,18 @@ const addPreset = ({ name, done, error }: { name: string, done: Function, error:
     })
 }
 
-const removePreset = ({ id, done, error }: { id: number, done: Function, error: Function }) => {
+const removePreset = ({
+  id,
+  done,
+  error
+}: {
+  id: number
+  done: Function
+  error: Function
+}) => {
   is.removePreset(id)
     .then(() => {
-      if (id === preset.value)
-        preset.value = null
+      if (id === preset.value) preset.value = null
     })
     .catch(() => {
       error()
@@ -215,15 +230,20 @@ defineExpose({
 </script>
 
 <template>
-  <q-list dense class="filter" :class="{ 'disable': disable || filterLoading }">
+  <q-list dense class="filter" :class="{ disable: disable || filterLoading }">
     <q-item-label header>
       <div class="row items-center q-gutter-sm">
         <div>
           {{ t('filter.basic') }}
         </div>
-        <q-icon v-if="as.signed" class="icon" name="img:/images/icons/help.svg" size="19px">
+        <q-icon
+          v-if="as.signed"
+          class="icon"
+          name="img:/images/icons/help.svg"
+          size="19px"
+        >
           <D4Tooltip>
-            <div style="max-width:200px" class="text-caption break-keep">
+            <div style="max-width: 200px" class="text-caption break-keep">
               {{ t('filter.basicDescription') }}
             </div>
           </D4Tooltip>
@@ -233,63 +253,128 @@ defineExpose({
     </q-item-label>
     <q-item :disable="filterLoading">
       <q-item-section>
-        <q-checkbox dense :disable="filterLoading" size="xs" v-model="is.storage.data.hardcore"
-          :label="t('item.hardcore')" @update:model-value="updateBasicDebounce()" />
+        <q-checkbox
+          dense
+          :disable="filterLoading"
+          size="xs"
+          v-model="is.storage.data.hardcore"
+          :label="t('item.hardcore')"
+          @update:model-value="updateBasicDebounce()"
+        />
       </q-item-section>
     </q-item>
     <q-item :disable="filterLoading">
       <q-item-section>
-        <q-checkbox dense :disable="filterLoading" size="xs" v-model="is.storage.data.ladder" :label="t('item.ladder')"
-          @update:model-value="updateBasicDebounce()" />
+        <q-checkbox
+          dense
+          :disable="filterLoading"
+          size="xs"
+          v-model="is.storage.data.ladder"
+          :label="t('item.ladder')"
+          @update:model-value="updateBasicDebounce()"
+        />
       </q-item-section>
     </q-item>
     <q-item :disable="filterLoading">
       <q-item-section>
-        <q-checkbox dense :disable="filterLoading" size="xs" v-model="is.storage.data.expanded"
-          :label="t('item.expanded')" @update:model-value="updateBasic()" />
+        <q-checkbox
+          dense
+          :disable="filterLoading"
+          size="xs"
+          v-model="is.storage.data.expanded"
+          :label="t('item.expanded')"
+          @update:model-value="updateBasic()"
+        />
       </q-item-section>
     </q-item>
     <q-separator inset />
     <template v-if="as.signed">
-      <D4Preset v-model="preset" :options="presets" :disable="filterLoading" @update:model-value="updatePreset"
-        @add="addPreset" @remove="removePreset" />
+      <D4Preset
+        v-model="preset"
+        :options="presets"
+        :disable="filterLoading"
+        @update:model-value="updatePreset"
+        @add="addPreset"
+        @remove="removePreset"
+      />
       <q-separator inset />
     </template>
     <template v-if="as.signed">
-      <q-expansion-item dense dense-toggle class="no-hover" v-model="expandMine"
-        expand-icon="img:/images/icons/dropdown.svg">
+      <q-expansion-item
+        dense
+        dense-toggle
+        class="no-hover"
+        v-model="expandMine"
+        expand-icon="img:/images/icons/dropdown.svg"
+      >
         <template #header>
-          <q-item-label style="padding-left:0;" class="full-width" header>{{ t('filter.onlyForMe') }}</q-item-label>
+          <q-item-label style="padding-left: 0" class="full-width" header>{{
+            t('filter.onlyForMe')
+          }}</q-item-label>
         </template>
         <q-item :disable="filterLoading" dense>
           <q-item-section>
-            <q-checkbox dense :disable="filterLoading" size="xs" v-model="filter.mine" :label="t('filter.mine')"
-              @update:model-value="mine" />
+            <q-checkbox
+              dense
+              :disable="filterLoading"
+              size="xs"
+              v-model="filter.mine"
+              :label="t('filter.mine')"
+              @update:model-value="mine"
+            />
           </q-item-section>
         </q-item>
         <q-slide-transition>
-          <div v-show="filter.mine" class="q-pl-lg row items-center q-gutter-xs">
+          <div
+            v-show="filter.mine"
+            class="q-pl-lg row items-center q-gutter-xs"
+          >
             <div class="tree"></div>
-            <q-checkbox dense :disable="filterLoading" size="xs" class="text-caption" v-model="filter.offered"
-              :label="t('filter.offered')" @update:model-value="updateDebounce()" />
+            <q-checkbox
+              dense
+              :disable="filterLoading"
+              size="xs"
+              class="text-caption"
+              v-model="filter.offered"
+              :label="t('filter.offered')"
+              @update:model-value="updateDebounce()"
+            />
           </div>
         </q-slide-transition>
         <q-item :disable="filterLoading" dense>
           <q-item-section>
-            <q-checkbox dense :disable="filterLoading" size="xs" v-model="filter.offer" :label="t('filter.offer')"
-              @update:model-value="updateDebounce()" />
+            <q-checkbox
+              dense
+              :disable="filterLoading"
+              size="xs"
+              v-model="filter.offer"
+              :label="t('filter.offer')"
+              @update:model-value="updateDebounce()"
+            />
           </q-item-section>
         </q-item>
         <q-item :disable="filterLoading" dense>
           <q-item-section>
-            <q-checkbox dense :disable="filterLoading" size="xs" v-model="filter.onlyCurrency"
-              :label="t('filter.onlyCurrency')" @update:model-value="updateDebounce()" />
+            <q-checkbox
+              dense
+              :disable="filterLoading"
+              size="xs"
+              v-model="filter.onlyCurrency"
+              :label="t('filter.onlyCurrency')"
+              @update:model-value="updateDebounce()"
+            />
           </q-item-section>
         </q-item>
         <q-item :disable="filterLoading" dense>
           <q-item-section>
-            <q-checkbox dense :disable="filterLoading" v-model="filter.favorite" size="xs" :label="t('item.favorites')"
-              @update:model-value="updateDebounce()" />
+            <q-checkbox
+              dense
+              :disable="filterLoading"
+              v-model="filter.favorite"
+              size="xs"
+              :label="t('item.favorites')"
+              @update:model-value="updateDebounce()"
+            />
           </q-item-section>
         </q-item>
       </q-expansion-item>
@@ -298,21 +383,52 @@ defineExpose({
     <q-item-label header>{{ t('filter.status') }}</q-item-label>
     <q-item :disable="filterLoading">
       <q-item-section>
-        <q-select v-model="filter.status" :disable="filterLoading" outlined dense no-error-icon hide-bottom-space
-          emit-value map-options transition-show="none" transition-hide="none" :transition-duration="0"
-          :options="itemStatus" dropdown-icon="img:/images/icons/dropdown.svg" popup-content-class="scroll bordered"
-          @update:model-value="update()" />
+        <q-select
+          v-model="filter.status"
+          :disable="filterLoading || !!filter.mine"
+          outlined
+          dense
+          no-error-icon
+          hide-bottom-space
+          emit-value
+          map-options
+          transition-show="none"
+          transition-hide="none"
+          :transition-duration="0"
+          :options="itemStatus"
+          dropdown-icon="img:/images/icons/dropdown.svg"
+          popup-content-class="scroll bordered"
+          @update:model-value="update()"
+        />
       </q-item-section>
     </q-item>
     <q-item-label header>{{ t('item.power') }}</q-item-label>
     <q-item :disable="filterLoading">
       <q-item-section>
         <div class="row justify-center no-wrap q-col-gutter-sm items-center">
-          <D4Counter :disable="filterLoading" v-model="filter.power[0]" :label="t('min')" :max="9999" allow-zero
-            no-button @update:model-value="update()" :debounce="1000" max-width="100%" />
+          <D4Counter
+            :disable="filterLoading"
+            v-model="filter.power[0]"
+            :label="t('min')"
+            :max="9999"
+            allow-zero
+            no-button
+            @update:model-value="update()"
+            :debounce="1000"
+            max-width="100%"
+          />
           <div>-</div>
-          <D4Counter :disable="filterLoading" v-model="filter.power[1]" :label="t('max')" :max="9999" allow-zero
-            no-button @update:model-value="update()" :debounce="1000" max-width="100%" />
+          <D4Counter
+            :disable="filterLoading"
+            v-model="filter.power[1]"
+            :label="t('max')"
+            :max="9999"
+            allow-zero
+            no-button
+            @update:model-value="update()"
+            :debounce="1000"
+            max-width="100%"
+          />
         </div>
       </q-item-section>
     </q-item>
@@ -320,37 +436,93 @@ defineExpose({
     <q-item :disable="filterLoading">
       <q-item-section>
         <div class="row justify-center no-wrap q-col-gutter-sm items-center">
-          <D4Counter :disable="filterLoading" v-model="filter.level[0]" :label="t('min')" :max="999" allow-zero
-            no-button @update:model-value="update()" :debounce="1000" max-width="100%" />
+          <D4Counter
+            :disable="filterLoading"
+            v-model="filter.level[0]"
+            :label="t('min')"
+            :max="999"
+            allow-zero
+            no-button
+            @update:model-value="update()"
+            :debounce="1000"
+            max-width="100%"
+          />
           <div>-</div>
-          <D4Counter :disable="filterLoading" v-model="filter.level[1]" :label="t('max')" :max="999" allow-zero
-            no-button @update:model-value="update()" :debounce="1000" max-width="100%" />
+          <D4Counter
+            :disable="filterLoading"
+            v-model="filter.level[1]"
+            :label="t('max')"
+            :max="999"
+            allow-zero
+            no-button
+            @update:model-value="update()"
+            :debounce="1000"
+            max-width="100%"
+          />
         </div>
       </q-item-section>
     </q-item>
     <q-item-label header>{{ t('item.quality') }}</q-item-label>
     <q-item :disable="filterLoading">
       <q-item-section>
-        <q-option-group dense :disable="filterLoading" size="xs" inline
-          :options="filterQuality().map(fq => ({ ...fq, label: fq.fullName }))" type="checkbox" v-model="filter.quality"
-          @update:model-value="updateDebounce()" />
+        <q-option-group
+          dense
+          :disable="filterLoading"
+          size="xs"
+          inline
+          :options="
+            filterQuality().map((fq) => ({ ...fq, label: fq.fullName }))
+          "
+          type="checkbox"
+          v-model="filter.quality"
+          @update:model-value="updateDebounce()"
+        />
       </q-item-section>
     </q-item>
     <q-item-label header>{{ t('item.selectType') }}</q-item-label>
     <q-item :disable="filterLoading">
       <q-item-section>
-        <q-option-group dense :disable="filterLoading" size="xs" inline :options="filterTypes()" type="checkbox"
-          v-model="filter.itemTypes" @update:model-value="val => update(val)" />
+        <q-option-group
+          dense
+          :disable="filterLoading"
+          size="xs"
+          inline
+          :options="filterTypes()"
+          type="checkbox"
+          v-model="filter.itemTypes"
+          @update:model-value="(val) => update(val)"
+        />
       </q-item-section>
     </q-item>
-    <q-item :disable="filterLoading" v-for="itemType in filter.itemTypes.filter(it => it !== 'aspect')" :key="itemType">
+    <q-item
+      :disable="filterLoading"
+      v-for="itemType in filter.itemTypes.filter((it) => it !== 'aspect')"
+      :key="itemType"
+    >
       <q-item-section>
-        <q-select :disable="filterLoading" v-model="filter.itemTypeValues1[itemType]"
-          :options="findType(itemType)?.value === 'rune' ? filterRunes() : filterClasses(itemType)"
-          :label="`${findType(itemType)?.label} ${t('filter.type')}`" outlined dense no-error-icon hide-bottom-space
-          emit-value map-options multiple transition-show="none" transition-hide="none" :transition-duration="0"
-          dropdown-icon="img:/images/icons/dropdown.svg" popup-content-class="scroll bordered"
-          @update:model-value="updateDebounce()">
+        <q-select
+          :disable="filterLoading"
+          v-model="filter.itemTypeValues1[itemType]"
+          :options="
+            findType(itemType)?.value === 'rune'
+              ? filterRunes()
+              : filterClasses(itemType)
+          "
+          :label="`${findType(itemType)?.label} ${t('filter.type')}`"
+          outlined
+          dense
+          no-error-icon
+          hide-bottom-space
+          emit-value
+          map-options
+          multiple
+          transition-show="none"
+          transition-hide="none"
+          :transition-duration="0"
+          dropdown-icon="img:/images/icons/dropdown.svg"
+          popup-content-class="scroll bordered"
+          @update:model-value="updateDebounce()"
+        >
         </q-select>
       </q-item-section>
     </q-item>
@@ -361,10 +533,16 @@ defineExpose({
         </div>
         <q-icon class="icon" name="img:/images/icons/help.svg" size="19px">
           <D4Tooltip self="bottom left">
-            <div style="max-width:240px">
-              <div class="text-subtitle2 text-weight-bold">{{ t('filter.description.advanced') }} </div>
+            <div style="max-width: 240px">
+              <div class="text-subtitle2 text-weight-bold">
+                {{ t('filter.description.advanced') }}
+              </div>
               <div class="text-center full-width">
-                <img class="q-py-lg" :src="locale === 'ko' ? NotifyKo : NotifyEn" width="200" />
+                <img
+                  class="q-py-lg"
+                  :src="locale === 'ko' ? NotifyKo : NotifyEn"
+                  width="200"
+                />
               </div>
               <ul class="text-caption text-weight-bold q-px-sm q-gutter-y-sm">
                 <li>{{ t('filter.description.advanced2') }}</li>
@@ -375,24 +553,54 @@ defineExpose({
         </q-icon>
       </div>
       <div>
-        <q-rating v-model="filter.greaterCount" :disable="disable || filterLoading" size="18px" max="4"
-          icon="img:/images/attribute_types/greater_invert.svg" @update:model-value="update()" />
+        <q-rating
+          v-model="filter.greaterCount"
+          :disable="disable || filterLoading"
+          size="18px"
+          max="4"
+          icon="img:/images/attribute_types/greater_invert.svg"
+          @update:model-value="update()"
+        />
       </div>
     </q-item-label>
     <q-item :disable="filterLoading">
       <q-item-section class="no-wrap">
-        <q-select ref="propertyRef" v-model="filter.properties" :disable="filterLoading" max-values="3" outlined dense
-          no-error-icon use-input hide-bottom-space hide-selected emit-value map-options multiple transition-show="none"
-          transition-hide="none" :transition-duration="0" :label="`${t('properties')} ${t('searchOrSelect')}`"
-          :options="propertyOptions(propertyNeedle)" dropdown-icon="img:/images/icons/dropdown.svg"
-          popup-content-class="scroll bordered limit-select" @update:model-value="selectedProperty"
-          @input.stop="filterProperties" @blur="() => propertyNeedle = undefined">
-
+        <q-select
+          ref="propertyRef"
+          v-model="filter.properties"
+          :disable="filterLoading"
+          max-values="3"
+          outlined
+          dense
+          no-error-icon
+          use-input
+          hide-bottom-space
+          hide-selected
+          emit-value
+          map-options
+          multiple
+          transition-show="none"
+          transition-hide="none"
+          :transition-duration="0"
+          :label="`${t('properties')} ${t('searchOrSelect')}`"
+          :options="propertyOptions(propertyNeedle)"
+          dropdown-icon="img:/images/icons/dropdown.svg"
+          popup-content-class="scroll bordered limit-select"
+          @update:model-value="selectedProperty"
+          @input.stop="filterProperties"
+          @blur="() => (propertyNeedle = undefined)"
+        >
           <template #option="scope">
             <q-item v-bind="scope.itemProps">
               <q-item-section side>
-                <q-icon class="icon" :class="{ 'rotate-45': ['standard'].includes(scope.opt.type as string) }"
-                  size="14px" :name="`img:/images/attribute_types/${scope.opt.type || 'standard'}.svg`" />
+                <q-icon
+                  class="icon"
+                  :class="{ 'rotate-45': ['standard'].includes(scope.opt.type as string) }"
+                  size="14px"
+                  :name="`img:/images/attribute_types/${
+                    scope.opt.type || 'standard'
+                  }.svg`"
+                />
               </q-item-section>
               <q-item-section>
                 <q-item-label lines="3">{{ scope.opt.label }}</q-item-label>
@@ -419,30 +627,73 @@ defineExpose({
           </q-item-label>
         </q-item-section>
         <q-item-section side>
-          <q-btn :disable="filterLoading" dense unelevated flat round aria-label="Tradurs Close Button" size="xs"
-            :tabindex="-1" class="q-ml-sm" @click="removeProperty(pid)">
-            <img class="icon" width="13" height="13" src="/images/icons/close.svg" alt="Tradurs Close Icon" />
+          <q-btn
+            :disable="filterLoading"
+            dense
+            unelevated
+            flat
+            round
+            aria-label="Tradurs Close Button"
+            size="xs"
+            :tabindex="-1"
+            class="q-ml-sm"
+            @click="removeProperty(pid)"
+          >
+            <img
+              class="icon"
+              width="13"
+              height="13"
+              src="/images/icons/close.svg"
+              alt="Tradurs Close Icon"
+            />
           </q-btn>
         </q-item-section>
       </q-item>
     </template>
     <q-item :disable="filterLoading">
       <q-item-section class="no-wrap">
-        <q-select ref="affixRef" v-model="filter.affixes" class="col" :disable="filterLoading" max-values="6" outlined
-          dense no-error-icon use-input hide-bottom-space hide-selected emit-value map-options multiple
-          transition-show="none" transition-hide="none" :transition-duration="0"
-          :label="`${t('affixes')} ${t('searchOrSelect')}`" :options="affixOptions(affixNeedle)"
-          dropdown-icon="img:/images/icons/dropdown.svg" popup-content-class="scroll bordered limit-select"
-          @update:model-value="selectedAffix" @input.stop="filterAffixes" @blur="() => affixNeedle = undefined">
-
+        <q-select
+          ref="affixRef"
+          v-model="filter.affixes"
+          class="col"
+          :disable="filterLoading"
+          max-values="6"
+          outlined
+          dense
+          no-error-icon
+          use-input
+          hide-bottom-space
+          hide-selected
+          emit-value
+          map-options
+          multiple
+          transition-show="none"
+          transition-hide="none"
+          :transition-duration="0"
+          :label="`${t('affixes')} ${t('searchOrSelect')}`"
+          :options="affixOptions(affixNeedle)"
+          dropdown-icon="img:/images/icons/dropdown.svg"
+          popup-content-class="scroll bordered limit-select"
+          @update:model-value="selectedAffix"
+          @input.stop="filterAffixes"
+          @blur="() => (affixNeedle = undefined)"
+        >
           <template #option="scope">
             <q-item v-bind="scope.itemProps">
               <q-item-section side>
-                <q-icon class="icon" :class="{ 'rotate-45': ['standard'].includes(scope.opt.type as string) }"
-                  size="14px" :name="`img:/images/attribute_types/${scope.opt.type || 'standard'}.svg`" />
+                <q-icon
+                  class="icon"
+                  :class="{ 'rotate-45': ['standard'].includes(scope.opt.type as string) }"
+                  size="14px"
+                  :name="`img:/images/attribute_types/${
+                    scope.opt.type || 'standard'
+                  }.svg`"
+                />
               </q-item-section>
               <q-item-section>
-                <q-item-label :class="scope.opt.color">{{ scope.opt.label }}</q-item-label>
+                <q-item-label :class="scope.opt.color">{{
+                  scope.opt.label
+                }}</q-item-label>
               </q-item-section>
             </q-item>
           </template>
@@ -466,23 +717,56 @@ defineExpose({
           </q-item-label>
         </q-item-section>
         <q-item-section side>
-          <q-btn :disable="filterLoading" dense unelevated flat round aria-label="Tradurs Close Button" size="xs"
-            :tabindex="-1" class="q-ml-sm" @click="removeAffix(aid)">
-            <img class="icon" width="13" height="13" src="/images/icons/close.svg" alt="Tradurs Close Icon" />
+          <q-btn
+            :disable="filterLoading"
+            dense
+            unelevated
+            flat
+            round
+            aria-label="Tradurs Close Button"
+            size="xs"
+            :tabindex="-1"
+            class="q-ml-sm"
+            @click="removeAffix(aid)"
+          >
+            <img
+              class="icon"
+              width="13"
+              height="13"
+              src="/images/icons/close.svg"
+              alt="Tradurs Close Icon"
+            />
           </q-btn>
         </q-item-section>
       </q-item>
     </template>
     <q-item :disable="filterLoading">
       <q-item-section class="no-wrap">
-        <q-select ref="restrictionRef" v-model="filter.restrictions" :disable="filterLoading" max-values="3" outlined
-          dense no-error-icon use-input hide-bottom-space hide-selected emit-value map-options multiple
-          transition-show="none" transition-hide="none" :transition-duration="0"
-          :label="`${t('restrictions')} ${t('searchOrSelect')}`" :options="restrictionOptions(restrictionNeedle)"
-          dropdown-icon="img:/images/icons/dropdown.svg" popup-content-class="scroll bordered limit-select"
-          @update:model-value="selectedRestriction" @input.stop="filterRestrictions"
-          @blur="() => restrictionNeedle = undefined">
-
+        <q-select
+          ref="restrictionRef"
+          v-model="filter.restrictions"
+          :disable="filterLoading"
+          max-values="3"
+          outlined
+          dense
+          no-error-icon
+          use-input
+          hide-bottom-space
+          hide-selected
+          emit-value
+          map-options
+          multiple
+          transition-show="none"
+          transition-hide="none"
+          :transition-duration="0"
+          :label="`${t('restrictions')} ${t('searchOrSelect')}`"
+          :options="restrictionOptions(restrictionNeedle)"
+          dropdown-icon="img:/images/icons/dropdown.svg"
+          popup-content-class="scroll bordered limit-select"
+          @update:model-value="selectedRestriction"
+          @input.stop="filterRestrictions"
+          @blur="() => (restrictionNeedle = undefined)"
+        >
           <template #option="scope">
             <q-item v-bind="scope.itemProps">
               <q-item-section>
@@ -510,9 +794,25 @@ defineExpose({
           </q-item-label>
         </q-item-section>
         <q-item-section side>
-          <q-btn :disable="filterLoading" dense unelevated flat round aria-label="Tradurs Close Button" size="xs"
-            :tabindex="-1" class="q-ml-sm" @click="removeRestriction(rid)">
-            <img class="icon" width="13" height="13" src="/images/icons/close.svg" alt="Tradurs Close Icon" />
+          <q-btn
+            :disable="filterLoading"
+            dense
+            unelevated
+            flat
+            round
+            aria-label="Tradurs Close Button"
+            size="xs"
+            :tabindex="-1"
+            class="q-ml-sm"
+            @click="removeRestriction(rid)"
+          >
+            <img
+              class="icon"
+              width="13"
+              height="13"
+              src="/images/icons/close.svg"
+              alt="Tradurs Close Icon"
+            />
           </q-btn>
         </q-item-section>
       </q-item>
@@ -520,11 +820,22 @@ defineExpose({
     <q-separator inset class="q-my-md" />
     <q-item :disable="filterLoading">
       <q-item-section>
-        <q-btn outline aria-label="Tradurs Refresh Button" size="md" :ripple="false" class="no-hover"
-          :disable="filterLoading" @click="clearFilter">
+        <q-btn
+          outline
+          aria-label="Tradurs Refresh Button"
+          size="md"
+          :ripple="false"
+          class="no-hover"
+          :disable="filterLoading"
+          @click="clearFilter"
+        >
           <div class="row items-center q-gutter-xs">
             <div>{{ t('btn.resetFilter') }}</div>
-            <q-icon class="icon" name="img:/images/icons/restore.svg" size="xs" />
+            <q-icon
+              class="icon"
+              name="img:/images/icons/restore.svg"
+              size="xs"
+            />
           </div>
         </q-btn>
       </q-item-section>
@@ -536,7 +847,7 @@ defineExpose({
 .disable {
   user-select: none;
   cursor: not-allowed !important;
-  opacity: .6;
+  opacity: 0.6;
 }
 
 .disable:deep(*) {
@@ -563,7 +874,7 @@ defineExpose({
   margin-bottom: 0;
 }
 
-.q-option-group.q-gutter-x-sm:deep(>*) {
+.q-option-group.q-gutter-x-sm:deep(> *) {
   margin-right: 8px;
 }
 </style>

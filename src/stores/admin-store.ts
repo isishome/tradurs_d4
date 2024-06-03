@@ -5,9 +5,23 @@ import { ref } from 'vue'
 export type IUser = {
   selected: boolean
   identity: string
+  status: string
+  verified: boolean
   email: string
   battleTag: string
+}
+
+export type Option = {
+  value: string
+  label: string
+  color?: string
+}
+
+export type Filter = {
   status: string
+  verified: string
+  statusOptions: Array<Option>
+  verifiedOptions: Array<Option>
 }
 
 export const useAdminStore = defineStore('admin', () => {
@@ -15,9 +29,9 @@ export const useAdminStore = defineStore('admin', () => {
   const over = ref<boolean>(false)
   const more = ref<boolean>(false)
 
-  const getUsers = (page: number, searchInfo?: string) => {
+  const getUsers = (page: number, filter?: Filter, searchInfo?: string) => {
     return new Promise<Array<IUser>>((resolve, reject) => {
-      api.get('/d4/admin/user', { params: { page, rows, searchInfo } })
+      api.get('/d4/admin/user', { params: { page, rows, filter: { status: filter?.status, verified: filter?.verified }, searchInfo } })
         .then((response) => {
           over.value = page > 1
           more.value = response.data.length > rows
