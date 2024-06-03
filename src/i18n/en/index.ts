@@ -456,7 +456,7 @@ export default {
         { type: 'answer', contents: '→ Left filter > \'Show only priced\' to see only items with stated prices.' },
         { type: 'answer', contents: '→ \'Get An Offer\' is only available to BattleTag-authenticated users.' },
         { type: 'question', contents: '7. When will the yolk be served?' },
-        { type: 'answer', contents: '→ You will receive 10 yolks per day when you log in for the first time or when you consume or redeem yolks (check your account information).' },
+        { type: 'answer', contents: '→ If you log in again or consume or retrieve yolks (when checking your account information), you will receive up to 30 yolks per day. (day of registration x)' },
         { type: 'question', contents: '8. I can\'t use the image analysis function normally.' },
         { type: 'answer', contents: '→ We\'re working on it, but images of items that are not game captures with low resolution (300 DPI is the recommended resolution for the engine you\'re using) are not recognized.' },
         { type: 'question', contents: '9. Why can\'t I see item states separately?' },
@@ -486,6 +486,7 @@ export default {
         { type: 'text', contents: '3. Because of the email verification process, you\'ll need to sign up using the email address you actually use.' },
         { type: 'image', contents: '04_join' },
         { type: 'text', contents: '4. If you sign up via social login, a random password will be auto-populated. You can also sign up by entering a password of your choice.' },
+        { type: 'text', contents: 'When signing up for social login, please make sure that the address is one that can actually receive emails.\nEven if you use social login, you must go through the initial registration process (account verification process).', classes: 'text-orange-10 text-weight-bold text-body1' },
         { type: 'image', contents: '05_verify' },
         { type: 'text', contents: '5. If the email is successful, you\'ll see a notification like the one in the image. If verification is not completed within 24 hours, the account is automatically deleted.' },
         { type: 'image', contents: '06_verify' },
@@ -633,7 +634,7 @@ export default {
       question: 'What is \'yolk\'?',
       answer: [
         { type: 'image', contents: '01_yolk' },
-        { type: 'text', contents: 'Top-right user icon\n(Mobile More icon > User icon)\nto see how many yolks you currently have.\n\nAs of July 1, 2023,\n\nYou are granted 30 yolks when you sign up.\n\nYou are granted 10 yolks per day upon login.\n\nIt cannot be sold or shared between users.\n\nOne is consumed when listing, relisting, or offering an item,\n\nand is redeemed when the item trade is successfully completed.\n\nThis is to discourage frivolous item registrations or\nrequests for suggestions, and the number of uses or grants may change in the future.' },
+        { type: 'text', contents: 'Top-right user icon\n(Mobile More icon > User icon)\nto see how many yolks you currently have.\n\nAs of 2024-06-03,\n\nYou are granted 30 yolks when you sign up.\n\nUp to 30 yolks are recharged per day.\n\nWhen charging, if you own more than 30 yolks, no more will be added.\n\nIt cannot be sold or shared between users.\n\nOne is consumed when listing, relisting, or offering an item,\n\nand is redeemed when the item trade is successfully completed.\n\nThis is to discourage frivolous item registrations or\nrequests for suggestions, and the number of uses or grants may change in the future.' },
       ]
     },
     {

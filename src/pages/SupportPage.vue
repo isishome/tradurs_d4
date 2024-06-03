@@ -1,15 +1,16 @@
 <script setup lang="ts">
-import { ref, reactive, computed, watch, onMounted, nextTick } from "vue"
-import { useQuasar, scroll, QExpansionItem } from "quasar"
-import { useRoute, useRouter } from "vue-router"
-import { useI18n } from "vue-i18n"
-import { useGlobalStore } from "stores/global-store"
-import { useAccountStore } from "stores/account-store"
-import { useScript } from "src/composables/script"
+import { ref, reactive, computed, watch, onMounted, nextTick } from 'vue'
+import { useQuasar, scroll, QExpansionItem } from 'quasar'
+import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+import { useGlobalStore } from 'stores/global-store'
+import { useAccountStore } from 'stores/account-store'
+import { useScript } from 'src/composables/script'
 
 interface Answer {
   type: string
   contents: string
+  classes?: string
   name?: string
 }
 
@@ -31,7 +32,7 @@ const $q = useQuasar()
 const { getScrollTarget, setVerticalScrollPosition } = scroll
 const route = useRoute()
 const router = useRouter()
-const { t, tm } = useI18n({ useScope: "global" })
+const { t, tm } = useI18n({ useScope: 'global' })
 const gs = useGlobalStore()
 const as = useAccountStore()
 
@@ -42,8 +43,8 @@ if (prod)
   )
 
 const supportRefs = ref<Array<QExpansionItem>>([])
-const support = computed(() => tm("support") as Array<Support>)
-const findSection = ref<string>(props.section || "basic")
+const support = computed(() => tm('support') as Array<Support>)
+const findSection = ref<string>(props.section || 'basic')
 const contact = reactive<{
   show: boolean
   open: boolean
@@ -61,15 +62,15 @@ const send = () => {
   if (window?.grecaptcha) {
     window.grecaptcha.ready(() => {
       window.grecaptcha
-        .execute(recaptchaApiKey, { action: "submit" })
+        .execute(recaptchaApiKey, { action: 'submit' })
         .then((token: string) => {
           gs.contactUs(token, contact.contents)
             .then(() => {
               $q.notify({
-                icon: "img:/images/icons/check.svg",
-                color: "positive",
-                classes: "",
-                message: t("contact.success")
+                icon: 'img:/images/icons/check.svg',
+                color: 'positive',
+                classes: '',
+                message: t('contact.success')
               })
               contact.open = false
             })
@@ -98,7 +99,7 @@ const afterShow = () => {
   if (findSectionIndex !== -1 && supportRefs.value[findSectionIndex]) {
     const el = supportRefs.value[findSectionIndex].$el
     const scrollTarget = getScrollTarget(el)
-    const offset = findSection.value === "basic" ? 0 : el.offsetTop
+    const offset = findSection.value === 'basic' ? 0 : el.offsetTop
     setVerticalScrollPosition(scrollTarget, offset, 100)
   }
 }
@@ -106,7 +107,7 @@ const afterShow = () => {
 const selectSection = async (s: Support) => {
   if (s.show)
     await router.push({
-      name: "support",
+      name: 'support',
       params: { lang: route.params.lang, section: s.id },
       state: { noScrollTop: true }
     })
@@ -115,8 +116,8 @@ const selectSection = async (s: Support) => {
 watch(
   () => route.params.section,
   (val, old) => {
-    if (val !== old && route.name === "support") {
-      findSection.value = (val as string) ?? "basic"
+    if (val !== old && route.name === 'support') {
+      findSection.value = (val as string) ?? 'basic'
     }
   }
 )
@@ -160,7 +161,11 @@ onMounted(() => {
                   :src="`/images/help/${s.id}/${a.contents}.webp`"
                   alt="Tradurs Notice Image"
                 />
-                <div v-else-if="a.type === 'text'" class="text-area">
+                <div
+                  v-else-if="a.type === 'text'"
+                  class="text-area"
+                  :class="a.classes"
+                >
                   {{ a.contents }}
                 </div>
                 <div
@@ -219,7 +224,7 @@ onMounted(() => {
                 src="/images/icons/discord.svg"
                 alt="Discord Icon"
               />
-              <div>{{ t("contact.title") }}</div>
+              <div>{{ t('contact.title') }}</div>
             </div>
           </q-btn>
         </q-item>
