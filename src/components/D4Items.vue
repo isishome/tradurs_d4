@@ -1602,7 +1602,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
           :style="
             $q.screen.lt.sm
               ? 'height:100%'
-              : 'min-height:40vh !important;max-height:80vh !important'
+              : 'min-height:40vh !important;max-height:50vh !important'
           "
         >
           <div class="q-pb-xl full-height">
@@ -1646,7 +1646,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
         </q-card-section>
       </template>
       <template v-if="isMakingOffer" #bottom>
-        <q-card-section>
+        <q-card-section class="col">
           <D4Offer
             :data="makeOffer"
             make
