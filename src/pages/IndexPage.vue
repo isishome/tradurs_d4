@@ -4,7 +4,7 @@ import { useGlobalStore } from 'stores/global-store'
 import {
   useItemStore,
   type OfferInfo,
-  type AwardsPick,
+  type AwardsItem,
   type IErrorItem,
   Sort
 } from 'stores/item-store'
@@ -296,22 +296,13 @@ const getList = async (scrollTop?: boolean) => {
   rewardItem.value = undefined
 
   if (is.showRewardItem) {
-    const awardsPick = is.awardsPick.filter(
-      (ap: AwardsPick) =>
-        ap.hardcore === is.storage.data.hardcore &&
-        ap.ladder === is.storage.data.ladder
-    )
-    if (awardsPick.length > 0) {
-      is.getItems(1, awardsPick[0].itemId.toString()).then(
-        (pick: Array<Item>) => {
-          rewardItem.value = pick.map((p: Item) => ({
-            ...p,
-            reward: true,
-            expanded: isExpanded.value
-          }))?.[0]
-        }
-      )
-    }
+    is.getReward().then(() => {
+      rewardItem.value = is.rewardItems.map((ri: Item) => ({
+        ...ri,
+        reward: true,
+        expanded: isExpanded.value
+      }))?.[0]
+    })
   }
 }
 

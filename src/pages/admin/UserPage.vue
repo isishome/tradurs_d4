@@ -239,12 +239,19 @@ onMounted(async () => {
           <th>기능</th>
         </tr>
       </thead>
+      <tbody v-show="users.length === 0 && !disable">
+        <tr>
+          <td colspan="6">
+            <div class="text-center q-py-xl">사용자 데이터가 없습니다.</div>
+          </td>
+        </tr>
+      </tbody>
       <tbody v-for="user in users" :key="user.identity">
         <tr>
-          <td rowspan="2" style="border-bottom: none; width: 50px">
+          <td rowspan="2" style="width: 50px">
             <q-checkbox v-model="user.selected" dense />
           </td>
-          <td colspan="2" style="border-bottom: none">
+          <td colspan="2">
             <div class="row items-center q-gutter-md">
               <div
                 class="cursor-pointer underline"
@@ -260,7 +267,7 @@ onMounted(async () => {
               </div>
             </div>
           </td>
-          <td rowspan="2" style="border-bottom: none">
+          <td rowspan="2">
             <q-btn-dropdown
               color="primary"
               label="기능"
@@ -323,13 +330,6 @@ onMounted(async () => {
                 >
               </div>
             </div>
-          </td>
-        </tr>
-      </tbody>
-      <tbody v-show="users.length === 0 && !disable">
-        <tr>
-          <td colspan="6">
-            <div class="text-center q-py-xl">사용자 데이터가 없습니다.</div>
           </td>
         </tr>
       </tbody>
@@ -439,5 +439,23 @@ onMounted(async () => {
 
 .users:deep(tbody td:before) {
   background: none;
+}
+
+.users:deep(tbody tr:not(:last-child) > td:not(:first-child, :last-child)) {
+  border-bottom-width: 0;
+}
+
+.users:deep(tbody:last-child tr:not(:last-child) > td:first-child),
+.users:deep(tbody:last-child tr:not(:last-child) > td:last-child) {
+  border-bottom-width: 0;
+}
+
+.users:deep(tbody:not(:last-child) tr:first-child > td:first-child),
+.users:deep(tbody:not(:last-child) tr:first-child > td:last-child) {
+  border-bottom-width: 1px;
+}
+
+.users:deep(tbody:not(:last-child) tr:last-child > td) {
+  border-bottom-width: 1px;
 }
 </style>

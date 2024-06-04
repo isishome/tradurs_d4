@@ -111,7 +111,7 @@ export interface Awards {
   mostPurchased: Array<Award>
 }
 
-export interface AwardsPick {
+export interface AwardsItem {
   itemId: number,
   hardcore: boolean,
   ladder: boolean
@@ -188,7 +188,7 @@ export const useItemStore = defineStore('item', {
     classes: [] as Array<EquipmentClass>,
     attributeTypes: [] as Array<AttributeType>,
     awards: 0 as number,
-    awardsPick: [] as Array<AwardsPick>,
+    rewardItems: [] as Array<Item>,
     properties: {
       data: [] as Array<Property>,
       loading: false,
@@ -455,7 +455,6 @@ export const useItemStore = defineStore('item', {
               this.classes = response.data.classes
               this.attributeTypes = response.data.attributeTypes
               this.awards = response.data.awards
-              this.awardsPick = response.data.awardsPick
             })
             .catch((e) => {
               error = e
@@ -575,6 +574,18 @@ export const useItemStore = defineStore('item', {
         }
         else
           resolve()
+      })
+    },
+    getReward() {
+      return new Promise<Array<Item>>((resolve, reject) => {
+        api.get('/d4/item/reward')
+          .then((response) => {
+            this.rewardItems = response.data
+            resolve(response.data)
+          })
+          .catch((e) => {
+            reject(e)
+          })
       })
     },
     getItems(page: number, itemId?: string | string[]) {

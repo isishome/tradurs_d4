@@ -80,9 +80,9 @@ export const useAdminStore = defineStore('admin', () => {
     })
   }
 
-  const resetCore = () => {
+  const refreshAffixes = () => {
     return new Promise<void>((resolve, reject) => {
-      api.get('/d4/admin/data/core/reset')
+      api.get('/d4/admin/data/affixes/refresh')
         .then(() => {
           resolve()
         })
@@ -100,6 +100,6 @@ export const useAdminStore = defineStore('admin', () => {
     resendVerify,
     deactivate,
     activate,
-    resetCore
+    refreshAffixes
   }
 })

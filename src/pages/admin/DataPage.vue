@@ -8,23 +8,24 @@ const as = useAdminStore()
 
 const disable = ref<boolean>(false)
 
-const resetCore = async () => {
+const refreshAffixes = async () => {
   disable.value = true
   try {
-    const result = await as.resetCore()
-    $q.notify({ message: '전역 코어 데이터가 정상적으로 초기화 되었습니다.', color: 'positive', classes: '' })
-  }
-  catch { }
+    await as.refreshAffixes()
+    $q.notify({
+      message: '아이템 속성 데이터가 정상적으로 새로고침 되었습니다.',
+      color: 'positive',
+      classes: ''
+    })
+  } catch {}
   disable.value = false
 }
 </script>
 <template>
   <q-list bordered>
-    <q-item clickable :disable="disable" @click="resetCore">
+    <q-item clickable :disable="disable" @click="refreshAffixes">
       <q-item-section>
-        <q-item-label>
-          코어 데이터 초기화
-        </q-item-label>
+        <q-item-label>아이템 속성 데이터 새로고침</q-item-label>
       </q-item-section>
     </q-item>
   </q-list>
