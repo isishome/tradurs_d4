@@ -639,8 +639,8 @@ const allowShowSeller = computed(
 
 const hideOffers = () => {
   offerItem.value = undefined
+  offers.value = []
   makeOffer.value = new Offer()
-  showOffers.value = false
 }
 
 const openMakingOffer = (item: Item): void => {
@@ -817,7 +817,8 @@ const startAnalyze = () => {
 const endAnalyze = (item: Item) => {
   disable.value = false
   item.itemId = activatedItem.value.itemId
-  item.ladder = activatedItem.value.ladder
+  item.hardcore = is.storage.data.hardcore
+  item.ladder = is.storage.data.ladder
   item.authorized = activatedItem.value.authorized
   activatedItem.value = item
   analyzeKey.value++
@@ -1646,7 +1647,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
         </q-card-section>
       </template>
       <template v-if="isMakingOffer" #bottom>
-        <q-card-section class="col">
+        <q-card-section>
           <D4Offer
             :data="makeOffer"
             make
