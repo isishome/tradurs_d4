@@ -44,9 +44,9 @@ export const useAdminStore = defineStore('admin', () => {
     })
   }
 
-  const resendVerify = (identity: string) => {
+  const resendVerify = (identity: string, lang: string) => {
     return new Promise<void>((resolve, reject) => {
-      api.post('/d4/admin/user/verify/resend', { identity })
+      api.post('/d4/admin/user/verify/resend', { identity, lang })
         .then(() => {
           resolve()
         })

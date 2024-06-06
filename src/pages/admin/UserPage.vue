@@ -3,12 +3,14 @@ import { ref, reactive, computed, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
+import { useGlobalStore } from 'src/stores/global-store'
 import { type IUser, type Filter, useAdminStore } from 'stores/admin-store'
 import { clipboard } from 'src/common'
 
 const route = useRoute()
 const router = useRouter()
 const $q = useQuasar()
+const gs = useGlobalStore()
 const as = useAdminStore()
 const { t } = useI18n({ useScope: 'global' })
 
@@ -70,9 +72,9 @@ const move = (val: number) => {
 }
 
 const searchInfo = ref<string>()
-const sendVerifyEmail = (identity: string) => {
+const sendVerifyEmail = (identity: string, lang: string) => {
   disable.value = true
-  as.resendVerify(identity)
+  as.resendVerify(identity, lang)
     .then(() => {
       $q.notify({
         message: '인증 메일이 발송이 완료되었습니다.',
@@ -279,15 +281,29 @@ onMounted(async () => {
               dropdown-icon="img:/images/icons/dropdown.svg"
             >
               <q-list dense>
-                <q-item
-                  v-if="user.status === '000'"
-                  clickable
-                  v-close-popup
-                  @click="sendVerifyEmail(user.identity)"
-                >
+                <q-item v-if="user.status === '000'" clickable>
                   <q-item-section>
                     <q-item-label>인증 메일 재 전송</q-item-label>
                   </q-item-section>
+                  <q-menu
+                    auto-close
+                    class="no-shadow"
+                    anchor="top right"
+                    self="top left"
+                    transition-show="jump-right"
+                    transition-hide="jump-left"
+                  >
+                    <q-list bordered class="rounded-borders">
+                      <q-item
+                        v-for="lang in gs.localeOptions"
+                        :key="lang.value"
+                        clickable
+                        @click="sendVerifyEmail(user.identity, lang.value)"
+                      >
+                        {{ lang.label }}</q-item
+                      >
+                    </q-list>
+                  </q-menu>
                 </q-item>
                 <q-item
                   v-if="user.status === '001'"
