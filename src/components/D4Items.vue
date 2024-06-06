@@ -5,7 +5,7 @@ import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 
 import { useAccountStore } from 'stores/account-store'
-import { useItemStore, Affix as IAffix } from 'stores/item-store'
+import { useItemStore } from 'stores/item-store'
 import { checkAttribute, scrollPos } from 'src/common'
 import { itemImgs } from 'src/common/items'
 import {
@@ -639,27 +639,28 @@ const allowShowSeller = computed(
 
 const hideOffers = () => {
   offerItem.value = undefined
-  offers.value = []
+  offers.value.splice(0, offers.value.length)
   makeOffer.value = new Offer()
 }
 
 const openMakingOffer = (item: Item): void => {
   disableOffers.value = true
-  offers.value = Array.from({ length: 2 }, () => {
-    const offer = new Offer()
-    offer.loading = true
-    offer.user.loading = true
-    offer.price.loading = true
-    return offer
-  })
+  showOffers.value = true
+  offers.value.push(
+    ...Array.from({ length: 3 }, () => {
+      const offer = new Offer()
+      offer.loading = true
+      offer.user.loading = true
+      offer.price.loading = true
+      return offer
+    })
+  )
 
   offerItem.value = item
   makeOffer.value.itemId = item.itemId
   makeOffer.value.user = as.info
 
   if (item.price.currency !== 'offer') makeOffer.value.price = item.price
-
-  showOffers.value = true
 
   is.getOffers(item.itemId)
     .then((resultOffers: Array<Offer>) => {
