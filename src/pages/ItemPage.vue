@@ -190,7 +190,6 @@ const favorite = (itemId: string, favorite: boolean) => {
         classes: '',
         message: t('messages.favorite')
       })
-
     if (is.detailItem.length > 0) is.detailItem[0].favorite = favorite
   })
 }
