@@ -312,6 +312,7 @@ export default {
     turnedDownOffer: 'Offer has been turned down',
     clipboard: 'The {t} has been copied to the clipboard',
     complete: 'Item trade completed ({in})',
+    favorite: 'Added to favorite items list',
     title000: 'A (new) offer has arrived',
     title001: 'The seller has accepted your offer',
     title002: 'Item trade completed',

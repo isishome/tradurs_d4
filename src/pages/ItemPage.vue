@@ -183,6 +183,14 @@ const copy = (itemId: string) => {
 }
 const favorite = (itemId: string, favorite: boolean) => {
   is.favorite(itemId, favorite).then(() => {
+    if (!!favorite)
+      $q.notify({
+        icon: 'img:/images/icons/check.svg',
+        color: 'positive',
+        classes: '',
+        message: t('messages.favorite')
+      })
+
     if (is.detailItem.length > 0) is.detailItem[0].favorite = favorite
   })
 }

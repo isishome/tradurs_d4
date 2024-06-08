@@ -235,6 +235,14 @@ const favorite = (itemId: string, favorite: boolean) => {
 
   if (findItem) {
     is.favorite(itemId, favorite).then(() => {
+      if (!!favorite)
+        $q.notify({
+          icon: 'img:/images/icons/check.svg',
+          color: 'positive',
+          classes: '',
+          message: t('messages.favorite')
+        })
+
       findItem.favorite = favorite
     })
   }

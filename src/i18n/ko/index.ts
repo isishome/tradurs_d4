@@ -312,6 +312,7 @@ export default {
     turnedDownOffer: '제안이 거절되었습니다',
     clipboard: '{t}이(가) 클립보드로 복사되었습니다',
     complete: '아이템 거래가 완료되었습니다 ({in})',
+    favorite: '관심 아이템 목록에 추가되었습니다',
     title000: '(새) 제안 요청이 도착했습니다',
     title001: '판매자가 제안을 수락했습니다',
     title002: '아이템 거래가 완료되었습니다',
