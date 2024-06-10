@@ -225,7 +225,13 @@
   height: 50px;
 }
 
+.icon.greater.active {
+  opacity: 1;
+}
+
+
 .icon.greater {
+  opacity: .2;
   transform: rotate(-22.5deg);
 }
 

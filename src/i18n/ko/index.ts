@@ -105,8 +105,8 @@ export default {
   searchOrSelect: '검색 / 선택',
   noMessage: '입력 한 텍스트와 매칭되는 {attr}을 찾을 수 없습니다',
   power: '능력',
-  properties: '고유 특성',
-  affixes: '옵션',
+  properties: '고유 속성',
+  affixes: '속성',
   restrictions: '제약 조건',
   relistItem: {
     title: '아이템 끌어올림',
@@ -212,7 +212,7 @@ export default {
     exists: '이미 존재하는 {attr} 입니다',
     continuous: '연속 추가',
     complete: '옵션 추가 요청이 완료되었습니다',
-    open: '속성 열기',
+    open: '옵션 열기',
     close: '속성 닫기'
   },
   item: {

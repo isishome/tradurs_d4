@@ -1188,7 +1188,7 @@ defineExpose({ scrollEnd })
         <q-icon
           v-for="(gc, idx) in greaterCount"
           :key="idx"
-          class="icon greater q-ml-xs"
+          class="icon greater active q-ml-xs"
           :name="`img:/images/attribute_types/${
             $q.dark.isActive ? 'greater' : 'greater_invert'
           }.svg`"
