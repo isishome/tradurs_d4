@@ -40,7 +40,18 @@ const isMine = computed(
   () =>
     !!filter.mine || !!filter.offered || filter.onlyCurrency || filter.favorite
 )
+
+const isItem = computed(
+  () =>
+    filter.power[0] !== 0 ||
+    filter.power[1] !== 9999 ||
+    filter.level[0] !== 0 ||
+    filter.level[1] !== 999 ||
+    filter.itemTypes.length > 0 ||
+    filter.quality.length > 0
+)
 const expandMine = ref<boolean>(isMine.value)
+const expandItem = ref<boolean>(isItem.value)
 
 // about property
 const propertyRef = ref<QSelect | null>(null)
@@ -224,6 +235,10 @@ watch(isMine, (val: boolean) => {
   expandMine.value = val
 })
 
+watch(isItem, (val: boolean) => {
+  expandItem.value = val
+})
+
 defineExpose({
   clearFilter
 })
@@ -402,130 +417,143 @@ defineExpose({
         />
       </q-item-section>
     </q-item>
-    <q-item-label header>{{ t('item.power') }}</q-item-label>
-    <q-item :disable="filterLoading">
-      <q-item-section>
-        <div class="row justify-center no-wrap q-col-gutter-sm items-center">
-          <D4Counter
-            :disable="filterLoading"
-            v-model="filter.power[0]"
-            :label="t('min')"
-            :max="9999"
-            allow-zero
-            no-button
-            @update:model-value="update()"
-            :debounce="1000"
-            max-width="100%"
-          />
-          <div>-</div>
-          <D4Counter
-            :disable="filterLoading"
-            v-model="filter.power[1]"
-            :label="t('max')"
-            :max="9999"
-            allow-zero
-            no-button
-            @update:model-value="update()"
-            :debounce="1000"
-            max-width="100%"
-          />
-        </div>
-      </q-item-section>
-    </q-item>
-    <q-item-label header>{{ t('item.level') }}</q-item-label>
-    <q-item :disable="filterLoading">
-      <q-item-section>
-        <div class="row justify-center no-wrap q-col-gutter-sm items-center">
-          <D4Counter
-            :disable="filterLoading"
-            v-model="filter.level[0]"
-            :label="t('min')"
-            :max="999"
-            allow-zero
-            no-button
-            @update:model-value="update()"
-            :debounce="1000"
-            max-width="100%"
-          />
-          <div>-</div>
-          <D4Counter
-            :disable="filterLoading"
-            v-model="filter.level[1]"
-            :label="t('max')"
-            :max="999"
-            allow-zero
-            no-button
-            @update:model-value="update()"
-            :debounce="1000"
-            max-width="100%"
-          />
-        </div>
-      </q-item-section>
-    </q-item>
-    <q-item-label header>{{ t('item.quality') }}</q-item-label>
-    <q-item :disable="filterLoading">
-      <q-item-section>
-        <q-option-group
-          dense
-          :disable="filterLoading"
-          size="xs"
-          inline
-          :options="
-            filterQuality().map((fq) => ({ ...fq, label: fq.fullName }))
-          "
-          type="checkbox"
-          v-model="filter.quality"
-          @update:model-value="updateDebounce()"
-        />
-      </q-item-section>
-    </q-item>
-    <q-item-label header>{{ t('item.selectType') }}</q-item-label>
-    <q-item :disable="filterLoading">
-      <q-item-section>
-        <q-option-group
-          dense
-          :disable="filterLoading"
-          size="xs"
-          inline
-          :options="filterTypes()"
-          type="checkbox"
-          v-model="filter.itemTypes"
-          @update:model-value="(val) => update(val)"
-        />
-      </q-item-section>
-    </q-item>
-    <q-item
-      :disable="filterLoading"
-      v-for="itemType in filter.itemTypes.filter((it) => it !== 'aspect')"
-      :key="itemType"
+    <q-expansion-item
+      dense
+      dense-toggle
+      class="no-hover"
+      v-model="expandItem"
+      expand-icon="img:/images/icons/dropdown.svg"
     >
-      <q-item-section>
-        <q-select
-          :disable="filterLoading"
-          v-model="filter.itemTypeValues1[itemType]"
-          :options="
-            findType(itemType)?.value === 'rune'
-              ? filterRunes()
-              : filterClasses(itemType)
-          "
-          :label="`${findType(itemType)?.label} ${t('filter.type')}`"
-          outlined
-          dense
-          no-error-icon
-          hide-bottom-space
-          emit-value
-          map-options
-          multiple
-          transition-show="none"
-          transition-hide="none"
-          :transition-duration="0"
-          dropdown-icon="img:/images/icons/dropdown.svg"
-          popup-content-class="scroll bordered"
-          @update:model-value="updateDebounce()"
-        >
-        </q-select>
-      </q-item-section>
-    </q-item>
+      <template #header>
+        <q-item-label style="padding-left: 0" class="full-width" header>{{
+          expandItem ? t('item.power') : t('filter.detail')
+        }}</q-item-label>
+      </template>
+      <q-item :disable="filterLoading">
+        <q-item-section>
+          <div class="row justify-center no-wrap q-col-gutter-sm items-center">
+            <D4Counter
+              :disable="filterLoading"
+              v-model="filter.power[0]"
+              :label="t('min')"
+              :max="9999"
+              allow-zero
+              no-button
+              @update:model-value="update()"
+              :debounce="1000"
+              max-width="100%"
+            />
+            <div>-</div>
+            <D4Counter
+              :disable="filterLoading"
+              v-model="filter.power[1]"
+              :label="t('max')"
+              :max="9999"
+              allow-zero
+              no-button
+              @update:model-value="update()"
+              :debounce="1000"
+              max-width="100%"
+            />
+          </div>
+        </q-item-section>
+      </q-item>
+      <q-item-label header>{{ t('item.level') }}</q-item-label>
+      <q-item :disable="filterLoading">
+        <q-item-section>
+          <div class="row justify-center no-wrap q-col-gutter-sm items-center">
+            <D4Counter
+              :disable="filterLoading"
+              v-model="filter.level[0]"
+              :label="t('min')"
+              :max="999"
+              allow-zero
+              no-button
+              @update:model-value="update()"
+              :debounce="1000"
+              max-width="100%"
+            />
+            <div>-</div>
+            <D4Counter
+              :disable="filterLoading"
+              v-model="filter.level[1]"
+              :label="t('max')"
+              :max="999"
+              allow-zero
+              no-button
+              @update:model-value="update()"
+              :debounce="1000"
+              max-width="100%"
+            />
+          </div>
+        </q-item-section>
+      </q-item>
+      <q-item-label header>{{ t('item.quality') }}</q-item-label>
+      <q-item :disable="filterLoading">
+        <q-item-section>
+          <q-option-group
+            dense
+            :disable="filterLoading"
+            size="xs"
+            inline
+            :options="
+              filterQuality().map((fq) => ({ ...fq, label: fq.fullName }))
+            "
+            type="checkbox"
+            v-model="filter.quality"
+            @update:model-value="updateDebounce()"
+          />
+        </q-item-section>
+      </q-item>
+      <q-item-label header>{{ t('item.selectType') }}</q-item-label>
+      <q-item :disable="filterLoading">
+        <q-item-section>
+          <q-option-group
+            dense
+            :disable="filterLoading"
+            size="xs"
+            inline
+            :options="filterTypes()"
+            type="checkbox"
+            v-model="filter.itemTypes"
+            @update:model-value="(val) => update(val)"
+          />
+        </q-item-section>
+      </q-item>
+      <q-item
+        :disable="filterLoading"
+        v-for="itemType in filter.itemTypes.filter((it) => it !== 'aspect')"
+        :key="itemType"
+      >
+        <q-item-section>
+          <q-select
+            :disable="filterLoading"
+            v-model="filter.itemTypeValues1[itemType]"
+            :options="
+              findType(itemType)?.value === 'rune'
+                ? filterRunes()
+                : filterClasses(itemType)
+            "
+            :label="`${findType(itemType)?.label} ${t('filter.type')}`"
+            outlined
+            dense
+            no-error-icon
+            hide-bottom-space
+            emit-value
+            map-options
+            multiple
+            transition-show="none"
+            transition-hide="none"
+            :transition-duration="0"
+            dropdown-icon="img:/images/icons/dropdown.svg"
+            popup-content-class="scroll bordered"
+            @update:model-value="updateDebounce()"
+          >
+          </q-select>
+        </q-item-section>
+      </q-item>
+    </q-expansion-item>
+    <q-separator inset />
     <q-item-label header class="row justify-between items-center">
       <div class="row items-center q-gutter-sm">
         <div>

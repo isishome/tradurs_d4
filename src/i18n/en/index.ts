@@ -36,8 +36,9 @@ export default {
     onlyForMe: 'Only For Me',
     all: 'All',
     status: 'Item Status',
+    detail: 'Item Detail',
     type: 'Type(s)',
-    advanced: 'Advanced Filter',
+    advanced: 'Affixes Filter',
     mine: 'My Items',
     offered: 'Have been offered',
     offer: 'Have made an offer',
@@ -47,10 +48,10 @@ export default {
     selectPreset: 'Select a preset',
     basicDescription: 'The basic filter information is saved in your account storage. When you register an item, its hardcore and seasonal status is automatically set by the basic filter information.',
     presetDescription: 'This feature saves the currently set filter values. Up to 3 presets can be saved.',
-    affixDescription: 'Affixes search allows you to select up to 6 affix filters, and if you select 5, other items including 4 of the 5 combined will also be searched.',
+    affixDescription: 'Affixes search allows you to select up to 6 affixes, and if 5 affixes are selected, items containing 4 of the 5 affixes combined will also be searched.',
     description: {
-      advanced: 'When using advanced filters, distinguish between \'Characteristics\' and \'Affixes\'',
-      advanced2: 'Occasionally, sellers may incorrectly enter \'Characteristics\' and \'Affixes\', so consider filtering'
+      advanced: 'When using affixes filters, use \'characteristics affixes\' and \'affixes\' separately.',
+      advanced2: 'Sometimes sellers input \'characteristics affixes\' and \'affixes\' incorrectly, so consider this and filter.'
     }
   },
   sort: {
