@@ -5,12 +5,12 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { reactive, ref } from "vue"
-import { QFile, uid, useQuasar } from "quasar"
-import { useRoute } from "vue-router"
-import { useI18n } from "vue-i18n"
-import { type ILabel, useItemStore } from "src/stores/item-store"
-import { Property, Affix, Item } from "src/types/item"
+import { reactive, ref } from 'vue'
+import { QFile, uid, useQuasar } from 'quasar'
+import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+import { type ILabel, useItemStore } from 'src/stores/item-store'
+import { Property, Affix, Item } from 'src/types/item'
 
 interface IProps {
   loading?: boolean
@@ -22,14 +22,14 @@ withDefaults(defineProps<IProps>(), {
   disable: false
 })
 
-const emit = defineEmits(["start", "end", "failed"])
+const emit = defineEmits(['start', 'end', 'failed'])
 
 const $q = useQuasar()
 const route = useRoute()
-const { t } = useI18n({ useScope: "global" })
+const { t } = useI18n({ useScope: 'global' })
 const is = useItemStore()
 
-const lang: string = (route.params.lang as string) || "ko"
+const lang: string = (route.params.lang as string) || 'ko'
 const similarRate =
   is.analyze.similarRate[lang as keyof typeof is.analyze.similarRate]
 const phase = is.analyze.lang[lang as keyof typeof is.analyze.lang]
@@ -38,18 +38,18 @@ const timeout = 400
 const showProgress = ref<boolean>(false)
 const checkedItem = reactive<string[]>([])
 const checkList: ILabel[] = [
-  { value: "analyze", label: t("analyze.analyzingImage") },
-  { value: "text", label: t("analyze.aligningText") },
-  { value: "info", label: t("analyze.checkBasicInfo") },
-  { value: "properties", label: t("analyze.checkCharacteristics") },
-  { value: "affixes", label: t("analyze.checkAffixes") },
-  { value: "restrictions", label: t("analyze.checkRestrictions") },
-  { value: "aggregate", label: t("analyze.aggregateItemInfo") }
+  { value: 'analyze', label: t('analyze.analyzingImage') },
+  { value: 'text', label: t('analyze.aligningText') },
+  { value: 'info', label: t('analyze.checkBasicInfo') },
+  { value: 'properties', label: t('analyze.checkCharacteristics') },
+  { value: 'affixes', label: t('analyze.checkAffixes') },
+  { value: 'restrictions', label: t('analyze.checkRestrictions') },
+  { value: 'aggregate', label: t('analyze.aggregateItemInfo') }
 ]
 const currentCheck = ref<string | number | null>(checkList[0].value)
 
 let plainText: string
-const item = new Item("")
+const item = new Item('')
 let restrictionsPhase: string[]
 
 const fileRef = ref<QFile>()
@@ -65,14 +65,14 @@ const endScan = () => {
   setTimeout(() => {
     showProgress.value = false
 
-    emit("end", item)
+    emit('end', item)
   }, timeout)
 }
 
 const failedScan = (msg: string) => {
   showProgress.value = false
 
-  emit("failed", msg)
+  emit('failed', msg)
 }
 
 const editDistance = (s1: string, s2: string) => {
@@ -117,7 +117,7 @@ const similarity = (s1: string, s2: string) => {
 }
 
 const checkText = () => {
-  currentCheck.value = "text"
+  currentCheck.value = 'text'
 
   const priceText = `판매가|sell.*value`
   const notTradable = `계정.*귀속|거래.*불가|account.*bound|not.*tradable`
@@ -125,31 +125,31 @@ const checkText = () => {
 
   // check priceText
   const indexPriceText = textArray.findIndex((ta) =>
-    new RegExp(priceText, "gi").test(ta)
+    new RegExp(priceText, 'gi').test(ta)
   )
 
   if (indexPriceText !== -1) textArray.splice(indexPriceText)
 
   // check not tradable
   const findNotTradable = textArray.filter((ta) =>
-    new RegExp(notTradable, "gi").test(ta)
+    new RegExp(notTradable, 'gi').test(ta)
   )
 
-  if (findNotTradable.length > 0) return failedScan(t("analyze.nonTradable"))
+  if (findNotTradable.length > 0) return failedScan(t('analyze.nonTradable'))
 
   setTimeout(() => {
-    checkedItem.push("text")
+    checkedItem.push('text')
     checkInfo(textArray)
   }, timeout)
 }
 
 const checkInfo = (textArray: string[]) => {
-  currentCheck.value = "info"
+  currentCheck.value = 'info'
 
   // check tier
-  const tierText = is.tiers.map((t) => t.fullName.replace(/[ ]/g, "")).join("|")
+  const tierText = is.tiers.map((t) => t.fullName.replace(/[ ]/g, '')).join('|')
   const indexTier = textArray.findIndex((ta) =>
-    new RegExp(tierText, "gi").test(ta)
+    new RegExp(tierText, 'gi').test(ta)
   )
 
   if (indexTier !== -1) {
@@ -165,7 +165,7 @@ const checkInfo = (textArray: string[]) => {
         item.tier = is.tiers[findTierIndex].value
         tierPhase[i].replace(
           is.quality[findTierIndex].fullName.toLowerCase(),
-          ""
+          ''
         )
         break
       }
@@ -174,17 +174,17 @@ const checkInfo = (textArray: string[]) => {
 
   // check quality
   const qualityText = is.quality
-    .map((q) => q.fullName.replace(/[ ]/g, ""))
-    .join(" |")
+    .map((q) => q.fullName.replace(/[ ]/g, ''))
+    .join(' |')
   const indexQuality = textArray.findIndex((ta) =>
-    new RegExp(qualityText, "gi").test(ta)
+    new RegExp(qualityText, 'gi').test(ta)
   )
 
-  if (indexQuality === -1) return failedScan(t("analyze.qualityNotFound"))
+  if (indexQuality === -1) return failedScan(t('analyze.qualityNotFound'))
 
   const qualityPhase = textArray
     .slice(indexQuality, indexQuality + 2)
-    .join(" ")
+    .join(' ')
     .split(/\s/gi)
 
   let typeValueIndex = -1
@@ -199,28 +199,28 @@ const checkInfo = (textArray: string[]) => {
       item.quality = is.quality[findQualityIndex].value as string
       qualityPhase[i].replace(
         is.quality[findQualityIndex].fullName.toLowerCase(),
-        ""
+        ''
       )
       break
     }
   }
 
   // check typevalue
-  if (typeValueIndex === -1) return failedScan(t("analyze.typeNotFound"))
+  if (typeValueIndex === -1) return failedScan(t('analyze.typeNotFound'))
 
   let typeValue = qualityPhase
     .splice(typeValueIndex, qualityPhase.length)
-    .join(" ")
-    .replace(new RegExp(`[^${phase}]`, "gi"), "")
+    .join(' ')
+    .replace(new RegExp(`[^${phase}]`, 'gi'), '')
     .trim()
 
   // replace for each language
   replaces.forEach((r) => {
-    typeValue = typeValue.replace(new RegExp(`${r[0]}`, "gi"), r[1])
+    typeValue = typeValue.replace(new RegExp(`${r[0]}`, 'gi'), r[1])
   })
 
-  if (!typeValue || typeValue === "")
-    return failedScan(t("analyze.typeNotFound"))
+  if (!typeValue || typeValue === '')
+    return failedScan(t('analyze.typeNotFound'))
 
   // check class
   const findClass = [...is.classes]
@@ -230,7 +230,7 @@ const checkInfo = (textArray: string[]) => {
         typeValue
           .toLowerCase()
           .indexOf(
-            c.label.replace(new RegExp(`[^${phase}]`, "gi"), "").toLowerCase()
+            c.label.replace(new RegExp(`[^${phase}]`, 'gi'), '').toLowerCase()
           ) !== -1
     )
 
@@ -238,7 +238,7 @@ const checkInfo = (textArray: string[]) => {
     item.itemType = findClass.type
     item.itemTypeValue1 = findClass.value as string
 
-    if (findClass.value === "gem") {
+    if (findClass.value === 'gem') {
       const findGemQuality = is.gems.find(
         (g) =>
           typeValue.toLowerCase().indexOf(g.qualityName.toLowerCase()) !== -1
@@ -249,40 +249,40 @@ const checkInfo = (textArray: string[]) => {
   }
 
   // check aspect
-  if (item.itemTypeValue1 === "") {
+  if (item.itemTypeValue1 === '') {
     const findAspect = is.aspectCategories.find(
       (a) => a.label.toLocaleLowerCase() === typeValue.toLowerCase()
     )
 
     if (findAspect) {
-      item.itemType = "aspect"
+      item.itemType = 'aspect'
       item.itemTypeValue1 = findAspect.value as string
     }
   }
 
-  if (item.itemTypeValue1 === "")
-    return failedScan(t("analyze.typeValueNotFound"))
+  if (item.itemTypeValue1 === '')
+    return failedScan(t('analyze.typeValueNotFound'))
 
   // check item name
   const name = textArray
     .splice(0, indexQuality)
-    .join(" ")
-    .replace(new RegExp(`[^ ${phase} ]`, "gi"), "")
+    .join(' ')
+    .replace(new RegExp(`[^ ${phase} ]`, 'gi'), '')
     .trim()
-  if (name === "") return failedScan(t("analyze.nameNotFound"))
+  if (name === '') return failedScan(t('analyze.nameNotFound'))
 
   item.name = name
 
   // check item power
   const powerText = `아이템.*위력|item.*power`
   const indexPower = textArray.findIndex((ta) =>
-    new RegExp(powerText, "gi").test(ta)
+    new RegExp(powerText, 'gi').test(ta)
   )
 
   if (indexPower !== -1) {
     const numPhase = textArray[indexPower]
-      .replace(/[^0-9\+]/gi, "")
-      .replace(/^([0-9]*)(\+?[0-9]*)$/gi, "$1")
+      .replace(/[^0-9\+]/gi, '')
+      .replace(/^([0-9]*)(\+?[0-9]*)$/gi, '$1')
     if (!isNaN(parseFloat(numPhase))) item.power = parseFloat(numPhase)
 
     textArray.splice(0, indexPower + 1)
@@ -303,40 +303,40 @@ const checkInfo = (textArray: string[]) => {
   // check item Requires Level
   const requiresText = `요구.*레벨|requires.*level`
   const indexRequires = textArray.findIndex((ta) =>
-    new RegExp(requiresText, "gi").test(ta)
+    new RegExp(requiresText, 'gi').test(ta)
   )
 
   // if (indexRequires === -1)
   //   return failedScan(t('analyze.requireNotFound'))
 
   if (indexRequires !== -1) {
-    const levelPhase = textArray[indexRequires].replace(/[^0-9]/gi, "")
+    const levelPhase = textArray[indexRequires].replace(/[^0-9]/gi, '')
     if (!isNaN(parseFloat(levelPhase))) item.level = parseFloat(levelPhase)
   }
 
   restrictionsPhase = textArray
     .splice(indexRequires, textArray.length)
-    .map((ta: string) => ta.replace(/[\+ ]/g, ""))
+    .map((ta: string) => ta.replace(/[\+ ]/g, ''))
 
   // remove lost when epuipped
   const lostText = `장착.*사라지는|lost.*when`
   const indexLost = textArray.findIndex((ta) =>
-    new RegExp(lostText, "gi").test(ta)
+    new RegExp(lostText, 'gi').test(ta)
   )
 
   if (indexLost !== -1) textArray.splice(indexLost, textArray.length)
 
   let tArray = textArray.map((ta: string) =>
     ta
-      .replace(/[\+ ]/g, "")
-      .replace(/([0-9]*?)(\,)([0-9.]{1,})/g, "$1$3")
-      .replace(/[\[]{2,}/g, "[")
-      .replace(/[\]]{2,}/g, "]")
-      .replace(/\]1/g, "]")
+      .replace(/[\+ ]/g, '')
+      .replace(/([0-9]*?)(\,)([0-9.]{1,})/g, '$1$3')
+      .replace(/[\[]{2,}/g, '[')
+      .replace(/[\]]{2,}/g, ']')
+      .replace(/\]1/g, ']')
   )
 
   setTimeout(() => {
-    checkedItem.push("info")
+    checkedItem.push('info')
     checkProperties(tArray)
   }, timeout)
 }
@@ -362,12 +362,12 @@ const checkAttributes = (
 
   let l = 0
   let prevSimilar = 0
-  while (l < 5) {
+  while (l < 8) {
     const text = tArray
       .slice(index, index + l + 1)
-      .join(" ")
-      .replace(/\([^\)]*\)?/g, "")
-      .replace(new RegExp(`[^${phase}]`, "g"), "")
+      .join(' ')
+      .replace(/\([^\)]*\)?/g, '')
+      .replace(new RegExp(`[^${phase}]`, 'g'), '')
     const similar = similarity(text, label)
 
     if (similar >= similarRate) {
@@ -388,7 +388,7 @@ const checkAttributes = (
 }
 
 const checkProperties = (tArray: string[]) => {
-  currentCheck.value = "properties"
+  currentCheck.value = 'properties'
 
   const findClass = is.findClass(item.itemTypeValue1)
 
@@ -401,9 +401,9 @@ const checkProperties = (tArray: string[]) => {
         const pid = findClass.properties[pi]
         const propertyLabel = is
           .findProperty(pid)
-          ?.label.replace(/{x}/g, "")
-          .replace(/[ \+\-%\[\]\:,0-9]/g, "")
-          .replace(/\([a-zA-Z가-힣 ]*\)/g, "") as string
+          ?.label.replace(/{x}/g, '')
+          .replace(/[ \+\-%\[\]\:,0-9]/g, '')
+          .replace(/\([a-zA-Z가-힣 ]*\)/g, '') as string
 
         for (let i = 0; i < tArray.length; i++) {
           const result = checkAttributes(tArray, i + cut, pid, propertyLabel)
@@ -429,7 +429,7 @@ const checkProperties = (tArray: string[]) => {
 
         const attrStr = tArray
           .slice(ma.index, ma.index + (ma.match[0]?.length ?? 0) + 2)
-          .join("-")
+          .join('-')
         const matchValues = attrStr
           .match(/[0-9.]{1,}/g)
           ?.filter((mv) => !isNaN(parseFloat(mv)))
@@ -440,7 +440,7 @@ const checkProperties = (tArray: string[]) => {
         const values: Array<number> = []
 
         plainMatch?.forEach((pm: number | string, index: number) => {
-          if (pm === "{x}" && matchValues?.[index])
+          if (pm === '{x}' && matchValues?.[index])
             values.push(matchValues?.[index])
         })
 
@@ -467,18 +467,18 @@ const checkProperties = (tArray: string[]) => {
       )
     } catch (e) {
       console.log(e)
-      return failedScan(t("analyze.failedAnalyze"))
+      return failedScan(t('analyze.failedAnalyze'))
     }
   }
 
   setTimeout(() => {
-    checkedItem.push("properties")
+    checkedItem.push('properties')
     checkAffixes(tArray)
   }, timeout)
 }
 
 const checkAffixes = (tArray: string[]) => {
-  currentCheck.value = "affixes"
+  currentCheck.value = 'affixes'
 
   try {
     const matchAttribute: Array<ISimilar> = []
@@ -486,9 +486,9 @@ const checkAffixes = (tArray: string[]) => {
     for (let i = 0; i < tArray.length; i++) {
       for (const affix of is.availableAffixes()) {
         const affixLabel = affix.label
-          .replace(/{x}/g, "")
-          .replace(/[ \+\-%\:,0-9]/g, "")
-          .replace(/\([a-zA-Z가-힣 ]*\)/g, "") as string
+          .replace(/{x}/g, '')
+          .replace(/[ \+\-%\:,0-9]/g, '')
+          .replace(/\([a-zA-Z가-힣 ]*\)/g, '') as string
 
         const result = checkAttributes(
           tArray,
@@ -518,18 +518,18 @@ const checkAffixes = (tArray: string[]) => {
         .map((m) => m.index)
         .includes(ma.index + (ma.match[0]?.length ?? 0) + 1)
         ? ma.index + (ma.match[0]?.length ?? 0) + 1
-        : ma.index + (ma.match[0]?.length ?? 0) + 5
-      const attrStr = tArray.slice(ma.index, end).join("-")
+        : ma.index + (ma.match[0]?.length ?? 0) + 8
+      const attrStr = tArray.slice(ma.index, end).join('-')
       const matchMinMax = attrStr
         .match(/[\[]{1}[0-9.]{1,}[^\-\[]*[\-]*[0-9.]{1,}[\]]?/g)
         ?.map((mmm) =>
           mmm
-            .replace(/[^0-9.-]/g, "")
+            .replace(/[^0-9.-]/g, '')
             .split(/[\-]{1,2}/)
             .map((mm) => (!isNaN(parseFloat(mm)) ? parseFloat(mm) : 0))
         )
       const matchValues = attrStr
-        .replace(/[\[]{1}[0-9.]{1,}[^\-\[]*[\-]*[0-9.]{1,}[\]]?/g, "")
+        .replace(/[\[]{1}[0-9.]{1,}[^\-\[]*[\-]*[0-9.]{1,}[\]]?/g, '')
         .match(/[0-9.]{1,}/g)
         ?.filter((mv) => !isNaN(parseFloat(mv)))
         .map((mv) => parseFloat(mv))
@@ -539,7 +539,7 @@ const checkAffixes = (tArray: string[]) => {
       const values: Array<number> = []
 
       plainMatch?.forEach((pm: number | string, index: number) => {
-        if (pm === "{x}" && matchValues?.[index])
+        if (pm === '{x}' && matchValues?.[index])
           values.push(matchValues?.[index])
       })
 
@@ -566,26 +566,26 @@ const checkAffixes = (tArray: string[]) => {
     item.affixes.sort((a: Affix, b: Affix) => a.affixId - b.affixId)
   } catch (e) {
     console.log(e)
-    return failedScan(t("analyze.failedAnalyze"))
+    return failedScan(t('analyze.failedAnalyze'))
   }
 
   setTimeout(() => {
-    checkedItem.push("affixes")
+    checkedItem.push('affixes')
     checkRestrictions()
   }, timeout)
 }
 
 const checkRestrictions = () => {
-  currentCheck.value = "restrictions"
+  currentCheck.value = 'restrictions'
 
   try {
     const matchAttribute: Array<ISimilar> = []
 
     for (const restriction of is.restrictions.data) {
       const restrictLabel = restriction.label
-        .replace(/{x}/g, "")
-        .replace(/[ \+\-%\[\]\:,0-9]/g, "")
-        .replace(/\([a-zA-Z가-힣 ]*\)/g, "") as string
+        .replace(/{x}/g, '')
+        .replace(/[ \+\-%\[\]\:,0-9]/g, '')
+        .replace(/\([a-zA-Z가-힣 ]*\)/g, '') as string
 
       let cut = 0
       for (let i = 0; i < restrictionsPhase.length; i++) {
@@ -617,7 +617,7 @@ const checkRestrictions = () => {
       const matchValues =
         restrictionsPhase
           .slice(ma.index + ma.match[0]?.length, restrictionsPhase.length)
-          .join("-")
+          .join('-')
           .match(/[0-9.]{1,}/g)
           ?.map((mv) => parseFloat(mv)) || []
       item.restrictions.push({
@@ -630,37 +630,37 @@ const checkRestrictions = () => {
     })
   } catch (e) {
     console.log(e)
-    return failedScan(t("analyze.failedAnalyze"))
+    return failedScan(t('analyze.failedAnalyze'))
   }
 
   setTimeout(() => {
-    checkedItem.push("restrictions")
+    checkedItem.push('restrictions')
     aggregate()
   }, timeout)
 }
 
 const aggregate = () => {
-  currentCheck.value = "aggregate"
+  currentCheck.value = 'aggregate'
   setTimeout(() => {
-    checkedItem.push("aggregate")
+    checkedItem.push('aggregate')
     endScan()
   }, timeout)
 }
 
 const scan = (f: File) => {
   dropBox.show = false
-  emit("start")
+  emit('start')
 
   filtering(f)
 }
 
 const filtering = (f: File) => {
   checkedItem.splice(0, checkedItem.length)
-  currentCheck.value = "analyze"
+  currentCheck.value = 'analyze'
   showProgress.value = true
 
-  const canvas = document.createElement("canvas")
-  const ctx = canvas.getContext("2d")
+  const canvas = document.createElement('canvas')
+  const ctx = canvas.getContext('2d')
   const fr = new FileReader()
   fr.readAsDataURL(f)
 
@@ -679,7 +679,7 @@ const filtering = (f: File) => {
 
       if (ctx) {
         if (isTransparent) {
-          ctx.fillStyle = "#000000"
+          ctx.fillStyle = '#000000'
           ctx.fillRect(0, 0, canvas.width, canvas.height)
         }
 
@@ -706,19 +706,19 @@ const filtering = (f: File) => {
           Math.round((iHeight - predictHeight) * ratio)
         )
 
-        ctx.filter = "brightness(1.6) contrast(1.4) blur(.6px)"
+        ctx.filter = 'brightness(1.6) contrast(1.4) blur(.6px)'
         ctx.drawImage(canvas, 0, 0)
 
         is.recognize(canvas, lang)
           .then((text) => {
             plainText = text
-            checkedItem.push("analyze")
+            checkedItem.push('analyze')
             checkText()
           })
           .catch(() => {
-            failedScan(t("analyze.failedAnalyze"))
+            failedScan(t('analyze.failedAnalyze'))
           })
-      } else failedScan(t("analyze.failedAnalyze"))
+      } else failedScan(t('analyze.failedAnalyze'))
     }
   }
 }
@@ -740,13 +740,13 @@ const dropBox = reactive<DropBox>({
 })
 
 const fileCheckAndScanStart = (f?: File) => {
-  if (f && f.type.indexOf("image") !== -1) scan(f)
+  if (f && f.type.indexOf('image') !== -1) scan(f)
   else {
     $q.notify({
-      icon: "img:/images/icons/alert.svg",
-      color: "negative",
-      classes: "",
-      message: t("analyze.notImageFormat")
+      icon: 'img:/images/icons/alert.svg',
+      color: 'negative',
+      classes: '',
+      message: t('analyze.notImageFormat')
     })
   }
 }
@@ -762,13 +762,13 @@ const paste = (event: ClipboardEvent) => {
 }
 
 const showDropBox = () => {
-  dropArea.value?.addEventListener("drop", drop)
-  document.body.addEventListener("paste", paste)
+  dropArea.value?.addEventListener('drop', drop)
+  document.body.addEventListener('paste', paste)
 }
 
 const beforeHideDropBox = () => {
-  dropArea.value?.removeEventListener("drop", drop)
-  document.body.removeEventListener("paste", paste)
+  dropArea.value?.removeEventListener('drop', drop)
+  document.body.removeEventListener('paste', paste)
 }
 </script>
 <template>
@@ -799,7 +799,7 @@ const beforeHideDropBox = () => {
       <template #top>
         <q-card-section>
           <div class="text-h6 q-px-sm text-center">
-            {{ t("analyze.title") }}
+            {{ t('analyze.title') }}
           </div>
         </q-card-section>
       </template>
@@ -859,13 +859,13 @@ const beforeHideDropBox = () => {
             height="48"
             alt="Tradurs Image Icon"
           />
-          <div>{{ t("analyze.dragAndDrop") }}</div>
+          <div>{{ t('analyze.dragAndDrop') }}</div>
           <div class="row q-gutter-x-sm items-baseline">
-            <div>{{ t("analyze.or") }}</div>
-            <div class="text-primary">{{ t("analyze.browse") }}</div>
+            <div>{{ t('analyze.or') }}</div>
+            <div class="text-primary">{{ t('analyze.browse') }}</div>
           </div>
           <div class="text-caption q-px-xl break-keep text-center">
-            {{ t("analyze.dragMessage") }}
+            {{ t('analyze.dragMessage') }}
           </div>
         </div>
       </template>

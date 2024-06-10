@@ -1,6 +1,6 @@
 <script lang="ts">
-import { useAccountStore } from "stores/account-store"
-import { useItemStore } from "stores/item-store"
+import { useAccountStore } from 'stores/account-store'
+import { useItemStore } from 'stores/item-store'
 
 export default {
   async preFetch({ store }) {
@@ -25,17 +25,17 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, reactive, watch } from "vue"
-import { useQuasar, useMeta } from "quasar"
+import { ref, computed, onMounted, reactive, watch } from 'vue'
+import { useQuasar, useMeta } from 'quasar'
 import {
   useRoute,
   useRouter,
   RouteRecordName,
   RouteParamsRaw
-} from "vue-router"
-import { useI18n } from "vue-i18n"
-import { useGlobalStore } from "stores/global-store"
-import { useAdBlock } from "src/composables/adblock"
+} from 'vue-router'
+import { useI18n } from 'vue-i18n'
+import { useGlobalStore } from 'stores/global-store'
+import { useAdBlock } from 'src/composables/adblock'
 
 interface IParagraph {
   type: string
@@ -51,18 +51,18 @@ const route = useRoute()
 const router = useRouter()
 const as = useAccountStore()
 const gs = useGlobalStore()
-const { t, tm, locale } = useI18n({ useScope: "global" })
+const { t, tm, locale } = useI18n({ useScope: 'global' })
 const { check } = useAdBlock()
 
 const view = ref<boolean>(false)
 const isDark = ref(
-  $q.cookies.has("d4.dark")
-    ? $q.cookies.get("d4.dark") === "true"
+  $q.cookies.has('d4.dark')
+    ? $q.cookies.get('d4.dark') === 'true'
     : $q.dark.isActive
 )
 $q.dark.set(isDark.value)
 
-const battleTag = ref<string>("")
+const battleTag = ref<string>('')
 const showBT = ref<boolean>(false)
 const loading = ref<boolean>(false)
 const reloadAdKey = computed(() => gs.reloadAdKey)
@@ -74,57 +74,57 @@ const updateBattleTag = () => {
   })
 }
 
-const lang = (route.params.lang as string) || "ko"
+const lang = (route.params.lang as string) || 'ko'
 locale.value = lang
 
 // about Meta
 const pageName = computed(() =>
   route.name
     ? `${t(`page.${route.name as string}`, 0, { locale: lang })} - `
-    : ""
+    : ''
 )
-const itemName = computed(() => (gs.itemName ? `${gs.itemName} - ` : ""))
+const itemName = computed(() => (gs.itemName ? `${gs.itemName} - ` : ''))
 const titleReactive = computed(() =>
   t(
-    "seo.title",
+    'seo.title',
     { pageName: pageName.value, itemName: itemName.value },
     { locale: lang }
   )
 )
-const descReactive = computed(() => t("seo.desc", 0, { locale: lang }))
-const keywordsReactive = computed(() => t("seo.keywords", 0, { locale: lang }))
+const descReactive = computed(() => t('seo.desc', 0, { locale: lang }))
+const keywordsReactive = computed(() => t('seo.keywords', 0, { locale: lang }))
 
 useMeta(() => {
   return {
     title: titleReactive.value,
     meta: {
-      description: { name: "description", content: descReactive.value },
-      keywords: { name: "keywords", content: keywordsReactive.value },
+      description: { name: 'description', content: descReactive.value },
+      keywords: { name: 'keywords', content: keywordsReactive.value },
       equiv: {
-        "http-equiv": "Content-Type",
-        content: "text/html; charset=UTF-8"
+        'http-equiv': 'Content-Type',
+        content: 'text/html; charset=UTF-8'
       },
-      ogTitle: { property: "og:title", content: titleReactive.value },
+      ogTitle: { property: 'og:title', content: titleReactive.value },
       ogDescription: {
-        property: "og:description",
+        property: 'og:description',
         content: descReactive.value
       },
-      ogUrl: { property: "og:url", content: "https://d4.tradurs.com" },
-      ogType: { property: "og:type", content: "website" },
+      ogUrl: { property: 'og:url', content: 'https://d4.tradurs.com' },
+      ogType: { property: 'og:type', content: 'website' },
       ogImage: {
-        property: "og:image",
-        content: "https://d4.tradurs.com/images/og.png"
+        property: 'og:image',
+        content: 'https://d4.tradurs.com/images/og.png'
       },
-      twitterCard: { name: "twitter:card", content: "summary" },
-      twitterTitle: { name: "twitter:title", content: titleReactive.value },
+      twitterCard: { name: 'twitter:card', content: 'summary' },
+      twitterTitle: { name: 'twitter:title', content: titleReactive.value },
       twitterDescription: {
-        name: "twitter:description",
+        name: 'twitter:description',
         content: descReactive.value
       },
-      twitterUrl: { name: "twitter:url", content: "https://d4.tradurs.com" },
+      twitterUrl: { name: 'twitter:url', content: 'https://d4.tradurs.com' },
       twitterImage: {
-        name: "twitter:image",
-        content: "https://d4.tradurs.com/images/og.png"
+        name: 'twitter:image',
+        content: 'https://d4.tradurs.com/images/og.png'
       }
     }
   }
@@ -136,24 +136,24 @@ const notice = reactive<{ open: boolean; close: boolean }>({
 })
 
 const close = () => {
-  $q.cookies.set("d4.update.20240525", "confirm", { expires: 1, path: "/" })
+  $q.cookies.set('d4.update.20240525', 'confirm', { expires: 1, path: '/' })
   notice.open = false
 }
 
 const checkAd = () => {
-  if (!(route.name === "support" && route.params.section === "allow")) {
+  if (!(route.name === 'support' && route.params.section === 'allow')) {
     check({
       actions: [
         {
           noCaps: true,
           dense: true,
-          class: "no-hover text-underline",
-          label: t("btn.allow"),
-          color: "dark",
+          class: 'no-hover text-underline',
+          label: t('btn.allow'),
+          color: 'dark',
           handler: () => {
             router.push({
-              name: "support",
-              params: { lang: route.params.lang, section: "allow" }
+              name: 'support',
+              params: { lang: route.params.lang, section: 'allow' }
             })
           }
         }
@@ -167,9 +167,9 @@ watch(reloadAdKey, (val, old) => {
 })
 
 onMounted(() => {
-  document.documentElement.setAttribute("lang", locale.value as string)
+  document.documentElement.setAttribute('lang', locale.value as string)
   view.value = true
-  showBT.value = !!as.signed && !(as.info.battleTag && as.info.battleTag !== "")
+  showBT.value = !!as.signed && !(as.info.battleTag && as.info.battleTag !== '')
   notice.open = false // !$q.cookies.has("d4.update.20240525")
   checkAd()
 })
@@ -184,7 +184,7 @@ onMounted(() => {
             class="text-weight-bold"
             :class="$q.screen.gt.sm ? 'q-pa-md text-h6' : 'q-pa-sm text-body2'"
           >
-            {{ t("notice.title") }}
+            {{ t('notice.title') }}
           </div>
         </div>
         <q-btn
@@ -209,7 +209,7 @@ onMounted(() => {
           class="q-pa-md column q-gutter-y-sm"
           :class="$q.screen.gt.sm ? 'text-body2' : 'text-caption'"
         >
-          <div class="text-area">{{ t("notice.top") }}</div>
+          <div class="text-area">{{ t('notice.top') }}</div>
           <div>
             <template
               v-for="(c, i) in (tm('notice.contents') as Array<IParagraph>) "
@@ -253,7 +253,7 @@ onMounted(() => {
               <q-separator v-else-if="c.type === 'separator'" />
             </template>
           </div>
-          <div class="text-area">{{ t("notice.bottom") }}</div>
+          <div class="text-area">{{ t('notice.bottom') }}</div>
         </div>
       </q-card-section>
     </template>
@@ -275,7 +275,7 @@ onMounted(() => {
   <D4Dialog v-model="showBT" persistent @submit="updateBattleTag">
     <template #top>
       <q-card-section>
-        <div class="q-pa-md text-h6">{{ t("battlenet.title") }}</div>
+        <div class="q-pa-md text-h6">{{ t('battlenet.title') }}</div>
       </q-card-section>
     </template>
     <template #middle>
@@ -284,9 +284,9 @@ onMounted(() => {
           class="q-px-lg"
           :class="$q.screen.gt.sm ? 'text-body1' : 'text-body2'"
         >
-          {{ t("battlenet.msg1") }}
+          {{ t('battlenet.msg1') }}
           <strong class="text-amber">Tradurs Diablo IV</strong>
-          {{ t("battlenet.msg2") }}
+          {{ t('battlenet.msg2') }}
         </div>
       </q-card-section>
       <q-card-section class="text-center">
@@ -294,7 +294,7 @@ onMounted(() => {
           class="q-px-lg"
           :class="$q.screen.gt.sm ? 'text-body2' : 'text-caption'"
         >
-          {{ t("battlenet.desc") }}
+          {{ t('battlenet.desc') }}
         </div>
       </q-card-section>
       <q-card-section>
