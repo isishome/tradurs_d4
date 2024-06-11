@@ -29,7 +29,8 @@ export const initMessenger = async (as: AccountStore, is: ItemStore) => {
       textColor: 'dark',
       multiLine: true,
       message,
-      timeout: 0,
+      progress: true,
+      timeout: 10000,
       actions: [
         {
           noCaps: true,
@@ -49,10 +50,16 @@ export const initMessenger = async (as: AccountStore, is: ItemStore) => {
   })
 
   as.messenger.on("connect_error", () => {
+    if (!!!as.signed)
+      return
+
     reconnect(i18n.global.t('socket.failed'))
   })
 
   as.messenger.on('disconnect', () => {
+    if (!!!as.signed)
+      return
+
     reconnect()
   })
 
