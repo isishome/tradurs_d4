@@ -202,7 +202,8 @@ export default {
     join: '입장',
     allow: '광고 허용 방법',
     confirm: '확인',
-    reRegister: '재등록'
+    reRegister: '재등록',
+    reConnect: '재연결'
   },
   attribute: {
     request: '{attr} 추가 요청',
@@ -681,6 +682,8 @@ export default {
     noData: '수상 내역이 없습니다'
   },
   socket: {
-    '0900': '알림 정보 인증이 실패했습니다'
+    '0900': '알림 정보 인증이 실패했습니다',
+    disconnect: '알림 서버와의 연결이 해제되었습니다.',
+    failed: '알림 서버 연결이 실패했습니다.'
   }
 }

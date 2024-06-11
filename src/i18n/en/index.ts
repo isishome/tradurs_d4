@@ -202,7 +202,8 @@ export default {
     join: 'Join',
     allow: 'How to allow ads',
     confirm: 'Confirm',
-    reRegister: 'Re-Register'
+    reRegister: 'Re-Register',
+    reConnect: 'Re-Connect'
   },
   attribute: {
     request: 'Request additional {attr}',
@@ -681,6 +682,8 @@ export default {
     noData: 'No awards'
   },
   socket: {
-    '0900': 'Notify information authentication failed'
+    '0900': 'Notify information authentication failed',
+    disconnect: 'The connection to the notification server has been disconnected.',
+    failed: 'The connection to the notification server failed.'
   }
 }

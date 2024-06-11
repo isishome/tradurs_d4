@@ -98,7 +98,9 @@ export default boot(({ app, ssrContext, store, router }/* { app, router, ... } *
     }
 
     if (as.signed === null)
-      await as.checkSign().then(() => { }).catch(() => { })
+      await as.checkSign().then(() => { }).catch(() => {
+        as.sign()
+      })
 
     if (((to.params.lang?.length === 2 && !gs.localeOptions.map(lo => lo.value).includes(to.params.lang as string)) || (onlyAdmin && !as.info.isAdmin)) && to.name !== 'pnf')
       return next({ name: 'pnf' })

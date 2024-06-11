@@ -12,10 +12,9 @@ export default {
       is.getProperties(),
       is.getAffixes(),
       is.getRestrictions(),
-      as.getEvaluations()
+      as.getEvaluations(),
+      as.unreadMessages()
     ]
-
-    if (!!as.info.id) promises.push(as.unreadMessages())
 
     return Promise.all(promises)
       .then(() => {})

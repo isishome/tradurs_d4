@@ -14,14 +14,46 @@ export const initMessenger = async (as: AccountStore, is: ItemStore) => {
     return
 
   const manager = new Manager(import.meta.env.VITE_APP_SOCKET, {
-    reconnectionAttempts: 5,
-    withCredentials: prod
+    reconnection: false,
+    withCredentials: prod,
+    transports: ['websocket']
   })
 
   as.messenger = manager.socket('/messenger')
 
+  const reconnect = (message = i18n.global.t('socket.disconnect')) => {
+    Notify.create({
+      icon: 'img:/images/icons/warning.svg',
+      classes: 'no-invert',
+      color: 'warning',
+      textColor: 'dark',
+      multiLine: true,
+      message,
+      timeout: 0,
+      actions: [
+        {
+          noCaps: true,
+          dense: true,
+          class: 'no-hover text-underline',
+          label: i18n.global.t('btn.reConnect'),
+          color: 'dark', handler: () => {
+            as.messenger?.connect()
+          }
+        }
+      ]
+    })
+  }
+
   as.messenger.on('connect', () => {
     as.messenger?.emit('join', as.info.id)
+  })
+
+  as.messenger.on("connect_error", () => {
+    reconnect(i18n.global.t('socket.failed'))
+  })
+
+  as.messenger.on('disconnect', () => {
+    reconnect()
   })
 
   as.messenger.on('error', (data: string) => {
