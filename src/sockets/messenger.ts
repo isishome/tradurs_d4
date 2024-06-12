@@ -118,7 +118,7 @@ export const initMessenger = async (as: AccountStore, is: ItemStore) => {
 
   as.messenger.on('complete', async (offerInfo: OfferInfo) => {
     notify()
-    await as.retrieve()
+    await as.checkSign()
     if (as.info.notifyPrivate)
       is.socket.complete = offerInfo
   })

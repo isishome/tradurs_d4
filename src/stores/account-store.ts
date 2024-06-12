@@ -80,21 +80,6 @@ export const useAccountStore = defineStore('account', {
           })
       })
     },
-    retrieve() {
-      return new Promise<void>((resolve, reject) => {
-        api.get('/account/retrieve')
-          .then((response) => {
-            this.info = response.data
-            this.signed = typeof (response.data.id) !== 'undefined'
-            resolve()
-          })
-          .catch(() => {
-            reject()
-          })
-
-        resolve()
-      })
-    },
     sign() {
       return new Promise<boolean>(resolve => {
         api.get('/account/signOut')

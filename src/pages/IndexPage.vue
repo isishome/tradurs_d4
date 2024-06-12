@@ -114,7 +114,7 @@ const upsertItem = (item: Item, done: Function) => {
           }
         })
       } else {
-        as.retrieve()
+        as.checkSign()
         props.filter?.clearFilter()
         reload()
       }
@@ -134,7 +134,7 @@ const relistItem = (item: Item, done: Function) => {
     disable.value = true
     is.relistItem(item.itemId)
       .then(() => {
-        as.retrieve()
+        as.checkSign()
         itemsRef.value?.hideEditable()
         disable.value = false
         reload()
@@ -171,7 +171,7 @@ const reRegisterItem = (item: Item, done: Function) => {
     disable.value = true
     is.reRegisterItem(item.itemId)
       .then(() => {
-        as.retrieve()
+        as.checkSign()
         itemsRef.value?.hideEditable()
         disable.value = false
         reload()
@@ -438,7 +438,7 @@ const relistItems = () => {
       })
       .catch(() => {})
       .then(() => {
-        as.retrieve()
+        as.checkSign()
 
         is.filter.loading = false
         disable.value = false
@@ -569,7 +569,7 @@ const reRegisterItems = () => {
       })
       .catch(() => {})
       .then(() => {
-        as.retrieve()
+        as.checkSign()
 
         is.filter.loading = false
         disable.value = false
@@ -632,7 +632,7 @@ const deleteItems = () => {
       })
       .catch(() => {})
       .then(() => {
-        as.retrieve()
+        as.checkSign()
 
         is.filter.loading = false
         disable.value = false

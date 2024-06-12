@@ -695,7 +695,7 @@ const makingOffer = (offer: Offer) => {
   is.makeOffer(offer)
     .then((response) => {
       const findOffer = offers.value.find((o) => o.offerId === response.offerId)
-      as.retrieve()
+      as.checkSign()
 
       if (findOffer) {
         $q.notify({
@@ -779,7 +779,7 @@ const complete = (evaluations: Array<number>) => {
   disableOffers.value = true
   is.addEvaluations(offerItem.value?.itemId as string, evaluations)
     .then(() => {
-      as.retrieve()
+      as.checkSign()
 
       $q.notify({
         icon: 'img:/images/icons/check.svg',

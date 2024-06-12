@@ -86,7 +86,7 @@ const upsertItem = (item: Item, done: Function) => {
           }
         })
       } else {
-        as.retrieve()
+        as.checkSign()
         props.filter?.clearFilter()
         router.push({ name: 'tradeList', params: { lang: route.params.lang } })
       }
@@ -106,7 +106,7 @@ const relistItem = (item: Item, done: Function) => {
   disable.value = true
   is.relistItem(item.itemId)
     .then(() => {
-      as.retrieve()
+      as.checkSign()
       router.push({ name: 'tradeList', params: { lang: route.params.lang } })
     })
     .catch(() => {
@@ -137,7 +137,7 @@ const reRegisterItem = (item: Item, done: Function) => {
   disable.value = true
   is.reRegisterItem(item.itemId)
     .then(() => {
-      as.retrieve()
+      as.checkSign()
       router.push({ name: 'tradeList', params: { lang: route.params.lang } })
     })
     .catch(() => {
