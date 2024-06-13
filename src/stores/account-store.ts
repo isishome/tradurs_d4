@@ -4,6 +4,7 @@ import { User, type INotify } from 'src/types/user'
 import { Socket } from 'socket.io-client'
 import { type ILabel } from 'src/stores/item-store'
 import { IItem } from 'src/types/item'
+import { AxiosRequestConfig } from 'axios'
 
 export interface IEvaluation extends ILabel {
   type: string
@@ -67,9 +68,9 @@ export const useAccountStore = defineStore('account', {
     }
   },
   actions: {
-    checkSign() {
+    checkSign(options?: AxiosRequestConfig) {
       return new Promise<void>((resolve, reject) => {
-        api.get('/account/signed')
+        api.get('/account/signed', options)
           .then((response) => {
             this.info = response.data
             this.signed = typeof (response.data.id) !== 'undefined'
@@ -80,9 +81,9 @@ export const useAccountStore = defineStore('account', {
           })
       })
     },
-    sign() {
+    sign(options?: AxiosRequestConfig) {
       return new Promise<boolean>(resolve => {
-        api.get('/account/signOut')
+        api.get('/account/signOut', options)
           .then(() => {
             this.signed = null
             this.info = {} as User
@@ -119,13 +120,13 @@ export const useAccountStore = defineStore('account', {
           resolve()
       })
     },
-    getEvaluations() {
+    getEvaluations(options?: AxiosRequestConfig) {
       return new Promise<void>((resolve, reject) => {
         let error: unknown = null
         if (this.evaluations.request === 0) {
           this.evaluations.request++
           this.evaluations.loading = true
-          api.get('/account/evaluations')
+          api.get('/account/evaluations', options)
             .then((response) => {
               this.evaluations.data = response.data
             })
@@ -203,9 +204,9 @@ export const useAccountStore = defineStore('account', {
           })
       })
     },
-    unreadMessages() {
+    unreadMessages(options?: AxiosRequestConfig) {
       return new Promise<void>((resolve, reject) => {
-        api.get('/account/messages/unread')
+        api.get('/account/messages/unread', options)
           .then((response) => {
             this.messagePage.unread = response.data.unread
             resolve()

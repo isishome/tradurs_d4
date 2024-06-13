@@ -21,7 +21,7 @@ export default {
     adminUser: 'Manage User',
     adminData: 'Manage Data',
     pnf: 'Page not found',
-    ftc: 'A problem has occurred with the data server.'
+    ftc: 'A problem has occurred with the data server'
   },
   battlenet: {
     title: 'Enter BattleTag™',

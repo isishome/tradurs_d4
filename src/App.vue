@@ -3,17 +3,27 @@ import { useAccountStore } from 'stores/account-store'
 import { useItemStore } from 'stores/item-store'
 
 export default {
-  async preFetch({ store }) {
+  async preFetch({ store, ssrContext, currentRoute }) {
     const as = useAccountStore(store)
     const is = useItemStore(store)
+
+    const options = process.env.SERVER
+      ? {
+          headers: {
+            Cookie: ssrContext?.req.headers['cookie'],
+            'Accept-Language': currentRoute.params.lang || 'ko'
+          }
+        }
+      : undefined
+
     const promises = [
-      is.getStorage(),
-      is.getBase(),
-      is.getProperties(),
-      is.getAffixes(),
-      is.getRestrictions(),
-      as.getEvaluations(),
-      as.unreadMessages()
+      is.getStorage(false, options),
+      is.getBase(options),
+      is.getProperties(options),
+      is.getAffixes(options),
+      is.getRestrictions(options),
+      as.getEvaluations(options),
+      as.unreadMessages(options)
     ]
 
     return Promise.all(promises)

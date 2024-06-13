@@ -2,11 +2,8 @@ import { boot } from 'quasar/wrappers'
 import axios, { AxiosInstance } from 'axios'
 import { Notify } from 'quasar'
 import { useAccountStore } from 'stores/account-store'
-import { useItemStore } from 'stores/item-store'
-import { useGlobalStore } from 'stores/global-store'
 import { User } from 'src/types/user'
 import { i18n } from './i18n'
-import { initMessenger } from 'src/sockets/messenger'
 
 let api: AxiosInstance
 
@@ -74,50 +71,6 @@ export default boot(({ app, ssrContext, store, router }/* { app, router, ... } *
     }
 
     return Promise.reject()
-  })
-
-  if (process.env.SERVER && ssrContext?.req.headers.cookie)
-    api.defaults.headers.common['cookie'] = ssrContext?.req.headers.cookie
-
-  router.beforeEach(async (to, from, next) => {
-    api.defaults.headers.common['Accept-Language'] = to.params.lang || ssrContext?.req.headers['Accept-Language'] || 'ko'
-
-    const gs = useGlobalStore(store)
-    const as = useAccountStore(store)
-    const is = useItemStore(store)
-    const onlyAdmin = !!to.matched.find(route => route.meta.onlyAdmin)
-    const requireAuth = !!to.matched.find(route => route.meta.requireAuth)
-
-    if (!['pnf', 'ftc'].includes(to.name as string)) {
-      try {
-        await gs.checkHealth()
-      }
-      catch {
-        return next({ name: 'ftc' })
-      }
-    }
-
-    if (as.signed === null)
-      await as.checkSign().then(() => { }).catch(() => {
-        as.sign()
-      })
-
-    if (((to.params.lang?.length === 2 && !gs.localeOptions.map(lo => lo.value).includes(to.params.lang as string)) || (onlyAdmin && !as.info.isAdmin)) && to.name !== 'pnf')
-      return next({ name: 'pnf' })
-
-    if (requireAuth && !as.info.id)
-      return next({ name: 'tradeList', params: { lang: to.params.lang } })
-
-    if (!!as.info.id && as.messenger === null && !['pnf', 'ftc'].includes(to.name as string)) {
-      try {
-        await initMessenger(as, is)
-      }
-      catch {
-        return next({ name: 'ftc' })
-      }
-    }
-
-    return next()
   })
 
   app.provide('axios', api)

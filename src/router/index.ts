@@ -1,7 +1,12 @@
 import { route } from 'quasar/wrappers'
 import { createMemoryHistory, createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
 import routes from './routes'
+import { api } from 'boot/axios'
+import { Cookies } from 'quasar'
 import { useGlobalStore } from 'src/stores/global-store'
+import { useAccountStore } from 'src/stores/account-store'
+import { useItemStore } from 'stores/item-store'
+import { initMessenger } from 'src/sockets/messenger'
 
 /*
  * If not building with SSR mode, you can
@@ -12,7 +17,7 @@ import { useGlobalStore } from 'src/stores/global-store'
  * with the Router instance.
  */
 
-export default route(function ({ store }/* { store, ssrContext } */) {
+export default route(function ({ store, ssrContext }/* { store, ssrContext } */) {
   const createHistory = process.env.SERVER
     ? createMemoryHistory
     : (process.env.VUE_ROUTER_MODE === 'history' ? createWebHistory : createWebHashHistory)
@@ -32,6 +37,55 @@ export default route(function ({ store }/* { store, ssrContext } */) {
     // quasar.conf.js -> build -> vueRouterMode
     // quasar.conf.js -> build -> publicPath
     history: createHistory(process.env.VUE_ROUTER_BASE)
+  })
+
+  Router.beforeEach(async (to, from, next) => {
+    api.defaults.headers.common['Accept-Language'] = to.params.lang || 'ko'
+
+    const gs = useGlobalStore(store)
+    const as = useAccountStore(store)
+    const is = useItemStore(store)
+    const onlyAdmin = !!to.matched.find(route => route.meta.onlyAdmin)
+    const requireAuth = !!to.matched.find(route => route.meta.requireAuth)
+
+    if (!process.env.SERVER && !['pnf', 'ftc'].includes(to.name as string)) {
+      try {
+        await gs.checkHealth()
+      }
+      catch {
+        return next({ name: 'ftc' })
+      }
+    }
+
+    if (as.signed === null && !process.env.SERVER && !['pnf', 'ftc'].includes(to.name as string)) {
+      const options = process.env.SERVER ? {
+        headers: {
+          'Cookie': ssrContext?.req.headers['cookie'],
+          'Accept-Language': to.params.lang || 'ko'
+        }
+      } : undefined
+
+      await as.checkSign(options).then(() => { }).catch(() => {
+        as.sign(options)
+      })
+    }
+
+    if (((to.params.lang?.length === 2 && !gs.localeOptions.map(lo => lo.value).includes(to.params.lang as string)) || (onlyAdmin && !as.info.isAdmin)) && to.name !== 'pnf')
+      return next({ name: 'pnf' })
+
+    if (requireAuth && !as.info.id)
+      return next({ name: 'tradeList', params: { lang: to.params.lang } })
+
+    if (!!as.info.id && as.messenger === null && !['pnf', 'ftc'].includes(to.name as string)) {
+      try {
+        await initMessenger(as, is)
+      }
+      catch {
+        return next({ name: 'ftc' })
+      }
+    }
+
+    return next()
   })
 
   Router.afterEach((to, from) => {

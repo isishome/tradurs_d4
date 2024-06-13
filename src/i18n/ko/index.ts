@@ -21,7 +21,7 @@ export default {
     adminUser: '사용자 관리',
     adminData: '데이터 관리',
     pnf: '페이지를 찾을 수 없습니다',
-    ftc: '데이터 서버에 문제가 발생했습니다.'
+    ftc: '데이터 서버에 문제가 발생했습니다'
   },
   battlenet: {
     title: 'BattleTag™ 입력',

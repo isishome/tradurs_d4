@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { api } from 'boot/axios'
 import { createWorker, ImageLike } from 'tesseract.js'
 import { Item, Offer } from 'src/types/item'
+import { AxiosRequestConfig } from 'axios'
 
 export interface ILabel {
   value: number | string,
@@ -396,12 +397,12 @@ export const useItemStore = defineStore('item', {
         this.filter.loading = false
       }
     },
-    getStorage(isForced: boolean = false) {
+    getStorage(isForced: boolean = false, options?: AxiosRequestConfig) {
       return new Promise<void>((resolve, reject) => {
         let error: unknown = null
         if (this.storage.request === 0 || isForced) {
           this.storage.request++
-          api.get('/d4/account/storage')
+          api.get('/d4/account/storage', options)
             .then((response) => {
               this.storage.data = response.data
             })
@@ -432,13 +433,13 @@ export const useItemStore = defineStore('item', {
           })
       })
     },
-    getBase() {
+    getBase(options?: AxiosRequestConfig) {
       return new Promise<void>((resolve, reject) => {
         let error: unknown = null
         if (this.base.request === 0) {
           this.base.request++
           this.base.loading = true
-          api.get('/d4/item/base')
+          api.get('/d4/item/base', options)
             .then((response) => {
               this.itemStatus = response.data.itemStatus
               this.offerStatus = response.data.offerStatus
@@ -472,13 +473,13 @@ export const useItemStore = defineStore('item', {
           resolve()
       })
     },
-    getProperties() {
+    getProperties(options?: AxiosRequestConfig) {
       return new Promise<void>((resolve, reject) => {
         let error: unknown = null
         if (this.properties.request === 0) {
           this.properties.request++
           this.properties.loading = true
-          api.get('/d4/item/properties')
+          api.get('/d4/item/properties', options)
             .then((response) => {
               this.properties.data = response.data
             })
@@ -498,13 +499,13 @@ export const useItemStore = defineStore('item', {
           resolve()
       })
     },
-    getAffixes() {
+    getAffixes(options?: AxiosRequestConfig) {
       return new Promise<void>((resolve, reject) => {
         let error: unknown = null
         if (this.affixes.request === 0) {
           this.affixes.request++
           this.affixes.loading = true
-          api.get('/d4/item/affixes')
+          api.get('/d4/item/affixes', options)
             .then((response) => {
               this.affixes.data = response.data
             })
@@ -524,13 +525,13 @@ export const useItemStore = defineStore('item', {
           resolve()
       })
     },
-    getRestrictions() {
+    getRestrictions(options?: AxiosRequestConfig) {
       return new Promise<void>((resolve, reject) => {
         let error: unknown = null
         if (this.restrictions.request === 0) {
           this.restrictions.request++
           this.restrictions.loading = true
-          api.get('/d4/item/restrictions')
+          api.get('/d4/item/restrictions', options)
             .then((response) => {
               this.restrictions.data = response.data
             })
@@ -550,13 +551,13 @@ export const useItemStore = defineStore('item', {
           resolve()
       })
     },
-    getPacts() {
+    getPacts(options?: AxiosRequestConfig) {
       return new Promise<void>((resolve, reject) => {
         let error: unknown = null
         if (this.pacts.request === 0) {
           this.pacts.request++
           this.pacts.loading = true
-          api.get('/d4/item/pacts')
+          api.get('/d4/item/pacts', options)
             .then((response) => {
               this.pacts.data = response.data
             })
