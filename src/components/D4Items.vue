@@ -946,7 +946,16 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                   :loading="rewardItem.loading"
                   :disable="rewardItem.forDisplay"
                   @click="openMakingOffer(rewardItem as Item)"
-                />
+                >
+                  <div
+                    v-show="rewardItem.offers > 0"
+                    class="q-ml-xs row items-center no-wrap"
+                  >
+                    <div class="text-grey-8">(</div>
+                    <div>{{ rewardItem.offers }}</div>
+                    <div class="text-grey-8">)</div>
+                  </div>
+                </D4Btn>
               </div>
             </div>
           </template>
@@ -1066,7 +1075,16 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                   :loading="item.loading"
                   :disable="item.forDisplay"
                   @click="openMakingOffer(item)"
-                />
+                >
+                  <div
+                    v-show="item.offers > 0"
+                    class="q-ml-xs row items-center no-wrap"
+                  >
+                    <div class="text-grey-8">(</div>
+                    <div>{{ item.offers }}</div>
+                    <div class="text-grey-8">)</div>
+                  </div>
+                </D4Btn>
               </div>
             </div>
           </template>

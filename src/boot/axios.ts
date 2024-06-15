@@ -32,7 +32,8 @@ export default boot(({ app, ssrContext, store, router }/* { app, router, ... } *
       const accountStore = useAccountStore(store)
       accountStore.signed = false
       accountStore.info = new User()
-      const url = status === 401 ? `${import.meta.env.VITE_APP_TRADURS}/sign?redirect=${encodeURIComponent(document.location.href)}` : `${import.meta.env.VITE_APP_TRADURS}/info`
+      const lang = !!router.currentRoute.value.params.lang ? `/${router.currentRoute.value.params.lang}` : ''
+      const url = status === 401 ? `${import.meta.env.VITE_APP_TRADURS}${lang}/sign?redirect=${encodeURIComponent(document.location.href)}` : `${import.meta.env.VITE_APP_TRADURS}${lang}/info`
 
       Notify.create({
         progress: true,

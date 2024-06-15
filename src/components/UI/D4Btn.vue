@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { computed } from "vue"
-import { RouteLocationRaw, useRouter } from "vue-router"
-import { useQuasar } from "quasar"
-import { useI18n } from "vue-i18n"
+import { computed } from 'vue'
+import { RouteLocationRaw, useRouter } from 'vue-router'
+import { useQuasar } from 'quasar'
+import { useI18n } from 'vue-i18n'
 
 interface IProps {
-  type?: "button" | "submit" | "reset"
+  type?: 'button' | 'submit' | 'reset'
   label?: string
   color?: string
   textColor?: string
@@ -20,7 +20,7 @@ interface IProps {
 }
 
 const props = withDefaults(defineProps<IProps>(), {
-  type: "button",
+  type: 'button',
   shadowDepth: 5,
   loading: false,
   disable: false,
@@ -28,13 +28,13 @@ const props = withDefaults(defineProps<IProps>(), {
   noCaps: true
 })
 
-const emit = defineEmits(["click"])
+const emit = defineEmits(['click'])
 
 const router = useRouter()
 const $q = useQuasar()
-const { locale } = useI18n({ useScope: "global" })
-const fontWidthGt = computed(() => (locale.value === "ko" ? 14 : 8))
-const fontWidthLt = computed(() => (locale.value === "ko" ? 12 : 7))
+const { locale } = useI18n({ useScope: 'global' })
+const fontWidthGt = computed(() => (locale.value === 'ko' ? 14 : 8))
+const fontWidthLt = computed(() => (locale.value === 'ko' ? 12 : 7))
 const padding = computed(() => ($q.screen.width > 600 ? 40 : 20))
 const textWidth = computed(() =>
   $q.screen.width > 600 ? fontWidthGt.value : fontWidthLt.value
@@ -43,18 +43,18 @@ const textHeight = computed(() => ($q.screen.width > 600 ? 37 : 30))
 const bg = computed<string>(() =>
   $q.dark.isActive
     ? `background: radial-gradient(ellipse at top, ${
-        props.color ? props.color : "var(--q-primary)"
+        props.color ? props.color : 'var(--q-primary)'
       }, 30%, var(--q-dark-page));`
-    : `background-color: ${props.color ? props.color : "var(--q-primary)"};`
+    : `background-color: ${props.color ? props.color : 'var(--q-primary)'};`
 )
 const tc = computed<string>(
-  () => `color:${props.textColor ? props.textColor : "var(--q-light-page)"};`
+  () => `color:${props.textColor ? props.textColor : 'var(--q-light-page)'};`
 )
 
 const click = () => {
   if (props.loading || props.disable || props.progress) return
   else if (props.to) router.push(props.to)
-  else emit("click")
+  else emit('click')
 }
 </script>
 
@@ -118,7 +118,7 @@ const click = () => {
 }
 
 .disable::after {
-  content: "";
+  content: '';
   position: absolute;
   z-index: 1;
   top: 0;
@@ -201,7 +201,7 @@ const click = () => {
 }
 
 .body--dark .frame::after {
-  content: "";
+  content: '';
   max-height: 100%;
   box-sizing: border-box;
   position: absolute;
@@ -212,7 +212,7 @@ const click = () => {
   right: 0;
   border-style: solid;
   border-image-width: 9px;
-  border-image: url("/images/frames/outer.webp") 30;
+  border-image: url('/images/frames/outer.webp') 30;
   filter: brightness(160%);
   pointer-events: none;
   transform: translate(0, 0);
@@ -224,7 +224,7 @@ const click = () => {
 
 .body--dark .frame::before {
   box-shadow: none;
-  content: "";
+  content: '';
   position: absolute;
   z-index: 1;
   top: 4px;
@@ -232,7 +232,7 @@ const click = () => {
   left: 4px;
   right: 4px;
   border-style: solid;
-  border-image: url("/images/frames/inner.webp") 36;
+  border-image: url('/images/frames/inner.webp') 36;
   border-image-width: 30px;
   pointer-events: none;
   filter: invert(50%);
@@ -272,7 +272,7 @@ const click = () => {
 }
 
 .body--dark .round::after {
-  content: "";
+  content: '';
   position: absolute;
   top: 0;
   bottom: 0;

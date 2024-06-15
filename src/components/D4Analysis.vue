@@ -183,7 +183,7 @@ const checkInfo = (textArray: string[]) => {
   if (indexQuality === -1) return failedScan(t('analyze.qualityNotFound'))
 
   const qualityPhase = textArray
-    .slice(indexQuality, indexQuality + 2)
+    .slice(indexQuality, indexQuality + 5)
     .join(' ')
     .split(/\s/gi)
 
