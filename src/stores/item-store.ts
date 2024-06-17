@@ -127,6 +127,11 @@ export interface IStorage {
   presets: Array<IPreset>
 }
 
+export interface AffixFilter {
+  affixId: number,
+  affixGreater: number
+}
+
 export interface IFilter {
   onlyCurrency: boolean,
   favorite: boolean,
@@ -142,7 +147,7 @@ export interface IFilter {
   itemTypeValues2: { [key: string]: Array<number> },
   greaterCount: number,
   properties: Array<number>,
-  affixes: Array<number>,
+  affixes: Array<AffixFilter>,
   restrictions: Array<number>,
   name: string,
   request: number,
@@ -589,9 +594,9 @@ export const useItemStore = defineStore('item', {
           })
       })
     },
-    getItems(page: number, itemId?: string | string[]) {
+    getItems(page: number, itemId?: string | string[], options?: AxiosRequestConfig) {
       return new Promise<Array<Item>>((resolve, reject) => {
-        api.post('/d4/item', { page, rows: this.itemPage.rows, itemId, basicFilter: { hardcore: this.storage.data.hardcore, ladder: this.storage.data.ladder }, filter: this.filter, sort: this.sort })
+        api.post('/d4/item', { page, rows: this.itemPage.rows, itemId, basicFilter: { hardcore: this.storage.data.hardcore, ladder: this.storage.data.ladder }, filter: this.filter, sort: this.sort }, options)
           .then((response) => {
             if (!itemId) {
               this.itemPage.over = page > 1

@@ -102,12 +102,14 @@ const upsertItem = (item: Item, done: Function) => {
             if (findIndex !== -1) {
               items.value[findIndex].itemId = 'ready'
               nextTick(() => {
+                result[0].expanded = items.value[findIndex].expanded
                 items.value.splice(findIndex, 1, result[0])
               })
             }
             if (rewardItem.value?.itemId === item.itemId) {
               rewardItem.value.itemId = 'ready'
               nextTick(() => {
+                result[0].expanded = rewardItem.value?.expanded ?? false
                 rewardItem.value = result[0]
               })
             }

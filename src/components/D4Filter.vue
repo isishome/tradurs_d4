@@ -3,6 +3,7 @@ import { computed, reactive, ref, watch } from 'vue'
 import { QSelect, debounce } from 'quasar'
 import { useAccountStore } from 'src/stores/account-store'
 import { type IFilter, useItemStore } from 'src/stores/item-store'
+import { type Affix } from 'src/types/item'
 import { useI18n } from 'vue-i18n'
 import NotifyEn from '/images/filter/notify_en.webp'
 import NotifyKo from '/images/filter/notify_ko.webp'
@@ -32,7 +33,14 @@ const filterLoading = computed(() => is.filter.loading)
 const findProperty = computed(() => is.findProperty)
 const findAffix = computed(() => is.findAffix)
 const findRestriction = computed(() => is.findRestriction)
-const itemStatus = computed(() => is.itemStatus)
+const itemStatus = computed(() => [
+  {
+    value: 'all',
+    label: t('filter.all'),
+    disable: !is.filter.mine
+  },
+  ...is.itemStatus
+])
 
 Object.assign(filter, is.filter)
 
@@ -82,6 +90,7 @@ const removeProperty = (val: number): void => {
 }
 
 // about affix
+const affixes = ref<Array<number>>([])
 const affixRef = ref<QSelect | null>(null)
 const affixOptions = is.filterAffixes
 const affixNeedle = ref<string>()
@@ -96,16 +105,17 @@ const filterAffixes = (e: KeyboardEvent) => {
 const selectedAffix = (val: number): void => {
   if (val) {
     affixRef.value?.hidePopup()
-    update()
+    update(undefined, true)
     affixNeedle.value = undefined
   }
 }
 
 const removeAffix = (val: number): void => {
-  const findIndex = filter.affixes.findIndex((a) => a === val)
+  const findIndex = affixes.value.findIndex((a) => a === val)
   if (findIndex !== -1) {
-    filter.affixes.splice(findIndex, 1)
-    update()
+    affixes.value.splice(findIndex, 1)
+
+    update(undefined, true)
   }
 }
 
@@ -138,7 +148,10 @@ const removeRestriction = (val: number): void => {
 }
 
 const mine = () => {
-  if (!filter.mine) filter.offered = false
+  if (!filter.mine) {
+    filter.status = filter.status === 'all' ? '000' : filter.status
+    filter.offered = false
+  } else filter.status = 'all'
 
   updateDebounce()
 }
@@ -151,20 +164,29 @@ const clearFilter = () => {
   update()
 }
 
-const update = (quality?: Array<string>) => {
+const update = (quality?: Array<string>, addRemoveAffix = false) => {
   if (quality) {
     Object.keys(filter.itemTypeValues1).forEach((q: string) => {
       if (!quality.includes(q)) delete filter.itemTypeValues1[q]
     })
   }
 
+  if (addRemoveAffix)
+    filter.affixes = is.affixes.data
+      .filter((a) => affixes.value.includes(a.value as number))
+      .map((a) => ({
+        affixId: a.value as number,
+        affixGreater:
+          filter.affixes.find((aa) => aa.affixId === a.value)?.affixGreater ?? 0
+      }))
+
   filter.request++
   Object.assign(is.filter, filter)
 }
 
-const updateDebounce = debounce((quality?: Array<string>) => {
-  update(quality)
-}, 800)
+const updateDebounce = debounce(() => {
+  update()
+}, 500)
 
 const updateBasic = () => {
   is.setStorage()
@@ -178,7 +200,7 @@ const updateBasic = () => {
 
 const updateBasicDebounce = debounce(() => {
   updateBasic()
-}, 400)
+}, 500)
 
 const updatePreset = (id: number) => {
   const findPreset = is.findPreset(id)
@@ -400,7 +422,7 @@ defineExpose({
       <q-item-section>
         <q-select
           v-model="filter.status"
-          :disable="filterLoading || !!filter.mine"
+          :disable="filterLoading"
           outlined
           dense
           no-error-icon
@@ -682,7 +704,7 @@ defineExpose({
       <q-item-section class="no-wrap">
         <q-select
           ref="affixRef"
-          v-model="filter.affixes"
+          v-model="affixes"
           class="col"
           :disable="filterLoading"
           max-values="6"
@@ -736,12 +758,26 @@ defineExpose({
         </q-select>
       </q-item-section>
     </q-item>
-    <template v-for="(aid, idx) in filter.affixes" :key="`${aid}`">
+    <template v-for="(affix, idx) in filter.affixes" :key="`${affix.affixId}`">
       <q-separator v-show="idx !== 0" inset />
-      <q-item :disable="filterLoading" class="q-mx-md q-mb-xs">
+      <q-item :disable="filterLoading" class="q-mx-sm q-my-xs">
+        <q-item-section
+          side
+          class="q-pr-sm"
+          v-show="findAffix(affix.affixId)?.type === 'standard'"
+        >
+          <q-rating
+            v-model="affix.affixGreater"
+            :disable="disable || filterLoading"
+            size="12px"
+            max="1"
+            icon="img:/images/attribute_types/greater_invert.svg"
+            @update:model-value="updateDebounce()"
+          />
+        </q-item-section>
         <q-item-section>
           <q-item-label caption>
-            {{ findAffix(aid as number)?.label }}
+            {{ findAffix(affix.affixId)?.label }}
           </q-item-label>
         </q-item-section>
         <q-item-section side>
@@ -755,7 +791,7 @@ defineExpose({
             size="xs"
             :tabindex="-1"
             class="q-ml-sm"
-            @click="removeAffix(aid)"
+            @click="removeAffix(affix.affixId)"
           >
             <img
               class="icon"

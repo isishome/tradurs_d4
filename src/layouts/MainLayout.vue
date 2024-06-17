@@ -166,7 +166,7 @@ const isMySpace = computed(() =>
 )
 const expandedAdmin = ref<boolean>(false)
 const isAdmin = computed(() =>
-  ['adminUser', 'adminData'].includes(route.name as string)
+  ['adminUser', 'adminItem', 'adminAffix'].includes(route.name as string)
 )
 
 // about screen size
@@ -597,7 +597,7 @@ watch(
                   v-ripple
                   clickable
                   :to="{
-                    name: 'adminData',
+                    name: 'adminItem',
                     params: { lang: route.params.lang }
                   }"
                   exact
@@ -605,7 +605,24 @@ watch(
                 >
                   <q-item-section side>
                     <q-item-label>
-                      {{ t('page.adminData') }}
+                      {{ t('page.adminItem') }}
+                    </q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item
+                  :inset-level="0.4"
+                  v-ripple
+                  clickable
+                  :to="{
+                    name: 'adminAffix',
+                    params: { lang: route.params.lang }
+                  }"
+                  exact
+                  active-class="active"
+                >
+                  <q-item-section side>
+                    <q-item-label>
+                      {{ t('page.adminAffix') }}
                     </q-item-label>
                   </q-item-section>
                 </q-item>
@@ -962,7 +979,7 @@ watch(
                     v-ripple
                     clickable
                     :to="{
-                      name: 'adminData',
+                      name: 'adminItem',
                       params: { lang: route.params.lang }
                     }"
                     exact
@@ -970,7 +987,23 @@ watch(
                   >
                     <q-item-section side>
                       <q-item-label>
-                        {{ t('page.adminData') }}
+                        {{ t('page.adminItem') }}
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <q-item
+                    v-ripple
+                    clickable
+                    :to="{
+                      name: 'adminAffix',
+                      params: { lang: route.params.lang }
+                    }"
+                    exact
+                    active-class="active"
+                  >
+                    <q-item-section side>
+                      <q-item-label>
+                        {{ t('page.adminAffix') }}
                       </q-item-label>
                     </q-item-section>
                   </q-item>

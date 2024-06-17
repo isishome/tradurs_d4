@@ -132,137 +132,139 @@ const remove = (): void => {
         :name="icon"
       />
     </div>
-    <div
-      class="row items-center q-gutter-x-xs q-ml-none col"
-      :class="[{ 'filtered': is.filter.affixes.includes(findAffix?.value as number) }, findAffix?.color, { 'text-shadow': findAffix?.color }]"
-    >
-      <template v-for="(comp, k) in affixInfo" :key="k">
-        <template v-if="comp.type === 'text'">
-          <div
-            v-for="(word, i) in (comp.value as string).split(/\s+/g).filter(w => w !== '')"
-            :key="i"
-          >
-            {{ word }}
-          </div>
-        </template>
-        <template v-if="!editable">
-          <div v-if="comp.type === 'variable'" class="figure">
-            {{ comp.value }}
-          </div>
-          <div
-            v-if="
-              comp.type === 'min' &&
-              Number(comp.value) + Number(affixInfo[k + 1].value) > 0
-            "
-            class="minmax-text"
-          >
-            [{{ comp.value }} - {{ affixInfo[k + 1].value }}]
-          </div>
-        </template>
-        <template v-else>
-          <q-input
-            v-if="comp.type === 'variable'"
-            class="var"
-            input-class="text-center text-caption no-padding"
-            dense
-            hide-bottom-space
-            hide-hint
-            no-error-icon
-            outlined
-            v-model.number="(comp.value as number)"
-            maxlength="6"
-            debounce="500"
-            :disable="disable"
-            :rules="[
-              (val) =>
-                (!disable &&
-                  (parseFloat(val) % 1 !== 0 || parseInt(val) % 1 === 0)) ||
-                ''
-            ]"
-            @update:model-value="update"
-            @focus="focus"
-          />
-          <div
-            v-else-if="comp.type === 'min'"
-            class="minmax row items-center q-gutter-x-xs"
-          >
-            <div>[</div>
-            <q-input
-              class="var"
-              input-class="text-center text-caption no-padding"
-              dense
-              hide-bottom-space
-              hide-hint
-              no-error-icon
-              outlined
-              v-model.number="comp.value"
-              maxlength="6"
-              debounce="500"
-              :disable="disable"
-              :rules="[
-                (val) =>
-                  (!disable &&
-                    (parseFloat(val) % 1 !== 0 || parseInt(val) % 1 === 0)) ||
-                  ''
-              ]"
-              @update:model-value="update"
-              @focus="focus"
-            />
-            <div>-</div>
-            <q-input
-              class="var"
-              input-class="text-center text-caption no-padding"
-              dense
-              hide-bottom-space
-              hide-hint
-              no-error-icon
-              outlined
-              v-model.number="affixInfo[k + 1].value"
-              maxlength="6"
-              debounce="500"
-              :disable="disable"
-              :rules="[
-                (val) =>
-                  (!disable &&
-                    (parseFloat(val) % 1 !== 0 || parseInt(val) % 1 === 0)) ||
-                  ''
-              ]"
-              @update:model-value="update"
-              @focus="focus"
-            />
-            <div>]</div>
-          </div>
-        </template>
-      </template>
-      <q-btn
-        v-show="editable"
-        :disable="disable"
-        dense
-        unelevated
-        flat
-        round
-        aria-label="Tradurs Editable Button"
-        size="xs"
-        :tabindex="-1"
-        class="q-ml-sm"
-        @click="remove"
+    <div class="col">
+      <div
+        class="row items-center q-gutter-x-xs q-ml-none inline"
+        :class="[{ 'filtered': is.filter.affixes.map(a => a.affixId).includes(findAffix?.value as number) }, findAffix?.color, { 'text-shadow': findAffix?.color }]"
       >
-        <img
-          v-show="data.action !== 8"
-          class="icon"
-          width="13"
-          height="13"
-          src="/images/icons/close.svg"
-          alt="Tradurs Remove Icon"
-        />
-        <img
-          v-show="data.action === 8"
-          class="icon flip-horizontal"
-          width="13"
-          src="/images/icons/restore.svg"
-          alt="Tradurs Restore Icon"
-        />
-      </q-btn>
+        <template v-for="(comp, k) in affixInfo" :key="k">
+          <template v-if="comp.type === 'text'">
+            <div
+              v-for="(word, i) in (comp.value as string).split(/\s+/g).filter(w => w !== '')"
+              :key="i"
+            >
+              {{ word }}
+            </div>
+          </template>
+          <template v-if="!editable">
+            <div v-if="comp.type === 'variable'" class="figure">
+              {{ comp.value }}
+            </div>
+            <div
+              v-if="
+                comp.type === 'min' &&
+                Number(comp.value) + Number(affixInfo[k + 1].value) > 0
+              "
+              class="minmax-text"
+            >
+              [{{ comp.value }} - {{ affixInfo[k + 1].value }}]
+            </div>
+          </template>
+          <template v-else>
+            <q-input
+              v-if="comp.type === 'variable'"
+              class="var"
+              input-class="text-center text-caption no-padding"
+              dense
+              hide-bottom-space
+              hide-hint
+              no-error-icon
+              outlined
+              v-model.number="(comp.value as number)"
+              maxlength="6"
+              debounce="500"
+              :disable="disable"
+              :rules="[
+                (val) =>
+                  (!disable &&
+                    (parseFloat(val) % 1 !== 0 || parseInt(val) % 1 === 0)) ||
+                  ''
+              ]"
+              @update:model-value="update"
+              @focus="focus"
+            />
+            <div
+              v-else-if="comp.type === 'min'"
+              class="minmax row items-center q-gutter-x-xs"
+            >
+              <div>[</div>
+              <q-input
+                class="var"
+                input-class="text-center text-caption no-padding"
+                dense
+                hide-bottom-space
+                hide-hint
+                no-error-icon
+                outlined
+                v-model.number="comp.value"
+                maxlength="6"
+                debounce="500"
+                :disable="disable"
+                :rules="[
+                  (val) =>
+                    (!disable &&
+                      (parseFloat(val) % 1 !== 0 || parseInt(val) % 1 === 0)) ||
+                    ''
+                ]"
+                @update:model-value="update"
+                @focus="focus"
+              />
+              <div>-</div>
+              <q-input
+                class="var"
+                input-class="text-center text-caption no-padding"
+                dense
+                hide-bottom-space
+                hide-hint
+                no-error-icon
+                outlined
+                v-model.number="affixInfo[k + 1].value"
+                maxlength="6"
+                debounce="500"
+                :disable="disable"
+                :rules="[
+                  (val) =>
+                    (!disable &&
+                      (parseFloat(val) % 1 !== 0 || parseInt(val) % 1 === 0)) ||
+                    ''
+                ]"
+                @update:model-value="update"
+                @focus="focus"
+              />
+              <div>]</div>
+            </div>
+          </template>
+        </template>
+        <q-btn
+          v-show="editable"
+          :disable="disable"
+          dense
+          unelevated
+          flat
+          round
+          aria-label="Tradurs Editable Button"
+          size="xs"
+          :tabindex="-1"
+          class="q-ml-sm"
+          @click="remove"
+        >
+          <img
+            v-show="data.action !== 8"
+            class="icon"
+            width="13"
+            height="13"
+            src="/images/icons/close.svg"
+            alt="Tradurs Remove Icon"
+          />
+          <img
+            v-show="data.action === 8"
+            class="icon flip-horizontal"
+            width="13"
+            src="/images/icons/restore.svg"
+            alt="Tradurs Restore Icon"
+          />
+        </q-btn>
+      </div>
     </div>
   </div>
 </template>

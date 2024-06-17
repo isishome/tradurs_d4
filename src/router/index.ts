@@ -45,8 +45,8 @@ export default route(function ({ store, ssrContext }/* { store, ssrContext } */)
     const gs = useGlobalStore(store)
     const as = useAccountStore(store)
     const is = useItemStore(store)
-    const onlyAdmin = !!to.matched.find(route => route.meta.onlyAdmin)
-    const requireAuth = !!to.matched.find(route => route.meta.requireAuth)
+    const onlyAdmin = !!to.matched.some(m => m.meta.onlyAdmin)
+    const requireAuth = !!to.matched.some(m => m.meta.requireAuth)
 
     if (!process.env.SERVER && !['pnf', 'ftc'].includes(to.name as string)) {
       try {
@@ -57,7 +57,7 @@ export default route(function ({ store, ssrContext }/* { store, ssrContext } */)
       }
     }
 
-    if (as.signed === null && !process.env.SERVER && !['pnf', 'ftc'].includes(to.name as string)) {
+    if (as.signed === null && !['pnf', 'ftc'].includes(to.name as string)) {
       const options = process.env.SERVER ? {
         headers: {
           'Cookie': ssrContext?.req.headers['cookie'],
@@ -69,6 +69,7 @@ export default route(function ({ store, ssrContext }/* { store, ssrContext } */)
         as.sign(options)
       })
     }
+
 
     if (((to.params.lang?.length === 2 && !gs.localeOptions.map(lo => lo.value).includes(to.params.lang as string)) || (onlyAdmin && !as.info.isAdmin)) && to.name !== 'pnf')
       return next({ name: 'pnf' })

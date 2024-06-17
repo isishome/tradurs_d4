@@ -23,11 +23,20 @@ const emit = defineEmits(['update', 'remove'])
 
 const is = useItemStore()
 
-const findRestriction = computed(() => is.findRestriction(props.data.restrictId))
-const restrictionInfo = computed(() => parse(findRestriction.value?.label, props.data.restrictValues))
+const findRestriction = computed(() =>
+  is.findRestriction(props.data.restrictId)
+)
+const restrictionInfo = computed(() =>
+  parse(findRestriction.value?.label, props.data.restrictValues)
+)
 
 const update = (): void => {
-  emit('update', { valueId: props.data.valueId, restrictValues: restrictionInfo.value.filter(i => i.type === 'variable').map(i => parseFloat(i.value.toString())) })
+  emit('update', {
+    valueId: props.data.valueId,
+    restrictValues: restrictionInfo.value
+      .filter((i) => i.type === 'variable')
+      .map((i) => parseFloat(i.value.toString()))
+  })
 }
 
 const remove = (): void => {
@@ -36,27 +45,79 @@ const remove = (): void => {
 </script>
 
 <template>
-  <div class="row no-wrap items-baseline q-gutter-xs" :class="{ disable, 'justify-end': !editable }"
-    :data-id="data.valueId">
-    <div class="row items-center q-gutter-x-xs"
-      :class="{ 'filtered': is.filter.restrictions.includes(findRestriction?.value as number) }">
-      <template v-for="comp, k in restrictionInfo" :key="k">
+  <div
+    class="row no-wrap items-baseline q-gutter-xs"
+    :class="{ disable, 'justify-end': !editable }"
+    :data-id="data.valueId"
+  >
+    <div
+      class="row items-center q-gutter-x-xs"
+      :class="{ 'filtered': is.filter.restrictions.includes(findRestriction?.value as number) }"
+    >
+      <template v-for="(comp, k) in restrictionInfo" :key="k">
         <template v-if="comp.type === 'text'">
-          <div v-for="(word, i) in (comp.value as string).split(/\s+/g).filter(w => w !== '')" :key="i">{{ word }}
+          <div
+            v-for="(word, i) in (comp.value as string).split(/\s+/g).filter(w => w !== '')"
+            :key="i"
+          >
+            {{ word }}
           </div>
         </template>
-        <div v-else-if="!editable && comp.type === 'variable'">{{ comp.value }}</div>
-        <q-input v-else class="var" input-class="text-center text-caption no-padding" dense hide-bottom-space hide-hint
-          no-error-icon outlined v-model.number="comp.value" maxlength="6" debounce="500" :disable="disable"
-          :rules="[val => !disable && (parseFloat(val) % 1 !== 0 || parseInt(val) % 1 === 0) || '']"
-          @update:model-value="update" @focus="focus" />
+        <div v-else-if="!editable && comp.type === 'variable'">
+          {{ comp.value }}
+        </div>
+        <q-input
+          v-else
+          class="var"
+          input-class="text-center text-caption no-padding"
+          dense
+          hide-bottom-space
+          hide-hint
+          no-error-icon
+          outlined
+          v-model.number="comp.value"
+          maxlength="6"
+          debounce="500"
+          :disable="disable"
+          :rules="[
+            (val) =>
+              (!disable &&
+                (parseFloat(val) % 1 !== 0 || parseInt(val) % 1 === 0)) ||
+              ''
+          ]"
+          @update:model-value="update"
+          @focus="focus"
+        />
       </template>
-      <q-btn v-show="editable" :disable="disable" dense unelevated flat round aria-label="Tradurs Remove/Restore Button"
-        size="xs" :tabindex="-1" class="q-ml-sm" @click="remove">
-        <img v-show="data.action !== 8" class="icon" width="13" height="13" src="/images/icons/close.svg"
-          alt="Tradurs Close Icon" />
-        <img v-show="data.action === 8" class="icon flip-horizontal" width="13" height="13"
-          src="/images/icons/restore.svg" alt="icon_restore" />
+      <q-btn
+        v-show="editable"
+        :disable="disable"
+        dense
+        unelevated
+        flat
+        round
+        aria-label="Tradurs Remove/Restore Button"
+        size="xs"
+        :tabindex="-1"
+        class="q-ml-sm"
+        @click="remove"
+      >
+        <img
+          v-show="data.action !== 8"
+          class="icon"
+          width="13"
+          height="13"
+          src="/images/icons/close.svg"
+          alt="Tradurs Close Icon"
+        />
+        <img
+          v-show="data.action === 8"
+          class="icon flip-horizontal"
+          width="13"
+          height="13"
+          src="/images/icons/restore.svg"
+          alt="icon_restore"
+        />
       </q-btn>
     </div>
   </div>
@@ -65,7 +126,7 @@ const remove = (): void => {
 .disable {
   user-select: none;
   pointer-events: none;
-  opacity: .3;
+  opacity: 0.3;
   position: relative;
 }
 

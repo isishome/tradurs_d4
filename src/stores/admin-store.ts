@@ -82,7 +82,25 @@ export const useAdminStore = defineStore('admin', () => {
 
   const refreshAffixes = () => {
     return new Promise<void>((resolve, reject) => {
-      api.get('/d4/admin/data/affixes/refresh')
+      api.get('/d4/admin/affix/refresh')
+        .then(() => {
+          resolve()
+        })
+        .catch(() => {
+          reject()
+        })
+    })
+  }
+
+  const upsertAffix = (action: 'insert' | 'update', affixId: number | null, affixType: string, affixAttribute: string, languageId: string) => {
+    return new Promise<void>((resolve, reject) => {
+      api.post('/d4/admin/affix/upsert', {
+        action,
+        affixId,
+        affixType,
+        affixAttribute,
+        languageId
+      })
         .then(() => {
           resolve()
         })
@@ -100,6 +118,7 @@ export const useAdminStore = defineStore('admin', () => {
     resendVerify,
     deactivate,
     activate,
-    refreshAffixes
+    refreshAffixes,
+    upsertAffix
   }
 })

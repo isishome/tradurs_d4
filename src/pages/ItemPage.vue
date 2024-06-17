@@ -4,7 +4,7 @@ import { useItemStore, type OfferInfo } from 'stores/item-store'
 import { Item, IPrice } from 'src/types/item'
 
 export default {
-  async preFetch({ store, currentRoute }) {
+  async preFetch({ store, currentRoute, ssrContext }) {
     const is = useItemStore(store)
     const gs = useGlobalStore(store)
 
@@ -17,7 +17,16 @@ export default {
     tempItem.price.loading = true
     is.detailItem.splice(0, 1, tempItem)
 
-    return is.getItems(1, currentRoute.params.itemid).then(
+    const options = process.env.SERVER
+      ? {
+          headers: {
+            Cookie: ssrContext?.req.headers['cookie'],
+            'Accept-Language': currentRoute.params.lang || 'ko'
+          }
+        }
+      : undefined
+
+    return is.getItems(1, currentRoute.params.itemid, options).then(
       (result: Array<Item>) => {
         if (result.length > 0) {
           result[0].expanded = true

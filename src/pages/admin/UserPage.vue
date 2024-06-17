@@ -271,9 +271,9 @@ onMounted(async () => {
           </td>
           <td rowspan="2">
             <q-btn-dropdown
-              color="primary"
               label="기능"
               dense
+              outline
               unelevated
               content-class="bordered"
               class="no-hover"

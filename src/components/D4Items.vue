@@ -1447,7 +1447,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                     <q-item
                       :disable="
                         !['000', '002'].includes(activatedItem.statusCode) ||
-                        activatedItem.offers > 0 ||
+                        !activatedItem.editable ||
                         disable
                       "
                       clickable
@@ -1461,7 +1461,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                     </q-item>
                     <q-item
                       clickable
-                      :disable="activatedItem.offers > 0 || disable"
+                      :disable="!activatedItem.editable || disable"
                       @click="deleteConfirm()"
                     >
                       <q-item-section class="text-negative text-weight-bold">{{
@@ -1475,7 +1475,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                 ref="analysis"
                 :loading="activatedItem.loading"
                 :disable="
-                  activatedItem.offers > 0 ||
+                  (!activatedItem.editable && !!activatedItem.itemId) ||
                   ['001', '004'].includes(activatedItem.statusCode) ||
                   disable
                 "
@@ -1496,7 +1496,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                 :label="t('btn.apply')"
                 :loading="activatedItem.loading"
                 :disable="
-                  activatedItem.offers > 0 ||
+                  (!activatedItem.editable && !!activatedItem.itemId) ||
                   ['001', '004'].includes(activatedItem.statusCode) ||
                   disable
                 "

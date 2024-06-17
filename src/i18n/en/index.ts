@@ -19,7 +19,8 @@ export default {
     support: 'Help',
     admin: 'Admin',
     adminUser: 'Manage User',
-    adminData: 'Manage Data',
+    adminItem: 'Manage Item',
+    adminAffix: 'Manage Affix',
     pnf: 'Page not found',
     ftc: 'A problem has occurred with the data server'
   },

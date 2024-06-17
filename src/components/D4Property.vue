@@ -23,9 +23,16 @@ const emit = defineEmits(['update', 'remove'])
 const is = useItemStore()
 
 const findProperty = computed(() => is.findProperty(props.data.propertyId))
-const propertyInfo = computed(() => parse(findProperty.value?.label, props.data.propertyValues))
+const propertyInfo = computed(() =>
+  parse(findProperty.value?.label, props.data.propertyValues)
+)
 const update = (): void => {
-  emit('update', { valueId: props.data.valueId, propertyValues: propertyInfo.value.filter(i => i.type === 'variable').map(i => parseFloat(i.value.toString())) })
+  emit('update', {
+    valueId: props.data.valueId,
+    propertyValues: propertyInfo.value
+      .filter((i) => i.type === 'variable')
+      .map((i) => parseFloat(i.value.toString()))
+  })
 }
 
 const remove = () => {
@@ -34,32 +41,92 @@ const remove = () => {
 </script>
 
 <template>
-  <div class="row no-wrap items-baseline q-gutter-xs" :class="{ disable }" :data-id="data.valueId">
-    <div class="text-center" style="width:21px">
-      <q-icon class="icon" :class="{ 'rotate-45': ['standard'].includes(findProperty?.type as string) }" size="10px"
-        :name="`img:/images/attribute_types/${findProperty?.type || 'standard'}.svg`" />
+  <div
+    class="row no-wrap items-baseline q-gutter-xs"
+    :class="{ disable }"
+    :data-id="data.valueId"
+  >
+    <div class="text-center" style="width: 21px">
+      <q-icon
+        class="icon"
+        :class="{ 'rotate-45': ['standard'].includes(findProperty?.type as string) }"
+        size="10px"
+        :name="`img:/images/attribute_types/${
+          findProperty?.type || 'standard'
+        }.svg`"
+      />
     </div>
-    <div class="row items-center q-gutter-x-xs q-ml-none col"
-      :class="{ 'filtered': is.filter.properties.includes(findProperty?.value as number) }">
-      <template v-for="(comp, k) in propertyInfo" :key="k">
-        <template v-if="comp.type === 'text'">
-          <div v-for="(word, i) in (comp.value as string).split(/\s+/g).filter(w => w !== '')" :key="i">{{ word }}
+    <div class="col">
+      <div
+        class="row items-center q-gutter-x-xs q-ml-none inline"
+        :class="{ 'filtered': is.filter.properties.includes(findProperty?.value as number) }"
+      >
+        <template v-for="(comp, k) in propertyInfo" :key="k">
+          <template v-if="comp.type === 'text'">
+            <div
+              v-for="(word, i) in (comp.value as string).split(/\s+/g).filter(w => w !== '')"
+              :key="i"
+            >
+              {{ word }}
+            </div>
+          </template>
+          <div v-else-if="!editable && comp.type === 'variable'" class="figure">
+            {{ comp.value }}
           </div>
+          <q-input
+            v-else-if="comp.type === 'variable'"
+            class="var"
+            input-class="text-center text-caption no-padding"
+            dense
+            hide-bottom-space
+            hide-hint
+            no-error-icon
+            outlined
+            v-model.number="comp.value"
+            maxlength="6"
+            debounce="500"
+            :disable="disable"
+            :rules="[
+              (val) =>
+                (!disable &&
+                  (parseFloat(val) % 1 !== 0 || parseInt(val) % 1 === 0)) ||
+                ''
+            ]"
+            @update:model-value="update"
+            @focus="focus"
+          />
         </template>
-        <div v-else-if="!editable && comp.type === 'variable'" class="figure">{{ comp.value }}</div>
-        <q-input v-else-if="comp.type === 'variable'" class="var" input-class="text-center text-caption no-padding"
-          dense hide-bottom-space hide-hint no-error-icon outlined v-model.number="comp.value" maxlength="6"
-          debounce="500" :disable="disable"
-          :rules="[val => !disable && (parseFloat(val) % 1 !== 0 || parseInt(val) % 1 === 0) || '']"
-          @update:model-value="update" @focus="focus" />
-      </template>
-      <q-btn v-show="editable" :disable="disable" dense unelevated flat round aria-label="Tradurs Remove/Restore Button"
-        size="xs" :tabindex="-1" class="q-ml-sm" @click="remove">
-        <img v-show="data.action !== 8" class="icon" width="13" height="13" src="/images/icons/close.svg"
-          alt="Tradurs Remove Icon" />
-        <img v-show="data.action === 8" class="icon flip-horizontal" width="13" height="13"
-          src="/images/icons/restore.svg" alt="Tradurs Restore Icon" />
-      </q-btn>
+        <q-btn
+          v-show="editable"
+          :disable="disable"
+          dense
+          unelevated
+          flat
+          round
+          aria-label="Tradurs Remove/Restore Button"
+          size="xs"
+          :tabindex="-1"
+          class="q-ml-sm"
+          @click="remove"
+        >
+          <img
+            v-show="data.action !== 8"
+            class="icon"
+            width="13"
+            height="13"
+            src="/images/icons/close.svg"
+            alt="Tradurs Remove Icon"
+          />
+          <img
+            v-show="data.action === 8"
+            class="icon flip-horizontal"
+            width="13"
+            height="13"
+            src="/images/icons/restore.svg"
+            alt="Tradurs Restore Icon"
+          />
+        </q-btn>
+      </div>
     </div>
   </div>
 </template>
@@ -67,7 +134,7 @@ const remove = () => {
 .disable {
   user-select: none;
   pointer-events: none;
-  opacity: .5;
+  opacity: 0.5;
   position: relative;
 }
 

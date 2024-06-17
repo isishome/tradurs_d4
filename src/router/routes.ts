@@ -55,7 +55,6 @@ const routes: RouteRecordRaw[] = [
       {
         name: 'admin',
         path: 'admin',
-        props: true,
         meta: {
           onlyAdmin: true
         },
@@ -67,9 +66,15 @@ const routes: RouteRecordRaw[] = [
             component: () => import('pages/admin/UserPage.vue')
           },
           {
-            name: 'adminData',
-            path: 'data',
-            component: () => import('pages/admin/DataPage.vue')
+            name: 'adminItem',
+            path: 'item',
+            component: () => import('pages/admin/ItemPage.vue'),
+            props: true
+          },
+          {
+            name: 'adminAffix',
+            path: 'affix',
+            component: () => import('pages/admin/AffixPage.vue')
           }
         ]
       }
