@@ -24,6 +24,12 @@ export type Filter = {
   verifiedOptions: Array<Option>
 }
 
+export type RequestAffix = {
+  requestId: number,
+  affixType: string,
+  affixAttribute: string
+}
+
 export const useAdminStore = defineStore('admin', () => {
   const rows = 10
   const over = ref<boolean>(false)
@@ -80,6 +86,32 @@ export const useAdminStore = defineStore('admin', () => {
     })
   }
 
+  const getRequestAffixes = () => {
+    return new Promise<Array<RequestAffix>>((resolve, reject) => {
+      api.get('/d4/admin/affix/request')
+        .then((response) => {
+          resolve(response.data)
+        })
+        .catch(() => {
+          reject()
+        })
+    })
+  }
+
+  const deleteRequestAffix = (requestId: number) => {
+    return new Promise<void>((resolve, reject) => {
+      api.post('/d4/admin/affix/request/delete', {
+        requestId
+      })
+        .then(() => {
+          resolve()
+        })
+        .catch(() => {
+          reject()
+        })
+    })
+  }
+
   const refreshAffixes = () => {
     return new Promise<void>((resolve, reject) => {
       api.get('/d4/admin/affix/refresh')
@@ -110,6 +142,20 @@ export const useAdminStore = defineStore('admin', () => {
     })
   }
 
+  const deleteAffix = (affixId: number) => {
+    return new Promise<void>((resolve, reject) => {
+      api.post('/d4/admin/affix/delete', {
+        affixId
+      })
+        .then(() => {
+          resolve()
+        })
+        .catch(() => {
+          reject()
+        })
+    })
+  }
+
   return {
     rows,
     over,
@@ -118,7 +164,10 @@ export const useAdminStore = defineStore('admin', () => {
     resendVerify,
     deactivate,
     activate,
+    getRequestAffixes,
+    deleteRequestAffix,
     refreshAffixes,
-    upsertAffix
+    upsertAffix,
+    deleteAffix
   }
 })
