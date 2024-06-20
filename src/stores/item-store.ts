@@ -255,7 +255,7 @@ export const useItemStore = defineStore('item', {
     analyze: {
       similarRate: {
         ko: .8,
-        en: .7
+        en: .8
       },
       lang: {
         ko: `가-힣`,
@@ -864,7 +864,7 @@ export const useItemStore = defineStore('item', {
       const { data: { text } } = await worker.recognize(image)
       await worker.terminate()
 
-      const parsedText = text.replace(new RegExp(`[^0-9${this.analyze.lang[lang as keyof typeof this.analyze.lang]}\\/\\+\\.\\[\\]\\-\\,\\:\\n\\(\\) ]`, 'gi'), '').replace(/[ ]{2,}/gi, ' ')
+      const parsedText = text.replace(new RegExp(`[^0-9%${this.analyze.lang[lang as keyof typeof this.analyze.lang]}\\/\\+\\.\\[\\]\\-\\,\\:\\n\\(\\) ]`, 'gi'), '').replace(/[ ]{2,}/gi, ' ')
       return parsedText
     }
   }

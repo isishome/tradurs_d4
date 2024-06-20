@@ -11,6 +11,7 @@ import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { type ILabel, useItemStore } from 'src/stores/item-store'
 import { Property, Affix, Item } from 'src/types/item'
+import stringComparison from 'string-comparison'
 
 interface IProps {
   loading?: boolean
@@ -29,6 +30,7 @@ const route = useRoute()
 const { t } = useI18n({ useScope: 'global' })
 const is = useItemStore()
 
+const cos = stringComparison.cosine
 const lang: string = (route.params.lang as string) || 'ko'
 const similarRate =
   is.analyze.similarRate[lang as keyof typeof is.analyze.similarRate]
@@ -75,46 +77,46 @@ const failedScan = (msg: string) => {
   emit('failed', msg)
 }
 
-const editDistance = (s1: string, s2: string) => {
-  s1 = s1.toLowerCase()
-  s2 = s2.toLowerCase()
+// const editDistance = (s1: string, s2: string) => {
+//   s1 = s1.toLowerCase()
+//   s2 = s2.toLowerCase()
 
-  var costs = new Array()
-  for (var i = 0; i <= s1.length; i++) {
-    var lastValue = i
-    for (var j = 0; j <= s2.length; j++) {
-      if (i == 0) costs[j] = j
-      else {
-        if (j > 0) {
-          var newValue = costs[j - 1]
-          if (s1.charAt(i - 1) != s2.charAt(j - 1))
-            newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1
-          costs[j - 1] = lastValue
-          lastValue = newValue
-        }
-      }
-    }
-    if (i > 0) costs[s2.length] = lastValue
-  }
-  return costs[s2.length]
-}
+//   var costs = new Array()
+//   for (var i = 0; i <= s1.length; i++) {
+//     var lastValue = i
+//     for (var j = 0; j <= s2.length; j++) {
+//       if (i == 0) costs[j] = j
+//       else {
+//         if (j > 0) {
+//           var newValue = costs[j - 1]
+//           if (s1.charAt(i - 1) != s2.charAt(j - 1))
+//             newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1
+//           costs[j - 1] = lastValue
+//           lastValue = newValue
+//         }
+//       }
+//     }
+//     if (i > 0) costs[s2.length] = lastValue
+//   }
+//   return costs[s2.length]
+// }
 
-const similarity = (s1: string, s2: string) => {
-  var longer = s1
-  var shorter = s2
-  if (s1.length < s2.length) {
-    longer = s2
-    shorter = s1
-  }
-  var longerLength = longer.length
-  if (longerLength == 0) {
-    return 1.0
-  }
-  return (
-    (longerLength - editDistance(longer, shorter)) /
-    parseFloat(longerLength.toString())
-  )
-}
+// const similarity = (s1: string, s2: string) => {
+//   var longer = s1
+//   var shorter = s2
+//   if (s1.length < s2.length) {
+//     longer = s2
+//     shorter = s1
+//   }
+//   var longerLength = longer.length
+//   if (longerLength == 0) {
+//     return 1.0
+//   }
+//   return (
+//     (longerLength - editDistance(longer, shorter)) /
+//     parseFloat(longerLength.toString())
+//   )
+// }
 
 const checkText = () => {
   currentCheck.value = 'text'
@@ -332,6 +334,7 @@ const checkInfo = (textArray: string[]) => {
       .replace(/([0-9]*?)(\,)([0-9.]{1,})/g, '$1$3')
       .replace(/[\[]{2,}/g, '[')
       .replace(/[\]]{2,}/g, ']')
+      .replace(/[%]{2,}/g, '%')
       .replace(/\]1/g, ']')
   )
 
@@ -367,8 +370,9 @@ const checkAttributes = (
       .slice(index, index + l + 1)
       .join(' ')
       .replace(/\([^\)]*\)?/g, '')
-      .replace(new RegExp(`[^${phase}]`, 'g'), '')
-    const similar = similarity(text, label)
+      .replace(new RegExp(`[^%${phase}]`, 'g'), '')
+
+    const similar = cos.similarity(text, label)
 
     if (similar >= similarRate) {
       result.push({ id, length: l, rate: similar })
@@ -402,8 +406,8 @@ const checkProperties = (tArray: string[]) => {
         const propertyLabel = is
           .findProperty(pid)
           ?.label.replace(/{x}/g, '')
-          .replace(/[ \+\-%\[\]\:,0-9]/g, '')
-          .replace(/\([a-zA-Z가-힣 ]*\)/g, '') as string
+          .replace(/[ \+\-\.\:,0-9]/g, '')
+          .replace(new RegExp(`\\([${phase} ]*\\)`, 'g'), '') as string
 
         for (let i = 0; i < tArray.length; i++) {
           const result = checkAttributes(tArray, i + cut, pid, propertyLabel)
@@ -487,8 +491,8 @@ const checkAffixes = (tArray: string[]) => {
       for (const affix of is.availableAffixes()) {
         const affixLabel = affix.label
           .replace(/{x}/g, '')
-          .replace(/[ \+\-%\:,0-9]/g, '')
-          .replace(/\([a-zA-Z가-힣 ]*\)/g, '') as string
+          .replace(/[ \+\-\.\:,0-9]/g, '')
+          .replace(new RegExp(`\\([${phase} ]*\\)`, 'g'), '') as string
 
         const result = checkAttributes(
           tArray,
@@ -584,8 +588,8 @@ const checkRestrictions = () => {
     for (const restriction of is.restrictions.data) {
       const restrictLabel = restriction.label
         .replace(/{x}/g, '')
-        .replace(/[ \+\-%\[\]\:,0-9]/g, '')
-        .replace(/\([a-zA-Z가-힣 ]*\)/g, '') as string
+        .replace(/[ \+\-\.\:,0-9]/g, '')
+        .replace(new RegExp(`\\([${phase} ]*\\)`, 'g'), '') as string
 
       let cut = 0
       for (let i = 0; i < restrictionsPhase.length; i++) {
@@ -669,7 +673,8 @@ const filtering = (f: File) => {
     image.src = fr.result as string
     image.onload = () => {
       const isTransparent = f.name.toLowerCase().match(/\.(png|webp)/g)
-      const ratio = Math.round((1000 / image.width) * 10000) / 10000
+      const ratio = Math.round((700 / image.width) * 1000) / 1000
+      const tooSmall = image.width < 300
       const iWidth = image.width
       const iHeight = image.height
       const predictWidth = Math.ceil(iWidth * 0.32)
@@ -679,7 +684,7 @@ const filtering = (f: File) => {
 
       if (ctx) {
         if (isTransparent) {
-          ctx.fillStyle = '#000000'
+          ctx.fillStyle = '#443322'
           ctx.fillRect(0, 0, canvas.width, canvas.height)
         }
 
@@ -706,7 +711,9 @@ const filtering = (f: File) => {
           Math.round((iHeight - predictHeight) * ratio)
         )
 
-        ctx.filter = 'brightness(1.6) contrast(1.4) blur(.6px)'
+        ctx.filter = `${
+          tooSmall ? 'brightness(1.6)' : ''
+        } contrast(1.4) blur(.6px)`
         ctx.drawImage(canvas, 0, 0)
 
         is.recognize(canvas, lang)
