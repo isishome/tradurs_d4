@@ -134,7 +134,7 @@ const remove = (): void => {
     </div>
     <div class="col">
       <div
-        class="row items-center q-gutter-x-xs q-ml-none inline"
+        class="row items-center q-gutter-x-xs inline"
         :class="[{ 'filtered': is.filter.affixes.map(a => a.affixId).includes(findAffix?.value as number) }, findAffix?.color, { 'text-shadow': findAffix?.color }]"
       >
         <template v-for="(comp, k) in affixInfo" :key="k">

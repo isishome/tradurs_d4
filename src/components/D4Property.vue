@@ -58,7 +58,7 @@ const remove = () => {
     </div>
     <div class="col">
       <div
-        class="row items-center q-gutter-x-xs q-ml-none inline"
+        class="row items-center q-gutter-x-xs inline"
         :class="{ 'filtered': is.filter.properties.includes(findProperty?.value as number) }"
       >
         <template v-for="(comp, k) in propertyInfo" :key="k">

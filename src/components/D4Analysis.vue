@@ -227,7 +227,7 @@ const checkInfo = (textArray: string[]) => {
   // check item name
   const name = textArray
     .splice(0, indexQuality)
-    .join(' ')
+    .join('')
     .replace(new RegExp(`[^ ${phase} ]`, 'gi'), '')
     .trim()
   if (name === '') return failedScan(t('analyze.nameNotFound'))
@@ -307,6 +307,7 @@ interface IMatch {
   id: number
   length: number
   rate: number
+  timestamp: number
 }
 
 interface ISimilar {
@@ -334,7 +335,7 @@ const checkAttributes = (
     const similar = cos.similarity(text, label)
 
     if (similar >= similarRate) {
-      result.push({ id, length: l, rate: similar })
+      result.push({ id, length: l, rate: similar, timestamp: Date.now() })
       l++
 
       if (text.length < label.length) {
@@ -475,7 +476,10 @@ const checkAffixes = (tArray: string[]) => {
     }
 
     matchAttribute.forEach((ma: ISimilar) => {
-      ma.match.sort((a, b) => b.rate - a.rate || b.length - a.length)
+      ma.match.sort(
+        (a, b) =>
+          b.rate - a.rate || a.timestamp - b.timestamp || b.length - a.length
+      )
 
       const end = matchAttribute
         .map((m) => m.index)
@@ -633,7 +637,6 @@ const filtering = (f: File) => {
     image.onload = () => {
       const isTransparent = f.name.toLowerCase().match(/\.(png|webp)/g)
       const ratio = Math.round((700 / image.width) * 1000) / 1000
-      const tooSmall = image.width < 300
       const iWidth = image.width
       const iHeight = image.height
       const predictWidth = Math.ceil(iWidth * 0.32)
@@ -670,9 +673,7 @@ const filtering = (f: File) => {
           Math.round((iHeight - predictHeight) * ratio)
         )
 
-        ctx.filter = `${
-          tooSmall ? 'brightness(1.6)' : ''
-        } contrast(1.4) blur(.6px)`
+        ctx.filter = 'brightness(.7) contrast(1.4) blur(.6px)'
         ctx.drawImage(canvas, 0, 0)
 
         is.recognize(canvas, lang)
