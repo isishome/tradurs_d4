@@ -664,7 +664,6 @@ export default {
   },
   socket: {
     '0900': 'Notify information authentication failed',
-    disconnect: 'The connection to the notification server has been disconnected.',
-    failed: 'The connection to the notification server failed.'
+    disconnect: 'The connection to the notification server has been disconnected.'
   }
 }

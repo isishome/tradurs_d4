@@ -1765,6 +1765,8 @@ defineExpose({ scrollEnd })
 }
 
 .more-action {
+  position: relative;
+  z-index: 3;
   line-height: 24px;
   padding: 0;
   margin: 0 0 0 4px;
@@ -1796,7 +1798,7 @@ defineExpose({ scrollEnd })
 
 .body--dark .card-item.magic:deep(.stress),
 .body--dark .card-item.consumables:deep(.stress) {
-  color: var(--q-magic);
+  color: #60c3f1;
 }
 
 .body--dark .card-item.rare:deep(.stress) {

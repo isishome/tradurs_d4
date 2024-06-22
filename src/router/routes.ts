@@ -67,7 +67,7 @@ const routes: RouteRecordRaw[] = [
           },
           {
             name: 'adminItem',
-            path: 'item',
+            path: 'item/:identity([a-zA-Z0-9_-]{1,})?',
             component: () => import('pages/admin/ItemPage.vue'),
             props: true
           },

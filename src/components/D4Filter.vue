@@ -296,6 +296,7 @@ defineExpose({
           size="xs"
           v-model="is.storage.data.hardcore"
           :label="t('item.hardcore')"
+          color="secondary"
           @update:model-value="updateBasicDebounce()"
         />
       </q-item-section>

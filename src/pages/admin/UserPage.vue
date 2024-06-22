@@ -194,7 +194,13 @@ onMounted(async () => {
         />
       </div>
       <div class="row justify-end items-center q-gutter-x-sm">
-        <q-input dense outlined v-model="searchInfo" @keyup.enter="getUsers(1)">
+        <q-input
+          dense
+          outlined
+          :disable="disable"
+          v-model="searchInfo"
+          @keyup.enter="getUsers(1)"
+        >
           <template #append>
             <q-btn
               :class="{ invisible: !!!searchInfo }"
@@ -205,7 +211,7 @@ onMounted(async () => {
               class="no-hover icon"
               padding="0"
               icon="img:/images/icons/close.svg"
-              :disable="!!!searchInfo"
+              :disable="!!!searchInfo || disable"
               @click="
                 () => {
                   searchInfo = ''
@@ -220,6 +226,7 @@ onMounted(async () => {
           dense
           color="primary"
           label="검색"
+          :disable="disable"
           @click="getUsers(1)"
         />
       </div>
@@ -323,6 +330,18 @@ onMounted(async () => {
                 >
                   <q-item-section>
                     <q-item-label>계정 활성화</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item
+                  clickable
+                  v-close-popup
+                  :to="{
+                    name: 'adminItem',
+                    params: { lang: route.params.lang, identity: user.identity }
+                  }"
+                >
+                  <q-item-section>
+                    <q-item-label>아이템 보기</q-item-label>
                   </q-item-section>
                 </q-item>
               </q-list>

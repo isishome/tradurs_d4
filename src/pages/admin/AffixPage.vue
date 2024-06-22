@@ -223,7 +223,7 @@ onMounted(() => {
     <q-virtual-scroll
       v-if="requestAffixes.length > 0"
       type="table"
-      style="max-height: 200px"
+      style="max-height: 500px"
       :virtual-scroll-item-size="48"
       :virtual-scroll-sticky-size-start="48"
       :virtual-scroll-sticky-size-end="32"
@@ -232,7 +232,11 @@ onMounted(() => {
       v-slot="{ item: row, index }"
     >
       <tr :key="index">
-        <td v-for="col in columns" :key="index + '-' + col">
+        <td
+          v-for="col in columns"
+          :key="index + '-' + col"
+          style="white-space: normal; min-width: 60px"
+        >
           {{
             col === 'affixType'
               ? attributeTypes.find((at) => at.value === row[col])?.label

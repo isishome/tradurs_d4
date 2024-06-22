@@ -8,15 +8,17 @@ type AccountStore = ReturnType<typeof useAccountStore>
 type ItemStore = ReturnType<typeof useItemStore>
 
 const prod = import.meta.env.PROD
+const reconnectionAttempts = 3
+let reconnectionCount = 0
 
 export const initMessenger = async (as: AccountStore, is: ItemStore) => {
   if (process.env.SERVER)
     return
 
   const manager = new Manager(import.meta.env.VITE_APP_SOCKET, {
-    reconnection: false,
     withCredentials: prod,
-    transports: ['websocket']
+    transports: ['websocket'],
+    reconnectionAttempts
   })
 
   as.messenger = manager.socket('/messenger')
@@ -38,6 +40,7 @@ export const initMessenger = async (as: AccountStore, is: ItemStore) => {
           class: 'no-hover text-underline',
           label: i18n.global.t('btn.reConnect'),
           color: 'dark', handler: () => {
+            reconnectionCount = 0
             as.messenger?.connect()
           }
         }
@@ -53,14 +56,15 @@ export const initMessenger = async (as: AccountStore, is: ItemStore) => {
     if (!!!as.signed)
       return
 
-    reconnect(i18n.global.t('socket.failed'))
+
+    reconnectionCount++
+    if (reconnectionCount >= reconnectionAttempts)
+      reconnect()
   })
 
   as.messenger.on('disconnect', () => {
     if (!!!as.signed)
       return
-
-    reconnect()
   })
 
   as.messenger.on('error', (data: string) => {

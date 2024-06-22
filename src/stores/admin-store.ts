@@ -30,6 +30,19 @@ export type RequestAffix = {
   affixAttribute: string
 }
 
+export type Search = {
+  itemName: string
+}
+
+export type Item = {
+  itemId: number
+  itemName: string
+  statusCode: string
+  battleTag: string
+  selected: boolean
+}
+
+
 export const useAdminStore = defineStore('admin', () => {
   const rows = 10
   const over = ref<boolean>(false)
@@ -156,6 +169,45 @@ export const useAdminStore = defineStore('admin', () => {
     })
   }
 
+  const getItems = (page: number, identity?: string, searchInfo?: Search) => {
+    return new Promise<Array<Item>>((resolve, reject) => {
+      api.get('/d4/admin/item/get', { params: { page, rows, identity, searchInfo } })
+        .then((response) => {
+          over.value = page > 1
+          more.value = response.data.length > rows
+          response.data.splice(rows, 1)
+          resolve(response.data)
+        })
+        .catch(() => {
+          reject()
+        })
+    })
+  }
+
+  const deleteItems = (itemIds: Array<number>) => {
+    return new Promise<void>((resolve, reject) => {
+      api.post('/d4/admin/item/delete', { itemIds })
+        .then(() => {
+          resolve()
+        })
+        .catch(() => {
+          reject()
+        })
+    })
+  }
+
+  const updateItemName = (itemId: number, itemName: string) => {
+    return new Promise<void>((resolve, reject) => {
+      api.post('/d4/admin/item/update', { itemId, itemName })
+        .then(() => {
+          resolve()
+        })
+        .catch(() => {
+          reject()
+        })
+    })
+  }
+
   return {
     rows,
     over,
@@ -168,6 +220,9 @@ export const useAdminStore = defineStore('admin', () => {
     deleteRequestAffix,
     refreshAffixes,
     upsertAffix,
-    deleteAffix
+    deleteAffix,
+    getItems,
+    deleteItems,
+    updateItemName
   }
 })
