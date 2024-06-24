@@ -1,10 +1,15 @@
 <script setup lang="ts">
 import { ref, reactive, computed, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useQuasar } from 'quasar'
+import { useQuasar, date } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { useGlobalStore } from 'src/stores/global-store'
-import { type IUser, type Filter, useAdminStore } from 'stores/admin-store'
+import {
+  type IUser,
+  type History,
+  type Filter,
+  useAdminStore
+} from 'stores/admin-store'
 import { clipboard } from 'src/common'
 
 const route = useRoute()
@@ -152,6 +157,28 @@ const activate = (identity: string) => {
     })
 }
 
+const history = reactive<History>({
+  show: false,
+  identity: undefined,
+  data: []
+})
+const clearHistoryInfo = () => {
+  history.identity = undefined
+  history.data.splice(0, history.data.length)
+  as.historyParams.nextHistoryId = null
+}
+const getHistory = () => {
+  disable.value = true
+  as.getHistory(history.identity as string)
+    .then((data) => {
+      history.data.push(...data)
+    })
+    .catch(() => {})
+    .then(() => {
+      disable.value = false
+    })
+}
+
 watch(
   () => route.query.page,
   async (val, old) => {
@@ -168,8 +195,8 @@ onMounted(async () => {
 </script>
 <template>
   <div>
-    <div class="row justify-between items-center q-mb-sm">
-      <div class="row jusitfy-start items-center q-gutter-x-sm">
+    <div class="row justify-between items-center q-mb-sm q-col-gutter-sm">
+      <div class="col-12 col-sm row jusitfy-start items-center q-gutter-x-sm">
         <q-select
           v-model="filter.status"
           :options="filter.statusOptions"
@@ -177,6 +204,8 @@ onMounted(async () => {
           map-options
           outlined
           dense
+          class="col"
+          popup-content-class="bordered"
           label="계정 상태"
           dropdown-icon="img:/images/icons/dropdown.svg"
           @update:model-value="getUsers(1)"
@@ -188,12 +217,14 @@ onMounted(async () => {
           map-options
           outlined
           dense
+          class="col"
+          popup-content-class="bordered"
           label="배틀 태그 활성상태"
           dropdown-icon="img:/images/icons/dropdown.svg"
           @update:model-value="getUsers(1)"
         />
       </div>
-      <div class="row justify-end items-center q-gutter-x-sm">
+      <div class="col-12 col-sm row justify-end items-center q-gutter-x-sm">
         <q-input
           dense
           outlined
@@ -344,6 +375,20 @@ onMounted(async () => {
                     <q-item-label>아이템 보기</q-item-label>
                   </q-item-section>
                 </q-item>
+                <q-item
+                  clickable
+                  v-close-popup
+                  @click="
+                    () => {
+                      history.identity = user.identity
+                      history.show = true
+                    }
+                  "
+                >
+                  <q-item-section>
+                    <q-item-label>활동 내역 보기</q-item-label>
+                  </q-item-section>
+                </q-item>
               </q-list>
             </q-btn-dropdown>
           </td>
@@ -453,9 +498,71 @@ onMounted(async () => {
           />
           <q-btn
             unelevated
-            color="grey-6"
+            color="grey-7"
             label="취소"
             @click="() => (deactivateInfo.show = false)"
+          />
+        </q-card-section>
+      </template>
+    </D4Dialog>
+    <D4Dialog
+      v-model="history.show"
+      @before-hide="clearHistoryInfo"
+      @show="getHistory"
+    >
+      <template #top>
+        <q-card-section class="text-h6">활동 내역</q-card-section>
+      </template>
+      <template #middle>
+        <q-card-section
+          class="col scroll"
+          :style="
+            $q.screen.lt.sm
+              ? 'height:100%'
+              : 'min-height:40vh !important;max-height:50vh !important'
+          "
+        >
+          <q-markup-table flat bordered class="full-width overflow-hidden">
+            <q-inner-loading :showing="disable" class="fit" style="z-index: 1">
+              <q-spinner size="lg" color="primary" />
+            </q-inner-loading>
+            <thead>
+              <tr>
+                <th>히스토리 유형</th>
+                <th>활동 유형</th>
+                <th>활동 정보</th>
+                <th>날짜</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="h in history.data" :key="h.historyId">
+                <td>{{ h.typeName }}</td>
+                <td>{{ h.actionName }}</td>
+                <td style="white-space: normal">{{ h.contents }}</td>
+                <td>{{ date.formatDate(h.regDate, 'YYYY.MM.DD HH:mm') }}</td>
+              </tr>
+              <tr v-if="!!as.historyParams.nextHistoryId">
+                <td colspan="4" class="text-center">
+                  <q-btn
+                    label="더보기"
+                    unelevated
+                    color="primary"
+                    @click="getHistory"
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </q-markup-table>
+        </q-card-section>
+      </template>
+      <template #bottom>
+        <q-card-section class="row justify-end q-gutter-sm">
+          <q-btn
+            unelevated
+            :disable="disable"
+            color="grey-7"
+            label="닫기"
+            @click="() => (history.show = false)"
           />
         </q-card-section>
       </template>

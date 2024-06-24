@@ -40,6 +40,17 @@ const selectedItems = computed(() =>
   items.filter((i) => i.statusCode !== '009' && i.selected).map((i) => i.itemId)
 )
 
+const itemName = computed(
+  () => (item: Item) =>
+    item.itemTypeValue1 === 'gem'
+      ? is.gems.find((g) => g.value === item.itemTypeValue2)?.label
+      : item.itemTypeValue1 === 'elixir'
+      ? is.elixirs.find((e) => e.value === item.itemTypeValue2)?.label
+      : item.itemTypeValue1 === 'summoning'
+      ? is.summonings.find((s) => s.value === item.itemTypeValue2)?.label
+      : item.itemName
+)
+
 const getItems = async (p?: number) => {
   if (!!p && p !== page.value)
     return router.push({
@@ -177,7 +188,7 @@ onMounted(async () => {
     <q-markup-table flat bordered>
       <thead>
         <tr>
-          <th>
+          <th style="width: 50px">
             <q-checkbox
               v-model="selectAll"
               @update:model-value="
@@ -197,6 +208,7 @@ onMounted(async () => {
               dense
               color="red-8"
               class="text-weight-bold"
+              :disable="items.filter((i) => i.selected).length === 0"
               :loading="disable"
               label="일괄 삭제"
               @click="deleteItems(selectedItems)"
@@ -222,7 +234,7 @@ onMounted(async () => {
               />
             </td>
             <td style="white-space: normal">
-              {{ item.itemName }}
+              {{ itemName(item) }}
               <q-popup-edit
                 v-model="item.itemName"
                 auto-save

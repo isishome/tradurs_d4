@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { api } from 'boot/axios'
-import { ref } from 'vue'
+import { ref, reactive } from 'vue'
+import { IHistory } from './account-store'
 
 export type IUser = {
   selected: boolean
@@ -40,6 +41,14 @@ export type Item = {
   statusCode: string
   battleTag: string
   selected: boolean
+  itemTypeValue1: string
+  itemTypeValue2: string
+}
+
+export type History = {
+  show: boolean
+  identity?: string
+  data: Array<IHistory>
 }
 
 
@@ -47,6 +56,10 @@ export const useAdminStore = defineStore('admin', () => {
   const rows = 10
   const over = ref<boolean>(false)
   const more = ref<boolean>(false)
+  const historyParams = reactive<{ rows: number, nextHistoryId: number | null }>({
+    rows: 20 as number,
+    nextHistoryId: null as number | null
+  })
 
   const getUsers = (page: number, filter?: Filter, searchInfo?: string) => {
     return new Promise<Array<IUser>>((resolve, reject) => {
@@ -207,11 +220,31 @@ export const useAdminStore = defineStore('admin', () => {
         })
     })
   }
+  const getHistory = (identity: string) => {
+    return new Promise<Array<IHistory>>((resolve, reject) => {
+      api.get('/d4/admin/history', {
+        params: {
+          identity,
+          rows: historyParams.rows,
+          nextHistoryId: historyParams.nextHistoryId
+        }
+      })
+        .then((response) => {
+          historyParams.nextHistoryId = response.data.slice(historyParams.rows, historyParams.rows + 1)[0]?.historyId
+          response.data.splice(historyParams.rows, 1)
+          resolve(response.data)
+        })
+        .catch((e) => {
+          reject(e)
+        })
+    })
+  }
 
   return {
     rows,
     over,
     more,
+    historyParams,
     getUsers,
     resendVerify,
     deactivate,
@@ -223,6 +256,7 @@ export const useAdminStore = defineStore('admin', () => {
     deleteAffix,
     getItems,
     deleteItems,
-    updateItemName
+    updateItemName,
+    getHistory
   }
 })
