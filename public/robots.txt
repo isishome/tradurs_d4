@@ -2,6 +2,11 @@ User-agent: *
 Disallow: /messages/
 Disallow: /blocks/
 Disallow: /history/
+Disallow: /item/
+Disallow: /en/messages/
+Disallow: /en/blocks/
+Disallow: /en/history/
+Disallow: /en/item/
 
 User-agent: *
 Allow: /

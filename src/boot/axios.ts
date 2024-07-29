@@ -13,7 +13,6 @@ export default boot(({ app, ssrContext, store, router }/* { app, router, ... } *
   // something to do
   api = axios.create({
     baseURL: import.meta.env.VITE_APP_BACKEND,
-    timeout: 0,
     withCredentials: true
   })
 

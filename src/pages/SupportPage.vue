@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { ref, reactive, computed, watch, onMounted, nextTick } from 'vue'
+import { ref, reactive, computed, watch, onMounted } from 'vue'
 import { useQuasar, scroll, QExpansionItem } from 'quasar'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useGlobalStore } from 'stores/global-store'
 import { useAccountStore } from 'stores/account-store'
-import { useScript } from 'src/composables/script'
 
 interface Answer {
   type: string
@@ -25,9 +24,6 @@ const props = defineProps<{
   section?: string
 }>()
 
-const prod: boolean = import.meta.env.PROD
-const recaptchaApiKey = import.meta.env.VITE_APP_RECAPTCHA
-
 const $q = useQuasar()
 const { getScrollTarget, setVerticalScrollPosition } = scroll
 const route = useRoute()
@@ -35,12 +31,6 @@ const router = useRouter()
 const { t, tm } = useI18n({ useScope: 'global' })
 const gs = useGlobalStore()
 const as = useAccountStore()
-
-if (prod)
-  useScript(
-    `https://www.google.com/recaptcha/api.js?render=${recaptchaApiKey}`,
-    { async: true }
-  )
 
 const supportRefs = ref<Array<QExpansionItem>>([])
 const support = computed(() => tm('support') as Array<Support>)
@@ -56,40 +46,6 @@ const contact = reactive<{
   contents: null,
   disable: false
 })
-
-const send = () => {
-  contact.disable = true
-  if (window?.grecaptcha) {
-    window.grecaptcha.ready(() => {
-      window.grecaptcha
-        .execute(recaptchaApiKey, { action: 'submit' })
-        .then((token: string) => {
-          gs.contactUs(token, contact.contents)
-            .then(() => {
-              $q.notify({
-                icon: 'img:/images/icons/check.svg',
-                color: 'positive',
-                classes: '',
-                message: t('contact.success')
-              })
-              contact.open = false
-            })
-            .catch(() => {})
-            .then(() => {
-              contact.disable = false
-            })
-        })
-        .catch(() => {
-          contact.disable = false
-        })
-    })
-  } else contact.disable = false
-}
-
-const close = () => {
-  contact.contents = null
-  contact.disable = false
-}
 
 const afterShow = () => {
   const findSectionIndex = support.value.findIndex(
@@ -230,58 +186,6 @@ onMounted(() => {
         </q-item>
       </q-expansion-item>
     </q-list>
-    <!-- <D4Dialog
-      v-model="contact.open"
-      @submit="send"
-      @hide="close"
-      :persistent="contact.disable"
-    >
-      <template #top>
-        <div class="q-pa-md text-h6">
-          {{ t("contact.title") }}
-        </div>
-      </template>
-
-      <template #middle>
-        <div class="q-pa-md">
-          <q-input
-            outlined
-            dense
-            no-error-icon
-            hide-bottom-space
-            :disable="contact.disable"
-            :autofocus="$q.platform.is.desktop"
-            rows="10"
-            type="textarea"
-            input-class="scroll"
-            :label="t('contact.contents')"
-            v-model="contact.contents"
-            :rules="[(val) => (val && val.length > 10) || '']"
-            maxlength="500"
-          >
-            <template #counter>
-              {{ contact.contents ? contact.contents.length : 0 }} / 500
-            </template>
-          </q-input>
-        </div>
-      </template>
-
-      <template #bottom>
-        <div class="row justify-end q-pa-md q-gutter-sm">
-          <D4Btn
-            :label="t('btn.cancel')"
-            :disable="contact.disable"
-            color="rgb(150,150,150)"
-            @click="contact.open = false"
-          />
-          <D4Btn
-            :label="t('contact.send')"
-            :loading="contact.disable"
-            type="submit"
-          />
-        </div>
-      </template>
-    </D4Dialog> -->
   </div>
 </template>
 

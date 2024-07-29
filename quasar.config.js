@@ -8,11 +8,9 @@
 // Configuration for your app
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js
 
-
-const { configure } = require('quasar/wrappers');
-const path = require('path');
+const { configure } = require('quasar/wrappers')
+const path = require('path')
 const { mergeConfig } = require('vite')
-
 
 module.exports = configure(function (/* ctx */) {
   return {
@@ -22,17 +20,10 @@ module.exports = configure(function (/* ctx */) {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
-    boot: [
-      'i18n',
-      'axios',
-      'register'
-    ],
+    boot: ['i18n', 'axios', 'register'],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#css
-    css: [
-      'app.css',
-      'common.css'
-    ],
+    css: ['app.css', 'common.css'],
 
     // https://github.com/quasarframework/quasar/tree/dev/extras
     extras: [
@@ -43,7 +34,6 @@ module.exports = configure(function (/* ctx */) {
       // 'themify',
       // 'line-awesome',
       // 'roboto-font-latin-ext', // this or either 'roboto-font', NEVER both!
-
       //'roboto-font', // optional, you are not bound to it
       //'material-icons', // optional, you are not bound to it
     ],
@@ -74,33 +64,38 @@ module.exports = configure(function (/* ctx */) {
       extendViteConf(viteConf) {
         viteConf.define.__VUE_PROD_HYDRATION_MISMATCH_DETAILS__ = false
         viteConf.build = mergeConfig(viteConf.build, {
-          rollupOptions:{
+          rollupOptions: {
             output: {
               inlineDynamicImports: false,
               manualChunks: (id) => {
-                if (id.includes('d4/src/components')) 
-                  return 'd4_component'
-                if (id.includes('d4/src/pages')) 
-                  return 'd4_pages'
-                if (id.includes('node_modules/@quasar') || id.includes('node_modules/quasar')) 
+                if (id.includes('d4/src/components')) return 'd4_component'
+                if (id.includes('d4/src/pages')) return 'd4_pages'
+                if (
+                  id.includes('node_modules/@quasar') ||
+                  id.includes('node_modules/quasar')
+                )
                   return 'quasar'
-                if (id.includes('node_modules')) 
-                  return 'vendor'
+                if (id.includes('node_modules')) return 'vendor'
               }
-            }}
-          })
+            }
+          }
+        })
       },
       // viteVuePluginOptions: {},
 
       vitePlugins: [
-        ['@intlify/vite-plugin-vue-i18n', {
-          // if you want to use Vue I18n Legacy API, you need to set `compositionOnly: false`
-          // compositionOnly: false,
+        [
+          '@intlify/vite-plugin-vue-i18n',
+          {
+            // if you want to use Vue I18n Legacy API, you need to set `compositionOnly: false`
+            // compositionOnly: false,
 
-          runtimeOnly: false,
-          // you need to set i18n resource including paths !
-          include: path.resolve(__dirname, './src/i18n/**')
-        }]
+            runtimeOnly: false,
+
+            // you need to set i18n resource including paths !
+            include: path.resolve(__dirname, './src/i18n/**')
+          }
+        ]
       ]
     },
 
@@ -177,7 +172,7 @@ module.exports = configure(function (/* ctx */) {
       injectPwaMetaTags: true,
       swFilename: 'sw.js',
       manifestFilename: 'manifest.json',
-      useCredentialsForManifestTag: false,
+      useCredentialsForManifestTag: false
       // useFilenameHashes: true,
       // extendGenerateSWOptions (cfg) {}
       // extendInjectManifestOptions (cfg) {},
@@ -206,13 +201,11 @@ module.exports = configure(function (/* ctx */) {
 
       packager: {
         // https://github.com/electron-userland/electron-packager/blob/master/docs/api.md#options
-
         // OS X / Mac App Store
         // appBundleId: '',
         // appCategoryType: '',
         // osxSign: '',
         // protocol: 'myapp://path',
-
         // Windows only
         // win32metadata: { ... }
       },
@@ -226,12 +219,10 @@ module.exports = configure(function (/* ctx */) {
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/developing-browser-extensions/configuring-bex
     bex: {
-      contentScripts: [
-        'my-content-script'
-      ],
+      contentScripts: ['my-content-script']
 
       // extendBexScriptsConf (esbuildConf) {}
       // extendBexManifestJson (json) {}
     }
   }
-});
+})
