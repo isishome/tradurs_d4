@@ -40,6 +40,10 @@
   border-color: var(--q-light-unique);
 }
 
+.body--light .card-item.mythic {
+  border-color: var(--q-light-mythic);
+}
+
 .card-item::before {
   content: '';
   position: absolute;
@@ -139,6 +143,10 @@
   background: linear-gradient(to bottom, var(--q-dark-unique), var(--q-dark-page));
 }
 
+.body--dark .mythic .inner {
+  background: linear-gradient(to bottom, var(--q-dark-mythic), var(--q-dark-page));
+}
+
 .body--dark .inner::after {
   content: '';
   position: absolute;
@@ -178,6 +186,10 @@
 
 .unique .inner::after {
   filter: var(--q-filter-unique);
+}
+
+.mythic .inner::after {
+  filter: var(--q-filter-mythic);
 }
 
 .card-item.editable,

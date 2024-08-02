@@ -369,6 +369,7 @@ defineExpose({ scrollEnd })
                   :key="t.value"
                   :disable="disable || !tierable"
                   round
+                  :size="$q.screen.lt.sm ? 'sm' : 'md'"
                   unelevated
                   aria-label="Tradurs Tier Button"
                   :class="['text-weight-bold', { active: _tier === t.value }]"
@@ -385,6 +386,7 @@ defineExpose({ scrollEnd })
                   :key="q.value"
                   :disable="disable || !qualifiable"
                   round
+                  :size="$q.screen.lt.sm ? 'sm' : 'md'"
                   unelevated
                   aria-label="Tradurs Quality Button"
                   :class="[
@@ -1020,12 +1022,14 @@ defineExpose({ scrollEnd })
           v-if="attrMobile.is && attrMobile.show"
           class="col fullscreen column"
         >
-          <q-card-section class="tab row justify-end items-center">
+          <q-card-section class="tab row justify-end items-center"
+            >123
             <q-btn-toggle
               v-model="attribute"
               square
               flat
               no-caps
+              size="xs"
               aria-label="Tradurs Attribute Button"
               :ripple="false"
               :color="$q.dark.isActive ? 'grey-5' : 'grey-8'"
@@ -1813,12 +1817,20 @@ defineExpose({ scrollEnd })
   color: var(--q-unique);
 }
 
+.body--dark .card-item.mythic:deep(.stress) {
+  color: var(--q-mythic);
+}
+
 .card-item.legendary:deep(.stress .icon) {
   filter: var(--q-filter-legendary) !important;
 }
 
 .card-item.unique:deep(.stress .icon) {
   filter: var(--q-filter-unique) !important;
+}
+
+.card-item.mythic:deep(.stress .icon) {
+  filter: var(--q-filter-mythic) !important;
 }
 
 .body--dark .card-item.magic .unique {

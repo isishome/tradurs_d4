@@ -30,6 +30,9 @@
   --q-unique: #D9A879;
   --q-light-unique: #6c4a00;
   --q-dark-unique: #20211C;
+  --q-mythic: #b891cd;
+  --q-light-mythic: #b891cd;
+  --q-dark-mythic: #1c002b;
   --q-tiny: rgba(200, 200, 200, 0.1);
   --q-cloud: #99999916;
   --q-half: rgba(150, 150, 150, 0.2);
@@ -40,6 +43,7 @@
   --q-filter-set: invert(37%) sepia(91%) saturate(1265%) hue-rotate(91deg) brightness(95%) contrast(106%);
   --q-filter-legendary: invert(41%) sepia(94%) saturate(1295%) hue-rotate(8deg) brightness(93%) contrast(97%);
   --q-filter-unique: invert(57%) sepia(68%) saturate(273%) hue-rotate(349deg) brightness(87%) contrast(93%);
+  --q-filter-mythic: invert(69%) sepia(11%) saturate(1048%) hue-rotate(235deg) brightness(87%) contrast(99%);
 }
 
 body.body--light::before {
