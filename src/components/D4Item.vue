@@ -1274,13 +1274,18 @@ defineExpose({ scrollEnd })
           >
             <div
               v-show="!loading"
-              class="hardcore-ladder row justify-end items-center"
+              class="row items-center q-gutter-x-xs text-overline"
+              style="line-height: 1.6"
             >
-              <div class="text-secondary">
-                {{ data.hardcore ? '&#10074;' : '' }}
+              <div
+                class="q-ml-none"
+                :class="[data.hardcore ? 'text-red-8' : 'text-blue-6']"
+              >
+                {{ data.hardcore ? t('item.hardcore') : t('item.softcore') }}
               </div>
+              <div>:</div>
               <div class="text-primary">
-                {{ data.ladder ? '&#10074;' : '' }}
+                {{ data.ladder ? t('item.seasonal') : t('item.eternal') }}
               </div>
             </div>
             <div v-show="loading">
@@ -1990,21 +1995,6 @@ defineExpose({ scrollEnd })
 
 .toggles:deep(.q-toggle__thumb::before) {
   display: none !important;
-}
-
-.hardcore-ladder {
-  line-height: 24px;
-  position: absolute;
-  font-size: 12px;
-  width: 24px;
-  transform: translateX(-26px);
-}
-
-@media (max-width: 600px) {
-  .hardcore-ladder {
-    line-height: 18px;
-    font-size: 10px;
-  }
 }
 
 .item-image-card {

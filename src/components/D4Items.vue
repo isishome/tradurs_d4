@@ -38,7 +38,7 @@ interface IProps {
 
 const props = withDefaults(defineProps<IProps>(), {
   width: '728',
-  height: '200'
+  height: '220'
 })
 
 const emit = defineEmits([

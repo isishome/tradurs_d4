@@ -77,7 +77,13 @@ const routes: RouteRecordRaw[] = [
             component: () => import('pages/admin/AffixPage.vue')
           }
         ]
-      }
+      },
+      {
+        name: 'test',
+        path: 'test',
+        component: () => import('pages/TestPage.vue'),
+        props: true
+      },
     ]
   },
 

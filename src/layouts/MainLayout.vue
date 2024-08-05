@@ -1548,7 +1548,7 @@ watch(
 }
 
 .body--light .bg-season::before {
-  filter: invert(1) grayscale(1);
+  filter: invert(1) grayscale(1) brightness(0.7);
 }
 
 .h1 {

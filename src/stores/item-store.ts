@@ -4,6 +4,8 @@ import { createWorker, ImageLike } from 'tesseract.js'
 import { Item, Offer } from 'src/types/item'
 import { AxiosRequestConfig } from 'axios'
 
+const prod = import.meta.env.PROD
+
 export interface ILabel {
   value: number | string,
   label: string
@@ -851,12 +853,16 @@ export const useItemStore = defineStore('item', {
       })
     },
     async recognize(image: ImageLike, lang: string) {
-      const locale = (lang === 'ko') ? 'kor' : 'eng'
+      const locale = (lang === 'ko') ? ['kor'] : ['eng', 'eng.d4']
       const worker = await createWorker(locale)
       // const worker = await createWorker(locale, 1, {
-      //   workerPath: 'https://cdn.jsdelivr.net/npm/tesseract.js@v5.1.0/dist/worker.min.js',
-      //   langPath: 'https://raw.githubusercontent.com/naptha/tessdata/gh-pages/4.0.0_best/kor.traineddata.gz',
+      //   workerPath:
+      //     'https://cdn.jsdelivr.net/npm/tesseract.js@v5.1.0/dist/worker.min.js',
+      //   langPath: prod
+      //     ? 'https://cdn.jsdelivr.net/gh/seraMint/tessdata/'
+      //     : '/tessdata', //'https://cdn.jsdelivr.net/gh/seraMint/tessdata', //'https://tessdata.projectnaptha.com/4.0.0',
       //   corePath: 'https://cdn.jsdelivr.net/npm/tesseract.js-core@v5.1.0',
+      //   cacheMethod: prod ? 'write' : 'none'
       // })
       await worker.setParameters({
         preserve_interword_spaces: '1'

@@ -69,7 +69,7 @@ export default {
     message: 'Do you want to delete this preset?'
   },
   season: {
-    bg: '/images/season/004/season_emblem_en.webp',
+    bg: '/images/season/005/season_emblem_en.webp',
     first: {
       socket: 'During Season of the Malignant, the more accurately you select the socket type in the accessory item affixes, the more often your items will be seen',
     },
@@ -219,7 +219,10 @@ export default {
   },
   item: {
     hardcore: 'Hardcore',
-    ladder: 'Loot Reborn Season',
+    softcore: 'Softcore',
+    ladder: 'Infernal Hordes Season',
+    seasonal: 'Seasonal',
+    eternal: 'Eternal',
     quality: 'Item Quality',
     selectType: 'Item Type',
     selectClass: 'Select {type}',
