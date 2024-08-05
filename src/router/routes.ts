@@ -78,12 +78,12 @@ const routes: RouteRecordRaw[] = [
           }
         ]
       },
-      {
-        name: 'test',
-        path: 'test',
-        component: () => import('pages/TestPage.vue'),
-        props: true
-      },
+      // {
+      //   name: 'test',
+      //   path: 'test',
+      //   component: () => import('pages/TestPage.vue'),
+      //   props: true
+      // },
     ]
   },
 
