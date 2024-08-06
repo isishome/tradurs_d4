@@ -853,14 +853,15 @@ export const useItemStore = defineStore('item', {
       })
     },
     async recognize(image: ImageLike, lang: string) {
-      const locale = (lang === 'ko') ? ['kor'] : ['eng', 'eng.d4']
+      const locale = (lang === 'ko') ? ['kor'] : ['eng']
+      //const locale = (lang === 'ko') ? ['kor', 'kor.d4'] : ['eng', 'eng.d4']
       const worker = await createWorker(locale)
       // const worker = await createWorker(locale, 1, {
       //   workerPath:
       //     'https://cdn.jsdelivr.net/npm/tesseract.js@v5.1.0/dist/worker.min.js',
       //   langPath: prod
       //     ? 'https://cdn.jsdelivr.net/gh/seraMint/tessdata/'
-      //     : '/tessdata', //'https://cdn.jsdelivr.net/gh/seraMint/tessdata', //'https://tessdata.projectnaptha.com/4.0.0',
+      //     : 'https://cdn.jsdelivr.net/gh/seraMint/tessdata/', //'https://cdn.jsdelivr.net/gh/seraMint/tessdata', //'https://tessdata.projectnaptha.com/4.0.0',
       //   corePath: 'https://cdn.jsdelivr.net/npm/tesseract.js-core@v5.1.0',
       //   cacheMethod: prod ? 'write' : 'none'
       // })

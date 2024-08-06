@@ -10,8 +10,8 @@ import { QFile, uid, useQuasar } from 'quasar'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { type ILabel, useItemStore } from 'src/stores/item-store'
-import { Property, Affix, Item } from 'src/types/item'
-import stringComparison from 'string-comparison'
+import { Affix, Item } from 'src/types/item'
+import similarity from 'similarity'
 
 interface IProps {
   loading?: boolean
@@ -30,7 +30,6 @@ const route = useRoute()
 const { t } = useI18n({ useScope: 'global' })
 const is = useItemStore()
 
-const cos = stringComparison.cosine
 const lang: string = (route.params.lang as string) || 'ko'
 const similarRate =
   is.analyze.similarRate[lang as keyof typeof is.analyze.similarRate]
@@ -134,9 +133,7 @@ const checkInfo = (textArray: string[]) => {
   }
 
   // check quality
-  const qualityText = is.quality
-    .map((q) => q.fullName.replace(/[ ]/g, ''))
-    .join(' |')
+  const qualityText = is.quality.map((q) => q.fullName.split(' ')[0]).join('|')
   const indexQuality = textArray.findIndex((ta) =>
     new RegExp(qualityText, 'gi').test(ta)
   )
@@ -152,7 +149,10 @@ const checkInfo = (textArray: string[]) => {
   for (let i = 0; i < qualityPhase.length; i++) {
     const findQualityIndex = is.quality.findIndex(
       (q) =>
-        qualityPhase[i].toLowerCase().indexOf(q.fullName.toLowerCase()) !== -1
+        similarity(
+          qualityPhase[i].toLowerCase(),
+          q.fullName.split(' ')[0].toLowerCase()
+        ) > similarRate
     )
 
     if (findQualityIndex !== -1) {
@@ -322,17 +322,18 @@ const checkAttributes = (plainTArray: string[], id: number, label: string) => {
 
   let len = 0
   while (len < 8) {
-    const similar = cos.similarity(
-      plainTArray.slice(0, len + 1).join(''),
-      label
-    )
+    const similar = similarity(plainTArray.slice(0, len + 1).join(''), label)
 
     const distance = Math.abs(
       plainTArray.slice(0, len + 1).join('').length - label.length
     )
 
-    if (similar >= similarRate)
+    if (similar >= similarRate) {
       result.push({ id, len, rate: similar, distance })
+
+      if (similar === 1) break
+    }
+
     len++
   }
 
@@ -353,7 +354,7 @@ const checkProperties = (tArray: string[]) => {
         attr: is
           .findProperty(p)
           ?.label.replace(/{x}/g, '')
-          .replace(/[ \+\-\.\:,0-9]/g, '')
+          .replace(/[ \+\-\.\:,0-9\[\]]/g, '')
           .replace(new RegExp(`\\([${phase} ]*\\)`, 'g'), '') as string
       }))
 
@@ -381,13 +382,15 @@ const checkProperties = (tArray: string[]) => {
             }
 
             similar.match.push(...result)
+            if (result.filter((r) => r.rate === 1).length > 0) break
           }
         }
 
         similar?.match.sort(
           (a, b) => a.distance - b.distance || b.rate - a.rate
         )
-        if (!!similar) plainTArray.splice(0, (similar?.match[0]?.len ?? 0) + 1)
+        if (!!similar || matchAttribute.length === 0)
+          plainTArray.splice(0, (similar?.match[0]?.len ?? 0) + 1)
         else break
       }
 
@@ -445,7 +448,7 @@ const checkAffixes = (tArray: string[]) => {
       id: aa.value as number,
       attr: aa.label
         .replace(/{x}/g, '')
-        .replace(/[ \+\-\.\:,0-9]/g, '')
+        .replace(/[ \+\-\.\:,0-9\[\]]/g, '')
         .replace(new RegExp(`\\([${phase} ]*\\)`, 'g'), '') as string
     }))
 
@@ -469,6 +472,7 @@ const checkAffixes = (tArray: string[]) => {
           }
 
           similar.match.push(...result)
+          if (result.filter((r) => r.rate === 1).length > 0) break
         }
       }
 
@@ -545,7 +549,7 @@ const checkRestrictions = () => {
       id: r.value as number,
       attr: r.label
         .replace(/{x}/g, '')
-        .replace(/[ \+\-\.\:,0-9]/g, '')
+        .replace(/[ \+\-\.\:,0-9\[\]]/g, '')
         .replace(new RegExp(`\\([${phase} ]*\\)`, 'g'), '') as string
     }))
 
@@ -573,6 +577,7 @@ const checkRestrictions = () => {
           }
 
           similar.match.push(...result)
+          if (result.filter((r) => r.rate === 1).length > 0) break
         }
       }
 
@@ -676,7 +681,7 @@ const filtering = (f: File) => {
           Math.round((iHeight - predictHeight) * ratio)
         )
 
-        ctx.filter = 'brightness(.7) contrast(1.4) blur(.6px)'
+        ctx.filter = 'brightness(1) contrast(1.4) blur(.6px) sepia(1)'
         ctx.drawImage(canvas, 0, 0)
 
         is.recognize(canvas, lang)
@@ -742,7 +747,29 @@ const beforeHideDropBox = () => {
 }
 </script>
 <template>
-  <div>
+  <div class="analysis">
+    <svg xmlns="http://www.w3.org/2000/svg">
+      <filter id="svgThreshold">
+        <feColorMatrix
+          type="matrix"
+          values="0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0"
+        />
+        <feComponentTransfer>
+          <feFuncR
+            type="discrete"
+            tableValues=" 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1"
+          />
+          <feFuncG
+            type="discrete"
+            tableValues=" 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1"
+          />
+          <feFuncB
+            type="discrete"
+            tableValues=" 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1"
+          />
+        </feComponentTransfer>
+      </filter>
+    </svg>
     <D4Btn
       :label="t('btn.imageAnalysis')"
       :loading="loading"
@@ -843,6 +870,9 @@ const beforeHideDropBox = () => {
   </div>
 </template>
 <style scoped>
+.analysis:deep(svg) {
+  display: none;
+}
 .check-item:deep(.checked) {
   opacity: 0.6;
 }
