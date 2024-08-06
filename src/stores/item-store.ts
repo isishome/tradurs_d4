@@ -586,7 +586,7 @@ export const useItemStore = defineStore('item', {
     },
     getReward() {
       return new Promise<Array<Item>>((resolve, reject) => {
-        api.get('/d4/item/reward')
+        api.get('/d4/item/reward', { params: { hardcore: this.storage.data.hardcore, ladder: this.storage.data.ladder } })
           .then((response) => {
             this.rewardItems = response.data
             resolve(response.data)

@@ -1272,20 +1272,25 @@ defineExpose({ scrollEnd })
             class="column items-start q-pa-sm relative-position"
             :class="{ 'q-gutter-xs': !$q.screen.lt.sm || loading }"
           >
-            <div
-              v-show="!loading"
-              class="row items-center q-gutter-x-xs text-overline"
-              style="line-height: 1.6"
-            >
+            <div v-show="loading">
+              <q-skeleton
+                width="100px"
+                :height="$q.screen.lt.sm ? '10px' : '16px'"
+              />
+            </div>
+            <div>
               <div
-                class="q-ml-none"
-                :class="[data.hardcore ? 'text-red-8' : 'text-blue-6']"
+                v-show="!loading"
+                class="row items-center q-gutter-x-xs text-overline no-wrap"
+                style="line-height: 1.6"
               >
-                {{ data.hardcore ? t('item.hardcore') : t('item.softcore') }}
-              </div>
-              <div>:</div>
-              <div class="text-primary">
-                {{ data.ladder ? t('item.seasonal') : t('item.eternal') }}
+                <div :class="[data.hardcore ? 'text-red-8' : 'text-blue-6']">
+                  {{ data.hardcore ? t('item.hardcore') : t('item.softcore') }}
+                </div>
+                <div>:</div>
+                <div class="text-primary">
+                  {{ data.ladder ? t('item.seasonal') : t('item.eternal') }}
+                </div>
               </div>
             </div>
             <div v-show="loading">
@@ -1925,7 +1930,6 @@ defineExpose({ scrollEnd })
 @media (max-width: 724px) {
   .user-area {
     width: 50%;
-    top: 9px;
     right: 10px;
   }
 
