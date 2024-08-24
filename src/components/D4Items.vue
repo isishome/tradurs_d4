@@ -866,7 +866,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
 
 <template>
   <div class="col-12" :style="`max-width:${width}px`">
-    <div :class="$q.screen.lt.sm ? 'q-gutter-y-xl' : 'q-gutter-y-xxl'">
+    <div :class="$q.screen.lt.sm ? 'q-gutter-y-lg' : 'q-gutter-y-xl'">
       <div
         v-if="rewardItem"
         class="item relative-position reward"

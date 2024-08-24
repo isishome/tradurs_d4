@@ -633,6 +633,18 @@ watch(
           <q-list class="q-mx-md q-py-xl q-mt-xl text-overline useful" dense>
             <q-item
               clickable
+              class="no-margin text-red-6 text-weight-bold"
+              tag="a"
+              href="https://d2r.tradurs.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <q-item-section>
+                <q-item-label> Diablo® II Tradurs </q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item
+              clickable
               class="no-margin"
               tag="a"
               href="https://diablo4.cc"
@@ -1283,6 +1295,19 @@ watch(
                 />
                 <div class="q-mt-xl">
                   <div class="column items-start useful">
+                    <q-btn
+                      flat
+                      no-caps
+                      padding="0"
+                      :ripple="false"
+                      class="text-overline no-hover text-weight-bold"
+                      color="red-6"
+                      type="a"
+                      href="https://d2r.tradurs.com"
+                      label="Diablo® II Tradurs"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    />
                     <q-btn
                       flat
                       no-caps

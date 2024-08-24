@@ -325,7 +325,7 @@ const apply = () => {
 const showItemImages = ref<boolean>(false)
 
 // attribute tabs
-const attribute = ref<string>(hasProperties.value ? 'properties' : 'affixes')
+const attribute = ref<string>('affixes')
 
 // attribute mobile
 const attrMobile = reactive<{ is: ComputedRef<boolean>; show: boolean }>({
@@ -1022,14 +1022,13 @@ defineExpose({ scrollEnd })
           v-if="attrMobile.is && attrMobile.show"
           class="col fullscreen column"
         >
-          <q-card-section class="tab row justify-end items-center"
-            >123
+          <q-card-section class="tab row justify-end items-center">
             <q-btn-toggle
               v-model="attribute"
               square
               flat
               no-caps
-              size="xs"
+              size="md"
               aria-label="Tradurs Attribute Button"
               :ripple="false"
               :color="$q.dark.isActive ? 'grey-5' : 'grey-8'"
