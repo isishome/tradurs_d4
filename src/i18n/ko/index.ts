@@ -226,6 +226,7 @@ export default {
     quality: '아이템 등급',
     selectType: '아이템 유형',
     selectClass: '{type} 선택',
+    selectRuneType: '룬 유형 선택',
     selectRune: '룬 선택',
     selectAspectCategory: '위상 범주',
     selectGem: '보석 선택',
@@ -308,6 +309,12 @@ export default {
   },
   max: '최대',
   min: '최소',
+  rune: {
+    gain: '획득',
+    requires: '필요',
+    cooldown: '재사용 대기시간',
+    second: '초'
+  },
   messages: {
     title: '메세지 리스트',
     expire: '읽은 메시지는 7일간 보관됩니다',

@@ -29,8 +29,12 @@ export interface Quality extends ILabel {
 
 export interface Rune extends ILabel {
   type: string,
-  attribute: string,
-  img: string
+  quality: string,
+  gain?: string,
+  requires?: string,
+  cooldown?: number | null,
+  effect: string,
+  level?: number | null
 }
 
 export interface AspectCategory extends ILabel { }

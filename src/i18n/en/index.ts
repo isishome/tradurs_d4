@@ -226,6 +226,7 @@ export default {
     quality: 'Item Quality',
     selectType: 'Item Type',
     selectClass: 'Select {type}',
+    selectRuneType: 'Select Rune Type',
     selectRune: 'Select Rune',
     selectAspectCategory: 'Select Aspect Category',
     selectGem: 'Select Gem',
@@ -308,6 +309,12 @@ export default {
   },
   max: 'Max',
   min: 'Min',
+  rune: {
+    gain: 'Gain',
+    requires: 'Requires',
+    cooldown: 'Cooldown',
+    second: ' Second(s)'
+  },
   messages: {
     title: 'Message List',
     expire: 'Read messages will be kept for 7 days',

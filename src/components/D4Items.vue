@@ -23,6 +23,7 @@ import { User } from 'src/types/user'
 import D4Item from 'components/D4Item.vue'
 import D4Property from 'components/D4Property.vue'
 import D4Material from 'components/D4Material.vue'
+import D4Description from 'components/D4Description.vue'
 import D4Affix from 'components/D4Affix.vue'
 import D4Restriction from 'components/D4Restriction.vue'
 import D4Offer from 'components/D4Offer.vue'
@@ -70,6 +71,9 @@ const requestAffixes = computed<number>(() => is.affixes.request)
 const requestRestrictions = computed<number>(() => is.restrictions.request)
 const itemHeight = computed(
   () => parseInt(props.height.toString()) - ($q.screen.lt.sm ? 50 : 0)
+)
+const rune = computed(
+  () => (itemTypeValue2: string) => is.findRune(itemTypeValue2)
 )
 
 // about copy item
@@ -1003,6 +1007,34 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
               :key="property.valueId"
               :data="property"
             />
+          </template>
+          <template v-if="item.itemType === 'rune'" #description>
+            <template v-if="item.itemTypeValue1 === 'ritual'">
+              <D4Description
+                :item="t('rune.gain')"
+                :desc="rune(item.itemTypeValue2)?.gain"
+              />
+              <D4Description
+                class="text-orange-8"
+                :desc="rune(item.itemTypeValue2)?.effect"
+              />
+            </template>
+            <template v-else>
+              <D4Description
+                :item="t('rune.requires')"
+                :desc="rune(item.itemTypeValue2)?.requires"
+              />
+              <D4Description
+                :item="t('rune.cooldown')"
+                :desc="`${rune(item.itemTypeValue2)?.cooldown}${t(
+                  'rune.second'
+                )}`"
+              />
+              <D4Description
+                class="text-purple-6"
+                :desc="rune(item.itemTypeValue2)?.effect"
+              />
+            </template>
           </template>
           <template
             v-if="
