@@ -113,7 +113,7 @@ const remove = (): void => {
   >
     <div
       class="text-center"
-      :class="{ 'cursor-pointer': isToggle }"
+      :class="{ 'cursor-pointer outline': isToggle }"
       style="width: 21px"
       @click="toggleGreater"
     >
@@ -318,5 +318,10 @@ const remove = (): void => {
 
 .text-shadow {
   text-shadow: 1px 1px 0 var(--q-dark);
+}
+
+.outline {
+  box-shadow: inset 0 0 0 1px rgba(150, 150, 150, 0.4);
+  border-radius: 4px;
 }
 </style>
