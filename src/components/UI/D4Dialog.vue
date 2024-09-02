@@ -73,8 +73,8 @@ watch(
       }`"
     >
       <q-form
-        class="inner column"
-        :class="{ 'full-height': maximized }"
+        class="inner"
+        :class="{ 'full-height column': maximized }"
         @submit="emit('submit')"
       >
         <slot v-if="$slots.top" name="top"> </slot>

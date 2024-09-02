@@ -109,7 +109,7 @@ watch(
 
 <template>
   <div v-if="editable">
-    <div class="row justify-end items-center q-gutter-sm">
+    <div class="row justify-end items-center q-gutter-sm no-wrap">
       <div style="min-width: 30px">
         {{ t('price.title') }}
       </div>

@@ -440,18 +440,22 @@ defineExpose({
         />
       </q-item-section>
     </q-item>
+    <q-separator inset />
     <q-expansion-item
       dense
       dense-toggle
       class="no-hover"
+      :class="{ detail: expandItem }"
       v-model="expandItem"
       expand-icon="img:/images/icons/dropdown.svg"
     >
       <template #header>
-        <q-item-label style="padding-left: 0" class="full-width" header>{{
-          expandItem ? t('item.power') : t('filter.detail')
-        }}</q-item-label>
+        <q-item-label style="padding-left: 0" class="full-width" header>
+          {{ t('filter.detail') }}</q-item-label
+        >
       </template>
+      <q-separator inset />
+      <q-item-label header>{{ t('item.power') }}</q-item-label>
       <q-item :disable="filterLoading">
         <q-item-section>
           <div class="row justify-center no-wrap q-col-gutter-sm items-center">
@@ -886,7 +890,9 @@ defineExpose({
     <q-item :disable="filterLoading">
       <q-item-section>
         <q-btn
+          unelevated
           outline
+          color="grey-6"
           aria-label="Tradurs Refresh Button"
           size="md"
           :ripple="false"
@@ -918,6 +924,28 @@ defineExpose({
 .disable:deep(*) {
   pointer-events: none;
   cursor: not-allowed !important;
+}
+
+.filter:deep(.q-list--dense > .q-item),
+.filter:deep(.q-item--dense) {
+  padding: 2px 14px !important;
+}
+
+.filter:deep(.detail) {
+  position: relative;
+}
+
+.filter:deep(.detail::after) {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  bottom: -8px;
+  left: 6px;
+  right: 6px;
+  background-color: var(--q-cloud);
+  border-radius: 4px;
+  pointer-events: none;
 }
 
 .filter:deep(.q-item__label--header) {
