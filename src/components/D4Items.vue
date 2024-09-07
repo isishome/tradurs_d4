@@ -514,13 +514,14 @@ const filterAffixes = (e: KeyboardEvent) => {
   affixNeedle.value = val
 }
 
-const selectedAffix = (val: number): void => {
+const selectedAffix = (val: number | string): void => {
   const tempId = uid()
   const tempValues = is.findAffix(val)?.label
   const valuesLen = (tempValues?.match(/\{x\}/gi) || []).length
   activatedItem.value.affixes.push({
     valueId: tempId,
-    affixId: val,
+    affixId: typeof val === 'number' ? val : undefined,
+    runeId: typeof val === 'string' ? val : undefined,
     affixValues: Array.from({ length: valuesLen }, () => {
       const tempRangeId = uid()
       return { valueRangeId: tempRangeId, value: 0, min: 0, max: 0 }
@@ -894,6 +895,38 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
               :data="property"
             />
           </template>
+          <template v-if="rewardItem.itemType === 'rune'" #description>
+            <template v-if="rewardItem.itemTypeValue1 === 'ritual'">
+              <D4Description
+                :item="t('rune.gain')"
+                :desc="rune(rewardItem.itemTypeValue2)?.gain"
+              />
+              <D4Description
+                :class="
+                  is.findRuneType(rune(rewardItem.itemTypeValue2)?.type)?.color
+                "
+                :desc="rune(rewardItem.itemTypeValue2)?.effect"
+              />
+            </template>
+            <template v-else>
+              <D4Description
+                :item="t('rune.requires')"
+                :desc="rune(rewardItem.itemTypeValue2)?.requires"
+              />
+              <D4Description
+                :item="t('rune.cooldown')"
+                :desc="`${rune(rewardItem.itemTypeValue2)?.cooldown}${t(
+                  'rune.second'
+                )}`"
+              />
+              <D4Description
+                :class="
+                  is.findRuneType(rune(rewardItem.itemTypeValue2)?.type)?.color
+                "
+                :desc="rune(rewardItem.itemTypeValue2)?.effect"
+              />
+            </template>
+          </template>
           <template
             v-if="
               rewardItem.itemTypeValue1 === 'summoning' &&
@@ -1015,7 +1048,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                 :desc="rune(item.itemTypeValue2)?.gain"
               />
               <D4Description
-                class="text-orange-8"
+                :class="is.findRuneType(rune(item.itemTypeValue2)?.type)?.color"
                 :desc="rune(item.itemTypeValue2)?.effect"
               />
             </template>
@@ -1031,7 +1064,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                 )}`"
               />
               <D4Description
-                class="text-purple-6"
+                :class="is.findRuneType(rune(item.itemTypeValue2)?.type)?.color"
                 :desc="rune(item.itemTypeValue2)?.effect"
               />
             </template>
@@ -1209,7 +1242,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                     <q-icon
                       class="icon"
                       :class="{ 'rotate-45': ['standard'].includes(scope.opt.type as string) }"
-                      size="14px"
+                      size="8px"
                       :name="`img:/images/attribute_types/${
                         scope.opt.type || 'standard'
                       }.svg`"
@@ -1272,19 +1305,30 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
             >
               <template #option="scope">
                 <q-item v-bind="scope.itemProps">
-                  <q-item-section side>
-                    <q-icon
-                      class="icon"
-                      :class="{ 'rotate-45': ['standard'].includes(scope.opt.type as string) }"
-                      size="14px"
-                      :name="`img:/images/attribute_types/${
-                        scope.opt.type || 'standard'
-                      }.svg`"
-                    />
+                  <q-item-section side class="q-pr-sm">
+                    <div
+                      class="row items-center justify-center"
+                      style="width: 20px"
+                    >
+                      <q-img
+                        v-if="scope.opt.effect"
+                        :src="`/images/items/rune/${scope.opt.type}/${scope.opt.value}.webp`"
+                        width="16px"
+                      />
+                      <q-icon
+                        v-else
+                        class="icon"
+                        :class="{ 'rotate-45': ['standard'].includes(scope.opt.type as string) }"
+                        :name="`img:/images/attribute_types/${
+                          scope.opt.type || 'standard'
+                        }.svg`"
+                        size="8px"
+                      />
+                    </div>
                   </q-item-section>
                   <q-item-section>
                     <q-item-label :class="scope.opt.color">{{
-                      scope.opt.label
+                      scope.opt.effect ?? scope.opt.label
                     }}</q-item-label>
                   </q-item-section>
                 </q-item>

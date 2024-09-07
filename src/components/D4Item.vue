@@ -250,8 +250,7 @@ const updateTypeValue1 = (val: string) => {
     Math.floor(
       Math.random() * itemImgs[_type.value]?.[_typeValue1.value as string]
     ) || 0
-  attribute.value =
-    findClass(val)?.properties.length !== 0 ? 'properties' : 'affixes'
+  attribute.value = 'affixes'
   _typeValue2.value =
     _type.value === 'rune'
       ? (filterRunesByType(val)?.[0]?.value as string)

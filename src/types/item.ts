@@ -21,7 +21,8 @@ export interface AffixValue {
 }
 
 export interface Affix extends Attribute {
-  affixId: number,
+  affixId?: number,
+  runeId?: string,
   affixGreater?: boolean,
   affixValues: Array<AffixValue>
 }

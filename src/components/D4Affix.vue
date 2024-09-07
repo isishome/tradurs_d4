@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useQuasar, QInput, uid } from 'quasar'
+import type { Affix, Rune } from 'stores/item-store'
 import { useItemStore } from 'stores/item-store'
 import { type Attribute, parseAffix, splitArray, focus } from 'src/common'
 import { AffixValue } from 'src/types/item'
@@ -25,7 +26,15 @@ const emit = defineEmits(['update', 'remove'])
 const $q = useQuasar()
 const is = useItemStore()
 
-const findAffix = computed(() => is.findAffix(props.data.affixId))
+const findAffix = computed(() =>
+  is.findAffix(props.data.affixId ?? props.data.runeId)
+)
+const isRune = computed(() => typeof findAffix.value?.value === 'string')
+const color = computed(() =>
+  isRune.value
+    ? is.findRuneType(findAffix.value?.type)?.color
+    : (findAffix.value as Affix)?.color
+)
 const affixGreater = computed(() => props.data.affixGreater ?? false)
 const _affixGreater = ref<boolean>(props.data.affixGreater ?? false)
 const affixInfo = computed(() =>
@@ -33,7 +42,7 @@ const affixInfo = computed(() =>
 )
 const affixColor = computed(
   () =>
-    findAffix.value?.color ||
+    color.value ||
     (['legendary', 'unique'].includes(findAffix.value?.type as string)
       ? 'stress'
       : findAffix.value?.type === 'socket'
@@ -49,7 +58,7 @@ const isToggle = computed(
 const icon = computed(
   () =>
     `img:/images/attribute_types/${
-      findAffix.value?.type === 'socket' && findAffix.value?.color
+      findAffix.value?.type === 'socket' && color.value
         ? 'socket_malignant'
         : (props.editable || affixGreater.value) &&
           findAffix.value?.type === 'standard' &&
@@ -107,35 +116,58 @@ const remove = (): void => {
 
 <template>
   <div
-    class="row no-wrap items-baseline q-gutter-xs"
-    :class="[disable, affixColor]"
+    class="row no-wrap q-gutter-xs"
+    :class="[disable, affixColor, isRune ? 'items-center' : 'items-baseline']"
     :data-id="data.valueId"
   >
     <div
-      class="text-center"
+      class="list row items-center justify-center"
       :class="{ 'cursor-pointer outline': isToggle }"
-      style="width: 21px"
       @click="toggleGreater"
     >
-      <q-icon
-        v-show="editable"
-        class="icon"
-        :class="{ greater: isStandard, active: affixGreater }"
-        size="10px"
-        :name="icon"
-      />
-      <q-icon
-        v-show="!editable"
-        class="icon"
-        :class="{ 'rotate-45': isStandard, 'greater active': affixGreater }"
-        size="10px"
-        :name="icon"
-      />
+      <q-avatar
+        :color="color?.replace(/text-/i, '')"
+        v-if="isRune"
+        size="16px"
+        :style="`--data-back: var(--q-${
+          $q.dark.isActive ? 'dark' : 'light'
+        }-page)`"
+      >
+        <img
+          :src="`/images/items/rune/${findAffix?.type}/${findAffix?.value}.webp`"
+        />
+      </q-avatar>
+      <template v-else>
+        <q-icon
+          v-show="editable"
+          class="icon"
+          :class="{ greater: isStandard, active: affixGreater }"
+          size="8px"
+          :name="icon"
+        />
+        <q-icon
+          v-show="!editable"
+          class="icon"
+          :class="{ 'rotate-45': isStandard, 'greater active': affixGreater }"
+          size="8px"
+          :name="icon"
+        />
+      </template>
     </div>
     <div class="col">
       <div
+        v-if="isRune"
+        class="row items-center inline"
+        :class="{ filtered :is.filter.affixes.filter(a => !!a.runeId).map(a => a.runeId).includes(findAffix?.value as string) }"
+      >
+        <div>
+          {{ (findAffix as Rune)?.effect }}
+        </div>
+      </div>
+      <div
+        v-else
         class="row items-center q-gutter-x-xs inline"
-        :class="[{ 'filtered': is.filter.affixes.map(a => a.affixId).includes(findAffix?.value as number) }, findAffix?.color, { 'text-shadow': findAffix?.color }]"
+        :class="[{ 'filtered': is.filter.affixes.filter(a => !!a.affixId).map(a => a.affixId).includes(findAffix?.value as number) }, color, { 'text-shadow': !!color }]"
       >
         <template v-for="(comp, k) in affixInfo" :key="k">
           <template v-if="comp.type === 'text'">
@@ -286,6 +318,29 @@ const remove = (): void => {
   right: 0;
   cursor: not-allowed;
   pointer-events: fill;
+}
+
+.list {
+  width: 22px;
+  height: 22px;
+}
+
+.list:deep(.q-avatar img) {
+  z-index: 2;
+  position: absolute;
+}
+
+.list:deep(.q-avatar::before) {
+  z-index: 1;
+  position: absolute;
+  content: '';
+  top: 50%;
+  left: 50%;
+  width: 90%;
+  height: 90%;
+  background-color: var(--data-back);
+  border-radius: inherit;
+  transform: translate(-50%, -50%);
 }
 
 .stress:deep(.figure) {

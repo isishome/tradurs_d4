@@ -51,7 +51,6 @@ export type History = {
   data: Array<IHistory>
 }
 
-
 export const useAdminStore = defineStore('admin', () => {
   const rows = 10
   const over = ref<boolean>(false)

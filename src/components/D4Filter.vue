@@ -2,8 +2,7 @@
 import { computed, reactive, ref, watch } from 'vue'
 import { QSelect, debounce } from 'quasar'
 import { useAccountStore } from 'src/stores/account-store'
-import { type IFilter, useItemStore } from 'src/stores/item-store'
-import { type Affix } from 'src/types/item'
+import { type IFilter, useItemStore, Rune } from 'src/stores/item-store'
 import { useI18n } from 'vue-i18n'
 import NotifyEn from '/images/filter/notify_en.webp'
 import NotifyKo from '/images/filter/notify_ko.webp'
@@ -90,7 +89,7 @@ const removeProperty = (val: number): void => {
 }
 
 // about affix
-const affixes = ref<Array<number>>([])
+const affixes = ref<Array<number | string>>([])
 const affixRef = ref<QSelect | null>(null)
 const affixOptions = is.filterAffixes
 const affixNeedle = ref<string>()
@@ -110,7 +109,7 @@ const selectedAffix = (val: number): void => {
   }
 }
 
-const removeAffix = (val: number): void => {
+const removeAffix = (val?: number | string): void => {
   const findIndex = affixes.value.findIndex((a) => a === val)
   if (findIndex !== -1) {
     affixes.value.splice(findIndex, 1)
@@ -172,13 +171,22 @@ const update = (quality?: Array<string>, addRemoveAffix = false) => {
   }
 
   if (addRemoveAffix)
-    filter.affixes = is.affixes.data
-      .filter((a) => affixes.value.includes(a.value as number))
-      .map((a) => ({
-        affixId: a.value as number,
-        affixGreater:
-          filter.affixes.find((aa) => aa.affixId === a.value)?.affixGreater ?? 0
-      }))
+    filter.affixes = [
+      ...is.affixes.data
+        .filter((a) => affixes.value.includes(a.value as number))
+        .map((a) => ({
+          affixId: a.value as number,
+          affixGreater:
+            filter.affixes.find((aa) => aa.affixId === a.value)?.affixGreater ??
+            0
+        })),
+      ...is.runes
+        .filter((r) => affixes.value.includes(r.value as string))
+        .map((r) => ({
+          runeId: r.value as string,
+          affixGreater: 0
+        }))
+    ]
 
   filter.request++
   Object.assign(is.filter, filter)
@@ -651,7 +659,7 @@ defineExpose({
                 <q-icon
                   class="icon"
                   :class="{ 'rotate-45': ['standard'].includes(scope.opt.type as string) }"
-                  size="14px"
+                  size="8px"
                   :name="`img:/images/attribute_types/${
                     scope.opt.type || 'standard'
                   }.svg`"
@@ -673,38 +681,47 @@ defineExpose({
         </q-select>
       </q-item-section>
     </q-item>
-    <template v-for="(pid, idx) in filter.properties" :key="`${pid}`">
-      <q-separator v-show="idx !== 0" inset />
-      <q-item :disable="filterLoading" class="q-mx-md q-mb-xs">
-        <q-item-section>
-          <q-item-label caption>
-            {{ findProperty(pid as number)?.label }}
-          </q-item-label>
-        </q-item-section>
-        <q-item-section side>
-          <q-btn
-            :disable="filterLoading"
-            dense
-            unelevated
-            flat
-            round
-            aria-label="Tradurs Close Button"
-            size="xs"
-            :tabindex="-1"
-            class="q-ml-sm"
-            @click="removeProperty(pid)"
-          >
-            <img
-              class="icon"
-              width="13"
-              height="13"
-              src="/images/icons/close.svg"
-              alt="Tradurs Close Icon"
+    <q-list dense class="attr q-mx-md" v-if="filter.properties.length > 0">
+      <template v-for="(pid, idx) in filter.properties" :key="`${pid}`">
+        <q-separator v-show="idx !== 0" inset />
+        <q-item :disable="filterLoading" class="q-mx-md q-mb-xs">
+          <q-item-section side>
+            <q-icon
+              class="icon rotate-45"
+              size="8px"
+              name="img:/images/attribute_types/standard.svg"
             />
-          </q-btn>
-        </q-item-section>
-      </q-item>
-    </template>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label caption>
+              {{ findProperty(pid as number)?.label }}
+            </q-item-label>
+          </q-item-section>
+          <q-item-section side>
+            <q-btn
+              :disable="filterLoading"
+              dense
+              unelevated
+              flat
+              round
+              aria-label="Tradurs Close Button"
+              size="xs"
+              :tabindex="-1"
+              class="q-ml-sm"
+              @click="removeProperty(pid)"
+            >
+              <img
+                class="icon"
+                width="13"
+                height="13"
+                src="/images/icons/close.svg"
+                alt="Tradurs Close Icon"
+              />
+            </q-btn>
+          </q-item-section>
+        </q-item>
+      </template>
+    </q-list>
     <q-item :disable="filterLoading">
       <q-item-section class="no-wrap">
         <q-select
@@ -736,10 +753,16 @@ defineExpose({
           <template #option="scope">
             <q-item v-bind="scope.itemProps">
               <q-item-section side>
+                <q-img
+                  v-if="scope.opt.effect"
+                  :src="`/images/items/rune/${scope.opt.type}/${scope.opt.value}.webp`"
+                  width="16px"
+                />
                 <q-icon
+                  v-else
                   class="icon"
                   :class="{ 'rotate-45': ['standard'].includes(scope.opt.type as string) }"
-                  size="14px"
+                  size="8px"
                   :name="`img:/images/attribute_types/${
                     scope.opt.type || 'standard'
                   }.svg`"
@@ -747,7 +770,7 @@ defineExpose({
               </q-item-section>
               <q-item-section>
                 <q-item-label :class="scope.opt.color">{{
-                  scope.opt.label
+                  scope.opt.effect ?? scope.opt.label
                 }}</q-item-label>
               </q-item-section>
             </q-item>
@@ -763,52 +786,75 @@ defineExpose({
         </q-select>
       </q-item-section>
     </q-item>
-    <template v-for="(affix, idx) in filter.affixes" :key="`${affix.affixId}`">
-      <q-separator v-show="idx !== 0" inset />
-      <q-item :disable="filterLoading" class="q-mx-sm q-my-xs">
-        <q-item-section
-          side
-          class="q-pr-sm"
-          v-show="findAffix(affix.affixId)?.type === 'standard'"
-        >
-          <q-rating
-            v-model="affix.affixGreater"
-            :disable="disable || filterLoading"
-            size="12px"
-            max="1"
-            icon="img:/images/attribute_types/greater_invert.svg"
-            @update:model-value="updateDebounce()"
-          />
-        </q-item-section>
-        <q-item-section>
-          <q-item-label caption>
-            {{ findAffix(affix.affixId)?.label }}
-          </q-item-label>
-        </q-item-section>
-        <q-item-section side>
-          <q-btn
-            :disable="filterLoading"
-            dense
-            unelevated
-            flat
-            round
-            aria-label="Tradurs Close Button"
-            size="xs"
-            :tabindex="-1"
-            class="q-ml-sm"
-            @click="removeAffix(affix.affixId)"
-          >
-            <img
-              class="icon"
-              width="13"
-              height="13"
-              src="/images/icons/close.svg"
-              alt="Tradurs Close Icon"
+    <q-list dense class="attr q-mx-md" v-if="filter.affixes.length > 0">
+      <template
+        v-for="(affix, idx) in filter.affixes"
+        :key="`${affix.affixId}`"
+      >
+        <q-separator v-show="idx !== 0" inset />
+        <q-item :disable="filterLoading" class="q-mx-sm q-my-xs">
+          <q-item-section side>
+            <q-img
+              v-if="!!affix.runeId"
+              :src="`/images/items/rune/${is.findRune(affix.runeId)?.type}/${
+                affix.runeId
+              }.webp`"
+              width="16px"
             />
-          </q-btn>
-        </q-item-section>
-      </q-item>
-    </template>
+            <template v-else>
+              <q-rating
+                v-if="findAffix(affix.affixId)?.type === 'standard'"
+                v-model="affix.affixGreater"
+                :disable="disable || filterLoading"
+                size="12px"
+                max="1"
+                icon="img:/images/attribute_types/greater_invert.svg"
+                @update:model-value="updateDebounce()"
+              />
+              <q-icon
+                v-else
+                class="icon"
+                size="8px"
+                :name="`img:/images/attribute_types/${
+                  is.findAffix(affix.affixId)?.type || 'standard'
+                }.svg`"
+              />
+            </template>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label caption>
+              {{
+                !!affix.runeId
+                  ? (findAffix(affix.runeId) as Rune)?.effect
+                  : findAffix(affix.affixId)?.label
+              }}
+            </q-item-label>
+          </q-item-section>
+          <q-item-section side>
+            <q-btn
+              :disable="filterLoading"
+              dense
+              unelevated
+              flat
+              round
+              aria-label="Tradurs Close Button"
+              size="xs"
+              :tabindex="-1"
+              class="q-ml-sm"
+              @click="removeAffix(affix.affixId ?? affix.runeId)"
+            >
+              <img
+                class="icon"
+                width="13"
+                height="13"
+                src="/images/icons/close.svg"
+                alt="Tradurs Close Icon"
+              />
+            </q-btn>
+          </q-item-section>
+        </q-item>
+      </template>
+    </q-list>
     <q-item :disable="filterLoading">
       <q-item-section class="no-wrap">
         <q-select
@@ -854,38 +900,40 @@ defineExpose({
         </q-select>
       </q-item-section>
     </q-item>
-    <template v-for="(rid, idx) in filter.restrictions" :key="`${rid}`">
-      <q-separator v-show="idx !== 0" inset />
-      <q-item :disable="filterLoading" class="q-mx-md q-mb-xs">
-        <q-item-section>
-          <q-item-label caption>
-            {{ findRestriction(rid as number)?.label }}
-          </q-item-label>
-        </q-item-section>
-        <q-item-section side>
-          <q-btn
-            :disable="filterLoading"
-            dense
-            unelevated
-            flat
-            round
-            aria-label="Tradurs Close Button"
-            size="xs"
-            :tabindex="-1"
-            class="q-ml-sm"
-            @click="removeRestriction(rid)"
-          >
-            <img
-              class="icon"
-              width="13"
-              height="13"
-              src="/images/icons/close.svg"
-              alt="Tradurs Close Icon"
-            />
-          </q-btn>
-        </q-item-section>
-      </q-item>
-    </template>
+    <q-list dense class="attr q-mx-md" v-if="filter.restrictions.length > 0">
+      <template v-for="(rid, idx) in filter.restrictions" :key="`${rid}`">
+        <q-separator v-show="idx !== 0" inset />
+        <q-item :disable="filterLoading" class="q-mx-md q-mb-xs">
+          <q-item-section>
+            <q-item-label caption>
+              {{ findRestriction(rid as number)?.label }}
+            </q-item-label>
+          </q-item-section>
+          <q-item-section side>
+            <q-btn
+              :disable="filterLoading"
+              dense
+              unelevated
+              flat
+              round
+              aria-label="Tradurs Close Button"
+              size="xs"
+              :tabindex="-1"
+              class="q-ml-sm"
+              @click="removeRestriction(rid)"
+            >
+              <img
+                class="icon"
+                width="13"
+                height="13"
+                src="/images/icons/close.svg"
+                alt="Tradurs Close Icon"
+              />
+            </q-btn>
+          </q-item-section>
+        </q-item>
+      </template>
+    </q-list>
     <q-separator inset class="q-my-md" />
     <q-item :disable="filterLoading">
       <q-item-section>
@@ -969,5 +1017,32 @@ defineExpose({
 
 .q-option-group.q-gutter-x-sm:deep(> *) {
   margin-right: 8px;
+}
+
+.attr {
+  margin-top: -4px;
+  margin-bottom: 10px;
+  background-color: var(--q-half);
+  border-radius: 0 0 4px 4px;
+}
+
+.attr:deep(.q-item) {
+  margin: 0;
+}
+
+.attr:deep(.q-item .q-item__section:first-child) {
+  width: 20px;
+  padding-right: 8px;
+  flex-direction: row;
+  align-items: center;
+}
+
+.attr:deep(.q-item .q-item__section:last-child) {
+  padding-left: 0;
+}
+
+.attr:deep(.q-item .q-item__section .q-item__label) {
+  line-height: 1.4 !important;
+  padding: 4px 0;
 }
 </style>
