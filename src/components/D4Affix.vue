@@ -274,26 +274,18 @@ const remove = (): void => {
           unelevated
           flat
           round
-          aria-label="Tradurs Editable Button"
+          aria-label="Tradurs Remove Button"
           size="xs"
           :tabindex="-1"
           class="q-ml-sm"
           @click="remove"
         >
           <img
-            v-show="data.action !== 8"
             class="icon"
             width="13"
             height="13"
             src="/images/icons/close.svg"
             alt="Tradurs Remove Icon"
-          />
-          <img
-            v-show="data.action === 8"
-            class="icon flip-horizontal"
-            width="13"
-            src="/images/icons/restore.svg"
-            alt="Tradurs Restore Icon"
           />
         </q-btn>
       </div>

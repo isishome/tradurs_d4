@@ -477,7 +477,7 @@ const updateProperty = ({
   valueId,
   propertyValues
 }: {
-  valueId: string
+  valueId: string | number
   propertyValues: Array<number>
 }): void => {
   const findProperty = activatedItem.value.properties.find(
@@ -489,15 +489,18 @@ const updateProperty = ({
   }
 }
 
-const removeProperty = ({ valueId }: { valueId: string }): void => {
+const removeProperty = ({ valueId }: { valueId: string | number }): void => {
   const findProperty = activatedItem.value.properties.find(
     (p) => p.valueId === valueId
   )
+
   if (findProperty) {
-    findProperty.disable = findProperty.action !== 8
-    findProperty.restore =
-      findProperty.action !== 8 ? findProperty.action : undefined
-    findProperty.action = findProperty.action !== 8 ? 8 : findProperty.restore
+    if (typeof valueId === 'number') findProperty.action = 8
+    else
+      activatedItem.value.properties.splice(
+        activatedItem.value.properties.findIndex((p) => p.valueId === valueId),
+        1
+      )
   }
 }
 
@@ -544,10 +547,11 @@ const updateAffix = ({
   affixGreater,
   affixValues
 }: {
-  valueId: string
+  valueId: string | number
   affixGreater: boolean
   affixValues: Array<AffixValue>
 }): void => {
+  debugger
   const findAffix = activatedItem.value.affixes.find(
     (a) => a.valueId === valueId
   )
@@ -558,14 +562,18 @@ const updateAffix = ({
   }
 }
 
-const removeAffix = ({ valueId }: { valueId: string }): void => {
+const removeAffix = ({ valueId }: { valueId: string | number }): void => {
   const findAffix = activatedItem.value.affixes.find(
     (a) => a.valueId === valueId
   )
+
   if (findAffix) {
-    findAffix.disable = findAffix.action !== 8
-    findAffix.restore = findAffix.action !== 8 ? findAffix.action : undefined
-    findAffix.action = findAffix.action !== 8 ? 8 : findAffix.restore
+    if (typeof valueId === 'number') findAffix.action = 8
+    else
+      activatedItem.value.affixes.splice(
+        activatedItem.value.affixes.findIndex((a) => a.valueId === valueId),
+        1
+      )
   }
 }
 
@@ -603,7 +611,7 @@ const updateRestriction = ({
   valueId,
   restrictValues
 }: {
-  valueId: string
+  valueId: string | number
   restrictValues: Array<number>
 }): void => {
   const findRestriction = activatedItem.value.restrictions.find(
@@ -615,16 +623,20 @@ const updateRestriction = ({
   }
 }
 
-const removeRestriction = ({ valueId }: { valueId: string }): void => {
+const removeRestriction = ({ valueId }: { valueId: string | number }): void => {
   const findRestriction = activatedItem.value.restrictions.find(
     (r) => r.valueId === valueId
   )
+
   if (findRestriction) {
-    findRestriction.disable = findRestriction.action !== 8
-    findRestriction.restore =
-      findRestriction.action !== 8 ? findRestriction.action : undefined
-    findRestriction.action =
-      findRestriction.action !== 8 ? 8 : findRestriction.restore
+    if (typeof valueId === 'number') findRestriction.action = 8
+    else
+      activatedItem.value.restrictions.splice(
+        activatedItem.value.restrictions.findIndex(
+          (r) => r.valueId === valueId
+        ),
+        1
+      )
   }
 }
 
@@ -1265,7 +1277,9 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
         </template>
         <template #properties>
           <D4Property
-            v-for="property in activatedItem.properties"
+            v-for="property in activatedItem.properties.filter(
+              (p) => p.action !== 8
+            )"
             :key="property.valueId || uid()"
             :data="property"
             editable
@@ -1363,7 +1377,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
         </template>
         <template #affixes>
           <D4Affix
-            v-for="affix in activatedItem.affixes"
+            v-for="affix in activatedItem.affixes.filter((a) => a.action !== 8)"
             :key="affix.valueId || uid()"
             :data="affix"
             editable
@@ -1420,7 +1434,9 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
         </template>
         <template #restrictions>
           <D4Restriction
-            v-for="restriction in activatedItem.restrictions"
+            v-for="restriction in activatedItem.restrictions.filter(
+              (r) => r.action !== 8
+            )"
             :key="restriction.valueId || uid()"
             :data="restriction"
             editable

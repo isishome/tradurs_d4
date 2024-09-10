@@ -39,6 +39,7 @@ const _price = reactive<Price>(
   new Price(props.data.currency, props.data.currencyValue, props.data.quantity)
 )
 const _priceError = ref<boolean>(false)
+const findType = store.findType
 const runes = store.filterRunesByType
 const currencies = store.currencies()
 const summonings = store.summonings
@@ -171,7 +172,9 @@ watch(
           @update:model-value="update"
         >
           <template #selected-item="scope">
-            <div class="ellipsis">{{ scope.opt.label }}</div>
+            <div class="ellipsis">
+              {{ scope.opt.label }} {{ findType('rune')?.label }}
+            </div>
           </template>
           <template #option="scope">
             <q-item v-bind="scope.itemProps">
@@ -184,7 +187,10 @@ watch(
                 />
               </q-item-section>
               <q-item-section>
-                <q-item-label>{{ scope.opt.label }}</q-item-label>
+                <q-item-label
+                  >{{ scope.opt.label }}
+                  {{ findType('rune')?.label }}</q-item-label
+                >
               </q-item-section>
             </q-item>
           </template>

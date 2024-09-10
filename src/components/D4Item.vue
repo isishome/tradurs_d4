@@ -498,7 +498,10 @@ defineExpose({ scrollEnd })
                 @update:model-value="updateTypeValue2"
               >
                 <template #selected-item="scope">
-                  <div class="ellipsis">{{ scope.opt.label }}</div>
+                  <div class="ellipsis">
+                    {{ scope.opt.label }}
+                    {{ findType('rune')?.label }}
+                  </div>
                 </template>
                 <template #option="scope">
                   <q-item v-bind="scope.itemProps">
@@ -511,7 +514,10 @@ defineExpose({ scrollEnd })
                       />
                     </q-item-section>
                     <q-item-section>
-                      <q-item-label>{{ scope.opt.label }}</q-item-label>
+                      <q-item-label
+                        >{{ scope.opt.label }}
+                        {{ findType('rune')?.label }}</q-item-label
+                      >
                     </q-item-section>
                   </q-item>
                 </template>
@@ -1373,6 +1379,7 @@ defineExpose({ scrollEnd })
                     </span>
                     <span v-show="data.itemType === 'rune'">
                       {{ store.findRune(data.itemTypeValue2)?.label }}
+                      {{ findType('rune')?.label }}
                     </span>
                     <span v-show="data.itemTypeValue1 === 'gem'">
                       {{
