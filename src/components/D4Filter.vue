@@ -1006,6 +1006,7 @@ defineExpose({
           <div class="row justify-between items-center q-py-xs">
             <div class="row items-center">
               <D4Analysis
+                v-if="as.signed"
                 ref="analysis"
                 :loading="loading"
                 :disable="filterLoading"
@@ -1076,7 +1077,7 @@ defineExpose({
 }
 
 .attr {
-  margin-top: -4px;
+  margin-top: -10px;
   margin-bottom: 10px;
   background-color: var(--q-half);
   border-radius: 0 0 4px 4px;
