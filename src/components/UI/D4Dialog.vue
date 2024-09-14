@@ -64,6 +64,7 @@ watch(
     :no-route-dismiss="noRouteDismiss"
     @update:model-value="emit('update:modelValue', show)"
     class="shadow-5"
+    backdrop-filter="blur(4px)"
   >
     <q-card
       class="card-item normal overflow-hidden"

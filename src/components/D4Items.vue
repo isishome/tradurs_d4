@@ -551,7 +551,6 @@ const updateAffix = ({
   affixGreater: boolean
   affixValues: Array<AffixValue>
 }): void => {
-  debugger
   const findAffix = activatedItem.value.affixes.find(
     (a) => a.valueId === valueId
   )
@@ -1208,6 +1207,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
       transition-hide="fade"
       transition-duration="100"
       @hide="hideEditable"
+      backdrop-filter="blur(4px)"
     >
       <D4Item
         ref="activatedRef"
@@ -1564,7 +1564,6 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                 </q-menu>
               </D4Btn>
               <D4Analysis
-                ref="analysis"
                 :loading="activatedItem.loading"
                 :disable="
                   (!activatedItem.editable && !!activatedItem.itemId) ||

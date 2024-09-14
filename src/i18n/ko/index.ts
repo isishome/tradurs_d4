@@ -181,6 +181,7 @@ export default {
     move: '이동',
     complete: '완료 처리',
     submit: '제출하기',
+    attributeFilter: '속성 검색',
     resetFilter: '검색 초기화',
     favorite: '관심 목록에 추가',
     unfavorite: '관심 목록에서 삭제',
@@ -220,7 +221,7 @@ export default {
   item: {
     hardcore: '하드코어',
     softcore: '소프트코어',
-    ladder: '지옥불 군세의 시즌',
+    ladder: '증오의 그릇 시즌',
     seasonal: '시즌',
     eternal: '영원',
     quality: '아이템 등급',

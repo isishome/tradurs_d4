@@ -181,6 +181,7 @@ export default {
     move: 'Move',
     complete: 'Complete',
     submit: 'Submit',
+    attributeFilter: 'Attribute Filter',
     resetFilter: 'Reset Filter',
     favorite: 'Add to Favorites',
     unfavorite: 'Remove to Favorites',
@@ -220,7 +221,7 @@ export default {
   item: {
     hardcore: 'Hardcore',
     softcore: 'Softcore',
-    ladder: 'Infernal Hordes Season',
+    ladder: 'Vessel of Hatred Season',
     seasonal: 'Seasonal',
     eternal: 'Eternal',
     quality: 'Item Quality',

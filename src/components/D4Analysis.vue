@@ -16,11 +16,13 @@ import similarity from 'similarity'
 interface IProps {
   loading?: boolean
   disable?: boolean
+  attrOnly?: boolean
 }
 
-withDefaults(defineProps<IProps>(), {
+const props = withDefaults(defineProps<IProps>(), {
   loading: false,
-  disable: false
+  disable: false,
+  attrOnly: false
 })
 
 const emit = defineEmits(['start', 'end', 'failed'])
@@ -95,7 +97,8 @@ const checkText = () => {
     new RegExp(notTradable, 'gi').test(ta)
   )
 
-  if (findNotTradable.length > 0) return failedScan(t('analyze.nonTradable'))
+  if (!props.attrOnly && findNotTradable.length > 0)
+    return failedScan(t('analyze.nonTradable'))
 
   setTimeout(() => {
     checkedItem.push('text')
