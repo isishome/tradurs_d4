@@ -39,7 +39,7 @@ export default {
     status: 'Item Status',
     detail: 'Item Detail',
     type: 'Type(s)',
-    advanced: 'Affixes Filter',
+    advanced: 'Attributes Filter',
     mine: 'My Items',
     offered: 'Have been offered',
     offer: 'Have made an offer',
@@ -51,7 +51,7 @@ export default {
     presetDescription: 'This feature saves the currently set filter values. Up to 3 presets can be saved.',
     affixDescription: 'Affixes search allows you to select up to 6 affixes, and if 5 affixes are selected, items containing 4 of the 5 affixes combined will also be searched.',
     description: {
-      advanced: 'When using affixes filters, use \'characteristics affixes\' and \'affixes\' separately.',
+      advanced: 'When using attributes filters, use \'characteristics affixes\' and \'affixes\' separately.',
       advanced2: 'Sometimes sellers input \'characteristics affixes\' and \'affixes\' incorrectly, so consider this and filter.'
     }
   },
@@ -69,7 +69,7 @@ export default {
     message: 'Do you want to delete this preset?'
   },
   season: {
-    bg: '/images/season/005/season_emblem_en.webp',
+    bg: '/images/season/006/season_emblem_en.webp',
     first: {
       socket: 'During Season of the Malignant, the more accurately you select the socket type in the accessory item affixes, the more often your items will be seen',
     },
@@ -78,7 +78,8 @@ export default {
       ferocity: 'Ferocity',
       divinity: 'Divinity',
       eternity: 'Eternity'
-    }
+    },
+    color: 'text-green-14'
   },
   noFilterdItems: 'No search results matched your criteria',
   noFilterdItemsDesc: 'Check out the item filters',
@@ -209,6 +210,7 @@ export default {
   },
   attribute: {
     request: 'Request additional {attr}',
+    requestMessage: 'Request an admin to add the attribute.',
     placeholder: "+{'{'}x{'}'}% Increased Attack Speed for {'{'}x{'}'} Seconds After Dodging an Attack",
     enter: 'Please enter the {attr}',
     invalid: 'Invalid {attr} format',

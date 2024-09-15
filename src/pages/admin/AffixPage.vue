@@ -52,7 +52,7 @@ const filteredAffixes = computed(() =>
   !!affixId.value
     ? affixes().filter((a) => a.value === Number(affixId.value))
     : affixNeedle.value
-    ? affixes(affixNeedle.value)
+    ? affixes(affixNeedle.value).filter((a) => !isNaN(Number(a.value)))
     : []
 )
 
@@ -83,16 +83,18 @@ const affixError = reactive<AffixError>({
 })
 const refAttribute = ref<QInput>()
 
-const deleteRequestAffix = (requestId: number) => {
+const deleteRequestAffix = (requestIds: Array<number>) => {
   disable.value = true
-  as.deleteRequestAffix(requestId)
+  as.deleteRequestAffix(requestIds)
     .then(() => {
-      const findRequestAffixIndex = requestAffixes.findIndex(
-        (ra) => ra.requestId == requestId
-      )
+      requestIds.forEach((requestId) => {
+        const findRequestAffixIndex = requestAffixes.findIndex(
+          (ra) => ra.requestId == requestId
+        )
 
-      if (findRequestAffixIndex !== -1)
-        requestAffixes.splice(findRequestAffixIndex, 1)
+        if (findRequestAffixIndex !== -1)
+          requestAffixes.splice(findRequestAffixIndex, 1)
+      })
 
       $q.notify({
         message: '속성 요청이 삭제되었습니다',
@@ -213,48 +215,70 @@ watch(availableAffixId, (val, old) => {
 onMounted(() => {
   as.getRequestAffixes().then((result) => {
     requestAffixes.splice(0, requestAffixes.length)
-    requestAffixes.push(...result)
+    requestAffixes.push(...result.map((r) => ({ ...r, selected: false })))
   })
 })
 </script>
 
 <template>
   <div>
-    <q-virtual-scroll
-      v-if="requestAffixes.length > 0"
-      type="table"
-      style="max-height: 500px"
-      :virtual-scroll-item-size="48"
-      :virtual-scroll-sticky-size-start="48"
-      :virtual-scroll-sticky-size-end="32"
-      :items="requestAffixes"
-      class="q-mb-xl no-shadow"
-      v-slot="{ item: row, index }"
-    >
-      <tr :key="index">
-        <td
-          v-for="col in columns"
-          :key="index + '-' + col"
-          style="white-space: normal; min-width: 60px"
-        >
-          {{
-            col === 'affixType'
-              ? attributeTypes.find((at) => at.value === row[col])?.label
-              : row[col]
-          }}
-        </td>
-        <td style="width: 50px">
-          <q-btn
-            :disable="disable"
-            unelevated
-            dense
-            color="negative"
-            label="삭제"
-            @click="deleteRequestAffix(row['requestId'])"
-          />
-        </td>
-      </tr>
-    </q-virtual-scroll>
+    <template v-if="requestAffixes.length > 0">
+      <div class="row justify-end items-center q-mb-sm">
+        <q-btn
+          :disable="
+            disable || requestAffixes.filter((ra) => ra.selected).length === 0
+          "
+          unelevated
+          dense
+          color="negative"
+          label="일괄 삭제"
+          @click="
+            deleteRequestAffix(
+              requestAffixes
+                .filter((ra) => ra.selected)
+                .map((ra) => ra.requestId)
+            )
+          "
+        />
+      </div>
+      <q-virtual-scroll
+        type="table"
+        style="max-height: 500px"
+        :virtual-scroll-item-size="48"
+        :virtual-scroll-sticky-size-start="48"
+        :virtual-scroll-sticky-size-end="32"
+        :items="requestAffixes"
+        class="no-shadow q-mb-xl"
+        v-slot="{ item: row, index }"
+      >
+        <tr :key="index">
+          <td style="width: 40px">
+            <q-checkbox dense v-model="row['selected']" />
+          </td>
+          <td
+            v-for="col in columns"
+            :key="index + '-' + col"
+            style="white-space: normal; min-width: 60px"
+          >
+            {{
+              col === 'affixType'
+                ? attributeTypes.find((at) => at.value === row[col])?.label
+                : row[col]
+            }}
+          </td>
+          <td style="width: 50px">
+            <q-btn
+              :disable="disable"
+              unelevated
+              dense
+              color="negative"
+              label="삭제"
+              @click="deleteRequestAffix([row['requestId']])"
+            />
+          </td>
+        </tr>
+      </q-virtual-scroll>
+    </template>
     <div class="row justify-between q-mb-sm">
       <div>
         <q-btn

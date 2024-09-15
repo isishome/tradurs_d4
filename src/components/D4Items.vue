@@ -378,7 +378,10 @@ const findQuality = computed(
 const filterAttributeTypes = computed(() =>
   is
     .filterAttributeTypes(add.category as string)
-    .filter((at) => findQuality.value?.includes(at.value as string))
+    .filter(
+      (at) =>
+        at.value !== 'socket' && findQuality.value?.includes(at.value as string)
+    )
 )
 
 const hideAdd = (): void => {
@@ -536,7 +539,7 @@ const selectedAffix = (val: number | string): void => {
   activatedRef.value?.scrollEnd('affixes', tempId)
 }
 
-const createAffix = (): void => {
+const requestAffix = (): void => {
   add.category = 'affixes'
   add.type = filterAttributeTypes.value?.[0]?.value as string
   add.show = true
@@ -1363,7 +1366,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
               dense
               round
               aria-label="Tradurs Add Button"
-              @click="createAffix"
+              @click="requestAffix"
             >
               <img
                 class="icon"
@@ -1607,9 +1610,12 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
       @hide="hideAdd"
     >
       <template #top>
-        <q-card-section class="row items-center q-ml-md">
-          <div class="name">
+        <q-card-section class="row items-center justify-between">
+          <div class="name q-ml-md">
             {{ t('attribute.request', { attr: t(add.category as string) }) }}
+          </div>
+          <div class="text-caption q-ml-md">
+            {{ t('attribute.requestMessage') }}
           </div>
         </q-card-section>
       </template>

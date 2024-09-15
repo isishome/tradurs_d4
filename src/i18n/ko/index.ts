@@ -69,7 +69,7 @@ export default {
     message: '해당 프리셋을 삭제할까요?'
   },
   season: {
-    bg: '/images/season/005/season_emblem_ko.webp',
+    bg: '/images/season/006/season_emblem_ko.webp',
     first: {
       socket: '악의 종자 시즌에는 장신구 아이템 옵션의 홈 유형을 정확하게 선택할수록 아이템의 노출 빈도가 높아집니다'
     },
@@ -78,7 +78,8 @@ export default {
       ferocity: '야성',
       divinity: '신성',
       eternity: '영원'
-    }
+    },
+    color: 'text-green-14'
   },
   noFilterdItems: '조건에 맞는 검색 결과가 없습니다',
   noFilterdItemsDesc: '아이템 필터를 확인해 보세요',
@@ -209,6 +210,7 @@ export default {
   },
   attribute: {
     request: '{attr} 추가 요청',
+    requestMessage: '관리자에게 속성 추가를 요청합니다.',
     placeholder: "공격 회피 후 {'{'}x{'}'}초 동안  +{'{'}x{'}'} 공격 속도 증가",
     enter: '{attr}을 입력해 주세요',
     invalid: '잘못된 형식의 {attr} 입니다',

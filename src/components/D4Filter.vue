@@ -21,7 +21,7 @@ const props = withDefaults(defineProps<IProps>(), {
 const $q = useQuasar()
 const as = useAccountStore()
 const is = useItemStore()
-const { t, locale } = useI18n({ useScope: 'global' })
+const { t, te, locale } = useI18n({ useScope: 'global' })
 
 const loading = ref(false)
 const preset = ref<number | null>(null)
@@ -342,6 +342,7 @@ defineExpose({
             size="xs"
             v-model="is.storage.data.ladder"
             :label="t('item.ladder')"
+            :class="[te('season.color') ? t('season.color') : '']"
             @update:model-value="updateBasicDebounce()"
           />
         </q-item-section>

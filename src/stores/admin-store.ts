@@ -28,7 +28,8 @@ export type Filter = {
 export type RequestAffix = {
   requestId: number,
   affixType: string,
-  affixAttribute: string
+  affixAttribute: string,
+  selected: boolean
 }
 
 export type Search = {
@@ -123,10 +124,10 @@ export const useAdminStore = defineStore('admin', () => {
     })
   }
 
-  const deleteRequestAffix = (requestId: number) => {
+  const deleteRequestAffix = (requestIds: Array<number>) => {
     return new Promise<void>((resolve, reject) => {
       api.post('/d4/admin/affix/request/delete', {
-        requestId
+        requestIds
       })
         .then(() => {
           resolve()
