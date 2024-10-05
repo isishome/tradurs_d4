@@ -44,6 +44,12 @@ const itemStatus = computed(() => [
   },
   ...is.itemStatus
 ])
+const attrCount = computed(
+  () =>
+    (filter.properties?.length ?? 0) +
+    (filter.affixes?.length ?? 0) +
+    (filter.restrictions.length ?? 0)
+)
 
 Object.assign(filter, is.filter)
 
@@ -172,11 +178,12 @@ const clearFilter = () => {
   preset.value = null
   is.clearFilter(true)
   Object.assign(filter, is.filter)
+  affixes.value = []
   filter.request--
   update()
 }
 
-const update = (quality?: Array<string>, addRemoveAffix = false) => {
+const update = (quality?: Array<string>) => {
   if (quality) {
     Object.keys(filter.itemTypeValues1).forEach((q: string) => {
       if (!quality.includes(q)) delete filter.itemTypeValues1[q]
@@ -632,7 +639,11 @@ defineExpose({
             :disable="filterLoading"
             :label="t('btn.attributeFilter')"
             @click="() => (attributeShow = true)"
-          />
+          >
+            <q-badge v-show="attrCount > 0" color="red-8" floating>
+              {{ attrCount }}
+            </q-badge>
+          </q-btn>
         </div>
       </q-item>
     </q-list>
@@ -950,7 +961,6 @@ defineExpose({
                     </q-item-section>
                   </q-item>
                 </template>
-
                 <template #no-option>
                   <q-item>
                     <q-item-section class="text-grey">
