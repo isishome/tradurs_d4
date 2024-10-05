@@ -12,6 +12,10 @@ import {
 } from 'stores/admin-store'
 import { clipboard } from 'src/common'
 
+const props = defineProps<{
+  identity?: string
+}>()
+
 const route = useRoute()
 const router = useRouter()
 const $q = useQuasar()
@@ -63,7 +67,12 @@ const getUsers = async (p?: number) => {
 
   disable.value = true
   users.splice(0, users.length)
-  const result = await as.getUsers(page.value, filter, searchInfo.value)
+  const result = await as.getUsers(
+    page.value,
+    props.identity,
+    filter,
+    searchInfo.value
+  )
   users.push(...result)
   disable.value = false
 }
@@ -208,6 +217,7 @@ onMounted(async () => {
           popup-content-class="bordered"
           label="계정 상태"
           dropdown-icon="img:/images/icons/dropdown.svg"
+          :disable="!!identity"
           @update:model-value="getUsers(1)"
         />
         <q-select
@@ -221,6 +231,7 @@ onMounted(async () => {
           popup-content-class="bordered"
           label="배틀 태그 활성상태"
           dropdown-icon="img:/images/icons/dropdown.svg"
+          :disable="!!identity"
           @update:model-value="getUsers(1)"
         />
       </div>
@@ -228,7 +239,7 @@ onMounted(async () => {
         <q-input
           dense
           outlined
-          :disable="disable"
+          :disable="disable || !!identity"
           v-model="searchInfo"
           @keyup.enter="getUsers(1)"
         >
@@ -257,7 +268,7 @@ onMounted(async () => {
           dense
           color="primary"
           label="검색"
-          :disable="disable"
+          :disable="disable || !!identity"
           @click="getUsers(1)"
         />
       </div>
@@ -509,6 +520,7 @@ onMounted(async () => {
       v-model="history.show"
       @before-hide="clearHistoryInfo"
       @show="getHistory"
+      :maximized="$q.screen.lt.sm"
     >
       <template #top>
         <q-card-section class="text-h6">활동 내역</q-card-section>
@@ -518,11 +530,11 @@ onMounted(async () => {
           class="col scroll"
           :style="
             $q.screen.lt.sm
-              ? 'height:100%'
+              ? 'height:100%;width:100%;'
               : 'min-height:40vh !important;max-height:50vh !important'
           "
         >
-          <q-markup-table flat bordered class="full-width overflow-hidden">
+          <q-markup-table flat bordered class="full-width">
             <q-inner-loading :showing="disable" class="fit" style="z-index: 1">
               <q-spinner size="lg" color="primary" />
             </q-inner-loading>
@@ -541,22 +553,21 @@ onMounted(async () => {
                 <td style="white-space: normal">{{ h.contents }}</td>
                 <td>{{ date.formatDate(h.regDate, 'YYYY.MM.DD HH:mm') }}</td>
               </tr>
-              <tr v-if="!!as.historyParams.nextHistoryId">
-                <td colspan="4" class="text-center">
-                  <q-btn
-                    label="더보기"
-                    unelevated
-                    color="primary"
-                    @click="getHistory"
-                  />
-                </td>
-              </tr>
             </tbody>
           </q-markup-table>
         </q-card-section>
       </template>
       <template #bottom>
-        <q-card-section class="row justify-end q-gutter-sm">
+        <q-card-section class="row justify-between q-gutter-sm">
+          <div>
+            <q-btn
+              v-if="!!as.historyParams.nextHistoryId"
+              label="더보기"
+              unelevated
+              color="primary"
+              @click="getHistory"
+            />
+          </div>
           <q-btn
             unelevated
             :disable="disable"

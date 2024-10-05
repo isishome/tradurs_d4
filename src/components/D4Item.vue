@@ -17,7 +17,7 @@ import {
 } from 'vue'
 import { QCard, useQuasar, date } from 'quasar'
 import { useI18n } from 'vue-i18n'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 import { useAccountStore } from 'stores/account-store'
 import { type Gem, type Elixir, useItemStore } from 'stores/item-store'
@@ -53,6 +53,7 @@ const as = useAccountStore()
 const store = useItemStore()
 const { t } = useI18n({ useScope: 'global' })
 const route = useRoute()
+const router = useRouter()
 
 // variable
 const editWrap = ref<QCard | null>(null)
@@ -108,6 +109,25 @@ const remainSeconds = computed(() =>
 )
 const remainColor = computed(() =>
   remainDate.value < hour ? `text-red-6` : ''
+)
+
+const isList = computed(() => route.name === 'tradeList')
+const itemName = computed(
+  () =>
+    (props.data.itemType === 'rune'
+      ? `${findRune(props.data.itemTypeValue2)?.label} ${
+          findType('rune')?.label
+        }`
+      : qualifiable.value
+      ? props.data.name
+      : props.data.itemTypeValue1 === 'gem'
+      ? store.gems.find((g) => g.value === props.data.itemTypeValue2)?.label
+      : props.data.itemTypeValue1 === 'elixir'
+      ? store.elixirs.find((e) => e.value === props.data.itemTypeValue2)?.label
+      : props.data.itemTypeValue1 === 'summoning'
+      ? store.summonings.find((s) => s.value === props.data.itemTypeValue2)
+          ?.label
+      : undefined) ?? t('item.unknown')
 )
 let remainInterval: NodeJS.Timeout
 
@@ -304,6 +324,14 @@ const updatePrice = (price: Price) => {
   _price.currencyValue = price.currencyValue
   _price.quantity = price.quantity
   update()
+}
+
+const goItemDetail = () => {
+  if (isList.value)
+    router.push({
+      name: 'itemInfo',
+      params: { itemid: props.data.itemId, lang: route.params.lang ?? 'ko' }
+    })
 }
 
 // control scroll
@@ -1213,7 +1241,6 @@ defineExpose({ scrollEnd })
               <q-img
                 v-show="!loading"
                 class="item-image"
-                :class="{ larger: data.itemTypeValue2.includes('_set') }"
                 :src="imgSrc"
                 alt="Tradurs Item Image"
               />
@@ -1307,102 +1334,21 @@ defineExpose({ scrollEnd })
                   dense
                   size="xs"
                   class="text-caption"
+                  :title="itemName"
                 >
-                  <div
-                    v-show="data.itemTypeValue1 === 'rune'"
-                    class="row items-center q-gutter-sm"
-                  >
-                    <div class="name">
-                      {{
-                        (
-                          filterRunesByType().find(
-                            (r) => r.value === data.itemTypeValue1
-                          ) || {}
-                        ).label
-                      }}
-                    </div>
-                    <div>
-                      {{
-                        findRuneType(findRune(data.itemTypeValue1)?.type)?.label
-                      }}
-                    </div>
-                  </div>
                   <div class="name stress ellipsis-2-lines">
-                    <span v-show="qualifiable">
-                      {{ data.name }}
-                    </span>
-                    <span v-show="data.itemTypeValue1 === 'gem'">
-                      {{
-                        store.gems.find((g) => g.value === data.itemTypeValue2)
-                          ?.label
-                      }}
-                    </span>
-                    <span v-show="data.itemTypeValue1 === 'elixir'">
-                      {{
-                        store.elixirs.find(
-                          (e) => e.value === data.itemTypeValue2
-                        )?.label
-                      }}
-                    </span>
-                    <span v-show="data.itemTypeValue1 === 'summoning'">
-                      {{
-                        store.summonings.find(
-                          (s) => s.value === data.itemTypeValue2
-                        )?.label
-                      }}
-                    </span>
+                    {{ itemName }}
                   </div>
                 </q-checkbox>
-                <template v-else>
-                  <div
-                    v-show="data.itemTypeValue1 === 'rune'"
-                    class="row items-center q-gutter-sm"
-                  >
-                    <div class="name">
-                      {{
-                        (
-                          filterRunesByType().find(
-                            (r) => r.value === data.itemTypeValue1
-                          ) || {}
-                        ).label
-                      }}
-                    </div>
-                    <div>
-                      {{
-                        findRuneType(findRune(data.itemTypeValue1)?.type)?.label
-                      }}
-                    </div>
-                  </div>
-                  <div class="name stress ellipsis-2-lines">
-                    <span v-show="qualifiable">
-                      {{ data.name }}
-                    </span>
-                    <span v-show="data.itemType === 'rune'">
-                      {{ store.findRune(data.itemTypeValue2)?.label }}
-                      {{ findType('rune')?.label }}
-                    </span>
-                    <span v-show="data.itemTypeValue1 === 'gem'">
-                      {{
-                        store.gems.find((g) => g.value === data.itemTypeValue2)
-                          ?.label
-                      }}
-                    </span>
-                    <span v-show="data.itemTypeValue1 === 'elixir'">
-                      {{
-                        store.elixirs.find(
-                          (e) => e.value === data.itemTypeValue2
-                        )?.label
-                      }}
-                    </span>
-                    <span v-show="data.itemTypeValue1 === 'summoning'">
-                      {{
-                        store.summonings.find(
-                          (s) => s.value === data.itemTypeValue2
-                        )?.label
-                      }}
-                    </span>
-                  </div>
-                </template>
+                <div
+                  v-else
+                  class="name stress ellipsis-2-lines"
+                  :title="itemName"
+                  :class="{ 'cursor-pointer': isList }"
+                  @click="goItemDetail"
+                >
+                  {{ itemName }}
+                </div>
                 <div
                   v-if="data.quantity > 1"
                   class="row items-center q-gutter-x-xs no-wrap"
@@ -1529,10 +1475,7 @@ defineExpose({ scrollEnd })
               style="opacity: 0.6"
             >
               {{ findQuality(data.quality)?.fullName }}
-              {{
-                store.findRuneType(store.findRune(data.itemTypeValue2)?.type)
-                  ?.label
-              }}
+              {{ findRuneType(findRune(data.itemTypeValue2)?.type)?.label }}
             </div>
 
             <div v-show="data.power > 0">
@@ -1543,9 +1486,6 @@ defineExpose({ scrollEnd })
                 })
               }}
             </div>
-            <!-- <div v-show="data.upgrade > 0" class="stress">
-            {{ t('item.upgrade', { u: data.upgrade, ul: upgradeLimit }) }}
-          </div> -->
             <div v-show="loading">
               <q-skeleton
                 width="130px"

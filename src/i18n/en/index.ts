@@ -79,7 +79,7 @@ export default {
       divinity: 'Divinity',
       eternity: 'Eternity'
     },
-    color: 'text-green-14'
+    color: 'text-primary'
   },
   noFilterdItems: 'No search results matched your criteria',
   noFilterdItemsDesc: 'Check out the item filters',
@@ -223,7 +223,7 @@ export default {
   item: {
     hardcore: 'Hardcore',
     softcore: 'Softcore',
-    ladder: 'Vessel of Hatred Season',
+    ladder: 'Season of Hatred Rising',
     seasonal: 'Seasonal',
     eternal: 'Eternal',
     quality: 'Item Quality',
@@ -244,7 +244,8 @@ export default {
     url: 'Item URL',
     favorites: 'Favorite Items',
     forDisplay: 'For Display',
-    expanded: 'Always expand items'
+    expanded: 'Always expand items',
+    unknown: 'Unknown Item'
   },
   price: {
     title: 'Price',

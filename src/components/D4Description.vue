@@ -12,7 +12,7 @@ defineProps({
 </script>
 
 <template>
-  <div class="row no-wrap items-center q-gutter-xs">
+  <div class="row no-wrap items-baseline q-gutter-xs">
     <div class="text-center" style="width: 21px">
       <q-icon
         class="icon rotate-45"

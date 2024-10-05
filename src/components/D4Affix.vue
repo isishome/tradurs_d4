@@ -26,6 +26,7 @@ const emit = defineEmits(['update', 'remove'])
 const $q = useQuasar()
 const is = useItemStore()
 
+const findType = is.findType
 const findAffix = computed(() =>
   is.findAffix(props.data.affixId ?? props.data.runeId)
 )
@@ -116,13 +117,14 @@ const remove = (): void => {
 
 <template>
   <div
-    class="row no-wrap q-gutter-xs"
-    :class="[disable, affixColor, isRune ? 'items-center' : 'items-baseline']"
+    class="row no-wrap q-gutter-xs items-baseline"
+    :class="[disable, affixColor]"
     :data-id="data.valueId"
+    :title="isRune ? `${(findAffix as Rune)?.label} ${findType('rune')?.label}` : undefined"
   >
     <div
       class="list row items-center justify-center"
-      :class="{ 'cursor-pointer outline': isToggle }"
+      :class="[{ 'cursor-pointer outline': isToggle }, { rune: isRune }]"
       @click="toggleGreater"
     >
       <q-avatar
@@ -157,11 +159,14 @@ const remove = (): void => {
     <div class="col">
       <div
         v-if="isRune"
-        class="row items-center inline"
+        class="column inline"
         :class="{ filtered :is.filter.affixes.filter(a => !!a.runeId).map(a => a.runeId).includes(findAffix?.value as string) }"
       >
-        <div>
-          {{ (findAffix as Rune)?.effect }}
+        <div
+          v-for="(e, idx) in ((findAffix as Rune)?.effect ?? '').split('|')"
+          :key="idx"
+        >
+          {{ e }}
         </div>
       </div>
       <div
@@ -333,6 +338,10 @@ const remove = (): void => {
   background-color: var(--data-back);
   border-radius: inherit;
   transform: translate(-50%, -50%);
+}
+
+.list.rune {
+  transform: translateY(3px);
 }
 
 .stress:deep(.figure) {

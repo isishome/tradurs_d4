@@ -79,7 +79,7 @@ export default {
       divinity: '신성',
       eternity: '영원'
     },
-    color: 'text-green-14'
+    color: 'text-primary'
   },
   noFilterdItems: '조건에 맞는 검색 결과가 없습니다',
   noFilterdItemsDesc: '아이템 필터를 확인해 보세요',
@@ -223,7 +223,7 @@ export default {
   item: {
     hardcore: '하드코어',
     softcore: '소프트코어',
-    ladder: '증오의 그릇 시즌',
+    ladder: '치솟는 증오의 시즌',
     seasonal: '시즌',
     eternal: '영원',
     quality: '아이템 등급',
@@ -244,7 +244,8 @@ export default {
     url: '아이템 주소',
     favorites: '관심 아이템',
     forDisplay: '전시용',
-    expanded: '항상 아이템 확장'
+    expanded: '항상 아이템 확장',
+    unknown: '알 수 없는 아이템'
   },
   price: {
     title: '가격',

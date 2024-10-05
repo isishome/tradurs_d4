@@ -916,10 +916,14 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                 :desc="rune(rewardItem.itemTypeValue2)?.gain"
               />
               <D4Description
+                v-for="(e, idx) in (
+                  rune(rewardItem.itemTypeValue2)?.effect ?? ''
+                ).split('|')"
+                :key="idx"
                 :class="
                   is.findRuneType(rune(rewardItem.itemTypeValue2)?.type)?.color
                 "
-                :desc="rune(rewardItem.itemTypeValue2)?.effect"
+                :desc="e"
               />
             </template>
             <template v-else>
@@ -934,10 +938,14 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                 )}`"
               />
               <D4Description
+                v-for="(e, idx) in (
+                  rune(rewardItem.itemTypeValue2)?.effect ?? ''
+                ).split('|')"
+                :key="idx"
                 :class="
                   is.findRuneType(rune(rewardItem.itemTypeValue2)?.type)?.color
                 "
-                :desc="rune(rewardItem.itemTypeValue2)?.effect"
+                :desc="e"
               />
             </template>
           </template>
@@ -1062,8 +1070,12 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                 :desc="rune(item.itemTypeValue2)?.gain"
               />
               <D4Description
+                v-for="(e, idx) in (
+                  rune(item.itemTypeValue2)?.effect ?? ''
+                ).split('|')"
+                :key="idx"
                 :class="is.findRuneType(rune(item.itemTypeValue2)?.type)?.color"
-                :desc="rune(item.itemTypeValue2)?.effect"
+                :desc="e"
               />
             </template>
             <template v-else>
@@ -1078,8 +1090,12 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                 )}`"
               />
               <D4Description
+                v-for="(e, idx) in (
+                  rune(item.itemTypeValue2)?.effect ?? ''
+                ).split('|')"
+                :key="idx"
                 :class="is.findRuneType(rune(item.itemTypeValue2)?.type)?.color"
-                :desc="rune(item.itemTypeValue2)?.effect"
+                :desc="e"
               />
             </template>
           </template>

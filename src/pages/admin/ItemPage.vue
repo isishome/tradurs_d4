@@ -6,6 +6,7 @@ import { useI18n } from 'vue-i18n'
 import { type Search, type Item, useAdminStore } from 'src/stores/admin-store'
 import { useItemStore } from 'src/stores/item-store'
 import { checkName } from 'src/common'
+import { param } from 'cypress/types/jquery'
 
 const props = defineProps<{
   identity?: string
@@ -39,16 +40,25 @@ const statusColor = computed(
 const selectedItems = computed(() =>
   items.filter((i) => i.statusCode !== '009' && i.selected).map((i) => i.itemId)
 )
-
+const qualifiable = computed(
+  () => (item: Item) =>
+    !['rune', 'inventory', 'consumables'].includes(item.itemType)
+)
 const itemName = computed(
   () => (item: Item) =>
-    item.itemTypeValue1 === 'gem'
+    (item.itemType === 'rune'
+      ? `${is.findRune(item.itemTypeValue2)?.label} ${
+          is.findType('rune')?.label
+        }`
+      : qualifiable.value(item)
+      ? item.itemName
+      : item.itemTypeValue1 === 'gem'
       ? is.gems.find((g) => g.value === item.itemTypeValue2)?.label
       : item.itemTypeValue1 === 'elixir'
       ? is.elixirs.find((e) => e.value === item.itemTypeValue2)?.label
       : item.itemTypeValue1 === 'summoning'
       ? is.summonings.find((s) => s.value === item.itemTypeValue2)?.label
-      : item.itemName
+      : item.itemName) ?? t('item.unknown')
 )
 
 const getItems = async (p?: number) => {
@@ -234,42 +244,73 @@ onMounted(async () => {
               />
             </td>
             <td style="white-space: normal">
-              {{ itemName(item) }}
-              <q-popup-edit
-                v-model="item.itemName"
-                auto-save
-                v-slot="scope"
-                :disable="item.statusCode === '009'"
-                cover
-                class="no-shadow bg-transparent"
-                :validate="(val) => checkName(val)"
-                @save="(val, init) => updateItemName(item.itemId, val, init)"
+              <div
+                :class="{ 'text-underline cursor-pointer': qualifiable(item) }"
               >
-                <q-input
-                  v-model="scope.value"
-                  :disable="disable"
-                  dense
-                  autofocus
-                  outlined
-                  maxlength="256"
-                  @keyup.enter="scope.set"
-                />
-              </q-popup-edit>
+                {{ itemName(item) }}
+                <q-popup-edit
+                  v-if="qualifiable(item)"
+                  v-model="item.itemName"
+                  auto-save
+                  v-slot="scope"
+                  :disable="item.statusCode === '009'"
+                  cover
+                  class="no-shadow bg-transparent"
+                  :validate="(val) => checkName(val)"
+                  @save="(val, init) => updateItemName(item.itemId, val, init)"
+                >
+                  <q-input
+                    type="textarea"
+                    v-model="scope.value"
+                    :disable="disable"
+                    dense
+                    autofocus
+                    outlined
+                    maxlength="256"
+                    @keyup.enter="scope.set"
+                  />
+                </q-popup-edit>
+              </div>
             </td>
             <td v-if="item.statusCode === '009'">삭제된 아이템</td>
             <td v-else :class="statusColor(item.statusCode)">
               {{ status(item.statusCode)?.label }}
             </td>
             <td class="text-right">
-              <q-btn
-                v-if="item.statusCode !== '009'"
-                outline
+              <q-btn-dropdown
+                label="기능"
                 dense
-                :loading="disable"
-                color="red-8"
-                label="삭제"
-                @click="deleteItems([item.itemId])"
-              />
+                outline
+                unelevated
+                content-class="bordered"
+                class="no-hover"
+                :ripple="false"
+                dropdown-icon="img:/images/icons/dropdown.svg"
+              >
+                <q-list dense>
+                  <q-item
+                    clickable
+                    v-close-popup
+                    @click="deleteItems([item.itemId])"
+                  >
+                    <q-item-section>
+                      <q-item-label class="text-red-8">삭제</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <q-item
+                    clickable
+                    v-close-popup
+                    :to="{
+                      name: 'adminUser',
+                      params: { identity: item.userIdentity }
+                    }"
+                  >
+                    <q-item-section>
+                      <q-item-label>사용자 정보</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </q-btn-dropdown>
             </td>
           </tr>
         </tbody>
