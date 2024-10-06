@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, reactive, ref, watch } from 'vue'
-import { QSelect, debounce, useQuasar } from 'quasar'
+import { computed, reactive, ref, watch, nextTick } from 'vue'
+import { QList, QSelect, debounce, useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { Item } from 'src/types/item'
 import { useAccountStore } from 'src/stores/account-store'
@@ -26,6 +26,7 @@ const { t, te, locale } = useI18n({ useScope: 'global' })
 const loading = ref(false)
 const preset = ref<number | null>(null)
 const presets = is.storage.data.presets
+const snapshotFilter = reactive<IFilter>({} as IFilter)
 const filter = reactive<IFilter>({} as IFilter)
 const filterQuality = is.filterQuality
 const filterTypes = is.filterTypes
@@ -46,9 +47,9 @@ const itemStatus = computed(() => [
 ])
 const attrCount = computed(
   () =>
-    (filter.properties?.length ?? 0) +
-    (filter.affixes?.length ?? 0) +
-    (filter.restrictions.length ?? 0)
+    (is.filter.properties?.length ?? 0) +
+    (is.filter.affixes?.length ?? 0) +
+    (is.filter.restrictions.length ?? 0)
 )
 
 Object.assign(filter, is.filter)
@@ -70,7 +71,17 @@ const isItem = computed(
 const expandMine = ref<boolean>(isMine.value)
 const expandItem = ref<boolean>(isItem.value)
 
+const moveScrollTarget = (listNode: QList | null) => {
+  nextTick(() => {
+    listNode?.$el?.querySelector('div.q-item:last-child').scrollIntoView({
+      behavior: 'smooth',
+      block: 'end'
+    })
+  })
+}
+
 // about property
+const propertyListRef = ref<QList | null>(null)
 const propertyRef = ref<QSelect | null>(null)
 const propertyOptions = is.filterProperties
 const propertyNeedle = ref<string>()
@@ -86,15 +97,20 @@ const selectedProperty = (val: number): void => {
   if (val) {
     propertyRef.value?.hidePopup()
     propertyNeedle.value = undefined
+    moveScrollTarget(propertyListRef.value)
   }
 }
 
 const removeProperty = (val: number): void => {
   const findIndex = filter.properties.findIndex((p) => p === val)
-  if (findIndex !== -1) filter.properties.splice(findIndex, 1)
+  if (findIndex !== -1) {
+    filter.properties.splice(findIndex, 1)
+    moveScrollTarget(propertyListRef.value)
+  }
 }
 
 // about affix
+const affixListRef = ref<QList | null>(null)
 const affixes = ref<Array<number | string | undefined>>([])
 const affixRef = ref<QSelect | null>(null)
 const affixOptions = is.filterAffixes
@@ -130,6 +146,7 @@ const selectedAffix = (val: number): void => {
     affixRef.value?.hidePopup()
     addRemoveAffix()
     affixNeedle.value = undefined
+    moveScrollTarget(affixListRef.value)
   }
 }
 
@@ -138,10 +155,12 @@ const removeAffix = (val?: number | string): void => {
   if (findIndex !== -1) {
     affixes.value.splice(findIndex, 1)
     addRemoveAffix()
+    moveScrollTarget(affixListRef.value)
   }
 }
 
 // about restrictions
+const restrictionListRef = ref<QList | null>(null)
 const restrictionRef = ref<QSelect | null>(null)
 const restrictionOptions = is.filterRestrictions
 const restrictionNeedle = ref<string>()
@@ -157,12 +176,16 @@ const selectedRestriction = (val: number): void => {
   if (val) {
     restrictionRef.value?.hidePopup()
     restrictionNeedle.value = undefined
+    moveScrollTarget(restrictionListRef.value)
   }
 }
 
 const removeRestriction = (val: number): void => {
   const findIndex = filter.restrictions.findIndex((r) => r === val)
-  if (findIndex !== -1) filter.restrictions.splice(findIndex, 1)
+  if (findIndex !== -1) {
+    filter.restrictions.splice(findIndex, 1)
+    moveScrollTarget(restrictionListRef.value)
+  }
 }
 
 const mine = () => {
@@ -264,7 +287,14 @@ const removePreset = ({
 }
 
 const attributeShow = ref(false)
+const beforeShowAttribute = () => {
+  Object.assign(snapshotFilter, is.filter)
+}
 const closeAttribute = () => {
+  attributeShow.value = false
+  Object.assign(filter, snapshotFilter)
+}
+const applyAttribute = () => {
   attributeShow.value = false
   update()
 }
@@ -647,58 +677,60 @@ defineExpose({
         </div>
       </q-item>
     </q-list>
-    <D4Dialog v-model="attributeShow">
-      <template #middle>
-        <q-list>
-          <q-item-label header class="row justify-between items-center">
-            <div class="row items-center q-gutter-sm">
-              <div>
-                {{ t('filter.advanced') }}
-              </div>
-              <q-icon
-                class="icon"
-                name="img:/images/icons/help.svg"
-                size="19px"
-              >
-                <D4Tooltip self="bottom left">
-                  <div style="max-width: 240px">
-                    <div class="text-subtitle2 text-weight-bold">
-                      {{ t('filter.description.advanced') }}
-                    </div>
-                    <div class="text-center full-width">
-                      <img
-                        class="q-py-lg"
-                        :src="locale === 'ko' ? NotifyKo : NotifyEn"
-                        width="200"
-                      />
-                    </div>
-                    <ul
-                      class="text-caption text-weight-bold q-px-sm q-gutter-y-sm"
-                    >
-                      <li>{{ t('filter.description.advanced2') }}</li>
-                      <li>{{ t('filter.affixDescription') }}</li>
-                    </ul>
+    <D4Dialog
+      v-model="attributeShow"
+      :maximized="$q.screen.lt.md"
+      @before-show="beforeShowAttribute"
+    >
+      <template #top>
+        <q-item-label header class="row justify-between items-center">
+          <div class="row items-center q-gutter-sm">
+            <div class="text-h6 text-primary">
+              {{ t('filter.advanced') }}
+            </div>
+            <q-icon class="icon" name="img:/images/icons/help.svg" size="19px">
+              <D4Tooltip self="bottom left">
+                <div style="max-width: 240px">
+                  <div class="text-subtitle2 text-weight-bold">
+                    {{ t('filter.description.advanced') }}
                   </div>
-                </D4Tooltip>
-              </q-icon>
-            </div>
-            <div>
-              <q-rating
-                v-model="filter.greaterCount"
-                :disable="filterLoading"
-                size="18px"
-                max="4"
-                icon="img:/images/attribute_types/greater_invert.svg"
-              />
-            </div>
-          </q-item-label>
+                  <div class="text-center full-width">
+                    <img
+                      class="q-py-lg"
+                      :src="locale === 'ko' ? NotifyKo : NotifyEn"
+                      width="200"
+                    />
+                  </div>
+                  <ul
+                    class="text-caption text-weight-bold q-px-sm q-gutter-y-sm"
+                  >
+                    <li>{{ t('filter.description.advanced2') }}</li>
+                    <li>{{ t('filter.affixDescription') }}</li>
+                  </ul>
+                </div>
+              </D4Tooltip>
+            </q-icon>
+          </div>
+          <div>
+            <q-rating
+              v-model="filter.greaterCount"
+              :disable="filterLoading"
+              size="18px"
+              max="4"
+              icon="img:/images/attribute_types/greater_invert.svg"
+            />
+          </div>
+        </q-item-label>
+      </template>
+      <template #middle>
+        <q-list :class="{ col: $q.screen.lt.md }">
           <q-item :disable="filterLoading">
             <q-item-section class="no-wrap">
               <q-select
                 ref="propertyRef"
                 v-model="filter.properties"
                 :disable="filterLoading"
-                max-values="3"
+                max-values="10"
                 outlined
                 dense
                 no-error-icon
@@ -750,8 +782,9 @@ defineExpose({
             </q-item-section>
           </q-item>
           <q-list
+            ref="propertyListRef"
             dense
-            class="attr q-mx-md"
+            class="attr q-mx-md scroll"
             v-if="filter.properties.length > 0"
           >
             <template v-for="(pid, idx) in filter.properties" :key="`${pid}`">
@@ -801,7 +834,7 @@ defineExpose({
                 v-model="affixes"
                 class="col"
                 :disable="filterLoading"
-                max-values="6"
+                max-values="10"
                 outlined
                 dense
                 no-error-icon
@@ -858,7 +891,12 @@ defineExpose({
               </q-select>
             </q-item-section>
           </q-item>
-          <q-list dense class="attr q-mx-md" v-if="filter.affixes.length > 0">
+          <q-list
+            ref="affixListRef"
+            dense
+            class="attr q-mx-md scroll"
+            v-if="filter.affixes.length > 0"
+          >
             <template
               v-for="(affix, idx) in filter.affixes"
               :key="`${affix.affixId}`"
@@ -933,7 +971,7 @@ defineExpose({
                 ref="restrictionRef"
                 v-model="filter.restrictions"
                 :disable="filterLoading"
-                max-values="3"
+                max-values="10"
                 outlined
                 dense
                 no-error-icon
@@ -972,8 +1010,9 @@ defineExpose({
             </q-item-section>
           </q-item>
           <q-list
+            ref="restrictionListRef"
             dense
-            class="attr q-mx-md"
+            class="attr q-mx-md scroll"
             v-if="filter.restrictions.length > 0"
           >
             <template v-for="(rid, idx) in filter.restrictions" :key="`${rid}`">
@@ -1032,12 +1071,12 @@ defineExpose({
                 :label="t('btn.close')"
                 :disable="filterLoading"
                 color="rgb(150,150,150)"
-                @click="() => (attributeShow = false)"
+                @click="closeAttribute"
               />
               <D4Btn
                 :label="t('btn.apply')"
                 :disable="filterLoading"
-                @click="closeAttribute"
+                @click="applyAttribute"
               />
             </div>
           </div>
@@ -1092,6 +1131,7 @@ defineExpose({
   margin-bottom: 10px;
   background-color: var(--q-half);
   border-radius: 0 0 4px 4px;
+  max-height: 18vh;
 }
 
 .attr:deep(.q-item) {
@@ -1112,5 +1152,9 @@ defineExpose({
 .attr:deep(.q-item .q-item__section .q-item__label) {
   line-height: 1.4 !important;
   padding: 4px 0;
+}
+
+.attr-place {
+  max-height: 50vh;
 }
 </style>
