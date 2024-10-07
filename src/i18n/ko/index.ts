@@ -69,7 +69,7 @@ export default {
     message: '해당 프리셋을 삭제할까요?'
   },
   season: {
-    bg: '/images/season/005/season_emblem_ko.webp',
+    bg: '/images/season/006/season_emblem_ko.webp',
     first: {
       socket: '악의 종자 시즌에는 장신구 아이템 옵션의 홈 유형을 정확하게 선택할수록 아이템의 노출 빈도가 높아집니다'
     },
@@ -78,7 +78,8 @@ export default {
       ferocity: '야성',
       divinity: '신성',
       eternity: '영원'
-    }
+    },
+    color: 'text-primary'
   },
   noFilterdItems: '조건에 맞는 검색 결과가 없습니다',
   noFilterdItemsDesc: '아이템 필터를 확인해 보세요',
@@ -181,6 +182,7 @@ export default {
     move: '이동',
     complete: '완료 처리',
     submit: '제출하기',
+    attributeFilter: '속성 검색',
     resetFilter: '검색 초기화',
     favorite: '관심 목록에 추가',
     unfavorite: '관심 목록에서 삭제',
@@ -208,6 +210,7 @@ export default {
   },
   attribute: {
     request: '{attr} 추가 요청',
+    requestMessage: '관리자에게 속성 추가를 요청합니다.',
     placeholder: "공격 회피 후 {'{'}x{'}'}초 동안  +{'{'}x{'}'} 공격 속도 증가",
     enter: '{attr}을 입력해 주세요',
     invalid: '잘못된 형식의 {attr} 입니다',
@@ -220,12 +223,13 @@ export default {
   item: {
     hardcore: '하드코어',
     softcore: '소프트코어',
-    ladder: '지옥불 군세의 시즌',
+    ladder: '치솟는 증오의 시즌',
     seasonal: '시즌',
     eternal: '영원',
     quality: '아이템 등급',
     selectType: '아이템 유형',
     selectClass: '{type} 선택',
+    selectRuneType: '룬 유형 선택',
     selectRune: '룬 선택',
     selectAspectCategory: '위상 범주',
     selectGem: '보석 선택',
@@ -240,7 +244,8 @@ export default {
     url: '아이템 주소',
     favorites: '관심 아이템',
     forDisplay: '전시용',
-    expanded: '항상 아이템 확장'
+    expanded: '항상 아이템 확장',
+    unknown: '알 수 없는 아이템'
   },
   price: {
     title: '가격',
@@ -308,6 +313,12 @@ export default {
   },
   max: '최대',
   min: '최소',
+  rune: {
+    gain: '획득',
+    requires: '필요',
+    cooldown: '재사용 대기시간',
+    second: '초'
+  },
   messages: {
     title: '메세지 리스트',
     expire: '읽은 메시지는 7일간 보관됩니다',

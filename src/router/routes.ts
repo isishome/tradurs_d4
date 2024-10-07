@@ -62,8 +62,9 @@ const routes: RouteRecordRaw[] = [
         children: [
           {
             name: 'adminUser',
-            path: 'user',
-            component: () => import('pages/admin/UserPage.vue')
+            path: 'user/:identity([a-zA-Z0-9_-]{1,})?',
+            component: () => import('pages/admin/UserPage.vue'),
+            props: true
           },
           {
             name: 'adminItem',

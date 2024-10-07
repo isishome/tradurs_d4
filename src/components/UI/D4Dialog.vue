@@ -64,6 +64,7 @@ watch(
     :no-route-dismiss="noRouteDismiss"
     @update:model-value="emit('update:modelValue', show)"
     class="shadow-5"
+    backdrop-filter="blur(4px)"
   >
     <q-card
       class="card-item normal overflow-hidden"
@@ -73,8 +74,8 @@ watch(
       }`"
     >
       <q-form
-        class="inner column"
-        :class="{ 'full-height': maximized }"
+        class="inner"
+        :class="{ 'full-height column': maximized }"
         @submit="emit('submit')"
       >
         <slot v-if="$slots.top" name="top"> </slot>

@@ -21,7 +21,8 @@ export interface AffixValue {
 }
 
 export interface Affix extends Attribute {
-  affixId: number,
+  affixId?: number,
+  runeId?: string,
   affixGreater?: boolean,
   affixValues: Array<AffixValue>
 }
@@ -89,7 +90,7 @@ export class Price implements IPrice {
 
   constructor(currency?: string, currencyValue?: string | number | null, quantity?: number) {
     this.currency = currency || 'gold'
-    this.currencyValue = this.currency === 'rune' ? 'eld' : (currencyValue || null)
+    this.currencyValue = currencyValue || null
     this.quantity = quantity || 1
   }
 }

@@ -23,6 +23,7 @@ import { User } from 'src/types/user'
 import D4Item from 'components/D4Item.vue'
 import D4Property from 'components/D4Property.vue'
 import D4Material from 'components/D4Material.vue'
+import D4Description from 'components/D4Description.vue'
 import D4Affix from 'components/D4Affix.vue'
 import D4Restriction from 'components/D4Restriction.vue'
 import D4Offer from 'components/D4Offer.vue'
@@ -70,6 +71,9 @@ const requestAffixes = computed<number>(() => is.affixes.request)
 const requestRestrictions = computed<number>(() => is.restrictions.request)
 const itemHeight = computed(
   () => parseInt(props.height.toString()) - ($q.screen.lt.sm ? 50 : 0)
+)
+const rune = computed(
+  () => (itemTypeValue2: string) => is.findRune(itemTypeValue2)
 )
 
 // about copy item
@@ -374,7 +378,10 @@ const findQuality = computed(
 const filterAttributeTypes = computed(() =>
   is
     .filterAttributeTypes(add.category as string)
-    .filter((at) => findQuality.value?.includes(at.value as string))
+    .filter(
+      (at) =>
+        at.value !== 'socket' && findQuality.value?.includes(at.value as string)
+    )
 )
 
 const hideAdd = (): void => {
@@ -473,7 +480,7 @@ const updateProperty = ({
   valueId,
   propertyValues
 }: {
-  valueId: string
+  valueId: string | number
   propertyValues: Array<number>
 }): void => {
   const findProperty = activatedItem.value.properties.find(
@@ -485,15 +492,18 @@ const updateProperty = ({
   }
 }
 
-const removeProperty = ({ valueId }: { valueId: string }): void => {
+const removeProperty = ({ valueId }: { valueId: string | number }): void => {
   const findProperty = activatedItem.value.properties.find(
     (p) => p.valueId === valueId
   )
+
   if (findProperty) {
-    findProperty.disable = findProperty.action !== 8
-    findProperty.restore =
-      findProperty.action !== 8 ? findProperty.action : undefined
-    findProperty.action = findProperty.action !== 8 ? 8 : findProperty.restore
+    if (typeof valueId === 'number') findProperty.action = 8
+    else
+      activatedItem.value.properties.splice(
+        activatedItem.value.properties.findIndex((p) => p.valueId === valueId),
+        1
+      )
   }
 }
 
@@ -510,13 +520,14 @@ const filterAffixes = (e: KeyboardEvent) => {
   affixNeedle.value = val
 }
 
-const selectedAffix = (val: number): void => {
+const selectedAffix = (val: number | string): void => {
   const tempId = uid()
   const tempValues = is.findAffix(val)?.label
   const valuesLen = (tempValues?.match(/\{x\}/gi) || []).length
   activatedItem.value.affixes.push({
     valueId: tempId,
-    affixId: val,
+    affixId: typeof val === 'number' ? val : undefined,
+    runeId: typeof val === 'string' ? val : undefined,
     affixValues: Array.from({ length: valuesLen }, () => {
       const tempRangeId = uid()
       return { valueRangeId: tempRangeId, value: 0, min: 0, max: 0 }
@@ -528,7 +539,7 @@ const selectedAffix = (val: number): void => {
   activatedRef.value?.scrollEnd('affixes', tempId)
 }
 
-const createAffix = (): void => {
+const requestAffix = (): void => {
   add.category = 'affixes'
   add.type = filterAttributeTypes.value?.[0]?.value as string
   add.show = true
@@ -539,7 +550,7 @@ const updateAffix = ({
   affixGreater,
   affixValues
 }: {
-  valueId: string
+  valueId: string | number
   affixGreater: boolean
   affixValues: Array<AffixValue>
 }): void => {
@@ -553,14 +564,18 @@ const updateAffix = ({
   }
 }
 
-const removeAffix = ({ valueId }: { valueId: string }): void => {
+const removeAffix = ({ valueId }: { valueId: string | number }): void => {
   const findAffix = activatedItem.value.affixes.find(
     (a) => a.valueId === valueId
   )
+
   if (findAffix) {
-    findAffix.disable = findAffix.action !== 8
-    findAffix.restore = findAffix.action !== 8 ? findAffix.action : undefined
-    findAffix.action = findAffix.action !== 8 ? 8 : findAffix.restore
+    if (typeof valueId === 'number') findAffix.action = 8
+    else
+      activatedItem.value.affixes.splice(
+        activatedItem.value.affixes.findIndex((a) => a.valueId === valueId),
+        1
+      )
   }
 }
 
@@ -598,7 +613,7 @@ const updateRestriction = ({
   valueId,
   restrictValues
 }: {
-  valueId: string
+  valueId: string | number
   restrictValues: Array<number>
 }): void => {
   const findRestriction = activatedItem.value.restrictions.find(
@@ -610,16 +625,20 @@ const updateRestriction = ({
   }
 }
 
-const removeRestriction = ({ valueId }: { valueId: string }): void => {
+const removeRestriction = ({ valueId }: { valueId: string | number }): void => {
   const findRestriction = activatedItem.value.restrictions.find(
     (r) => r.valueId === valueId
   )
+
   if (findRestriction) {
-    findRestriction.disable = findRestriction.action !== 8
-    findRestriction.restore =
-      findRestriction.action !== 8 ? findRestriction.action : undefined
-    findRestriction.action =
-      findRestriction.action !== 8 ? 8 : findRestriction.restore
+    if (typeof valueId === 'number') findRestriction.action = 8
+    else
+      activatedItem.value.restrictions.splice(
+        activatedItem.value.restrictions.findIndex(
+          (r) => r.valueId === valueId
+        ),
+        1
+      )
   }
 }
 
@@ -890,6 +909,46 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
               :data="property"
             />
           </template>
+          <template v-if="rewardItem.itemType === 'rune'" #description>
+            <template v-if="rewardItem.itemTypeValue1 === 'ritual'">
+              <D4Description
+                :item="t('rune.gain')"
+                :desc="rune(rewardItem.itemTypeValue2)?.gain"
+              />
+              <D4Description
+                v-for="(e, idx) in (
+                  rune(rewardItem.itemTypeValue2)?.effect ?? ''
+                ).split('|')"
+                :key="idx"
+                :class="
+                  is.findRuneType(rune(rewardItem.itemTypeValue2)?.type)?.color
+                "
+                :desc="e"
+              />
+            </template>
+            <template v-else>
+              <D4Description
+                :item="t('rune.requires')"
+                :desc="rune(rewardItem.itemTypeValue2)?.requires"
+              />
+              <D4Description
+                :item="t('rune.cooldown')"
+                :desc="`${rune(rewardItem.itemTypeValue2)?.cooldown}${t(
+                  'rune.second'
+                )}`"
+              />
+              <D4Description
+                v-for="(e, idx) in (
+                  rune(rewardItem.itemTypeValue2)?.effect ?? ''
+                ).split('|')"
+                :key="idx"
+                :class="
+                  is.findRuneType(rune(rewardItem.itemTypeValue2)?.type)?.color
+                "
+                :desc="e"
+              />
+            </template>
+          </template>
           <template
             v-if="
               rewardItem.itemTypeValue1 === 'summoning' &&
@@ -1003,6 +1062,42 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
               :key="property.valueId"
               :data="property"
             />
+          </template>
+          <template v-if="item.itemType === 'rune'" #description>
+            <template v-if="item.itemTypeValue1 === 'ritual'">
+              <D4Description
+                :item="t('rune.gain')"
+                :desc="rune(item.itemTypeValue2)?.gain"
+              />
+              <D4Description
+                v-for="(e, idx) in (
+                  rune(item.itemTypeValue2)?.effect ?? ''
+                ).split('|')"
+                :key="idx"
+                :class="is.findRuneType(rune(item.itemTypeValue2)?.type)?.color"
+                :desc="e"
+              />
+            </template>
+            <template v-else>
+              <D4Description
+                :item="t('rune.requires')"
+                :desc="rune(item.itemTypeValue2)?.requires"
+              />
+              <D4Description
+                :item="t('rune.cooldown')"
+                :desc="`${rune(item.itemTypeValue2)?.cooldown}${t(
+                  'rune.second'
+                )}`"
+              />
+              <D4Description
+                v-for="(e, idx) in (
+                  rune(item.itemTypeValue2)?.effect ?? ''
+                ).split('|')"
+                :key="idx"
+                :class="is.findRuneType(rune(item.itemTypeValue2)?.type)?.color"
+                :desc="e"
+              />
+            </template>
           </template>
           <template
             v-if="
@@ -1131,6 +1226,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
       transition-hide="fade"
       transition-duration="100"
       @hide="hideEditable"
+      backdrop-filter="blur(4px)"
     >
       <D4Item
         ref="activatedRef"
@@ -1177,7 +1273,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                     <q-icon
                       class="icon"
                       :class="{ 'rotate-45': ['standard'].includes(scope.opt.type as string) }"
-                      size="14px"
+                      size="8px"
                       :name="`img:/images/attribute_types/${
                         scope.opt.type || 'standard'
                       }.svg`"
@@ -1200,7 +1296,9 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
         </template>
         <template #properties>
           <D4Property
-            v-for="property in activatedItem.properties"
+            v-for="property in activatedItem.properties.filter(
+              (p) => p.action !== 8
+            )"
             :key="property.valueId || uid()"
             :data="property"
             editable
@@ -1240,19 +1338,30 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
             >
               <template #option="scope">
                 <q-item v-bind="scope.itemProps">
-                  <q-item-section side>
-                    <q-icon
-                      class="icon"
-                      :class="{ 'rotate-45': ['standard'].includes(scope.opt.type as string) }"
-                      size="14px"
-                      :name="`img:/images/attribute_types/${
-                        scope.opt.type || 'standard'
-                      }.svg`"
-                    />
+                  <q-item-section side class="q-pr-sm">
+                    <div
+                      class="row items-center justify-center"
+                      style="width: 20px"
+                    >
+                      <q-img
+                        v-if="scope.opt.effect"
+                        :src="`/images/items/rune/${scope.opt.type}/${scope.opt.value}.webp`"
+                        width="16px"
+                      />
+                      <q-icon
+                        v-else
+                        class="icon"
+                        :class="{ 'rotate-45': ['standard'].includes(scope.opt.type as string) }"
+                        :name="`img:/images/attribute_types/${
+                          scope.opt.type || 'standard'
+                        }.svg`"
+                        size="8px"
+                      />
+                    </div>
                   </q-item-section>
                   <q-item-section>
                     <q-item-label :class="scope.opt.color">{{
-                      scope.opt.label
+                      scope.opt.effect ?? scope.opt.label
                     }}</q-item-label>
                   </q-item-section>
                 </q-item>
@@ -1273,7 +1382,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
               dense
               round
               aria-label="Tradurs Add Button"
-              @click="createAffix"
+              @click="requestAffix"
             >
               <img
                 class="icon"
@@ -1287,7 +1396,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
         </template>
         <template #affixes>
           <D4Affix
-            v-for="affix in activatedItem.affixes"
+            v-for="affix in activatedItem.affixes.filter((a) => a.action !== 8)"
             :key="affix.valueId || uid()"
             :data="affix"
             editable
@@ -1344,7 +1453,9 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
         </template>
         <template #restrictions>
           <D4Restriction
-            v-for="restriction in activatedItem.restrictions"
+            v-for="restriction in activatedItem.restrictions.filter(
+              (r) => r.action !== 8
+            )"
             :key="restriction.valueId || uid()"
             :data="restriction"
             editable
@@ -1472,7 +1583,6 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                 </q-menu>
               </D4Btn>
               <D4Analysis
-                ref="analysis"
                 :loading="activatedItem.loading"
                 :disable="
                   (!activatedItem.editable && !!activatedItem.itemId) ||
@@ -1516,9 +1626,12 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
       @hide="hideAdd"
     >
       <template #top>
-        <q-card-section class="row items-center q-ml-md">
-          <div class="name">
+        <q-card-section class="row items-center justify-between">
+          <div class="name q-ml-md">
             {{ t('attribute.request', { attr: t(add.category as string) }) }}
+          </div>
+          <div class="text-caption q-ml-md">
+            {{ t('attribute.requestMessage') }}
           </div>
         </q-card-section>
       </template>

@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref, computed, reactive, nextTick, watch } from "vue"
-import { useQuasar } from "quasar"
-import { useI18n } from "vue-i18n"
+import { ref, computed, reactive, nextTick, watch } from 'vue'
+import { useQuasar } from 'quasar'
+import { useI18n } from 'vue-i18n'
 
-import { useItemStore } from "stores/item-store"
-import { Price } from "src/types/item"
-import { focus } from "src/common"
+import { useItemStore } from 'stores/item-store'
+import { Price } from 'src/types/item'
+import { focus } from 'src/common'
 
 interface IProps {
   data: Price
@@ -26,11 +26,11 @@ const props = withDefaults(defineProps<IProps>(), {
   dark: undefined
 })
 
-const emit = defineEmits(["update"])
+const emit = defineEmits(['update'])
 
 // common variable
 const $q = useQuasar()
-const { t } = useI18n({ useScope: "global" })
+const { t } = useI18n({ useScope: 'global' })
 const store = useItemStore()
 
 // variable
@@ -39,30 +39,39 @@ const _price = reactive<Price>(
   new Price(props.data.currency, props.data.currencyValue, props.data.quantity)
 )
 const _priceError = ref<boolean>(false)
+const findType = store.findType
 const runes = store.filterRunesByType
 const currencies = store.currencies()
 const summonings = store.summonings
 const currencyValueImg = computed(() =>
-  _price.currency === "gold"
-    ? "/images/items/currencies/gold.webp"
-    : _price.currency === "summoning"
+  _price.currency === 'rune'
+    ? `/images/items/rune/${
+        store.findRune(_price.currencyValue as string)?.type
+      }/${_price.currencyValue}.webp`
+    : _price.currency === 'gold'
+    ? '/images/items/currencies/gold.webp'
+    : _price.currency === 'summoning'
     ? `/images/items/consumables/summoning/${_price.currencyValue}.webp`
-    : ""
+    : ''
 )
 const currencyValueName = computed(() =>
-  _price.currency === "gold"
+  _price.currency === 'rune'
+    ? `${store.findRune(_price.currencyValue as string)?.label} ${
+        currencies.find((c) => c.value === _price.currency)?.label
+      }`
+    : _price.currency === 'gold'
     ? currencies.find((c) => c.value === _price.currency)?.label
-    : _price.currency === "summoning"
+    : _price.currency === 'summoning'
     ? store.summonings.find((s) => s.value === _price.currencyValue)?.label
-    : ""
+    : ''
 )
 
 if (!props.offer)
-  currencies.unshift({ value: "offer", label: t("price.getOffer") })
+  currencies.unshift({ value: 'offer', label: t('price.getOffer') })
 
 const update = (): void => {
   nextTick(() => {
-    if (_price.currency === "gold") {
+    if (_price.currency === 'gold') {
       _priceError.value = false
 
       if (Number(_price.currencyValue as number) >= 100000)
@@ -71,14 +80,18 @@ const update = (): void => {
       else _priceError.value = true
     }
 
-    emit("update", _price)
+    emit('update', _price)
   })
 }
 
 const updateCurrency = (val: string | null): void => {
   _priceError.value = false
   _price.currencyValue =
-    val === "rune" ? "eld" : val === "summoning" ? summonings?.[0]?.value : null
+    val === 'rune'
+      ? store.runes?.[0].value
+      : val === 'summoning'
+      ? summonings?.[0]?.value
+      : null
   _price.quantity = 1
   update()
 }
@@ -97,9 +110,9 @@ watch(
 
 <template>
   <div v-if="editable">
-    <div class="row justify-end items-center q-gutter-sm">
+    <div class="row justify-end items-center q-gutter-sm no-wrap">
       <div style="min-width: 30px">
-        {{ t("price.title") }}
+        {{ t('price.title') }}
       </div>
       <div class="col-xs-3">
         <q-select
@@ -143,7 +156,7 @@ watch(
       <div v-show="_price.currency === 'rune'">
         <q-select
           v-model="_price.currencyValue"
-          :disable="disable"
+          :disable="disable || fixed"
           outlined
           dense
           no-error-icon
@@ -159,20 +172,25 @@ watch(
           @update:model-value="update"
         >
           <template #selected-item="scope">
-            <div class="ellipsis">{{ scope.opt.label }}</div>
+            <div class="ellipsis">
+              {{ scope.opt.label }} {{ findType('rune')?.label }}
+            </div>
           </template>
           <template #option="scope">
             <q-item v-bind="scope.itemProps">
               <q-item-section avatar>
                 <img
-                  :src="scope.opt.img"
+                  :src="`/images/items/rune/${scope.opt.type}/${scope.opt.value}.webp`"
                   width="24"
                   height="24"
                   alt="Tradurs Rune Image"
                 />
               </q-item-section>
               <q-item-section>
-                <q-item-label>{{ scope.opt.label }}</q-item-label>
+                <q-item-label
+                  >{{ scope.opt.label }}
+                  {{ findType('rune')?.label }}</q-item-label
+                >
               </q-item-section>
             </q-item>
           </template>
@@ -215,7 +233,7 @@ watch(
             class="bg-negative"
           >
             <div class="tooltip text-caption">
-              {{ t("price.restrictGold") }}
+              {{ t('price.restrictGold') }}
             </div>
           </q-tooltip>
         </q-input>
@@ -281,7 +299,7 @@ watch(
     </q-item>
     <div v-show="!loading" class="price">
       <div v-if="data.currency === 'offer'">
-        <div>{{ t("offer.title") }}</div>
+        <div>{{ t('offer.title') }}</div>
       </div>
       <div v-else class="row items-center q-gutter-xs relative-position">
         <!-- <template v-if="_price.currency === 'rune'">
@@ -296,19 +314,14 @@ watch(
             height="24"
             alt="Tradurs Price Icon"
           />
-          <div v-if="data.currency === 'gold'">
-            {{
-              $n(
-                Number.parseFloat(
-                  data.currencyValue ? data.currencyValue.toString() : "0"
-                ),
-                "decimal"
-              )
-            }}
-          </div>
-          <div v-else>
-            {{ currencyValueName }}
-          </div>
+          {{
+            $n(
+              Number.parseFloat(
+                data.currencyValue ? data.currencyValue.toString() : '0'
+              ),
+              'decimal'
+            )
+          }}
         </template>
         <template v-else>
           <img
@@ -336,7 +349,7 @@ watch(
 }
 
 .tooltip::after {
-  content: "";
+  content: '';
   position: fixed;
   width: 16px;
   height: 16px;

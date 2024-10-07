@@ -28,7 +28,8 @@ export type Filter = {
 export type RequestAffix = {
   requestId: number,
   affixType: string,
-  affixAttribute: string
+  affixAttribute: string,
+  selected: boolean
 }
 
 export type Search = {
@@ -41,8 +42,10 @@ export type Item = {
   statusCode: string
   battleTag: string
   selected: boolean
+  itemType: string
   itemTypeValue1: string
   itemTypeValue2: string
+  userIdentity: string
 }
 
 export type History = {
@@ -50,7 +53,6 @@ export type History = {
   identity?: string
   data: Array<IHistory>
 }
-
 
 export const useAdminStore = defineStore('admin', () => {
   const rows = 10
@@ -61,9 +63,9 @@ export const useAdminStore = defineStore('admin', () => {
     nextHistoryId: null as number | null
   })
 
-  const getUsers = (page: number, filter?: Filter, searchInfo?: string) => {
+  const getUsers = (page: number, userIdentity?: string, filter?: Filter, searchInfo?: string) => {
     return new Promise<Array<IUser>>((resolve, reject) => {
-      api.get('/d4/admin/user', { params: { page, rows, filter: { status: filter?.status, verified: filter?.verified }, searchInfo } })
+      api.post('/d4/admin/user', { page, rows, userIdentity, filter: { status: filter?.status, verified: filter?.verified }, searchInfo })
         .then((response) => {
           over.value = page > 1
           more.value = response.data.length > rows
@@ -124,10 +126,10 @@ export const useAdminStore = defineStore('admin', () => {
     })
   }
 
-  const deleteRequestAffix = (requestId: number) => {
+  const deleteRequestAffix = (requestIds: Array<number>) => {
     return new Promise<void>((resolve, reject) => {
       api.post('/d4/admin/affix/request/delete', {
-        requestId
+        requestIds
       })
         .then(() => {
           resolve()

@@ -13,7 +13,9 @@ export interface ILabel {
 
 export interface Status extends ILabel { }
 
-export interface RuneType extends ILabel { }
+export interface RuneType extends ILabel {
+  color: string
+}
 
 export interface Tier extends ILabel {
   value: string,
@@ -29,8 +31,12 @@ export interface Quality extends ILabel {
 
 export interface Rune extends ILabel {
   type: string,
-  attribute: string,
-  img: string
+  quality: string,
+  gain?: string,
+  requires?: string,
+  cooldown?: number | null,
+  effect: string,
+  level?: number | null
 }
 
 export interface AspectCategory extends ILabel { }
@@ -130,7 +136,8 @@ export interface IStorage {
 }
 
 export interface AffixFilter {
-  affixId: number,
+  affixId?: number,
+  runeId?: string,
   affixGreater: number
 }
 
@@ -321,7 +328,7 @@ export const useItemStore = defineStore('item', {
       return (word?: string): Array<Property> => word ? state.properties.data.filter(p => p.label.toLowerCase().indexOf(word.toLowerCase()) !== -1) : state.properties.data
     },
     filterAffixes: (state) => {
-      return (word?: string): Array<Affix> => word ? state.affixes.data.filter(a => a.label.toLowerCase().indexOf(word.toLowerCase()) !== -1) : state.affixes.data
+      return (word?: string): Array<Affix | Rune> => word ? [...state.affixes.data.filter(a => a.label.toLowerCase().indexOf(word.toLowerCase()) !== -1), ...state.runes.filter(r => r.effect.toLowerCase().indexOf(word.toLowerCase()) !== -1)] : [...state.affixes.data, ...state.runes]
     },
     availableAffixes: (state) => {
       return (): Array<Affix> => state.affixes.data.filter((a: Affix) => !a.disable)
@@ -333,7 +340,7 @@ export const useItemStore = defineStore('item', {
       return (propertyId: number): Property | undefined => state.properties.data.find(p => p.value === propertyId)
     },
     findAffix: (state) => {
-      return (affixId: number): Affix | undefined => state.affixes.data.find(a => a.value === affixId)
+      return (id?: number | string): Affix | Rune | undefined => state.affixes.data.find(a => a.value === id) ?? state.runes.find(r => r.value === id)
     },
     findRestriction: (state) => {
       return (restrictId: number): Restriction | undefined => state.restrictions.data.find(r => r.value === restrictId)
