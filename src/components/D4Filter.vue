@@ -916,10 +916,10 @@ defineExpose({
                       v-if="findAffix(affix.affixId)?.type === 'standard'"
                       v-model="affix.affixGreater"
                       :disable="filterLoading"
+                      class="outline"
                       size="12px"
                       max="1"
                       icon="img:/images/attribute_types/greater_invert.svg"
-                      @update:model-value="updateDebounce()"
                     />
                     <q-icon
                       v-else
@@ -1156,5 +1156,11 @@ defineExpose({
 
 .attr-place {
   max-height: 50vh;
+}
+
+.outline {
+  box-shadow: inset 0 0 0 1px rgba(150, 150, 150, 0.4);
+  border-radius: 4px;
+  padding: 2px;
 }
 </style>
