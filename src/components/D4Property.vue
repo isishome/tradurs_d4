@@ -52,7 +52,7 @@ const remove = () => {
     <div class="text-center" style="width: 21px">
       <q-icon
         class="icon"
-        :class="{ 'rotate-45': ['standard'].includes(findProperty?.type as string) }"
+        :class="{ 'rotate-45': isStandard }"
         :size="isStandard ? '8px' : '10px'"
         :name="`img:/images/attribute_types/${
           findProperty?.type || 'standard'
