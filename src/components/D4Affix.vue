@@ -144,14 +144,14 @@ const remove = (): void => {
           v-show="editable"
           class="icon"
           :class="{ greater: isStandard, active: affixGreater }"
-          size="8px"
+          :size="isStandard ? '8px' : '10px'"
           :name="icon"
         />
         <q-icon
           v-show="!editable"
           class="icon"
           :class="{ 'rotate-45': isStandard, 'greater active': affixGreater }"
-          size="8px"
+          :size="isStandard ? '8px' : '10px'"
           :name="icon"
         />
       </template>

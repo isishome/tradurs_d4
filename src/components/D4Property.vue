@@ -26,6 +26,9 @@ const findProperty = computed(() => is.findProperty(props.data.propertyId))
 const propertyInfo = computed(() =>
   parse(findProperty.value?.label, props.data.propertyValues)
 )
+const isStandard = computed(() =>
+  ['standard'].includes(findProperty.value?.type ?? '')
+)
 const update = (): void => {
   emit('update', {
     valueId: props.data.valueId,
@@ -50,7 +53,7 @@ const remove = () => {
       <q-icon
         class="icon"
         :class="{ 'rotate-45': ['standard'].includes(findProperty?.type as string) }"
-        size="10px"
+        :size="isStandard ? '8px' : '10px'"
         :name="`img:/images/attribute_types/${
           findProperty?.type || 'standard'
         }.svg`"
