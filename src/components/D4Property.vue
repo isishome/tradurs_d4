@@ -49,11 +49,11 @@ const remove = () => {
     :class="{ disable }"
     :data-id="data.valueId"
   >
-    <div class="text-center" style="width: 21px">
+    <div class="list row justify-center items-center">
       <q-icon
         class="icon"
         :class="{ 'rotate-45': isStandard }"
-        :size="isStandard ? '8px' : '10px'"
+        size="10px"
         :name="`img:/images/attribute_types/${
           findProperty?.type || 'standard'
         }.svg`"
@@ -62,7 +62,7 @@ const remove = () => {
     <div class="col">
       <div
         class="row items-center q-gutter-x-xs inline"
-        :class="{ 'filtered': is.filter.properties.includes(findProperty?.value as number) }"
+        :class="{ 'filtered': is.filter.properties.map(p => p.value).includes(findProperty?.value as number) }"
       >
         <template v-for="(comp, k) in propertyInfo" :key="k">
           <template v-if="comp.type === 'text'">
@@ -142,5 +142,10 @@ const remove = () => {
   right: 0;
   cursor: not-allowed;
   pointer-events: fill;
+}
+
+.list {
+  width: 22px;
+  height: 22px;
 }
 </style>

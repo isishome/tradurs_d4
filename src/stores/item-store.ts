@@ -135,6 +135,25 @@ export interface IStorage {
   presets: Array<IPreset>
 }
 
+export type MinMax = {
+  min: number
+  max: number
+}
+
+export type Attr = {
+  value: number | string
+  affixGreater?: number
+  minmax?: Array<MinMax>
+}
+
+export type AttrOption = Property &
+  Omit<Affix, 'disable'> &
+  Restriction &
+  Omit<Rune, 'quality' | 'effect'> &
+{
+  effect?: string
+}
+
 export interface AffixFilter {
   affixId?: number,
   runeId?: string,
@@ -155,9 +174,9 @@ export interface IFilter {
   itemTypeValues1: { [key: string]: Array<number> },
   itemTypeValues2: { [key: string]: Array<number> },
   greaterCount: number,
-  properties: Array<number>,
-  affixes: Array<AffixFilter>,
-  restrictions: Array<number>,
+  properties: Array<Attr>,
+  affixes: Array<Attr>,
+  restrictions: Array<Attr>,
   name: string,
   request: number,
   loading: boolean,

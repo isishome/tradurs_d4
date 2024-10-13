@@ -52,7 +52,7 @@ const remove = (): void => {
   >
     <div
       class="row items-center q-gutter-x-xs"
-      :class="{ 'filtered': is.filter.restrictions.includes(findRestriction?.value as number) }"
+      :class="{ 'filtered': is.filter.restrictions.map(r => r.value).includes(findRestriction?.value as number) }"
     >
       <template v-for="(comp, k) in restrictionInfo" :key="k">
         <template v-if="comp.type === 'text'">

@@ -1,15 +1,16 @@
 <script setup lang="ts">
-import { computed, reactive, ref, watch, nextTick } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import { QList, QSelect, debounce, useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { Item } from 'src/types/item'
 import { useAccountStore } from 'src/stores/account-store'
-import { type IFilter, useItemStore, Rune } from 'src/stores/item-store'
+import { type IFilter, type Attr, useItemStore } from 'src/stores/item-store'
 import NotifyEn from '/images/filter/notify_en.webp'
 import NotifyKo from '/images/filter/notify_ko.webp'
 
 import D4Preset from 'components/D4Preset.vue'
 import D4Analysis from 'components/D4Analysis.vue'
+import D4Attribute from 'components/D4Attribute.vue'
 
 interface IProps {
   disable?: boolean
@@ -26,7 +27,6 @@ const { t, te, locale } = useI18n({ useScope: 'global' })
 const loading = ref(false)
 const preset = ref<number | null>(null)
 const presets = is.storage.data.presets
-const snapshotFilter = reactive<IFilter>({} as IFilter)
 const filter = reactive<IFilter>({} as IFilter)
 const filterQuality = is.filterQuality
 const filterTypes = is.filterTypes
@@ -34,9 +34,6 @@ const findType = is.findType
 const filterClasses = is.filterClasses
 const filterRunes = is.filterRunesByType
 const filterLoading = computed(() => props.disable || is.filter.loading)
-const findProperty = computed(() => is.findProperty)
-const findAffix = computed(() => is.findAffix)
-const findRestriction = computed(() => is.findRestriction)
 const itemStatus = computed(() => [
   {
     value: 'all',
@@ -47,9 +44,9 @@ const itemStatus = computed(() => [
 ])
 const attrCount = computed(
   () =>
-    (is.filter.properties?.length ?? 0) +
-    (is.filter.affixes?.length ?? 0) +
-    (is.filter.restrictions.length ?? 0)
+    (filter.properties.length ?? 0) +
+    (filter.affixes.length ?? 0) +
+    (filter.restrictions.length ?? 0)
 )
 
 Object.assign(filter, is.filter)
@@ -71,121 +68,25 @@ const isItem = computed(
 const expandMine = ref<boolean>(isMine.value)
 const expandItem = ref<boolean>(isItem.value)
 
-const moveScrollTarget = (listNode: QList | null) => {
-  nextTick(() => {
-    listNode?.$el?.querySelector('div.q-item:last-child').scrollIntoView({
-      behavior: 'smooth',
-      block: 'end'
-    })
-  })
-}
-
 // about property
-const propertyListRef = ref<QList | null>(null)
-const propertyRef = ref<QSelect | null>(null)
+const properties = ref<Array<Attr>>([])
 const propertyOptions = is.filterProperties
-const propertyNeedle = ref<string>()
-
-const filterProperties = (e: KeyboardEvent) => {
-  const val = (e.target as HTMLInputElement).value.toLowerCase()
-  propertyRef.value?.showPopup()
-  propertyRef.value?.updateInputValue(val)
-  propertyNeedle.value = val
-}
-
-const selectedProperty = (val: number): void => {
-  if (val) {
-    propertyRef.value?.hidePopup()
-    propertyNeedle.value = undefined
-    moveScrollTarget(propertyListRef.value)
-  }
-}
-
-const removeProperty = (val: number): void => {
-  const findIndex = filter.properties.findIndex((p) => p === val)
-  if (findIndex !== -1) {
-    filter.properties.splice(findIndex, 1)
-    moveScrollTarget(propertyListRef.value)
-  }
+const updateProperties = (val: Array<Attr>) => {
+  properties.value.splice(0, properties.value.length, ...val)
 }
 
 // about affix
-const affixListRef = ref<QList | null>(null)
-const affixes = ref<Array<number | string | undefined>>([])
-const affixRef = ref<QSelect | null>(null)
+const affixes = ref<Array<Attr>>([])
 const affixOptions = is.filterAffixes
-const affixNeedle = ref<string>()
-
-const addRemoveAffix = () => {
-  filter.affixes = [
-    ...is.affixes.data
-      .filter((a) => affixes.value.includes(a.value as number))
-      .map((a) => ({
-        affixId: a.value as number,
-        affixGreater:
-          filter.affixes.find((aa) => aa.affixId === a.value)?.affixGreater ?? 0
-      })),
-    ...is.runes
-      .filter((r) => affixes.value.includes(r.value as string))
-      .map((r) => ({
-        runeId: r.value as string,
-        affixGreater: 0
-      }))
-  ]
-}
-
-const filterAffixes = (e: KeyboardEvent) => {
-  const val = (e.target as HTMLInputElement).value.toLowerCase()
-  affixRef.value?.showPopup()
-  affixRef.value?.updateInputValue(val)
-  affixNeedle.value = val
-}
-
-const selectedAffix = (val: number): void => {
-  if (val) {
-    affixRef.value?.hidePopup()
-    addRemoveAffix()
-    affixNeedle.value = undefined
-    moveScrollTarget(affixListRef.value)
-  }
-}
-
-const removeAffix = (val?: number | string): void => {
-  const findIndex = affixes.value.findIndex((a) => a === val)
-  if (findIndex !== -1) {
-    affixes.value.splice(findIndex, 1)
-    addRemoveAffix()
-    moveScrollTarget(affixListRef.value)
-  }
+const updateAffixes = (val: Array<Attr>) => {
+  affixes.value.splice(0, affixes.value.length, ...val)
 }
 
 // about restrictions
-const restrictionListRef = ref<QList | null>(null)
-const restrictionRef = ref<QSelect | null>(null)
+const restrictions = ref<Array<Attr>>([])
 const restrictionOptions = is.filterRestrictions
-const restrictionNeedle = ref<string>()
-
-const filterRestrictions = (e: KeyboardEvent) => {
-  const val = (e.target as HTMLInputElement).value.toLowerCase()
-  restrictionRef.value?.showPopup()
-  restrictionRef.value?.updateInputValue(val)
-  restrictionNeedle.value = val
-}
-
-const selectedRestriction = (val: number): void => {
-  if (val) {
-    restrictionRef.value?.hidePopup()
-    restrictionNeedle.value = undefined
-    moveScrollTarget(restrictionListRef.value)
-  }
-}
-
-const removeRestriction = (val: number): void => {
-  const findIndex = filter.restrictions.findIndex((r) => r === val)
-  if (findIndex !== -1) {
-    filter.restrictions.splice(findIndex, 1)
-    moveScrollTarget(restrictionListRef.value)
-  }
+const updateRestrictions = (val: Array<Attr>) => {
+  restrictions.value.splice(0, restrictions.value.length, ...val)
 }
 
 const mine = () => {
@@ -201,7 +102,9 @@ const clearFilter = () => {
   preset.value = null
   is.clearFilter(true)
   Object.assign(filter, is.filter)
+  properties.value = []
   affixes.value = []
+  restrictions.value = []
   filter.request--
   update()
 }
@@ -288,14 +191,22 @@ const removePreset = ({
 
 const attributeShow = ref(false)
 const beforeShowAttribute = () => {
-  Object.assign(snapshotFilter, is.filter)
+  const clone = JSON.parse(JSON.stringify(filter))
+
+  properties.value = clone.properties
+  affixes.value = clone.affixes
+  restrictions.value = clone.restrictions
 }
 const closeAttribute = () => {
   attributeShow.value = false
-  Object.assign(filter, snapshotFilter)
 }
 const applyAttribute = () => {
   attributeShow.value = false
+
+  filter.properties = properties.value
+  filter.affixes = affixes.value
+  filter.restrictions = restrictions.value
+
   update()
 }
 
@@ -305,10 +216,29 @@ const startAnalyze = () => {
 
 const endAnalyze = (item: Item) => {
   loading.value = false
-  filter.properties = item.properties.map((p) => p.propertyId)
-  affixes.value = item.affixes.map((a) => a.affixId ?? a.runeId)
-  addRemoveAffix()
-  filter.restrictions = item.restrictions.map((r) => r.restrictId)
+
+  properties.value = item.properties.map((p) => ({
+    value: p.propertyId,
+    minmax: is
+      .findProperty(p.propertyId)
+      ?.label.match(/\{x\}/g)
+      ?.map(() => ({ min: 0, max: 9999 }))
+  }))
+
+  affixes.value = item.affixes
+    .filter(
+      (a) => typeof a.affixId !== 'undefined' || typeof a.runeId !== 'undefined'
+    )
+    .map((a) => ({
+      value: a.affixId ?? a.runeId,
+      affixGreater: 0,
+      minmax: is
+        .findAffix(a.affixId ?? a.runeId)
+        ?.label.match(/\{x\}/g)
+        ?.map(() => ({ min: 0, max: 9999 }))
+    })) as Array<Attr>
+
+  restrictions.value = item.restrictions.map((r) => ({ value: r.restrictId }))
 }
 
 const failedAnalyze = (msg: string) => {
@@ -724,331 +654,32 @@ defineExpose({
       </template>
       <template #middle>
         <q-list :class="{ col: $q.screen.lt.md }">
-          <q-item :disable="filterLoading">
-            <q-item-section class="no-wrap">
-              <q-select
-                ref="propertyRef"
-                v-model="filter.properties"
-                :disable="filterLoading"
-                max-values="10"
-                outlined
-                dense
-                no-error-icon
-                use-input
-                hide-bottom-space
-                hide-selected
-                emit-value
-                map-options
-                multiple
-                transition-show="none"
-                transition-hide="none"
-                :transition-duration="0"
-                :label="`${t('properties')} ${t('searchOrSelect')}`"
-                :options="propertyOptions(propertyNeedle)"
-                dropdown-icon="img:/images/icons/dropdown.svg"
-                popup-content-class="scroll bordered limit-select"
-                @update:model-value="selectedProperty"
-                @input.stop="filterProperties"
-                @blur="() => (propertyNeedle = undefined)"
-              >
-                <template #option="scope">
-                  <q-item v-bind="scope.itemProps">
-                    <q-item-section side>
-                      <q-icon
-                        class="icon"
-                        :class="{ 'rotate-45': ['standard'].includes(scope.opt.type as string) }"
-                        size="8px"
-                        :name="`img:/images/attribute_types/${
-                          scope.opt.type || 'standard'
-                        }.svg`"
-                      />
-                    </q-item-section>
-                    <q-item-section>
-                      <q-item-label lines="3">{{
-                        scope.opt.label
-                      }}</q-item-label>
-                    </q-item-section>
-                  </q-item>
-                </template>
-
-                <template #no-option>
-                  <q-item>
-                    <q-item-section class="text-grey">
-                      {{ t('noMessage', { attr: t('properties') }) }}
-                    </q-item-section>
-                  </q-item>
-                </template>
-              </q-select>
-            </q-item-section>
-          </q-item>
-          <q-list
-            ref="propertyListRef"
-            dense
-            class="attr q-mx-md scroll"
-            v-if="filter.properties.length > 0"
-          >
-            <template v-for="(pid, idx) in filter.properties" :key="`${pid}`">
-              <q-separator v-show="idx !== 0" inset />
-              <q-item :disable="filterLoading" class="q-mx-md q-mb-xs">
-                <q-item-section side>
-                  <q-icon
-                    class="icon rotate-45"
-                    size="8px"
-                    name="img:/images/attribute_types/standard.svg"
-                  />
-                </q-item-section>
-                <q-item-section>
-                  <q-item-label caption>
-                    {{ findProperty(pid as number)?.label }}
-                  </q-item-label>
-                </q-item-section>
-                <q-item-section side>
-                  <q-btn
-                    :disable="filterLoading"
-                    dense
-                    unelevated
-                    flat
-                    round
-                    aria-label="Tradurs Close Button"
-                    size="xs"
-                    :tabindex="-1"
-                    class="q-ml-sm"
-                    @click="removeProperty(pid)"
-                  >
-                    <img
-                      class="icon"
-                      width="13"
-                      height="13"
-                      src="/images/icons/close.svg"
-                      alt="Tradurs Close Icon"
-                    />
-                  </q-btn>
-                </q-item-section>
-              </q-item>
-            </template>
-          </q-list>
-          <q-item :disable="filterLoading">
-            <q-item-section class="no-wrap">
-              <q-select
-                ref="affixRef"
-                v-model="affixes"
-                class="col"
-                :disable="filterLoading"
-                max-values="10"
-                outlined
-                dense
-                no-error-icon
-                use-input
-                hide-bottom-space
-                hide-selected
-                emit-value
-                map-options
-                multiple
-                transition-show="none"
-                transition-hide="none"
-                :transition-duration="0"
-                :label="`${t('affixes')} ${t('searchOrSelect')}`"
-                :options="affixOptions(affixNeedle)"
-                dropdown-icon="img:/images/icons/dropdown.svg"
-                popup-content-class="scroll bordered limit-select"
-                @update:model-value="selectedAffix"
-                @input.stop="filterAffixes"
-                @blur="() => (affixNeedle = undefined)"
-              >
-                <template #option="scope">
-                  <q-item v-bind="scope.itemProps">
-                    <q-item-section side>
-                      <q-img
-                        v-if="scope.opt.effect"
-                        :src="`/images/items/rune/${scope.opt.type}/${scope.opt.value}.webp`"
-                        width="16px"
-                      />
-                      <q-icon
-                        v-else
-                        class="icon"
-                        :class="{ 'rotate-45': ['standard'].includes(scope.opt.type as string) }"
-                        size="8px"
-                        :name="`img:/images/attribute_types/${
-                          scope.opt.type || 'standard'
-                        }.svg`"
-                      />
-                    </q-item-section>
-                    <q-item-section>
-                      <q-item-label :class="scope.opt.color">{{
-                        scope.opt.effect ?? scope.opt.label
-                      }}</q-item-label>
-                    </q-item-section>
-                  </q-item>
-                </template>
-
-                <template #no-option>
-                  <q-item>
-                    <q-item-section class="text-grey">
-                      {{ t('noMessage', { attr: t('affixes') }) }}
-                    </q-item-section>
-                  </q-item>
-                </template>
-              </q-select>
-            </q-item-section>
-          </q-item>
-          <q-list
-            ref="affixListRef"
-            dense
-            class="attr q-mx-md scroll"
-            v-if="filter.affixes.length > 0"
-          >
-            <template
-              v-for="(affix, idx) in filter.affixes"
-              :key="`${affix.affixId}`"
-            >
-              <q-separator v-show="idx !== 0" inset />
-              <q-item :disable="filterLoading" class="q-mx-sm q-my-xs">
-                <q-item-section side>
-                  <q-img
-                    v-if="!!affix.runeId"
-                    :src="`/images/items/rune/${
-                      is.findRune(affix.runeId)?.type
-                    }/${affix.runeId}.webp`"
-                    width="16px"
-                  />
-                  <template v-else>
-                    <q-rating
-                      v-if="findAffix(affix.affixId)?.type === 'standard'"
-                      v-model="affix.affixGreater"
-                      :disable="filterLoading"
-                      class="outline"
-                      size="12px"
-                      max="1"
-                      icon="img:/images/attribute_types/greater_invert.svg"
-                    />
-                    <q-icon
-                      v-else
-                      class="icon"
-                      size="8px"
-                      :name="`img:/images/attribute_types/${
-                        is.findAffix(affix.affixId)?.type || 'standard'
-                      }.svg`"
-                    />
-                  </template>
-                </q-item-section>
-                <q-item-section>
-                  <q-item-label caption>
-                    {{
-                      !!affix.runeId
-                        ? (findAffix(affix.runeId) as Rune)?.effect
-                        : findAffix(affix.affixId)?.label
-                    }}
-                  </q-item-label>
-                </q-item-section>
-                <q-item-section side>
-                  <q-btn
-                    :disable="filterLoading"
-                    dense
-                    unelevated
-                    flat
-                    round
-                    aria-label="Tradurs Close Button"
-                    size="xs"
-                    :tabindex="-1"
-                    class="q-ml-sm"
-                    @click="removeAffix(affix.affixId ?? affix.runeId)"
-                  >
-                    <img
-                      class="icon"
-                      width="13"
-                      height="13"
-                      src="/images/icons/close.svg"
-                      alt="Tradurs Close Icon"
-                    />
-                  </q-btn>
-                </q-item-section>
-              </q-item>
-            </template>
-          </q-list>
-          <q-item :disable="filterLoading">
-            <q-item-section class="no-wrap">
-              <q-select
-                ref="restrictionRef"
-                v-model="filter.restrictions"
-                :disable="filterLoading"
-                max-values="10"
-                outlined
-                dense
-                no-error-icon
-                use-input
-                hide-bottom-space
-                hide-selected
-                emit-value
-                map-options
-                multiple
-                transition-show="none"
-                transition-hide="none"
-                :transition-duration="0"
-                :label="`${t('restrictions')} ${t('searchOrSelect')}`"
-                :options="restrictionOptions(restrictionNeedle)"
-                dropdown-icon="img:/images/icons/dropdown.svg"
-                popup-content-class="scroll bordered limit-select"
-                @update:model-value="selectedRestriction"
-                @input.stop="filterRestrictions"
-                @blur="() => (restrictionNeedle = undefined)"
-              >
-                <template #option="scope">
-                  <q-item v-bind="scope.itemProps">
-                    <q-item-section>
-                      <q-item-label>{{ scope.opt.label }}</q-item-label>
-                    </q-item-section>
-                  </q-item>
-                </template>
-                <template #no-option>
-                  <q-item>
-                    <q-item-section class="text-grey">
-                      {{ t('noMessage', { attr: t('restrictions') }) }}
-                    </q-item-section>
-                  </q-item>
-                </template>
-              </q-select>
-            </q-item-section>
-          </q-item>
-          <q-list
-            ref="restrictionListRef"
-            dense
-            class="attr q-mx-md scroll"
-            v-if="filter.restrictions.length > 0"
-          >
-            <template v-for="(rid, idx) in filter.restrictions" :key="`${rid}`">
-              <q-separator v-show="idx !== 0" inset />
-              <q-item :disable="filterLoading" class="q-mx-md q-mb-xs">
-                <q-item-section side></q-item-section>
-                <q-item-section>
-                  <q-item-label caption>
-                    {{ findRestriction(rid as number)?.label }}
-                  </q-item-label>
-                </q-item-section>
-                <q-item-section side>
-                  <q-btn
-                    :disable="filterLoading"
-                    dense
-                    unelevated
-                    flat
-                    round
-                    aria-label="Tradurs Close Button"
-                    size="xs"
-                    :tabindex="-1"
-                    class="q-ml-sm"
-                    @click="removeRestriction(rid)"
-                  >
-                    <img
-                      class="icon"
-                      width="13"
-                      height="13"
-                      src="/images/icons/close.svg"
-                      alt="Tradurs Close Icon"
-                    />
-                  </q-btn>
-                </q-item-section>
-              </q-item>
-            </template>
-          </q-list>
+          <D4Attribute
+            :data="properties"
+            :options="propertyOptions()"
+            :disable="filterLoading"
+            :search-message="`${t('properties')} ${t('searchOrSelect')}`"
+            :no-message="t('noMessage', { attr: t('properties') })"
+            @update="updateProperties"
+          />
+          <D4Attribute
+            :data="affixes"
+            :options="affixOptions()"
+            :disable="filterLoading"
+            :search-message="`${t('affixes')} ${t('searchOrSelect')}`"
+            :no-message="t('noMessage', { attr: t('affixes') })"
+            greatable
+            @update="updateAffixes"
+          />
+          <D4Attribute
+            :data="restrictions"
+            :options="restrictionOptions()"
+            :disable="filterLoading"
+            :search-message="`${t('restrictions')} ${t('searchOrSelect')}`"
+            :no-message="t('noMessage', { attr: t('restrictions') })"
+            no-icon
+            @update="updateRestrictions"
+          />
         </q-list>
       </template>
       <template #bottom>
@@ -1152,10 +783,6 @@ defineExpose({
 .attr:deep(.q-item .q-item__section .q-item__label) {
   line-height: 1.4 !important;
   padding: 4px 0;
-}
-
-.attr-place {
-  max-height: 50vh;
 }
 
 .outline {

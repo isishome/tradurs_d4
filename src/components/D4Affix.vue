@@ -144,7 +144,7 @@ const remove = (): void => {
           v-show="editable"
           class="icon"
           :class="{ greater: isStandard, active: affixGreater }"
-          :size="isStandard && !affixGreater ? '8px' : '10px'"
+          size="10px"
           :name="icon"
         />
         <q-icon
@@ -160,7 +160,7 @@ const remove = (): void => {
       <div
         v-if="isRune"
         class="column inline"
-        :class="{ filtered :is.filter.affixes.filter(a => !!a.runeId).map(a => a.runeId).includes(findAffix?.value as string) }"
+        :class="{ filtered :is.filter.affixes.filter(a => !!a.value).map(a => a.value).includes(findAffix?.value as string) }"
       >
         <div
           v-for="(e, idx) in ((findAffix as Rune)?.effect ?? '').split('|')"
@@ -172,7 +172,7 @@ const remove = (): void => {
       <div
         v-else
         class="row items-center q-gutter-x-xs inline"
-        :class="[{ 'filtered': is.filter.affixes.filter(a => !!a.affixId).map(a => a.affixId).includes(findAffix?.value as number) }, color, { 'text-shadow': !!color }]"
+        :class="[{ 'filtered': is.filter.affixes.filter(a => !!a.value).map(a => a.value).includes(findAffix?.value as number) }, color, { 'text-shadow': !!color }]"
       >
         <template v-for="(comp, k) in affixInfo" :key="k">
           <template v-if="comp.type === 'text'">
