@@ -8,6 +8,7 @@ import D4Attr from 'components/D4Attr.vue'
 interface IProps {
   data?: Array<Attr>
   options?: Array<AttrOption>
+  maxValues?: number
   disable?: boolean
   searchMessage?: string
   noMessage?: string
@@ -18,6 +19,7 @@ interface IProps {
 const props = withDefaults(defineProps<IProps>(), {
   data: () => [],
   options: () => [],
+  maxValues: 6,
   disable: false,
   searchMessage: '',
   noMessage: '',
@@ -89,8 +91,13 @@ const selectAttr = (val: number | string): void => {
 
 const removeAttr = (val?: number | string): void => {
   const findIndexAttr = selectedAttrs.value.findIndex((a) => a.value === val)
-  if (findIndexAttr !== -1) {
+  const findIndexSelectedAttr = selectedAttrValues.value.findIndex(
+    (sa) => sa === val
+  )
+
+  if (findIndexAttr !== -1 && findIndexSelectedAttr !== -1) {
     selectedAttrs.value?.splice(findIndexAttr, 1)
+    selectedAttrValues.value?.splice(findIndexSelectedAttr, 1)
     moveScrollTarget(attrListRef.value)
 
     update()
@@ -120,8 +127,8 @@ watch(
         ref="attrRef"
         v-model="selectedAttrValues"
         class="col"
-        :disable="disable"
-        max-values="10"
+        :disable="disable || selectedAttrValues.length === maxValues"
+        :max-values="maxValues"
         outlined
         dense
         no-error-icon
@@ -232,6 +239,7 @@ watch(
           <D4Attr
             :data="sa"
             :label="findOption(sa.value)?.effect ?? findOption(sa.value)?.label"
+            :disable="disable"
             @update="(mm) => (sa.minmax = mm)"
           />
         </q-item-section>

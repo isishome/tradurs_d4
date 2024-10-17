@@ -25,16 +25,24 @@ const parseData = computed(() =>
 const update = () => {
   const min = parseData.value.flat().filter((pd) => pd.type === 'min')
   const max = parseData.value.flat().filter((pd) => pd.type === 'max')
+
   emit(
     'update',
-    min.map((m, i) => ({ min: m.value, max: max[i].value }))
+    min.map((m, i) => {
+      const minv = parseFloat(m.value.toString()) || 0
+      const maxv = parseFloat(max[i].value.toString()) || 9999
+      return {
+        min: minv < 0 ? 0 : minv > 9999 ? 9999 : minv,
+        max: maxv < 0 ? 0 : maxv > 9999 ? 9999 : maxv
+      }
+    })
   )
 }
 
 watch(
   () => props.data.minmax,
   (val) => {
-    if (_data.value) _data.value.minmax = val
+    if (_data.value) _data.value.minmax = JSON.parse(JSON.stringify(val))
   }
 )
 </script>
@@ -47,8 +55,8 @@ watch(
   >
     <template v-for="(d, idx2) in pd" :key="idx2">
       <template v-if="d.type === 'text'">{{ d.value }}</template>
-      <template v-else-if="d.type === 'min'">{x}</template>
-      <!-- <q-input
+      <!--<template v-else-if="d.type === 'min'">{x}</template>-->
+      <q-input
         v-else-if="['min', 'max'].includes(d.type)"
         class="var inline"
         input-class="text-center text-caption no-padding"
@@ -70,9 +78,8 @@ watch(
         ]"
         @update:model-value="update"
         @focus="focus"
-      /> 
+      />
       <template v-if="d.type === 'min'"> ~ </template>
-      -->
     </template>
   </q-item-label>
 </template>
