@@ -55,7 +55,7 @@ export type History = {
 }
 
 export const useAdminStore = defineStore('admin', () => {
-  const rows = 2
+  const rows = 10
   const over = ref<boolean>(false)
   const more = ref<boolean>(false)
   const historyParams = reactive<{ rows: number, nextHistoryId: number | null }>({
