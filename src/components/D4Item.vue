@@ -319,6 +319,10 @@ const update = () => {
   })
 }
 
+const onClickUser = (identity: string | null) => {
+  if (as.info.isAdmin) router.push({ name: 'adminUser', params: { identity } })
+}
+
 const updatePrice = (price: Price) => {
   _price.currency = price.currency
   _price.currencyValue = price.currencyValue
@@ -1289,6 +1293,7 @@ defineExpose({ scrollEnd })
                 :progress="loading"
                 :authorized="data.authorized"
                 @update="emit('update-only', data.itemId)"
+                @click="onClickUser(data.user.id)"
               />
             </div>
           </div>
@@ -1342,9 +1347,12 @@ defineExpose({ scrollEnd })
                 </q-checkbox>
                 <div
                   v-else
-                  class="name stress ellipsis-2-lines"
+                  class="name stress"
                   :title="itemName"
-                  :class="{ 'cursor-pointer': isList }"
+                  :class="[
+                    { 'cursor-pointer': isList },
+                    { 'ellipsis-2-lines': route.name !== 'itemInfo' }
+                  ]"
                   @click="goItemDetail"
                 >
                   {{ itemName }}

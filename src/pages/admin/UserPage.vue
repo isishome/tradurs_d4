@@ -28,7 +28,11 @@ const selectAll = ref<boolean>(false)
 const page = ref<number>(
   route.query.page ? parseInt(route.query.page as string) : 1
 )
-
+const searchInfo = ref<string | undefined>(
+  !!route.query.keyword
+    ? decodeURIComponent(route.query.keyword as string)
+    : undefined
+)
 const filter = reactive<Filter>({
   status: 'all',
   verified: 'all',
@@ -56,7 +60,6 @@ const users = reactive<Array<IUser>>([])
 const selected = computed(() =>
   users.filter((u) => u.selected).map((u) => u.identity)
 )
-
 const getUsers = async (p?: number) => {
   if (!!p && p !== page.value)
     return router.push({
@@ -76,16 +79,19 @@ const getUsers = async (p?: number) => {
   users.push(...result)
   disable.value = false
 }
-
 const move = (val: number) => {
   router.push({
     name: 'adminUser',
     params: { lang: route.params.lang },
-    query: { page: page.value + val }
+    query: {
+      page: page.value + val,
+      keyword: !!searchInfo.value
+        ? encodeURIComponent(searchInfo.value as string)
+        : undefined
+    }
   })
 }
 
-const searchInfo = ref<string>()
 const sendVerifyEmail = (identity: string, lang: string) => {
   disable.value = true
   as.resendVerify(identity, lang)
@@ -189,10 +195,16 @@ const getHistory = () => {
 }
 
 watch(
-  () => route.query.page,
-  async (val, old) => {
-    if (val !== old && route.name === 'adminUser') {
-      page.value = val ? parseInt(val as string) : 1
+  () => [route.query.page, route.query.keyword],
+  async ([val1, val2], [old1, old2]) => {
+    if (route.name === 'adminUser') {
+      if (val2 !== old2) {
+        page.value = 1
+        searchInfo.value = !!val2
+          ? decodeURIComponent(val2 as string)
+          : undefined
+      } else if (val1 !== old1) page.value = val1 ? parseInt(val1 as string) : 1
+
       await Promise.all([getUsers()])
     }
   }
@@ -241,7 +253,14 @@ onMounted(async () => {
           outlined
           :disable="disable || !!identity"
           v-model="searchInfo"
-          @keyup.enter="getUsers(1)"
+          @keyup.enter="
+            () =>
+              router.push({
+                name: 'adminUser',
+                params: { identity, lang: route.params.lang },
+                query: { page: 1, keyword: !!searchInfo ? encodeURIComponent(searchInfo as string) : undefined }
+              })
+          "
         >
           <template #append>
             <q-btn
@@ -253,13 +272,12 @@ onMounted(async () => {
               class="no-hover icon"
               padding="0"
               icon="img:/images/icons/close.svg"
-              :disable="!!!searchInfo || disable"
-              @click="
-                () => {
-                  searchInfo = ''
-                  getUsers(1)
-                }
-              "
+              :disable="!!!searchInfo || disable || !!identity"
+              :to="{
+                name: 'adminUser',
+                params: { identity, lang: route.params.lang },
+                query: { page }
+              }"
             />
           </template>
         </q-input>
@@ -268,8 +286,12 @@ onMounted(async () => {
           dense
           color="primary"
           label="검색"
-          :disable="disable || !!identity"
-          @click="getUsers(1)"
+          :disable="!!!searchInfo || disable || !!identity"
+          :to="{
+                name: 'adminUser',
+                params: { identity, lang: route.params.lang },
+                query: { page: 1, keyword: !!searchInfo ? encodeURIComponent(searchInfo as string) : undefined }
+              }"
         />
       </div>
     </div>
@@ -437,7 +459,7 @@ onMounted(async () => {
           round
           padding="0"
           aria-label="Tradurs Prev Button"
-          :disable="!as.over || disable"
+          :disable="!as.over || disable || !!identity"
           :shadow="!$q.dark.isActive"
           @click="move(-1)"
         >
@@ -455,7 +477,7 @@ onMounted(async () => {
           round
           padding="0"
           aria-label="Tradurs Next Button"
-          :disable="!as.more || disable"
+          :disable="!as.more || disable || !!identity"
           :shadow="!$q.dark.isActive"
           @click="move(1)"
         >
@@ -535,8 +557,12 @@ onMounted(async () => {
           "
         >
           <q-markup-table flat bordered class="full-width">
-            <q-inner-loading :showing="disable" class="fit" style="z-index: 1">
-              <q-spinner size="lg" color="primary" />
+            <q-inner-loading
+              :showing="disable"
+              class="fixed"
+              style="z-index: 1"
+            >
+              <q-spinner class="fixed-center" size="50px" color="primary" />
             </q-inner-loading>
             <thead>
               <tr>
@@ -565,6 +591,7 @@ onMounted(async () => {
               label="더보기"
               unelevated
               color="primary"
+              :disable="disable"
               @click="getHistory"
             />
           </div>

@@ -25,7 +25,9 @@ const page = ref<number>(
   route.query.page ? parseInt(route.query.page as string) : 1
 )
 const searchInfo = reactive<Search>({
-  itemName: ''
+  itemName: !!route.query.keyword
+    ? decodeURIComponent(route.query.keyword as string)
+    : undefined
 })
 const items = reactive<Array<Item>>([])
 const status = is.findItemStatus
@@ -79,30 +81,42 @@ const getItems = async (p?: number) => {
 const move = (val: number) => {
   router.push({
     name: 'adminItem',
-    params: { lang: route.params.lang, identity: props.identity },
-    query: { page: page.value + val }
+    params: {
+      lang: route.params.lang,
+      identity: props.identity
+    },
+    query: {
+      page: page.value + val,
+      keyword: !!searchInfo.itemName
+        ? encodeURIComponent(searchInfo.itemName as string)
+        : undefined
+    }
   })
 }
 
 const updateItemName = (itemId: number, itemName: string, oldName: string) => {
   if (checkName(itemName)) {
-    disable.value = true
-    as.updateItemName(itemId, itemName)
-      .then(() => {
-        selectAll.value = false
-        $q.notify({
-          message: '아이템명이 변경되었습니다',
-          color: 'positive',
-          classes: ''
+    const findItem = items.find((i) => i.itemId === itemId)
+    if (findItem) {
+      disable.value = true
+      const trimName = itemName.replace(/\n/g, '')
+      as.updateItemName(itemId, trimName)
+        .then(() => {
+          selectAll.value = false
+          $q.notify({
+            message: '아이템명이 변경되었습니다',
+            color: 'positive',
+            classes: ''
+          })
+          findItem.itemName = trimName
         })
-      })
-      .catch(() => {
-        const findItem = items.find((i) => i.itemId === itemId)
-        if (findItem) findItem.itemName = oldName
-      })
-      .then(() => {
-        disable.value = false
-      })
+        .catch(() => {
+          findItem.itemName = oldName
+        })
+        .then(() => {
+          disable.value = false
+        })
+    }
   }
 
   return false
@@ -140,10 +154,16 @@ const deleteItems = async (itemIds: Array<number>) => {
 }
 
 watch(
-  () => route.query.page,
-  async (val, old) => {
-    if (val !== old && route.name === 'adminItem') {
-      page.value = val ? parseInt(val as string) : 1
+  () => [route.query.page, route.query.keyword],
+  async ([val1, val2], [old1, old2]) => {
+    if (route.name === 'adminItem') {
+      if (val2 !== old2) {
+        page.value = 1
+        searchInfo.itemName = !!val2
+          ? decodeURIComponent(val2 as string)
+          : undefined
+      } else if (val1 !== old1) page.value = val1 ? parseInt(val1 as string) : 1
+
       await getItems()
     }
   }
@@ -163,7 +183,14 @@ onMounted(async () => {
           outlined
           :disable="disable"
           v-model="searchInfo.itemName"
-          @keyup.enter="getItems(1)"
+          @keyup.enter="
+            () =>
+              router.push({
+                name: 'adminItem',
+                params: { identity, lang: route.params.lang },
+                query: { page: 1, keyword: !!searchInfo.itemName ? encodeURIComponent(searchInfo.itemName as string) : undefined }
+              })
+          "
         >
           <template #append>
             <q-btn
@@ -175,13 +202,12 @@ onMounted(async () => {
               class="no-hover icon"
               padding="0"
               icon="img:/images/icons/close.svg"
-              :disable="!!!searchInfo || disable"
-              @click="
-                () => {
-                  searchInfo.itemName = ''
-                  getItems(1)
-                }
-              "
+              :disable="!!!searchInfo.itemName || disable"
+              :to="{
+                name: 'adminItem',
+                params: { identity, lang: route.params.lang },
+                query: { page }
+              }"
             />
           </template>
         </q-input>
@@ -190,8 +216,12 @@ onMounted(async () => {
           dense
           color="primary"
           label="검색"
-          :disable="disable"
-          @click="getItems(1)"
+          :disable="!!!searchInfo.itemName || disable"
+          :to="{
+                name: 'adminItem',
+                params: { identity, lang: route.params.lang },
+                query: { page: 1, keyword: !!searchInfo.itemName ? encodeURIComponent(searchInfo.itemName as string) : undefined }
+              }"
         />
       </div>
     </div>
@@ -248,28 +278,48 @@ onMounted(async () => {
                 :class="{ 'text-underline cursor-pointer': qualifiable(item) }"
               >
                 {{ itemName(item) }}
-                <q-popup-edit
-                  v-if="qualifiable(item)"
-                  v-model="item.itemName"
-                  auto-save
-                  v-slot="scope"
-                  :disable="item.statusCode === '009'"
-                  cover
-                  class="no-shadow bg-transparent"
-                  :validate="(val) => checkName(val)"
-                  @save="(val, init) => updateItemName(item.itemId, val, init)"
-                >
-                  <q-input
-                    type="textarea"
-                    v-model="scope.value"
-                    :disable="disable"
-                    dense
-                    autofocus
-                    outlined
-                    maxlength="256"
-                    @keyup.enter="scope.set"
-                  />
-                </q-popup-edit>
+                <q-menu class="no-shadow">
+                  <q-list bordered class="rounded-borders">
+                    <q-item
+                      clickable
+                      :to="{
+                        name: 'adminUser',
+                        params: {
+                          identity: item.userIdentity,
+                          lang: route.params.lang
+                        }
+                      }"
+                    >
+                      <q-item-section>사용자 정보</q-item-section>
+                    </q-item>
+                    <q-item v-if="qualifiable(item)" clickable>
+                      <q-item-section>아이템 명 수정</q-item-section>
+                      <q-popup-edit
+                        v-if="qualifiable(item)"
+                        v-model="item.itemName"
+                        v-slot="scope"
+                        :disable="item.statusCode === '009'"
+                        cover
+                        class="no-shadow bg-transparent"
+                        :validate="(val) => checkName(val)"
+                        @save="
+                          (val, init) => updateItemName(item.itemId, val, init)
+                        "
+                      >
+                        <q-input
+                          type="textarea"
+                          v-model="scope.value"
+                          :disable="disable"
+                          dense
+                          autofocus
+                          outlined
+                          maxlength="256"
+                          @keyup.enter="scope.set"
+                        />
+                      </q-popup-edit>
+                    </q-item>
+                  </q-list>
+                </q-menu>
               </div>
             </td>
             <td v-if="item.statusCode === '009'">삭제된 아이템</td>
@@ -302,7 +352,10 @@ onMounted(async () => {
                     v-close-popup
                     :to="{
                       name: 'adminUser',
-                      params: { identity: item.userIdentity }
+                      params: {
+                        identity: item.userIdentity,
+                        lang: route.params.lang
+                      }
                     }"
                   >
                     <q-item-section>

@@ -136,6 +136,8 @@ const clear = () => {
 }
 
 const main = () => {
+  clear()
+  d4Filter.value?.clearFilter()
   is.sort = 'date_desc'
   router.push({
     name: 'tradeList',

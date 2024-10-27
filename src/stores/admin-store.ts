@@ -33,7 +33,7 @@ export type RequestAffix = {
 }
 
 export type Search = {
-  itemName: string
+  itemName?: string
 }
 
 export type Item = {
@@ -55,7 +55,7 @@ export type History = {
 }
 
 export const useAdminStore = defineStore('admin', () => {
-  const rows = 10
+  const rows = 2
   const over = ref<boolean>(false)
   const more = ref<boolean>(false)
   const historyParams = reactive<{ rows: number, nextHistoryId: number | null }>({
