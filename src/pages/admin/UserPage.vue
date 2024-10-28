@@ -562,7 +562,11 @@ onMounted(async () => {
               class="fixed"
               style="z-index: 1"
             >
-              <q-spinner class="fixed-center" size="50px" color="primary" />
+              <q-spinner
+                size="50px"
+                color="primary"
+                style="position: fixed; top: 50%"
+              />
             </q-inner-loading>
             <thead>
               <tr>
