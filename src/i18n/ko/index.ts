@@ -397,12 +397,18 @@ export default {
   },
   notice: {
     title: '업데이트 안내',
-    top: '안녕하세요. 트레이더스입니다. 변경 된 사항 안내드립니다.',
+    top: '안녕하세요. 트레이더스입니다. 전설 위상 데이터 업데이트로 인한 점검 안내입니다.',
     contents: [
       { type: 'head', value: '◆ 변경 사항' },
-      { type: 'list', value: '하루 최대 충전되는 노른자 수가 변경되었습니다.', class: 'text-weight-bold text-subtitle2' },
-      { value: '30개 > 50개', class: 'text-weight-bold q-ml-xl q-my-sm text-orange text-h6' },
-      { type: 'space' }
+      { type: 'list', value: '전설 위상 아이템 데이터가 업데이트됩니다.', class: 'text-body1' },
+      { value: '위상 이름으로 검색 및 아이템 등록 가능', class: 'text-weight-bold q-ml-xl q-my-sm text-orange text-subtitle2' },
+      { type: 'list', value: '룬 및 위상 아이템 검색 기능이 업데이트됩니다.', class: 'text-body1' },
+      { value: '필터 및 아이템 등록 시 룬 이름이나 위상 이름을 통해 검색이 가능합니다.', class: 'q-ml-xl q-my-sm text-subtitle2' },
+      { type: 'list', value: '속성 데이터 정리로 인해 등록된 아이템이 모두 초기화됩니다.', class: 'text-body1 text-weight-bold text-red-8' },
+      { value: '아래 점검 시간 이후에는 기존에 등록했던 아이템 데이터는 모두 초기화될 예정이니 서비스 이용에 참고하시기 바랍니다.', class: 'q-ml-xl q-my-sm text-subtitle2 text-weight-bold' },
+      { type: 'space' },
+      { type: 'list', value: '점검 시간', class: 'text-h6 text-weight-bold' },
+      { value: '2024-11-06 00:00 ~ 점검 종료까지', class: 'q-ml-xl q-my-sm text-h6 text-weight-bold' }
     ],
     bottom: '감사합니다.',
     close: '24시간 동안 열지 않기'

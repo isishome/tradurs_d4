@@ -397,12 +397,18 @@ export default {
   },
   notice: {
     title: 'Update Notice',
-    top: 'Hello. This is Tradurs. Here\'s what\'s been updated.',
+    top: 'Hello. This is Tradurs. This is a maintenance notice due to the update of the Legendary Aspect data',
     contents: [
       { type: 'head', value: '◆ Changes' },
-      { type: 'list', value: 'The maximum number of yolks charged per day has changed.', class: 'text-weight-bold text-subtitle2' },
-      { value: '30 > 50', class: 'text-weight-bold q-ml-xl q-my-sm text-orange text-h6' },
-      { type: 'space' }
+      { type: 'list', value: 'Legendary Aspect item data will be updated.', class: 'text-body1' },
+      { value: 'Search and register items by aspect name', class: 'text-weight-bold q-ml-xl q-my-sm text-orange text-subtitle2' },
+      { type: 'list', value: 'Rune and aspect item search feature will be updated.', class: 'text-body1' },
+      { value: 'You can search by rune name or aspect name when filtering and registering items.', class: 'q-ml-xl q-my-sm text-subtitle2' },
+      { type: 'list', value: 'All registered items will be initialized due to affix data reorganization.', class: 'text-body1 text-weight-bold text-red-8' },
+      { value: 'Please note that all previously registered item data will be initialized after the maintenance time below.', class: 'q-ml-xl q-my-sm text-subtitle2 text-weight-bold' },
+      { type: 'space' },
+      { type: 'list', value: 'Maintenance Time', class: 'text-h6 text-weight-bold' },
+      { value: '2024-11-06 00:00(KST) ~ Until the end of the maintenance', class: 'q-ml-xl q-my-sm text-h6 text-weight-bold' }
     ],
     bottom: 'Thank you',
     close: 'Do not open for 24 hours'
