@@ -7,6 +7,9 @@ node_modules
 /dist
 /src-ssr
 
+# affix file
+/affix
+
 # Cordova related directories and files
 /src-cordova/node_modules
 /src-cordova/platforms

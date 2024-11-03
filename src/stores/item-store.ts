@@ -86,7 +86,11 @@ export interface Property extends ILabel {
 
 export interface Affix extends ILabel {
   type: string,
+  aspectName?: string,
   color?: string,
+  cls?: string,
+  aspectCategory?: string,
+  equipmentClasses?: Array<string>,
   sort?: number,
   disable: boolean
 }
@@ -171,8 +175,8 @@ export interface IFilter {
   power: [number, number],
   level: [number, number],
   itemTypes: Array<string>,
-  itemTypeValues1: { [key: string]: Array<number> },
-  itemTypeValues2: { [key: string]: Array<number> },
+  itemTypeValues1: { [key: string]: Array<string | number> },
+  itemTypeValues2: { [key: string]: Array<string | number> },
   greaterCount: number,
   properties: Array<Attr>,
   affixes: Array<Attr>,
@@ -207,6 +211,7 @@ export const useItemStore = defineStore('item', {
       loading: false as boolean,
       request: 0 as number
     },
+    classes: [] as Array<ILabel>,
     itemStatus: [] as Array<Status>,
     offerStatus: [] as Array<Status>,
     tiers: [] as Array<Tier>,
@@ -219,7 +224,7 @@ export const useItemStore = defineStore('item', {
     summonings: [] as Array<Summoning>,
     materials: [] as Array<Summoning>,
     types: [] as Array<ItemType>,
-    classes: [] as Array<EquipmentClass>,
+    equipClasses: [] as Array<EquipmentClass>,
     attributeTypes: [] as Array<AttributeType>,
     awards: 0 as number,
     rewardItems: [] as Array<Item>,
@@ -301,6 +306,9 @@ export const useItemStore = defineStore('item', {
     findPreset: (state) => {
       return (id: number): IPreset | undefined => state.storage.data.presets.find(p => p.value === id)
     },
+    findClass: (state) => {
+      return (cls?: string): ILabel | undefined => state.classes.find(c => c.value === cls)
+    },
     findItemStatus: (state) => {
       return (statusCode?: string): Status | undefined => state.itemStatus.find(s => s.value === statusCode)
     },
@@ -322,14 +330,14 @@ export const useItemStore = defineStore('item', {
     filterTypes: (state) => {
       return (type?: string): Array<ItemType> => type ? state.types.filter(t => t.value === type && !t.onlyCurrency) : state.types.filter(t => !t.onlyCurrency)
     },
-    findClass: (state) => {
-      return (className?: string): EquipmentClass | undefined => state.classes.find(c => c.value === className)
+    findEquipClass: (state) => {
+      return (className?: string): EquipmentClass | undefined => state.equipClasses.find(ec => ec.value === className)
     },
     filterClasses: (state) => {
-      return (type?: string): Array<EquipmentClass> => type ? state.classes.filter(c => c.type === type) : state.classes
+      return (type?: string, word?: string): Array<EquipmentClass> => type ? state.equipClasses.filter(ec => ec.type === type && ec.label?.toLowerCase().indexOf((word ?? '').toLowerCase()) !== -1) : state.equipClasses.filter(ec => ec.label?.toLowerCase().indexOf((word ?? '').toLowerCase()) !== -1)
     },
     currencies: (state) => {
-      return (): Array<ILabel> => [...state.types.filter(t => t.isCurrency || t.onlyCurrency), ...state.classes.filter(c => c.isCurrency)]
+      return (): Array<ILabel> => [...state.types.filter(t => t.isCurrency || t.onlyCurrency), ...state.equipClasses.filter(ec => ec.isCurrency)]
     },
     findRuneType: (state) => {
       return (type?: string): RuneType | undefined => state.runeTypes.find(rt => rt.value === type)
@@ -338,7 +346,13 @@ export const useItemStore = defineStore('item', {
       return (id: string): Rune | undefined => state.runes.find(r => r.value === id)
     },
     filterRunesByType: (state) => {
-      return (type?: string): Array<Rune> => type ? state.runes.filter(r => r.type === type) : state.runes
+      return (type?: string, word?: string): Array<Rune> => type ? state.runes.filter(r => r.type === type && r.label?.toLowerCase().indexOf((word ?? '').toLowerCase()) !== -1) : state.runes.filter(r => r.label?.toLowerCase().indexOf((word ?? '').toLowerCase()) !== -1)
+    },
+    filterAspectByCategory: (state) => {
+      return (category?: string, word?: string): Array<Affix> => category ? state.affixes.data.filter(a => !!a.aspectName && a.aspectCategory === category && a.aspectName?.toLowerCase().indexOf((word ?? '').toLowerCase()) !== -1).map(a => ({ ...a, label: a.aspectName as string })) : state.affixes.data.filter(a => !!a.aspectName && a.aspectName?.toLowerCase().indexOf((word ?? '').toLowerCase()) !== -1).map(a => ({ ...a, label: a.aspectName as string }))
+    },
+    findAspect: (state) => {
+      return (id: number): Affix | undefined => state.affixes.data.find(a => a.value === id)
     },
     filterAttributeTypes: (state) => {
       return (attribute?: string): Array<AttributeType> => attribute ? state.attributeTypes.filter(at => at.hasAttributes.includes(attribute)) : state.attributeTypes
@@ -474,6 +488,7 @@ export const useItemStore = defineStore('item', {
           this.base.loading = true
           api.get('/d4/item/base', options)
             .then((response) => {
+              this.classes = response.data.classes
               this.itemStatus = response.data.itemStatus
               this.offerStatus = response.data.offerStatus
               this.tiers = response.data.tiers
@@ -486,7 +501,7 @@ export const useItemStore = defineStore('item', {
               this.summonings = response.data.summonings
               this.materials = response.data.materials
               this.types = response.data.types
-              this.classes = response.data.classes
+              this.equipClasses = response.data.equipClasses
               this.attributeTypes = response.data.attributeTypes
               this.awards = response.data.awards
             })

@@ -1,5 +1,6 @@
 .quasar
 .vscode
+/affix
 cypress
 node_modules
 src-ssr

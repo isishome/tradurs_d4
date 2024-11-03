@@ -15,7 +15,7 @@ import {
   ComputedRef,
   onMounted
 } from 'vue'
-import { QCard, useQuasar, date } from 'quasar'
+import { QCard, QSelect, useQuasar, date } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 
@@ -61,11 +61,12 @@ const editWrap = ref<QCard | null>(null)
 const filterClasses = store.filterClasses
 const runeTypes = store.runeTypes
 const filterRunesByType = store.filterRunesByType
+const filterAspectByCategory = store.filterAspectByCategory
 const imgSrc = computed(() =>
   props.data.itemType === 'rune'
     ? `/images/items/rune/${props.data.itemTypeValue1}/${props.data.itemTypeValue2}.webp`
     : props.data.itemType === 'aspect'
-    ? `/images/items/${props.data.itemType}/${props.data.itemTypeValue1}.webp`
+    ? `/images/items/aspect/legendary/${props.data.itemTypeValue2}.webp`
     : ['gem', 'summoning'].includes(props.data.itemTypeValue1)
     ? `/images/items/${props.data.itemType}/${props.data.itemTypeValue1}/${props.data.itemTypeValue2}.webp`
     : props.data.itemTypeValue1 === 'elixir'
@@ -118,6 +119,8 @@ const itemName = computed(
       ? `${findRune(props.data.itemTypeValue2)?.label} ${
           findType('rune')?.label
         }`
+      : props.data.itemType === 'aspect'
+      ? store.findAspect(Number(_typeValue2.value))?.aspectName
       : qualifiable.value
       ? props.data.name
       : props.data.itemTypeValue1 === 'gem'
@@ -148,6 +151,7 @@ const _typeValue1 = ref<string>(
       ? (store.aspectCategories[0].value as string)
       : (filterClasses(_type.value)[0].value as string))
 )
+
 const _typeValue2 = ref<string>(
   props.data.itemTypeValue2 ||
     (_typeValue1.value === 'gem'
@@ -176,10 +180,10 @@ const filterQuality = store.filterQuality
 const findStatus = store.findItemStatus
 const findRune = store.findRune
 const findType = store.findType
-const findClass = store.findClass
+const findEquipClass = store.findEquipClass
 
 const hasProperties = computed(
-  () => findClass(_typeValue1.value)?.properties.length !== 0
+  () => findEquipClass(_typeValue1.value)?.properties.length !== 0
 )
 
 const _image = ref<number>(
@@ -207,12 +211,12 @@ const tierable = computed(
   () => !['rune', 'aspect', 'inventory', 'consumables'].includes(_type.value)
 )
 const qualifiable = computed(
-  () => !['rune', 'inventory', 'consumables'].includes(_type.value)
+  () => !['rune', 'aspect', 'inventory', 'consumables'].includes(_type.value)
 )
 const descriptable = computed(
   () =>
     store.filterMaterials(props.data.itemTypeValue2).length > 0 ||
-    ['rune'].includes(_type.value)
+    ['rune', 'aspect'].includes(_type.value)
 )
 
 const noLevel = computed(() => ['summoning'].includes(_typeValue1.value))
@@ -253,7 +257,12 @@ const updateType = (val: string) => {
     _name.value = ''
   }
 
-  if (!qualifiable.value) _quality.value = 'normal'
+  _quality.value =
+    val === 'aspect'
+      ? 'legendary'
+      : !qualifiable.value
+      ? 'normal'
+      : _quality.value
 
   _typeValue1.value =
     val === 'rune'
@@ -261,6 +270,8 @@ const updateType = (val: string) => {
       : val === 'aspect'
       ? (store.aspectCategories[0].value as string)
       : (filterClasses(val)[0].value as string)
+
+  attribute.value = val === 'aspect' ? 'affixes' : attribute.value
 
   updateTypeValue1(_typeValue1.value)
 }
@@ -274,6 +285,8 @@ const updateTypeValue1 = (val: string) => {
   _typeValue2.value =
     _type.value === 'rune'
       ? (filterRunesByType(val)?.[0]?.value as string)
+      : _type.value === 'aspect'
+      ? `${filterAspectByCategory(val)?.[0]?.value}`
       : val === 'gem'
       ? (store.gems[0].value as string)
       : val === 'elixir'
@@ -298,6 +311,7 @@ const updateTypeValue2 = (val: string) => {
       : _typeValue1.value === 'elixir'
       ? store.elixirs.find((e: Elixir) => e.value === val)?.level || null
       : selectedRune?.level ?? null
+
   update()
 }
 
@@ -317,6 +331,17 @@ const update = () => {
     price: _price,
     favorite: _favorite
   })
+}
+
+// about typevalue2
+const typeValue2Ref = ref<QSelect | null>(null)
+const typeValue2Needle = ref<string>()
+
+const filterTypeValue = (e: KeyboardEvent) => {
+  const val = (e.target as HTMLInputElement).value.toLowerCase()
+  typeValue2Ref.value?.showPopup()
+  typeValue2Ref.value?.updateInputValue(val)
+  typeValue2Needle.value = val
 }
 
 const onClickUser = (identity: string | null) => {
@@ -512,22 +537,26 @@ defineExpose({ scrollEnd })
             </div>
             <div class="col">
               <q-select
+                ref="typeValue2Ref"
                 v-model="_typeValue2"
                 :disable="disable"
                 outlined
                 dense
                 no-error-icon
+                use-input
                 hide-bottom-space
                 emit-value
                 map-options
                 transition-show="none"
                 transition-hide="none"
                 :transition-duration="0"
-                :label="t('item.selectRune')"
-                :options="filterRunesByType(_typeValue1)"
+                :label="`${t('item.rune')} ${t('searchOrSelect')}`"
+                :options="filterRunesByType(_typeValue1, typeValue2Needle)"
                 dropdown-icon="img:/images/icons/dropdown.svg"
                 popup-content-class="scroll bordered limit-select"
                 @update:model-value="updateTypeValue2"
+                @input.stop="filterTypeValue"
+                @blur="() => (typeValue2Needle = undefined)"
               >
                 <template #selected-item="scope">
                   <div class="ellipsis">
@@ -556,44 +585,95 @@ defineExpose({ scrollEnd })
               </q-select>
             </div>
           </template>
-          <div class="col" v-else-if="_type === 'aspect'">
-            <q-select
-              v-model="_typeValue1"
-              :disable="disable"
-              outlined
-              dense
-              no-error-icon
-              hide-bottom-space
-              emit-value
-              map-options
-              transition-show="none"
-              transition-hide="none"
-              :transition-duration="0"
-              :label="t('item.selectAspectCategory')"
-              dropdown-icon="img:/images/icons/dropdown.svg"
-              :options="store.aspectCategories"
-              popup-content-class="scroll bordered limit-select"
-              @update:model-value="update"
-            >
-              <template #selected-item="scope">
-                <div class="ellipsis">{{ scope.opt.label }}</div>
-              </template>
-              <template #option="scope">
-                <q-item clickable v-bind="scope.itemProps">
-                  <q-item-section avatar>
-                    <img
-                      height="48"
-                      :src="`/images/items/${_type}/${scope.opt.value}.webp`"
-                      alt="Tradurs Aspect Image"
-                    />
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label>{{ scope.opt.label }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
-          </div>
+          <template class="col" v-else-if="_type === 'aspect'">
+            <div class="col">
+              <q-select
+                v-model="_typeValue1"
+                :disable="disable"
+                outlined
+                dense
+                no-error-icon
+                hide-bottom-space
+                emit-value
+                map-options
+                transition-show="none"
+                transition-hide="none"
+                :transition-duration="0"
+                :label="t('item.selectAspectCategory')"
+                dropdown-icon="img:/images/icons/dropdown.svg"
+                :options="store.aspectCategories"
+                popup-content-class="scroll bordered limit-select"
+                @update:model-value="updateTypeValue1"
+              >
+                <template #selected-item="scope">
+                  <div class="ellipsis">{{ scope.opt.label }}</div>
+                </template>
+                <template #option="scope">
+                  <q-item clickable v-bind="scope.itemProps">
+                    <q-item-section avatar>
+                      <img
+                        height="48"
+                        :src="`/images/items/${_type}/${scope.opt.value}.webp`"
+                        alt="Tradurs Aspect Image"
+                      />
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>{{ scope.opt.label }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
+            </div>
+            <div class="col">
+              <q-select
+                ref="typeValue2Ref"
+                v-model="_typeValue2"
+                :disable="disable"
+                outlined
+                dense
+                no-error-icon
+                use-input
+                hide-bottom-space
+                emit-value
+                map-options
+                transition-show="none"
+                transition-hide="none"
+                :transition-duration="0"
+                :label="`${t('item.aspect')} ${t('searchOrSelect')}`"
+                :options="
+                  filterAspectByCategory(_typeValue1, typeValue2Needle).map(
+                    (a) => ({ ...a, value: a.value.toString() })
+                  )
+                "
+                dropdown-icon="img:/images/icons/dropdown.svg"
+                popup-content-class="scroll bordered limit-select"
+                @update:model-value="updateTypeValue2"
+                @input.stop="filterTypeValue"
+                @blur="() => (typeValue2Needle = undefined)"
+              >
+                <template #selected-item="scope">
+                  <div class="ellipsis">
+                    {{ scope.opt.aspectName }}
+                  </div>
+                </template>
+                <template #option="scope">
+                  <q-item v-bind="scope.itemProps">
+                    <q-item-section avatar>
+                      <img
+                        :src="`/images/items/aspect/legendary/${scope.opt.value}.webp`"
+                        width="24"
+                        height="24"
+                        alt="Tradurs Aspect Image"
+                      />
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>{{ scope.opt.aspectName }} </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
+            </div>
+          </template>
           <template v-else>
             <div class="col">
               <q-select
@@ -777,7 +857,7 @@ defineExpose({ scrollEnd })
                         {{
                           t('item.selectImage', {
                             tv:
-                              findClass(data.itemTypeValue1)?.label ||
+                              findEquipClass(data.itemTypeValue1)?.label ||
                               findType(data.itemType)?.label
                           })
                         }}
@@ -862,7 +942,11 @@ defineExpose({ scrollEnd })
       </q-card-section>
       <q-card-section
         class="q-col-gutter-x-sm"
-        :class="qualifiable ? 'row justify-between items-center' : 'col'"
+        :class="
+          qualifiable || data.itemType === 'aspect'
+            ? 'row justify-between items-center'
+            : 'col'
+        "
       >
         <div v-show="tierable" class="row items-center q-gutter-x-sm">
           <D4Counter
@@ -887,11 +971,13 @@ defineExpose({ scrollEnd })
           max-width="110px"
           :max="999"
           no-button
-          :disable="disable || !qualifiable || noLevel"
+          :disable="
+            disable || !(qualifiable || data.itemType === 'aspect') || noLevel
+          "
           @update:model-value="update"
         />
       </q-card-section>
-      <template v-if="qualifiable">
+      <template v-if="qualifiable || data.itemType === 'aspect'">
         <template v-if="$slots['base-end']">
           <D4Separator />
           <q-card-section>
@@ -931,6 +1017,7 @@ defineExpose({ scrollEnd })
             flat
             no-caps
             aria-label="Tradurs Attribute Button"
+            :disable="data.itemType === 'aspect'"
             :ripple="false"
             :color="$q.dark.isActive ? 'grey-5' : 'grey-8'"
             toggle-color="transparent toggle"
@@ -981,7 +1068,7 @@ defineExpose({ scrollEnd })
                 name="affixes"
                 class="q-gutter-y-xs no-padding column"
               >
-                <div v-if="slots['add-affix']">
+                <div v-if="slots['add-affix'] && data.itemType !== 'aspect'">
                   <slot name="add-affix" :wrap="editWrap"></slot>
                 </div>
                 <div ref="affixRef" class="col scroll">
@@ -1060,6 +1147,7 @@ defineExpose({ scrollEnd })
               no-caps
               size="md"
               aria-label="Tradurs Attribute Button"
+              :disable="data.itemType === 'aspect'"
               :ripple="false"
               :color="$q.dark.isActive ? 'grey-5' : 'grey-8'"
               toggle-color="transparent toggle"
@@ -1112,7 +1200,7 @@ defineExpose({ scrollEnd })
                   name="affixes"
                   class="q-gutter-y-xs no-padding column"
                 >
-                  <div v-if="slots['add-affix']">
+                  <div v-if="slots['add-affix'] && data.itemType !== 'aspect'">
                     <slot name="add-affix" :wrap="editWrap"></slot>
                   </div>
                   <div class="col scroll">
@@ -1466,19 +1554,21 @@ defineExpose({ scrollEnd })
               />
             </div>
             <div
-              v-show="!loading && qualifiable"
+              v-show="
+                !loading && (qualifiable || ['aspect'].includes(data.itemType))
+              "
               class="stress"
               style="opacity: 0.6"
             >
               {{ findTier(data.tier)?.fullName }}
               {{ findQuality(data.quality)?.fullName }}
               {{
-                findClass(data.itemTypeValue1)?.label ||
+                findEquipClass(data.itemTypeValue1)?.label ||
                 findType(data.itemType)?.label
               }}
             </div>
             <div
-              v-show="!loading && data.itemType === 'rune'"
+              v-show="!loading && ['rune'].includes(data.itemType)"
               class="stress"
               style="opacity: 0.6"
             >
@@ -1546,7 +1636,7 @@ defineExpose({ scrollEnd })
           v-show="
             loading ||
             (!loading &&
-              (data.itemType === 'rune' ||
+              (['rune', 'aspect'].includes(data.itemType) ||
                 data.properties?.length > 0 ||
                 data.itemTypeValue1 === 'summoning'))
           "

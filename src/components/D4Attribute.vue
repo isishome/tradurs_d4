@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, nextTick } from 'vue'
 import { QList, QSelect } from 'quasar'
-import { MinMax, type Attr, type AttrOption } from 'src/stores/item-store'
+import { type Attr, type AttrOption } from 'src/stores/item-store'
 
 import D4Attr from 'components/D4Attr.vue'
 

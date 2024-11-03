@@ -18,6 +18,10 @@ const props = defineProps({
   disable: {
     type: Boolean,
     default: false
+  },
+  necessary: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -185,7 +189,7 @@ const remove = (): void => {
           </template>
           <template v-if="!editable">
             <div v-if="comp.type === 'variable'" class="figure">
-              {{ comp.value }}
+              {{ comp.value || '?' }}
             </div>
             <div
               v-if="
@@ -273,7 +277,7 @@ const remove = (): void => {
           </template>
         </template>
         <q-btn
-          v-show="editable"
+          v-show="editable && !necessary"
           :disable="disable"
           dense
           unelevated

@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, watch } from "vue"
-import { useQuasar, date } from "quasar"
-import { useI18n } from "vue-i18n"
-import { useRoute, useRouter } from "vue-router"
-import { useGlobalStore } from "src/stores/global-store"
-import { useAccountStore } from "src/stores/account-store"
-import { useItemStore } from "src/stores/item-store"
-import { IMessage, IAnswer } from "src/types/user"
+import { ref, reactive, computed, onMounted, watch } from 'vue'
+import { useQuasar, date } from 'quasar'
+import { useI18n } from 'vue-i18n'
+import { useRoute, useRouter } from 'vue-router'
+import { useGlobalStore } from 'src/stores/global-store'
+import { useAccountStore } from 'src/stores/account-store'
+import { useItemStore } from 'src/stores/item-store'
+import { IMessage, IAnswer } from 'src/types/user'
 
 const $q = useQuasar()
 const gs = useGlobalStore()
 const as = useAccountStore()
 const is = useItemStore()
-const { t, n } = useI18n({ useScope: "global" })
+const { t, n } = useI18n({ useScope: 'global' })
 const route = useRoute()
 const router = useRouter()
 
@@ -88,7 +88,7 @@ const answer = reactive<IAnswer>({
   open: false,
   loading: false,
   msgId: null,
-  contents: "안녕하세요. Tradurs입니다.\n\n\n\n감사합니다."
+  contents: '안녕하세요. Tradurs입니다.\n\n\n\n감사합니다.'
 })
 
 const sendAnswer = () => {
@@ -96,10 +96,10 @@ const sendAnswer = () => {
   gs.answer(answer.msgId as number, answer.contents)
     .then(() => {
       $q.notify({
-        icon: "img:/images/icons/check.svg",
-        color: "positive",
-        classes: "",
-        message: t("contact.successAnswer")
+        icon: 'img:/images/icons/check.svg',
+        color: 'positive',
+        classes: '',
+        message: t('contact.successAnswer')
       })
       answer.open = false
     })
@@ -116,13 +116,13 @@ const open = (msgId: number) => {
 
 const close = () => {
   answer.msgId = null
-  answer.contents = "안녕하세요. Tradurs입니다.\n\n\n\n감사합니다."
+  answer.contents = '안녕하세요. Tradurs입니다.\n\n\n\n감사합니다.'
   answer.loading = false
 }
 
 const move = (val: number) => {
   router.push({
-    name: "messages",
+    name: 'messages',
     params: { lang: route.params.lang },
     query: { page: page.value + val }
   })
@@ -131,7 +131,7 @@ const move = (val: number) => {
 watch(
   () => route.query.page,
   (val, old) => {
-    if (val !== old && route.name === "messages") {
+    if (val !== old && route.name === 'messages') {
       page.value = val ? parseInt(val as string) : 1
       getList()
     }
@@ -146,7 +146,7 @@ onMounted(() => {
 <template>
   <div>
     <div class="text-right text-caption q-pa-xs top-space">
-      {{ t("messages.expire") }}
+      {{ t('messages.expire') }}
     </div>
     <q-list bordered class="rounded-borders">
       <q-item>
@@ -193,7 +193,7 @@ onMounted(() => {
               :to="{
                 name: 'messages',
                 params: { lang: route.params.lang },
-                query: { page: 1 }
+                query: { page: !!!route.query.page ? 1 : undefined }
               }"
             >
               <div class="row items-center q-gutter-x-sm">
@@ -205,7 +205,7 @@ onMounted(() => {
                   alt="Tradurs Refresh Icon"
                 />
                 <div>
-                  {{ t("btn.newMessages") }}
+                  {{ t('btn.newMessages') }}
                 </div>
               </div>
             </q-btn>
@@ -234,12 +234,12 @@ onMounted(() => {
           <q-item-section>
             <q-item-label class="text-weight-bold" lines="1">
               {{
-                ["900", "999"].includes(message.msgType)
-                  ? "Tradurs"
+                ['900', '999'].includes(message.msgType)
+                  ? 'Tradurs'
                   : `${message.itemName}${
                       message.itemQuantity !== 1
                         ? ` x ${message.itemQuantity}`
-                        : ""
+                        : ''
                     }`
               }}
             </q-item-label>
@@ -248,9 +248,20 @@ onMounted(() => {
             </q-item-label>
             <q-item-label caption lines="2" v-if="message.currency === 'gold'">
               {{
-                `${t("item.gold")} : ${n(
+                `${t('item.gold')} : ${n(
                   Number.parseFloat(message.currencyValue as string)
                 )} `
+              }}
+            </q-item-label>
+            <q-item-label
+              caption
+              lines="2"
+              v-else-if="message.currency === 'rune'"
+            >
+              {{
+                `${is.findRune(message.currencyValue)?.label} ${t(
+                  'item.rune'
+                )} x ${message.quantity} `
               }}
             </q-item-label>
             <q-item-label
@@ -269,9 +280,9 @@ onMounted(() => {
           <q-item-section side top>
             <q-item-label lines="2" style="max-width: 60px" class="text-right">
               {{
-                date.isSameDate(message.regDate, Date.now(), "date")
-                  ? date.formatDate(message.regDate, "HH:mm")
-                  : date.formatDate(message.regDate, "YY.MM.DD HH:mm")
+                date.isSameDate(message.regDate, Date.now(), 'date')
+                  ? date.formatDate(message.regDate, 'HH:mm')
+                  : date.formatDate(message.regDate, 'YY.MM.DD HH:mm')
               }}
             </q-item-label>
           </q-item-section>
@@ -317,7 +328,7 @@ onMounted(() => {
                     state: { offers: true }
                   }"
                 >
-                  {{ t("btn.gotoItem") }}
+                  {{ t('btn.gotoItem') }}
                 </q-btn>
               </q-item-label>
             </q-item>
@@ -364,13 +375,13 @@ onMounted(() => {
       <q-item v-show="!loading && messages.length === 0">
         <q-item-section>
           <q-item-label class="row justify-center q-pt-md q-pb-xl">{{
-            t("messages.noData")
+            t('messages.noData')
           }}</q-item-label>
         </q-item-section>
       </q-item>
     </q-list>
     <div class="row justify-between q-mt-md q-px-sm paging">
-      <div>{{ t("message.page", { page }) }}</div>
+      <div>{{ t('message.page', { page }) }}</div>
       <div class="row justify-end items-center q-gutter-x-md">
         <q-btn
           flat
@@ -418,7 +429,7 @@ onMounted(() => {
     >
       <template #top>
         <div class="q-pa-md text-h6">
-          {{ t("contact.answer") }}
+          {{ t('contact.answer') }}
         </div>
       </template>
       <template #middle>
