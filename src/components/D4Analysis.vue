@@ -126,7 +126,7 @@ const checkInfo = (textArray: string[]) => {
 
       if (findTierIndex !== -1) {
         item.tier = is.tiers[findTierIndex].value
-        tierPhase[i].replace(
+        tierPhase[i] = tierPhase[i].replace(
           is.quality[findTierIndex].fullName.toLowerCase(),
           ''
         )
@@ -161,7 +161,7 @@ const checkInfo = (textArray: string[]) => {
     if (findQualityIndex !== -1) {
       typeValueIndex = i
       item.quality = is.quality[findQualityIndex].value as string
-      qualityPhase[i].replace(
+      qualityPhase[i] = qualityPhase[i].replace(
         is.quality[findQualityIndex].fullName.toLowerCase(),
         ''
       )
@@ -187,7 +187,7 @@ const checkInfo = (textArray: string[]) => {
     return failedScan(t('analyze.typeNotFound'))
 
   // check class
-  const findClass = [...is.classes]
+  const findEquipClass = [...is.equipClasses]
     .sort((a, b) => b.label.length - a.label.length)
     .find(
       (c) =>
@@ -198,11 +198,11 @@ const checkInfo = (textArray: string[]) => {
           ) !== -1
     )
 
-  if (findClass) {
-    item.itemType = findClass.type
-    item.itemTypeValue1 = findClass.value as string
+  if (findEquipClass) {
+    item.itemType = findEquipClass.type
+    item.itemTypeValue1 = findEquipClass.value as string
 
-    if (findClass.value === 'gem') {
+    if (findEquipClass.value === 'gem') {
       const findGemQuality = is.gems.find(
         (g) =>
           typeValue.toLowerCase().indexOf(g.qualityName.toLowerCase()) !== -1
@@ -214,13 +214,48 @@ const checkInfo = (textArray: string[]) => {
 
   // check aspect
   if (item.itemTypeValue1 === '') {
-    const findAspect = is.aspectCategories.find(
-      (a) => a.label.toLocaleLowerCase() === typeValue.toLowerCase()
-    )
+    const aspectLabel = is.findType('aspect')?.label
+    const matchAspect = typeValue
+      .toLowerCase()
+      .match(new RegExp(`^${aspectLabel}`, 'i'))
 
-    if (findAspect) {
-      item.itemType = 'aspect'
-      item.itemTypeValue1 = findAspect.value as string
+    if (!!matchAspect) {
+      const name = textArray
+        .splice(0, indexQuality)
+        .join('')
+        .replace(new RegExp(`[^ ${phase} ]`, 'gi'), '')
+        .trim()
+
+      if (!!name) {
+        const filteredAspects = is.affixes.data
+          .filter(
+            (a) =>
+              !!a.aspectName &&
+              similarity(
+                a.aspectName.replace(/\s/g, ''),
+                name
+                  .replace(
+                    is.aspectCategories.find(
+                      (ac) => ac.value === a.aspectCategory
+                    )?.label ?? '',
+                    ''
+                  )
+                  .replace(/\s/g, '')
+              ) > similarRate
+          )
+          .map((a) => ({
+            ...a,
+            rate: similarity(a.aspectName as string, name)
+          }))
+
+        filteredAspects.sort((a, b) => b.rate - a.rate)
+
+        if (filteredAspects.length > 0) {
+          item.itemType = 'aspect'
+          item.itemTypeValue1 = filteredAspects[0].aspectCategory as string
+          item.itemTypeValue2 = `${filteredAspects[0].value}`
+        }
+      }
     }
   }
 
@@ -233,6 +268,7 @@ const checkInfo = (textArray: string[]) => {
     .join('')
     .replace(new RegExp(`[^ ${phase} ]`, 'gi'), '')
     .trim()
+
   if (name === '') return failedScan(t('analyze.nameNotFound'))
 
   item.name = name
@@ -346,13 +382,13 @@ const checkAttributes = (plainTArray: string[], id: number, label: string) => {
 const checkProperties = (tArray: string[]) => {
   currentCheck.value = 'properties'
 
-  const findClass = is.findClass(item.itemTypeValue1)
+  const findEquipClass = is.findEquipClass(item.itemTypeValue1)
 
-  if (findClass) {
+  if (findEquipClass) {
     try {
       const matchAttribute: Array<ISimilar> = []
 
-      const properties = findClass.properties.map((p) => ({
+      const properties = findEquipClass.properties.map((p) => ({
         id: p,
         attr: is
           .findProperty(p)

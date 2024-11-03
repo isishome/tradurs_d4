@@ -76,6 +76,12 @@ const rune = computed(
   () => (itemTypeValue2: string) => is.findRune(itemTypeValue2)
 )
 
+const affix = computed(() => (itemTypeValue2: string) => ({
+  affixId: Number(itemTypeValue2),
+  affixGreater: false,
+  affixValues: []
+}))
+
 // about copy item
 const copy = (itemId: string) => {
   emit('copy', itemId)
@@ -92,13 +98,18 @@ const activateShow = ref<boolean>(false)
 const activatedItem = ref<Item>(new Item(''))
 
 const setDefaultProperties = () => {
-  const findClass = is.findClass(activatedItem.value.itemTypeValue1)
+  const findEquipClass = is.findEquipClass(activatedItem.value.itemTypeValue1)
 
-  if (findClass) {
-    findClass.properties.forEach((p) => {
+  if (findEquipClass) {
+    findEquipClass.properties.forEach((p) => {
       selectedProperty(p)
     })
   }
+}
+
+const setAspectAffix = () => {
+  if (activatedItem.value.itemType === 'aspect')
+    selectedAffix(Number(activatedItem.value.itemTypeValue2))
 }
 
 const editItem = (item: Item) => {
@@ -156,6 +167,8 @@ const updateItem = ({
   const changeTypeValue1NotFirst =
     activatedItem.value.itemTypeValue1 &&
     activatedItem.value.itemTypeValue1 !== itemTypeValue1
+  const changeTypeValue2NotFirst =
+    activatedItem.value.itemTypeValue2 !== itemTypeValue2
   activatedItem.value.itemType = itemType
   activatedItem.value.name = name
   activatedItem.value.quantity = quantity
@@ -182,6 +195,7 @@ const updateItem = ({
       activatedItem.value.properties.length
     )
     activatedItem.value.affixes.splice(0, activatedItem.value.affixes.length)
+
     activatedItem.value.restrictions.splice(
       0,
       activatedItem.value.restrictions.length
@@ -202,6 +216,14 @@ const updateItem = ({
     actions.add(32)
     activatedItem.value.actions = Array.from(actions)
     setDefaultProperties()
+  }
+
+  if (changeTypeValue2NotFirst) {
+    activatedItem.value.affixes.splice(0, activatedItem.value.affixes.length)
+    const actions = new Set(activatedItem.value.actions)
+    actions.add(16)
+    activatedItem.value.actions = Array.from(actions)
+    setAspectAffix()
   }
 }
 
@@ -557,6 +579,7 @@ const updateAffix = ({
   const findAffix = activatedItem.value.affixes.find(
     (a) => a.valueId === valueId
   )
+
   if (findAffix) {
     findAffix.action = findAffix.action !== 2 ? 4 : 2
     findAffix.affixGreater = affixGreater
@@ -662,18 +685,18 @@ const hideOffers = () => {
   makeOffer.value = new Offer()
 }
 
-const openMakingOffer = (item: Item): void => {
+const openMakingOffer = (item: Item, isFirst = false): void => {
   disableOffers.value = true
   showOffers.value = true
-  offers.value.push(
-    ...Array.from({ length: 3 }, () => {
+
+  if (isFirst)
+    offers.value = Array.from({ length: 3 }, () => {
       const offer = new Offer()
       offer.loading = true
       offer.user.loading = true
       offer.price.loading = true
       return offer
     })
-  )
 
   offerItem.value = item
   makeOffer.value.itemId = item.itemId
@@ -1004,7 +1027,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                   "
                   :loading="rewardItem.loading"
                   :disable="rewardItem.forDisplay"
-                  @click="openMakingOffer(rewardItem as Item)"
+                  @click="openMakingOffer(rewardItem as Item, true)"
                 >
                   <div
                     v-show="rewardItem.offers > 0"
@@ -1055,8 +1078,11 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
           @copy="copy"
           @update-only="(val: string) => emit('update-only', val)"
         >
-          <template #top-right> </template>
-          <template v-if="requestProperties > 0" #properties>
+          <template #top-right></template>
+          <template
+            v-if="requestProperties > 0 && item.itemType !== 'aspect'"
+            #properties
+          >
             <D4Property
               v-for="property in item.properties"
               :key="property.valueId"
@@ -1100,7 +1126,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
             </template>
           </template>
           <template
-            v-if="
+            v-else-if="
               item.itemTypeValue1 === 'summoning' &&
               descriptions(item.itemTypeValue2).length > 0
             "
@@ -1169,7 +1195,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                   "
                   :loading="item.loading"
                   :disable="item.forDisplay"
-                  @click="openMakingOffer(item)"
+                  @click="openMakingOffer(item, true)"
                 >
                   <div
                     v-show="item.offers > 0"
@@ -1401,6 +1427,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
             :data="affix"
             editable
             :disable="disable"
+            :necessary="activatedItem.itemType === 'aspect'"
             @update="updateAffix"
             @remove="removeAffix"
           />

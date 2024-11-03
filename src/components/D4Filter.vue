@@ -33,6 +33,7 @@ const filterTypes = is.filterTypes
 const findType = is.findType
 const filterClasses = is.filterClasses
 const filterRunes = is.filterRunesByType
+const filterAspectByCategory = is.filterAspectByCategory
 const filterLoading = computed(() => props.disable || is.filter.loading)
 const itemStatus = computed(() => [
   {
@@ -89,6 +90,17 @@ const updateRestrictions = (val: Array<Attr>) => {
   restrictions.value.splice(0, restrictions.value.length, ...val)
 }
 
+// about typevalue2
+const typeValue2Ref = ref<{ [key: string]: QSelect }>({})
+const typeValue2Needle = ref<{ [key: string]: string }>({})
+
+const filterTypeValue = (e: KeyboardEvent, itemType: string) => {
+  const val = (e.target as HTMLInputElement).value.toLowerCase()
+  typeValue2Ref.value?.[itemType]?.showPopup()
+  typeValue2Ref.value?.[itemType]?.updateInputValue(val)
+  typeValue2Needle.value[itemType] = val
+}
+
 const mine = () => {
   if (!filter.mine) {
     filter.status = filter.status === 'all' ? '000' : filter.status
@@ -116,7 +128,9 @@ const update = (quality?: Array<string>) => {
     })
   }
 
+  filter.name = is.filter.name
   filter.request++
+
   Object.assign(is.filter, filter)
 }
 
@@ -542,22 +556,26 @@ defineExpose({
       </q-item>
       <q-item
         :disable="filterLoading"
-        v-for="itemType in filter.itemTypes.filter((it) => it !== 'aspect')"
+        v-for="itemType in filter.itemTypes"
         :key="itemType"
       >
         <q-item-section>
           <q-select
+            :ref="(selectEl:QSelect) => (typeValue2Ref[itemType] = selectEl)"
             :disable="filterLoading"
             v-model="filter.itemTypeValues1[itemType]"
             :options="
               findType(itemType)?.value === 'rune'
-                ? filterRunes()
-                : filterClasses(itemType)
+                ? filterRunes(undefined, typeValue2Needle[itemType])
+                : findType(itemType)?.value === 'aspect'
+                ? filterAspectByCategory(undefined, typeValue2Needle[itemType])
+                : filterClasses(itemType, typeValue2Needle[itemType])
             "
             :label="`${findType(itemType)?.label} ${t('filter.type')}`"
             outlined
             dense
             no-error-icon
+            use-input
             hide-bottom-space
             emit-value
             map-options
@@ -568,6 +586,8 @@ defineExpose({
             dropdown-icon="img:/images/icons/dropdown.svg"
             popup-content-class="scroll bordered"
             @update:model-value="updateDebounce()"
+            @input.stop="(e) => filterTypeValue(e, itemType)"
+            @blur="() => delete typeValue2Needle[itemType]"
           >
           </q-select>
         </q-item-section>

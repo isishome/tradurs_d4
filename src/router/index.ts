@@ -2,11 +2,12 @@ import { route } from 'quasar/wrappers'
 import { createMemoryHistory, createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
 import routes from './routes'
 import { api } from 'boot/axios'
-import { Cookies } from 'quasar'
 import { useGlobalStore } from 'src/stores/global-store'
 import { useAccountStore } from 'src/stores/account-store'
 import { useItemStore } from 'stores/item-store'
 import { initMessenger } from 'src/sockets/messenger'
+
+const prod = import.meta.env.PROD
 
 /*
  * If not building with SSR mode, you can
@@ -46,6 +47,7 @@ export default route(function ({ store, ssrContext }/* { store, ssrContext } */)
     const as = useAccountStore(store)
     const is = useItemStore(store)
     const onlyAdmin = !!to.matched.some(m => m.meta.onlyAdmin)
+    const onlyDev = !!to.matched.some(m => m.meta.onlyDev)
     const requireAuth = !!to.matched.some(m => m.meta.requireAuth)
 
     if (!process.env.SERVER && !['pnf', 'ftc'].includes(to.name as string)) {
@@ -71,7 +73,7 @@ export default route(function ({ store, ssrContext }/* { store, ssrContext } */)
     }
 
 
-    if (((to.params.lang?.length === 2 && !gs.localeOptions.map(lo => lo.value).includes(to.params.lang as string)) || (onlyAdmin && !as.info.isAdmin)) && to.name !== 'pnf')
+    if (((to.params.lang?.length === 2 && !gs.localeOptions.map(lo => lo.value).includes(to.params.lang as string)) || (onlyAdmin && !as.info.isAdmin) || (onlyDev && prod)) && to.name !== 'pnf')
       return next({ name: 'pnf' })
 
     if (requireAuth && !as.info.id)
