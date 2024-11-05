@@ -79,21 +79,21 @@ const routes: RouteRecordRaw[] = [
           }
         ]
       },
-      {
-        name: 'dev',
-        path: 'dev',
-        meta: {
-          onlyDev: true
-        },
-        redirect: { name: 'devAffix' },
-        children: [
-          {
-            name: 'devAffix',
-            path: 'affix',
-            component: () => import('pages/dev/AffixPage.vue')
-          }
-        ]
-      },
+      // {
+      //   name: 'dev',
+      //   path: 'dev',
+      //   meta: {
+      //     onlyDev: true
+      //   },
+      //   redirect: { name: 'devAffix' },
+      //   children: [
+      //     {
+      //       name: 'devAffix',
+      //       path: 'affix',
+      //       component: () => import('pages/dev/AffixPage.vue')
+      //     }
+      //   ]
+      // },
       // {
       //   name: 'test',
       //   path: 'test',

@@ -9,6 +9,7 @@ node_modules
 
 # affix file
 /affix
+/src/pages/dev
 
 # Cordova related directories and files
 /src-cordova/node_modules
