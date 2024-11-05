@@ -208,7 +208,7 @@ const _price = reactive<Price>(
 )
 
 const tierable = computed(
-  () => !['rune', 'aspect', 'inventory', 'consumables'].includes(_type.value)
+  () => !['rune', 'inventory', 'consumables'].includes(_type.value)
 )
 const qualifiable = computed(
   () => !['rune', 'aspect', 'inventory', 'consumables'].includes(_type.value)

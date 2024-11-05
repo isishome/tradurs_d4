@@ -179,7 +179,7 @@ onMounted(() => {
   document.documentElement.setAttribute('lang', locale.value as string)
   view.value = true
   showBT.value = !!as.signed && !(as.info.battleTag && as.info.battleTag !== '')
-  notice.open = !$q.cookies.has('d4.update.20241103')
+  notice.open = false //!$q.cookies.has('d4.update.20241103')
   checkAd()
 })
 </script>

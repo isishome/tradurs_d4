@@ -297,6 +297,7 @@ watch(newItems, (val: number) => {
       '',
       t('btn.refresh'),
       () => {
+        is.socket.newItems = 0
         router.push({ name: 'tradeList', params: { lang: route.params.lang } })
       }
     )

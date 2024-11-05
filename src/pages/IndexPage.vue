@@ -674,6 +674,7 @@ watch(newItems, (val: number) => {
         itemsRef.value?.hideEditable()
         itemsRef.value?.hideOffers()
         props.filter?.clearFilter()
+        is.socket.newItems = 0
         reload()
       }
     )
