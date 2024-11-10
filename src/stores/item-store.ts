@@ -90,7 +90,7 @@ export interface Affix extends ILabel {
   color?: string,
   cls?: string,
   aspectCategory?: string,
-  equipmentClasses?: Array<string>,
+  equipmentClasses?: string,
   sort?: number,
   disable: boolean
 }

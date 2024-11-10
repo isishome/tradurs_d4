@@ -589,6 +589,13 @@ defineExpose({
             @input.stop="(e) => filterTypeValue(e, itemType)"
             @blur="() => delete typeValue2Needle[itemType]"
           >
+            <template #no-option>
+              <q-item>
+                <q-item-section class="text-grey">
+                  {{ t('noMessage', { attr: findType(itemType)?.label }) }}
+                </q-item-section>
+              </q-item>
+            </template>
           </q-select>
         </q-item-section>
       </q-item>

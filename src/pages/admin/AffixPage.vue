@@ -18,7 +18,12 @@ type AffixInfo = {
   action: 'insert' | 'update'
   affixId: number | null
   affixType: string
-  affixAttribute: string
+  affixColor?: string
+  affixClass?: string
+  aspectCategory?: string
+  equipmentClasses?: Array<string>
+  aspectName?: { [key: string]: string }
+  affixAttribute: { [key: string]: string }
   languageId: string
 }
 
@@ -40,11 +45,7 @@ const availableAffixId = computed(
   () =>
     Math.max(
       ...is.affixes.data
-        .filter((a) =>
-          affixInfo.affixType === 'legendaryAspect'
-            ? a.type === 'legendary' && (a.value as number) < 801
-            : a.type === affixInfo.affixType
-        )
+        .filter((a) => a.type === affixInfo.affixType)
         .map((a) => a.value as number)
     ) + 1
 )
@@ -64,8 +65,8 @@ const filterAffixes = debounce((e: KeyboardEvent) => {
 const attributeTypes = [
   { value: 'standard', label: '표준' },
   { value: 'legendary', label: '전설' },
-  { value: 'legendaryAspect', label: '전설 위상' },
-  { value: 'unique', label: '고유' }
+  { value: 'unique', label: '고유' },
+  { value: 'mythic', label: '신화 고유' }
 ]
 
 const affixInfo = reactive<AffixInfo>({
@@ -73,7 +74,12 @@ const affixInfo = reactive<AffixInfo>({
   show: false,
   affixId: null,
   affixType: 'standard',
-  affixAttribute: '',
+  affixColor: '',
+  affixClass: 'all',
+  aspectCategory: 'defensive',
+  equipmentClasses: [],
+  aspectName: { ko: '', en: '' },
+  affixAttribute: { ko: '', en: '' },
   languageId: ((route.params.lang as string) || 'ko').toLowerCase()
 })
 
@@ -110,11 +116,19 @@ const deleteRequestAffix = (requestIds: Array<number>) => {
 
 const upsert = () => {
   let errorMessage = ''
-  if (!affixInfo.affixAttribute || affixInfo.affixAttribute.trim() === '')
+  if (
+    !affixInfo.affixAttribute ||
+    affixInfo.affixAttribute[affixInfo.languageId].trim() === ''
+  )
     errorMessage = t('attribute.enter', { attr: '속성' })
-  else if (!checkAttribute(affixInfo.affixAttribute))
+  else if (!checkAttribute(affixInfo.affixAttribute[affixInfo.languageId]))
     errorMessage = t('attribute.invalid', { attr: '속성' })
-  else if (is.matchAffixes(affixInfo.affixType, affixInfo.affixAttribute))
+  else if (
+    is.matchAffixes(
+      affixInfo.affixType,
+      affixInfo.affixAttribute[affixInfo.languageId]
+    )
+  )
     errorMessage = t('attribute.exists', { attr: '속성' })
 
   if (errorMessage !== '') {
@@ -130,7 +144,12 @@ const upsert = () => {
     affixInfo.affixId,
     affixInfo.affixType,
     affixInfo.affixAttribute,
-    affixInfo.languageId
+    affixInfo.languageId,
+    affixInfo.affixColor,
+    affixInfo.affixClass,
+    affixInfo.aspectCategory,
+    affixInfo.equipmentClasses?.join('|'),
+    affixInfo.aspectName
   )
     .then(() => {
       $q.notify({
@@ -138,11 +157,12 @@ const upsert = () => {
         color: 'positive',
         classes: ''
       })
+
+      affixInfo.show = false
     })
     .catch(() => {})
     .then(async () => {
       disable.value = false
-      affixInfo.show = false
     })
 }
 
@@ -176,7 +196,15 @@ const openUpdate = (affix: Affix) => {
   affixInfo.action = 'update'
   affixInfo.affixId = affix.value as number
   affixInfo.affixType = affix.type
-  affixInfo.affixAttribute = affix.label
+  affixInfo.affixColor = affix.color
+  affixInfo.affixClass = affix.cls
+  affixInfo.aspectCategory = affix.aspectCategory
+  affixInfo.equipmentClasses = affix.equipmentClasses?.split('|') ?? []
+  affixInfo.affixAttribute[affixInfo.languageId] = affix.label
+  if (affix.aspectName) {
+    affixInfo.aspectName = {}
+    affixInfo.aspectName[affixInfo.languageId] = affix.aspectName
+  }
   affixInfo.show = true
 }
 
@@ -184,13 +212,21 @@ const clearAffixInfo = () => {
   affixInfo.action = 'insert'
   affixInfo.affixId = null
   affixInfo.affixType = 'standard'
-  affixInfo.affixAttribute = ''
+  affixInfo.affixColor = ''
+  affixInfo.affixClass = 'all'
+  affixInfo.aspectCategory = 'defensive'
+  affixInfo.equipmentClasses = []
+  affixInfo.affixAttribute = { ko: '', en: '' }
+  affixInfo.aspectName = { ko: '', en: '' }
   affixError.error = false
   affixError.errorMessage = ''
 }
 
 const beforeShow = () => {
-  if (affixInfo.action === 'insert') affixInfo.affixId = availableAffixId.value
+  if (affixInfo.action === 'insert') {
+    clearAffixInfo()
+    affixInfo.affixId = availableAffixId.value
+  }
 }
 
 const refreshAffixes = async () => {
@@ -285,7 +321,7 @@ onMounted(() => {
           :disable="disable"
           unelevated
           color="positive"
-          label="데이터 적용"
+          label="속성 데이터 적용"
           @click="refreshAffixes"
         />
       </div>
@@ -452,6 +488,7 @@ onMounted(() => {
           label="추가"
           @click="
             () => {
+              affixInfo.action = 'insert'
               affixInfo.show = true
             }
           "
@@ -509,13 +546,140 @@ onMounted(() => {
         </q-card-section>
         <q-separator />
         <q-card-section class="row items-center q-gutter-sm">
+          <div class="col-3">속성 생상</div>
+          <div class="col">
+            <q-input
+              :disable="disable"
+              dense
+              outlined
+              v-model="affixInfo.affixColor"
+            />
+          </div>
+        </q-card-section>
+        <template v-if="affixInfo.affixType === 'legendary'">
+          <q-separator />
+          <q-card-section class="row items-center q-gutter-sm">
+            <div class="col-3">위상 정보</div>
+            <div class="col row justify-between q-gutter-x-sm">
+              <div class="col q-ml-none">
+                <q-select
+                  v-model="affixInfo.affixClass"
+                  :disable="disable"
+                  outlined
+                  dense
+                  no-error-icon
+                  hide-bottom-space
+                  emit-value
+                  map-options
+                  transition-show="none"
+                  transition-hide="none"
+                  :transition-duration="0"
+                  label="클래스 선택"
+                  dropdown-icon="img:/images/icons/dropdown.svg"
+                  :options="[{ value: 'all', label: '모두' }, ...is.classes]"
+                  popup-content-class="scroll bordered limit-select"
+                  @update:model-value=""
+                />
+              </div>
+              <div class="col">
+                <q-select
+                  v-model="affixInfo.aspectCategory"
+                  :disable="disable"
+                  outlined
+                  dense
+                  no-error-icon
+                  hide-bottom-space
+                  emit-value
+                  map-options
+                  transition-show="none"
+                  transition-hide="none"
+                  :transition-duration="0"
+                  label="위상 유형"
+                  dropdown-icon="img:/images/icons/dropdown.svg"
+                  :options="is.aspectCategories"
+                  popup-content-class="scroll bordered limit-select"
+                  @update:model-value=""
+                />
+              </div>
+              <div class="col">
+                <q-select
+                  v-model="affixInfo.equipmentClasses"
+                  :disable="disable"
+                  outlined
+                  dense
+                  no-error-icon
+                  hide-bottom-space
+                  emit-value
+                  map-options
+                  multiple
+                  transition-show="none"
+                  transition-hide="none"
+                  :transition-duration="0"
+                  label="아이템 유형"
+                  dropdown-icon="img:/images/icons/dropdown.svg"
+                  :options="is.equipClasses"
+                  popup-content-class="scroll bordered limit-select"
+                  @update:model-value=""
+                />
+              </div>
+            </div>
+          </q-card-section>
+          <q-card-section class="row items-center q-gutter-sm">
+            <div class="col-3"></div>
+            <div class="col">
+              <q-input
+                v-if="
+                  affixInfo.action === 'insert' || affixInfo.languageId === 'ko'
+                "
+                :disable="disable"
+                dense
+                outlined
+                label="위상 이름 (ko)"
+                v-model="affixInfo.aspectName!.ko"
+              />
+              <q-input
+                v-if="
+                  affixInfo.action === 'insert' || affixInfo.languageId === 'en'
+                "
+                :disable="disable"
+                dense
+                outlined
+                label="위상 이름 (en)"
+                v-model="affixInfo.aspectName!.en"
+              />
+            </div>
+          </q-card-section>
+        </template>
+        <q-separator />
+        <q-card-section class="row items-center q-gutter-sm">
           <div class="col-3">속성 내용</div>
           <div class="col">
             <q-input
+              v-if="
+                affixInfo.action === 'insert' || affixInfo.languageId === 'ko'
+              "
               ref="refAttribute"
-              v-model="affixInfo.affixAttribute"
+              v-model="affixInfo.affixAttribute.ko"
               type="textarea"
               :placeholder="t('attribute.placeholder')"
+              :disable="disable"
+              :error="affixError.error"
+              :error-message="affixError.errorMessage"
+              outlined
+              dense
+              no-error-icon
+              hide-hint
+              :autofocus="affixInfo.action === 'update'"
+              @keydown.exact.enter.prevent="upsert"
+            />
+            <q-input
+              v-if="
+                affixInfo.action === 'insert' || affixInfo.languageId === 'en'
+              "
+              ref="refAttribute"
+              v-model="affixInfo.affixAttribute.en"
+              type="textarea"
+              :placeholder="t('attribute.placeholder', 1, { locale: 'en' })"
               :disable="disable"
               :error="affixError.error"
               :error-message="affixError.errorMessage"

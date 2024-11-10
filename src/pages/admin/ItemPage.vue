@@ -283,14 +283,14 @@ onMounted(async () => {
                     <q-item
                       clickable
                       :to="{
-                        name: 'adminUser',
+                        name: 'itemInfo',
                         params: {
-                          identity: item.userIdentity,
+                          itemid: item.itemId,
                           lang: route.params.lang
                         }
                       }"
                     >
-                      <q-item-section>사용자 정보</q-item-section>
+                      <q-item-section>아이템 바로가기</q-item-section>
                     </q-item>
                     <q-item v-if="qualifiable(item)" clickable>
                       <q-item-section>아이템 명 수정</q-item-section>

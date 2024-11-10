@@ -105,7 +105,7 @@ export default {
     sh5: ' 배틀태그가 노출되지 않습니다'
   },
   searchOrSelect: '검색 / 선택',
-  noMessage: '입력 한 텍스트와 매칭되는 {attr}을 찾을 수 없습니다',
+  noMessage: '입력 한 텍스트와 매칭되는 {attr}을(를) 찾을 수 없습니다',
   power: '능력',
   properties: '고유 속성',
   affixes: '속성',
