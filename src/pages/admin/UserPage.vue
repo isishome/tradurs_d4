@@ -34,7 +34,9 @@ const searchInfo = ref<string | undefined>(
     : undefined
 )
 const filter = reactive<Filter>({
-  status: 'all',
+  status: !!route.query.status
+    ? decodeURIComponent(route.query.status as string)
+    : 'all',
   verified: 'all',
   statusOptions: [
     { value: 'all', label: '전체' },
@@ -56,10 +58,23 @@ const colors = computed(
   () => (state: string) =>
     filter.statusOptions.find((so) => so.value === state)?.color ?? ''
 )
-const users = reactive<Array<IUser>>([])
+const users: Array<IUser> = reactive([])
 const selected = computed(() =>
   users.filter((u) => u.selected).map((u) => u.identity)
 )
+const remain = computed(() => (liftDate: string) => {
+  const remainMinutes = date.getDateDiff(liftDate, Date.now(), 'minutes')
+  return `${
+    Math.floor(remainMinutes / 60) > 0
+      ? `${Math.floor(remainMinutes / 60)}시간 `
+      : ''
+  }${
+    Math.floor(remainMinutes % 60) > 0
+      ? `${Math.floor(remainMinutes % 60)}분`
+      : ''
+  }`
+})
+
 const getUsers = async (p?: number) => {
   if (!!p && p !== page.value)
     return router.push({
@@ -111,6 +126,7 @@ const sendVerifyEmail = (identity: string, lang: string) => {
 type Deactivate = {
   show: boolean
   identity: string | null
+  liftDate: string | null
   hour?: number
   description?: string
 }
@@ -118,12 +134,14 @@ type Deactivate = {
 const deactivateInfo = reactive<Deactivate>({
   show: false,
   identity: null,
-  hour: 24,
-  description: '관리자'
+  liftDate: null,
+  hour: undefined,
+  description: '현거래 유도'
 })
 
-const showDeactivate = (identity: string) => {
+const showDeactivate = (identity: string, liftDate: string | null) => {
   deactivateInfo.identity = identity
+  deactivateInfo.liftDate = liftDate
   deactivateInfo.show = true
 }
 
@@ -151,8 +169,9 @@ const deactivate = () => {
 
 const clearDeactivateInfo = () => {
   deactivateInfo.identity = null
-  deactivateInfo.hour = 24
-  deactivateInfo.description = '관리자'
+  deactivateInfo.liftDate = null
+  deactivateInfo.hour = undefined
+  deactivateInfo.description = '현거래 유도'
 }
 
 const activate = (identity: string) => {
@@ -230,7 +249,15 @@ onMounted(async () => {
           label="계정 상태"
           dropdown-icon="img:/images/icons/dropdown.svg"
           :disable="!!identity"
-          @update:model-value="getUsers(1)"
+          @update:model-value="
+            () => {
+              router.push({
+                name: 'adminUser',
+                params: { identity, lang: route.params.lang },
+                query: { page: 1, keyword: !!searchInfo ? encodeURIComponent(searchInfo as string) : undefined , status: !!filter.status ? encodeURIComponent(filter.status as string) : undefined }
+              })
+            }
+          "
         />
         <q-select
           v-model="filter.verified"
@@ -377,10 +404,10 @@ onMounted(async () => {
                   </q-menu>
                 </q-item>
                 <q-item
-                  v-if="user.status === '001'"
+                  v-if="['001', '002'].includes(user.status)"
                   clickable
                   v-close-popup
-                  @click="showDeactivate(user.identity)"
+                  @click="showDeactivate(user.identity, user.liftDate)"
                 >
                   <q-item-section>
                     <q-item-label>계정 비활성화</q-item-label>
@@ -442,6 +469,10 @@ onMounted(async () => {
                   >{{ user.verified ? '인증' : '비 인증' }}</span
                 >
               </div>
+              <div>
+                제재 횟수 :
+                <span class="text-negative">{{ user.inactive }}</span>
+              </div>
             </div>
           </td>
         </tr>
@@ -501,10 +532,27 @@ onMounted(async () => {
         <q-card-section class="text-h6">계정 비활성화</q-card-section>
       </template>
       <template #middle>
+        <template v-if="!!deactivateInfo.liftDate">
+          <q-card-section class="row items-center q-gutter-sm">
+            <div class="col-3">비활성 종료시간</div>
+            <div class="col">
+              {{
+                date.formatDate(deactivateInfo.liftDate, 'YYYY-MM-DD HH:mm:ss')
+              }}
+              ({{ remain(deactivateInfo.liftDate) }})
+            </div>
+          </q-card-section>
+          <q-separator />
+        </template>
         <q-card-section class="row items-center q-gutter-sm">
           <div class="col-3">비활성 시간 (hour)</div>
           <div class="col">
-            <q-input dense outlined v-model="deactivateInfo.hour"></q-input>
+            <q-input
+              dense
+              outlined
+              placeholder="30일 = 720시간"
+              v-model="deactivateInfo.hour"
+            ></q-input>
           </div>
         </q-card-section>
         <q-separator />

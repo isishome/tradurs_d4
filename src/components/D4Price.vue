@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, reactive, nextTick, watch } from 'vue'
-import { useQuasar } from 'quasar'
+import { useQuasar, QSelect } from 'quasar'
 import { useI18n } from 'vue-i18n'
 
 import { useItemStore } from 'stores/item-store'
@@ -78,7 +78,7 @@ const update = (): void => {
         _price.currencyValue =
           Math.floor(Number(_price.currencyValue as number) / 100000) * 100000
       else _priceError.value = true
-    }
+    } else runeRef.value?.blur()
 
     emit('update', _price)
   })
@@ -94,6 +94,17 @@ const updateCurrency = (val: string | null): void => {
       : null
   _price.quantity = 1
   update()
+}
+
+// about filter rune
+const runeRef = ref<QSelect>()
+const needle = ref<string>()
+
+const filterRunes = (e: KeyboardEvent) => {
+  const val = (e.target as HTMLInputElement).value.toLowerCase()
+  runeRef.value?.showPopup()
+  runeRef.value?.updateInputValue(val)
+  needle.value = val
 }
 
 watch(
@@ -153,13 +164,15 @@ watch(
           </template>
         </q-select>
       </div>
-      <div v-show="_price.currency === 'rune'">
+      <div v-show="_price.currency === 'rune'" style="max-width: 120px">
         <q-select
+          ref="runeRef"
           v-model="_price.currencyValue"
           :disable="disable || fixed"
           outlined
           dense
           no-error-icon
+          use-input
           hide-bottom-space
           emit-value
           map-options
@@ -167,9 +180,11 @@ watch(
           transition-show="none"
           transition-hide="none"
           :transition-duration="0"
-          :options="runes()"
+          :options="runes(undefined, needle)"
           dropdown-icon="img:/images/icons/dropdown.svg"
           @update:model-value="update"
+          @input.stop="filterRunes"
+          @blur="() => (needle = undefined)"
         >
           <template #selected-item="scope">
             <div class="ellipsis">
@@ -191,6 +206,13 @@ watch(
                   >{{ scope.opt.label }}
                   {{ findType('rune')?.label }}</q-item-label
                 >
+              </q-item-section>
+            </q-item>
+          </template>
+          <template #no-option>
+            <q-item>
+              <q-item-section class="text-grey">
+                {{ t('noMessage', { attr: findType('rune')?.label }) }}
               </q-item-section>
             </q-item>
           </template>

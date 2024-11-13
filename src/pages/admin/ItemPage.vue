@@ -44,7 +44,7 @@ const selectedItems = computed(() =>
 )
 const qualifiable = computed(
   () => (item: Item) =>
-    !['rune', 'inventory', 'consumables'].includes(item.itemType)
+    !['rune', 'aspect', 'inventory', 'consumables'].includes(item.itemType)
 )
 const itemName = computed(
   () => (item: Item) =>
@@ -52,6 +52,8 @@ const itemName = computed(
       ? `${is.findRune(item.itemTypeValue2)?.label} ${
           is.findType('rune')?.label
         }`
+      : item.itemType === 'aspect'
+      ? is.findAspect(Number(item.itemTypeValue2))?.aspectName
       : qualifiable.value(item)
       ? item.itemName
       : item.itemTypeValue1 === 'gem'
@@ -274,9 +276,7 @@ onMounted(async () => {
               />
             </td>
             <td style="white-space: normal">
-              <div
-                :class="{ 'text-underline cursor-pointer': qualifiable(item) }"
-              >
+              <span class="text-underline cursor-pointer" @click.stop>
                 {{ itemName(item) }}
                 <q-menu class="no-shadow">
                   <q-list bordered class="rounded-borders">
@@ -320,7 +320,7 @@ onMounted(async () => {
                     </q-item>
                   </q-list>
                 </q-menu>
-              </div>
+              </span>
             </td>
             <td v-if="item.statusCode === '009'">삭제된 아이템</td>
             <td v-else :class="statusColor(item.statusCode)">

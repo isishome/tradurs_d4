@@ -20,14 +20,17 @@ const insRef = ref<HTMLElement>()
 
 // function
 const render = () => {
-  ;(window.adsbygoogle || []).push({})
+  requestAnimationFrame(() => {
+    ;(window.adsbygoogle || []).push({})
+  })
 }
 
-// etc
+// hook
 onMounted(() => {
-  if (document.readyState !== 'complete')
-    window.addEventListener('load', render)
-  else render()
+  // if (document.readyState !== 'complete')
+  //   window.addEventListener('load', render)
+  // else render()
+  render()
 })
 </script>
 

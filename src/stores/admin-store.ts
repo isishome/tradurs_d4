@@ -10,6 +10,8 @@ export type IUser = {
   verified: boolean
   email: string
   battleTag: string
+  inactive: number
+  liftDate: string
 }
 
 export type Option = {
