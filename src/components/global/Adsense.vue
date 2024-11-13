@@ -27,10 +27,9 @@ const render = () => {
 
 // hook
 onMounted(() => {
-  // if (document.readyState !== 'complete')
-  //   window.addEventListener('load', render)
-  // else render()
-  render()
+  if (document.readyState !== 'complete')
+    window.addEventListener('load', render)
+  else render()
 })
 </script>
 
