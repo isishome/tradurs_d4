@@ -486,6 +486,7 @@ export const useItemStore = defineStore('item', {
         let error: unknown = null
         const data = LocalStorage.getItem<string>('base') ?? ''
         if (!!data) {
+          this.base.request++
           Object.assign(this, JSON.parse(data))
           resolve()
         }
@@ -518,6 +519,7 @@ export const useItemStore = defineStore('item', {
         let error: unknown = null
         const data = LocalStorage.getItem<string>('properties') ?? ''
         if (!!data) {
+          this.properties.request++
           this.properties.data = JSON.parse(data)
           resolve()
         }
@@ -550,6 +552,7 @@ export const useItemStore = defineStore('item', {
         let error: unknown = null
         const data = LocalStorage.getItem<string>('affixes') ?? ''
         if (!!data) {
+          this.affixes.request++
           this.affixes.data = JSON.parse(data)
           resolve()
         }
@@ -582,6 +585,7 @@ export const useItemStore = defineStore('item', {
         let error: unknown = null
         const data = LocalStorage.getItem<string>('restrictions') ?? ''
         if (!!data) {
+          this.restrictions.request++
           this.restrictions.data = JSON.parse(data)
           resolve()
         }

@@ -1,12 +1,14 @@
 import { route } from 'quasar/wrappers'
 import { createMemoryHistory, createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
 import { LocalStorage } from 'quasar'
+import { i18n } from "src/boot/i18n"
 import routes from './routes'
 import { api } from 'boot/axios'
 import { useGlobalStore } from 'src/stores/global-store'
 import { useAccountStore } from 'src/stores/account-store'
 import { useItemStore } from 'stores/item-store'
 import { initMessenger } from 'src/sockets/messenger'
+import { clearLocalStorage } from 'src/common'
 
 const prod = import.meta.env.PROD
 
@@ -42,7 +44,8 @@ export default route(function ({ store, ssrContext }/* { store, ssrContext } */)
   })
 
   Router.beforeEach(async (to, from, next) => {
-    api.defaults.headers.common['Accept-Language'] = to.params.lang || 'ko'
+    const lang = to.params.lang || 'ko'
+    api.defaults.headers.common['Accept-Language'] = lang
 
     const gs = useGlobalStore(store)
     const as = useAccountStore(store)
@@ -54,14 +57,12 @@ export default route(function ({ store, ssrContext }/* { store, ssrContext } */)
     if (!process.env.SERVER && !['pnf', 'ftc'].includes(to.name as string)) {
       try {
         const appVersion = LocalStorage.getItem<string>('APP_VERSION')
+        const locale = LocalStorage.getItem<string>('lang')
 
-        if (appVersion !== import.meta.env.VITE_APP_VERSION) {
+        if (appVersion !== import.meta.env.VITE_APP_VERSION || locale !== lang) {
+          clearLocalStorage()
           LocalStorage.setItem('APP_VERSION', import.meta.env.VITE_APP_VERSION)
-          LocalStorage.removeItem('base')
-          LocalStorage.removeItem('properties')
-          LocalStorage.removeItem('affixes')
-          LocalStorage.removeItem('restrictions')
-          LocalStorage.removeItem('evaluations')
+          LocalStorage.setItem('lang', lang)
         }
 
         const promises = [

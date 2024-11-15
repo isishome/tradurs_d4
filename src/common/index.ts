@@ -1,5 +1,5 @@
 import { nextTick } from "vue"
-import { copyToClipboard, Notify, Platform } from 'quasar'
+import { copyToClipboard, Notify, Platform, LocalStorage } from 'quasar'
 import { i18n } from "src/boot/i18n"
 import { AffixValue } from "src/types/item"
 import { MinMax } from "src/stores/item-store"
@@ -124,4 +124,12 @@ export const focus = (evt: Event) => {
 
   const el: HTMLInputElement | null = (evt.target as Element)?.closest('input')
   el?.select()
+}
+
+export const clearLocalStorage = () => {
+  LocalStorage.removeItem('base')
+  LocalStorage.removeItem('properties')
+  LocalStorage.removeItem('affixes')
+  LocalStorage.removeItem('restrictions')
+  LocalStorage.removeItem('evaluations')
 }

@@ -127,6 +127,7 @@ export const useAccountStore = defineStore('account', {
         let error: unknown = null
         const data = LocalStorage.getItem<string>('evaluations') ?? ''
         if (!!data) {
+          this.evaluations.request++
           this.evaluations.data = JSON.parse(data)
           resolve()
         }
