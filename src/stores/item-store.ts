@@ -485,7 +485,7 @@ export const useItemStore = defineStore('item', {
       return new Promise<void>((resolve, reject) => {
         let error: unknown = null
         const data = LocalStorage.getItem<string>('base') ?? ''
-        if (!!data) {
+        if (!!data && this.base.request === 0) {
           this.base.request++
           Object.assign(this, JSON.parse(data))
           resolve()
@@ -518,7 +518,7 @@ export const useItemStore = defineStore('item', {
       return new Promise<void>((resolve, reject) => {
         let error: unknown = null
         const data = LocalStorage.getItem<string>('properties') ?? ''
-        if (!!data) {
+        if (!!data && this.properties.request === 0) {
           this.properties.request++
           this.properties.data = JSON.parse(data)
           resolve()
@@ -551,7 +551,7 @@ export const useItemStore = defineStore('item', {
       return new Promise<void>((resolve, reject) => {
         let error: unknown = null
         const data = LocalStorage.getItem<string>('affixes') ?? ''
-        if (!!data) {
+        if (!!data && this.affixes.request === 0) {
           this.affixes.request++
           this.affixes.data = JSON.parse(data)
           resolve()
@@ -584,7 +584,7 @@ export const useItemStore = defineStore('item', {
       return new Promise<void>((resolve, reject) => {
         let error: unknown = null
         const data = LocalStorage.getItem<string>('restrictions') ?? ''
-        if (!!data) {
+        if (!!data && this.restrictions.request === 0) {
           this.restrictions.request++
           this.restrictions.data = JSON.parse(data)
           resolve()
