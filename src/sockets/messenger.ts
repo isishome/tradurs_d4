@@ -126,4 +126,30 @@ export const initMessenger = async (as: AccountStore, is: ItemStore) => {
     if (as.info.notifyPrivate)
       is.socket.complete = offerInfo
   })
+
+  as.messenger.on('refreshAffixes', () => {
+    is.affixes.request = 0
+  })
+
+  as.messenger.on('notice', ({ message, caption }: { message: { ko: string, en: string }, caption: string }) => {
+    Notify.create({
+      icon: 'img:/images/icons/warning.svg',
+      classes: 'no-invert',
+      color: 'warning',
+      textColor: 'dark',
+      multiLine: true,
+      html: true,
+      message: message[(i18n.global.locale.value ?? 'ko') as keyof typeof message],
+      caption,
+      timeout: 0,
+      actions: [
+        {
+          dense: true,
+          class: 'no-hover text-underline',
+          label: i18n.global.t('btn.confirm'),
+          color: 'dark'
+        }
+      ]
+    })
+  })
 }

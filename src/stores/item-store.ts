@@ -480,13 +480,13 @@ export const useItemStore = defineStore('item', {
           })
       })
     },
-    getBase(options?: AxiosRequestConfig) {
+    getBase() {
       return new Promise<void>((resolve, reject) => {
         let error: unknown = null
         if (this.base.request === 0) {
           this.base.request++
           this.base.loading = true
-          api.get('/d4/item/base', options)
+          api.get('/d4/item/base')
             .then((response) => {
               this.classes = response.data.classes
               this.itemStatus = response.data.itemStatus
@@ -521,13 +521,13 @@ export const useItemStore = defineStore('item', {
           resolve()
       })
     },
-    getProperties(options?: AxiosRequestConfig) {
+    getProperties() {
       return new Promise<void>((resolve, reject) => {
         let error: unknown = null
         if (this.properties.request === 0) {
           this.properties.request++
           this.properties.loading = true
-          api.get('/d4/item/properties', options)
+          api.get('/d4/item/properties')
             .then((response) => {
               this.properties.data = response.data
             })
@@ -547,13 +547,13 @@ export const useItemStore = defineStore('item', {
           resolve()
       })
     },
-    getAffixes(options?: AxiosRequestConfig) {
+    getAffixes() {
       return new Promise<void>((resolve, reject) => {
         let error: unknown = null
         if (this.affixes.request === 0) {
           this.affixes.request++
           this.affixes.loading = true
-          api.get('/d4/item/affixes', options)
+          api.get('/d4/item/affixes')
             .then((response) => {
               this.affixes.data = response.data
             })
@@ -573,13 +573,13 @@ export const useItemStore = defineStore('item', {
           resolve()
       })
     },
-    getRestrictions(options?: AxiosRequestConfig) {
+    getRestrictions() {
       return new Promise<void>((resolve, reject) => {
         let error: unknown = null
         if (this.restrictions.request === 0) {
           this.restrictions.request++
           this.restrictions.loading = true
-          api.get('/d4/item/restrictions', options)
+          api.get('/d4/item/restrictions')
             .then((response) => {
               this.restrictions.data = response.data
             })

@@ -12,6 +12,7 @@ import { checkName, scrollPosDirect } from 'src/common'
 import D4Filter from 'components/D4Filter.vue'
 import D4User from 'components/D4User.vue'
 import Adsense from 'components/global/Adsense.vue'
+import { identity } from 'cypress/types/lodash'
 
 const props = defineProps<{
   lang: string
@@ -463,7 +464,6 @@ watch(
               v-ripple
               clickable
               :to="{ name: 'tradeList', params: { lang: route.params.lang } }"
-              exact
               active-class="active"
             >
               <q-item-section side>
@@ -476,7 +476,6 @@ watch(
               v-ripple
               clickable
               :to="{ name: 'awards', params: { lang: route.params.lang } }"
-              exact
               active-class="active"
             >
               <q-item-section side>
@@ -523,7 +522,6 @@ watch(
                     name: 'messages',
                     params: { lang: route.params.lang }
                   }"
-                  exact
                   active-class="active"
                 >
                   <q-item-section side>
@@ -538,7 +536,6 @@ watch(
                   v-ripple
                   clickable
                   :to="{ name: 'blocks', params: { lang: route.params.lang } }"
-                  exact
                   active-class="active"
                 >
                   <q-item-section side>
@@ -552,7 +549,6 @@ watch(
                   v-ripple
                   clickable
                   :to="{ name: 'history', params: { lang: route.params.lang } }"
-                  exact
                   active-class="active"
                 >
                   <q-item-section side>
@@ -585,7 +581,6 @@ watch(
                     name: 'adminUser',
                     params: { lang: route.params.lang }
                   }"
-                  exact
                   active-class="active"
                 >
                   <q-item-section side>
@@ -602,7 +597,6 @@ watch(
                     name: 'adminItem',
                     params: { lang: route.params.lang }
                   }"
-                  exact
                   active-class="active"
                 >
                   <q-item-section side>
@@ -619,12 +613,27 @@ watch(
                     name: 'adminAffix',
                     params: { lang: route.params.lang }
                   }"
-                  exact
                   active-class="active"
                 >
                   <q-item-section side>
                     <q-item-label>
                       {{ t('page.adminAffix') }}
+                    </q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item
+                  :inset-level="0.4"
+                  v-ripple
+                  clickable
+                  :to="{
+                    name: 'adminNotice',
+                    params: { lang: route.params.lang }
+                  }"
+                  active-class="active"
+                >
+                  <q-item-section side>
+                    <q-item-label>
+                      {{ t('page.adminNotice') }}
                     </q-item-label>
                   </q-item-section>
                 </q-item>
@@ -912,7 +921,6 @@ watch(
                       name: 'messages',
                       params: { lang: route.params.lang }
                     }"
-                    exact
                     active-class="active"
                   >
                     <q-item-section side>
@@ -929,7 +937,6 @@ watch(
                       name: 'blocks',
                       params: { lang: route.params.lang }
                     }"
-                    exact
                     active-class="active"
                   >
                     <q-item-section side>
@@ -945,7 +952,6 @@ watch(
                       name: 'history',
                       params: { lang: route.params.lang }
                     }"
-                    exact
                     active-class="active"
                   >
                     <q-item-section side>
@@ -980,7 +986,6 @@ watch(
                       name: 'adminUser',
                       params: { lang: route.params.lang }
                     }"
-                    exact
                     active-class="active"
                   >
                     <q-item-section side>
@@ -996,7 +1001,6 @@ watch(
                       name: 'adminItem',
                       params: { lang: route.params.lang }
                     }"
-                    exact
                     active-class="active"
                   >
                     <q-item-section side>
@@ -1012,12 +1016,26 @@ watch(
                       name: 'adminAffix',
                       params: { lang: route.params.lang }
                     }"
-                    exact
                     active-class="active"
                   >
                     <q-item-section side>
                       <q-item-label>
                         {{ t('page.adminAffix') }}
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <q-item
+                    v-ripple
+                    clickable
+                    :to="{
+                      name: 'adminNotice',
+                      params: { lang: route.params.lang }
+                    }"
+                    active-class="active"
+                  >
+                    <q-item-section side>
+                      <q-item-label>
+                        {{ t('page.adminNotice') }}
                       </q-item-label>
                     </q-item-section>
                   </q-item>

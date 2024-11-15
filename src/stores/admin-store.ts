@@ -154,6 +154,21 @@ export const useAdminStore = defineStore('admin', () => {
     })
   }
 
+  const sendNotice = (message: { ko: string, en: string }, caption?: string) => {
+    return new Promise<void>((resolve, reject) => {
+      api.post('/d4/admin/notice', {
+        message,
+        caption
+      })
+        .then(() => {
+          resolve()
+        })
+        .catch(() => {
+          reject()
+        })
+    })
+  }
+
   const upsertAffix = (action: 'insert' | 'update', affixId: number | null, affixType: string, affixAttribute: { [key: string]: string }, languageId: string, affixColor?: string, affixClass?: string, aspectCategory?: string, equipClasses?: string, aspectName?: { [key: string]: string }) => {
     return new Promise<void>((resolve, reject) => {
       api.post('/d4/admin/affix/upsert', {
@@ -261,6 +276,7 @@ export const useAdminStore = defineStore('admin', () => {
     getRequestAffixes,
     deleteRequestAffix,
     refreshAffixes,
+    sendNotice,
     upsertAffix,
     deleteAffix,
     getItems,

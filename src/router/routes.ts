@@ -76,6 +76,11 @@ const routes: RouteRecordRaw[] = [
             name: 'adminAffix',
             path: 'affix',
             component: () => import('pages/admin/AffixPage.vue')
+          },
+          {
+            name: 'adminNotice',
+            path: 'notice',
+            component: () => import('pages/admin/NoticePage.vue')
           }
         ]
       },

@@ -52,7 +52,15 @@ export default route(function ({ store, ssrContext }/* { store, ssrContext } */)
 
     if (!process.env.SERVER && !['pnf', 'ftc'].includes(to.name as string)) {
       try {
-        await gs.checkHealth()
+        const promises = [
+          is.getBase(),
+          is.getProperties(),
+          is.getAffixes(),
+          is.getRestrictions(),
+          as.getEvaluations(),
+          gs.checkHealth()
+        ]
+        await Promise.all(promises)
       }
       catch {
         return next({ name: 'ftc' })

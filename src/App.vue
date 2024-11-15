@@ -16,15 +16,7 @@ export default {
         }
       : undefined
 
-    const promises = [
-      is.getStorage(false, options),
-      is.getBase(options),
-      is.getProperties(options),
-      is.getAffixes(options),
-      is.getRestrictions(options),
-      as.getEvaluations(options),
-      as.unreadMessages(options)
-    ]
+    const promises = [is.getStorage(false, options), as.unreadMessages(options)]
 
     return Promise.all(promises)
       .then(() => {})

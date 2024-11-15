@@ -21,6 +21,7 @@ export default {
     adminUser: 'Manage User',
     adminItem: 'Manage Item',
     adminAffix: 'Manage Affix',
+    adminNotice: 'Send Notice',
     pnf: 'Page not found',
     ftc: 'A problem has occurred with the data server'
   },

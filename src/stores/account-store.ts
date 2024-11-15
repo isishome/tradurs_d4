@@ -120,13 +120,13 @@ export const useAccountStore = defineStore('account', {
           resolve()
       })
     },
-    getEvaluations(options?: AxiosRequestConfig) {
+    getEvaluations() {
       return new Promise<void>((resolve, reject) => {
         let error: unknown = null
         if (this.evaluations.request === 0) {
           this.evaluations.request++
           this.evaluations.loading = true
-          api.get('/account/evaluations', options)
+          api.get('/account/evaluations')
             .then((response) => {
               this.evaluations.data = response.data
             })
