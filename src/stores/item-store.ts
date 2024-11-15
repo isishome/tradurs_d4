@@ -1,8 +1,9 @@
-import { defineStore } from 'pinia'
 import { api } from 'boot/axios'
+import { defineStore } from 'pinia'
+import { AxiosRequestConfig } from 'axios'
+import { LocalStorage } from 'quasar'
 import { createWorker, ImageLike } from 'tesseract.js'
 import { Item, Offer } from 'src/types/item'
-import { AxiosRequestConfig } from 'axios'
 
 const prod = import.meta.env.PROD
 
@@ -483,27 +484,18 @@ export const useItemStore = defineStore('item', {
     getBase() {
       return new Promise<void>((resolve, reject) => {
         let error: unknown = null
-        if (this.base.request === 0) {
+        const data = LocalStorage.getItem<string>('base') ?? ''
+        if (!!data) {
+          Object.assign(this, JSON.parse(data))
+          resolve()
+        }
+        else if (this.base.request === 0) {
           this.base.request++
           this.base.loading = true
           api.get('/d4/item/base')
             .then((response) => {
-              this.classes = response.data.classes
-              this.itemStatus = response.data.itemStatus
-              this.offerStatus = response.data.offerStatus
-              this.tiers = response.data.tiers
-              this.quality = response.data.quality
-              this.runeTypes = response.data.runeTypes
-              this.runes = response.data.runes
-              this.aspectCategories = response.data.aspectCategories
-              this.gems = response.data.gems
-              this.elixirs = response.data.elixirs
-              this.summonings = response.data.summonings
-              this.materials = response.data.materials
-              this.types = response.data.types
-              this.equipClasses = response.data.equipClasses
-              this.attributeTypes = response.data.attributeTypes
-              this.awards = response.data.awards
+              LocalStorage.setItem('base', JSON.stringify(response.data))
+              Object.assign(this, response.data)
             })
             .catch((e) => {
               error = e
@@ -524,11 +516,17 @@ export const useItemStore = defineStore('item', {
     getProperties() {
       return new Promise<void>((resolve, reject) => {
         let error: unknown = null
-        if (this.properties.request === 0) {
+        const data = LocalStorage.getItem<string>('properties') ?? ''
+        if (!!data) {
+          this.properties.data = JSON.parse(data)
+          resolve()
+        }
+        else if (this.properties.request === 0) {
           this.properties.request++
           this.properties.loading = true
           api.get('/d4/item/properties')
             .then((response) => {
+              LocalStorage.setItem('properties', JSON.stringify(response.data))
               this.properties.data = response.data
             })
             .catch((e) => {
@@ -550,11 +548,17 @@ export const useItemStore = defineStore('item', {
     getAffixes() {
       return new Promise<void>((resolve, reject) => {
         let error: unknown = null
-        if (this.affixes.request === 0) {
+        const data = LocalStorage.getItem<string>('affixes') ?? ''
+        if (!!data) {
+          this.affixes.data = JSON.parse(data)
+          resolve()
+        }
+        else if (this.affixes.request === 0) {
           this.affixes.request++
           this.affixes.loading = true
           api.get('/d4/item/affixes')
             .then((response) => {
+              LocalStorage.setItem('affixes', JSON.stringify(response.data))
               this.affixes.data = response.data
             })
             .catch((e) => {
@@ -576,11 +580,17 @@ export const useItemStore = defineStore('item', {
     getRestrictions() {
       return new Promise<void>((resolve, reject) => {
         let error: unknown = null
-        if (this.restrictions.request === 0) {
+        const data = LocalStorage.getItem<string>('restrictions') ?? ''
+        if (!!data) {
+          this.restrictions.data = JSON.parse(data)
+          resolve()
+        }
+        else if (this.restrictions.request === 0) {
           this.restrictions.request++
           this.restrictions.loading = true
           api.get('/d4/item/restrictions')
             .then((response) => {
+              LocalStorage.setItem('restrictions', JSON.stringify(response.data))
               this.restrictions.data = response.data
             })
             .catch((e) => {

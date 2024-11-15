@@ -1,5 +1,5 @@
 import { i18n } from 'src/boot/i18n'
-import { Notify } from 'quasar'
+import { Notify, LocalStorage } from 'quasar'
 import { Manager } from 'socket.io-client'
 import { useAccountStore } from 'src/stores/account-store'
 import { useItemStore, type OfferInfo } from 'src/stores/item-store'
@@ -129,6 +129,7 @@ export const initMessenger = async (as: AccountStore, is: ItemStore) => {
 
   as.messenger.on('refreshAffixes', () => {
     is.affixes.request = 0
+    LocalStorage.removeItem('affixes')
   })
 
   as.messenger.on('notice', ({ message, caption }: { message: { ko: string, en: string }, caption: string }) => {

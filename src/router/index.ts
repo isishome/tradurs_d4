@@ -1,5 +1,6 @@
 import { route } from 'quasar/wrappers'
 import { createMemoryHistory, createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
+import { LocalStorage } from 'quasar'
 import routes from './routes'
 import { api } from 'boot/axios'
 import { useGlobalStore } from 'src/stores/global-store'
@@ -52,6 +53,17 @@ export default route(function ({ store, ssrContext }/* { store, ssrContext } */)
 
     if (!process.env.SERVER && !['pnf', 'ftc'].includes(to.name as string)) {
       try {
+        const appVersion = LocalStorage.getItem<string>('APP_VERSION')
+
+        if (appVersion !== import.meta.env.VITE_APP_VERSION) {
+          LocalStorage.setItem('APP_VERSION', import.meta.env.VITE_APP_VERSION)
+          LocalStorage.removeItem('base')
+          LocalStorage.removeItem('properties')
+          LocalStorage.removeItem('affixes')
+          LocalStorage.removeItem('restrictions')
+          LocalStorage.removeItem('evaluations')
+        }
+
         const promises = [
           is.getBase(),
           is.getProperties(),

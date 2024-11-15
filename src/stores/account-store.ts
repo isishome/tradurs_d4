@@ -1,10 +1,12 @@
-import { defineStore } from 'pinia'
 import { api } from 'boot/axios'
+import { defineStore } from 'pinia'
+import { AxiosRequestConfig } from 'axios'
+import { LocalStorage } from 'quasar'
 import { User, type INotify } from 'src/types/user'
 import { Socket } from 'socket.io-client'
 import { type ILabel } from 'src/stores/item-store'
 import { IItem } from 'src/types/item'
-import { AxiosRequestConfig } from 'axios'
+
 
 export interface IEvaluation extends ILabel {
   type: string
@@ -123,11 +125,17 @@ export const useAccountStore = defineStore('account', {
     getEvaluations() {
       return new Promise<void>((resolve, reject) => {
         let error: unknown = null
-        if (this.evaluations.request === 0) {
+        const data = LocalStorage.getItem<string>('evaluations') ?? ''
+        if (!!data) {
+          this.evaluations.data = JSON.parse(data)
+          resolve()
+        }
+        else if (this.evaluations.request === 0) {
           this.evaluations.request++
           this.evaluations.loading = true
           api.get('/account/evaluations')
             .then((response) => {
+              LocalStorage.setItem('evaluations', JSON.stringify(response.data))
               this.evaluations.data = response.data
             })
             .catch((e) => {

@@ -464,7 +464,7 @@ watch(
               v-ripple
               clickable
               :to="{ name: 'tradeList', params: { lang: route.params.lang } }"
-              active-class="active"
+              exact-active-class="active"
             >
               <q-item-section side>
                 <q-item-label>
@@ -476,7 +476,7 @@ watch(
               v-ripple
               clickable
               :to="{ name: 'awards', params: { lang: route.params.lang } }"
-              active-class="active"
+              exact-active-class="active"
             >
               <q-item-section side>
                 <q-item-label>
@@ -1508,6 +1508,7 @@ watch(
 
 .page:deep(.q-item.active) {
   opacity: 1;
+  color: currentColor;
 }
 
 .page:deep(.active .q-item__label) {
