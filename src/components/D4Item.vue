@@ -582,6 +582,13 @@ defineExpose({ scrollEnd })
                     </q-item-section>
                   </q-item>
                 </template>
+                <template #no-option>
+                  <q-item>
+                    <q-item-section class="text-grey">
+                      {{ t('noMessage', { attr: findType('rune')?.label }) }}
+                    </q-item-section>
+                  </q-item>
+                </template>
               </q-select>
             </div>
           </template>
@@ -668,6 +675,13 @@ defineExpose({ scrollEnd })
                     </q-item-section>
                     <q-item-section>
                       <q-item-label>{{ scope.opt.aspectName }} </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </template>
+                <template #no-option>
+                  <q-item>
+                    <q-item-section class="text-grey">
+                      {{ t('noMessage', { attr: t('item.aspect') }) }}
                     </q-item-section>
                   </q-item>
                 </template>
