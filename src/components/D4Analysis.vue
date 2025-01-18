@@ -386,7 +386,7 @@ const checkProperties = (tArray: string[]) => {
 
   if (findEquipClass) {
     try {
-      const matchAttribute: Array<ISimilar> = []
+      let matchAttribute: Array<ISimilar> = []
 
       const properties = findEquipClass.properties.map((p) => ({
         id: p,
@@ -428,11 +428,23 @@ const checkProperties = (tArray: string[]) => {
         similar?.match.sort(
           (a, b) => a.distance - b.distance || b.rate - a.rate
         )
+
         if (!!similar || matchAttribute.length === 0)
           plainTArray.splice(0, (similar?.match[0]?.len ?? 0) + 1)
         else break
       }
 
+      matchAttribute = matchAttribute.reduce((acc: ISimilar[], c: ISimilar) => {
+        if (
+          !acc
+            .filter((a: ISimilar) => a.match?.[0])
+            .map((a: ISimilar) => a.match[0].id)
+            .includes(c.match?.[0]?.id)
+        )
+          acc.push(c)
+
+        return acc
+      }, [])
       matchAttribute.sort((a, b) => a.index - b.index)
       matchAttribute.forEach((ma: ISimilar) => {
         const attrStr = tArray
