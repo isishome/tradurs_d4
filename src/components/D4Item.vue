@@ -20,7 +20,7 @@ import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 
 import { useAccountStore } from 'stores/account-store'
-import { type Gem, type Elixir, useItemStore } from 'stores/item-store'
+import { type Gem, type Elixir, useItemStore, Affix } from 'stores/item-store'
 import { Item, Price } from 'src/types/item'
 import { checkName, clipboard } from 'src/common'
 import { itemImgs } from 'src/common/items'
@@ -48,7 +48,7 @@ const emit = defineEmits(['update', 'apply', 'copy', 'favorite', 'update-only'])
 
 // common variable
 const $q = useQuasar()
-const slots = useSlots()
+const slots: any = useSlots()
 const as = useAccountStore()
 const store = useItemStore()
 const { t } = useI18n({ useScope: 'global' })
@@ -649,7 +649,7 @@ defineExpose({ scrollEnd })
                 :label="`${t('item.aspect')} ${t('searchOrSelect')}`"
                 :options="
                   filterAspectByCategory(_typeValue1, typeValue2Needle).map(
-                    (a) => ({ ...a, value: a.value.toString() })
+                    (a:Affix) => ({ ...a, value: a.value.toString() })
                   )
                 "
                 dropdown-icon="img:/images/icons/dropdown.svg"
@@ -951,7 +951,7 @@ defineExpose({ scrollEnd })
           :label="t('item.name')"
           @update:model-value="update"
           maxlength="256"
-          :rules="[(val) => checkName(val) || '']"
+          :rules="[(val:string) => checkName(val) || '']"
         />
       </q-card-section>
       <q-card-section
@@ -992,7 +992,7 @@ defineExpose({ scrollEnd })
         />
       </q-card-section>
       <template v-if="qualifiable || data.itemType === 'aspect'">
-        <template v-if="$slots['base-end']">
+        <template v-if="slots['base-end']">
           <D4Separator />
           <q-card-section>
             <slot name="base-end"></slot>

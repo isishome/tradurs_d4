@@ -1,27 +1,55 @@
 <script setup lang="ts">
-import { useScript } from 'src/composables/script'
+import { ref, onBeforeMount, onMounted, onUnmounted } from 'vue'
 
 interface IProps {
+  client?: string
   dataAdClient: string
   dataAdSlot: string
   dataAdFormat?: string
   dataAdtest?: boolean
   dataFullWidthResponsive?: string
+  repeat?: number
 }
 
-withDefaults(defineProps<IProps>(), {
+const props = withDefaults(defineProps<IProps>(), {
+  client: 'ca-pub-5110777286519562',
   dataAdFormat: undefined,
   dataAdtest: undefined,
-  dataFullWidthResponsive: undefined
+  dataFullWidthResponsive: undefined,
+  repeat: 3
 })
 
-useScript(
-  'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5110777286519562',
-  () => {
-    ;(window.adsbygoogle || []).push({})
-  },
-  { async: true, crossOrigin: 'anonymous' }
-)
+let timer: NodeJS.Timeout
+const repeat = ref(0)
+const render = () => {
+  repeat.value++
+  if (repeat.value > props.repeat) clearTimeout(timer)
+  else if (!!window?.adsbygoogle) (window.adsbygoogle || []).push({})
+  else
+    timer = setTimeout(() => {
+      render()
+    }, 200)
+}
+
+onBeforeMount(() => {
+  const adURL = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${props.client}`
+  const script = document.createElement('script')
+  script.src = adURL
+
+  script.async = true
+  script.crossOrigin = 'anonymous'
+
+  if (!document.head.querySelector(`script[src="${adURL}"]`))
+    document.head.appendChild(script)
+})
+
+onMounted(() => {
+  render()
+})
+
+onUnmounted(() => {
+  clearTimeout(timer)
+})
 </script>
 
 <template>

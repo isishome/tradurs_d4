@@ -17,6 +17,7 @@ export function useScript(src: string, arg1: ScriptLoadListener, arg2: ScriptOpt
 export function useScript(src: string, arg1?: ScriptOptions | ScriptLoadListener, arg2?: ScriptOptions): void {
 
   onMounted(() => {
+    debugger
     let script = document.createElement('script')
     script.src = src
     const opt = typeof (arg1) === 'function' ? arg2 : arg1
