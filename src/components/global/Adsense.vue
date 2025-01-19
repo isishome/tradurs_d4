@@ -2,8 +2,7 @@
 import { ref, onBeforeMount, onMounted, onUnmounted } from 'vue'
 
 interface IProps {
-  client?: string
-  dataAdClient: string
+  dataAdClient?: string
   dataAdSlot: string
   dataAdFormat?: string
   dataAdtest?: boolean
@@ -12,7 +11,7 @@ interface IProps {
 }
 
 const props = withDefaults(defineProps<IProps>(), {
-  client: 'ca-pub-5110777286519562',
+  dataAdClient: 'ca-pub-5110777286519562',
   dataAdFormat: undefined,
   dataAdtest: undefined,
   dataFullWidthResponsive: undefined,
@@ -20,10 +19,10 @@ const props = withDefaults(defineProps<IProps>(), {
 })
 
 let timer: NodeJS.Timeout
-const repeat = ref(0)
+const currentRepeat = ref(0)
 const render = () => {
-  repeat.value++
-  if (repeat.value > props.repeat) clearTimeout(timer)
+  currentRepeat.value++
+  if (currentRepeat.value > props.repeat) clearTimeout(timer)
   else if (!!window?.adsbygoogle) (window.adsbygoogle || []).push({})
   else
     timer = setTimeout(() => {
@@ -32,7 +31,7 @@ const render = () => {
 }
 
 onBeforeMount(() => {
-  const adURL = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${props.client}`
+  const adURL = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${props.dataAdClient}`
   const script = document.createElement('script')
   script.src = adURL
 

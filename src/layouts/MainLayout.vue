@@ -1254,9 +1254,10 @@ watch(
                 <Adsense
                   ref="topAdRef"
                   :style="size"
-                  data-ad-client="ca-pub-5110777286519562"
                   data-ad-slot="7137983054"
                   :data-adtest="!prod"
+                  data-ad-format="horizontal"
+                  data-full-width-responsive="false"
                   :key="`top-${topAdKey}`"
                 />
               </div>
@@ -1267,9 +1268,10 @@ watch(
               <Adsense
                 ref="bottomAdRef"
                 :style="sizeBottom"
-                data-ad-client="ca-pub-5110777286519562"
                 data-ad-slot="6163086381"
                 :data-adtest="!prod"
+                data-ad-format="horizontal"
+                data-full-width-responsive="true"
                 :key="`bottom-${bottomAdKey}`"
               />
             </div>
@@ -1308,9 +1310,10 @@ watch(
                   ref="rightAdRef"
                   v-if="$q.screen.width > 1439"
                   style="display: inline-block; width: 160px; height: 600px"
-                  data-ad-client="ca-pub-5110777286519562"
                   data-ad-slot="6751896285"
                   :data-adtest="!prod"
+                  data-ad-format="vertical"
+                  data-full-width-responsive="false"
                   :key="`right-${rightAdKey}`"
                 />
                 <div class="q-mt-xl">
