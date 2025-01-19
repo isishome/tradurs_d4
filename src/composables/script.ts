@@ -6,7 +6,8 @@ interface ScriptLoadListener {
 
 interface ScriptOptions {
   async?: boolean,
-  defer?: boolean
+  defer?: boolean,
+  crossOrigin?: string
 }
 
 export function useScript(src: string): void
@@ -22,14 +23,16 @@ export function useScript(src: string, arg1?: ScriptOptions | ScriptLoadListener
 
     script.async = opt?.async || false
     script.defer = opt?.defer || false
+    script.crossOrigin = opt?.crossOrigin || null
 
     script.onload = () => {
       if (typeof (arg1) === 'function')
         arg1()
     }
 
-
     if (!document.head.querySelector(`script[src="${src}"]`))
       document.head.appendChild(script)
+    else if (typeof (arg1) === 'function')
+      arg1()
   })
 }

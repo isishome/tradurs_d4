@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { useScript } from 'src/composables/script'
 
 interface IProps {
   dataAdClient: string
@@ -15,27 +15,17 @@ withDefaults(defineProps<IProps>(), {
   dataFullWidthResponsive: undefined
 })
 
-// variable
-const insRef = ref<HTMLElement>()
-
-// function
-const render = () => {
-  requestAnimationFrame(() => {
+useScript(
+  'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5110777286519562',
+  () => {
     ;(window.adsbygoogle || []).push({})
-  })
-}
-
-// hook
-onMounted(() => {
-  if (document.readyState !== 'complete')
-    window.addEventListener('load', render)
-  else render()
-})
+  },
+  { async: true, crossOrigin: 'anonymous' }
+)
 </script>
 
 <template>
   <ins
-    ref="insRef"
     class="adsbygoogle ins"
     :data-ad-client="dataAdClient"
     :data-ad-slot="dataAdSlot"
