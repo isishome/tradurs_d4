@@ -1312,7 +1312,6 @@ watch(
                   style="display: inline-block; width: 160px; height: 600px"
                   data-ad-slot="6751896285"
                   :data-adtest="!prod"
-                  data-ad-format="vertical"
                   data-full-width-responsive="false"
                   :key="`right-${rightAdKey}`"
                 />
