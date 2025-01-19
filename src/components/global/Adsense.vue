@@ -16,7 +16,7 @@ const props = withDefaults(defineProps<IProps>(), {
   dataAdFormat: undefined,
   dataAdtest: undefined,
   dataFullWidthResponsive: undefined,
-  repeat: 3
+  repeat: 5
 })
 
 let timer: NodeJS.Timeout
@@ -28,7 +28,7 @@ const render = () => {
   else
     timer = setTimeout(() => {
       render()
-    }, 200)
+    }, 400)
 }
 
 onBeforeMount(() => {
