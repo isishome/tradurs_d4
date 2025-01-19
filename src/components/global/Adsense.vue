@@ -27,20 +27,24 @@ const render = () => {
   else
     timer = setTimeout(() => {
       render()
-    }, 400)
+    }, 200)
 }
 
-onBeforeMount(() => {
-  const adURL = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${props.dataAdClient}`
-  const script = document.createElement('script')
-  script.src = adURL
+// const load = () => {
+//   const adURL = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${props.dataAdClient}`
+//   const script = document.createElement('script')
+//   script.src = adURL
 
-  script.async = true
-  script.crossOrigin = 'anonymous'
+//   script.async = true
+//   script.crossOrigin = 'anonymous'
 
-  if (!document.head.querySelector(`script[src="${adURL}"]`))
-    document.head.appendChild(script)
-})
+//   if (!document.head.querySelector(`script[src="${adURL}"]`))
+//     document.head.appendChild(script)
+// }
+
+// onBeforeMount(() => {
+//   load()
+// })
 
 onMounted(() => {
   render()
