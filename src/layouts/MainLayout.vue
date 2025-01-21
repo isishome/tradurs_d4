@@ -756,14 +756,14 @@ watch(
             <h1 class="h1">
               <img
                 v-show="$q.dark.isActive"
-                src="/images/logo.webp"
+                src="/images/logo.webp?season=7"
                 width="48"
                 height="48"
                 alt="Tradurs Logo Image"
               />
               <img
                 v-show="!$q.dark.isActive"
-                src="/images/logo_light.webp"
+                src="/images/logo_light.webp?season=7"
                 width="48"
                 height="48"
                 alt="Tradurs Light Logo Image"
@@ -807,14 +807,14 @@ watch(
               <h1 class="h1">
                 <img
                   v-show="$q.dark.isActive"
-                  src="/images/logo.webp"
+                  src="/images/logo.webp?season=7"
                   width="36"
                   height="36"
                   alt="Tradurs Logo Image"
                 />
                 <img
                   v-show="!$q.dark.isActive"
-                  src="/images/logo_light.webp"
+                  src="/images/logo_light.webp?season=7"
                   width="36"
                   height="36"
                   alt="Tradurs Light Logo Image"

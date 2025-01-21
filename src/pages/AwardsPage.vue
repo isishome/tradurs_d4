@@ -55,7 +55,7 @@ const awards: Awards = reactive({
 const itemName = computed(
   () => (itemName?: string, itemType?:string, typeValue1?: string, typeValue2?: string) =>
     (itemType === 'rune'
-      ? `${is.findRune(typeValue2)?.label} ${
+      ? `${is.findRune(typeValue2 ?? '')?.label} ${
           is.findType('rune')?.label
         }`
       : itemType === 'aspect'
@@ -76,11 +76,11 @@ const itemImage = computed(
       ? `/images/items/rune/${awards.itemTypeValue1}/${awards.itemTypeValue2}.webp`
       : awards.itemType === 'aspect'
       ? `/images/items/aspect/legendary/${awards.itemTypeValue2}.webp`
-      : ['gem', 'summoning'].includes(awards.itemTypeValue1)
+      : ['gem', 'summoning'].includes(awards.itemTypeValue1 ?? '')
       ? `/images/items/${awards.itemType}/${awards.itemTypeValue1}/${awards.itemTypeValue2}.webp`
       : awards.itemTypeValue1 === 'elixir'
       ? `/images/items/${awards.itemType}/${awards.itemTypeValue1}/${
-          awards.itemTypeValue2.split('_')[1]
+          (awards.itemTypeValue2 ?? '').split('_')[1]
         }.webp`
       : `/images/items/${awards.itemType}/${awards.itemTypeValue1}/${awards.imageId}.webp`
 )
@@ -103,6 +103,7 @@ is.getAwards()
       mostSold: [],
       mostPurchased: []
     })
+   
     Object.assign(awards, data)
   })
   .catch(() => {
@@ -124,7 +125,6 @@ is.getAwards()
       <template #category>
         {{ t('awards.highPriced.category') }}
       </template>
-
       <template #item-name>
         <div class="row justify-center">
           <q-item
@@ -165,7 +165,6 @@ is.getAwards()
           </q-item>
         </div>
       </template>
-
       <template #detail>
         <div class="text-h6 text-center text-weight-bold">
           {{
@@ -177,14 +176,12 @@ is.getAwards()
           }}
         </div>
       </template>
-
       <template #battleTag>
         {{ awards.highPriced[0]?.ranking }}.
         {{ awards.highPriced[0]?.battleTag }}
       </template>
-
       <template #etc>
-        <q-separator />
+        <q-separator v-show="awards.highPriced.length > 1" />
         <q-list separator class="rounded-borders">
           <q-item
             v-for="(ranker, idx) in awards.highPriced.slice(

@@ -70,7 +70,7 @@ export default {
     message: 'Do you want to delete this preset?'
   },
   season: {
-    bg: '/images/season/006/season_emblem_en.webp',
+    bg: '/images/season/007/season_emblem_en.webp',
     first: {
       socket: 'During Season of the Malignant, the more accurately you select the socket type in the accessory item affixes, the more often your items will be seen',
     },
@@ -224,7 +224,7 @@ export default {
   item: {
     hardcore: 'Hardcore',
     softcore: 'Softcore',
-    ladder: 'Season of Hatred Rising',
+    ladder: 'Season of Witchcraft',
     seasonal: 'Seasonal',
     eternal: 'Eternal',
     quality: 'Item Quality',
