@@ -546,7 +546,7 @@ onMounted(() => {
         </q-card-section>
         <q-separator />
         <q-card-section class="row items-center q-gutter-sm">
-          <div class="col-3">속성 생상</div>
+          <div class="col-3">속성 색상</div>
           <div class="col">
             <q-input
               :disable="disable"
