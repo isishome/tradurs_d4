@@ -10,13 +10,29 @@ import { QFile, uid, useQuasar } from 'quasar'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { type ILabel, useItemStore } from 'src/stores/item-store'
-import { Affix, Item } from 'src/types/item'
-import similarity from 'similarity'
+import { Item, Property } from 'src/types/item'
+import stringComparison from 'string-comparison'
 
 interface IProps {
   loading?: boolean
   disable?: boolean
   attrOnly?: boolean
+}
+
+type Match = {
+  id: number
+  label: string
+  chainText: string
+  len: number
+  rate: number
+  span: number
+}
+
+type Line = {
+  index: number
+  label: string
+  complete: boolean
+  matches: Array<Match>
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -31,6 +47,7 @@ const $q = useQuasar()
 const route = useRoute()
 const { t } = useI18n({ useScope: 'global' })
 const is = useItemStore()
+const lev = stringComparison.levenshtein
 
 const lang: string = (route.params.lang as string) || 'ko'
 const similarRate =
@@ -50,6 +67,152 @@ const checkList: ILabel[] = [
   { value: 'aggregate', label: t('analyze.aggregateItemInfo') }
 ]
 const currentCheck = ref<string | number | null>(checkList[0].value)
+
+const similarity = (a: string, b: string) => {
+  return lev.similarity(a, b)
+}
+const distance = (a: string, b: string) => {
+  return lev.distance(a, b)
+}
+
+const simplify = (sentense: string) => {
+  return sentense
+    .replace(new RegExp(`\\([${phase} ]*\\)`, 'gi'), '')
+    .replace(new RegExp(`[^${phase}]`, 'gi'), '')
+}
+
+const parseValues = (
+  standard: string,
+  target: string,
+  ignoreBrackets = false
+) => {
+  const xLen = standard.match(/\{x\}/gi)?.length ?? 0
+  const values = target.match(/([(\[]?)([0-9\-.%]{1,})([\])]?)/gi) ?? []
+  const val = values
+    .filter((v) => !(ignoreBrackets ? /[()]/gi : /[()\[\]]/gi).test(v))
+    .map((v) => v.split(/[\[\]%\-]/gi))
+    .flat()
+    .filter((v) => !!v && /[0-9]{1,}\.?[0-9]{1,}/gi.test(v))
+  const minmax = values
+    .filter((v) => /[\[\]]/gi.test(v))
+    .map((v) => v.split(/[\[\]%]/gi))
+    .flat()
+    .filter((v) => !!v && /[0-9]{1,}\.?[0-9]{1,}/gi.test(v))
+
+  const returnValues = []
+  const returnRangeValues = []
+
+  for (let i = 0; i < xLen; i++) {
+    const v = !isNaN(parseFloat(val[i])) ? parseFloat(val[i]) : 0
+    let min = !isNaN(parseFloat((minmax[i] ?? '').split('-')[0]))
+      ? parseFloat((minmax[i] ?? '').split('-')[0])
+      : 0
+    let max = !isNaN(parseFloat((minmax[i] ?? '').split('-')[1]))
+      ? parseFloat((minmax[i] ?? '').split('-')[1])
+      : min ?? 0
+
+    if (val.length > minmax.length && (v < min || v > max)) {
+      min = 0
+      max = 0
+      minmax.unshift('0-0')
+    }
+
+    returnValues.push(v)
+    returnRangeValues.push({ min, max })
+  }
+
+  return { returnValues, returnRangeValues }
+}
+
+const compare = (
+  standard: Array<ILabel>,
+  target: Array<string>,
+  cutoffSim: number,
+  cutoffDis: number,
+  layer: number = 1
+) => {
+  const simpleStandard = standard.map((s) => ({
+    value: s.value,
+    label: simplify(s.label)
+  }))
+  const simpleTarget: Array<Line> = target.map((t, i) => ({
+    index: i,
+    label: simplify(t),
+    complete: false,
+    matches: []
+  }))
+
+  for (const ss of simpleStandard) {
+    const remain = simpleTarget.filter((st) => !st.complete && !!st.label)
+
+    for (let i = 0; i < remain.length; i++) {
+      const st = remain[i]
+      let repeat = 0
+      let lastRate = 0
+      while (repeat < layer) {
+        const chainText = remain
+          .slice(i, i + repeat + 1)
+          .map((r) => r.label)
+          .join('')
+
+        const rate = similarity(chainText, ss.label)
+        const span = distance(chainText, ss.label)
+
+        if (lastRate >= rate) break
+        else if (rate >= cutoffSim && span <= cutoffDis) {
+          st.matches.push({
+            id: ss.value as number,
+            label: ss.label,
+            chainText,
+            len: repeat + 1,
+            rate,
+            span
+          })
+
+          if (rate === 1) {
+            st.complete = true
+            break
+          }
+        }
+
+        lastRate = rate
+        repeat++
+      }
+    }
+  }
+
+  const result = []
+
+  let i = 0
+  while (!!simpleTarget[i]) {
+    simpleTarget[i].matches.sort((a, b) => b.rate - a.rate || a.span - b.span)
+    const id = simpleTarget[i].matches[0]?.id
+
+    if (id) {
+      const label = standard.find((s) => s.value === id)?.label
+      result.push({
+        id,
+        label,
+        index: simpleTarget[i].index,
+        len: simpleTarget[i].matches[0]?.len,
+        values: parseValues(
+          label ?? '',
+          target
+            .slice(
+              simpleTarget[i].index,
+              simpleTarget[i].index + simpleTarget[i].matches[0]?.len + 1
+            )
+            .join(''),
+          id === 2
+        )
+      })
+
+      i = i + simpleTarget[i].matches[0]?.len
+    } else i++
+  }
+
+  return result
+}
 
 let plainText: string
 const item = new Item('')
@@ -344,140 +507,39 @@ const checkInfo = (textArray: string[]) => {
   }, timeout)
 }
 
-interface IMatch {
-  id: number
-  len: number
-  rate: number
-  distance: number
-}
-
-interface ISimilar {
-  index: number
-  match: Array<IMatch>
-}
-
-const checkAttributes = (plainTArray: string[], id: number, label: string) => {
-  const result: Array<IMatch> = []
-
-  let len = 0
-  while (len < 8) {
-    const similar = similarity(plainTArray.slice(0, len + 1).join(''), label)
-
-    const distance = Math.abs(
-      plainTArray.slice(0, len + 1).join('').length - label.length
-    )
-
-    if (similar >= similarRate) {
-      result.push({ id, len, rate: similar, distance })
-
-      if (similar === 1) break
-    }
-
-    len++
-  }
-
-  return result
-}
-
 const checkProperties = (tArray: string[]) => {
   currentCheck.value = 'properties'
 
   const findEquipClass = is.findEquipClass(item.itemTypeValue1)
 
+  let start = -1
+  let end = 0
   if (findEquipClass) {
     try {
-      let matchAttribute: Array<ISimilar> = []
+      item.properties = compare(is.properties.data, tArray, 0.8, 3, 10).reduce(
+        (acc: Array<Property>, c) => {
+          if (
+            acc.filter((a) => a.propertyId === c.id).length === 0 &&
+            start + 4 > c.index
+          ) {
+            if (start === -1) start = c.index
 
-      const properties = findEquipClass.properties.map((p) => ({
-        id: p,
-        attr: is
-          .findProperty(p)
-          ?.label.replace(/{x}/g, '')
-          .replace(/[ \+\-\.\:,0-9\[\]]/g, '')
-          .replace(new RegExp(`\\([${phase} ]*\\)`, 'g'), '') as string
-      }))
+            end = c.index + c.len
 
-      const plainTArray = tArray.map((ta) =>
-        ta
-          .replace(/\([^\)]*\)?/g, '')
-          .replace(new RegExp(`[^%${phase}]`, 'g'), '')
-      )
-
-      while (plainTArray.length) {
-        const index = tArray.length - plainTArray.length
-        let similar = matchAttribute.find((ma) => ma.index === index)
-
-        for (const property of properties) {
-          const result = checkAttributes(
-            plainTArray,
-            property.id,
-            property.attr
-          )
-
-          if (result.length > 0) {
-            if (!!!similar) {
-              similar = { index, match: [] }
-              matchAttribute.push(similar)
-            }
-
-            similar.match.push(...result)
-            if (result.filter((r) => r.rate === 1).length > 0) break
+            acc.push({
+              valueId: uid(),
+              propertyId: c.id,
+              propertyValues: c.values.returnValues,
+              action: 2
+            })
           }
-        }
 
-        similar?.match.sort(
-          (a, b) => a.distance - b.distance || b.rate - a.rate
-        )
-
-        if (!!similar || matchAttribute.length === 0)
-          plainTArray.splice(0, (similar?.match[0]?.len ?? 0) + 1)
-        else break
-      }
-
-      matchAttribute = matchAttribute.reduce((acc: ISimilar[], c: ISimilar) => {
-        if (
-          !acc
-            .filter((a: ISimilar) => a.match?.[0])
-            .map((a: ISimilar) => a.match[0].id)
-            .includes(c.match?.[0]?.id)
-        )
-          acc.push(c)
-
-        return acc
-      }, [])
-      matchAttribute.sort((a, b) => a.index - b.index)
-      matchAttribute.forEach((ma: ISimilar) => {
-        const attrStr = tArray
-          .slice(ma.index, ma.index + (ma.match[0]?.len ?? 0) + 1)
-          .join('-')
-        const matchValues = attrStr
-          .match(/[0-9.]{1,}/g)
-          ?.filter((mv) => !isNaN(parseFloat(mv)))
-          .map((mv) => parseFloat(mv))
-        const plainMatch = is
-          .findProperty(ma.match[0]?.id)
-          ?.label.match(/[0-9]{1,}[.]?[0-9]*|\{x\}/g)
-        const values: Array<number> = []
-
-        plainMatch?.forEach((pm: number | string, index: number) => {
-          if (pm === '{x}' && matchValues?.[index])
-            values.push(matchValues?.[index])
-        })
-
-        item.properties.push({
-          valueId: uid(),
-          propertyId: ma.match[0]?.id,
-          propertyValues: values,
-          action: 2
-        })
-      })
-
-      tArray.splice(
-        0,
-        (matchAttribute[matchAttribute.length - 1]?.index ?? 0) +
-          (matchAttribute[matchAttribute.length - 1]?.match[0]?.len ?? 0) +
-          1
+          return acc
+        },
+        []
       )
+
+      tArray.splice(0, end)
     } catch (e) {
       console.log(e)
       return failedScan(t('analyze.failedAnalyze'))
@@ -494,92 +556,17 @@ const checkAffixes = (tArray: string[]) => {
   currentCheck.value = 'affixes'
 
   try {
-    const matchAttribute: Array<ISimilar> = []
-    const affixes = is.availableAffixes().map((aa) => ({
-      id: aa.value as number,
-      attr: aa.label
-        .replace(/{x}/g, '')
-        .replace(/[ \+\-\.\:,0-9\[\]]/g, '')
-        .replace(new RegExp(`\\([${phase} ]*\\)`, 'g'), '') as string
+    item.affixes = compare(is.affixes.data, tArray, 0.7, 3, 10).map((r) => ({
+      valueId: uid(),
+      affixId: r.id,
+      affixValues: r.values.returnValues.map((rv, i) => ({
+        valueRangeId: uid(),
+        value: rv,
+        min: r.values.returnRangeValues[i].min,
+        max: r.values.returnRangeValues[i].max
+      })),
+      action: 2
     }))
-
-    const plainTArray = tArray.map((ta) =>
-      ta
-        .replace(/\([^\)]*\)?/g, '')
-        .replace(new RegExp(`[^%${phase}]`, 'g'), '')
-    )
-
-    while (plainTArray.length) {
-      const index = tArray.length - plainTArray.length
-      let similar = matchAttribute.find((ma) => ma.index === index)
-
-      for (const affix of affixes) {
-        const result = checkAttributes(plainTArray, affix.id, affix.attr)
-
-        if (result.length > 0) {
-          if (!!!similar) {
-            similar = { index, match: [] }
-            matchAttribute.push(similar)
-          }
-
-          similar.match.push(...result)
-          if (result.filter((r) => r.rate === 1).length > 0) break
-        }
-      }
-
-      similar?.match.sort((a, b) => a.distance - b.distance || b.rate - a.rate)
-      plainTArray.splice(0, (similar?.match[0]?.len ?? 0) + 1)
-    }
-
-    matchAttribute.sort((a, b) => a.index - b.index)
-    matchAttribute.forEach((ma: ISimilar) => {
-      const end = matchAttribute
-        .map((m) => m.index)
-        .includes(ma.index + (ma.match[0]?.len ?? 0) + 1)
-        ? ma.index + (ma.match[0]?.len ?? 0) + 1
-        : ma.index + (ma.match[0]?.len ?? 0) + 8
-      const attrStr = tArray.slice(ma.index, end).join('-')
-      const matchMinMax = attrStr
-        .match(/[\[]{1}[0-9.]{1,}[^\-\[]*[\-]*[0-9.]{1,}[\]]?/g)
-        ?.map((mmm) =>
-          mmm
-            .replace(/[^0-9.-]/g, '')
-            .split(/[\-]{1,2}/)
-            .map((mm) => (!isNaN(parseFloat(mm)) ? parseFloat(mm) : 0))
-        )
-      const matchValues = attrStr
-        .replace(/[\[]{1}[0-9.]{1,}[^\-\[]*[\-]*[0-9.]{1,}[\]]?/g, '')
-        .match(/[0-9.]{1,}/g)
-        ?.filter((mv) => !isNaN(parseFloat(mv)))
-        .map((mv) => parseFloat(mv))
-      const plainMatch = is
-        .findAffix(ma.match[0]?.id)
-        ?.label.match(/[0-9]{1,}[.]?[0-9]*|\{x\}/g)
-      const values: Array<number> = []
-
-      plainMatch?.forEach((pm: number | string, index: number) => {
-        if (pm === '{x}' && matchValues?.[index])
-          values.push(matchValues?.[index])
-      })
-
-      const a: Affix = {
-        valueId: uid(),
-        affixId: ma.match[0]?.id as number,
-        affixValues: [],
-        action: 2
-      }
-
-      values.forEach((mv: number, idx: number) => {
-        a.affixValues.push({
-          valueRangeId: uid(),
-          value: mv,
-          min: matchMinMax?.[idx]?.[0] as number,
-          max: matchMinMax?.[idx]?.[1] || (matchMinMax?.[idx]?.[0] as number)
-        })
-      })
-
-      item.affixes.push(a)
-    })
   } catch (e) {
     console.log(e)
     return failedScan(t('analyze.failedAnalyze'))
@@ -595,65 +582,24 @@ const checkRestrictions = () => {
   currentCheck.value = 'restrictions'
 
   try {
-    const matchAttribute: Array<ISimilar> = []
-    const restrictions = is.restrictions.data.map((r) => ({
-      id: r.value as number,
-      attr: r.label
-        .replace(/{x}/g, '')
-        .replace(/[ \+\-\.\:,0-9\[\]]/g, '')
-        .replace(new RegExp(`\\([${phase} ]*\\)`, 'g'), '') as string
-    }))
-
     const plainTArray = restrictionsPhase.map((rp) =>
       rp
         .replace(/\([^\)]*\)?/g, '')
         .replace(new RegExp(`[^%${phase}]`, 'g'), '')
     )
 
-    while (plainTArray.length) {
-      const index = restrictionsPhase.length - plainTArray.length
-      let similar = matchAttribute.find((ma) => ma.index === index)
-
-      for (const restriction of restrictions) {
-        const result = checkAttributes(
-          plainTArray,
-          restriction.id,
-          restriction.attr
-        )
-
-        if (result.length > 0) {
-          if (!!!similar) {
-            similar = { index, match: [] }
-            matchAttribute.push(similar)
-          }
-
-          similar.match.push(...result)
-          if (result.filter((r) => r.rate === 1).length > 0) break
-        }
-      }
-
-      similar?.match.sort((a, b) => a.distance - b.distance || b.rate - a.rate)
-      plainTArray.splice(0, (similar?.match[0]?.len ?? 0) + 1)
-    }
-
-    matchAttribute.sort((a, b) => a.index - b.index)
-    matchAttribute.forEach((ma: ISimilar) => {
-      ma.match.sort((a, b) => b.rate - a.rate || b.len - a.len)
-
-      const matchValues =
-        restrictionsPhase
-          .slice(ma.index + ma.match[0]?.len, restrictionsPhase.length)
-          .join('-')
-          .match(/[0-9.]{1,}/g)
-          ?.map((mv) => parseFloat(mv)) || []
-      item.restrictions.push({
-        valueId: uid(),
-        restrictId: ma.match[0]?.id,
-        restrictValues: matchValues,
-        action: 2
-      })
-      restrictionsPhase.splice(ma.index, ma.match[0]?.len + 1)
-    })
+    item.restrictions = compare(
+      is.properties.data,
+      plainTArray,
+      0.8,
+      3,
+      10
+    ).map((r) => ({
+      valueId: uid(),
+      restrictId: r.id,
+      restrictValues: r.values.returnValues,
+      action: 2
+    }))
   } catch (e) {
     console.log(e)
     return failedScan(t('analyze.failedAnalyze'))

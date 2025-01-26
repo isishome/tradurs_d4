@@ -63,23 +63,23 @@ module.exports = configure(function (/* ctx */) {
 
       extendViteConf(viteConf) {
         viteConf.define.__VUE_PROD_HYDRATION_MISMATCH_DETAILS__ = false
-        viteConf.build = mergeConfig(viteConf.build, {
-          rollupOptions: {
-            output: {
-              inlineDynamicImports: false,
-              manualChunks: (id) => {
-                if (id.includes('d4/src/components')) return 'd4_component'
-                if (id.includes('d4/src/pages')) return 'd4_pages'
-                if (
-                  id.includes('node_modules/@quasar') ||
-                  id.includes('node_modules/quasar')
-                )
-                  return 'quasar'
-                if (id.includes('node_modules')) return 'vendor'
-              }
-            }
-          }
-        })
+        // viteConf.build = mergeConfig(viteConf.build, {
+        //   rollupOptions: {
+        //     output: {
+        //       inlineDynamicImports: false,
+        //       manualChunks: (id) => {
+        //         if (id.includes('d4/src/components')) return 'd4_component'
+        //         if (id.includes('d4/src/pages')) return 'd4_pages'
+        //         if (
+        //           id.includes('node_modules/@quasar') ||
+        //           id.includes('node_modules/quasar')
+        //         )
+        //           return 'quasar'
+        //         if (id.includes('node_modules')) return 'vendor'
+        //       }
+        //     }
+        //   }
+        // })
       },
       // viteVuePluginOptions: {},
 
@@ -126,7 +126,7 @@ module.exports = configure(function (/* ctx */) {
       // directives: [],
 
       // Quasar plugins
-      plugins: ['Cookies', 'Dialog', 'Notify', 'Meta', 'Screen', 'LocalStorage']
+      plugins: ['Cookies', 'Dialog', 'Notify', 'Meta', 'LocalStorage']
     },
 
     // animations: 'all', // --- includes all animations
