@@ -2,7 +2,7 @@ import { api } from 'boot/axios'
 import { defineStore } from 'pinia'
 import { AxiosRequestConfig } from 'axios'
 import { LocalStorage } from 'quasar'
-import { User, type INotify } from 'src/types/user'
+import { User } from 'src/types/user'
 import { Socket } from 'socket.io-client'
 import { type ILabel } from 'src/stores/item-store'
 import { IItem } from 'src/types/item'
@@ -163,17 +163,17 @@ export const useAccountStore = defineStore('account', {
           })
       })
     },
-    notify(notify: INotify) {
-      return new Promise<void>((resolve, reject) => {
-        api.post('/account/notify', notify)
-          .then(() => {
-            resolve()
-          })
-          .catch((e) => {
-            reject(e)
-          })
-      })
-    },
+    // notify(notify: INotify) {
+    //   return new Promise<void>((resolve, reject) => {
+    //     api.post('/account/notify', notify)
+    //       .then(() => {
+    //         resolve()
+    //       })
+    //       .catch((e) => {
+    //         reject(e)
+    //       })
+    //   })
+    // },
     getMessages(page: number) {
       return new Promise<void>((resolve, reject) => {
         api.post('/account/messages', { page, rows: this.messagePage.rows })

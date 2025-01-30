@@ -87,43 +87,44 @@ export const initMessenger = async (as: AccountStore, is: ItemStore) => {
   const notify = () => {
     as.newMessages = true
     as.messagePage.unread++
-    const sound = new Audio('/sounds/notify.wav')
+    const sound = new Audio(`/sounds/${is.storage.data.sound ?? '0'}.wav`)
+    sound.volume = is.storage.data.volume ?? 1.0
     sound.play()
   }
 
   as.messenger.on('newItems', () => {
-    if (as.info.notifyNew)
+    if (is.storage.data.notifyNew)
       is.socket.newItems++
   })
 
   as.messenger.on('newOffer', (offerInfo: OfferInfo) => {
     notify()
-    if (as.info.notifyPrivate)
+    if (is.storage.data.notifyPrivate)
       is.socket.newOffer = offerInfo
   })
 
   as.messenger.on('acceptedOffer', (offerInfo: OfferInfo) => {
     notify()
-    if (as.info.notifyPrivate)
+    if (is.storage.data.notifyPrivate)
       is.socket.acceptedOffer = offerInfo
   })
 
   as.messenger.on('retractedOffer', (offerInfo: OfferInfo) => {
     notify()
-    if (as.info.notifyPrivate)
+    if (is.storage.data.notifyPrivate)
       is.socket.retractedOffer = offerInfo
   })
 
   as.messenger.on('turnedDownOffer', (offerInfo: OfferInfo) => {
     notify()
-    if (as.info.notifyPrivate)
+    if (is.storage.data.notifyPrivate)
       is.socket.turnedDownOffer = offerInfo
   })
 
   as.messenger.on('complete', async (offerInfo: OfferInfo) => {
     notify()
     await as.checkSign()
-    if (as.info.notifyPrivate)
+    if (is.storage.data.notifyPrivate)
       is.socket.complete = offerInfo
   })
 

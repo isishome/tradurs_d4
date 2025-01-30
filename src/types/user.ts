@@ -1,10 +1,4 @@
-export interface INotify {
-  notifyNew: boolean,
-  notifyPrivate: boolean,
-  notifyEmail: boolean
-}
-
-export interface IUser extends INotify {
+export interface IUser {
   id: string | null,
   yolk: number,
   avatar: number,
@@ -58,9 +52,6 @@ export class User implements IUser {
   public online = false
   public blockable = false
   public unblockable = false
-  public notifyNew = true
-  public notifyPrivate = true
-  public notifyEmail = true
   public loading = false
   public isAdmin = false
   constructor(id?: string) {

@@ -413,7 +413,7 @@ watch(
               :transition-duration="0"
               style="min-width: 260px"
             >
-              <D4User :data="as.info" info>
+              <D4User :data="as.info" :storage="is.storage.data" info>
                 <template #actions>
                   <q-btn
                     no-caps
@@ -1189,7 +1189,7 @@ watch(
               :transition-duration="0"
               style="min-width: 280px"
             >
-              <D4User :data="as.info" info>
+              <D4User :data="as.info" :storage="is.storage.data" info>
                 <template #actions>
                   <q-btn
                     no-caps
@@ -1283,7 +1283,7 @@ watch(
               >
                 <div>Copyright</div>
                 <div>@</div>
-                <div>2023</div>
+                <div>2025</div>
                 <q-btn
                   class="no-hover"
                   no-caps

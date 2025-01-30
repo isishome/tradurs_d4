@@ -26,7 +26,7 @@ const { t, te, locale } = useI18n({ useScope: 'global' })
 
 const loading = ref(false)
 const preset = ref<number | null>(null)
-const presets = is.storage.data.presets
+const presets = is.storage.data.presets ?? []
 const filter = reactive<IFilter>({} as IFilter)
 const filterQuality = is.filterQuality
 const filterTypes = is.filterTypes
@@ -139,7 +139,11 @@ const updateDebounce = debounce(() => {
 }, 500)
 
 const updateBasic = () => {
-  is.setStorage()
+  is.setStorage({
+    hardcore: is.storage.data.hardcore,
+    ladder: is.storage.data.ladder,
+    expanded: is.storage.data.expanded
+  })
     .then(() => {})
     .catch(() => {})
     .then(() => {

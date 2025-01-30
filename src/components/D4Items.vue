@@ -860,8 +860,8 @@ const startAnalyze = () => {
 const endAnalyze = (item: Item) => {
   disable.value = false
   item.itemId = activatedItem.value.itemId
-  item.hardcore = is.storage.data.hardcore
-  item.ladder = is.storage.data.ladder
+  item.hardcore = is.storage.data.hardcore || false
+  item.ladder = is.storage.data.ladder || true
   item.authorized = activatedItem.value.authorized
   activatedItem.value = item
   analyzeKey.value++
@@ -879,8 +879,8 @@ const failedAnalyze = (msg: string) => {
 }
 
 const create = () => {
-  activatedItem.value.hardcore = is.storage.data.hardcore
-  activatedItem.value.ladder = is.storage.data.ladder
+  activatedItem.value.hardcore = is.storage.data.hardcore || false
+  activatedItem.value.ladder = is.storage.data.ladder || true
   activatedItem.value.itemType = 'weapon'
   activatedItem.value.itemTypeValue1 = 'axe'
   setDefaultProperties()

@@ -8,136 +8,141 @@ import { Item, Offer } from 'src/types/item'
 const prod = import.meta.env.PROD
 
 export interface ILabel {
-  value: number | string,
+  value: number | string
   label: string
 }
 
-export interface Status extends ILabel { }
+export interface Status extends ILabel {}
 
 export interface RuneType extends ILabel {
   color: string
 }
 
 export interface Tier extends ILabel {
-  value: string,
+  value: string
   fullName: string
 }
 
 export interface Quality extends ILabel {
-  fullName: string,
-  upgradeLimit: number | null,
-  affixLimit: number | null,
+  fullName: string
+  upgradeLimit: number | null
+  affixLimit: number | null
   hasAttributeTypes: Array<string>
 }
 
 export interface Rune extends ILabel {
-  type: string,
-  quality: string,
-  gain?: string,
-  requires?: string,
-  cooldown?: number | null,
-  effect: string,
+  type: string
+  quality: string
+  gain?: string
+  requires?: string
+  cooldown?: number | null
+  effect: string
   level?: number | null
 }
 
-export interface AspectCategory extends ILabel { }
+export interface AspectCategory extends ILabel {}
 
 export interface Gem extends ILabel {
-  quality: string,
-  qualityName: string,
+  quality: string
+  qualityName: string
   level: number | null
 }
 
 export interface Elixir extends ILabel {
-  elixir: string,
-  gradable: boolean,
-  craftable: boolean,
-  onlyHardcore: boolean,
-  grade: string,
-  gradeName: string,
+  elixir: string
+  gradable: boolean
+  craftable: boolean
+  onlyHardcore: boolean
+  grade: string
+  gradeName: string
   level: number | null
 }
 
 export interface Summoning extends ILabel {
-  summoningGroup?: string,
+  summoningGroup?: string
   quantity?: number
 }
 
 export interface ItemType extends ILabel {
-  attribute: string,
-  isCurrency: boolean,
+  attribute: string
+  isCurrency: boolean
   onlyCurrency: boolean
 }
 
 export interface EquipmentClass extends ILabel {
-  type: string,
-  isCurrency: boolean,
+  type: string
+  isCurrency: boolean
   properties: number[]
 }
 
 export interface AttributeType extends ILabel {
-  sort: number,
+  sort: number
   hasAttributes: Array<string>
 }
 
 export interface Property extends ILabel {
-  type: string,
+  type: string
   sort?: number
 }
 
 export interface Affix extends ILabel {
-  type: string,
-  aspectName?: string,
-  color?: string,
-  cls?: string,
-  aspectCategory?: string,
-  equipmentClasses?: string,
-  sort?: number,
+  type: string
+  aspectName?: string
+  color?: string
+  cls?: string
+  aspectCategory?: string
+  equipmentClasses?: string
+  sort?: number
   disable: boolean
 }
 
 export interface Restriction extends ILabel {
-  type: string,
+  type: string
   sort?: number
 }
 
-export interface Pact extends ILabel { }
+export interface Pact extends ILabel {}
 
 export interface Award {
-  ranking: number,
-  good?: number,
-  bad?: number,
-  itemId?: number,
-  items?: number,
-  itemName?: string,
-  itemType?: string,
-  itemTypeValue1?: string,
-  itemTypeValue2?: string,
-  imageId?: number,
-  price?: string | number | null,
+  ranking: number
+  good?: number
+  bad?: number
+  itemId?: number
+  items?: number
+  itemName?: string
+  itemType?: string
+  itemTypeValue1?: string
+  itemTypeValue2?: string
+  imageId?: number
+  price?: string | number | null
   battleTag: string
 }
 
 export interface Awards {
-  highPriced: Array<Award>,
-  bestManners: Array<Award>,
-  mostSold: Array<Award>,
+  highPriced: Array<Award>
+  bestManners: Array<Award>
+  mostSold: Array<Award>
   mostPurchased: Array<Award>
 }
 
 export interface AwardsItem {
-  itemId: number,
-  hardcore: boolean,
+  itemId: number
+  hardcore: boolean
   ladder: boolean
 }
 
-export type OfferInfo = { itemName: string, itemId: string, price?: string }
+export type OfferInfo = { itemName: string; itemId: string; price?: string }
 
 export interface IStorage {
-  hardcore: boolean,
-  ladder: boolean,
-  expanded: boolean,
-  presets: Array<IPreset>
+  hardcore?: boolean
+  ladder?: boolean
+  expanded?: boolean
+  notifyNew?: boolean
+  notifyPrivate?: boolean
+  notifyEmail?: boolean
+  sound?: number
+  volume?: number
+  presets?: Array<IPreset>
 }
 
 export type MinMax = {
@@ -154,37 +159,36 @@ export type Attr = {
 export type AttrOption = Property &
   Omit<Affix, 'disable'> &
   Restriction &
-  Omit<Rune, 'quality' | 'effect'> &
-{
-  effect?: string
-}
+  Omit<Rune, 'quality' | 'effect'> & {
+    effect?: string
+  }
 
 export interface AffixFilter {
-  affixId?: number,
-  runeId?: string,
+  affixId?: number
+  runeId?: string
   affixGreater: number
 }
 
 export interface IFilter {
-  onlyCurrency: boolean,
-  favorite: boolean,
-  quality: Array<string>,
-  status: string,
-  mine: boolean | null,
-  offered: boolean | null,
-  offer: boolean | null,
-  power: [number, number],
-  level: [number, number],
-  itemTypes: Array<string>,
-  itemTypeValues1: { [key: string]: Array<string | number> },
-  itemTypeValues2: { [key: string]: Array<string | number> },
-  greaterCount: number,
-  properties: Array<Attr>,
-  affixes: Array<Attr>,
-  restrictions: Array<Attr>,
-  name: string,
-  request: number,
-  loading: boolean,
+  onlyCurrency: boolean
+  favorite: boolean
+  quality: Array<string>
+  status: string
+  mine: boolean | null
+  offered: boolean | null
+  offer: boolean | null
+  power: [number, number]
+  level: [number, number]
+  itemTypes: Array<string>
+  itemTypeValues1: { [key: string]: Array<string | number> }
+  itemTypeValues2: { [key: string]: Array<string | number> }
+  greaterCount: number
+  properties: Array<Attr>
+  affixes: Array<Attr>
+  restrictions: Array<Attr>
+  name: string
+  request: number
+  loading: boolean
   fixed: boolean
 }
 
@@ -236,6 +240,7 @@ export const useItemStore = defineStore('item', {
     },
     affixes: {
       data: [] as Array<Affix>,
+      vectors: null as unknown as Map<number, number[]>,
       loading: false,
       request: 0
     },
@@ -288,8 +293,8 @@ export const useItemStore = defineStore('item', {
     },
     analyze: {
       similarRate: {
-        ko: .8,
-        en: .8
+        ko: 0.8,
+        en: 0.8
       },
       lang: {
         ko: `가-힣`,
@@ -305,92 +310,193 @@ export const useItemStore = defineStore('item', {
   }),
   getters: {
     findPreset: (state) => {
-      return (id: number): IPreset | undefined => state.storage.data.presets.find(p => p.value === id)
+      return (id: number): IPreset | undefined =>
+        state.storage.data.presets?.find((p) => p.value === id)
     },
     findClass: (state) => {
-      return (cls?: string): ILabel | undefined => state.classes.find(c => c.value === cls)
+      return (cls?: string): ILabel | undefined =>
+        state.classes.find((c) => c.value === cls)
     },
     findItemStatus: (state) => {
-      return (statusCode?: string): Status | undefined => state.itemStatus.find(s => s.value === statusCode)
+      return (statusCode?: string): Status | undefined =>
+        state.itemStatus.find((s) => s.value === statusCode)
     },
     findOfferStatus: (state) => {
-      return (statusCode?: string): Status | undefined => state.offerStatus.find(s => s.value === statusCode)
+      return (statusCode?: string): Status | undefined =>
+        state.offerStatus.find((s) => s.value === statusCode)
     },
     findTier: (state) => {
-      return (id?: string | null): Tier | undefined => state.tiers.find(t => t.value === id)
+      return (id?: string | null): Tier | undefined =>
+        state.tiers.find((t) => t.value === id)
     },
     findQuality: (state) => {
-      return (type?: string): Quality | undefined => state.quality.find(q => q.value === type)
+      return (type?: string): Quality | undefined =>
+        state.quality.find((q) => q.value === type)
     },
     filterQuality: (state) => {
-      return (type?: string): Array<Quality> => type ? state.quality.filter(q => q.value === type) : state.quality
+      return (type?: string): Array<Quality> =>
+        type ? state.quality.filter((q) => q.value === type) : state.quality
     },
     findType: (state) => {
-      return (type: string): ItemType | undefined => state.types.find(t => t.value === type && !t.onlyCurrency)
+      return (type: string): ItemType | undefined =>
+        state.types.find((t) => t.value === type && !t.onlyCurrency)
     },
     filterTypes: (state) => {
-      return (type?: string): Array<ItemType> => type ? state.types.filter(t => t.value === type && !t.onlyCurrency) : state.types.filter(t => !t.onlyCurrency)
+      return (type?: string): Array<ItemType> =>
+        type
+          ? state.types.filter((t) => t.value === type && !t.onlyCurrency)
+          : state.types.filter((t) => !t.onlyCurrency)
     },
     findEquipClass: (state) => {
-      return (className?: string): EquipmentClass | undefined => state.equipClasses.find(ec => ec.value === className)
+      return (className?: string): EquipmentClass | undefined =>
+        state.equipClasses.find((ec) => ec.value === className)
     },
     filterClasses: (state) => {
-      return (type?: string, word?: string): Array<EquipmentClass> => type ? state.equipClasses.filter(ec => ec.type === type && ec.label?.toLowerCase().indexOf((word ?? '').toLowerCase()) !== -1) : state.equipClasses.filter(ec => ec.label?.toLowerCase().indexOf((word ?? '').toLowerCase()) !== -1)
+      return (type?: string, word?: string): Array<EquipmentClass> =>
+        type
+          ? state.equipClasses.filter(
+              (ec) =>
+                ec.type === type &&
+                ec.label?.toLowerCase().indexOf((word ?? '').toLowerCase()) !==
+                  -1
+            )
+          : state.equipClasses.filter(
+              (ec) =>
+                ec.label?.toLowerCase().indexOf((word ?? '').toLowerCase()) !==
+                -1
+            )
     },
     currencies: (state) => {
-      return (): Array<ILabel> => [...state.types.filter(t => t.isCurrency || t.onlyCurrency), ...state.equipClasses.filter(ec => ec.isCurrency)]
+      return (): Array<ILabel> => [
+        ...state.types.filter((t) => t.isCurrency || t.onlyCurrency),
+        ...state.equipClasses.filter((ec) => ec.isCurrency)
+      ]
     },
     findRuneType: (state) => {
-      return (type?: string): RuneType | undefined => state.runeTypes.find(rt => rt.value === type)
+      return (type?: string): RuneType | undefined =>
+        state.runeTypes.find((rt) => rt.value === type)
     },
     findRune: (state) => {
-      return (id: string): Rune | undefined => state.runes.find(r => r.value === id)
+      return (id: string): Rune | undefined =>
+        state.runes.find((r) => r.value === id)
     },
     filterRunesByType: (state) => {
-      return (type?: string, word?: string): Array<Rune> => type ? state.runes.filter(r => r.type === type && r.label?.toLowerCase().indexOf((word ?? '').toLowerCase()) !== -1) : state.runes.filter(r => r.label?.toLowerCase().indexOf((word ?? '').toLowerCase()) !== -1)
+      return (type?: string, word?: string): Array<Rune> =>
+        type
+          ? state.runes.filter(
+              (r) =>
+                r.type === type &&
+                r.label?.toLowerCase().indexOf((word ?? '').toLowerCase()) !==
+                  -1
+            )
+          : state.runes.filter(
+              (r) =>
+                r.label?.toLowerCase().indexOf((word ?? '').toLowerCase()) !==
+                -1
+            )
     },
     filterAspectByCategory: (state) => {
-      return (category?: string, word?: string): Array<Affix> => category ? state.affixes.data.filter(a => !!a.aspectName && a.aspectCategory === category && a.aspectName?.toLowerCase().indexOf((word ?? '').toLowerCase()) !== -1).map(a => ({ ...a, label: a.aspectName as string })) : state.affixes.data.filter(a => !!a.aspectName && a.aspectName?.toLowerCase().indexOf((word ?? '').toLowerCase()) !== -1).map(a => ({ ...a, label: a.aspectName as string }))
+      return (category?: string, word?: string): Array<Affix> =>
+        category
+          ? state.affixes.data
+              .filter(
+                (a) =>
+                  !!a.aspectName &&
+                  a.aspectCategory === category &&
+                  a.aspectName
+                    ?.toLowerCase()
+                    .indexOf((word ?? '').toLowerCase()) !== -1
+              )
+              .map((a) => ({ ...a, label: a.aspectName as string }))
+          : state.affixes.data
+              .filter(
+                (a) =>
+                  !!a.aspectName &&
+                  a.aspectName
+                    ?.toLowerCase()
+                    .indexOf((word ?? '').toLowerCase()) !== -1
+              )
+              .map((a) => ({ ...a, label: a.aspectName as string }))
     },
     findAspect: (state) => {
-      return (id: number): Affix | undefined => state.affixes.data.find(a => a.value === id)
+      return (id: number): Affix | undefined =>
+        state.affixes.data.find((a) => a.value === id)
     },
     filterAttributeTypes: (state) => {
-      return (attribute?: string): Array<AttributeType> => attribute ? state.attributeTypes.filter(at => at.hasAttributes.includes(attribute)) : state.attributeTypes
+      return (attribute?: string): Array<AttributeType> =>
+        attribute
+          ? state.attributeTypes.filter((at) =>
+              at.hasAttributes.includes(attribute)
+            )
+          : state.attributeTypes
     },
     filterProperties: (state) => {
-      return (word?: string): Array<Property> => word ? state.properties.data.filter(p => p.label.toLowerCase().indexOf(word.toLowerCase()) !== -1) : state.properties.data
+      return (word?: string): Array<Property> =>
+        word
+          ? state.properties.data.filter(
+              (p) => p.label.toLowerCase().indexOf(word.toLowerCase()) !== -1
+            )
+          : state.properties.data
     },
     filterAffixes: (state) => {
-      return (word?: string): Array<Affix | Rune> => word ? [...state.affixes.data.filter(a => a.label.toLowerCase().indexOf(word.toLowerCase()) !== -1), ...state.runes.filter(r => r.effect.toLowerCase().indexOf(word.toLowerCase()) !== -1)] : [...state.affixes.data, ...state.runes]
+      return (word?: string): Array<Affix | Rune> =>
+        word
+          ? [
+              ...state.affixes.data.filter(
+                (a) => a.label.toLowerCase().indexOf(word.toLowerCase()) !== -1
+              ),
+              ...state.runes.filter(
+                (r) => r.effect.toLowerCase().indexOf(word.toLowerCase()) !== -1
+              )
+            ]
+          : [...state.affixes.data, ...state.runes]
     },
     availableAffixes: (state) => {
-      return (): Array<Affix> => state.affixes.data.filter((a: Affix) => !a.disable)
+      return (): Array<Affix> =>
+        state.affixes.data.filter((a: Affix) => !a.disable)
     },
     filterRestrictions: (state) => {
-      return (word?: string): Array<Restriction> => word ? state.restrictions.data.filter(r => r.label.toLowerCase().indexOf(word.toLowerCase()) !== -1) : state.restrictions.data
+      return (word?: string): Array<Restriction> =>
+        word
+          ? state.restrictions.data.filter(
+              (r) => r.label.toLowerCase().indexOf(word.toLowerCase()) !== -1
+            )
+          : state.restrictions.data
     },
     findProperty: (state) => {
-      return (propertyId: number): Property | undefined => state.properties.data.find(p => p.value === propertyId)
+      return (propertyId: number): Property | undefined =>
+        state.properties.data.find((p) => p.value === propertyId)
     },
     findAffix: (state) => {
-      return (id?: number | string): Affix | Rune | undefined => state.affixes.data.find(a => a.value === id) ?? state.runes.find(r => r.value === id)
+      return (id?: number | string): Affix | Rune | undefined =>
+        state.affixes.data.find((a) => a.value === id) ??
+        state.runes.find((r) => r.value === id)
     },
     findRestriction: (state) => {
-      return (restrictId: number): Restriction | undefined => state.restrictions.data.find(r => r.value === restrictId)
+      return (restrictId: number): Restriction | undefined =>
+        state.restrictions.data.find((r) => r.value === restrictId)
     },
     matchAffixes: (state) => {
-      return (type: string, attribute: string): boolean => type && attribute ? state.affixes.data.filter(a => a.type === type && a.label.trim() === attribute).length > 0 : false
+      return (type: string, attribute: string): boolean =>
+        type && attribute
+          ? state.affixes.data.filter(
+              (a) => a.type === type && a.label.trim() === attribute
+            ).length > 0
+          : false
     },
     filterMaterials: (state) => {
-      return (summoning: string): Array<Summoning> => summoning ? state.materials.filter(m => m.summoningGroup === summoning) : []
+      return (summoning: string): Array<Summoning> =>
+        summoning
+          ? state.materials.filter((m) => m.summoningGroup === summoning)
+          : []
     },
     needExpand: (state) => {
       return !(
         state.filter.greaterCount === 0 &&
         state.filter.properties.length === 0 &&
         state.filter.affixes.length === 0 &&
-        state.filter.restrictions.length === 0)
+        state.filter.restrictions.length === 0
+      )
     },
     showRewardItem: (state) => {
       return !(
@@ -410,7 +516,8 @@ export const useItemStore = defineStore('item', {
         state.filter.properties.length > 0 ||
         state.filter.affixes.length > 0 ||
         state.filter.restrictions.length > 0 ||
-        state.filter.name !== '')
+        state.filter.name !== ''
+      )
     }
   },
   actions: {
@@ -450,7 +557,8 @@ export const useItemStore = defineStore('item', {
         let error: unknown = null
         if (this.storage.request === 0 || isForced) {
           this.storage.request++
-          api.get('/d4/account/storage', options)
+          api
+            .get('/d4/account/storage', options)
             .then((response) => {
               this.storage.data = response.data
             })
@@ -460,19 +568,16 @@ export const useItemStore = defineStore('item', {
             .then(() => {
               this.storage.loading = false
 
-              if (error)
-                reject()
-              else
-                resolve()
+              if (error) reject()
+              else resolve()
             })
-        }
-        else
-          resolve()
+        } else resolve()
       })
     },
-    setStorage() {
+    setStorage(data: IStorage) {
       return new Promise<void>((resolve, reject) => {
-        api.post('/d4/account/storage/update', { hardcore: this.storage.data.hardcore, ladder: this.storage.data.ladder, expanded: this.storage.data.expanded })
+        api
+          .post('/d4/account/storage/update', data)
           .then(() => {
             resolve()
           })
@@ -489,11 +594,11 @@ export const useItemStore = defineStore('item', {
           this.base.request++
           Object.assign(this, JSON.parse(data))
           resolve()
-        }
-        else if (this.base.request === 0) {
+        } else if (this.base.request === 0) {
           this.base.request++
           this.base.loading = true
-          api.get('/d4/item/base')
+          api
+            .get('/d4/item/base')
             .then((response) => {
               LocalStorage.setItem('base', JSON.stringify(response.data))
               Object.assign(this, response.data)
@@ -504,14 +609,10 @@ export const useItemStore = defineStore('item', {
             .then(() => {
               this.base.loading = false
 
-              if (error)
-                reject()
-              else
-                resolve()
+              if (error) reject()
+              else resolve()
             })
-        }
-        else
-          resolve()
+        } else resolve()
       })
     },
     getProperties() {
@@ -522,11 +623,11 @@ export const useItemStore = defineStore('item', {
           this.properties.request++
           this.properties.data = JSON.parse(data)
           resolve()
-        }
-        else if (this.properties.request === 0) {
+        } else if (this.properties.request === 0) {
           this.properties.request++
           this.properties.loading = true
-          api.get('/d4/item/properties')
+          api
+            .get('/d4/item/properties')
             .then((response) => {
               LocalStorage.setItem('properties', JSON.stringify(response.data))
               this.properties.data = response.data
@@ -537,14 +638,10 @@ export const useItemStore = defineStore('item', {
             .then(() => {
               this.properties.loading = false
 
-              if (error)
-                reject()
-              else
-                resolve()
+              if (error) reject()
+              else resolve()
             })
-        }
-        else
-          resolve()
+        } else resolve()
       })
     },
     getAffixes() {
@@ -554,12 +651,13 @@ export const useItemStore = defineStore('item', {
         if (!!data && this.affixes.request === 0) {
           this.affixes.request++
           this.affixes.data = JSON.parse(data)
+
           resolve()
-        }
-        else if (this.affixes.request === 0) {
+        } else if (this.affixes.request === 0) {
           this.affixes.request++
           this.affixes.loading = true
-          api.get('/d4/item/affixes')
+          api
+            .get('/d4/item/affixes')
             .then((response) => {
               LocalStorage.setItem('affixes', JSON.stringify(response.data))
               this.affixes.data = response.data
@@ -570,14 +668,10 @@ export const useItemStore = defineStore('item', {
             .then(() => {
               this.affixes.loading = false
 
-              if (error)
-                reject()
-              else
-                resolve()
+              if (error) reject()
+              else resolve()
             })
-        }
-        else
-          resolve()
+        } else resolve()
       })
     },
     getRestrictions() {
@@ -588,13 +682,16 @@ export const useItemStore = defineStore('item', {
           this.restrictions.request++
           this.restrictions.data = JSON.parse(data)
           resolve()
-        }
-        else if (this.restrictions.request === 0) {
+        } else if (this.restrictions.request === 0) {
           this.restrictions.request++
           this.restrictions.loading = true
-          api.get('/d4/item/restrictions')
+          api
+            .get('/d4/item/restrictions')
             .then((response) => {
-              LocalStorage.setItem('restrictions', JSON.stringify(response.data))
+              LocalStorage.setItem(
+                'restrictions',
+                JSON.stringify(response.data)
+              )
               this.restrictions.data = response.data
             })
             .catch((e) => {
@@ -603,14 +700,10 @@ export const useItemStore = defineStore('item', {
             .then(() => {
               this.restrictions.loading = false
 
-              if (error)
-                reject()
-              else
-                resolve()
+              if (error) reject()
+              else resolve()
             })
-        }
-        else
-          resolve()
+        } else resolve()
       })
     },
     getPacts(options?: AxiosRequestConfig) {
@@ -619,7 +712,8 @@ export const useItemStore = defineStore('item', {
         if (this.pacts.request === 0) {
           this.pacts.request++
           this.pacts.loading = true
-          api.get('/d4/item/pacts', options)
+          api
+            .get('/d4/item/pacts', options)
             .then((response) => {
               this.pacts.data = response.data
             })
@@ -629,19 +723,21 @@ export const useItemStore = defineStore('item', {
             .then(() => {
               this.pacts.loading = false
 
-              if (error)
-                reject()
-              else
-                resolve()
+              if (error) reject()
+              else resolve()
             })
-        }
-        else
-          resolve()
+        } else resolve()
       })
     },
     getReward() {
       return new Promise<Array<Item>>((resolve, reject) => {
-        api.get('/d4/item/reward', { params: { hardcore: this.storage.data.hardcore, ladder: this.storage.data.ladder } })
+        api
+          .get('/d4/item/reward', {
+            params: {
+              hardcore: this.storage.data.hardcore,
+              ladder: this.storage.data.ladder
+            }
+          })
           .then((response) => {
             this.rewardItems = response.data
             resolve(response.data)
@@ -651,9 +747,28 @@ export const useItemStore = defineStore('item', {
           })
       })
     },
-    getItems(page: number, itemId?: string | string[], options?: AxiosRequestConfig) {
+    getItems(
+      page: number,
+      itemId?: string | string[],
+      options?: AxiosRequestConfig
+    ) {
       return new Promise<Array<Item>>((resolve, reject) => {
-        api.post('/d4/item', { page, rows: this.itemPage.rows, itemId, basicFilter: { hardcore: this.storage.data.hardcore, ladder: this.storage.data.ladder }, filter: this.filter, sort: this.sort }, options)
+        api
+          .post(
+            '/d4/item',
+            {
+              page,
+              rows: this.itemPage.rows,
+              itemId,
+              basicFilter: {
+                hardcore: this.storage.data.hardcore,
+                ladder: this.storage.data.ladder
+              },
+              filter: this.filter,
+              sort: this.sort
+            },
+            options
+          )
           .then((response) => {
             if (!itemId) {
               this.itemPage.over = page > 1
@@ -667,18 +782,28 @@ export const useItemStore = defineStore('item', {
           })
       })
     },
-    addAttribute(category: string | null, attribute: Property | Affix | Restriction) {
+    addAttribute(
+      category: string | null,
+      attribute: Property | Affix | Restriction
+    ) {
       return new Promise<void>((resolve, reject) => {
-        api.post('/d4/item/attribute', { category: category, attribute: attribute })
+        api
+          .post('/d4/item/attribute', {
+            category: category,
+            attribute: attribute
+          })
           .then(() => {
             resolve()
           })
-          .catch((e) => { reject(e) })
+          .catch((e) => {
+            reject(e)
+          })
       })
     },
     addItem(item: Item) {
       return new Promise<Item>((resolve, reject) => {
-        api.post('/d4/item/add', { item })
+        api
+          .post('/d4/item/add', { item })
           .then((response) => {
             resolve(response.data)
           })
@@ -689,7 +814,8 @@ export const useItemStore = defineStore('item', {
     },
     updateItem(item: Item) {
       return new Promise<void>((resolve, reject) => {
-        api.post('/d4/item/update', { item })
+        api
+          .post('/d4/item/update', { item })
           .then(() => {
             resolve()
           })
@@ -700,7 +826,8 @@ export const useItemStore = defineStore('item', {
     },
     relistItem(itemId: string) {
       return new Promise<void>((resolve, reject) => {
-        api.post('/d4/item/relist', { itemId })
+        api
+          .post('/d4/item/relist', { itemId })
           .then(() => {
             resolve()
           })
@@ -711,7 +838,8 @@ export const useItemStore = defineStore('item', {
     },
     relistItems(itemIds: Array<string>) {
       return new Promise<Array<IErrorItem>>((resolve, reject) => {
-        api.post('/d4/item/relist/batch', { itemIds })
+        api
+          .post('/d4/item/relist/batch', { itemIds })
           .then((response) => {
             resolve(response.data)
           })
@@ -722,7 +850,8 @@ export const useItemStore = defineStore('item', {
     },
     statusItem(itemId: string) {
       return new Promise<void>((resolve, reject) => {
-        api.post('/d4/item/status', { itemId: itemId })
+        api
+          .post('/d4/item/status', { itemId: itemId })
           .then(() => {
             resolve()
           })
@@ -733,7 +862,8 @@ export const useItemStore = defineStore('item', {
     },
     statusItems(itemIds: Array<string>, status: string) {
       return new Promise<Array<IErrorItem>>((resolve, reject) => {
-        api.post('/d4/item/status/batch', { itemIds, status })
+        api
+          .post('/d4/item/status/batch', { itemIds, status })
           .then((response) => {
             resolve(response.data)
           })
@@ -744,7 +874,8 @@ export const useItemStore = defineStore('item', {
     },
     reRegisterItem(itemId: string) {
       return new Promise<void>((resolve, reject) => {
-        api.post('/d4/item/reregister', { itemId })
+        api
+          .post('/d4/item/reregister', { itemId })
           .then(() => {
             resolve()
           })
@@ -755,7 +886,8 @@ export const useItemStore = defineStore('item', {
     },
     reRegisterItems(itemIds: Array<string>) {
       return new Promise<Array<IErrorItem>>((resolve, reject) => {
-        api.post('/d4/item/reregister/batch', { itemIds })
+        api
+          .post('/d4/item/reregister/batch', { itemIds })
           .then((response) => {
             resolve(response.data)
           })
@@ -766,7 +898,8 @@ export const useItemStore = defineStore('item', {
     },
     deleteItem(itemId: string) {
       return new Promise<void>((resolve, reject) => {
-        api.post('/d4/item/delete', { itemId: itemId })
+        api
+          .post('/d4/item/delete', { itemId: itemId })
           .then(() => {
             resolve()
           })
@@ -777,7 +910,8 @@ export const useItemStore = defineStore('item', {
     },
     deleteItems(itemIds: Array<string>) {
       return new Promise<Array<IErrorItem>>((resolve, reject) => {
-        api.post('/d4/item/delete/batch', { itemIds })
+        api
+          .post('/d4/item/delete/batch', { itemIds })
           .then((response) => {
             resolve(response.data)
           })
@@ -788,7 +922,8 @@ export const useItemStore = defineStore('item', {
     },
     getOffers(itemId: string, offerId?: string) {
       return new Promise<Array<Offer>>((resolve, reject) => {
-        api.get('/d4/item/offer', { params: { itemId, offerId } })
+        api
+          .get('/d4/item/offer', { params: { itemId, offerId } })
           .then((response) => {
             resolve(response.data)
           })
@@ -799,7 +934,8 @@ export const useItemStore = defineStore('item', {
     },
     makeOffer(offer: Offer) {
       return new Promise<Offer>((resolve, reject) => {
-        api.post('/d4/item/offer/make', { offer })
+        api
+          .post('/d4/item/offer/make', { offer })
           .then((response) => {
             resolve(response.data)
           })
@@ -810,7 +946,8 @@ export const useItemStore = defineStore('item', {
     },
     acceptOffer(offer: Offer) {
       return new Promise<void>((resolve, reject) => {
-        api.post('/d4/item/offer/accept', { offer })
+        api
+          .post('/d4/item/offer/accept', { offer })
           .then(() => {
             resolve()
           })
@@ -821,7 +958,8 @@ export const useItemStore = defineStore('item', {
     },
     retractOffer(offerId: string) {
       return new Promise<void>((resolve, reject) => {
-        api.post('/d4/item/offer/retract', { offerId })
+        api
+          .post('/d4/item/offer/retract', { offerId })
           .then(() => {
             resolve()
           })
@@ -832,7 +970,8 @@ export const useItemStore = defineStore('item', {
     },
     turnDownOffer(offerId: string) {
       return new Promise<void>((resolve, reject) => {
-        api.post('/d4/item/offer/turndown', { offerId })
+        api
+          .post('/d4/item/offer/turndown', { offerId })
           .then(() => {
             resolve()
           })
@@ -843,7 +982,8 @@ export const useItemStore = defineStore('item', {
     },
     addEvaluations(itemId: string, evaluations: Array<number>) {
       return new Promise<void>((resolve, reject) => {
-        api.post('/d4/item/evaluations/add', { itemId, evaluations })
+        api
+          .post('/d4/item/evaluations/add', { itemId, evaluations })
           .then(() => {
             resolve()
           })
@@ -854,7 +994,8 @@ export const useItemStore = defineStore('item', {
     },
     favorite(itemId: string, favorite: boolean) {
       return new Promise<void>((resolve, reject) => {
-        api.post('/d4/item/favorite', { itemId, favorite })
+        api
+          .post('/d4/item/favorite', { itemId, favorite })
           .then(() => {
             resolve()
           })
@@ -865,7 +1006,8 @@ export const useItemStore = defineStore('item', {
     },
     getAwards() {
       return new Promise<Awards>((resolve, reject) => {
-        api.get('/d4/awards')
+        api
+          .get('/d4/awards')
           .then((response) => {
             resolve(response.data)
           })
@@ -881,9 +1023,14 @@ export const useItemStore = defineStore('item', {
         delete cloneFilter.loading
         delete cloneFilter.fixed
 
-        api.post('/d4/account/preset/add', { name, preset: cloneFilter })
+        api
+          .post('/d4/account/preset/add', { name, preset: cloneFilter })
           .then((response) => {
-            this.storage.data.presets.push({ value: response.data, label: name, filter: cloneFilter })
+            ;(this.storage.data.presets ?? []).push({
+              value: response.data,
+              label: name,
+              filter: cloneFilter
+            })
             resolve(response.data)
           })
           .catch((e) => {
@@ -893,12 +1040,16 @@ export const useItemStore = defineStore('item', {
     },
     removePreset(id: number) {
       return new Promise<void>((resolve, reject) => {
-        api.post('/d4/account/preset/remove', { id })
+        api
+          .post('/d4/account/preset/remove', { id })
           .then(() => {
-            const presetIndex = this.storage.data.presets.findIndex((p: IPreset) => p.value === id)
+            const presetIndex =
+              this.storage.data.presets?.findIndex(
+                (p: IPreset) => p.value === id
+              ) ?? -1
 
             if (presetIndex !== -1)
-              this.storage.data.presets.splice(presetIndex, 1)
+              (this.storage.data.presets ?? []).splice(presetIndex, 1)
 
             resolve()
           })
@@ -908,7 +1059,7 @@ export const useItemStore = defineStore('item', {
       })
     },
     async recognize(image: ImageLike, lang: string) {
-      const locale = (lang === 'ko') ? ['kor'] : ['eng']
+      const locale = lang === 'ko' ? ['kor'] : ['eng']
       //const locale = (lang === 'ko') ? ['kor.d4', 'kor'] : ['eng.d4', 'eng']
       const worker = await createWorker(locale)
       // const worker = await createWorker(locale, 1, {
@@ -923,10 +1074,23 @@ export const useItemStore = defineStore('item', {
       await worker.setParameters({
         preserve_interword_spaces: '1'
       })
-      const { data: { text } } = await worker.recognize(image)
+      const {
+        data: { text }
+      } = await worker.recognize(image)
+
       await worker.terminate()
 
-      const parsedText = text.replace(new RegExp(`[^0-9%${this.analyze.lang[lang as keyof typeof this.analyze.lang]}\\/\\+\\.\\[\\]\\-\\,\\:\\n\\(\\) ]`, 'gi'), '').replace(/[ ]{2,}/gi, ' ')
+      const parsedText = text
+        .replace(
+          new RegExp(
+            `[^0-9%${
+              this.analyze.lang[lang as keyof typeof this.analyze.lang]
+            }\\/\\+\\.\\[\\]\\-\\,\\:\\n\\(\\) ]`,
+            'gi'
+          ),
+          ''
+        )
+        .replace(/[ ]{2,}/gi, ' ')
       return parsedText
     }
   }

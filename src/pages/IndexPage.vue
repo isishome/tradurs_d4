@@ -58,7 +58,7 @@ const selectedAll = ref<boolean>(false)
 const sortOptions = reactive<Array<{ value: string; label: string }>>(
   tm('sort.options')
 )
-const isExpanded = computed(() => is.storage.data.expanded)
+const isExpanded = computed(() => is.storage.data.expanded || false)
 const noSelected = computed(
   () => items.value.filter((i) => i.selected).length === 0
 )

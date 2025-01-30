@@ -53,21 +53,27 @@ const awards: Awards = reactive({
   ]
 })
 const itemName = computed(
-  () => (itemName?: string, itemType?:string, typeValue1?: string, typeValue2?: string) =>
-    (itemType === 'rune'
-      ? `${is.findRune(typeValue2 ?? '')?.label} ${
-          is.findType('rune')?.label
-        }`
-      : itemType === 'aspect'
-      ? is.findAspect(Number(typeValue2))?.aspectName
-      : typeValue1 === 'gem'
-      ? is.gems.find((g: Gem) => g.value === typeValue2)?.label || null
-      : typeValue1 === 'elixir'
-      ? is.elixirs.find((e: Elixir) => e.value === typeValue2)?.label || null
-      : typeValue1 === 'summoning'
-      ? is.summonings.find((s: Summoning) => s.value === typeValue2)?.label ||
-        null
-      : itemName) ?? t('item.unknown')
+  () =>
+    (
+      itemName?: string,
+      itemType?: string,
+      typeValue1?: string,
+      typeValue2?: string
+    ) =>
+      (itemType === 'rune'
+        ? `${is.findRune(typeValue2 ?? '')?.label} ${
+            is.findType('rune')?.label
+          }`
+        : itemType === 'aspect'
+        ? is.findAspect(Number(typeValue2))?.aspectName
+        : typeValue1 === 'gem'
+        ? is.gems.find((g: Gem) => g.value === typeValue2)?.label || null
+        : typeValue1 === 'elixir'
+        ? is.elixirs.find((e: Elixir) => e.value === typeValue2)?.label || null
+        : typeValue1 === 'summoning'
+        ? is.summonings.find((s: Summoning) => s.value === typeValue2)?.label ||
+          null
+        : itemName) ?? t('item.unknown')
 )
 
 const itemImage = computed(
@@ -103,7 +109,7 @@ is.getAwards()
       mostSold: [],
       mostPurchased: []
     })
-   
+
     Object.assign(awards, data)
   })
   .catch(() => {
@@ -230,7 +236,7 @@ is.getAwards()
       </template>
 
       <template #detail>
-        + {{ awards.bestManners[0]?.good }}<span>&#8451</span>
+        + {{ awards.bestManners[0]?.good }}<span>&#8451;</span>
       </template>
 
       <template #battleTag>
@@ -247,7 +253,7 @@ is.getAwards()
           :key="idx"
         >
           {{ ranker?.ranking }}. {{ ranker?.battleTag }} + {{ ranker?.good
-          }}<span>&#8451</span>
+          }}<span>&#8451;</span>
         </div>
       </template>
 

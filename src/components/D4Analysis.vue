@@ -11,28 +11,14 @@ import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { type ILabel, useItemStore } from 'src/stores/item-store'
 import { Item, Property } from 'src/types/item'
-import stringComparison from 'string-comparison'
+import CompareWorker from 'src/common/worker?worker'
+import { similarity } from 'src/common'
+import { CompareParams, type Result } from 'src/common/worker'
 
 interface IProps {
   loading?: boolean
   disable?: boolean
   attrOnly?: boolean
-}
-
-type Match = {
-  id: number
-  label: string
-  chainText: string
-  len: number
-  rate: number
-  span: number
-}
-
-type Line = {
-  index: number
-  label: string
-  complete: boolean
-  matches: Array<Match>
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -47,14 +33,24 @@ const $q = useQuasar()
 const route = useRoute()
 const { t } = useI18n({ useScope: 'global' })
 const is = useItemStore()
-const lev = stringComparison.levenshtein
+
+const worker = new CompareWorker()
+const compare = (params: CompareParams): Promise<Array<Result>> => {
+  return new Promise((resolve) => {
+    worker.onmessage = (event) => resolve(event.data)
+    worker.postMessage(JSON.stringify(params))
+  })
+}
+const terminate = () => {
+  worker.terminate()
+}
 
 const lang: string = (route.params.lang as string) || 'ko'
 const similarRate =
   is.analyze.similarRate[lang as keyof typeof is.analyze.similarRate]
 const phase = is.analyze.lang[lang as keyof typeof is.analyze.lang]
 const replaces = is.analyze.replaces[lang as keyof typeof is.analyze.replaces]
-const timeout = 400
+const timeout = 200
 const showProgress = ref<boolean>(false)
 const checkedItem = reactive<string[]>([])
 const checkList: ILabel[] = [
@@ -67,152 +63,6 @@ const checkList: ILabel[] = [
   { value: 'aggregate', label: t('analyze.aggregateItemInfo') }
 ]
 const currentCheck = ref<string | number | null>(checkList[0].value)
-
-const similarity = (a: string, b: string) => {
-  return lev.similarity(a, b)
-}
-const distance = (a: string, b: string) => {
-  return lev.distance(a, b)
-}
-
-const simplify = (sentense: string) => {
-  return sentense
-    .replace(new RegExp(`\\([${phase} ]*\\)`, 'gi'), '')
-    .replace(new RegExp(`[^${phase}]`, 'gi'), '')
-}
-
-const parseValues = (
-  standard: string,
-  target: string,
-  ignoreBrackets = false
-) => {
-  const xLen = standard.match(/\{x\}/gi)?.length ?? 0
-  const values = target.match(/([(\[]?)([0-9\-.%]{1,})([\])]?)/gi) ?? []
-  const val = values
-    .filter((v) => !(ignoreBrackets ? /[()]/gi : /[()\[\]]/gi).test(v))
-    .map((v) => v.split(/[\[\]%\-]/gi))
-    .flat()
-    .filter((v) => !!v && /[0-9]{1,}\.?[0-9]{1,}/gi.test(v))
-  const minmax = values
-    .filter((v) => /[\[\]]/gi.test(v))
-    .map((v) => v.split(/[\[\]%]/gi))
-    .flat()
-    .filter((v) => !!v && /[0-9]{1,}\.?[0-9]{1,}/gi.test(v))
-
-  const returnValues = []
-  const returnRangeValues = []
-
-  for (let i = 0; i < xLen; i++) {
-    const v = !isNaN(parseFloat(val[i])) ? parseFloat(val[i]) : 0
-    let min = !isNaN(parseFloat((minmax[i] ?? '').split('-')[0]))
-      ? parseFloat((minmax[i] ?? '').split('-')[0])
-      : 0
-    let max = !isNaN(parseFloat((minmax[i] ?? '').split('-')[1]))
-      ? parseFloat((minmax[i] ?? '').split('-')[1])
-      : min ?? 0
-
-    if (val.length > minmax.length && (v < min || v > max)) {
-      min = 0
-      max = 0
-      minmax.unshift('0-0')
-    }
-
-    returnValues.push(v)
-    returnRangeValues.push({ min, max })
-  }
-
-  return { returnValues, returnRangeValues }
-}
-
-const compare = (
-  standard: Array<ILabel>,
-  target: Array<string>,
-  cutoffSim: number,
-  cutoffDis: number,
-  layer: number = 1
-) => {
-  const simpleStandard = standard.map((s) => ({
-    value: s.value,
-    label: simplify(s.label)
-  }))
-  const simpleTarget: Array<Line> = target.map((t, i) => ({
-    index: i,
-    label: simplify(t),
-    complete: false,
-    matches: []
-  }))
-
-  for (const ss of simpleStandard) {
-    const remain = simpleTarget.filter((st) => !st.complete && !!st.label)
-
-    for (let i = 0; i < remain.length; i++) {
-      const st = remain[i]
-      let repeat = 0
-      let lastRate = 0
-      while (repeat < layer) {
-        const chainText = remain
-          .slice(i, i + repeat + 1)
-          .map((r) => r.label)
-          .join('')
-
-        const rate = similarity(chainText, ss.label)
-        const span = distance(chainText, ss.label)
-
-        if (lastRate >= rate) break
-        else if (rate >= cutoffSim && span <= cutoffDis) {
-          st.matches.push({
-            id: ss.value as number,
-            label: ss.label,
-            chainText,
-            len: repeat + 1,
-            rate,
-            span
-          })
-
-          if (rate === 1) {
-            st.complete = true
-            break
-          }
-        }
-
-        lastRate = rate
-        repeat++
-      }
-    }
-  }
-
-  const result = []
-
-  let i = 0
-  while (!!simpleTarget[i]) {
-    simpleTarget[i].matches.sort((a, b) => b.rate - a.rate || a.span - b.span)
-    const id = simpleTarget[i].matches[0]?.id
-
-    if (id) {
-      const label = standard.find((s) => s.value === id)?.label
-      result.push({
-        id,
-        label,
-        index: simpleTarget[i].index,
-        len: simpleTarget[i].matches[0]?.len,
-        values: parseValues(
-          label ?? '',
-          target
-            .slice(
-              simpleTarget[i].index,
-              simpleTarget[i].index + simpleTarget[i].matches[0]?.len + 1
-            )
-            .join(''),
-          id === 2
-        )
-      })
-
-      i = i + simpleTarget[i].matches[0]?.len
-    } else i++
-  }
-
-  return result
-}
 
 let plainText: string
 const item = new Item('')
@@ -507,40 +357,48 @@ const checkInfo = (textArray: string[]) => {
   }, timeout)
 }
 
-const checkProperties = (tArray: string[]) => {
+const checkProperties = async (tArray: string[]) => {
   currentCheck.value = 'properties'
 
   const findEquipClass = is.findEquipClass(item.itemTypeValue1)
 
-  let start = -1
-  let end = 0
   if (findEquipClass) {
     try {
-      item.properties = compare(is.properties.data, tArray, 0.8, 3, 10).reduce(
-        (acc: Array<Property>, c) => {
-          if (
-            acc.filter((a) => a.propertyId === c.id).length === 0 &&
-            start + 4 > c.index
-          ) {
-            if (start === -1) start = c.index
+      const data = await compare({
+        standard: is.properties.data,
+        target: tArray,
+        cutoffSim: 0.8,
+        cutoffDis: 3,
+        layer: 3,
+        phase
+      })
 
-            end = c.index + c.len
+      let start = -1
+      let end = 0
 
-            acc.push({
-              valueId: uid(),
-              propertyId: c.id,
-              propertyValues: c.values.returnValues,
-              action: 2
-            })
-          }
+      item.properties = data.reduce((acc: Array<Property>, c: any) => {
+        if (
+          acc.filter((a) => a.propertyId === c.id).length === 0 &&
+          start + 4 > c.index
+        ) {
+          if (start === -1) start = c.index
 
-          return acc
-        },
-        []
-      )
+          end = c.index + c.len
+
+          acc.push({
+            valueId: uid(),
+            propertyId: c.id,
+            propertyValues: c.values.returnValues,
+            action: 2
+          })
+        }
+
+        return acc
+      }, [])
 
       tArray.splice(0, end)
     } catch (e) {
+      terminate()
       console.log(e)
       return failedScan(t('analyze.failedAnalyze'))
     }
@@ -552,11 +410,20 @@ const checkProperties = (tArray: string[]) => {
   }, timeout)
 }
 
-const checkAffixes = (tArray: string[]) => {
+const checkAffixes = async (tArray: string[]) => {
   currentCheck.value = 'affixes'
 
   try {
-    item.affixes = compare(is.affixes.data, tArray, 0.7, 3, 10).map((r) => ({
+    const data = await compare({
+      standard: is.affixes.data,
+      target: tArray,
+      cutoffSim: 0.8,
+      cutoffDis: 3,
+      layer: 10,
+      phase
+    })
+
+    item.affixes = data.map((r: Result) => ({
       valueId: uid(),
       affixId: r.id,
       affixValues: r.values.returnValues.map((rv, i) => ({
@@ -568,6 +435,7 @@ const checkAffixes = (tArray: string[]) => {
       action: 2
     }))
   } catch (e) {
+    terminate()
     console.log(e)
     return failedScan(t('analyze.failedAnalyze'))
   }
@@ -578,7 +446,7 @@ const checkAffixes = (tArray: string[]) => {
   }, timeout)
 }
 
-const checkRestrictions = () => {
+const checkRestrictions = async () => {
   currentCheck.value = 'restrictions'
 
   try {
@@ -588,13 +456,16 @@ const checkRestrictions = () => {
         .replace(new RegExp(`[^%${phase}]`, 'g'), '')
     )
 
-    item.restrictions = compare(
-      is.properties.data,
-      plainTArray,
-      0.8,
-      3,
-      10
-    ).map((r) => ({
+    const data = await compare({
+      standard: is.restrictions.data,
+      target: plainTArray,
+      cutoffSim: 0.8,
+      cutoffDis: 3,
+      layer: 3,
+      phase
+    })
+
+    item.restrictions = data.map((r: Result) => ({
       valueId: uid(),
       restrictId: r.id,
       restrictValues: r.values.returnValues,
@@ -603,6 +474,8 @@ const checkRestrictions = () => {
   } catch (e) {
     console.log(e)
     return failedScan(t('analyze.failedAnalyze'))
+  } finally {
+    terminate()
   }
 
   setTimeout(() => {
