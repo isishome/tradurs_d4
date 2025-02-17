@@ -651,7 +651,7 @@ watch(
               rel="noopener noreferrer"
             >
               <q-item-section>
-                <q-item-label> Diablo® II Tradurs </q-item-label>
+                <q-item-label>Diablo® II Tradurs</q-item-label>
               </q-item-section>
             </q-item>
             <q-item
@@ -663,7 +663,7 @@ watch(
               rel="noopener noreferrer"
             >
               <q-item-section>
-                <q-item-label> Diablo.cc </q-item-label>
+                <q-item-label>Diablo.cc</q-item-label>
               </q-item-section>
             </q-item>
             <q-item
@@ -675,7 +675,19 @@ watch(
               rel="noopener noreferrer"
             >
               <q-item-section>
-                <q-item-label> D4 Armory </q-item-label>
+                <q-item-label>D4 Armory</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item
+              clickable
+              class="no-margin"
+              tag="a"
+              href="https://mobalytics.gg/diablo-4"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <q-item-section>
+                <q-item-label>Mobalytics Diablo IV</q-item-label>
               </q-item-section>
             </q-item>
             <q-item
@@ -687,7 +699,7 @@ watch(
               rel="noopener noreferrer"
             >
               <q-item-section>
-                <q-item-label> D4Builds.gg </q-item-label>
+                <q-item-label>D4Builds.gg</q-item-label>
               </q-item-section>
             </q-item>
             <q-item
@@ -699,7 +711,7 @@ watch(
               rel="noopener noreferrer"
             >
               <q-item-section>
-                <q-item-label> maxroll Diablo IV </q-item-label>
+                <q-item-label>maxroll Diablo IV</q-item-label>
               </q-item-section>
             </q-item>
             <q-item
@@ -711,7 +723,7 @@ watch(
               rel="noopener noreferrer"
             >
               <q-item-section>
-                <q-item-label> Aspect Simulator </q-item-label>
+                <q-item-label>Aspect Simulator</q-item-label>
               </q-item-section>
             </q-item>
           </q-list>
@@ -1351,6 +1363,19 @@ watch(
                       type="a"
                       href="https://d4armory.fly.dev/map"
                       label="D4 Armory"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    />
+
+                    <q-btn
+                      flat
+                      no-caps
+                      padding="0"
+                      :ripple="false"
+                      class="text-overline no-hover"
+                      type="a"
+                      href="https://mobalytics.gg/diablo-4"
+                      label="Mobalytics Diablo IV"
                       target="_blank"
                       rel="noopener noreferrer"
                     />

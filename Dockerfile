@@ -8,12 +8,11 @@ WORKDIR /d4-proj
 COPY . .
 
 # 의존성 설치 및 프로젝트 빌드
-RUN npm install \
-    && npx quasar build -m ssr
+RUN npm install --jobs=1 && npx quasar build -m ssr && npm cache clean --force
 
 # ssr 의존성 설치
 WORKDIR /d4-proj/dist/ssr
-RUN npm install 
+RUN npm install --jobs=1 && npm cache clean --force
 
 # alpine 20 버전 기반
 FROM node:20-alpine
