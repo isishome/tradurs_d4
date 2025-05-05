@@ -19,6 +19,7 @@ const props = defineProps<{
 }>()
 
 const prod: boolean = import.meta.env.PROD
+const version = import.meta.env.VITE_APP_VERSION
 
 const route = useRoute()
 const router = useRouter()
@@ -766,16 +767,17 @@ watch(
             @click="main"
           >
             <h1 class="h1">
+              {{ ver }}
               <img
                 v-show="$q.dark.isActive"
-                src="/images/logo.webp?season=7"
+                :src="`/images/logo.webp?v=${version}`"
                 width="48"
                 height="48"
                 alt="Tradurs Logo Image"
               />
               <img
                 v-show="!$q.dark.isActive"
-                src="/images/logo_light.webp?season=7"
+                :src="`/images/logo_light.webp?v=${version}`"
                 width="48"
                 height="48"
                 alt="Tradurs Light Logo Image"
