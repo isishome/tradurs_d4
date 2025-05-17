@@ -10,7 +10,7 @@
 
 const { configure } = require('quasar/wrappers')
 const path = require('path')
-const { mergeConfig } = require('vite')
+//const { mergeConfig } = require('vite')
 
 module.exports = configure(function (/* ctx */) {
   return {
@@ -42,7 +42,7 @@ module.exports = configure(function (/* ctx */) {
     build: {
       target: {
         browser: ['es2019', 'edge88', 'firefox78', 'chrome87', 'safari13.1'],
-        node: 'node20'
+        node: 'node18'
       },
 
       vueRouterMode: 'history', // available values: 'hash', 'history'

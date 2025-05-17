@@ -428,54 +428,28 @@ export default {
   },
   notice: {
     title: '업데이트 안내',
-    top: '안녕하세요. 트레이더스입니다. 알림음 관련 기능 추가 안내입니다.',
+    top: '안녕하세요. 트레이더스입니다. 보스 소환 재료 셋 및 재료 추가 안내입니다.',
     contents: [
       { type: 'head', value: '◆ 추가 사항' },
       {
         type: 'list',
-        value: '알림음 두 종류가 추가되었습니다',
+        value: '심판관의 가면, 배신자의 껍데기 재료 아이템이 추가되었습니다.',
         class: 'text-body1'
       },
       { type: 'space' },
-      { type: 'image', value: '/images/notice/20250129/sound.webp' },
-      {
-        value:
-          '이제 기본 알림음 외에 추가로 도살자나 젖소 알림음을 선택하여 사용할 수 있습니다.',
-        class: 'q-ml-xl q-my-sm text-subtitle2'
-      },
+      { type: 'image', value: '/images/notice/20250517/judicatorsmask.webp' },
+      { type: 'image', value: '/images/notice/20250517/betrayershusk.webp' },
       { type: 'space' },
       { type: 'space' },
       {
         type: 'list',
-        value: '알림음 음량 변경 기능이 추가되었습니다.',
+        value: '우리바르 재료 셋 벨리알 재료 셋이 추가되었습니다.',
         class: 'text-body1'
       },
       { type: 'space' },
-      { type: 'image', value: '/images/notice/20250129/volume.webp' },
-      {
-        value: '이제 알림음 음량을 조정하여 사용할 수 있습니다.',
-        class: 'q-ml-xl q-my-sm text-subtitle2'
-      },
+      { type: 'image', value: '/images/notice/20250517/urivar_set.webp' },
+      { type: 'image', value: '/images/notice/20250517/belial_set.webp' },
       { type: 'space' },
-      { type: 'head', value: '◆ 수정 및 개선 사항' },
-      {
-        type: 'list',
-        value: '아이템 이미지 분석 기능이 개선되었습니다.',
-        class: 'text-body1'
-      },
-      {
-        value: '1. 속성 및 속성 값 인식률이 개선되었습니다.',
-        class: 'q-ml-xl q-my-sm text-subtitle2'
-      },
-      {
-        value:
-          '2. 분석 도중 UI가 멈추던 현상 및 제약조건이 정상적으로 추가되지 않던 문제가 수정되었습니다.',
-        class: 'q-ml-xl q-my-sm text-subtitle2'
-      },
-      {
-        value: '3. 이미지 인식 후 분석에 소요되는 시간이 감소되었습니다.',
-        class: 'q-ml-xl q-my-sm text-subtitle2'
-      },
       { type: 'space' }
     ],
     bottom: '감사합니다.',

@@ -12,7 +12,6 @@ import { checkName, scrollPosDirect } from 'src/common'
 import D4Filter from 'components/D4Filter.vue'
 import D4User from 'components/D4User.vue'
 import Adsense from 'components/global/Adsense.vue'
-import { identity } from 'cypress/types/lodash'
 
 const props = defineProps<{
   lang: string
@@ -767,7 +766,6 @@ watch(
             @click="main"
           >
             <h1 class="h1">
-              {{ ver }}
               <img
                 v-show="$q.dark.isActive"
                 :src="`/images/logo.webp?v=${version}`"

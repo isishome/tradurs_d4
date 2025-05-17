@@ -436,53 +436,26 @@ export default {
     title: 'Update Notice',
     top: 'Hello. This is Tradurs. Information on adding features related to notification sounds.',
     contents: [
-      { type: 'head', value: '◆ Additional information' },
       {
         type: 'list',
-        value: 'Two types of notification sounds have been added',
+        value:
+          "Judicator's Mask, Betrayer's Husk material items have been added.",
         class: 'text-body1'
       },
       { type: 'space' },
-      { type: 'image', value: '/images/notice/20250129/sound.webp' },
-      {
-        value:
-          'You can now select butcher or cow notification sounds in addition to the default notification sounds.',
-        class: 'q-ml-xl q-my-sm text-subtitle2'
-      },
+      { type: 'image', value: '/images/notice/20250517/judicatorsmask.webp' },
+      { type: 'image', value: '/images/notice/20250517/betrayershusk.webp' },
       { type: 'space' },
       { type: 'space' },
       {
         type: 'list',
-        value: 'Notification sound volume change function has been added.',
+        value: 'Urivar Material Set, Belial Material Set has been added.',
         class: 'text-body1'
       },
       { type: 'space' },
-      { type: 'image', value: '/images/notice/20250129/volume.webp' },
-      {
-        value: 'You can now adjust the notification sound volume.',
-        class: 'q-ml-xl q-my-sm text-subtitle2'
-      },
+      { type: 'image', value: '/images/notice/20250517/urivar_set.webp' },
+      { type: 'image', value: '/images/notice/20250517/belial_set.webp' },
       { type: 'space' },
-      { type: 'head', value: '◆ Improvements and fixes' },
-      {
-        type: 'list',
-        value: 'Item image analysis function has been improved.',
-        class: 'text-body1'
-      },
-      {
-        value: '1. Affix and affix value recognition rates have been improved.',
-        class: 'q-ml-xl q-my-sm text-subtitle2'
-      },
-      {
-        value:
-          '2. The issue where the UI stopped during analysis and constraints were not added properly has been fixed.',
-        class: 'q-ml-xl q-my-sm text-subtitle2'
-      },
-      {
-        value:
-          '3. The time required for analysis after image recognition has been reduced.',
-        class: 'q-ml-xl q-my-sm text-subtitle2'
-      },
       { type: 'space' }
     ],
     bottom: 'Thank you',
