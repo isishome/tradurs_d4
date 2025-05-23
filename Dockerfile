@@ -1,4 +1,4 @@
-# alpine 18 버전 기반 빌더
+# alpine 16 버전 기반 빌더
 FROM node:16-alpine AS builder
 
 # 작업 디렉토리
@@ -15,7 +15,7 @@ WORKDIR /d4-proj/dist/ssr
 
 RUN npm install
 
-# alpine 18 버전 기반
+# alpine 16 버전 기반
 FROM node:16-alpine
 
 # 작업 디렉토리
