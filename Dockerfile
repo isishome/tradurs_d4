@@ -28,4 +28,4 @@ COPY --from=builder /d4-proj/dist/ssr /d4
 EXPOSE 6090
 
 # node 실행
-ENTRYPOINT ["node", "index.js"]
+ENTRYPOINT ["node", "--max-old-space-size=100", "index.js"]
