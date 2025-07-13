@@ -8,6 +8,7 @@
   "scripts": {
     "test": "echo \"No test specified\" && exit 0",
     "dev": "npx quasar dev -m ssr -p 6090",
+    "build": "npx quasar build -m ssr",
     "cypress": "npx cypress open"
   },
   "dependencies": {
