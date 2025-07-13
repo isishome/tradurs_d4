@@ -57,7 +57,7 @@ jobs:
             sudo docker stop "tradurs.d4" || true
             sudo docker rm -f "tradurs.d4" || true
             sudo docker run -d --restart always --cpuset-cpus="0" --cpu-shares=25000 \
-              --cpu-period=100000 --memory="768mb" --publish 6092:6092 \
+              --cpu-period=100000 --memory="768mb" --publish 6090:6090 \
               --name tradurs.d4 tradurs:d4
             sudo docker system prune -f
             sudo docker buildx prune -f
