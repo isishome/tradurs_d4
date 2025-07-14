@@ -43,3 +43,6 @@ cypress.config.ts
 
 # prettier
 .prettierrc
+
+# env
+.env.*
