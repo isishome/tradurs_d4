@@ -1822,7 +1822,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
           <div>{{ t('seller') }}</div>
           <q-img src="/images/icons/direction.svg" class="icon" width="20px" />
           <D4User
-            :data="offerItem?.user"
+            :data="offerItem?.user as User"
             :disable="disableOffers"
             @update="emit('update-only', offerItem?.itemId)"
           />
