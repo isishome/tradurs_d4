@@ -18,7 +18,6 @@ const props = withDefaults(defineProps<IProps>(), {
   repeat: 5
 })
 
-const prod: boolean = import.meta.env.PROD
 let timer: NodeJS.Timeout
 const currentRepeat = ref(0)
 const render = () => {
@@ -31,23 +30,24 @@ const render = () => {
     }, 200)
 }
 
-const init = () => {
-  const adURL = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${props.dataAdClient}`
-  const script = document.createElement('script')
-  script.src = adURL
+// const load = () => {
+//   const adURL = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${props.dataAdClient}`
+//   const script = document.createElement('script')
+//   script.src = adURL
 
-  script.async = true
-  script.crossOrigin = 'anonymous'
+//   script.async = true
+//   script.crossOrigin = 'anonymous'
 
-  script.onload = () => render()
+//   if (!document.head.querySelector(`script[src="${adURL}"]`))
+//     document.head.appendChild(script)
+// }
 
-  if (!document.head.querySelector(`script[src="${adURL}"]`))
-    document.head.appendChild(script)
-  else render()
-}
+// onBeforeMount(() => {
+//   load()
+// })
 
 onMounted(() => {
-  if (prod) init()
+  render()
 })
 
 onUnmounted(() => {
