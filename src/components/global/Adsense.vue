@@ -18,36 +18,36 @@ const props = withDefaults(defineProps<IProps>(), {
   repeat: 5
 })
 
+const prod: boolean = import.meta.env.PROD
 let timer: NodeJS.Timeout
 const currentRepeat = ref(0)
+
 const render = () => {
   currentRepeat.value++
   if (currentRepeat.value > props.repeat) clearTimeout(timer)
   else if (!!window?.adsbygoogle) (window.adsbygoogle || []).push({})
-  else
-    timer = setTimeout(() => {
-      render()
-    }, 200)
+  else timer = setTimeout(render, 400)
 }
 
-// const load = () => {
-//   const adURL = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${props.dataAdClient}`
-//   const script = document.createElement('script')
-//   script.src = adURL
+const load = () => {
+  const adURL = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${props.dataAdClient}`
+  const script = document.createElement('script')
+  script.src = adURL
 
-//   script.async = true
-//   script.crossOrigin = 'anonymous'
+  script.async = true
+  script.crossOrigin = 'anonymous'
 
-//   if (!document.head.querySelector(`script[src="${adURL}"]`))
-//     document.head.appendChild(script)
-// }
+  if (!document.head.querySelector(`script[src="${adURL}"]`)) {
+    script.onload = () => {
+      render()
+    }
 
-// onBeforeMount(() => {
-//   load()
-// })
+    document.head.appendChild(script)
+  } else render()
+}
 
 onMounted(() => {
-  render()
+  if (prod) load()
 })
 
 onUnmounted(() => {
