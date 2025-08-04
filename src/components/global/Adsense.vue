@@ -20,17 +20,11 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const prod: boolean = import.meta.env.PROD
 let timer: NodeJS.Timeout
-const adsRef = ref<HTMLElement>()
 const currentRepeat = ref(0)
 
 const render = () => {
   currentRepeat.value++
   if (currentRepeat.value > props.repeat) clearTimeout(timer)
-  else if (
-    adsRef.value?.getAttribute('data-ad-status') !== 'filled' ||
-    !window?.adsbygoogle
-  )
-    timer = setTimeout(render, 400)
   else if (!!window?.adsbygoogle) (window.adsbygoogle || []).push({})
   else timer = setTimeout(render, 400)
 }
@@ -63,7 +57,6 @@ onUnmounted(() => {
 
 <template>
   <ins
-    ref="adsRef"
     class="adsbygoogle ins"
     :data-ad-client="dataAdClient"
     :data-ad-slot="dataAdSlot"
