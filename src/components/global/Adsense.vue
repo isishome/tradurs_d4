@@ -19,14 +19,18 @@ const props = withDefaults(defineProps<IProps>(), {
 })
 
 const prod: boolean = import.meta.env.PROD
+const adEl = ref<HTMLElement | null>(null)
+let observer: MutationObserver
 let timer: NodeJS.Timeout
 const currentRepeat = ref(0)
 
 const render = () => {
   currentRepeat.value++
   if (currentRepeat.value > props.repeat) clearTimeout(timer)
-  else if (!!window?.adsbygoogle) (window.adsbygoogle || []).push({})
-  else timer = setTimeout(render, 400)
+
+  if (!!window?.adsbygoogle) (window.adsbygoogle || []).push({})
+
+  timer = setTimeout(render, 400)
 }
 
 const load = () => {
@@ -46,17 +50,38 @@ const load = () => {
   } else render()
 }
 
+const observeAdStatus = () => {
+  if (!adEl.value) return
+
+  observer = new MutationObserver(() => {
+    const status = adEl.value?.getAttribute('data-ad-status')
+    if (status === 'filled') {
+      clearTimeout(timer)
+    }
+  })
+
+  observer.observe(adEl.value, {
+    attributes: true,
+    attributeFilter: ['data-ad-status']
+  })
+}
+
 onMounted(() => {
-  if (prod) load()
+  if (prod) {
+    load()
+    observeAdStatus()
+  }
 })
 
 onUnmounted(() => {
   clearTimeout(timer)
+  observer?.disconnect()
 })
 </script>
 
 <template>
   <ins
+    ref="adEl"
     class="adsbygoogle ins"
     :data-ad-client="dataAdClient"
     :data-ad-slot="dataAdSlot"
