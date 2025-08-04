@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 
 interface IProps {
   dataAdClient?: string
@@ -29,7 +29,7 @@ const render = () => {
   else timer = setTimeout(render, 400)
 }
 
-const load = async () => {
+const load = () => {
   const adURL = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${props.dataAdClient}`
   const script = document.createElement('script')
   script.src = adURL
@@ -38,22 +38,16 @@ const load = async () => {
   script.crossOrigin = 'anonymous'
 
   if (!document.head.querySelector(`script[src="${adURL}"]`)) {
-    script.onload = async () => {
-      await nextTick(() => {
-        render()
-      })
+    script.onload = () => {
+      render()
     }
 
     document.head.appendChild(script)
-  } else {
-    await nextTick(() => {
-      render()
-    })
-  }
+  } else render()
 }
 
 onMounted(async () => {
-  if (prod) await load()
+  if (prod) load()
 })
 
 onUnmounted(() => {
@@ -63,7 +57,6 @@ onUnmounted(() => {
 
 <template>
   <ins
-    ref="adEl"
     class="adsbygoogle ins"
     :data-ad-client="dataAdClient"
     :data-ad-slot="dataAdSlot"
