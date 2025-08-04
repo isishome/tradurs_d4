@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 
 interface IProps {
   dataAdClient?: string
@@ -19,21 +19,17 @@ const props = withDefaults(defineProps<IProps>(), {
 })
 
 const prod: boolean = import.meta.env.PROD
-const adEl = ref<HTMLElement | null>(null)
-let observer: MutationObserver
 let timer: NodeJS.Timeout
 const currentRepeat = ref(0)
 
 const render = () => {
   currentRepeat.value++
   if (currentRepeat.value > props.repeat) clearTimeout(timer)
-
-  if (!!window?.adsbygoogle) (window.adsbygoogle || []).push({})
-
-  timer = setTimeout(render, 400)
+  else if (!!window?.adsbygoogle) (window.adsbygoogle || []).push({})
+  else timer = setTimeout(render, 400)
 }
 
-const load = () => {
+const load = async () => {
   const adURL = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${props.dataAdClient}`
   const script = document.createElement('script')
   script.src = adURL
@@ -42,40 +38,26 @@ const load = () => {
   script.crossOrigin = 'anonymous'
 
   if (!document.head.querySelector(`script[src="${adURL}"]`)) {
-    script.onload = () => {
-      render()
+    script.onload = async () => {
+      await nextTick(() => {
+        render()
+      })
     }
 
     document.head.appendChild(script)
-  } else render()
-}
-
-const observeAdStatus = () => {
-  if (!adEl.value) return
-
-  observer = new MutationObserver(() => {
-    const status = adEl.value?.getAttribute('data-ad-status')
-    if (status === 'filled') {
-      clearTimeout(timer)
-    }
-  })
-
-  observer.observe(adEl.value, {
-    attributes: true,
-    attributeFilter: ['data-ad-status']
-  })
-}
-
-onMounted(() => {
-  if (prod) {
-    load()
-    observeAdStatus()
+  } else {
+    await nextTick(() => {
+      render()
+    })
   }
+}
+
+onMounted(async () => {
+  if (prod) await load()
 })
 
 onUnmounted(() => {
   clearTimeout(timer)
-  observer?.disconnect()
 })
 </script>
 
