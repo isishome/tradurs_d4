@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { onMounted, nextTick } from 'vue'
 
 interface IProps {
   dataAdClient?: string
@@ -7,26 +7,21 @@ interface IProps {
   dataAdFormat?: string
   dataAdtest?: boolean
   dataFullWidthResponsive?: string
-  repeat?: number
 }
 
 const props = withDefaults(defineProps<IProps>(), {
   dataAdClient: 'ca-pub-5110777286519562',
   dataAdFormat: undefined,
   dataAdtest: undefined,
-  dataFullWidthResponsive: undefined,
-  repeat: 5
+  dataFullWidthResponsive: undefined
 })
 
 const prod: boolean = import.meta.env.PROD
-let timer: NodeJS.Timeout
-const currentRepeat = ref(0)
 
 const render = () => {
-  currentRepeat.value++
-  if (currentRepeat.value > props.repeat) clearTimeout(timer)
-  else if (!!window?.adsbygoogle) (window.adsbygoogle || []).push({})
-  else timer = setTimeout(render, 400)
+  void nextTick(() => {
+    ;(window.adsbygoogle || []).push({})
+  })
 }
 
 const load = () => {
@@ -48,10 +43,6 @@ const load = () => {
 
 onMounted(async () => {
   if (prod) load()
-})
-
-onUnmounted(() => {
-  clearTimeout(timer)
 })
 </script>
 
