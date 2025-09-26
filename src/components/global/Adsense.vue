@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, nextTick } from 'vue'
+import { onMounted, nextTick, onBeforeMount } from 'vue'
 
 interface IProps {
   dataAdClient?: string
@@ -9,7 +9,7 @@ interface IProps {
   dataFullWidthResponsive?: string
 }
 
-const props = withDefaults(defineProps<IProps>(), {
+withDefaults(defineProps<IProps>(), {
   dataAdClient: 'ca-pub-5110777286519562',
   dataAdFormat: undefined,
   dataAdtest: undefined,
@@ -18,31 +18,40 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const prod: boolean = import.meta.env.PROD
 
+const pushAdsense = () => {
+  ;(window.adsbygoogle = window.adsbygoogle || []).push({})
+}
+
 const render = () => {
   void nextTick(() => {
-    ;(window.adsbygoogle || []).push({})
+    if (window.adsenseLoaded) pushAdsense()
+    else window.addEventListener('adsense-loaded', pushAdsense)
   })
 }
 
-const load = () => {
-  const adURL = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${props.dataAdClient}`
-  const script = document.createElement('script')
-  script.src = adURL
+// const load = () => {
+//   const adURL = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${props.dataAdClient}`
+//   const script = document.createElement('script')
+//   script.src = adURL
 
-  script.async = true
-  script.crossOrigin = 'anonymous'
+//   script.async = true
+//   script.crossOrigin = 'anonymous'
 
-  if (!document.head.querySelector(`script[src="${adURL}"]`)) {
-    script.onload = () => {
-      render()
-    }
+//   if (!document.head.querySelector(`script[src="${adURL}"]`)) {
+//     script.onload = () => {
+//       render()
+//     }
 
-    document.head.appendChild(script)
-  } else render()
-}
+//     document.head.appendChild(script)
+//   } else render()
+// }
 
-onMounted(async () => {
-  if (prod) load()
+onMounted(() => {
+  if (prod) render()
+})
+
+onBeforeMount(() => {
+  window.removeEventListener('adsense-loaded', pushAdsense)
 })
 </script>
 
