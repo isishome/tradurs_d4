@@ -1254,11 +1254,9 @@ watch(
               <div class="row justify-center top-ads">
                 <Adsense
                   ref="topAdRef"
-                  :style="size"
+                  :style="`display:inline-block;${size}`"
                   data-ad-slot="7137983054"
                   :data-adtest="!prod"
-                  data-ad-format="horizontal"
-                  data-full-width-responsive="false"
                   :key="`top-${topAdKey}`"
                 />
               </div>
@@ -1268,6 +1266,7 @@ watch(
             <div v-if="$q.screen.width <= 1439" class="row justify-center">
               <Adsense
                 ref="bottomAdRef"
+                style="display: block"
                 data-ad-slot="6163086381"
                 :data-adtest="!prod"
                 data-ad-format="auto"
@@ -1312,7 +1311,6 @@ watch(
                   style="display: inline-block; width: 160px; height: 600px"
                   data-ad-slot="6751896285"
                   :data-adtest="!prod"
-                  data-full-width-responsive="false"
                   :key="`right-${rightAdKey}`"
                 />
                 <div class="q-mt-xl">
