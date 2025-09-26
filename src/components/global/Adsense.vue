@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, nextTick, onBeforeMount } from 'vue'
+import { onMounted, nextTick, onUnmounted } from 'vue'
 
 interface IProps {
   dataAdClient?: string
@@ -29,28 +29,11 @@ const render = () => {
   })
 }
 
-// const load = () => {
-//   const adURL = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${props.dataAdClient}`
-//   const script = document.createElement('script')
-//   script.src = adURL
-
-//   script.async = true
-//   script.crossOrigin = 'anonymous'
-
-//   if (!document.head.querySelector(`script[src="${adURL}"]`)) {
-//     script.onload = () => {
-//       render()
-//     }
-
-//     document.head.appendChild(script)
-//   } else render()
-// }
-
 onMounted(() => {
   if (prod) render()
 })
 
-onBeforeMount(() => {
+onUnmounted(() => {
   window.removeEventListener('adsense-loaded', pushAdsense)
 })
 </script>
