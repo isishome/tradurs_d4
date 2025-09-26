@@ -175,23 +175,12 @@ const isAdmin = computed(() =>
 // about screen size
 const size = computed(() =>
   $q.screen.width < 320
-    ? 'width:300px;max-height:100px;'
+    ? 'width:300px;max-height:50px;'
     : $q.screen.width < 468
-    ? 'width:320px;max-height:100px;'
+    ? 'width:300px;max-height:100px;'
     : $q.screen.width < 728
     ? 'width:468px;height:60px;'
     : 'width:728px;height:90px;'
-)
-const sizeBottom = computed(() =>
-  $q.screen.width < 300
-    ? 'display:inline-block;width:250px;height:250px;'
-    : $q.screen.width < 336
-    ? 'display:inline-block;width:300px;height:250px;'
-    : $q.screen.width < 468
-    ? 'display:inline-block;width:336px;height:280px;'
-    : $q.screen.width < 728
-    ? 'display:inline-block;width:468px;height:60px;'
-    : 'display:inline-block;width:728px;height:90px;'
 )
 
 watch([size, () => $q.screen.gt.md], ([new1, new2], [old1, old2]) => {
@@ -1279,10 +1268,9 @@ watch(
             <div v-if="$q.screen.width <= 1439" class="row justify-center">
               <Adsense
                 ref="bottomAdRef"
-                :style="sizeBottom"
                 data-ad-slot="6163086381"
                 :data-adtest="!prod"
-                data-ad-format="horizontal"
+                data-ad-format="auto"
                 data-full-width-responsive="true"
                 :key="`bottom-${bottomAdKey}`"
               />
