@@ -1266,7 +1266,7 @@ watch(
             <div v-if="$q.screen.width <= 1439" class="row justify-center">
               <Adsense
                 ref="bottomAdRef"
-                style="display: block"
+                style="display: block; width: 100%"
                 data-ad-slot="6163086381"
                 :data-adtest="!prod"
                 data-ad-format="auto"
