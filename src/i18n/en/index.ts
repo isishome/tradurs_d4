@@ -78,7 +78,7 @@ export default {
     message: 'Do you want to delete this preset?'
   },
   season: {
-    bg: '/images/season/010/season_emblem_en.webp',
+    bg: '/images/season/011/season_emblem_en.webp',
     first: {
       socket:
         'During Season of the Malignant, the more accurately you select the socket type in the accessory item affixes, the more often your items will be seen'
@@ -245,7 +245,7 @@ export default {
   item: {
     hardcore: 'Hardcore',
     softcore: 'Softcore',
-    ladder: 'Season of INFERNAL CHAOS',
+    ladder: 'Season of DEVINE INTERVENTION',
     seasonal: 'Seasonal',
     eternal: 'Eternal',
     quality: 'Item Quality',
