@@ -428,27 +428,16 @@ export default {
   },
   notice: {
     title: '업데이트 안내',
-    top: '안녕하세요. 트레이더스입니다. 보스 소환 재료 셋 및 재료 추가 안내입니다.',
+    top: '안녕하세요. 트레이더스입니다. 신규 클래스 관련 추가 업데이트 안내입니다.',
     contents: [
       { type: 'head', value: '◆ 추가 사항' },
       {
         type: 'list',
-        value: '심판관의 가면, 배신자의 껍데기 재료 아이템이 추가되었습니다.',
+        value: '성기사 전용 고유 아이템 속성 및 일반 속성이 추가되었습니다.',
         class: 'text-body1'
       },
       { type: 'space' },
-      { type: 'image', value: '/images/notice/20250517/judicatorsmask.webp' },
-      { type: 'image', value: '/images/notice/20250517/betrayershusk.webp' },
-      { type: 'space' },
-      { type: 'space' },
-      {
-        type: 'list',
-        value: '우리바르 재료 셋 벨리알 재료 셋이 추가되었습니다.',
-        class: 'text-body1'
-      },
-      { type: 'space' },
-      { type: 'image', value: '/images/notice/20250517/urivar_set.webp' },
-      { type: 'image', value: '/images/notice/20250517/belial_set.webp' },
+      { type: 'image', value: '/images/notice/20251221/paladin.webp' },
       { type: 'space' },
       { type: 'space' }
     ],
