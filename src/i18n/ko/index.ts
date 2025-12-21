@@ -433,7 +433,7 @@ export default {
       { type: 'head', value: '◆ 추가 사항' },
       {
         type: 'list',
-        value: '성기사 전용 고유 아이템 속성 및 일반 속성이 추가되었습니다.',
+        value: '성기사 전용 고유 장비의 속성 및 일반 속성이 추가되었습니다.',
         class: 'text-body1'
       },
       { type: 'space' },

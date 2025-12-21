@@ -434,32 +434,22 @@ export default {
   },
   notice: {
     title: 'Update Notice',
-    top: 'Hello. This is Tradurs. Information on adding features related to notification sounds.',
+    top: 'Hello, this is Tradurs. We would like to inform you of an additional update related to the new class.',
     contents: [
+      { type: 'head', value: '◆ Additions' },
       {
         type: 'list',
         value:
-          "Judicator's Mask, Betrayer's Husk material items have been added.",
+          'Affixes for Paladin-exclusive Unique equipment, as well as new general affixes, have been added.',
         class: 'text-body1'
       },
       { type: 'space' },
-      { type: 'image', value: '/images/notice/20250517/judicatorsmask.webp' },
-      { type: 'image', value: '/images/notice/20250517/betrayershusk.webp' },
-      { type: 'space' },
-      { type: 'space' },
-      {
-        type: 'list',
-        value: 'Urivar Material Set, Belial Material Set has been added.',
-        class: 'text-body1'
-      },
-      { type: 'space' },
-      { type: 'image', value: '/images/notice/20250517/urivar_set.webp' },
-      { type: 'image', value: '/images/notice/20250517/belial_set.webp' },
+      { type: 'image', value: '/images/notice/20251221/paladin.webp' },
       { type: 'space' },
       { type: 'space' }
     ],
-    bottom: 'Thank you',
-    close: 'Do not open for 24 hours'
+    bottom: 'Thank you.',
+    close: 'Do not show again for 24 hours'
   },
   adblock: {
     title: 'Please allow ads on Tradurs',
