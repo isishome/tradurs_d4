@@ -1064,11 +1064,11 @@ export const useItemStore = defineStore('item', {
       const worker = await createWorker(locale)
       // const worker = await createWorker(locale, 1, {
       //   workerPath:
-      //     'https://cdn.jsdelivr.net/npm/tesseract.js@v6/dist/worker.min.js',
+      //     'https://cdn.jsdelivr.net/npm/tesseract.js@v7/dist/worker.min.js',
       //   langPath: prod
       //     ? 'https://cdn.jsdelivr.net/gh/seraMint/tessdata/'
-      //     : 'https://tessdata.projectnaptha.com/4.0.0', //'https://cdn.jsdelivr.net/gh/seraMint/tessdata/', //'https://tessdata.projectnaptha.com/4.0.0',
-      //   corePath: 'https://cdn.jsdelivr.net/npm/tesseract.js-core@v6',
+      //     : 'https://raw.githubusercontent.com/naptha/tessdata/gh-pages/4.0.0', //'https://cdn.jsdelivr.net/gh/seraMint/tessdata/', //'https://tessdata.projectnaptha.com/4.0.0',
+      //   corePath: 'https://cdn.jsdelivr.net/npm/tesseract.js-core@7.0.0',
       //   cacheMethod: prod ? 'write' : 'none'
       // })
       await worker.setParameters({
