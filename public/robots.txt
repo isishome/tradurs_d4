@@ -1,0 +1,9 @@
+User-agent: *
+Disallow: /messages/
+Disallow: /blocks/
+Disallow: /history/
+Disallow: /en/messages/
+Disallow: /en/blocks/
+Disallow: /en/history/
+
+Sitemap: https://d4.tradurs.com/sitemap.xml

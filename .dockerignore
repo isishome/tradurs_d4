@@ -1,0 +1,16 @@
+.quasar
+.vscode
+/affix
+/src/pages/dev
+cypress
+node_modules
+src-ssr
+.dockerignore
+.editorconfig
+.env.deveopment
+.env.local
+.gitignore
+.prettierrc
+cypress.config.ts
+Dockerfile
+*.md

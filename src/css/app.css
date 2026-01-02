@@ -1,0 +1,293 @@
+:root {
+  --q-primary: #A59263;
+  --q-primary-cloud: #a5926388;
+  --q-secondary: #A50905;
+  --q-accent: #9C27B0;
+  --q-light: #EFEFEF;
+  --q-light-page: #F9F9F9;
+  --q-light-border: #DDDDDD;
+  --q-dark: #1a1a1a;
+  --q-dark-page: #040404;
+  --q-dark-border: #333333;
+  --q-positive: #21BA45;
+  --q-negative: #C10015;
+  --q-info: #31CCEC;
+  --q-warning: #F2C037;
+  --q-light-normal: #888888;
+  --q-dark-normal: #333333;
+  --q-magic: #7B7DF6;
+  --q-light-magic: #4B4DC6;
+  --q-dark-magic: #1B263A;
+  --q-rare: #EAEB0B;
+  --q-light-rare: #EACB00;
+  --q-dark-rare: #533809;
+  --q-set: #00FF00;
+  --q-light-set: #00BB00;
+  --q-dark-set: #003300;
+  --q-legendary: #F78003;
+  --q-light-legendary: #C76003;
+  --q-dark-legendary: #471B0B;
+  --q-unique: #D9A879;
+  --q-light-unique: #6c4a00;
+  --q-dark-unique: #20211C;
+  --q-mythic: #b891cd;
+  --q-light-mythic: #b891cd;
+  --q-dark-mythic: #1c002b;
+  --q-tiny: rgba(200, 200, 200, 0.1);
+  --q-cloud: #99999916;
+  --q-half: rgba(150, 150, 150, 0.2);
+  --q-shadow: rgba(150, 150, 150, 0.6);
+  --q-filter-normal: invert(39%) sepia(1%) saturate(1823%) hue-rotate(16deg) brightness(100%) contrast(89%);
+  --q-filter-magic: invert(35%) sepia(72%) saturate(1098%) hue-rotate(212deg) brightness(80%) contrast(96%);
+  --q-filter-rare: invert(91%) sepia(21%) saturate(2166%) hue-rotate(5deg) brightness(96%) contrast(91%);
+  --q-filter-set: invert(37%) sepia(91%) saturate(1265%) hue-rotate(91deg) brightness(95%) contrast(106%);
+  --q-filter-legendary: invert(41%) sepia(94%) saturate(1295%) hue-rotate(8deg) brightness(93%) contrast(97%);
+  --q-filter-unique: invert(57%) sepia(68%) saturate(273%) hue-rotate(349deg) brightness(87%) contrast(93%);
+  --q-filter-mythic: invert(69%) sepia(11%) saturate(1048%) hue-rotate(235deg) brightness(87%) contrast(99%);
+}
+
+body.body--light::before {
+  filter: invert(100%);
+}
+
+body.body--light {
+  background-color: var(--q-light-page);
+  color: var(--q-dark-page);
+}
+
+body.body--dark {
+  background-color: var(--q-dark-page);
+  color: var(--q-light-page);
+}
+
+.q-dark {
+  color: var(--q-light-page);
+}
+
+.invert,
+.invert-icon img,
+.body--dark .icon,
+.body--dark .q-select__dropdown-icon img,
+.body--dark .q-btn-dropdown__arrow img,
+.body--dark .q-expansion-item__toggle-icon img,
+.q-notification:not(.no-invert) .q-icon img,
+.body--dark .q-tree__arrow img {
+  filter: invert(100%) !important;
+}
+
+.q-focus-helper {
+  opacity: .05 !important;
+}
+
+.no-hover .q-focus-helper {
+  display: none;
+}
+
+.q-checkbox__inner:before {
+  display: none;
+}
+
+.body--light .q-drawer {
+  background-color: var(--q-light-page);
+}
+
+.q-drawer::before {
+  content: '';
+  position: absolute;
+  z-index: -2;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-image: url('/images/back.webp');
+  background-size: 550px;
+  background-repeat: repeat;
+  transform: translate(0, 0);
+}
+
+.q-drawer::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-image: linear-gradient(90deg, #000000 0%, rgba(0, 0, 0, 0) calc(70% - 180px), rgba(0, 0, 0, 0) 100%), linear-gradient(0deg, rgba(0, 0, 0, 0.24), rgba(0, 0, 0, 0.24));
+  background-size: 100%;
+  background-repeat: repeat;
+  transform: translate(0, 0);
+}
+
+.q-drawer.q-drawer--right::after {
+  background-image: linear-gradient(270deg, #000000 0%, rgba(0, 0, 0, 0) calc(70% - 180px), rgba(0, 0, 0, 0) 100%), linear-gradient(180deg, rgba(0, 0, 0, 0.24), rgba(0, 0, 0, 0.24));
+}
+
+.body--light .q-drawer::before,
+.body--light .q-drawer::after {
+  background-image: none;
+  background-color: var(--q-light);
+}
+
+@media (min-width:1024px) {
+  .q-drawer {
+    position: fixed !important;
+  }
+
+  .body--dark .q-drawer {
+    background-color: var(--q-dark-page);
+  }
+}
+
+@media (min-width:1440px) {
+  .q-drawer {
+    width: calc((100vw - 840px) / 2) !important;
+  }
+
+  .q-page-container {
+    padding-left: calc((100vw - 840px) / 2) !important;
+  }
+}
+
+.q-dialog__backdrop {
+  background: rgba(0, 0, 0, .8);
+  transition: none;
+}
+
+.q-separator--dark {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.q-field__control:before {
+  background-color: white;
+}
+
+.q-field--dark .q-field__control:before {
+  background-color: black;
+}
+
+.scroll {
+  resize: none !important;
+  overflow-y: auto;
+  min-height: 30px !important;
+}
+
+.scroll.q-menu .q-item__section,
+.q-select__dialog .q-item__section {
+  word-break: break-all;
+}
+
+.scroll.q-menu .q-item__label,
+.q-select__dialog .q-item__label {
+  line-height: 1.4 !important;
+}
+
+.scroll.bordered {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.28);
+}
+
+.body--light .scroll.bordered {
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12);
+}
+
+.scroll::-webkit-scrollbar {
+  width: 4px !important;
+}
+
+.scroll::-webkit-scrollbar-track {
+  box-shadow: none !important;
+  background-color: rgba(255, 255, 255, .1);
+  border-radius: 0 !important;
+}
+
+.scroll::-webkit-scrollbar-thumb {
+  box-shadow: none !important;
+  background: rgba(255, 255, 255, .2);
+  border-radius: 0 !important;
+}
+
+.body--light .scroll::-webkit-scrollbar-track {
+  background-color: rgba(0, 0, 0, .05);
+}
+
+.body--light .scroll::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, .2);
+}
+
+.break-keep {
+  word-break: keep-all;
+}
+
+.break-all {
+  word-break: break-all;
+}
+
+.underline {
+  border-bottom: solid 1px currentColor;
+}
+
+.text-underline {
+  text-decoration: underline;
+}
+
+.q-menu--dark {
+  box-shadow: none;
+}
+
+.q-card--dark {
+  box-shadow: none;
+}
+
+.notify {
+  background-color: #e0e0e0 !important;
+  color: #424242 !important;
+}
+
+.notify .q-btn {
+  color: #424242 !important;
+}
+
+.body--light .notify {
+  background-color: #424242 !important;
+  color: #e0e0e0 !important;
+}
+
+.body--light .notify .q-btn {
+  color: #e0e0e0 !important;
+}
+
+.grecaptcha-badge {
+  visibility: hidden;
+}
+
+.max-width {
+  max-width: 728px;
+}
+
+.text-area {
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.limit-select {
+  max-height: 40vh !important;
+}
+
+.mobile .limit-select {
+  max-width: inherit !important;
+}
+
+.keep-tooltip {
+  pointer-events: all !important;
+  cursor: default;
+  border-radius: 0;
+}
+
+.q-field--dark .q-field__control:before {
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+.cursor-default {
+  cursor: default;
+}

@@ -1,0 +1,46 @@
+{
+  "name": "d4-ssr",
+  "version": "1.11.5",
+  "description": "Diablo4 Trade App",
+  "productName": "D4 App",
+  "author": "SeraSome",
+  "private": true,
+  "scripts": {
+    "test": "echo \"No test specified\" && exit 0",
+    "dev": "npx quasar dev -m ssr -p 6090",
+    "build": "npx quasar build -m ssr",
+    "cypress": "npx cypress open"
+  },
+  "dependencies": {
+    "@quasar/extras": "^1.16.4",
+    "axios": "^1.2.1",
+    "pinia": "^2.0.11",
+    "quasar": "^2.16.0",
+    "socket.io-client": "^4.7.5",
+    "string-comparison": "^1.3.0",
+    "tesseract.js": "^7.0.0",
+    "vue": "^3.4.18",
+    "vue-i18n": "^9.2.2",
+    "vue-router": "^4.0.12"
+  },
+  "devDependencies": {
+    "@electron/packager": "^18.3.6",
+    "@intlify/vite-plugin-vue-i18n": "^3.3.1",
+    "@quasar/app-vite": "^1.9.0",
+    "@types/node": "^12.20.21",
+    "@types/similarity": "^1.2.3",
+    "@vue/devtools": "^7.2.1",
+    "autoprefixer": "^10.4.2",
+    "cypress": "^13.17.0",
+    "electron": "^33.2.1",
+    "typescript": "^4.5.4"
+  },
+  "engines": {
+    "node": "^20 || ^18 || ^16",
+    "npm": ">= 6.13.4",
+    "yarn": ">= 1.21.1"
+  },
+  "overrides": {
+    "qs": "6.14.1"
+  }
+}
