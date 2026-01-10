@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useQuasar, Screen, QBtnDropdown } from 'quasar'
 import { useI18n } from 'vue-i18n'
@@ -63,6 +63,7 @@ const newAwards = computed(
 )
 const isNarrow = computed(() => $q.screen.width <= 1100)
 const d4Filter = ref<InstanceType<typeof D4Filter>>()
+const showAd = ref(true)
 
 const myTweak = (offset: number): void => {
   gs.offsetTop = offset ?? 0
@@ -177,47 +178,50 @@ const size = computed(() =>
   $q.screen.width < 468
     ? 'width:320px;max-height:100px;'
     : $q.screen.width < 728
-    ? 'width:468px;height:60px;'
-    : 'width:728px;height:90px;'
+      ? 'width:468px;height:60px;'
+      : 'width:728px;height:90px;'
 )
 
-watch([size, () => $q.screen.gt.md], ([new1, new2], [old1, old2]) => {
+watch([size, () => $q.screen.gt.md], async ([new1, new2], [old1, old2]) => {
   if (new1 !== old1 || new2 !== old2) {
+    showAd.value = false
+
+    await nextTick()
+
     topAdKey.value++
     bottomAdKey.value++
     rightAdKey.value++
     gs.topAccessTimeStamp = Date.now()
     gs.bottomAccessTimeStamp = Date.now()
     gs.rightAccessTimeStamp = Date.now()
+
+    showAd.value = true
   }
 })
 
 watch(
   () => gs.reloadAdKey,
-  () => {
-    if (
-      Date.now() - gs.topAccessTimeStamp > gs.timeLimit ||
-      topAdRef.value?.$el.getAttribute('data-ad-status') === 'unfilled'
-    ) {
+  async () => {
+    showAd.value = false
+
+    await nextTick()
+
+    if (Date.now() - gs.topAccessTimeStamp > gs.timeLimit) {
       topAdKey.value++
       gs.topAccessTimeStamp = Date.now()
     }
 
-    if (
-      Date.now() - gs.bottomAccessTimeStamp > gs.timeLimit ||
-      bottomAdRef.value?.$el.getAttribute('data-ad-status') === 'unfilled'
-    ) {
+    if (Date.now() - gs.bottomAccessTimeStamp > gs.timeLimit) {
       bottomAdKey.value++
       gs.bottomAccessTimeStamp = Date.now()
     }
 
-    if (
-      Date.now() - gs.rightAccessTimeStamp > gs.timeLimit ||
-      rightAdRef.value?.$el.getAttribute('data-ad-status') === 'unfilled'
-    ) {
+    if (Date.now() - gs.rightAccessTimeStamp > gs.timeLimit) {
       rightAdKey.value++
       gs.rightAccessTimeStamp = Date.now()
     }
+
+    showAd.value = true
   }
 )
 
@@ -239,7 +243,10 @@ watch(
 <template>
   <q-layout view="hHh lpR lFf" :key="mainKey" @scroll="onScroll">
     <div
-      v-show="['tradeList', 'itemInfo'].includes(route.name as string) && is.storage.data.ladder"
+      v-show="
+        ['tradeList', 'itemInfo'].includes(route.name as string) &&
+        is.storage.data.ladder
+      "
       class="bg-season"
       :style="`--tradurs-season-image:url('${t('season.bg')}');`"
     ></div>
@@ -828,7 +835,9 @@ watch(
               class="col"
               v-model="_name"
               :label="searchName"
-              :disable="filterLoading || !['tradeList'].includes(route.name as string)"
+              :disable="
+                filterLoading || !['tradeList'].includes(route.name as string)
+              "
               :rules="[(val) => !!!val || checkName(val) || '']"
               @keyup.enter="search()"
             >
@@ -1251,6 +1260,7 @@ watch(
             <div class="view max-width">
               <div class="row justify-center top-ads">
                 <Adsense
+                  v-if="showAd"
                   ref="topAdRef"
                   :style="`display:inline-block;${size}`"
                   data-ad-slot="7137983054"
@@ -1263,6 +1273,7 @@ watch(
             <div class="q-py-xl"></div>
             <div v-if="$q.screen.width <= 1439" class="row justify-center">
               <Adsense
+                v-if="showAd"
                 ref="bottomAdRef"
                 style="
                   display: block;
@@ -1310,7 +1321,7 @@ watch(
               <div :style="`position:sticky;top:${asideTop}`" class="column">
                 <Adsense
                   ref="rightAdRef"
-                  v-if="$q.screen.width > 1439"
+                  v-if="showAd && $q.screen.width > 1439"
                   style="display: inline-block; width: 160px; height: 600px"
                   data-ad-slot="6751896285"
                   :data-adtest="!prod"

@@ -19,13 +19,19 @@ withDefaults(defineProps<IProps>(), {
 const prod: boolean = import.meta.env.PROD
 
 const pushAdsense = () => {
-  ;(window.adsbygoogle = window.adsbygoogle || []).push({})
+  try {
+    ;(window.adsbygoogle = window.adsbygoogle || []).push({})
+  } catch (e) {
+    console.error('Adsense push error:', e)
+  }
 }
 
 const render = () => {
   void nextTick(() => {
-    if (window.adsenseLoaded) pushAdsense()
-    else window.addEventListener('adsense-loaded', pushAdsense)
+    setTimeout(() => {
+      if (window.adsenseLoaded) pushAdsense()
+      else window.addEventListener('adsense-loaded', pushAdsense)
+    }, 100)
   })
 }
 
