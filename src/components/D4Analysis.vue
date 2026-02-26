@@ -45,6 +45,8 @@ const terminate = () => {
   worker.terminate()
 }
 
+const cutoffSim = 0.6
+const cutoffDis = 3
 const lang: string = (route.params.lang as string) || 'ko'
 const similarRate =
   is.analyze.similarRate[lang as keyof typeof is.analyze.similarRate]
@@ -367,8 +369,8 @@ const checkProperties = async (tArray: string[]) => {
       const data = await compare({
         standard: is.properties.data,
         target: tArray,
-        cutoffSim: 0.8,
-        cutoffDis: 3,
+        cutoffSim,
+        cutoffDis,
         layer: 3,
         phase
       })
@@ -417,8 +419,8 @@ const checkAffixes = async (tArray: string[]) => {
     const data = await compare({
       standard: is.affixes.data,
       target: tArray,
-      cutoffSim: 0.8,
-      cutoffDis: 3,
+      cutoffSim,
+      cutoffDis,
       layer: 10,
       phase
     })
@@ -459,8 +461,8 @@ const checkRestrictions = async () => {
     const data = await compare({
       standard: is.restrictions.data,
       target: plainTArray,
-      cutoffSim: 0.8,
-      cutoffDis: 3,
+      cutoffSim,
+      cutoffDis,
       layer: 3,
       phase
     })
@@ -514,56 +516,60 @@ const filtering = (f: File) => {
     image.src = fr.result as string
     image.onload = () => {
       const isTransparent = f.name.toLowerCase().match(/\.(png|webp)/g)
-      const ratio = Math.round((700 / image.width) * 1000) / 1000
+      const scale = Math.round((700 / image.width) * 1000) / 1000
       const iWidth = image.width
       const iHeight = image.height
       const predictWidth = Math.ceil(iWidth * 0.32)
       const predictHeight = Math.ceil(iWidth * 0.36)
-      canvas.width = iWidth * ratio
-      canvas.height = iHeight * ratio
+      canvas.width = iWidth * scale
+      canvas.height = iHeight * scale
 
-      if (ctx) {
-        if (isTransparent) {
-          ctx.fillStyle = '#443322'
-          ctx.fillRect(0, 0, canvas.width, canvas.height)
-        }
+      if (!ctx) {
+        failedScan(t('analyze.failedAnalyze'))
+        return
+      }
 
-        ctx.drawImage(
-          image,
-          0,
-          0,
-          iWidth - predictWidth,
-          predictHeight,
-          0,
-          0,
-          Math.round((iWidth - predictWidth) * ratio),
-          Math.round(predictHeight * ratio)
-        )
-        ctx.drawImage(
-          image,
-          0,
-          predictHeight,
-          iWidth,
-          iHeight - predictHeight,
-          0,
-          Math.round(predictHeight * ratio),
-          iWidth * ratio,
-          Math.round((iHeight - predictHeight) * ratio)
-        )
+      if (isTransparent) {
+        ctx.fillStyle = '#443322'
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+      }
 
-        ctx.filter = 'brightness(1) contrast(1.4) blur(.6px) sepia(1)'
-        ctx.drawImage(canvas, 0, 0)
+      ctx.drawImage(
+        image,
+        0,
+        0,
+        iWidth - predictWidth,
+        predictHeight,
+        0,
+        0,
+        Math.round((iWidth - predictWidth) * scale),
+        Math.round(predictHeight * scale)
+      )
 
-        is.recognize(canvas, lang)
-          .then((text) => {
-            plainText = text
-            checkedItem.push('analyze')
-            checkText()
-          })
-          .catch(() => {
-            failedScan(t('analyze.failedAnalyze'))
-          })
-      } else failedScan(t('analyze.failedAnalyze'))
+      ctx.drawImage(
+        image,
+        0,
+        predictHeight,
+        iWidth,
+        iHeight - predictHeight,
+        0,
+        Math.round(predictHeight * scale),
+        iWidth * scale,
+        Math.round((iHeight - predictHeight) * scale)
+      )
+
+      ctx.filter = 'brightness(1) contrast(1.4) blur(.6px) sepia(1)'
+      ctx.drawImage(canvas, 0, 0)
+
+      is.recognize(canvas, lang)
+        .then((text) => {
+          plainText = text
+          checkedItem.push('analyze')
+          checkText()
+        })
+        .catch(() => {
+          failedScan(t('analyze.failedAnalyze'))
+        })
     }
   }
 }

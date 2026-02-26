@@ -1060,8 +1060,14 @@ export const useItemStore = defineStore('item', {
     },
     async recognize(image: ImageLike, lang: string) {
       const locale = lang === 'ko' ? ['kor'] : ['eng']
-      //const locale = (lang === 'ko') ? ['kor.d4', 'kor'] : ['eng.d4', 'eng']
-      const worker = await createWorker(locale)
+      const appVersion = LocalStorage.getItem<string>('APP_VERSION')
+      const cacheMethod =
+        appVersion !== import.meta.env.VITE_APP_VERSION || !prod
+          ? 'none'
+          : 'write'
+      const worker = await createWorker(locale, 1, {
+        cacheMethod
+      })
       // const worker = await createWorker(locale, 1, {
       //   workerPath:
       //     'https://cdn.jsdelivr.net/npm/tesseract.js@v7/dist/worker.min.js',
@@ -1071,27 +1077,42 @@ export const useItemStore = defineStore('item', {
       //   corePath: 'https://cdn.jsdelivr.net/npm/tesseract.js-core@7.0.0',
       //   cacheMethod: prod ? 'write' : 'none'
       // })
-      await worker.setParameters({
-        preserve_interword_spaces: '1'
-      })
-      const {
-        data: { text }
-      } = await worker.recognize(image)
+      try {
+        await worker.setParameters({
+          preserve_interword_spaces: '1'
+        })
 
-      await worker.terminate()
+        const {
+          data: { blocks }
+        } = await worker.recognize(image, undefined, {
+          text: false,
+          blocks: true
+        })
 
-      const parsedText = text
-        .replace(
-          new RegExp(
-            `[^0-9%${
-              this.analyze.lang[lang as keyof typeof this.analyze.lang]
-            }\\/\\+\\.\\[\\]\\-\\,\\:\\n\\(\\) ]`,
-            'gi'
-          ),
-          ''
+        const parsedText = (
+          blocks?.[0]?.paragraphs
+            .flatMap((p) => p.lines)
+            .filter((l) => l.confidence > 50)
+            .map((l) => l.text.replace(/\n+/g, '\n'))
+            .join('') ?? ''
         )
-        .replace(/[ ]{2,}/gi, ' ')
-      return parsedText
+          .replace(
+            new RegExp(
+              `[^0-9%${
+                this.analyze.lang[lang as keyof typeof this.analyze.lang]
+              }\\/\\+\\.\\[\\]\\-\\,\\:\\n\\(\\) ]`,
+              'gi'
+            ),
+            ''
+          )
+          .replace(/[ ]{2,}/gi, ' ')
+        return parsedText
+      } catch (e) {
+        console.log(e)
+        return ''
+      } finally {
+        await worker.terminate()
+      }
     }
   }
 })

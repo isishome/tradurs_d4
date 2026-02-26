@@ -88,7 +88,7 @@ const parseValues = (
       : 0
     let max = !isNaN(parseFloat((minmax[i] ?? '').split('-')[1]))
       ? parseFloat((minmax[i] ?? '').split('-')[1])
-      : min ?? 0
+      : (min ?? 0)
 
     if (val.length > minmax.length && (v < min || v > max)) {
       min = 0

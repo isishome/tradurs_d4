@@ -28,7 +28,7 @@ jobs:
           VITE_APP_BACKEND: ${{ secrets.VITE_APP_BACKEND }}
           VITE_APP_SOCKET: ${{ secrets.VITE_APP_SOCKET }}
           VITE_APP_TRADURS: ${{ secrets.VITE_APP_TRADURS }}
-          VITE_APP_VERSION: 1.11.7
+          VITE_APP_VERSION: 1.11.8
 
       - name: Copy Dockerfile
         run: |
