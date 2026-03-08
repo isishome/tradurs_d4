@@ -222,7 +222,8 @@ export default {
     allow: '광고 허용 방법',
     confirm: '확인',
     reRegister: '재등록',
-    reConnect: '재연결'
+    reConnect: '재연결',
+    recognizeSelectedArea: '선택 영역 인식'
   },
   attribute: {
     request: '{attr} 추가 요청',
@@ -327,7 +328,8 @@ export default {
     browse: '파일 선택',
     dragMessage:
       '이곳에 아이템 이미지를 드롭 하거나 클립보드에 복사된 아이템 이미지를 붙여넣기 하세요',
-    notImageFormat: '이미지 형식의 파일이 아닙니다'
+    notImageFormat: '이미지 형식의 파일이 아닙니다',
+    cropArea: '영역 선택'
   },
   max: '최대',
   min: '최소',

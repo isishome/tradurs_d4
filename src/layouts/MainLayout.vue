@@ -12,6 +12,7 @@ import { checkName, scrollPosDirect } from 'src/common'
 import D4Filter from 'components/D4Filter.vue'
 import D4User from 'components/D4User.vue'
 import Adsense from 'components/global/Adsense.vue'
+import UsefulLinks from 'src/components/global/UsefulLinks.vue'
 
 const props = defineProps<{
   lang: string
@@ -635,92 +636,7 @@ watch(
             </q-expansion-item>
           </q-list>
           <q-separator />
-          <q-list class="q-mx-md q-py-xl q-mt-xl text-overline useful" dense>
-            <q-item
-              clickable
-              class="no-margin text-red-6 text-weight-bold"
-              tag="a"
-              href="https://d2r.tradurs.com"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <q-item-section>
-                <q-item-label>Diablo® II Tradurs</q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item
-              clickable
-              class="no-margin"
-              tag="a"
-              href="https://diablo4.cc"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <q-item-section>
-                <q-item-label>Diablo.cc</q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item
-              clickable
-              class="no-margin"
-              tag="a"
-              href="https://d4armory.fly.dev/map"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <q-item-section>
-                <q-item-label>D4 Armory</q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item
-              clickable
-              class="no-margin"
-              tag="a"
-              href="https://mobalytics.gg/diablo-4"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <q-item-section>
-                <q-item-label>Mobalytics Diablo IV</q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item
-              clickable
-              class="no-margin"
-              tag="a"
-              href="https://d4builds.gg/build-planner"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <q-item-section>
-                <q-item-label>D4Builds.gg</q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item
-              clickable
-              class="no-margin"
-              tag="a"
-              href="https://maxroll.gg/d4"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <q-item-section>
-                <q-item-label>maxroll Diablo IV</q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item
-              clickable
-              class="no-margin"
-              tag="a"
-              href="https://aziraell3.github.io/GAME/D4/?job=dru"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <q-item-section>
-                <q-item-label>Aspect Simulator</q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-list>
+          <UsefulLinks mode="listitem" />
           <div class="column q-mt-lg q-mb-xl q-ml-lg q-pl-sm text-caption">
             <div>
               {{ t('contact.inquiries') }}
@@ -1328,94 +1244,7 @@ watch(
                   :key="`right-${rightAdKey}`"
                 />
                 <div class="q-mt-xl">
-                  <div class="column items-start useful">
-                    <q-btn
-                      flat
-                      no-caps
-                      padding="0"
-                      :ripple="false"
-                      class="text-overline no-hover text-weight-bold"
-                      color="red-6"
-                      type="a"
-                      href="https://d2r.tradurs.com"
-                      label="Diablo® II Tradurs"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    />
-                    <q-btn
-                      flat
-                      no-caps
-                      padding="0"
-                      :ripple="false"
-                      class="text-overline no-hover"
-                      type="a"
-                      href="https://diablo4.cc"
-                      label="Diablo.cc"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    />
-                    <q-btn
-                      flat
-                      no-caps
-                      padding="0"
-                      :ripple="false"
-                      class="text-overline no-hover"
-                      type="a"
-                      href="https://d4armory.fly.dev/map"
-                      label="D4 Armory"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    />
-
-                    <q-btn
-                      flat
-                      no-caps
-                      padding="0"
-                      :ripple="false"
-                      class="text-overline no-hover"
-                      type="a"
-                      href="https://mobalytics.gg/diablo-4"
-                      label="Mobalytics Diablo IV"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    />
-                    <q-btn
-                      flat
-                      no-caps
-                      padding="0"
-                      :ripple="false"
-                      class="text-overline no-hover"
-                      type="a"
-                      href="https://d4builds.gg/build-planner"
-                      label="D4Builds.gg"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    />
-                    <q-btn
-                      flat
-                      no-caps
-                      padding="0"
-                      :ripple="false"
-                      class="text-overline no-hover"
-                      type="a"
-                      href="https://maxroll.gg/d4"
-                      label="maxroll Diablo IV"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    />
-                    <q-btn
-                      flat
-                      no-caps
-                      padding="0"
-                      :ripple="false"
-                      class="text-overline no-hover"
-                      type="a"
-                      href="https://aziraell3.github.io/GAME/D4/?job=dru"
-                      label="Aspect Simulator"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    />
-                  </div>
+                  <UsefulLinks />
                 </div>
                 <div class="column q-py-xl q-pr-xl text-caption">
                   <div>
@@ -1576,23 +1405,6 @@ watch(
   .top-ads {
     margin: 28px 0 10px 0;
   }
-}
-
-.useful {
-  color: currentColor;
-}
-
-.useful a {
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  border-radius: 0;
-  line-height: 1rem;
-  margin-bottom: 10px;
-  opacity: 0.5;
-}
-
-.useful a:hover {
-  opacity: 1;
 }
 
 .bg-season::before {

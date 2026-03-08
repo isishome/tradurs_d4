@@ -227,7 +227,8 @@ export default {
     allow: 'How to allow ads',
     confirm: 'Confirm',
     reRegister: 'Re-Register',
-    reConnect: 'Re-Connect'
+    reConnect: 'Re-Connect',
+    recognizeSelectedArea: 'Recognize Selected Area'
   },
   attribute: {
     request: 'Request additional {attr}',
@@ -333,7 +334,8 @@ export default {
     browse: 'browse',
     dragMessage:
       'Drop an item image here or paste an item image copied from the clipboard',
-    notImageFormat: 'The file is not in an image format'
+    notImageFormat: 'The file is not in an image format',
+    cropArea: 'Select Area'
   },
   max: 'Max',
   min: 'Min',

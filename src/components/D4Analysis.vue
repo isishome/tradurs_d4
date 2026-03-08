@@ -5,7 +5,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { nextTick, reactive, ref } from 'vue'
 import { QFile, uid, useQuasar } from 'quasar'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
@@ -14,11 +14,23 @@ import { Item, Property } from 'src/types/item'
 import CompareWorker from 'src/common/worker?worker'
 import { similarity } from 'src/common'
 import { CompareParams, type Result } from 'src/common/worker'
+import type Cropper from 'cropperjs'
+
+interface DropBox {
+  show: boolean
+  enter: number
+}
 
 interface IProps {
   loading?: boolean
   disable?: boolean
   attrOnly?: boolean
+}
+
+interface CropBox {
+  show: boolean
+  origin?: string
+  loading: boolean
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -45,6 +57,9 @@ const terminate = () => {
   worker.terminate()
 }
 
+let plainText: string
+let restrictionsPhase: string[]
+let cropper: Cropper
 const cutoffSim = 0.6
 const cutoffDis = 3
 const lang: string = (route.params.lang as string) || 'ko'
@@ -64,14 +79,21 @@ const checkList: ILabel[] = [
   { value: 'restrictions', label: t('analyze.checkRestrictions') },
   { value: 'aggregate', label: t('analyze.aggregateItemInfo') }
 ]
-const currentCheck = ref<string | number | null>(checkList[0].value)
-
-let plainText: string
 const item = new Item('')
-let restrictionsPhase: string[]
-
+const currentCheck = ref<string | number | null>(checkList[0].value)
 const fileRef = ref<QFile>()
 const file = ref()
+const dropArea = ref<HTMLDivElement>()
+const dropBox = reactive<DropBox>({
+  show: false,
+  enter: 0
+})
+const cropImage = ref<HTMLImageElement>()
+const cropBox = reactive<CropBox>({
+  show: false,
+  origin: undefined,
+  loading: true
+})
 
 const beforeHide = () => {
   file.value = undefined
@@ -494,14 +516,79 @@ const aggregate = () => {
   }, timeout)
 }
 
-const scan = (f: File) => {
+const scan = async (f: File) => {
   dropBox.show = false
-  emit('start')
+  cropBox.origin = URL.createObjectURL(f)
 
-  filtering(f)
+  await nextTick()
+
+  cropBox.show = true
 }
 
-const filtering = (f: File) => {
+const onShowCropBox = async () => {
+  const Cropper = (await import('cropperjs')).default
+
+  if (!Cropper || !cropImage.value) {
+    cropBox.show = false
+    dropBox.show = true
+
+    return
+  }
+
+  if (cropper) cropper.destroy()
+
+  cropper = new Cropper(cropImage.value, {
+    container: cropImage.value.parentElement as HTMLElement
+  })
+
+  const selection = cropper.getCropperSelection()
+
+  if (selection) {
+    selection.initialAspectRatio =
+      cropImage.value.width / cropImage.value.height
+    selection.initialCoverage = 0.98
+    selection.zoomable = false
+  }
+
+  cropBox.loading = false
+}
+
+const onBeforeHideCropBox = () => {
+  if (cropBox.origin) URL.revokeObjectURL(cropBox.origin)
+  cropBox.loading = true
+  cropper.destroy()
+  file.value = undefined
+}
+
+const onStartFilter = async () => {
+  const selection = cropper.getCropperSelection()
+  const cropperImage = cropper.getCropperImage()
+
+  if (!selection || !cropperImage) return
+
+  const image = await cropperImage.$ready()
+
+  const imageRect = cropperImage.getBoundingClientRect()
+
+  const scaleX = image.naturalWidth / imageRect.width
+  const scaleY = image.naturalHeight / imageRect.height
+
+  const realCanvas = await selection.$toCanvas({
+    width: Math.round(selection.width * scaleX),
+    height: Math.round(selection.height * scaleY)
+  })
+
+  realCanvas?.toBlob((blob) => {
+    if (blob) {
+      emit('start')
+      filtering(blob)
+    }
+
+    cropBox.show = false
+  })
+}
+
+const filtering = (f: Blob) => {
   checkedItem.splice(0, checkedItem.length)
   currentCheck.value = 'analyze'
   showProgress.value = true
@@ -515,7 +602,7 @@ const filtering = (f: File) => {
     const image = new Image()
     image.src = fr.result as string
     image.onload = () => {
-      const isTransparent = f.name.toLowerCase().match(/\.(png|webp)/g)
+      const isTransparent = f.type.toLowerCase().match(/image\/(png|webp)/g)
       const scale = Math.round((700 / image.width) * 1000) / 1000
       const iWidth = image.width
       const iHeight = image.height
@@ -578,17 +665,6 @@ const click = () => {
   if ($q.platform.is.mobile) fileRef.value?.pickFiles()
   else dropBox.show = true
 }
-
-interface DropBox {
-  show: boolean
-  enter: number
-}
-
-const dropArea = ref<HTMLDivElement>()
-const dropBox = reactive<DropBox>({
-  show: false,
-  enter: 0
-})
 
 const fileCheckAndScanStart = (f?: File) => {
   if (f && f.type.indexOf('image') !== -1) scan(f)
@@ -743,9 +819,48 @@ const beforeHideDropBox = () => {
         </div>
       </template>
     </D4Dialog>
+    <D4Dialog
+      v-model="cropBox.show"
+      width="700px"
+      max-width="100%"
+      persistent
+      @show="onShowCropBox"
+      @before-hide="onBeforeHideCropBox"
+    >
+      <template #top>
+        <div class="text-h6 q-pa-md">
+          {{ t('analyze.cropArea') }}
+        </div>
+      </template>
+      <template #middle>
+        <div class="crop-area">
+          <img ref="cropImage" :src="cropBox.origin" />
+          <q-inner-loading :showing="cropBox.loading">
+            <q-spinner size="50px" color="primary" />
+          </q-inner-loading>
+        </div>
+      </template>
+      <template #bottom>
+        <div class="row justify-end q-gutter-x-sm q-pa-sm">
+          <D4Btn
+            :label="t('btn.cancel')"
+            :disable="loading"
+            color="rgb(150,150,150)"
+            v-close-popup
+          />
+          <D4Btn
+            :label="t('btn.recognizeSelectedArea')"
+            :loading="loading"
+            :disable="disable"
+            color="var(--q-light-unique)"
+            @click="onStartFilter"
+          />
+        </div>
+      </template>
+    </D4Dialog>
   </div>
 </template>
-<style scoped>
+<style lang="scss" scoped>
 .analysis:deep(svg) {
   display: none;
 }
@@ -770,5 +885,21 @@ const beforeHideDropBox = () => {
 
 .body--light .drop-area.enter {
   background-color: var(--q-cloud);
+}
+
+.crop-area {
+  height: 800px;
+  max-height: 60vh;
+
+  & img {
+    max-width: 100%;
+    max-height: 100%;
+    visibility: hidden;
+  }
+
+  &:deep(cropper-canvas) {
+    width: 100%;
+    height: 100%;
+  }
 }
 </style>
