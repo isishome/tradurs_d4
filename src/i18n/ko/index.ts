@@ -234,7 +234,7 @@ export default {
     exists: '이미 존재하는 {attr} 입니다',
     continuous: '연속 추가',
     complete: '옵션 추가 요청이 완료되었습니다',
-    open: '옵션 열기',
+    open: '속성 열기',
     close: '속성 닫기'
   },
   item: {

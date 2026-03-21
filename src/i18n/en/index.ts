@@ -59,7 +59,7 @@ export default {
       'Affixes search allows you to select up to 6 affixes, and if 5 affixes are selected, items containing 4 of the 5 affixes combined will also be searched.',
     description: {
       advanced:
-        "When using attributes filters, use 'characteristics affixes' and 'affixes' separately.",
+        "When using Attributes Filters, use 'characteristics affixes' and 'affixes' separately.",
       advanced2:
         "Sometimes sellers input 'characteristics affixes' and 'affixes' incorrectly, so consider this and filter."
     }
