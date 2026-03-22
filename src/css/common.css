@@ -71,7 +71,7 @@
   font-size: 18px;
   line-height: 24px;
   font-weight: 700;
-  word-break: break-all;
+  word-break: keep-all;
 }
 
 .price {
@@ -88,7 +88,7 @@
   letter-spacing: -0.5px;
 }
 
-@media (max-width:600px) {
+@media (max-width: 600px) {
   .name {
     font-size: 14px;
     line-height: 18px;
@@ -120,15 +120,27 @@
 
 .body--dark .inner {
   background-blend-mode: color-dodge;
-  background: linear-gradient(to bottom, var(--q-dark-normal), var(--q-dark-page));
+  background: linear-gradient(
+    to bottom,
+    var(--q-dark-normal),
+    var(--q-dark-page)
+  );
 }
 
 .body--dark .magic .inner {
-  background: linear-gradient(to bottom, var(--q-dark-magic), var(--q-dark-page));
+  background: linear-gradient(
+    to bottom,
+    var(--q-dark-magic),
+    var(--q-dark-page)
+  );
 }
 
 .body--dark .rare .inner {
-  background: linear-gradient(to bottom, var(--q-dark-rare), var(--q-dark-page));
+  background: linear-gradient(
+    to bottom,
+    var(--q-dark-rare),
+    var(--q-dark-page)
+  );
 }
 
 .body--dark .set .inner {
@@ -136,15 +148,27 @@
 }
 
 .body--dark .legendary .inner {
-  background: linear-gradient(to bottom, var(--q-dark-legendary), var(--q-dark-page));
+  background: linear-gradient(
+    to bottom,
+    var(--q-dark-legendary),
+    var(--q-dark-page)
+  );
 }
 
 .body--dark .unique .inner {
-  background: linear-gradient(to bottom, var(--q-dark-unique), var(--q-dark-page));
+  background: linear-gradient(
+    to bottom,
+    var(--q-dark-unique),
+    var(--q-dark-page)
+  );
 }
 
 .body--dark .mythic .inner {
-  background: linear-gradient(to bottom, var(--q-dark-mythic), var(--q-dark-page));
+  background: linear-gradient(
+    to bottom,
+    var(--q-dark-mythic),
+    var(--q-dark-page)
+  );
 }
 
 .body--dark .inner::after {
@@ -198,7 +222,7 @@
   max-width: 100vw;
 }
 
-@media (max-width:600px) {
+@media (max-width: 600px) {
   .card-item .inner {
     padding: 6px;
   }
@@ -241,9 +265,8 @@
   opacity: 1;
 }
 
-
 .icon.greater {
-  opacity: .2;
+  opacity: 0.2;
   transform: rotate(-22.5deg);
 }
 
@@ -256,12 +279,16 @@
   position: fixed;
   width: 2px;
   height: 2px;
-  box-shadow: 0 0 1px 1px rgb(0, 17, 255), 0 0 4px 4px rgb(0, 180, 204);
+  box-shadow:
+    0 0 1px 1px rgb(0, 17, 255),
+    0 0 4px 4px rgb(0, 180, 204);
   z-index: -1;
 }
 
 .body--light .icon.greater::after {
-  box-shadow: 0 0 3px 3px rgb(255, 230, 0), 0 0 6px 6px rgb(255, 255, 255);
+  box-shadow:
+    0 0 3px 3px rgb(255, 230, 0),
+    0 0 6px 6px rgb(255, 255, 255);
 }
 
 .greater-mark {
@@ -276,11 +303,15 @@
 }
 
 .greater-mark .icon.greater::after {
-  box-shadow: 0 0 3px 3px rgb(0, 17, 255), 0 0 7px 7px rgb(0, 180, 204);
+  box-shadow:
+    0 0 3px 3px rgb(0, 17, 255),
+    0 0 7px 7px rgb(0, 180, 204);
 }
 
 .body--light .greater-mark .icon.greater::after {
-  box-shadow: 0 0 4px 4px rgb(255, 230, 0), 0 0 10px 10px rgb(255, 255, 255);
+  box-shadow:
+    0 0 4px 4px rgb(255, 230, 0),
+    0 0 10px 10px rgb(255, 255, 255);
 }
 
 .greater-mark i {
@@ -291,7 +322,7 @@
   font-size: 18px;
 }
 
-@media (max-width:600px) {
+@media (max-width: 600px) {
   .greater-mark {
     transform: translate(30px, 9px);
   }
@@ -301,7 +332,9 @@
   }
 
   .greater-mark .icon.greater::after {
-    box-shadow: 0 0 2px 2px rgb(0, 17, 255), 0 0 6px 6px rgb(0, 180, 204);
+    box-shadow:
+      0 0 2px 2px rgb(0, 17, 255),
+      0 0 6px 6px rgb(0, 180, 204);
   }
 
   .greater-mark i {
@@ -315,4 +348,10 @@
 
 .top-space {
   height: 30px;
+}
+
+.attr-area {
+  font-family:
+    'Roboto', '-apple-system', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  letter-spacing: 0.6px;
 }

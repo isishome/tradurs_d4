@@ -66,14 +66,14 @@ const imgSrc = computed(() =>
   props.data.itemType === 'rune'
     ? `/images/items/rune/${props.data.itemTypeValue1}/${props.data.itemTypeValue2}.webp`
     : props.data.itemType === 'aspect'
-    ? `/images/items/aspect/legendary/${props.data.itemTypeValue2}.webp`
-    : ['gem', 'summoning'].includes(props.data.itemTypeValue1)
-    ? `/images/items/${props.data.itemType}/${props.data.itemTypeValue1}/${props.data.itemTypeValue2}.webp`
-    : props.data.itemTypeValue1 === 'elixir'
-    ? `/images/items/${props.data.itemType}/${props.data.itemTypeValue1}/${
-        props.data.itemTypeValue2.split('_')[1]
-      }.webp`
-    : `/images/items/${props.data.itemType}/${props.data.itemTypeValue1}/${props.data.imageId}.webp`
+      ? `/images/items/aspect/legendary/${props.data.itemTypeValue2}.webp`
+      : ['gem', 'summoning'].includes(props.data.itemTypeValue1)
+        ? `/images/items/${props.data.itemType}/${props.data.itemTypeValue1}/${props.data.itemTypeValue2}.webp`
+        : props.data.itemTypeValue1 === 'elixir'
+          ? `/images/items/${props.data.itemType}/${props.data.itemTypeValue1}/${
+              props.data.itemTypeValue2.split('_')[1]
+            }.webp`
+          : `/images/items/${props.data.itemType}/${props.data.itemTypeValue1}/${props.data.imageId}.webp`
 )
 
 const _name = ref<string>(props.data.name)
@@ -120,17 +120,20 @@ const itemName = computed(
           findType('rune')?.label
         }`
       : props.data.itemType === 'aspect'
-      ? store.findAspect(Number(_typeValue2.value))?.aspectName
-      : qualifiable.value
-      ? props.data.name
-      : props.data.itemTypeValue1 === 'gem'
-      ? store.gems.find((g) => g.value === props.data.itemTypeValue2)?.label
-      : props.data.itemTypeValue1 === 'elixir'
-      ? store.elixirs.find((e) => e.value === props.data.itemTypeValue2)?.label
-      : props.data.itemTypeValue1 === 'summoning'
-      ? store.summonings.find((s) => s.value === props.data.itemTypeValue2)
-          ?.label
-      : undefined) ?? t('item.unknown')
+        ? store.findAspect(Number(_typeValue2.value))?.aspectName
+        : qualifiable.value
+          ? props.data.name
+          : props.data.itemTypeValue1 === 'gem'
+            ? store.gems.find((g) => g.value === props.data.itemTypeValue2)
+                ?.label
+            : props.data.itemTypeValue1 === 'elixir'
+              ? store.elixirs.find((e) => e.value === props.data.itemTypeValue2)
+                  ?.label
+              : props.data.itemTypeValue1 === 'summoning'
+                ? store.summonings.find(
+                    (s) => s.value === props.data.itemTypeValue2
+                  )?.label
+                : undefined) ?? t('item.unknown')
 )
 let remainInterval: NodeJS.Timeout
 
@@ -157,10 +160,10 @@ const _typeValue2 = ref<string>(
     (_typeValue1.value === 'gem'
       ? (store.gems[0].value as string)
       : _typeValue1.value === 'elixir'
-      ? (store.elixirs[0].value as string)
-      : _typeValue1.value === 'summoning'
-      ? (store.summonings[0].value as string)
-      : '')
+        ? (store.elixirs[0].value as string)
+        : _typeValue1.value === 'summoning'
+          ? (store.summonings[0].value as string)
+          : '')
 )
 const _power = ref<number>(props.data.power)
 const _upgrade = ref<number>(props.data.upgrade)
@@ -261,15 +264,15 @@ const updateType = (val: string) => {
     val === 'aspect'
       ? 'legendary'
       : !qualifiable.value
-      ? 'normal'
-      : _quality.value
+        ? 'normal'
+        : _quality.value
 
   _typeValue1.value =
     val === 'rune'
       ? (store.runeTypes?.[0].value as string)
       : val === 'aspect'
-      ? (store.aspectCategories[0].value as string)
-      : (filterClasses(val)[0].value as string)
+        ? (store.aspectCategories[0].value as string)
+        : (filterClasses(val)[0].value as string)
 
   attribute.value = val === 'aspect' ? 'affixes' : attribute.value
 
@@ -286,14 +289,14 @@ const updateTypeValue1 = (val: string) => {
     _type.value === 'rune'
       ? (filterRunesByType(val)?.[0]?.value as string)
       : _type.value === 'aspect'
-      ? `${filterAspectByCategory(val)?.[0]?.value}`
-      : val === 'gem'
-      ? (store.gems[0].value as string)
-      : val === 'elixir'
-      ? (store.elixirs[0].value as string)
-      : val === 'summoning'
-      ? (store.summonings[0].value as string)
-      : ''
+        ? `${filterAspectByCategory(val)?.[0]?.value}`
+        : val === 'gem'
+          ? (store.gems[0].value as string)
+          : val === 'elixir'
+            ? (store.elixirs[0].value as string)
+            : val === 'summoning'
+              ? (store.summonings[0].value as string)
+              : ''
   updateTypeValue2(_typeValue2.value)
 }
 
@@ -309,8 +312,8 @@ const updateTypeValue2 = (val: string) => {
     _typeValue1.value === 'gem'
       ? store.gems.find((g: Gem) => g.value === val)?.level || null
       : _typeValue1.value === 'elixir'
-      ? store.elixirs.find((e: Elixir) => e.value === val)?.level || null
-      : selectedRune?.level ?? null
+        ? store.elixirs.find((e: Elixir) => e.value === val)?.level || null
+        : (selectedRune?.level ?? null)
 
   update()
 }
@@ -649,7 +652,7 @@ defineExpose({ scrollEnd })
                 :label="`${t('item.aspect')} ${t('searchOrSelect')}`"
                 :options="
                   filterAspectByCategory(_typeValue1, typeValue2Needle).map(
-                    (a:Affix) => ({ ...a, value: a.value.toString() })
+                    (a: Affix) => ({ ...a, value: a.value.toString() })
                   )
                 "
                 dropdown-icon="img:/images/icons/dropdown.svg"
@@ -896,12 +899,14 @@ defineExpose({ scrollEnd })
                     <q-card-section class="scroll q-ma-lg" style="height: 50vh">
                       <div class="row q-col-gutter-md">
                         <div
-                          v-for="i, idx in itemImgs[_type][_typeValue1 as string]"
+                          v-for="(i, idx) in itemImgs[_type][
+                            _typeValue1 as string
+                          ]"
                           :key="idx"
                           class="col-4 col-md-3 cursor-pointer"
                           @click="
                             () => {
-                              _image = idx
+                              _image = idx as number
                               update()
                             }
                           "
@@ -951,7 +956,7 @@ defineExpose({ scrollEnd })
           :label="t('item.name')"
           @update:model-value="update"
           maxlength="256"
-          :rules="[(val:string) => checkName(val) || '']"
+          :rules="[(val: string) => checkName(val) || '']"
         />
       </q-card-section>
       <q-card-section

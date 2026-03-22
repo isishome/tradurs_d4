@@ -51,8 +51,8 @@ const affixColor = computed(
     (['legendary', 'unique'].includes(findAffix.value?.type as string)
       ? 'stress'
       : findAffix.value?.type === 'socket'
-      ? 'text-grey-6'
-      : '')
+        ? 'text-grey-6'
+        : '')
 )
 const isStandard = computed(() =>
   ['standard'].includes(findAffix.value?.type ?? '')
@@ -66,14 +66,14 @@ const icon = computed(
       findAffix.value?.type === 'socket' && color.value
         ? 'socket_malignant'
         : (props.editable || affixGreater.value) &&
-          findAffix.value?.type === 'standard' &&
-          $q.dark.isActive
-        ? 'greater'
-        : (props.editable || affixGreater.value) &&
-          findAffix.value?.type === 'standard' &&
-          !$q.dark.isActive
-        ? 'greater_invert'
-        : findAffix.value?.type
+            findAffix.value?.type === 'standard' &&
+            $q.dark.isActive
+          ? 'greater'
+          : (props.editable || affixGreater.value) &&
+              findAffix.value?.type === 'standard' &&
+              !$q.dark.isActive
+            ? 'greater_invert'
+            : findAffix.value?.type
     }.svg`
 )
 
@@ -121,10 +121,14 @@ const remove = (): void => {
 
 <template>
   <div
-    class="row no-wrap q-gutter-xs items-baseline"
+    class="row no-wrap q-gutter-x-xs items-baseline attr-area"
     :class="[disable, affixColor]"
     :data-id="data.valueId"
-    :title="isRune ? `${(findAffix as Rune)?.label} ${findType('rune')?.label}` : undefined"
+    :title="
+      isRune
+        ? `${(findAffix as Rune)?.label} ${findType('rune')?.label}`
+        : undefined
+    "
   >
     <div
       class="list row items-center justify-center"
@@ -164,7 +168,12 @@ const remove = (): void => {
       <div
         v-if="isRune"
         class="column inline"
-        :class="{ filtered :is.filter.affixes.filter(a => !!a.value).map(a => a.value).includes(findAffix?.value as string) }"
+        :class="{
+          filtered: is.filter.affixes
+            .filter((a) => !!a.value)
+            .map((a) => a.value)
+            .includes(findAffix?.value as string)
+        }"
       >
         <div
           v-for="(e, idx) in ((findAffix as Rune)?.effect ?? '').split('|')"
@@ -176,12 +185,23 @@ const remove = (): void => {
       <div
         v-else
         class="row items-center q-gutter-x-xs inline"
-        :class="[{ 'filtered': is.filter.affixes.filter(a => !!a.value).map(a => a.value).includes(findAffix?.value as number) }, color, { 'text-shadow': !!color }]"
+        :class="[
+          {
+            filtered: is.filter.affixes
+              .filter((a) => !!a.value)
+              .map((a) => a.value)
+              .includes(findAffix?.value as number)
+          },
+          color,
+          { 'text-shadow': !!color }
+        ]"
       >
         <template v-for="(comp, k) in affixInfo" :key="k">
           <template v-if="comp.type === 'text'">
             <div
-              v-for="(word, i) in (comp.value as string).split(/\s+/g).filter(w => w !== '')"
+              v-for="(word, i) in (comp.value as string)
+                .split(/\s+/g)
+                .filter((w) => w !== '')"
               :key="i"
             >
               {{ word }}
@@ -211,7 +231,7 @@ const remove = (): void => {
               hide-hint
               no-error-icon
               outlined
-              v-model.number="(comp.value as number)"
+              v-model.number="comp.value as number"
               maxlength="6"
               debounce="500"
               :disable="disable"

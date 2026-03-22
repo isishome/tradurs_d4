@@ -1063,7 +1063,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
         </D4Item>
       </div>
       <div
-        v-for="item, idx in (items as Array<Item>)"
+        v-for="(item, idx) in items as Array<Item>"
         :key="item.itemId"
         :data-itemid="item.itemId"
         class="item relative-position"
@@ -1298,7 +1298,11 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                   <q-item-section side>
                     <q-icon
                       class="icon"
-                      :class="{ 'rotate-45': ['standard'].includes(scope.opt.type as string) }"
+                      :class="{
+                        'rotate-45': ['standard'].includes(
+                          scope.opt.type as string
+                        )
+                      }"
                       size="8px"
                       :name="`img:/images/attribute_types/${
                         scope.opt.type || 'standard'
@@ -1377,7 +1381,11 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                       <q-icon
                         v-else
                         class="icon"
-                        :class="{ 'rotate-45': ['standard'].includes(scope.opt.type as string) }"
+                        :class="{
+                          'rotate-45': ['standard'].includes(
+                            scope.opt.type as string
+                          )
+                        }"
                         :name="`img:/images/attribute_types/${
                           scope.opt.type || 'standard'
                         }.svg`"
@@ -1768,7 +1776,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
           <div class="q-pb-xl full-height">
             <div class="row items-center q-col-gutter-lg">
               <div
-                v-for="offer, idx in (offers as Array<Offer>)"
+                v-for="(offer, idx) in offers as Array<Offer>"
                 :key="`offers_${idx}`"
                 class="col-12 col-sm-6"
               >

@@ -1,35 +1,35 @@
 :root {
-  --q-primary: #A59263;
+  --q-primary: #a59263;
   --q-primary-cloud: #a5926388;
-  --q-secondary: #A50905;
-  --q-accent: #9C27B0;
-  --q-light: #EFEFEF;
-  --q-light-page: #F9F9F9;
-  --q-light-border: #DDDDDD;
+  --q-secondary: #a50905;
+  --q-accent: #9c27b0;
+  --q-light: #efefef;
+  --q-light-page: #f9f9f9;
+  --q-light-border: #dddddd;
   --q-dark: #1a1a1a;
   --q-dark-page: #040404;
   --q-dark-border: #333333;
-  --q-positive: #21BA45;
-  --q-negative: #C10015;
-  --q-info: #31CCEC;
-  --q-warning: #F2C037;
+  --q-positive: #21ba45;
+  --q-negative: #c10015;
+  --q-info: #31ccec;
+  --q-warning: #f2c037;
   --q-light-normal: #888888;
   --q-dark-normal: #333333;
-  --q-magic: #7B7DF6;
-  --q-light-magic: #4B4DC6;
-  --q-dark-magic: #1B263A;
-  --q-rare: #EAEB0B;
-  --q-light-rare: #EACB00;
+  --q-magic: #7b7df6;
+  --q-light-magic: #4b4dc6;
+  --q-dark-magic: #1b263a;
+  --q-rare: #eaeb0b;
+  --q-light-rare: #eacb00;
   --q-dark-rare: #533809;
-  --q-set: #00FF00;
-  --q-light-set: #00BB00;
+  --q-set: #00ff00;
+  --q-light-set: #00bb00;
   --q-dark-set: #003300;
-  --q-legendary: #F78003;
-  --q-light-legendary: #C76003;
-  --q-dark-legendary: #471B0B;
-  --q-unique: #D9A879;
+  --q-legendary: #f78003;
+  --q-light-legendary: #c76003;
+  --q-dark-legendary: #471b0b;
+  --q-unique: #d9a879;
   --q-light-unique: #6c4a00;
-  --q-dark-unique: #20211C;
+  --q-dark-unique: #20211c;
   --q-mythic: #b891cd;
   --q-light-mythic: #b891cd;
   --q-dark-mythic: #1c002b;
@@ -37,13 +37,24 @@
   --q-cloud: #99999916;
   --q-half: rgba(150, 150, 150, 0.2);
   --q-shadow: rgba(150, 150, 150, 0.6);
-  --q-filter-normal: invert(39%) sepia(1%) saturate(1823%) hue-rotate(16deg) brightness(100%) contrast(89%);
-  --q-filter-magic: invert(35%) sepia(72%) saturate(1098%) hue-rotate(212deg) brightness(80%) contrast(96%);
-  --q-filter-rare: invert(91%) sepia(21%) saturate(2166%) hue-rotate(5deg) brightness(96%) contrast(91%);
-  --q-filter-set: invert(37%) sepia(91%) saturate(1265%) hue-rotate(91deg) brightness(95%) contrast(106%);
-  --q-filter-legendary: invert(41%) sepia(94%) saturate(1295%) hue-rotate(8deg) brightness(93%) contrast(97%);
-  --q-filter-unique: invert(57%) sepia(68%) saturate(273%) hue-rotate(349deg) brightness(87%) contrast(93%);
-  --q-filter-mythic: invert(69%) sepia(11%) saturate(1048%) hue-rotate(235deg) brightness(87%) contrast(99%);
+  --q-filter-normal: invert(39%) sepia(1%) saturate(1823%) hue-rotate(16deg)
+    brightness(100%) contrast(89%);
+  --q-filter-magic: invert(35%) sepia(72%) saturate(1098%) hue-rotate(212deg)
+    brightness(80%) contrast(96%);
+  --q-filter-rare: invert(91%) sepia(21%) saturate(2166%) hue-rotate(5deg)
+    brightness(96%) contrast(91%);
+  --q-filter-set: invert(37%) sepia(91%) saturate(1265%) hue-rotate(91deg)
+    brightness(95%) contrast(106%);
+  --q-filter-legendary: invert(41%) sepia(94%) saturate(1295%) hue-rotate(8deg)
+    brightness(93%) contrast(97%);
+  --q-filter-unique: invert(57%) sepia(68%) saturate(273%) hue-rotate(349deg)
+    brightness(87%) contrast(93%);
+  --q-filter-mythic: invert(69%) sepia(11%) saturate(1048%) hue-rotate(235deg)
+    brightness(87%) contrast(99%);
+}
+
+body {
+  font-family: 'kodia';
 }
 
 body.body--light::before {
@@ -76,7 +87,7 @@ body.body--dark {
 }
 
 .q-focus-helper {
-  opacity: .05 !important;
+  opacity: 0.05 !important;
 }
 
 .no-hover .q-focus-helper {
@@ -113,14 +124,28 @@ body.body--dark {
   bottom: 0;
   left: 0;
   right: 0;
-  background-image: linear-gradient(90deg, #000000 0%, rgba(0, 0, 0, 0) calc(70% - 180px), rgba(0, 0, 0, 0) 100%), linear-gradient(0deg, rgba(0, 0, 0, 0.24), rgba(0, 0, 0, 0.24));
+  background-image:
+    linear-gradient(
+      90deg,
+      #000000 0%,
+      rgba(0, 0, 0, 0) calc(70% - 180px),
+      rgba(0, 0, 0, 0) 100%
+    ),
+    linear-gradient(0deg, rgba(0, 0, 0, 0.24), rgba(0, 0, 0, 0.24));
   background-size: 100%;
   background-repeat: repeat;
   transform: translate(0, 0);
 }
 
 .q-drawer.q-drawer--right::after {
-  background-image: linear-gradient(270deg, #000000 0%, rgba(0, 0, 0, 0) calc(70% - 180px), rgba(0, 0, 0, 0) 100%), linear-gradient(180deg, rgba(0, 0, 0, 0.24), rgba(0, 0, 0, 0.24));
+  background-image:
+    linear-gradient(
+      270deg,
+      #000000 0%,
+      rgba(0, 0, 0, 0) calc(70% - 180px),
+      rgba(0, 0, 0, 0) 100%
+    ),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.24), rgba(0, 0, 0, 0.24));
 }
 
 .body--light .q-drawer::before,
@@ -129,7 +154,7 @@ body.body--dark {
   background-color: var(--q-light);
 }
 
-@media (min-width:1024px) {
+@media (min-width: 1024px) {
   .q-drawer {
     position: fixed !important;
   }
@@ -139,7 +164,7 @@ body.body--dark {
   }
 }
 
-@media (min-width:1440px) {
+@media (min-width: 1440px) {
   .q-drawer {
     width: calc((100vw - 840px) / 2) !important;
   }
@@ -150,7 +175,7 @@ body.body--dark {
 }
 
 .q-dialog__backdrop {
-  background: rgba(0, 0, 0, .8);
+  background: rgba(0, 0, 0, 0.8);
   transition: none;
 }
 
@@ -196,22 +221,22 @@ body.body--dark {
 
 .scroll::-webkit-scrollbar-track {
   box-shadow: none !important;
-  background-color: rgba(255, 255, 255, .1);
+  background-color: rgba(255, 255, 255, 0.1);
   border-radius: 0 !important;
 }
 
 .scroll::-webkit-scrollbar-thumb {
   box-shadow: none !important;
-  background: rgba(255, 255, 255, .2);
+  background: rgba(255, 255, 255, 0.2);
   border-radius: 0 !important;
 }
 
 .body--light .scroll::-webkit-scrollbar-track {
-  background-color: rgba(0, 0, 0, .05);
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
 .body--light .scroll::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, .2);
+  background: rgba(0, 0, 0, 0.2);
 }
 
 .break-keep {

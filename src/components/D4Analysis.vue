@@ -69,7 +69,7 @@ const phase = is.analyze.lang[lang as keyof typeof is.analyze.lang]
 const replaces = is.analyze.replaces[lang as keyof typeof is.analyze.replaces]
 const timeout = 200
 const showProgress = ref<boolean>(false)
-const checkedItem = reactive<string[]>([])
+const checkedItem = ref<string[]>([])
 const checkList: ILabel[] = [
   { value: 'analyze', label: t('analyze.analyzingImage') },
   { value: 'text', label: t('analyze.aligningText') },
@@ -97,7 +97,7 @@ const cropBox = reactive<CropBox>({
 
 const beforeHide = () => {
   file.value = undefined
-  checkedItem.splice(0, checkedItem.length)
+  checkedItem.value.splice(0, checkedItem.value.length)
   currentCheck.value = null
 }
 
@@ -138,7 +138,7 @@ const checkText = () => {
     return failedScan(t('analyze.nonTradable'))
 
   setTimeout(() => {
-    checkedItem.push('text')
+    checkedItem.value.push('text')
     checkInfo(textArray)
   }, timeout)
 }
@@ -376,7 +376,7 @@ const checkInfo = (textArray: string[]) => {
     .filter((ta) => !!ta.trim())
 
   setTimeout(() => {
-    checkedItem.push('info')
+    checkedItem.value.push('info')
     checkProperties(tArray)
   }, timeout)
 }
@@ -429,7 +429,7 @@ const checkProperties = async (tArray: string[]) => {
   }
 
   setTimeout(() => {
-    checkedItem.push('properties')
+    checkedItem.value.push('properties')
     checkAffixes(tArray)
   }, timeout)
 }
@@ -465,7 +465,7 @@ const checkAffixes = async (tArray: string[]) => {
   }
 
   setTimeout(() => {
-    checkedItem.push('affixes')
+    checkedItem.value.push('affixes')
     checkRestrictions()
   }, timeout)
 }
@@ -503,7 +503,7 @@ const checkRestrictions = async () => {
   }
 
   setTimeout(() => {
-    checkedItem.push('restrictions')
+    checkedItem.value.push('restrictions')
     aggregate()
   }, timeout)
 }
@@ -511,7 +511,7 @@ const checkRestrictions = async () => {
 const aggregate = () => {
   currentCheck.value = 'aggregate'
   setTimeout(() => {
-    checkedItem.push('aggregate')
+    checkedItem.value.push('aggregate')
     endScan()
   }, timeout)
 }
@@ -589,7 +589,7 @@ const onStartFilter = async () => {
 }
 
 const filtering = (f: Blob) => {
-  checkedItem.splice(0, checkedItem.length)
+  checkedItem.value.splice(0, checkedItem.value.length)
   currentCheck.value = 'analyze'
   showProgress.value = true
 
@@ -651,7 +651,7 @@ const filtering = (f: Blob) => {
       is.recognize(canvas, lang)
         .then((text) => {
           plainText = text
-          checkedItem.push('analyze')
+          checkedItem.value.push('analyze')
           checkText()
         })
         .catch(() => {

@@ -45,7 +45,7 @@ const remove = () => {
 
 <template>
   <div
-    class="row no-wrap items-baseline q-gutter-xs"
+    class="row no-wrap items-baseline q-gutter-x-xs attr-area"
     :class="{ disable }"
     :data-id="data.valueId"
   >
@@ -62,12 +62,18 @@ const remove = () => {
     <div class="col">
       <div
         class="row items-center q-gutter-x-xs inline"
-        :class="{ 'filtered': is.filter.properties.map(p => p.value).includes(findProperty?.value as number) }"
+        :class="{
+          filtered: is.filter.properties
+            .map((p) => p.value)
+            .includes(findProperty?.value as number)
+        }"
       >
         <template v-for="(comp, k) in propertyInfo" :key="k">
           <template v-if="comp.type === 'text'">
             <div
-              v-for="(word, i) in (comp.value as string).split(/\s+/g).filter(w => w !== '')"
+              v-for="(word, i) in (comp.value as string)
+                .split(/\s+/g)
+                .filter((w) => w !== '')"
               :key="i"
             >
               {{ word }}

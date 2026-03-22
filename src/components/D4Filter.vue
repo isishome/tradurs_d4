@@ -565,15 +565,18 @@ defineExpose({
       >
         <q-item-section>
           <q-select
-            :ref="(selectEl:QSelect) => (typeValue2Ref[itemType] = selectEl)"
+            :ref="(selectEl: QSelect) => (typeValue2Ref[itemType] = selectEl)"
             :disable="filterLoading"
             v-model="filter.itemTypeValues1[itemType]"
             :options="
               findType(itemType)?.value === 'rune'
                 ? filterRunes(undefined, typeValue2Needle[itemType])
                 : findType(itemType)?.value === 'aspect'
-                ? filterAspectByCategory(undefined, typeValue2Needle[itemType])
-                : filterClasses(itemType, typeValue2Needle[itemType])
+                  ? filterAspectByCategory(
+                      undefined,
+                      typeValue2Needle[itemType]
+                    )
+                  : filterClasses(itemType, typeValue2Needle[itemType])
             "
             :label="`${findType(itemType)?.label} ${t('filter.type')}`"
             outlined
@@ -590,7 +593,7 @@ defineExpose({
             dropdown-icon="img:/images/icons/dropdown.svg"
             popup-content-class="scroll bordered"
             @update:model-value="updateDebounce()"
-            @input.stop="(e) => filterTypeValue(e, itemType)"
+            @input.stop="(e: KeyboardEvent) => filterTypeValue(e, itemType)"
             @blur="() => delete typeValue2Needle[itemType]"
           >
             <template #no-option>
