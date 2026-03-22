@@ -55,6 +55,7 @@
 
 body {
   font-family: 'kodia';
+  letter-spacing: -0.02em;
 }
 
 body.body--light::before {

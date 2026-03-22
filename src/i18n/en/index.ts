@@ -436,17 +436,30 @@ export default {
   },
   notice: {
     title: 'Update Notice',
-    top: 'Hello, this is Tradurs. We would like to inform you of an additional update related to the new class.',
+    top: 'Hello, this is Tradurs.\nHere are the new features and updates included in this release.',
     contents: [
-      { type: 'head', value: '◆ Additions' },
+      { type: 'head', value: '◆ New Features' },
       {
         type: 'list',
-        value:
-          'Affixes for Paladin-exclusive Unique equipment, as well as new general affixes, have been added.',
+        value: 'Real-time notifications via Telegram bot have been added.',
         class: 'text-body1'
       },
       { type: 'space' },
-      { type: 'image', value: '/images/notice/20251221/paladin.webp' },
+      { type: 'image', value: '/images/notice/20260322/notify.webp' },
+      {
+        type: 'link',
+        name: 'support',
+        label: 'How to connect Telegram',
+        params: {
+          section: 'telegram'
+        }
+      },
+      { type: 'head', value: '◆ Changes' },
+      {
+        type: 'list',
+        value: 'The default font for Tradurs has been changed to Kodia.',
+        class: 'text-body1'
+      },
       { type: 'space' },
       { type: 'space' }
     ],
@@ -1061,6 +1074,57 @@ export default {
           type: 'text',
           contents:
             'Top-right user icon\n(Mobile More icon > User icon)\nto see how many yolks you currently have.\n\nAs of 2024-06-03,\n\nYou are granted 30 yolks when you sign up.\n\nUp to 30 yolks are recharged per day.\n\nWhen charging, if you own more than 30 yolks, no more will be added.\n\nIt cannot be sold or shared between users.\n\nOne is consumed when listing, relisting, or offering an item,\n\nand is redeemed when the item trade is successfully completed.\n\nThis is to discourage frivolous item registrations or\nrequests for suggestions, and the number of uses or grants may change in the future.'
+        }
+      ]
+    },
+    {
+      id: 'telegram',
+      question: 'How do I use Telegram real-time notifications?',
+      answer: [
+        { type: 'image', contents: '01' },
+        {
+          type: 'text',
+          contents: 'Tap the More icon in the top-right corner. (Mobile only)'
+        },
+        { type: 'image', contents: '02' },
+        {
+          type: 'text',
+          contents: 'In the side menu, tap the user icon.'
+        },
+        { type: 'image', contents: '03' },
+        {
+          type: 'text',
+          contents: 'Tap [Edit Profile] to go to the profile settings page.'
+        },
+        { type: 'image', contents: '04' },
+        {
+          type: 'text',
+          contents:
+            'In the "Connect Telegram" section, tap the [CONNECT] button.'
+        },
+        { type: 'image', contents: '05' },
+        {
+          type: 'text',
+          contents:
+            'You will be redirected to the Telegram app. (If installed)\nTap [START] to activate the Tradurs notification bot.'
+        },
+        { type: 'image', contents: '06' },
+        {
+          type: 'text',
+          contents:
+            'Return to the profile page to see the status change to "Pending Connection".\nThe request remains valid for 10 minutes, and you cannot resend a request while it is in progress.'
+        },
+        { type: 'image', contents: '07' },
+        {
+          type: 'text',
+          contents:
+            'Refresh the page to update the connection status.\nWhen the status changes to "Connected", the bot has been successfully linked.'
+        },
+        { type: 'image', contents: '08' },
+        {
+          type: 'text',
+          contents:
+            'You will now receive real-time push notifications on Telegram for items you have registered or proposed.'
         }
       ]
     },

@@ -430,21 +430,35 @@ export default {
   },
   notice: {
     title: '업데이트 안내',
-    top: '안녕하세요. 트레이더스입니다. 신규 클래스 관련 추가 업데이트 안내입니다.',
+    top: '안녕하세요, 트레이더스입니다.\n이번 업데이트를 통해 추가된 기능과 변경 사항을 안내드립니다.',
     contents: [
       { type: 'head', value: '◆ 추가 사항' },
       {
         type: 'list',
-        value: '성기사 전용 고유 장비의 속성 및 일반 속성이 추가되었습니다.',
+        value: '텔레그램 봇을 통한 실시간 알림 기능이 추가되었습니다.',
         class: 'text-body1'
       },
       { type: 'space' },
-      { type: 'image', value: '/images/notice/20251221/paladin.webp' },
+      { type: 'image', value: '/images/notice/20260322/notify.webp' },
+      {
+        type: 'link',
+        name: 'support',
+        label: '텔레그램 연동 방법 보기',
+        params: {
+          section: 'telegram'
+        }
+      },
+      { type: 'head', value: '◆ 변경 사항' },
+      {
+        type: 'list',
+        value: '트레이더스의 기본 폰트가 Kodia로 변경되었습니다.',
+        class: 'text-body1'
+      },
       { type: 'space' },
       { type: 'space' }
     ],
     bottom: '감사합니다.',
-    close: '24시간 동안 열지 않기'
+    close: '24시간 동안 보지 않기'
   },
   adblock: {
     title: '트레이더스에서 광고를 허용해 주세요',
@@ -1035,6 +1049,56 @@ export default {
           type: 'text',
           contents:
             '우측 상단 사용자 아이콘\n(모바일 더보기 아이콘 > 사용자 아이콘)\n을 클릭하면 현재 보유한 노른자 개수를 확인할 수 있습니다.\n\n2024-06-03 현재,\n\n가입 시 30개의 노른자(yolk)가 부여됩니다.\n\n일일 최대 30개의 노른자가 충전됩니다.\n\n충전 시 노른자를 30개 이상 소유 중인 경우 더 이상 추가되지 않습니다.\n\n판매되거나 사용자 사이에 나눠 가질 수 없습니다.\n\n아이템 등록, 끌어올림, 제안 등록 시 1개씩 소모되며,\n\n아이템 거래가 정상적으로 완료되면 회수됩니다.\n\n이는 무분별한 아이템 등록이나 \n제안 요청을 막고자 함이며 앞으로 사용 개수나 부여 개수는 변경될 수 있습니다.'
+        }
+      ]
+    },
+    {
+      id: 'telegram',
+      question: '텔레그램 실시간 알림은 어떻게 사용하나요?',
+      answer: [
+        { type: 'image', contents: '01' },
+        {
+          type: 'text',
+          contents: '우측 상단의 더보기 아이콘을 클릭합니다. (모바일 기준)'
+        },
+        { type: 'image', contents: '02' },
+        {
+          type: 'text',
+          contents: '더보기 사이드 메뉴에서 사용자 아이콘을 클릭합니다.'
+        },
+        { type: 'image', contents: '03' },
+        {
+          type: 'text',
+          contents: '[정보 변경]을 클릭하여 정보 변경 페이지로 이동합니다.'
+        },
+        { type: 'image', contents: '04' },
+        {
+          type: 'text',
+          contents: '"텔레그램 연동" 섹션에서 [연동] 버튼을 클릭합니다.'
+        },
+        { type: 'image', contents: '05' },
+        {
+          type: 'text',
+          contents:
+            '텔레그램 앱으로 이동합니다. (설치된 경우 자동 실행)\n[시작] 버튼을 눌러 트레이더스 알림 봇을 활성화합니다.'
+        },
+        { type: 'image', contents: '06' },
+        {
+          type: 'text',
+          contents:
+            '다시 정보 페이지를 확인하면 상태가 "연동 요청 중"으로 변경됩니다.\n연동 요청은 10분간 유지되며, 연동 진행 중에는 재요청이 불가능합니다.'
+        },
+        { type: 'image', contents: '07' },
+        {
+          type: 'text',
+          contents:
+            '페이지를 새로고침하여 연동 상태를 확인합니다.\n상태가 "연동 중"으로 변경되면 봇과 연결이 완료된 것입니다.'
+        },
+        { type: 'image', contents: '08' },
+        {
+          type: 'text',
+          contents:
+            '이후 사용자가 등록한 아이템 또는 제안한 아이템에 대한 알림이 텔레그램으로 실시간 푸시 알림으로 제공됩니다.'
         }
       ]
     },

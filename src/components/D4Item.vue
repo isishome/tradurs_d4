@@ -1807,6 +1807,7 @@ defineExpose({ scrollEnd })
   font-family: monospace;
   font-size: 11px;
   line-height: 12px;
+  letter-spacing: 0;
 }
 
 .complete {
