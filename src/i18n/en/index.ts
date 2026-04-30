@@ -246,7 +246,7 @@ export default {
   item: {
     hardcore: 'Hardcore',
     softcore: 'Softcore',
-    ladder: 'Season of DEVINE SLAUGHTER',
+    ladder: 'Season of RECKONING',
     seasonal: 'Seasonal',
     eternal: 'Eternal',
     quality: 'Item Quality',

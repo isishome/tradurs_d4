@@ -240,7 +240,7 @@ export default {
   item: {
     hardcore: '하드코어',
     softcore: '소프트코어',
-    ladder: '살육의 시즌',
+    ladder: '결전의 시즌',
     seasonal: '시즌',
     eternal: '영원',
     quality: '아이템 등급',
