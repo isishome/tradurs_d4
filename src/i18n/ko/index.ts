@@ -77,7 +77,7 @@ export default {
     message: '해당 프리셋을 삭제할까요?'
   },
   season: {
-    bg: '/images/season/012/season_emblem_ko.webp',
+    bg: '/images/season/013/season_emblem_ko.webp',
     first: {
       socket:
         '악의 종자 시즌에는 장신구 아이템 옵션의 홈 유형을 정확하게 선택할수록 아이템의 노출 빈도가 높아집니다'

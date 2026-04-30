@@ -589,6 +589,7 @@ defineExpose({
             multiple
             transition-show="none"
             transition-hide="none"
+            class="full-width"
             :transition-duration="0"
             dropdown-icon="img:/images/icons/dropdown.svg"
             popup-content-class="scroll bordered"
