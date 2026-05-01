@@ -19,7 +19,7 @@ export const itemImgs: { [key: string]: any } = {
     totem: 21,
     wand: 26,
     shield: 20,
-    flail: 1
+    flail: 3
   },
   armor: { boots: 85, chestarmor: 67, gloves: 70, helm: 68, pants: 65 },
   accessory: { amulet: 41, ring: 61 }
