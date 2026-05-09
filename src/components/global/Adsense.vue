@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, nextTick, onUnmounted } from 'vue'
+import { onMounted, nextTick, onUnmounted, ref } from 'vue'
 
 interface IProps {
   dataAdClient?: string
@@ -17,6 +17,7 @@ withDefaults(defineProps<IProps>(), {
 })
 
 const prod: boolean = import.meta.env.PROD
+const insRef = ref<HTMLModElement>()
 
 const pushAdsense = () => {
   try {
@@ -35,6 +36,24 @@ const render = () => {
   })
 }
 
+const isUnfilled = () => {
+  const ins = insRef.value
+  if (!ins) return false
+  if (ins.dataset.adStatus === 'unfilled') return true
+
+  const iframe = ins.querySelector('iframe')
+  if (!iframe) return false
+
+  try {
+    const body = iframe.contentDocument?.body
+    if (!body) return false
+
+    return body.children.length === 0 && body.textContent?.trim() === ''
+  } catch {
+    return false
+  }
+}
+
 onMounted(() => {
   if (prod) render()
 })
@@ -42,10 +61,13 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('adsense-loaded', pushAdsense)
 })
+
+defineExpose({ isUnfilled })
 </script>
 
 <template>
   <ins
+    ref="insRef"
     class="adsbygoogle ins"
     :data-ad-client="dataAdClient"
     :data-ad-slot="dataAdSlot"

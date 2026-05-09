@@ -180,7 +180,7 @@ const isAdmin = computed(() =>
 // about screen size
 const size = computed(() =>
   $q.screen.width < 468
-    ? 'width:320px;max-height:100px;'
+    ? 'width:320px;height:100px;'
     : $q.screen.width < 728
       ? 'width:468px;height:60px;'
       : 'width:728px;height:90px;'
@@ -207,7 +207,9 @@ watch(
   () => gs.reloadAdKey,
   async () => {
     const now = Date.now()
-    const reloadTopAd = now - gs.topAccessTimeStamp > gs.timeLimit
+    const reloadTopAd =
+      topAdRef.value?.isUnfilled() ||
+      now - gs.topAccessTimeStamp > gs.timeLimit
     const reloadBottomAd = now - gs.bottomAccessTimeStamp > gs.timeLimit
     const reloadRightAd = now - gs.rightAccessTimeStamp > gs.timeLimit
 
