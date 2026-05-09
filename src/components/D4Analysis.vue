@@ -66,6 +66,8 @@ const lang: string = (route.params.lang as string) || 'ko'
 const similarRate =
   is.analyze.similarRate[lang as keyof typeof is.analyze.similarRate]
 const phase = is.analyze.lang[lang as keyof typeof is.analyze.lang]
+const greaterSuffix =
+  is.analyze.greaterSuffix[lang as keyof typeof is.analyze.lang]
 const replaces = is.analyze.replaces[lang as keyof typeof is.analyze.replaces]
 const timeout = 200
 const showProgress = ref<boolean>(false)
@@ -190,7 +192,9 @@ const checkInfo = (textArray: string[]) => {
     const findQualityIndex = is.quality.findIndex(
       (q) =>
         similarity(
-          qualityPhase[i].toLowerCase(),
+          qualityPhase[i]
+            .replace(new RegExp(`[^ ${phase} ]`, 'gi'), '')
+            .toLowerCase(),
           q.fullName.split(' ')[0].toLowerCase()
         ) > similarRate
     )
@@ -202,149 +206,155 @@ const checkInfo = (textArray: string[]) => {
         is.quality[findQualityIndex].fullName.toLowerCase(),
         ''
       )
+
       break
     }
   }
-
-  // check typevalue
-  if (typeValueIndex === -1) return failedScan(t('analyze.typeNotFound'))
-
-  let typeValue = qualityPhase
-    .splice(typeValueIndex, qualityPhase.length)
-    .join(' ')
-    .replace(new RegExp(`[^${phase}]`, 'gi'), '')
-    .trim()
-
-  // replace for each language
-  replaces.forEach((r) => {
-    typeValue = typeValue.replace(new RegExp(`${r[0]}`, 'gi'), r[1])
-  })
-
-  if (!typeValue || typeValue === '')
-    return failedScan(t('analyze.typeNotFound'))
-
-  // check class
-  const findEquipClass = [...is.equipClasses]
-    .sort((a, b) => b.label.length - a.label.length)
-    .find(
-      (c) =>
-        typeValue
-          .toLowerCase()
-          .indexOf(
-            c.label.replace(new RegExp(`[^${phase}]`, 'gi'), '').toLowerCase()
-          ) !== -1
-    )
-
-  if (findEquipClass) {
-    item.itemType = findEquipClass.type
-    item.itemTypeValue1 = findEquipClass.value as string
-
-    if (findEquipClass.value === 'gem') {
-      const findGemQuality = is.gems.find(
-        (g) =>
-          typeValue.toLowerCase().indexOf(g.qualityName.toLowerCase()) !== -1
-      )
-
-      if (findGemQuality) item.itemTypeValue2 = findGemQuality.quality
-    }
-  }
-
-  // check aspect
-  if (item.itemTypeValue1 === '') {
-    const aspectLabel = is.findType('aspect')?.label
-    const matchAspect = typeValue
-      .toLowerCase()
-      .match(new RegExp(`^${aspectLabel}`, 'i'))
-
-    if (!!matchAspect) {
-      const name = textArray
-        .splice(0, indexQuality)
-        .join('')
-        .replace(new RegExp(`[^ ${phase} ]`, 'gi'), '')
-        .trim()
-
-      if (!!name) {
-        const filteredAspects = is.affixes.data
-          .filter(
-            (a) =>
-              !!a.aspectName &&
-              similarity(
-                a.aspectName.replace(/\s/g, ''),
-                name
-                  .replace(
-                    is.aspectCategories.find(
-                      (ac) => ac.value === a.aspectCategory
-                    )?.label ?? '',
-                    ''
-                  )
-                  .replace(/\s/g, '')
-              ) > similarRate
-          )
-          .map((a) => ({
-            ...a,
-            rate: similarity(a.aspectName as string, name)
-          }))
-
-        filteredAspects.sort((a, b) => b.rate - a.rate)
-
-        if (filteredAspects.length > 0) {
-          item.itemType = 'aspect'
-          item.itemTypeValue1 = filteredAspects[0].aspectCategory as string
-          item.itemTypeValue2 = `${filteredAspects[0].value}`
-        }
-      }
-    }
-  }
-
-  if (item.itemTypeValue1 === '')
-    return failedScan(t('analyze.typeValueNotFound'))
 
   // check item name
   const name = textArray
     .splice(0, indexQuality)
     .join('')
     .replace(new RegExp(`[^ ${phase} ]`, 'gi'), '')
+    .replace(new RegExp(`\\s+(?:[^\\s]*[${greaterSuffix}][^\\s]*\\s*)+$`), '')
     .trim()
 
   if (name === '') return failedScan(t('analyze.nameNotFound'))
 
   item.name = name
 
-  // check item power
-  const powerText = `아이템.*위력|item.*power`
-  const indexPower = textArray.findIndex((ta) =>
-    new RegExp(powerText, 'gi').test(ta)
+  // check fixed item
+  const findFixedItemIndex = is.fixedItems.data.findIndex(
+    (fi) =>
+      similarity(item.name, fi.label) > similarRate &&
+      item.quality === fi.quality
   )
 
-  if (indexPower !== -1) {
-    const numPhase = textArray[indexPower]
-      .replace(/[^0-9\+]/gi, '')
-      .replace(/^([0-9]*)(\+?[0-9]*)$/gi, '$1')
-    if (!isNaN(parseFloat(numPhase))) item.power = parseFloat(numPhase)
+  if (findFixedItemIndex !== -1) {
+    const findItem = is.fixedItems.data[findFixedItemIndex]
+    item.fixedItemId = findItem.value as number
 
-    textArray.splice(0, indexPower + 1)
+    const findEquipClass = is.equipClasses.find(
+      (ec) => ec.value === findItem.equipmentClass
+    )
+
+    item.itemType = findEquipClass?.type as string
+    item.itemTypeValue1 = findEquipClass?.value as string
+  } else {
+    // check typevalue
+    if (typeValueIndex === -1) return failedScan(t('analyze.typeNotFound'))
+
+    // replace for each language
+    let typeValue = qualityPhase
+      .splice(typeValueIndex, qualityPhase.length)
+      .join(' ')
+      .replace(new RegExp(`[^${phase}]`, 'gi'), '')
+      .trim()
+
+    replaces.forEach((r) => {
+      typeValue = typeValue.replace(new RegExp(`${r[0]}`, 'gi'), r[1])
+    })
+
+    if (!typeValue || typeValue === '')
+      return failedScan(t('analyze.typeNotFound'))
+
+    // check class
+    const findEquipClass = [...is.equipClasses]
+      .sort((a, b) => b.label.length - a.label.length)
+      .find(
+        (c) =>
+          typeValue
+            .toLowerCase()
+            .indexOf(
+              c.label.replace(new RegExp(`[^${phase}]`, 'gi'), '').toLowerCase()
+            ) !== -1
+      )
+
+    if (findEquipClass) {
+      item.itemType = findEquipClass.type
+      item.itemTypeValue1 = findEquipClass.value as string
+
+      if (findEquipClass.value === 'gem') {
+        const findGemQuality = is.gems.find(
+          (g) =>
+            typeValue.toLowerCase().indexOf(g.qualityName.toLowerCase()) !== -1
+        )
+
+        if (findGemQuality) item.itemTypeValue2 = findGemQuality.quality
+      }
+    }
+
+    // check aspect
+    if (item.itemTypeValue1 === '') {
+      const aspectLabel = is.findType('aspect')?.label
+      const matchAspect = typeValue
+        .toLowerCase()
+        .match(new RegExp(`^${aspectLabel}`, 'i'))
+
+      if (!!matchAspect) {
+        const name = textArray
+          .splice(0, indexQuality)
+          .join('')
+          .replace(new RegExp(`[^ ${phase} ]`, 'gi'), '')
+          .trim()
+
+        if (!!name) {
+          const filteredAspects = is.affixes.data
+            .filter(
+              (a) =>
+                !!a.aspectName &&
+                similarity(
+                  a.aspectName.replace(/\s/g, ''),
+                  name
+                    .replace(
+                      is.aspectCategories.find(
+                        (ac) => ac.value === a.aspectCategory
+                      )?.label ?? '',
+                      ''
+                    )
+                    .replace(/\s/g, '')
+                ) > similarRate
+            )
+            .map((a) => ({
+              ...a,
+              rate: similarity(a.aspectName as string, name)
+            }))
+
+          filteredAspects.sort((a, b) => b.rate - a.rate)
+
+          if (filteredAspects.length > 0) {
+            item.itemType = 'aspect'
+            item.itemTypeValue1 = filteredAspects[0].aspectCategory as string
+            item.itemTypeValue2 = `${filteredAspects[0].value}`
+          }
+        }
+      }
+    }
+
+    if (item.itemTypeValue1 === '')
+      return failedScan(t('analyze.typeValueNotFound'))
+
+    // check item power
+    const powerText = `아이템.*위력|item.*power`
+    const indexPower = textArray.findIndex((ta) =>
+      new RegExp(powerText, 'gi').test(ta)
+    )
+
+    if (indexPower !== -1) {
+      const numPhase = textArray[indexPower]
+        .replace(/[^0-9\+]/gi, '')
+        .replace(/^([0-9]*)(\+?[0-9]*)$/gi, '$1')
+      if (!isNaN(parseFloat(numPhase))) item.power = parseFloat(numPhase)
+
+      textArray.splice(0, indexPower + 1)
+    }
   }
-
-  // check item upgrades
-  // const upgradesText = `업그레이드|upgrades`
-  // const indexUpgrades = textArray.findIndex(ta => (new RegExp(upgradesText, 'gi')).test(ta))
-
-  // if (indexUpgrades !== -1) {
-  //   const numPhase = textArray[indexUpgrades].replace(/[^0-9\/]/gi, '').replace(/^([0-9]*)(\/?[0-9]*)$/gi, '$1')
-  //   if (!isNaN(parseFloat(numPhase)))
-  //     item.upgrade = parseFloat(numPhase)
-
-  //   textArray.splice(0, indexUpgrades + 1)
-  // }
 
   // check item Requires Level
   const requiresText = `요구.*레벨|requires.*level`
   const indexRequires = textArray.findIndex((ta) =>
     new RegExp(requiresText, 'gi').test(ta)
   )
-
-  // if (indexRequires === -1)
-  //   return failedScan(t('analyze.requireNotFound'))
 
   if (indexRequires !== -1) {
     const levelPhase = textArray[indexRequires].replace(/[^0-9]/gi, '')
@@ -384,47 +394,65 @@ const checkInfo = (textArray: string[]) => {
 const checkProperties = async (tArray: string[]) => {
   currentCheck.value = 'properties'
 
-  const findEquipClass = is.findEquipClass(item.itemTypeValue1)
+  if (item.fixedItemId) {
+    item.properties = is.properties.data
+      .filter((p) =>
+        (
+          is.fixedItems.data.find((fi) => fi.value === item.fixedItemId)
+            ?.properties ?? []
+        ).includes(p.value as number)
+      )
+      .map((p) => ({
+        propertyId: p.value as number,
+        propertyValues: Array.from(
+          { length: (p.label?.match(/\{x\}/gi) || []).length },
+          () => 0
+        ),
+        action: 2
+      }))
+  } else {
+    const findEquipClass = is.findEquipClass(item.itemTypeValue1)
 
-  if (findEquipClass) {
-    try {
-      const data = await compare({
-        standard: is.properties.data,
-        target: tArray,
-        cutoffSim,
-        cutoffDis,
-        layer: 3,
-        phase
-      })
+    if (findEquipClass) {
+      try {
+        const data = await compare({
+          standard: is.properties.data,
+          target: tArray,
+          cutoffSim,
+          cutoffDis,
+          layer: 3,
+          phase
+        })
 
-      let start = -1
-      let end = 0
+        let start = -1
+        let end = 0
 
-      item.properties = data.reduce((acc: Array<Property>, c: any) => {
-        if (
-          acc.filter((a) => a.propertyId === c.id).length === 0 &&
-          start + 4 > c.index
-        ) {
-          if (start === -1) start = c.index
+        item.properties = data.reduce((acc: Array<Property>, c: any) => {
+          if (
+            acc.filter((a) => a.propertyId === c.id).length === 0 &&
+            start + 4 > c.index
+          ) {
+            if (start === -1) start = c.index
 
-          end = c.index + c.len
+            end = c.index + c.len
 
-          acc.push({
-            valueId: uid(),
-            propertyId: c.id,
-            propertyValues: c.values.returnValues,
-            action: 2
-          })
-        }
+            acc.push({
+              valueId: uid(),
+              propertyId: c.id,
+              propertyValues: c.values.returnValues,
+              action: 2
+            })
+          }
 
-        return acc
-      }, [])
+          return acc
+        }, [])
 
-      tArray.splice(0, end)
-    } catch (e) {
-      terminate()
-      console.log(e)
-      return failedScan(t('analyze.failedAnalyze'))
+        tArray.splice(0, end)
+      } catch (e) {
+        terminate()
+        console.log(e)
+        return failedScan(t('analyze.failedAnalyze'))
+      }
     }
   }
 
@@ -437,31 +465,57 @@ const checkProperties = async (tArray: string[]) => {
 const checkAffixes = async (tArray: string[]) => {
   currentCheck.value = 'affixes'
 
-  try {
-    const data = await compare({
-      standard: is.affixes.data,
-      target: tArray,
-      cutoffSim,
-      cutoffDis,
-      layer: 10,
-      phase
-    })
+  if (item.fixedItemId) {
+    item.affixes = is.affixes.data
+      .filter((a) =>
+        (
+          is.fixedItems.data.find((fi) => fi.value === item.fixedItemId)
+            ?.affixes ?? []
+        ).includes(a.value as number)
+      )
+      .map((a) => ({
+        ...a,
+        values: Array.from(
+          { length: (a.label?.match(/\{x\}/gi) || []).length },
+          () => 0
+        )
+      }))
+      .map((a) => ({
+        valueId: uid(),
+        affixId: a.value as number,
+        affixValues: Array.from({ length: a.values.length }, () => {
+          const tempRangeId = uid()
+          return { valueRangeId: tempRangeId, value: 0, min: 0, max: 0 }
+        }),
+        action: 2
+      }))
+  } else {
+    try {
+      const data = await compare({
+        standard: is.affixes.data,
+        target: tArray,
+        cutoffSim,
+        cutoffDis,
+        layer: 10,
+        phase
+      })
 
-    item.affixes = data.map((r: Result) => ({
-      valueId: uid(),
-      affixId: r.id,
-      affixValues: r.values.returnValues.map((rv, i) => ({
-        valueRangeId: uid(),
-        value: rv,
-        min: r.values.returnRangeValues[i].min,
-        max: r.values.returnRangeValues[i].max
-      })),
-      action: 2
-    }))
-  } catch (e) {
-    terminate()
-    console.log(e)
-    return failedScan(t('analyze.failedAnalyze'))
+      item.affixes = data.map((r: Result) => ({
+        valueId: uid(),
+        affixId: r.id,
+        affixValues: r.values.returnValues.map((rv, i) => ({
+          valueRangeId: uid(),
+          value: rv,
+          min: r.values.returnRangeValues[i].min,
+          max: r.values.returnRangeValues[i].max
+        })),
+        action: 2
+      }))
+    } catch (e) {
+      terminate()
+      console.log(e)
+      return failedScan(t('analyze.failedAnalyze'))
+    }
   }
 
   setTimeout(() => {
@@ -473,33 +527,51 @@ const checkAffixes = async (tArray: string[]) => {
 const checkRestrictions = async () => {
   currentCheck.value = 'restrictions'
 
-  try {
-    const plainTArray = restrictionsPhase.map((rp) =>
-      rp
-        .replace(/\([^\)]*\)?/g, '')
-        .replace(new RegExp(`[^%${phase}]`, 'g'), '')
-    )
+  if (item.fixedItemId) {
+    item.restrictions = is.restrictions.data
+      .filter((r) =>
+        (
+          is.fixedItems.data.find((fi) => fi.value === item.fixedItemId)
+            ?.restrictions ?? []
+        ).includes(r.value as number)
+      )
+      .map((r) => ({
+        restrictId: r.value as number,
+        restrictValues: Array.from(
+          { length: (r.label?.match(/\{x\}/gi) || []).length },
+          () => 0
+        ),
+        action: 2
+      }))
+  } else {
+    try {
+      const plainTArray = restrictionsPhase.map((rp) =>
+        rp
+          .replace(/\([^\)]*\)?/g, '')
+          .replace(new RegExp(`[^%${phase}]`, 'g'), '')
+      )
 
-    const data = await compare({
-      standard: is.restrictions.data,
-      target: plainTArray,
-      cutoffSim,
-      cutoffDis,
-      layer: 3,
-      phase
-    })
+      const data = await compare({
+        standard: is.restrictions.data,
+        target: plainTArray,
+        cutoffSim,
+        cutoffDis,
+        layer: 3,
+        phase
+      })
 
-    item.restrictions = data.map((r: Result) => ({
-      valueId: uid(),
-      restrictId: r.id,
-      restrictValues: r.values.returnValues,
-      action: 2
-    }))
-  } catch (e) {
-    console.log(e)
-    return failedScan(t('analyze.failedAnalyze'))
-  } finally {
-    terminate()
+      item.restrictions = data.map((r: Result) => ({
+        valueId: uid(),
+        restrictId: r.id,
+        restrictValues: r.values.returnValues,
+        action: 2
+      }))
+    } catch (e) {
+      console.log(e)
+      return failedScan(t('analyze.failedAnalyze'))
+    } finally {
+      terminate()
+    }
   }
 
   setTimeout(() => {
@@ -588,6 +660,22 @@ const onStartFilter = async () => {
   })
 }
 
+const binarize = (
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number
+) => {
+  const imgData = ctx.getImageData(0, 0, width, height)
+  const data = imgData.data
+  for (let i = 0; i < data.length; i += 4) {
+    const avg = (data[i] + data[i + 1] + data[i + 2]) / 3
+    const threshold = 140
+    const color = avg > threshold ? 255 : 0
+    data[i] = data[i + 1] = data[i + 2] = color
+  }
+  ctx.putImageData(imgData, 0, 0)
+}
+
 const filtering = (f: Blob) => {
   checkedItem.value.splice(0, checkedItem.value.length)
   currentCheck.value = 'analyze'
@@ -645,8 +733,23 @@ const filtering = (f: Blob) => {
         Math.round((iHeight - predictHeight) * scale)
       )
 
-      ctx.filter = 'brightness(1) contrast(1.4) blur(.6px) sepia(1)'
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
+      const data = imageData.data
+      let colorSum = 0
+
+      for (let i = 0; i < data.length; i += 4) {
+        colorSum += 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2]
+      }
+
+      const brightness = colorSum / (canvas.width * canvas.height)
+
+      ctx.filter =
+        brightness < 60
+          ? 'brightness(1) contrast(1.4) blur(.6px) sepia(1)'
+          : 'grayscale(1) contrast(2) brightness(1.2)'
       ctx.drawImage(canvas, 0, 0)
+
+      if (brightness >= 60) binarize(ctx, canvas.width, canvas.height)
 
       is.recognize(canvas, lang)
         .then((text) => {

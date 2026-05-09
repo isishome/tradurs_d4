@@ -159,6 +159,8 @@ export const clearLocalStorage = () => {
   LocalStorage.removeItem('properties')
   LocalStorage.removeItem('affixes')
   LocalStorage.removeItem('restrictions')
+  LocalStorage.removeItem('fixedItems')
+  LocalStorage.removeItem('setGroups')
   LocalStorage.removeItem('evaluations')
 }
 

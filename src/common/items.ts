@@ -22,5 +22,9 @@ export const itemImgs: { [key: string]: any } = {
     flail: 3
   },
   armor: { boots: 85, chestarmor: 67, gloves: 70, helm: 68, pants: 65 },
-  accessory: { amulet: 41, ring: 61 }
+  accessory: { amulet: 41, ring: 61 },
+  inventory: {
+    charm: 2,
+    horadricseal: 5
+  }
 }

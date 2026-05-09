@@ -253,6 +253,7 @@ export default {
     selectGem: '보석 선택',
     selectElixir: '비약 선택',
     selectSummoning: '소환 재료 선택',
+    selectFixedItem: '{typeValue1} 아이템 선택',
     selectImage: '{tv} 이미지 선택',
     name: '아이템 명',
     power: '아이템 위력 {p}{u}',
@@ -263,7 +264,8 @@ export default {
     favorites: '관심 아이템',
     forDisplay: '전시용',
     expanded: '항상 아이템 확장',
-    unknown: '알 수 없는 아이템'
+    unknown: '알 수 없는 아이템',
+    manualInput: '직접 입력'
   },
   price: {
     title: '가격',
@@ -430,35 +432,52 @@ export default {
   },
   notice: {
     title: '업데이트 안내',
-    top: '안녕하세요, 트레이더스입니다.\n이번 업데이트를 통해 추가된 기능과 변경 사항을 안내드립니다.',
+    top: '안녕하세요, 트레이더스입니다.\nDiablo 4 Season of Reckoning / Lord of Hatred 데이터 반영 업데이트를 안내드립니다.',
     contents: [
-      { type: 'head', value: '◆ 추가 사항' },
+      { type: 'head', value: '◆ 신규 아이템 데이터 추가' },
       {
         type: 'list',
-        value: '텔레그램 봇을 통한 실시간 알림 기능이 추가되었습니다.',
+        value:
+          '신규 고유 아이템 112종, 신화 아이템 3종, 세트 부적 209개와 세트 그룹 44종이 추가되었습니다.',
         class: 'text-body1'
       },
-      { type: 'space' },
-      { type: 'image', value: '/images/notice/20260322/notify.webp' },
-      {
-        type: 'link',
-        name: 'support',
-        label: '텔레그램 연동 방법 보기',
-        params: {
-          section: 'telegram'
-        }
-      },
-      { type: 'head', value: '◆ 변경 사항' },
       {
         type: 'list',
-        value: '트레이더스의 기본 폰트가 Kodia로 변경되었습니다.',
+        value:
+          '신규 아이템의 이름, 장비 부위, 고유 효과, 신화 효과, 세트 효과 정보가 함께 반영되었습니다.',
+        class: 'text-body1'
+      },
+      { type: 'head', value: '◆ 보스 소굴 열쇠 추가' },
+      {
+        type: 'list',
+        value:
+          '소굴 열쇠, 상급 소굴 열쇠, 거짓 예언자의 핵심 등 시즌 13 보스 비축고 개봉 재료가 추가되었습니다.',
+        class: 'text-body1'
+      },
+      {
+        type: 'list',
+        value:
+          '바르샨, 그리구아르, 얼음속의 야수, 지르, 우리바르, 두리엘, 안다리엘, 증오의 전령, 벨리알, 메피스토의 필요 재료 정보가 갱신되었습니다.',
+        class: 'text-body1'
+      },
+      { type: 'head', value: '◆ 거래 데이터 개선' },
+      {
+        type: 'list',
+        value:
+          '신규 아이템을 더 정확하게 표시하고 검색할 수 있도록 거래 데이터 구조가 개선되었습니다.',
+        class: 'text-body1'
+      },
+      {
+        type: 'list',
+        value:
+          '최대 생명력 증가 옵션과 호라드림 문장, 부적 아이템 분류가 추가되었습니다.',
         class: 'text-body1'
       },
       { type: 'space' },
       { type: 'space' }
     ],
     bottom: '감사합니다.',
-    close: '24시간 동안 보지 않기'
+    close: '일주일 동안 보지 않기'
   },
   adblock: {
     title: '트레이더스에서 광고를 허용해 주세요',

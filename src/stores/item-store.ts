@@ -61,6 +61,7 @@ export interface Elixir extends ILabel {
 export interface Summoning extends ILabel {
   summoningGroup?: string
   quantity?: number
+  quality?: string
 }
 
 export interface ItemType extends ILabel {
@@ -99,6 +100,27 @@ export interface Affix extends ILabel {
 export interface Restriction extends ILabel {
   type: string
   sort?: number
+}
+
+export interface FixedItem extends ILabel {
+  sort?: number
+  quality?: string
+  equipmentClass?: string
+  properties?: number[]
+  affixes?: number[]
+  restrictions?: number[]
+  setGroups?: number[]
+}
+
+export interface BonusAffix {
+  setCount: number
+  affix: number
+}
+
+export interface SetGroup extends ILabel {
+  fixedItemIds?: number[]
+  bonusAffixes?: Array<BonusAffix>
+  fixedItems?: FixedItem[]
 }
 
 export interface Pact extends ILabel {}
@@ -249,6 +271,16 @@ export const useItemStore = defineStore('item', {
       loading: false,
       request: 0
     },
+    fixedItems: {
+      data: [] as Array<FixedItem>,
+      loading: false,
+      request: 0
+    },
+    setGroups: {
+      data: [] as Array<SetGroup>,
+      loading: false,
+      request: 0
+    },
     pacts: {
       data: [] as Array<Pact>,
       loading: false,
@@ -305,6 +337,12 @@ export const useItemStore = defineStore('item', {
       replaces: {
         ko: [[`낮`, `낫`]],
         en: []
+      },
+      greaterSuffix: {
+        ko: `휴퓨후푸`,
+        en: ``,
+        ja: ``,
+        zh: ``
       }
     }
   }),
@@ -484,11 +522,29 @@ export const useItemStore = defineStore('item', {
             ).length > 0
           : false
     },
+    findSummoning: (state) => {
+      return (summoning: string): Summoning | undefined =>
+        state.summonings.find((s) => s.value === summoning)
+    },
     filterMaterials: (state) => {
       return (summoning: string): Array<Summoning> =>
         summoning
           ? state.materials.filter((m) => m.summoningGroup === summoning)
           : []
+    },
+    filterFixedItems: (state) => {
+      return (quality?: string, equipmentClass?: string): FixedItem[] =>
+        state.fixedItems.data
+          .filter((fi) => fi.quality === quality)
+          .filter(
+            (fi) =>
+              equipmentClass === undefined ||
+              fi.equipmentClass === equipmentClass
+          )
+    },
+    findSetGroup: (state) => {
+      return (groupId: number): SetGroup | undefined =>
+        state.setGroups.data.find((sg) => sg.value === groupId)
     },
     needExpand: (state) => {
       return !(
@@ -699,6 +755,64 @@ export const useItemStore = defineStore('item', {
             })
             .then(() => {
               this.restrictions.loading = false
+
+              if (error) reject()
+              else resolve()
+            })
+        } else resolve()
+      })
+    },
+    getFixedItems() {
+      return new Promise<void>((resolve, reject) => {
+        let error: unknown = null
+        const data = LocalStorage.getItem<string>('fixedItems') ?? ''
+        if (!!data && this.fixedItems.request === 0) {
+          this.fixedItems.request++
+          this.fixedItems.data = JSON.parse(data)
+          resolve()
+        } else if (this.fixedItems.request === 0) {
+          this.fixedItems.request++
+          this.fixedItems.loading = true
+          api
+            .get('/d4/item/fixed-items')
+            .then((response) => {
+              LocalStorage.setItem('fixedItems', JSON.stringify(response.data))
+              this.fixedItems.data = response.data
+            })
+            .catch((e) => {
+              error = e
+            })
+            .then(() => {
+              this.fixedItems.loading = false
+
+              if (error) reject()
+              else resolve()
+            })
+        } else resolve()
+      })
+    },
+    getSetGroups() {
+      return new Promise<void>((resolve, reject) => {
+        let error: unknown = null
+        const data = LocalStorage.getItem<string>('setGroups') ?? ''
+        if (!!data && this.setGroups.request === 0) {
+          this.setGroups.request++
+          this.setGroups.data = JSON.parse(data)
+          resolve()
+        } else if (this.setGroups.request === 0) {
+          this.setGroups.request++
+          this.setGroups.loading = true
+          api
+            .get('/d4/item/set-groups')
+            .then((response) => {
+              LocalStorage.setItem('setGroups', JSON.stringify(response.data))
+              this.setGroups.data = response.data
+            })
+            .catch((e) => {
+              error = e
+            })
+            .then(() => {
+              this.setGroups.loading = false
 
               if (error) reject()
               else resolve()
@@ -1106,6 +1220,7 @@ export const useItemStore = defineStore('item', {
             ''
           )
           .replace(/[ ]{2,}/gi, ' ')
+
         return parsedText
       } catch (e) {
         console.log(e)

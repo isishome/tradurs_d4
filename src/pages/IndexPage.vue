@@ -940,6 +940,7 @@ onMounted(() => {
           class="row items-center q-gutter-x-xs relative-position"
         >
           <D4Btn
+            data-cy="create-item-button"
             round
             @click="create"
             color="var(--q-secondary)"

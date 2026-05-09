@@ -127,6 +127,7 @@ watch(
       </div>
       <div class="col-xs-3">
         <q-select
+          data-cy="price-currency-select"
           v-model="_price.currency"
           :disable="disable || fixed"
           outlined
@@ -218,7 +219,11 @@ watch(
           </template>
         </q-select>
       </div>
-      <div v-if="_price.currency === 'gold'" class="col-xs-5 col-sm-3">
+      <div
+        v-if="_price.currency === 'gold'"
+        data-cy="price-gold-input"
+        class="col-xs-5 col-sm-3"
+      >
         <q-input
           :disable="disable"
           dense

@@ -68,15 +68,6 @@ onUnmounted(() => {
   background-color: rgba(0, 0, 0, 0.05);
 }
 
-.ins[data-ad-status='filled'] {
-  background-color: inherit !important;
-  box-shadow: none !important;
-}
-
-.ins[data-ad-status='filled']::after {
-  content: '';
-}
-
 .ins::after {
   content: 'AD';
   position: absolute;

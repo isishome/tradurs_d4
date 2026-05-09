@@ -5,29 +5,20 @@ export default {
 </script>
 
 <script setup lang="ts">
-import {
-  reactive,
-  ref,
-  computed,
-  useSlots,
-  nextTick,
-  onUnmounted,
-  ComputedRef,
-  onMounted
-} from 'vue'
-import { QCard, QSelect, useQuasar, date } from 'quasar'
+import { reactive, ref, computed, useSlots, nextTick, ComputedRef } from 'vue'
+import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
-import { useRoute, useRouter } from 'vue-router'
+import { useItemStore } from 'stores/item-store'
 
-import { useAccountStore } from 'stores/account-store'
-import { type Gem, type Elixir, useItemStore, Affix } from 'stores/item-store'
+import type { Gem, Elixir, Affix } from 'stores/item-store'
+import type { QCard, QSelect } from 'quasar'
 import { Item, Price } from 'src/types/item'
-import { checkName, clipboard } from 'src/common'
+import { checkName } from 'src/common'
 import { itemImgs } from 'src/common/items'
 
 import D4Price from 'components/D4Price.vue'
-import D4User from 'components/D4User.vue'
 import D4Separator from 'components/D4Separator.vue'
+import D4ItemDisplay from './D4ItemDisplay.vue'
 
 interface IProps {
   data: Item
@@ -44,125 +35,66 @@ const props = withDefaults(defineProps<IProps>(), {
   history: false
 })
 
-const emit = defineEmits(['update', 'apply', 'copy', 'favorite', 'update-only'])
+const emit = defineEmits([
+  'update',
+  'apply',
+  'copy',
+  'favorite',
+  'update-only',
+  'update:property',
+  'update:affix',
+  'update:restriction'
+])
 
 // common variable
 const $q = useQuasar()
 const slots: any = useSlots()
-const as = useAccountStore()
-const store = useItemStore()
+
+const {
+  filterClasses,
+  filterRunesByType,
+  filterAspectByCategory,
+  filterTypes,
+  filterQuality,
+  findType,
+  findEquipClass,
+  filterFixedItems,
+  findSummoning,
+  runeTypes,
+  aspectCategories,
+  gems,
+  elixirs,
+  summonings,
+  tiers,
+  storage
+} = useItemStore()
 const { t } = useI18n({ useScope: 'global' })
-const route = useRoute()
-const router = useRouter()
 
 // variable
 const editWrap = ref<QCard | null>(null)
-
-const filterClasses = store.filterClasses
-const runeTypes = store.runeTypes
-const filterRunesByType = store.filterRunesByType
-const filterAspectByCategory = store.filterAspectByCategory
-const imgSrc = computed(() =>
-  props.data.itemType === 'rune'
-    ? `/images/items/rune/${props.data.itemTypeValue1}/${props.data.itemTypeValue2}.webp`
-    : props.data.itemType === 'aspect'
-      ? `/images/items/aspect/legendary/${props.data.itemTypeValue2}.webp`
-      : ['gem', 'summoning'].includes(props.data.itemTypeValue1)
-        ? `/images/items/${props.data.itemType}/${props.data.itemTypeValue1}/${props.data.itemTypeValue2}.webp`
-        : props.data.itemTypeValue1 === 'elixir'
-          ? `/images/items/${props.data.itemType}/${props.data.itemTypeValue1}/${
-              props.data.itemTypeValue2.split('_')[1]
-            }.webp`
-          : `/images/items/${props.data.itemType}/${props.data.itemTypeValue1}/${props.data.imageId}.webp`
-)
-
+const _fixedItemId = ref<number>(props.data.fixedItemId)
 const _name = ref<string>(props.data.name)
 const _quantity = ref<number>(props.data.quantity || 1)
-const selectable = computed(() => props.data.authorized && store.filter.mine)
-const greaterCount = computed(
-  () => props.data.affixes?.filter((a) => a.affixGreater).length
-)
-const endDate = new Date(props.data.endDate)
-const expDate = new Date(props.data.expDate)
-const remainDate = ref<number>(
-  date.getDateDiff(
-    ['000', '002'].includes(props.data.statusCode) ? endDate : expDate,
-    new Date(),
-    'seconds'
-  )
-)
-const hour = 60 * 60
-const minute = 60
-const remainHours = computed(() =>
-  Math.floor(Math.max(remainDate.value / hour, 0))
-    .toString()
-    .padStart(2, '0')
-)
-const remainMinutes = computed(() =>
-  Math.floor(Math.max((remainDate.value % hour) / minute, 0))
-    .toString()
-    .padStart(2, '0')
-)
-const remainSeconds = computed(() =>
-  Math.floor(Math.max((remainDate.value % hour) % minute, 0))
-    .toString()
-    .padStart(2, '0')
-)
-const remainColor = computed(() =>
-  remainDate.value < hour ? `text-red-6` : ''
-)
-
-const isList = computed(() => route.name === 'tradeList')
-const itemName = computed(
-  () =>
-    (props.data.itemType === 'rune'
-      ? `${findRune(props.data.itemTypeValue2)?.label} ${
-          findType('rune')?.label
-        }`
-      : props.data.itemType === 'aspect'
-        ? store.findAspect(Number(_typeValue2.value))?.aspectName
-        : qualifiable.value
-          ? props.data.name
-          : props.data.itemTypeValue1 === 'gem'
-            ? store.gems.find((g) => g.value === props.data.itemTypeValue2)
-                ?.label
-            : props.data.itemTypeValue1 === 'elixir'
-              ? store.elixirs.find((e) => e.value === props.data.itemTypeValue2)
-                  ?.label
-              : props.data.itemTypeValue1 === 'summoning'
-                ? store.summonings.find(
-                    (s) => s.value === props.data.itemTypeValue2
-                  )?.label
-                : undefined) ?? t('item.unknown')
-)
-let remainInterval: NodeJS.Timeout
-
-const executeInterval = () => {
-  remainInterval = setInterval(() => {
-    remainDate.value--
-  }, 1000)
-}
-
 const _tier = ref<string | null>(props.data.tier)
 const _quality = ref<string>(props.data.quality || 'rare')
 const _type = ref<string>(
-  props.data.itemType || (store.filterTypes()[0].value as string)
+  props.data.itemType || (filterTypes()[0].value as string)
 )
 const _typeValue1 = ref<string>(
   props.data.itemTypeValue1 ||
     (_type.value === 'aspect'
-      ? (store.aspectCategories[0].value as string)
+      ? (aspectCategories[0].value as string)
       : (filterClasses(_type.value)[0].value as string))
 )
 
 const _typeValue2 = ref<string>(
   props.data.itemTypeValue2 ||
     (_typeValue1.value === 'gem'
-      ? (store.gems[0].value as string)
+      ? (gems[0].value as string)
       : _typeValue1.value === 'elixir'
-        ? (store.elixirs[0].value as string)
+        ? (elixirs[0].value as string)
         : _typeValue1.value === 'summoning'
-          ? (store.summonings[0].value as string)
+          ? (summonings[0].value as string)
           : '')
 )
 const _power = ref<number>(props.data.power)
@@ -171,24 +103,11 @@ const _level = ref<number | null>(
   props.data.level === 0 ? null : props.data.level
 )
 const _favorite = ref<boolean>(props.data.favorite)
-
-const findRuneType = store.findRuneType
-const filterTypes = store.filterTypes
-const upgradeLimit = computed(
-  () => store.findQuality(props.data.quality)?.upgradeLimit
-)
-const findTier = store.findTier
-const findQuality = store.findQuality
-const filterQuality = store.filterQuality
-const findStatus = store.findItemStatus
-const findRune = store.findRune
-const findType = store.findType
-const findEquipClass = store.findEquipClass
-
+const typeValue2Ref = ref<QSelect | null>(null)
+const typeValue2Needle = ref<string>()
 const hasProperties = computed(
   () => findEquipClass(_typeValue1.value)?.properties.length !== 0
 )
-
 const _image = ref<number>(
   props.data.itemId !== ''
     ? props.data.imageId
@@ -209,21 +128,36 @@ const _price = reactive<Price>(
       : undefined
   )
 )
-
+const propertyRef = ref<HTMLDivElement | null>(null)
+const affixRef = ref<HTMLDivElement | null>(null)
+const restrictionRef = ref<HTMLDivElement | null>(null)
+const showItemImages = ref<boolean>(false)
+const attribute = ref<string>('affixes')
+const attrMobile = reactive<{ is: ComputedRef<boolean>; show: boolean }>({
+  is: computed(() => $q.screen.lt.md),
+  show: false
+})
+const fixed = computed(
+  () =>
+    ['unique', 'mythic', 'set'].includes(_quality.value) &&
+    fixedItems.value.length > 1
+)
 const tierable = computed(
-  () => !['rune', 'inventory', 'consumables'].includes(_type.value)
+  () =>
+    !(
+      ['inventory'].includes(_type.value) && ['gem'].includes(_typeValue1.value)
+    ) && !['rune', 'consumables'].includes(_type.value)
 )
 const qualifiable = computed(
-  () => !['rune', 'aspect', 'inventory', 'consumables'].includes(_type.value)
-)
-const descriptable = computed(
   () =>
-    store.filterMaterials(props.data.itemTypeValue2).length > 0 ||
-    ['rune', 'aspect'].includes(_type.value)
+    !(
+      ['inventory'].includes(_type.value) && ['gem'].includes(_typeValue1.value)
+    ) && !['rune', 'aspect', 'consumables'].includes(_type.value)
 )
-
 const noLevel = computed(() => ['summoning'].includes(_typeValue1.value))
-
+const powerful = computed(
+  () => !['rune', 'inventory', 'consumables'].includes(_type.value)
+)
 const attributes = computed(() =>
   [
     { label: t('properties'), value: 'properties', hide: !hasProperties.value },
@@ -231,15 +165,10 @@ const attributes = computed(() =>
     { label: t('restrictions'), value: 'restrictions' }
   ].filter((a) => !a.hide)
 )
-
-const copy = () => {
-  clipboard(
-    `${document.location.origin}/${route.params.lang || 'ko'}/item/${
-      props.data.itemId
-    }`,
-    t('item.url')
-  )
-}
+const fixedItems = computed(() => [
+  { value: 0, label: t('item.manualInput') },
+  ...filterFixedItems(_quality.value, _typeValue1.value)
+])
 
 const updateTier = (val: string) => {
   _tier.value = _tier.value === val ? null : val
@@ -251,6 +180,7 @@ const updateQuality = (val: string) => {
   _quality.value = val
   _power.value = 0
   _upgrade.value = 0
+  _fixedItemId.value = 0
   update()
 }
 
@@ -269,9 +199,9 @@ const updateType = (val: string) => {
 
   _typeValue1.value =
     val === 'rune'
-      ? (store.runeTypes?.[0].value as string)
+      ? (runeTypes?.[0].value as string)
       : val === 'aspect'
-        ? (store.aspectCategories[0].value as string)
+        ? (aspectCategories[0].value as string)
         : (filterClasses(val)[0].value as string)
 
   attribute.value = val === 'aspect' ? 'affixes' : attribute.value
@@ -291,35 +221,77 @@ const updateTypeValue1 = (val: string) => {
       : _type.value === 'aspect'
         ? `${filterAspectByCategory(val)?.[0]?.value}`
         : val === 'gem'
-          ? (store.gems[0].value as string)
+          ? (gems[0].value as string)
           : val === 'elixir'
-            ? (store.elixirs[0].value as string)
+            ? (elixirs[0].value as string)
             : val === 'summoning'
-              ? (store.summonings[0].value as string)
+              ? (summonings[0].value as string)
               : ''
+  _quality.value = ['gem'].includes(_typeValue1.value)
+    ? 'normal'
+    : _quality.value
   updateTypeValue2(_typeValue2.value)
 }
 
 const updateTypeValue2 = (val: string) => {
+  _fixedItemId.value = 0
   const selectedRune =
     _type.value === 'rune'
       ? filterRunesByType(_typeValue1.value)?.find((r) => r.value === val)
       : undefined
 
-  _quality.value = selectedRune?.quality ?? _quality.value
+  const selectedSummoning = findSummoning(val)
+
+  _quality.value =
+    selectedRune?.quality ?? selectedSummoning?.quality ?? 'normal'
 
   _level.value =
     _typeValue1.value === 'gem'
-      ? store.gems.find((g: Gem) => g.value === val)?.level || null
+      ? gems.find((g: Gem) => g.value === val)?.level || null
       : _typeValue1.value === 'elixir'
-        ? store.elixirs.find((e: Elixir) => e.value === val)?.level || null
+        ? elixirs.find((e: Elixir) => e.value === val)?.level || null
         : (selectedRune?.level ?? null)
 
   update()
 }
 
+const updateFixedItem = () => {
+  _name.value = ''
+  _quantity.value = 1
+
+  update()
+
+  const findFixedItem = fixedItems.value.find(
+    (fi) => fi.value === _fixedItemId.value
+  )
+
+  if (findFixedItem) {
+    const properties = props.data.properties.map((p) => p.propertyId as number)
+    const affixes = props.data.affixes.map((a) => a.affixId as number)
+    const restrictions = props.data.restrictions.map(
+      (r) => r.restrictId as number
+    )
+    ;(findFixedItem.properties ?? [])
+      .filter((fip) => !properties.includes(fip))
+      .forEach((fip) => {
+        emit('update:property', fip)
+      })
+    ;(findFixedItem.affixes ?? [])
+      .filter((fia) => !affixes.includes(fia))
+      .forEach((fia) => {
+        emit('update:affix', fia)
+      })
+    ;(findFixedItem.restrictions ?? [])
+      .filter((fir) => !restrictions.includes(fir))
+      .forEach((fir) => {
+        emit('update:restriction', fir)
+      })
+  }
+}
+
 const update = () => {
   emit('update', {
+    fixedItemId: _fixedItemId.value,
     name: _name,
     quantity: _quantity.value,
     tier: _tier.value,
@@ -336,19 +308,11 @@ const update = () => {
   })
 }
 
-// about typevalue2
-const typeValue2Ref = ref<QSelect | null>(null)
-const typeValue2Needle = ref<string>()
-
 const filterTypeValue = (e: KeyboardEvent) => {
   const val = (e.target as HTMLInputElement).value.toLowerCase()
   typeValue2Ref.value?.showPopup()
   typeValue2Ref.value?.updateInputValue(val)
   typeValue2Needle.value = val
-}
-
-const onClickUser = (identity: string | null) => {
-  if (as.info.isAdmin) router.push({ name: 'adminUser', params: { identity } })
 }
 
 const updatePrice = (price: Price) => {
@@ -358,18 +322,6 @@ const updatePrice = (price: Price) => {
   update()
 }
 
-const goItemDetail = () => {
-  if (isList.value)
-    router.push({
-      name: 'itemInfo',
-      params: { itemid: props.data.itemId, lang: route.params.lang ?? 'ko' }
-    })
-}
-
-// control scroll
-const propertyRef = ref<HTMLDivElement | null>(null)
-const affixRef = ref<HTMLDivElement | null>(null)
-const restrictionRef = ref<HTMLDivElement | null>(null)
 const scrollEnd = (pType: string, valueId: string) => {
   nextTick(() => {
     if (pType === 'properties' && propertyRef.value) {
@@ -390,29 +342,10 @@ const scrollEnd = (pType: string, valueId: string) => {
     }
   })
 }
+
 const apply = () => {
   emit('apply')
 }
-
-// item images
-const showItemImages = ref<boolean>(false)
-
-// attribute tabs
-const attribute = ref<string>('affixes')
-
-// attribute mobile
-const attrMobile = reactive<{ is: ComputedRef<boolean>; show: boolean }>({
-  is: computed(() => $q.screen.lt.md),
-  show: false
-})
-
-onMounted(() => {
-  if (['000', '002', '003'].includes(props.data.statusCode)) executeInterval()
-})
-
-onUnmounted(() => {
-  clearInterval(remainInterval)
-})
 
 defineExpose({ scrollEnd })
 </script>
@@ -438,7 +371,7 @@ defineExpose({ scrollEnd })
               <div class="row no-wrap items-center q-gutter-xs quality">
                 <q-btn
                   :ripple="!$q.dark.isActive"
-                  v-for="t in store.tiers"
+                  v-for="t in tiers"
                   :key="t.value"
                   :disable="disable || !tierable"
                   round
@@ -462,6 +395,7 @@ defineExpose({ scrollEnd })
                   :size="$q.screen.lt.sm ? 'sm' : 'md'"
                   unelevated
                   aria-label="Tradurs Quality Button"
+                  :data-cy="`item-quality-${q.value}`"
                   :class="[
                     'text-weight-bold',
                     { active: _quality === q.value }
@@ -479,6 +413,7 @@ defineExpose({ scrollEnd })
         <div class="row items-center q-col-gutter-sm">
           <div class="col">
             <q-select
+              data-cy="item-type-select"
               v-model="_type"
               :disable="disable"
               outlined
@@ -496,17 +431,6 @@ defineExpose({ scrollEnd })
               popup-content-class="scroll bordered limit-select"
               @update:model-value="updateType"
             >
-              <!-- Season 1 accessory notify -->
-              <!-- <template v-if="store.storage.data.ladder && _type === 'accessory'" #prepend>
-                    <q-icon class="caution" size="19px">
-                      <q-spinner-puff :color="$q.dark.isActive ? 'yellow-6' : 'black'" />
-                      <D4Tooltip>
-                        <div style="max-width:140px" class="text-caption break-keep">
-                          {{ t('season.first.socket') }}
-                        </div>
-                      </D4Tooltip>
-                    </q-icon>
-                  </template> -->
               <template #selected-item="scope">
                 <div class="ellipsis">{{ scope.opt.label }}</div>
               </template>
@@ -516,6 +440,7 @@ defineExpose({ scrollEnd })
           <template v-if="_type === 'rune'">
             <div class="col">
               <q-select
+                data-cy="item-subtype-select"
                 v-model="_typeValue1"
                 :disable="disable"
                 outlined
@@ -598,6 +523,7 @@ defineExpose({ scrollEnd })
           <template class="col" v-else-if="_type === 'aspect'">
             <div class="col">
               <q-select
+                data-cy="item-subtype-select"
                 v-model="_typeValue1"
                 :disable="disable"
                 outlined
@@ -611,7 +537,7 @@ defineExpose({ scrollEnd })
                 :transition-duration="0"
                 :label="t('item.selectAspectCategory')"
                 dropdown-icon="img:/images/icons/dropdown.svg"
-                :options="store.aspectCategories"
+                :options="aspectCategories"
                 popup-content-class="scroll bordered limit-select"
                 @update:model-value="updateTypeValue1"
               >
@@ -694,6 +620,7 @@ defineExpose({ scrollEnd })
           <template v-else>
             <div class="col">
               <q-select
+                data-cy="item-subtype-select"
                 v-model="_typeValue1"
                 :disable="disable"
                 outlined
@@ -735,7 +662,7 @@ defineExpose({ scrollEnd })
                 :transition-duration="0"
                 :label="t('item.selectGem')"
                 dropdown-icon="img:/images/icons/dropdown.svg"
-                :options="store.gems"
+                :options="gems"
                 popup-content-class="scroll bordered limit-select"
                 options-dense
                 @update:model-value="updateTypeValue2"
@@ -779,7 +706,7 @@ defineExpose({ scrollEnd })
                 :transition-duration="0"
                 :label="t('item.selectElixir')"
                 dropdown-icon="img:/images/icons/dropdown.svg"
-                :options="store.elixirs"
+                :options="elixirs"
                 popup-content-class="scroll bordered limit-select"
                 options-dense
                 @update:model-value="updateTypeValue2"
@@ -789,9 +716,7 @@ defineExpose({ scrollEnd })
                 </template>
                 <template #option="scope">
                   <q-item
-                    :disable="
-                      scope.opt.onlyHardcore && !store.storage.data.hardcore
-                    "
+                    :disable="scope.opt.onlyHardcore && !storage.data.hardcore"
                     clickable
                     v-bind="scope.itemProps"
                   >
@@ -824,7 +749,7 @@ defineExpose({ scrollEnd })
                 :transition-duration="0"
                 :label="t('item.selectSummoning')"
                 dropdown-icon="img:/images/icons/dropdown.svg"
-                :options="store.summonings"
+                :options="summonings"
                 popup-content-class="scroll bordered limit-select"
                 options-dense
                 @update:model-value="updateTypeValue2"
@@ -848,91 +773,139 @@ defineExpose({ scrollEnd })
                 </template>
               </q-select>
             </div>
-            <div v-else>
-              <q-btn
-                dense
-                glossy
-                outline
-                aria-label="Tradurs Thumbnail Button"
-                padding="4px 8px"
-                color="primary"
-                :ripple="false"
-                class="no-hover rounded-borders"
-                @click="showItemImages = true"
-              >
-                <img
-                  height="32"
-                  :src="`/images/items/${_type}/${_typeValue1}/${_image}.webp`"
-                  alt="Tradurs Item Thumbnail Image"
-                />
-                <D4Dialog v-model="showItemImages" :no-route-dismiss="false">
-                  <template #top>
-                    <q-card-section
-                      class="row justify-between items-center q-ml-md"
-                    >
-                      <div class="name">
-                        {{
-                          t('item.selectImage', {
-                            tv:
-                              findEquipClass(data.itemTypeValue1)?.label ||
-                              findType(data.itemType)?.label
-                          })
-                        }}
-                      </div>
-                      <q-btn
-                        unelevated
-                        aria-label="Tradurs Close Button"
-                        class="no-hover icon"
-                        :ripple="false"
-                      >
+            <template v-else>
+              <div v-show="fixed">
+                <q-select
+                  v-model="_fixedItemId"
+                  :disable="disable"
+                  outlined
+                  dense
+                  no-error-icon
+                  hide-bottom-space
+                  emit-value
+                  map-options
+                  transition-show="none"
+                  transition-hide="none"
+                  :transition-duration="0"
+                  :label="
+                    t('item.selectClass', {
+                      type: findEquipClass(_typeValue1)?.label
+                    })
+                  "
+                  dropdown-icon="img:/images/icons/dropdown.svg"
+                  :options="fixedItems"
+                  popup-content-class="scroll bordered limit-select"
+                  options-dense
+                  @update:model-value="updateFixedItem"
+                >
+                  <template #selected-item="scope">
+                    <div class="ellipsis">{{ scope.opt.label }}</div>
+                  </template>
+                  <template #option="scope">
+                    <q-item clickable v-bind="scope.itemProps">
+                      <q-item-section v-if="scope.opt.quality" avatar>
                         <img
-                          src="/images/icons/close.svg"
-                          width="24"
-                          height="24"
-                          @click="showItemImages = false"
-                          alt="Tradurs Close Icon"
+                          height="36"
+                          :src="`/images/items/fixed/${scope.opt.quality}-${scope.opt.sort}.webp`"
+                          alt="Tradurs Summoning Images"
                         />
-                      </q-btn>
-                    </q-card-section>
+                      </q-item-section>
+                      <q-item-section>
+                        <q-item-label>{{ scope.opt.label }}</q-item-label>
+                      </q-item-section>
+                    </q-item>
                   </template>
-                  <template #middle>
-                    <q-card-section class="scroll q-ma-lg" style="height: 50vh">
-                      <div class="row q-col-gutter-md">
-                        <div
-                          v-for="(i, idx) in itemImgs[_type][
-                            _typeValue1 as string
-                          ]"
-                          :key="idx"
-                          class="col-4 col-md-3 cursor-pointer"
-                          @click="
-                            () => {
-                              _image = idx as number
-                              update()
-                            }
-                          "
-                          v-close-popup
-                        >
-                          <q-card
-                            flat
-                            bordered
-                            class="item-image-card"
-                            :class="{ 'bg-primary-cloud': idx === _image }"
-                          >
-                            <q-card-section class="text-center no-padding">
-                              <q-img
-                                style="width: 90%"
-                                :src="`/images/items/${_type}/${_typeValue1}/${idx}.webp`"
-                                alt="Tradurs Item Image"
-                              />
-                            </q-card-section>
-                          </q-card>
+                </q-select>
+              </div>
+              <div v-show="!_fixedItemId || _fixedItemId === 0">
+                <q-btn
+                  dense
+                  glossy
+                  outline
+                  aria-label="Tradurs Thumbnail Button"
+                  padding="4px 8px"
+                  color="primary"
+                  :ripple="false"
+                  class="no-hover rounded-borders"
+                  @click="showItemImages = true"
+                >
+                  <img
+                    height="32"
+                    :src="`/images/items/${_type}/${_typeValue1}/${_image}.webp`"
+                    alt="Tradurs Item Thumbnail Image"
+                  />
+                  <D4Dialog v-model="showItemImages" :no-route-dismiss="false">
+                    <template #top>
+                      <q-card-section
+                        class="row justify-between items-center q-ml-md"
+                      >
+                        <div class="name">
+                          {{
+                            t('item.selectImage', {
+                              tv:
+                                findEquipClass(data.itemTypeValue1)?.label ||
+                                findType(data.itemType)?.label
+                            })
+                          }}
                         </div>
-                      </div>
-                    </q-card-section>
-                  </template>
-                </D4Dialog>
-              </q-btn>
-            </div>
+                        <q-btn
+                          unelevated
+                          aria-label="Tradurs Close Button"
+                          class="no-hover icon"
+                          :ripple="false"
+                        >
+                          <img
+                            src="/images/icons/close.svg"
+                            width="24"
+                            height="24"
+                            @click="showItemImages = false"
+                            alt="Tradurs Close Icon"
+                          />
+                        </q-btn>
+                      </q-card-section>
+                    </template>
+                    <template #middle>
+                      <q-card-section
+                        class="scroll q-ma-lg"
+                        style="height: 50vh"
+                      >
+                        <div class="row q-col-gutter-md">
+                          <div
+                            v-for="(i, idx) in itemImgs[_type][
+                              _typeValue1 as string
+                            ]"
+                            :key="idx"
+                            class="col-4 col-md-3 cursor-pointer"
+                            @click="
+                              () => {
+                                _image = idx as number
+                                update()
+                              }
+                            "
+                            v-close-popup
+                          >
+                            <q-card
+                              flat
+                              bordered
+                              class="item-image-card"
+                              :class="{ 'bg-primary-cloud': idx === _image }"
+                            >
+                              <q-card-section class="text-center no-padding">
+                                <q-img
+                                  style="width: 90%"
+                                  :src="`/images/items/${_type}/${_typeValue1}/${idx}.webp`"
+                                  alt="Tradurs Item Image"
+                                />
+                              </q-card-section>
+                            </q-card>
+                          </div>
+                        </div>
+                      </q-card-section>
+                    </template>
+                  </D4Dialog>
+                </q-btn>
+              </div>
+            </template>
           </template>
           <!-- Item Type Value Place ----------------------------------------------------------------------------------->
           <D4Counter
@@ -943,7 +916,7 @@ defineExpose({ scrollEnd })
           />
         </div>
       </q-card-section>
-      <q-card-section v-if="qualifiable">
+      <q-card-section v-if="qualifiable && _fixedItemId === 0">
         <q-input
           :disable="disable"
           dense
@@ -967,7 +940,11 @@ defineExpose({ scrollEnd })
             : 'col'
         "
       >
-        <div v-show="tierable" class="row items-center q-gutter-x-sm">
+        <div
+          v-show="powerful"
+          data-cy="item-power-input"
+          class="row items-center q-gutter-x-sm"
+        >
           <D4Counter
             v-model="_power"
             :label="t('item.power')"
@@ -978,11 +955,9 @@ defineExpose({ scrollEnd })
             :disable="disable"
             @update:model-value="update"
           />
-          <!-- <D4Counter v-if="upgradeLimit" v-model="_upgrade"
-            :label="t('item.upgrade', { u: _upgrade, ul: upgradeLimit })" max-width="110px" :max="upgradeLimit"
-            allow-zero :no-button="$q.screen.lt.sm" :disable="disable" @update:model-value="update" /> -->
         </div>
         <D4Counter
+          data-cy="item-level-input"
           v-show="!noLevel"
           v-model="_level"
           class="col row justify-end"
@@ -1322,668 +1297,23 @@ defineExpose({ scrollEnd })
     </q-form>
     <slot name="more" :loading="loading"></slot>
   </q-card>
-  <template v-else>
-    <div v-show="greaterCount > 0" class="greater-mark">
-      <div class="row items-center q-gutter-xs">
-        <q-icon
-          v-for="(gc, idx) in greaterCount"
-          :key="idx"
-          class="icon greater active q-ml-xs"
-          :name="`img:/images/attribute_types/${
-            $q.dark.isActive ? 'greater' : 'greater_invert'
-          }.svg`"
-        />
-      </div>
-    </div>
-    <q-card
-      class="card-item non-selectable no-scroll full-height overflow-hidden"
-      :class="[
-        data.expanded ? 'expanded' : 'no-expanded',
-        data.quality,
-        data.itemType,
-        `status-${data.statusCode}`
-      ]"
-      v-bind="$attrs"
-    >
-      <div class="inner">
-        <q-card-section>
-          <div class="user-area row justify-end">
-            <div class="item-image">
-              <q-img
-                v-show="!loading"
-                class="item-image"
-                :src="imgSrc"
-                alt="Tradurs Item Image"
-              />
-            </div>
-            <div
-              class="column justify-center items-end"
-              :class="{ 'q-gutter-xs': !$q.screen.lt.sm || loading }"
-            >
-              <q-skeleton
-                v-show="loading"
-                width="40px"
-                :height="$q.screen.lt.sm ? '16px' : '18px'"
-              />
-              <div v-show="!loading" class="row items-center q-gutter-x-sm">
-                <template v-if="!data.forDisplay && !history">
-                  <div
-                    v-if="['000', '002', '003'].includes(data.statusCode)"
-                    class="date"
-                    :class="remainColor"
-                  >
-                    {{ remainHours }}:{{ remainMinutes }}:{{ remainSeconds }}
-                  </div>
-                  <div
-                    v-else-if="data.statusCode === '001'"
-                    class="date complete"
-                  >
-                    {{ date.formatDate(data.updDate, 'YY.MM.DD') }}
-                  </div>
-                  <div>
-                    {{ findStatus(data.statusCode)?.label }}
-                  </div>
-                </template>
-                <div v-else-if="data.forDisplay">
-                  {{ t('item.forDisplay') }}
-                </div>
-              </div>
-              <div v-if="slots['top-right']">
-                <slot name="top-right"></slot>
-              </div>
-              <D4Price :data="data.price" :progress="loading" />
-              <D4User
-                v-if="!data.forDisplay && !history"
-                :data="data.user"
-                :label="t('seller')"
-                :disable="disable"
-                :progress="loading"
-                :authorized="data.authorized"
-                @update="emit('update-only', data.itemId)"
-                @click="onClickUser(data.user.id)"
-              />
-            </div>
-          </div>
-          <div
-            class="column items-start q-pa-sm relative-position"
-            :class="{ 'q-gutter-xs': !$q.screen.lt.sm || loading }"
-          >
-            <div v-show="loading">
-              <q-skeleton
-                width="100px"
-                :height="$q.screen.lt.sm ? '10px' : '16px'"
-              />
-            </div>
-            <div>
-              <div
-                v-show="!loading"
-                class="row items-center q-gutter-x-xs text-overline no-wrap"
-                style="line-height: 1.6"
-              >
-                <div :class="[data.hardcore ? 'text-red-8' : 'text-blue-6']">
-                  {{ data.hardcore ? t('item.hardcore') : t('item.softcore') }}
-                </div>
-                <div>:</div>
-                <div class="text-primary">
-                  {{ data.ladder ? t('item.seasonal') : t('item.eternal') }}
-                </div>
-              </div>
-            </div>
-            <div v-show="loading">
-              <q-skeleton
-                width="150px"
-                :height="$q.screen.lt.sm ? '16px' : '24px'"
-              />
-            </div>
-            <div class="name-place">
-              <div
-                v-show="!loading"
-                class="row items-center q-gutter-xs q-mb-xs no-wrap"
-              >
-                <q-checkbox
-                  v-if="selectable"
-                  v-model="data.selected"
-                  dense
-                  size="xs"
-                  class="text-caption"
-                  :title="itemName"
-                >
-                  <div class="name stress ellipsis-2-lines">
-                    {{ itemName }}
-                  </div>
-                </q-checkbox>
-                <div
-                  v-else
-                  class="name stress"
-                  :title="itemName"
-                  :class="[
-                    { 'cursor-pointer': isList },
-                    { 'ellipsis-2-lines': route.name !== 'itemInfo' }
-                  ]"
-                  @click="goItemDetail"
-                >
-                  {{ itemName }}
-                </div>
-                <div
-                  v-if="data.quantity > 1"
-                  class="row items-center q-gutter-x-xs no-wrap"
-                >
-                  <div class="text-lowercase">x</div>
-                  <div>{{ data.quantity }}</div>
-                </div>
-                <div v-if="!history" class="more-action">
-                  <q-btn
-                    dense
-                    flat
-                    aria-label="Tradurs More Button"
-                    :ripple="false"
-                    class="no-hover"
-                    padding="0"
-                  >
-                    <img
-                      class="icon"
-                      src="/images/icons/morevert.svg"
-                      :width="$q.screen.lt.sm ? 16 : 22"
-                      :height="$q.screen.lt.sm ? 16 : 22"
-                      alt="Tradurs More Icon"
-                    />
-                    <q-menu
-                      auto-close
-                      class="no-shadow"
-                      anchor="top end"
-                      self="bottom start"
-                      :class="[$q.dark.isActive ? 'bg-grey-4' : 'bg-grey-9']"
-                    >
-                      <q-item
-                        v-if="as.signed"
-                        :class="[
-                          $q.dark.isActive ? 'text-grey-9' : 'text-grey-4'
-                        ]"
-                        :dense="$q.screen.lt.sm"
-                        clickable
-                        @click="$emit('favorite', data.itemId, !data.favorite)"
-                      >
-                        <q-item-section side>
-                          <img
-                            :class="{ invert: !$q.dark.isActive }"
-                            :src="
-                              data.favorite
-                                ? '/images/icons/unfavorite.svg'
-                                : '/images/icons/favorite.svg'
-                            "
-                            width="24"
-                            height="24"
-                            alt="Tradurs Favorite Icon"
-                          />
-                        </q-item-section>
-                        <q-item-section>{{
-                          data.favorite
-                            ? t('btn.unfavorite')
-                            : t('btn.favorite')
-                        }}</q-item-section>
-                      </q-item>
-                      <q-item
-                        v-if="as.signed"
-                        :class="[
-                          $q.dark.isActive ? 'text-grey-9' : 'text-grey-4'
-                        ]"
-                        :dense="$q.screen.lt.sm"
-                        clickable
-                        @click="$emit('copy', data.itemId)"
-                      >
-                        <q-item-section side>
-                          <img
-                            :class="{ invert: !$q.dark.isActive }"
-                            src="/images/icons/copy.svg"
-                            width="24"
-                            height="24"
-                            alt="Tradurs Copy Icon"
-                          />
-                        </q-item-section>
-                        <q-item-section>{{ t('btn.copy') }}</q-item-section>
-                      </q-item>
-                      <q-item
-                        :class="[
-                          $q.dark.isActive ? 'text-grey-9' : 'text-grey-4'
-                        ]"
-                        :dense="$q.screen.lt.sm"
-                        clickable
-                        @click="copy"
-                      >
-                        <q-item-section side>
-                          <img
-                            :class="{ invert: !$q.dark.isActive }"
-                            src="/images/icons/share.svg"
-                            width="24"
-                            height="24"
-                            alt="Tradurs Share Icon"
-                          />
-                        </q-item-section>
-                        <q-item-section>{{ t('btn.share') }}</q-item-section>
-                      </q-item>
-                    </q-menu>
-                  </q-btn>
-                </div>
-              </div>
-            </div>
-            <div v-show="loading">
-              <q-skeleton
-                width="100px"
-                :height="$q.screen.lt.sm ? '16px' : '18px'"
-              />
-            </div>
-            <div
-              v-show="
-                !loading && (qualifiable || ['aspect'].includes(data.itemType))
-              "
-              class="stress"
-              style="opacity: 0.6"
-            >
-              {{ findTier(data.tier)?.fullName }}
-              {{ findQuality(data.quality)?.fullName }}
-              {{
-                findEquipClass(data.itemTypeValue1)?.label ||
-                findType(data.itemType)?.label
-              }}
-            </div>
-            <div
-              v-show="!loading && ['rune'].includes(data.itemType)"
-              class="stress"
-              style="opacity: 0.6"
-            >
-              {{ findQuality(data.quality)?.fullName }}
-              {{ findRuneType(findRune(data.itemTypeValue2)?.type)?.label }}
-            </div>
-
-            <div v-show="data.power > 0">
-              {{
-                t('item.power', {
-                  p: data.power,
-                  u: data.upgrade ? ` + ${data.upgrade * 5}` : ''
-                })
-              }}
-            </div>
-            <div v-show="loading">
-              <q-skeleton
-                width="130px"
-                :height="$q.screen.lt.sm ? '16px' : '18px'"
-              />
-            </div>
-          </div>
-        </q-card-section>
-        <D4Separator v-show="qualifiable || descriptable" type="left" />
-        <!-- D4 season2
-        <q-card-section
-        v-if="store.storage.data.ladder && data.itemType === 'armor' && !history && Object.values(data.pacts).reduce((a: number, b: number) => a + b, 0) > 0">
-        <div class="row justify-start items-center" :class="!$q.screen.lt.sm ? 'q-gutter-x-xl' : 'q-gutter-x-md'">
-          <div v-show="data.pacts.ferocity" class="row items-center q-gutter-x-sm">
-            <q-icon name="img:/images/season/002/ferocity.webp" :size="!$q.screen.lt.sm ? '48px' : '40px'">
-              <D4Tooltip anchor="top middle" self="top middle" :offset="[14, 28]" padding="xs" transition-show="jump-up"
-                transition-hide="jump-down">
-                <div style="max-width:140px" class="text-caption break-keep">
-                  {{ t('season.second.ferocity') }}
-                </div>
-              </D4Tooltip>
-            </q-icon>
-            <div>{{ data.pacts.ferocity }}</div>
-          </div>
-          <div v-show="data.pacts.divinity" class="row items-center  q-gutter-x-sm">
-            <q-icon name="img:/images/season/002/divinity.webp" :size="!$q.screen.lt.sm ? '48px' : '36px'">
-              <D4Tooltip anchor="top middle" self="top middle" :offset="[14, 28]" padding="xs" transition-show="jump-up"
-                transition-hide="jump-down">
-                <div style="max-width:140px" class="text-caption break-keep">
-                  {{ t('season.second.divinity') }}
-                </div>
-              </D4Tooltip>
-            </q-icon>
-            <div>{{ data.pacts.divinity }}</div>
-          </div>
-          <div v-show="data.pacts.eternity" class="row items-center  q-gutter-x-sm">
-            <q-icon name="img:/images/season/002/eternity.webp" :size="!$q.screen.lt.sm ? '48px' : '36px'">
-              <D4Tooltip anchor="top middle" self="top middle" :offset="[14, 28]" padding="xs" transition-show="jump-up"
-                transition-hide="jump-down">
-                <div style="max-width:140px" class="text-caption break-keep">
-                  {{ t('season.second.eternity') }}
-                </div>
-              </D4Tooltip>
-            </q-icon>
-            <div>{{ data.pacts.eternity }}</div>
-          </div>
-        </div>
-      </q-card-section> -->
-        <q-card-section
-          v-show="
-            loading ||
-            (!loading &&
-              (['rune', 'aspect'].includes(data.itemType) ||
-                data.properties?.length > 0 ||
-                data.itemTypeValue1 === 'summoning'))
-          "
-        >
-          <div class="q-px-sm">
-            <q-item
-              v-show="loading"
-              v-for="c in 2"
-              :key="c"
-              style="min-height: 10px; padding: 3px"
-            >
-              <q-item-section side class="q-pr-sm">
-                <q-skeleton type="circle" width="10px" height="10px" />
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>
-                  <q-skeleton
-                    type="rect"
-                    width="65%"
-                    :height="$q.screen.lt.sm ? '14px' : '18px'"
-                  />
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-            <div
-              v-if="(slots.properties || slots.description) && !loading"
-              class="column"
-              :class="{ 'q-gutter-y-xs': !$q.screen.lt.sm }"
-              style="min-height: 25px"
-            >
-              <slot name="properties"> </slot>
-              <slot name="description"> </slot>
-            </div>
-          </div>
-        </q-card-section>
-        <D4Separator
-          v-show="
-            loading ||
-            (!loading &&
-              (data.properties?.length > 0 || !!slots.description) &&
-              data.affixes?.length > 0)
-          "
-        />
-        <q-card-section
-          v-show="loading || (!loading && data.affixes?.length > 0)"
-        >
-          <div class="q-px-sm">
-            <q-item
-              v-show="loading"
-              v-for="c in 3"
-              :key="c"
-              style="min-height: 10px; padding: 3px"
-            >
-              <q-item-section side class="q-pr-sm">
-                <q-skeleton type="circle" width="10px" height="10px" />
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>
-                  <q-skeleton
-                    type="rect"
-                    width="65%"
-                    :height="$q.screen.lt.sm ? '14px' : '18px'"
-                  />
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-            <div
-              v-if="slots.affixes && !loading"
-              class="column"
-              :class="{ 'q-gutter-y-xs': !$q.screen.lt.sm }"
-              style="min-height: 25px"
-            >
-              <slot name="affixes"> </slot>
-            </div>
-          </div>
-        </q-card-section>
-        <q-card-section
-          v-show="
-            !loading &&
-            data.properties?.length === 0 &&
-            data.affixes?.length === 0 &&
-            !!!slots.description
-          "
-          :class="
-            $q.screen.lt.sm ? '' : $q.screen.lt.md ? 'q-my-md' : 'q-my-lg'
-          "
-        ></q-card-section>
-        <q-card-section class="row justify-end">
-          <div class="q-px-sm">
-            <q-item
-              v-show="loading"
-              v-for="c in 2"
-              :key="c"
-              style="min-height: 10px; padding: 3px"
-            >
-              <q-item-section>
-                <q-item-label class="row justify-end">
-                  <q-skeleton
-                    type="rect"
-                    width="85%"
-                    :height="$q.screen.lt.sm ? '14px' : '18px'"
-                  />
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-            <div
-              v-show="data.itemTypeValue1 !== 'summoning'"
-              class="column"
-              :class="{ 'q-gutter-y-xs': !$q.screen.lt.sm }"
-            >
-              <div class="text-right q-pt-sm">
-                <template v-if="!loading">
-                  {{ t('item.level') }}: {{ data.level }}
-                </template>
-                <q-skeleton
-                  v-else
-                  type="rect"
-                  width="100px"
-                  :height="$q.screen.lt.sm ? '14px' : '18px'"
-                />
-              </div>
-              <slot
-                v-if="
-                  slots.restrictions && !loading && data.restrictions.length > 0
-                "
-                name="restrictions"
-              >
-              </slot>
-            </div>
-          </div>
-        </q-card-section>
-        <q-card-section
-          v-if="history"
-          :class="{ 'q-my-md': $q.screen.gt.sm && noLevel }"
-        >
-          <div :class="{ 'q-py-md': $q.screen.gt.sm && noLevel }"></div>
-        </q-card-section>
-        <D4Separator v-show="slots.actions" />
-        <q-card-section v-if="slots.actions">
-          <slot name="actions"></slot>
-        </q-card-section>
-      </div>
-      <slot name="more" :loading="loading"></slot>
-    </q-card>
-  </template>
+  <D4ItemDisplay
+    v-else
+    :data="data"
+    :loading="loading"
+    :disable="disable"
+    :history="history"
+    @favorite="() => emit('favorite', data.itemId, !data.favorite)"
+    @copy="() => emit('copy', data.itemId)"
+    @update-only="(val: string) => emit('update-only', val)"
+  >
+    <template v-for="(_, slotName) in slots" #[slotName]="slotProps">
+      <slot :name="slotName" v-bind="slotProps || {}"></slot>
+    </template>
+  </D4ItemDisplay>
 </template>
-<style scoped>
-.date {
-  font-family: monospace;
-  font-size: 11px;
-  line-height: 12px;
-  letter-spacing: 0;
-}
-
-.complete {
-  color: var(--q-legendary);
-}
-
-.name-place {
-  width: 60%;
-}
-
-.more-action {
-  position: relative;
-  z-index: 3;
-  line-height: 24px;
-  padding: 0;
-  margin: 0 0 0 4px;
-  visibility: hidden;
-}
-
-.card-item:hover:deep(.more-action) {
-  visibility: visible;
-}
-
-@media (max-width: 600px) {
-  .name-place {
-    width: 48%;
-  }
-
-  .card-item:deep(.more-action) {
-    line-height: 18px;
-    visibility: visible !important;
-  }
-}
-
-.card-item.legendary:deep(.stress) {
-  font-weight: 700;
-}
-
-.card-item.unique:deep(.stress) {
-  font-weight: 700;
-}
-
-.body--dark .card-item.magic:deep(.stress),
-.body--dark .card-item.consumables:deep(.stress) {
-  color: #60c3f1;
-}
-
-.body--dark .card-item.rare:deep(.stress) {
-  color: var(--q-rare);
-}
-
-.body--dark .card-item.legendary:deep(.stress) {
-  color: var(--q-legendary);
-}
-
-.body--dark .card-item.unique:deep(.stress) {
-  color: var(--q-unique);
-}
-
-.body--dark .card-item.mythic:deep(.stress) {
-  color: var(--q-mythic);
-}
-
-.card-item.legendary:deep(.stress .icon) {
-  filter: var(--q-filter-legendary) !important;
-}
-
-.card-item.unique:deep(.stress .icon) {
-  filter: var(--q-filter-unique) !important;
-}
-
-.card-item.mythic:deep(.stress .icon) {
-  filter: var(--q-filter-mythic) !important;
-}
-
-.body--dark .card-item.magic .unique {
-  font-weight: 600;
-  color: var(--q-magic);
-}
-
-.body--dark .card-item.rare .unique {
-  font-weight: 600;
-  color: var(--q-rare);
-}
-
-.body--dark .card-item.set .unique {
-  font-weight: 600;
-  color: var(--q-set);
-}
-
-.body--dark .card-item.legendary .unique {
-  font-weight: 600;
-  color: var(--q-legendary);
-}
-
-.body--dark .card-item.unique .unique {
-  font-weight: 600;
-  color: var(--q-unique);
-}
-
-.body--dark .card-item.magic .unique .icon {
-  filter: var(--q-filter-magic) !important;
-}
-
-.body--dark .card-item.rare .unique .icon {
-  filter: var(--q-filter-rare) !important;
-}
-
-.body--dark .card-item.set .unique .icon {
-  filter: var(--q-filter-set) !important;
-}
-
-.body--dark .card-item.legendary .unique .icon {
-  filter: var(--q-filter-legendary) !important;
-}
-
-.body--dark .card-item.unique .unique .icon {
-  filter: var(--q-filter-unique) !important;
-}
-
-.no-expanded::after {
-  content: '';
-  position: absolute;
-  top: 82%;
-  bottom: -16%;
-  left: 0;
-  right: 0;
-  border-radius: 2px;
-  filter: blur(10px);
-  transform: scale(200%, 200%);
-  background-color: var(--q-light);
-}
-
-.body--dark .no-expanded::after {
-  background-color: var(--q-dark-page);
-}
-
-.status-002 {
-  filter: grayscale(1) opacity(0.5);
-}
-
-.user-area {
-  position: relative;
-  width: 35%;
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  z-index: 1;
-}
-
-.item-image {
-  position: absolute;
-  top: 0;
-  right: 48%;
-  width: 90px;
-  max-width: 80%;
-  z-index: 2;
-}
-
-@media (max-width: 724px) {
-  .user-area {
-    width: 50%;
-    right: 10px;
-  }
-
-  .item-image {
-    right: 40%;
-    max-width: 50%;
-  }
-}
-
-@media (max-width: 400px) {
-  .item-image {
-    display: none;
-  }
-}
+<style lang="scss" scoped>
+@use '/src/css/card-item' as *;
 
 .quality:deep(.q-btn) {
   font-size: inherit;

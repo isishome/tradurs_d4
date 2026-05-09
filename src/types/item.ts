@@ -2,83 +2,84 @@ import { uid } from 'quasar'
 import { User } from './user'
 
 export interface Attribute {
-  valueId?: number | string,
-  action?: number,
-  disable?: boolean,
+  valueId?: number | string
+  action?: number
+  disable?: boolean
   restore?: number
 }
 
 export interface Property extends Attribute {
-  propertyId: number,
+  propertyId: number
   propertyValues: Array<number>
 }
 
 export interface AffixValue {
-  valueRangeId: number | string,
-  value: number,
-  min: number,
+  valueRangeId: number | string
+  value: number
+  min: number
   max: number
 }
 
 export interface Affix extends Attribute {
-  affixId?: number,
-  runeId?: string,
-  affixGreater?: boolean,
+  affixId?: number
+  runeId?: string
+  affixGreater?: boolean
   affixValues: Array<AffixValue>
 }
 
 export interface Restriction extends Attribute {
-  restrictId: number,
+  restrictId: number
   restrictValues: Array<number>
 }
 
 export interface Pacts {
-  ferocity: number | null,
-  divinity: number | null,
+  ferocity: number | null
+  divinity: number | null
   eternity: number | null
 }
 
 export interface IPrice {
-  currency: string | null,
-  currencyValue: string | number | null,
+  currency: string | null
+  currencyValue: string | number | null
   quantity: number
 }
 
 export interface IItem {
-  itemId: string,
-  hardcore: boolean,
-  ladder: boolean,
-  statusCode: string,
-  name: string,
-  quantity: number,
-  tier: string,
-  quality: string,
-  itemType: string,
-  itemTypeValue1: string,
-  itemTypeValue2: string,
-  imageId: number,
-  power: number,
-  upgrade: number,
-  level: number,
-  properties: Array<Property>,
-  affixes: Array<Affix>,
-  restrictions: Array<Restriction>,
-  pacts: Pacts,
-  price: Price,
-  endDate: string,
-  updDate: string,
-  expDate: string,
-  relistCount: number,
-  authorized: boolean,
-  user: User,
-  offers: number,
-  evaluations: Array<number>,
-  favorite: boolean,
-  forDisplay: boolean,
-  editable: boolean,
-  actions: Array<number>,
-  loading: boolean,
-  expanded: boolean,
+  itemId: string
+  hardcore: boolean
+  ladder: boolean
+  statusCode: string
+  fixedItemId: number
+  name: string
+  quantity: number
+  tier: string
+  quality: string
+  itemType: string
+  itemTypeValue1: string
+  itemTypeValue2: string
+  imageId: number
+  power: number
+  upgrade: number
+  level: number
+  properties: Array<Property>
+  affixes: Array<Affix>
+  restrictions: Array<Restriction>
+  pacts: Pacts
+  price: Price
+  endDate: string
+  updDate: string
+  expDate: string
+  relistCount: number
+  authorized: boolean
+  user: User
+  offers: number
+  evaluations: Array<number>
+  favorite: boolean
+  forDisplay: boolean
+  editable: boolean
+  actions: Array<number>
+  loading: boolean
+  expanded: boolean
   selected: boolean
 }
 
@@ -88,7 +89,11 @@ export class Price implements IPrice {
   public quantity: number
   public loading = false
 
-  constructor(currency?: string, currencyValue?: string | number | null, quantity?: number) {
+  constructor(
+    currency?: string,
+    currencyValue?: string | number | null,
+    quantity?: number
+  ) {
     this.currency = currency || 'gold'
     this.currencyValue = currencyValue || null
     this.quantity = quantity || 1
@@ -100,6 +105,7 @@ export class Item implements IItem {
   public hardcore = false
   public ladder = false
   public statusCode = '000'
+  public fixedItemId = 0
   public name = ''
   public quantity = 1
   public tier = ''

@@ -32,8 +32,8 @@ export default route(function (
   const createHistory = process.env.SERVER
     ? createMemoryHistory
     : process.env.VUE_ROUTER_MODE === 'history'
-    ? createWebHistory
-    : createWebHashHistory
+      ? createWebHistory
+      : createWebHashHistory
 
   const Router = createRouter({
     scrollBehavior(to, from, savedPosition) {
@@ -80,6 +80,8 @@ export default route(function (
           is.getProperties(),
           is.getAffixes(),
           is.getRestrictions(),
+          is.getFixedItems(),
+          is.getSetGroups(),
           as.getEvaluations(),
           gs.checkHealth()
         ]

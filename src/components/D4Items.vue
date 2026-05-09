@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { ref, computed, reactive, nextTick } from 'vue'
 import { useQuasar, QInput, QSelect, uid } from 'quasar'
+
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
-
 import { useAccountStore } from 'stores/account-store'
 import { useItemStore } from 'stores/item-store'
+
 import { checkAttribute, scrollPos } from 'src/common'
 import { itemImgs } from 'src/common/items'
 import {
@@ -149,6 +150,7 @@ const copyItem = (item: Item) => {
 }
 
 const updateItem = ({
+  fixedItemId,
   name,
   quantity,
   tier,
@@ -169,7 +171,10 @@ const updateItem = ({
     activatedItem.value.itemTypeValue1 !== itemTypeValue1
   const changeTypeValue2NotFirst =
     activatedItem.value.itemTypeValue2 !== itemTypeValue2
+  const changeFixedItemIdNotFirst =
+    activatedItem.value.fixedItemId !== fixedItemId
   activatedItem.value.itemType = itemType
+  activatedItem.value.fixedItemId = fixedItemId
   activatedItem.value.name = name
   activatedItem.value.quantity = quantity
   activatedItem.value.tier = tier
@@ -184,7 +189,7 @@ const updateItem = ({
   activatedItem.value.price.currencyValue = price.currencyValue
   activatedItem.value.price.quantity = price.quantity
 
-  if (changeTypeNotFirst) {
+  if (changeTypeNotFirst || changeFixedItemIdNotFirst) {
     activatedItem.value.quantity = 1
     activatedItem.value.imageId =
       Math.floor(
@@ -200,7 +205,6 @@ const updateItem = ({
       0,
       activatedItem.value.restrictions.length
     )
-    activatedItem.value.pacts = { ferocity: 0, divinity: 0, eternity: 0 }
 
     const actions = new Set(activatedItem.value.actions)
     actions.add(16)
@@ -863,6 +867,7 @@ const endAnalyze = (item: Item) => {
   item.hardcore = is.storage.data.hardcore || false
   item.ladder = is.storage.data.ladder || true
   item.authorized = activatedItem.value.authorized
+  item.editable = activatedItem.value.editable
   activatedItem.value = item
   analyzeKey.value++
 }
@@ -1263,6 +1268,9 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
         :disable="disable"
         @update="updateItem"
         @apply="apply"
+        @update:property="selectedProperty"
+        @update:affix="selectedAffix"
+        @update:restriction="selectedRestriction"
       >
         <template #add-property="props">
           <div class="row items-center q-gutter-sm">
@@ -1327,7 +1335,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
         <template #properties>
           <D4Property
             v-for="property in activatedItem.properties.filter(
-              (p) => p.action !== 8
+              (p: Property) => p.action !== 8
             )"
             :key="property.valueId || uid()"
             :data="property"
@@ -1340,6 +1348,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
         <template #add-affix="props">
           <div class="row items-center q-gutter-sm">
             <q-select
+              data-cy="affix-select"
               ref="affixRef"
               v-model="affixId"
               :disable="disable"
@@ -1430,7 +1439,9 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
         </template>
         <template #affixes>
           <D4Affix
-            v-for="affix in activatedItem.affixes.filter((a) => a.action !== 8)"
+            v-for="affix in activatedItem.affixes.filter(
+              (a: Affix) => a.action !== 8
+            )"
             :key="affix.valueId || uid()"
             :data="affix"
             editable
@@ -1489,7 +1500,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
         <template #restrictions>
           <D4Restriction
             v-for="restriction in activatedItem.restrictions.filter(
-              (r) => r.action !== 8
+              (r: Restriction) => r.action !== 8
             )"
             :key="restriction.valueId || uid()"
             :data="restriction"
@@ -1499,58 +1510,6 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
             @remove="removeRestriction"
           />
         </template>
-        <!-- D4 season2 Pact -->
-        <!--
-          <template v-if="is.storage.data.ladder && activatedItem.itemType === 'armor'" #base-end>
-          <div class="row justify-around items-center">
-            <div class="relative-position">
-              <q-spinner-puff :color="$q.dark.isActive ? 'yellow-6' : 'black'" class="absolute-center" size="52px" />
-              <q-icon class="caution" size="19px">
-                <D4Tooltip>
-                  <div style="max-width:140px" class="text-caption break-keep">
-                    {{ t('season.second.pact') }}
-                  </div>
-                </D4Tooltip>
-              </q-icon>
-            </div>
-            <div class="row items-center">
-              <q-icon name="img:/images/season/002/ferocity.webp" size="40px">
-                <D4Tooltip anchor="top middle" self="top middle" :offset="[14, 28]" padding="xs" transition-show="jump-up"
-                  transition-hide="jump-down">
-                  <div style="max-width:140px" class="text-caption break-keep">
-                    {{ t('season.second.ferocity') }}
-                  </div>
-                </D4Tooltip>
-              </q-icon>
-              <D4Counter v-model.number="activatedItem.pacts.ferocity" max-width="40px" hide-label :max="5" allow-zero
-                allow-null :no-button="$q.screen.lt.sm" :disable="disable" />
-            </div>
-            <div class="row items-center">
-              <q-icon name="img:/images/season/002/divinity.webp" size="40px">
-                <D4Tooltip anchor="top middle" self="top middle" :offset="[14, 28]" padding="xs" transition-show="jump-up"
-                  transition-hide="jump-down">
-                  <div style="max-width:140px" class="text-caption break-keep">
-                    {{ t('season.second.divinity') }}
-                  </div>
-                </D4Tooltip>
-              </q-icon>
-              <D4Counter v-model.number="activatedItem.pacts.divinity" max-width="40px" hide-label :max="5" allow-zero
-                allow-null :no-button="$q.screen.lt.sm" :disable="disable" />
-            </div>
-            <div class="row items-center">
-              <q-icon name="img:/images/season/002/eternity.webp" size="40px">
-                <D4Tooltip anchor="top middle" self="top middle" :offset="[14, 28]" padding="xs" transition-show="jump-up"
-                  transition-hide="jump-down">
-                  <div style="max-width:140px" class="text-caption break-keep">
-                    {{ t('season.second.eternity') }}
-                  </div>
-                </D4Tooltip>
-              </q-icon>
-              <D4Counter v-model.number="activatedItem.pacts.eternity" max-width="40px" hide-label :max="5" allow-zero
-                allow-null :no-button="$q.screen.lt.sm" :disable="disable" />
-            </div>
-          </div>
-        </template> -->
         <template #actions>
           <div
             v-if="activatedItem.authorized || activatedItem.itemId === ''"
@@ -1638,6 +1597,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
                 @click="activateShow = false"
               />
               <D4Btn
+                data-cy="item-apply-button"
                 :label="t('btn.apply')"
                 :loading="activatedItem.loading"
                 :disable="

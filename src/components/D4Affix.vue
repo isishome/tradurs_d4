@@ -48,7 +48,7 @@ const affixInfo = computed(() =>
 const affixColor = computed(
   () =>
     color.value ||
-    (['legendary', 'unique'].includes(findAffix.value?.type as string)
+    (['legendary', 'unique', 'mythic'].includes(findAffix.value?.type as string)
       ? 'stress'
       : findAffix.value?.type === 'socket'
         ? 'text-grey-6'
@@ -56,6 +56,9 @@ const affixColor = computed(
 )
 const isStandard = computed(() =>
   ['standard'].includes(findAffix.value?.type ?? '')
+)
+const isMythic = computed(() =>
+  ['mythic'].includes(findAffix.value?.type ?? '')
 )
 const isToggle = computed(
   () => props.editable && ['standard'].includes(findAffix.value?.type ?? '')
@@ -121,6 +124,7 @@ const remove = (): void => {
 
 <template>
   <div
+    data-cy="affix-row"
     class="row no-wrap q-gutter-x-xs items-baseline attr-area"
     :class="[disable, affixColor]"
     :data-id="data.valueId"
@@ -131,6 +135,7 @@ const remove = (): void => {
     "
   >
     <div
+      data-cy="affix-greater-toggle"
       class="list row items-center justify-center"
       :class="[{ 'cursor-pointer outline': isToggle }, { rune: isRune }]"
       @click="toggleGreater"
@@ -151,14 +156,21 @@ const remove = (): void => {
         <q-icon
           v-show="editable"
           class="icon"
-          :class="{ greater: isStandard, active: affixGreater }"
+          :class="{
+            'rotate-45': isStandard || isMythic,
+            greater: isStandard,
+            active: affixGreater
+          }"
           size="10px"
           :name="icon"
         />
         <q-icon
           v-show="!editable"
           class="icon"
-          :class="{ 'rotate-45': isStandard, 'greater active': affixGreater }"
+          :class="{
+            'rotate-45': isStandard || isMythic,
+            'greater active': affixGreater
+          }"
           size="10px"
           :name="icon"
         />

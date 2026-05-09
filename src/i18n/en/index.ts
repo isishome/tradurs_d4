@@ -259,6 +259,7 @@ export default {
     selectGem: 'Select Gem',
     selectElixir: 'Select Elixir',
     selectSummoning: 'Select Summoning material',
+    selectFixedItem: 'Select {typeValue1} material',
     selectImage: 'Select {tv} Image',
     name: 'Item Name',
     power: '{p} Item Power',
@@ -269,7 +270,8 @@ export default {
     favorites: 'Favorite Items',
     forDisplay: 'For Display',
     expanded: 'Always expand items',
-    unknown: 'Unknown Item'
+    unknown: 'Unknown Item',
+    manualInput: 'Manual Input'
   },
   price: {
     title: 'Price',
@@ -436,35 +438,52 @@ export default {
   },
   notice: {
     title: 'Update Notice',
-    top: 'Hello, this is Tradurs.\nHere are the new features and updates included in this release.',
+    top: 'Hello, this is Tradurs.\nThis update reflects Diablo 4 Season of Reckoning / Lord of Hatred data.',
     contents: [
-      { type: 'head', value: '◆ New Features' },
+      { type: 'head', value: '◆ New Item Data' },
       {
         type: 'list',
-        value: 'Real-time notifications via Telegram bot have been added.',
+        value:
+          'Added 112 new Unique items, 3 Mythic items, 209 Set Charms, and 44 Set groups.',
         class: 'text-body1'
       },
-      { type: 'space' },
-      { type: 'image', value: '/images/notice/20260322/notify.webp' },
-      {
-        type: 'link',
-        name: 'support',
-        label: 'How to connect Telegram',
-        params: {
-          section: 'telegram'
-        }
-      },
-      { type: 'head', value: '◆ Changes' },
       {
         type: 'list',
-        value: 'The default font for Tradurs has been changed to Kodia.',
+        value:
+          'New item names, equipment slots, Unique effects, Mythic effects, and Set bonuses have been reflected.',
+        class: 'text-body1'
+      },
+      { type: 'head', value: '◆ Boss Lair Keys' },
+      {
+        type: 'list',
+        value:
+          'Added Season 13 boss hoard materials including Lair Key, Greater Lair Key, and Crux of the False Prophet.',
+        class: 'text-body1'
+      },
+      {
+        type: 'list',
+        value:
+          'Updated required materials for Varshan, Grigoire, The Beast in the Ice, Zir, Urivar, Duriel, Andariel, Harbinger of Hatred, Belial, and Mephisto.',
+        class: 'text-body1'
+      },
+      { type: 'head', value: '◆ Trade Data Improvements' },
+      {
+        type: 'list',
+        value:
+          'Trade data has been improved so the new items can be displayed and searched more accurately.',
+        class: 'text-body1'
+      },
+      {
+        type: 'list',
+        value:
+          'Added the Maximum Life percentage option, Horadric Seal data, and Charm item classifications.',
         class: 'text-body1'
       },
       { type: 'space' },
       { type: 'space' }
     ],
     bottom: 'Thank you.',
-    close: 'Do not show again for 24 hours'
+    close: 'Do not show again for 1 week'
   },
   adblock: {
     title: 'Please allow ads on Tradurs',

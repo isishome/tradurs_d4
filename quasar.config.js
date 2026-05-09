@@ -80,6 +80,16 @@ module.exports = configure(function (/* ctx */) {
         //     }
         //   }
         // })
+
+        viteConf.server = {
+          ...(viteConf.server || {}),
+          hmr: {
+            protocol: 'ws',
+            host: 'localhost',
+            port: 24680,
+            clientPort: 24680
+          }
+        }
       },
       // viteVuePluginOptions: {},
 
