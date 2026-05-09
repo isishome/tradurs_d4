@@ -65,6 +65,9 @@ const newAwards = computed(
 const isNarrow = computed(() => $q.screen.width <= 1100)
 const d4Filter = ref<InstanceType<typeof D4Filter>>()
 const showAd = ref(true)
+const showTopAd = ref(true)
+const showBottomAd = ref(true)
+const showRightAd = ref(true)
 
 const myTweak = (offset: number): void => {
   gs.offsetTop = offset ?? 0
@@ -203,26 +206,37 @@ watch([size, () => $q.screen.gt.md], async ([new1, new2], [old1, old2]) => {
 watch(
   () => gs.reloadAdKey,
   async () => {
-    showAd.value = false
+    const now = Date.now()
+    const reloadTopAd = now - gs.topAccessTimeStamp > gs.timeLimit
+    const reloadBottomAd = now - gs.bottomAccessTimeStamp > gs.timeLimit
+    const reloadRightAd = now - gs.rightAccessTimeStamp > gs.timeLimit
+
+    if (!reloadTopAd && !reloadBottomAd && !reloadRightAd) return
+
+    if (reloadTopAd) showTopAd.value = false
+    if (reloadBottomAd) showBottomAd.value = false
+    if (reloadRightAd) showRightAd.value = false
 
     await nextTick()
 
-    if (Date.now() - gs.topAccessTimeStamp > gs.timeLimit) {
+    if (reloadTopAd) {
       topAdKey.value++
-      gs.topAccessTimeStamp = Date.now()
+      gs.topAccessTimeStamp = now
     }
 
-    if (Date.now() - gs.bottomAccessTimeStamp > gs.timeLimit) {
+    if (reloadBottomAd) {
       bottomAdKey.value++
-      gs.bottomAccessTimeStamp = Date.now()
+      gs.bottomAccessTimeStamp = now
     }
 
-    if (Date.now() - gs.rightAccessTimeStamp > gs.timeLimit) {
+    if (reloadRightAd) {
       rightAdKey.value++
-      gs.rightAccessTimeStamp = Date.now()
+      gs.rightAccessTimeStamp = now
     }
 
-    showAd.value = true
+    if (reloadTopAd) showTopAd.value = true
+    if (reloadBottomAd) showBottomAd.value = true
+    if (reloadRightAd) showRightAd.value = true
   }
 )
 
@@ -1176,7 +1190,7 @@ watch(
             <div class="view max-width">
               <div class="row justify-center top-ads">
                 <Adsense
-                  v-if="showAd"
+                  v-if="showAd && showTopAd"
                   ref="topAdRef"
                   :style="`display:inline-block;${size}`"
                   data-ad-slot="7137983054"
@@ -1189,7 +1203,7 @@ watch(
             <div class="q-py-xl"></div>
             <div v-if="$q.screen.width <= 1439" class="row justify-center">
               <Adsense
-                v-if="showAd"
+                v-if="showAd && showBottomAd"
                 ref="bottomAdRef"
                 style="
                   display: block;
@@ -1237,7 +1251,7 @@ watch(
               <div :style="`position:sticky;top:${asideTop}`" class="column">
                 <Adsense
                   ref="rightAdRef"
-                  v-if="showAd && $q.screen.width > 1439"
+                  v-if="showAd && showRightAd && $q.screen.width > 1439"
                   style="display: inline-block; width: 160px; height: 600px"
                   data-ad-slot="6751896285"
                   :data-adtest="!prod"

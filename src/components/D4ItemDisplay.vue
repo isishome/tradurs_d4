@@ -507,41 +507,7 @@ onUnmounted(() => {
         </div>
       </q-card-section>
       <D4Separator v-show="qualifiable || descriptable" type="left" />
-      <q-card-section v-if="setGroup" class="set-description">
-        <div>{{ setGroup?.label }}</div>
-        <ul class="group-list">
-          <li
-            v-for="fi in setGroup?.fixedItems"
-            :key="fi.value"
-            :class="[fixedItem?.value === fi.value ? 'stress' : 'text-grey']"
-          >
-            {{ fi.label }}
-          </li>
-        </ul>
-        <div class="stress">
-          {{ setGroup?.label }} {{ `(1/${setGroup?.fixedItemIds?.length})` }}
-        </div>
-        <div
-          v-show="setGroup.bonusAffixes && setGroup.bonusAffixes.length > 0"
-          class="stress q-mt-xs q-px-sm"
-        >
-          <div class="column no-wrap q-gutter-sm">
-            <div v-for="bonus in setGroup.bonusAffixes" :key="bonus.affix">
-              <div>{{ `(${bonus.setCount}) ${data.quality}` }}</div>
-              <ul class="bonus-list">
-                <li
-                  v-for="(ba, idx) in (
-                    findAffix(bonus.affix)?.label ?? ''
-                  ).split(/\n/)"
-                  :key="idx"
-                  class="q-px-sm"
-                  v-html="setBonusAffixLabel(ba)"
-                ></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </q-card-section>
+
       <q-card-section
         v-show="
           loading ||
@@ -623,12 +589,50 @@ onUnmounted(() => {
           </div>
         </div>
       </q-card-section>
+      <q-card-section v-if="setGroup" class="set-description">
+        <div>{{ setGroup?.label }}</div>
+        <ul class="group-list">
+          <li
+            v-for="fi in setGroup?.fixedItems"
+            :key="fi.value"
+            :class="[fixedItem?.value === fi.value ? 'stress' : 'text-grey']"
+          >
+            {{ fi.label }}
+          </li>
+        </ul>
+        <div class="stress">
+          {{ setGroup?.label }} {{ `(1/${setGroup?.fixedItemIds?.length})` }}
+        </div>
+        <div
+          v-show="setGroup.bonusAffixes && setGroup.bonusAffixes.length > 0"
+          class="stress q-mt-xs q-px-sm"
+        >
+          <div class="column no-wrap q-gutter-sm">
+            <div v-for="bonus in setGroup.bonusAffixes" :key="bonus.affix">
+              <div>
+                {{ `(${bonus.setCount}) ${findQuality(data.quality)?.label}` }}
+              </div>
+              <ul class="bonus-list">
+                <li
+                  v-for="(ba, idx) in (
+                    findAffix(bonus.affix)?.label ?? ''
+                  ).split(/\n/)"
+                  :key="idx"
+                  class="q-px-sm"
+                  v-html="setBonusAffixLabel(ba)"
+                ></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </q-card-section>
       <q-card-section
         v-show="
           !loading &&
           data.properties?.length === 0 &&
           data.affixes?.length === 0 &&
-          !!!slots.description
+          !!!slots.description &&
+          !!!setGroup
         "
         :class="$q.screen.lt.sm ? '' : $q.screen.lt.md ? 'q-my-md' : 'q-my-lg'"
       ></q-card-section>
