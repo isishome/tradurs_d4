@@ -243,7 +243,9 @@ const updateTypeValue2 = (val: string) => {
   const selectedSummoning = findSummoning(val)
 
   _quality.value =
-    selectedRune?.quality ?? selectedSummoning?.quality ?? 'normal'
+    selectedRune?.quality ??
+    selectedSummoning?.quality ??
+    (!qualifiable.value ? 'normal' : _quality.value)
 
   _level.value =
     _typeValue1.value === 'gem'
