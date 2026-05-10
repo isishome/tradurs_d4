@@ -179,11 +179,11 @@ const setBonusAffixLabel = computed(
   () => (label?: string) =>
     (label ?? '')
       .replace(
-        /(\{x\}%?|\d+%?)/g,
+        /(\{x\}%?|\[\+\]|\d+%?)/g,
         '<span class="text-weight-bold" style="color: var(--q-unique)">$1</span>'
       )
       .replace(
-        /(\[x\])/g,
+        /(\[x\]|\[\+\])/g,
         '<span class="text-weight-bold text-grey-6">$1</span>'
       )
 )
@@ -243,15 +243,17 @@ onUnmounted(() => {
   >
     <div class="inner">
       <q-card-section>
+        <div class="item-image-wrap">
+          <q-img
+            v-show="!loading"
+            class="item-image"
+            fit="contain"
+            position="center"
+            :src="imgSrc"
+            alt="Tradurs Item Image"
+          />
+        </div>
         <div class="user-area row justify-end">
-          <div class="item-image">
-            <q-img
-              v-show="!loading"
-              class="item-image"
-              :src="imgSrc"
-              alt="Tradurs Item Image"
-            />
-          </div>
           <div
             class="column justify-center items-end"
             :class="{ 'q-gutter-xs': !$q.screen.lt.sm || loading }"
@@ -754,13 +756,27 @@ onUnmounted(() => {
   z-index: 1;
 }
 
-.item-image {
+.item-image-wrap {
   position: absolute;
-  top: 0;
-  right: 48%;
-  width: 90px;
-  max-width: 80%;
+  top: 14px;
+  right: clamp(150px, 28%, 220px);
+  width: clamp(56px, 12vw, 90px);
+  height: clamp(56px, 12vw, 90px);
   z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.item-image {
+  width: 100%;
+  height: 100%;
+}
+
+.item-image:deep(.q-img__image) {
+  object-fit: contain !important;
+  object-position: center center !important;
 }
 
 .set-description {
@@ -797,14 +813,17 @@ onUnmounted(() => {
     right: 10px;
   }
 
-  .item-image {
-    right: 40%;
-    max-width: 50%;
+  .item-image-wrap {
+    top: 12px;
+    right: auto;
+    left: clamp(52%, 57%, calc(100% - 168px));
+    width: clamp(46px, 13vw, 68px);
+    height: clamp(46px, 13vw, 68px);
   }
 }
 
 @media (max-width: 400px) {
-  .item-image {
+  .item-image-wrap {
     display: none;
   }
 }

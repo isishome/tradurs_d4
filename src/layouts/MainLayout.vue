@@ -370,8 +370,48 @@ watch(
                   :active="lang.value === locale"
                   @click="setLang(lang.value)"
                 >
-                  {{ lang.label }}</q-item
+                  <q-item-section>
+                    {{ lang.label }}
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
+          </q-btn>
+          <q-btn
+            round
+            dense
+            flat
+            aria-label="Tradurs Font Button"
+            :ripple="!$q.dark.isActive"
+          >
+            <img
+              class="icon"
+              width="24"
+              height="24"
+              src="/images/icons/font.svg"
+              alt="Tradurs Font Icon"
+            />
+            <q-menu
+              auto-close
+              class="no-shadow"
+              anchor="bottom end"
+              self="top end"
+              transition-show="none"
+              transition-hide="none"
+              :transition-duration="0"
+            >
+              <q-list bordered class="rounded-borders">
+                <q-item
+                  v-for="font in gs.fontOptions"
+                  :key="font.value"
+                  :clickable="font.value !== gs.font"
+                  :active="font.value === gs.font"
+                  @click="() => gs.setFont(font.value)"
                 >
+                  <q-item-section>
+                    {{ font.label }}
+                  </q-item-section>
+                </q-item>
               </q-list>
             </q-menu>
           </q-btn>
@@ -1075,8 +1115,46 @@ watch(
                   :active="lang.value === locale"
                   @click="setLang(lang.value)"
                 >
-                  {{ lang.label }}</q-item
+                  <q-item-section>
+                    {{ lang.label }}
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
+          </q-btn>
+          <q-btn
+            round
+            dense
+            flat
+            aria-label="Tradurs Font Button"
+            :ripple="!$q.dark.isActive"
+          >
+            <img
+              class="icon"
+              width="24"
+              height="24"
+              src="/images/icons/font.svg"
+              alt="Tradurs Font Icon"
+            />
+            <q-menu
+              auto-close
+              class="no-shadow"
+              anchor="bottom end"
+              self="top end"
+              transition-show="none"
+              transition-hide="none"
+              :transition-duration="0"
+            >
+              <q-list bordered class="rounded-borders">
+                <q-item
+                  v-for="font in gs.fontOptions"
+                  :key="font.value"
+                  :clickable="font.value !== gs.font"
+                  :active="font.value === gs.font"
+                  @click="() => gs.setFont(font.value)"
                 >
+                  <q-item-section>{{ font.label }}</q-item-section>
+                </q-item>
               </q-list>
             </q-menu>
           </q-btn>

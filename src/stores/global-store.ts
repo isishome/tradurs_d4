@@ -1,5 +1,10 @@
 import { defineStore } from 'pinia'
+import { Cookies } from 'quasar'
 import { api } from 'boot/axios'
+
+import { applyFont, normalizeFont } from 'src/boot/appearance'
+
+import type { FontMode } from 'src/boot/appearance'
 
 export const useGlobalStore = defineStore('global', {
   state: () => ({
@@ -7,6 +12,11 @@ export const useGlobalStore = defineStore('global', {
       { value: 'ko', label: '한국어' },
       { value: 'en', label: 'English' }
     ],
+    font: 'kodia' as FontMode,
+    fontOptions: [
+      { value: 'kodia', label: 'Kodia Font' },
+      { value: 'system', label: 'System Font' }
+    ] as { value: FontMode; label: string }[],
     itemName: null as string | null,
     offsetTop: 0 as number,
     scrollTop: 0 as number,
@@ -54,6 +64,15 @@ export const useGlobalStore = defineStore('global', {
             reject()
           })
       })
+    },
+    initFont(value?: unknown) {
+      this.font = normalizeFont(value)
+      applyFont(this.font)
+    },
+    setFont(font: FontMode) {
+      this.font = font
+      Cookies.set('d4.font', font, { path: '/', expires: 365 })
+      applyFont(font)
     }
   }
 })
