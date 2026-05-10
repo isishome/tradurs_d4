@@ -245,7 +245,11 @@ const updateTypeValue2 = (val: string) => {
   _quality.value =
     selectedRune?.quality ??
     selectedSummoning?.quality ??
-    (!qualifiable.value ? 'normal' : _quality.value)
+    (['aspect'].includes(_type.value)
+      ? 'legendary'
+      : !qualifiable.value
+        ? 'normal'
+        : _quality.value)
 
   _level.value =
     _typeValue1.value === 'gem'
