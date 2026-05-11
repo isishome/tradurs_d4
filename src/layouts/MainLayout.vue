@@ -809,7 +809,7 @@ watch(
               :disable="
                 filterLoading || !['tradeList'].includes(route.name as string)
               "
-              :rules="[(val) => !!!val || checkName(val) || '']"
+              :rules="[(val: string) => !!!val || checkName(val) || '']"
               @keyup.enter="search()"
             >
               <template #append>

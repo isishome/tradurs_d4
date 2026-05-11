@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia'
+import { computed } from 'vue'
 import { Cookies } from 'quasar'
 import { api } from 'boot/axios'
+import { i18n } from 'src/boot/i18n'
 
 import { applyFont, normalizeFont } from 'src/boot/appearance'
 
@@ -13,10 +15,10 @@ export const useGlobalStore = defineStore('global', {
       { value: 'en', label: 'English' }
     ],
     font: 'kodia' as FontMode,
-    fontOptions: [
-      { value: 'kodia', label: 'Kodia Font' },
-      { value: 'system', label: 'System Font' }
-    ] as { value: FontMode; label: string }[],
+    fontOptions: computed<{ value: FontMode; label: string }[]>(() => [
+      { value: 'kodia', label: i18n.global.t('font.kodia') },
+      { value: 'system', label: i18n.global.t('font.system') }
+    ]),
     itemName: null as string | null,
     offsetTop: 0 as number,
     scrollTop: 0 as number,

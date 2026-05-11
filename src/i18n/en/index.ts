@@ -1,5 +1,9 @@
 export default {
   language: 'Language',
+  font: {
+    kodia: 'Kodia Font',
+    system: 'System Font'
+  },
   decimal: {
     style: 'decimal',
     minimumSignificantDigits: 3,
