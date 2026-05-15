@@ -1290,7 +1290,7 @@ watch(
                   max-width: 100%;
                   overflow: hidden;
                 "
-                data-ad-slot="6163086381"
+                data-ad-slot="9284600281"
                 :data-adtest="!prod"
                 data-ad-format="auto"
                 data-full-width-responsive="true"
