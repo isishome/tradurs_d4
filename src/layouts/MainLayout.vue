@@ -1332,7 +1332,7 @@ watch(
                   ref="rightAdRef"
                   v-if="showAd && showRightAd && $q.screen.width > 1439"
                   style="display: inline-block; width: 160px; height: 600px"
-                  data-ad-slot="6751896285"
+                  data-ad-slot="6574447551"
                   :data-adtest="!prod"
                   :key="`right-${rightAdKey}`"
                 />
