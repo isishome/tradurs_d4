@@ -17,20 +17,7 @@ withDefaults(defineProps<IProps>(), {
 })
 
 const prod: boolean = import.meta.env.PROD
-const ADSENSE_PUSH_INTERVAL = 700
-let nextAdsensePushAt = 0
-
 const insRef = ref<HTMLModElement>()
-let renderTimer: number | undefined
-let pushTimer: number | undefined
-
-const queueAdsensePush = (callback: () => void) => {
-  const now = Date.now()
-  const delay = Math.max(0, nextAdsensePushAt - now)
-  nextAdsensePushAt = now + delay + ADSENSE_PUSH_INTERVAL
-
-  return window.setTimeout(callback, delay)
-}
 
 const pushAdsense = () => {
   try {
@@ -40,20 +27,11 @@ const pushAdsense = () => {
   }
 }
 
-const scheduleAdsensePush = () => {
-  if (pushTimer) window.clearTimeout(pushTimer)
-  pushTimer = queueAdsensePush(pushAdsense)
-}
-
 const render = () => {
   void nextTick(() => {
-    renderTimer = window.setTimeout(() => {
-      if (window.adsenseLoaded) scheduleAdsensePush()
-      else {
-        window.addEventListener('adsense-loaded', scheduleAdsensePush, {
-          once: true
-        })
-      }
+    setTimeout(() => {
+      if (window.adsenseLoaded) pushAdsense()
+      else window.addEventListener('adsense-loaded', pushAdsense)
     }, 100)
   })
 }
@@ -81,9 +59,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  if (renderTimer) window.clearTimeout(renderTimer)
-  if (pushTimer) window.clearTimeout(pushTimer)
-  window.removeEventListener('adsense-loaded', scheduleAdsensePush)
+  window.removeEventListener('adsense-loaded', pushAdsense)
 })
 
 defineExpose({ isUnfilled })
