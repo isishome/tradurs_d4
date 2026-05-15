@@ -1272,7 +1272,7 @@ watch(
                   v-if="showAd && showTopAd"
                   ref="topAdRef"
                   :style="`display:inline-block;${size}`"
-                  data-ad-slot="7137983054"
+                  data-ad-slot="6532261129"
                   :data-adtest="!prod"
                   :key="`top-${topAdKey}`"
                 />
