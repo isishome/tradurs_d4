@@ -1209,7 +1209,7 @@ watch(
             <div class="q-py-xl"></div>
             <div v-if="$q.screen.width <= 1439" class="row justify-center">
               <Adsense
-                class="ad-right"
+                class="ad-bottom"
                 data-ad-client="ca-pub-5110777286519562"
                 data-ad-slot="9284600281"
                 :data-adtest="!prod"
