@@ -61,6 +61,7 @@ ins.adsbygoogle {
   min-height: 50px;
 
   &[data-ad-status='filled'] {
+    box-shadow: none;
     background-color: transparent;
   }
 }
