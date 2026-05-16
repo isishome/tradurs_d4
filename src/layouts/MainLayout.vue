@@ -1199,7 +1199,6 @@ watch(
                   class="ad-top"
                   data-ad-client="ca-pub-5110777286519562"
                   data-ad-slot="6532261129"
-                  data-ad-format="horizontal"
                   :data-adtest="!prod"
                   :key="`top-${reloadAdKey}`"
                 />
