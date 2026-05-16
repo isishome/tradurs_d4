@@ -1199,6 +1199,7 @@ watch(
                   class="ad-top"
                   data-ad-client="ca-pub-5110777286519562"
                   data-ad-slot="6532261129"
+                  data-ad-format="horizontal"
                   :data-adtest="!prod"
                   :key="`top-${reloadAdKey}`"
                 />
@@ -1469,12 +1470,15 @@ watch(
 .ad-top {
   display: block;
   width: 100%;
-  height: 100px;
+  max-width: 728px;
+  height: 90px;
 }
 
-@media (min-width: 768px) {
+@media (max-width: 600px) {
   .ad-top {
-    height: 90px;
+    min-height: 50px;
+    height: 100px;
+    overflow: hidden;
   }
 }
 

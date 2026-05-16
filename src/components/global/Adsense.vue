@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, nextTick, onUnmounted, ref } from 'vue'
+import { onMounted, nextTick, onUnmounted } from 'vue'
 
 type Props = {
   dataAdClient: string
@@ -10,13 +10,12 @@ type Props = {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  dataAdFormat: 'auto',
+  dataAdFormat: undefined,
   dataAdtest: undefined,
   dataFullWidthResponsive: 'false'
 })
 
 const prod: boolean = import.meta.env.PROD
-let renderTimer: NodeJS.Timeout
 
 const onPush = () => {
   try {
@@ -29,10 +28,8 @@ const onPush = () => {
 const render = async () => {
   await nextTick()
 
-  renderTimer = setTimeout(() => {
-    if (window.adsenseLoaded) onPush()
-    else window.addEventListener('adsense-loaded', onPush)
-  }, 400)
+  if (window.adsenseLoaded) onPush()
+  else window.addEventListener('adsense-loaded', onPush)
 }
 
 onMounted(async () => {
@@ -40,7 +37,6 @@ onMounted(async () => {
 })
 
 onUnmounted(() => {
-  if (renderTimer) clearTimeout(renderTimer)
   window.removeEventListener('adsense-loaded', onPush)
 })
 </script>
