@@ -52,13 +52,17 @@ onUnmounted(() => {
   ></ins>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 ins.adsbygoogle {
   display: block;
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05);
   background-color: rgba(255, 255, 255, 0.05);
   position: relative;
   min-height: 50px;
+
+  &[data-ad-status='filled'] {
+    background-color: transparent;
+  }
 }
 
 .body--light ins.adsbygoogle {
