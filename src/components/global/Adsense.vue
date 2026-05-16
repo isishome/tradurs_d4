@@ -10,9 +10,9 @@ type Props = {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  dataAdFormat: undefined,
+  dataAdFormat: 'auto',
   dataAdtest: undefined,
-  dataFullWidthResponsive: undefined
+  dataFullWidthResponsive: 'false'
 })
 
 const prod: boolean = import.meta.env.PROD

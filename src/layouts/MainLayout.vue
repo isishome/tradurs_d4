@@ -1470,16 +1470,12 @@ watch(
 .ad-top {
   display: block;
   width: 100%;
-  max-width: 728px;
-  height: 90px;
+  height: 100px;
 }
 
-@media (max-width: 600px) {
+@media (min-width: 768px) {
   .ad-top {
-    height: auto;
-    min-height: 50px;
-    max-height: 100px;
-    overflow: hidden;
+    height: 90px;
   }
 }
 
