@@ -1,25 +1,24 @@
 <script setup lang="ts">
 import { onMounted, nextTick, onUnmounted, ref } from 'vue'
 
-interface IProps {
-  dataAdClient?: string
+type Props = {
+  dataAdClient: string
   dataAdSlot: string
   dataAdFormat?: string
   dataAdtest?: boolean
   dataFullWidthResponsive?: string
 }
 
-withDefaults(defineProps<IProps>(), {
-  dataAdClient: 'ca-pub-5110777286519562',
+const props = withDefaults(defineProps<Props>(), {
   dataAdFormat: undefined,
   dataAdtest: undefined,
   dataFullWidthResponsive: undefined
 })
 
 const prod: boolean = import.meta.env.PROD
-const insRef = ref<HTMLModElement>()
+let renderTimer: NodeJS.Timeout
 
-const pushAdsense = () => {
+const onPush = () => {
   try {
     ;(window.adsbygoogle = window.adsbygoogle || []).push({})
   } catch (e) {
@@ -27,48 +26,28 @@ const pushAdsense = () => {
   }
 }
 
-const render = () => {
-  void nextTick(() => {
-    setTimeout(() => {
-      if (window.adsenseLoaded) pushAdsense()
-      else window.addEventListener('adsense-loaded', pushAdsense)
-    }, 100)
-  })
+const render = async () => {
+  await nextTick()
+
+  renderTimer = setTimeout(() => {
+    if (window.adsenseLoaded) onPush()
+    else window.addEventListener('adsense-loaded', onPush)
+  }, 400)
 }
 
-const isUnfilled = () => {
-  const ins = insRef.value
-  if (!ins) return false
-  if (ins.dataset.adStatus === 'unfilled') return true
-
-  const iframe = ins.querySelector('iframe')
-  if (!iframe) return false
-
-  try {
-    const body = iframe.contentDocument?.body
-    if (!body) return false
-
-    return body.children.length === 0 && body.textContent?.trim() === ''
-  } catch {
-    return false
-  }
-}
-
-onMounted(() => {
-  if (prod) render()
+onMounted(async () => {
+  if (prod && !(!props.dataAdClient || !props.dataAdSlot)) await render()
 })
 
 onUnmounted(() => {
-  window.removeEventListener('adsense-loaded', pushAdsense)
+  if (renderTimer) clearTimeout(renderTimer)
+  window.removeEventListener('adsense-loaded', onPush)
 })
-
-defineExpose({ isUnfilled })
 </script>
 
 <template>
   <ins
-    ref="insRef"
-    class="adsbygoogle ins"
+    class="adsbygoogle"
     :data-ad-client="dataAdClient"
     :data-ad-slot="dataAdSlot"
     :data-ad-format="dataAdFormat"
@@ -78,19 +57,20 @@ defineExpose({ isUnfilled })
 </template>
 
 <style scoped>
-.ins {
+ins.adsbygoogle {
+  display: block;
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05);
   background-color: rgba(255, 255, 255, 0.05);
   position: relative;
   min-height: 50px;
 }
 
-.body--light .ins {
+.body--light ins.adsbygoogle {
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05);
   background-color: rgba(0, 0, 0, 0.05);
 }
 
-.ins::after {
+ins.adsbygoogle::after {
   content: 'AD';
   position: absolute;
   top: 50%;
@@ -101,7 +81,11 @@ defineExpose({ isUnfilled })
   opacity: 0.2;
 }
 
-.body--light .ins::after {
+ins.adsbygoogle[data-ad-status='unfilled'] {
+  display: none !important;
+}
+
+.body--light ins.adsbygoogle::after {
   color: #1a1a1a;
 }
 </style>

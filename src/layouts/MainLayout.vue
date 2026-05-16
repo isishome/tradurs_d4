@@ -35,12 +35,7 @@ locale.value = props.lang || 'ko'
 const tradurs: string =
   import.meta.env.VITE_APP_TRADURS + `/${props.lang || 'ko'}`
 const mainKey = ref<number>(0)
-const topAdRef = ref<InstanceType<typeof Adsense>>()
-const bottomAdRef = ref<InstanceType<typeof Adsense>>()
-const rightAdRef = ref<InstanceType<typeof Adsense>>()
-const topAdKey = ref<number>(0)
-const bottomAdKey = ref<number>(0)
-const rightAdKey = ref<number>(0)
+const reloadAdKey = computed(() => gs.reloadAdKey)
 const loading = computed(() => gs.loading)
 const filterLoading = computed(() => is.filter.loading)
 const searchName = computed(() => t('item.name'))
@@ -64,10 +59,6 @@ const newAwards = computed(
 )
 const isNarrow = computed(() => $q.screen.width <= 1100)
 const d4Filter = ref<InstanceType<typeof D4Filter>>()
-const showAd = ref(true)
-const showTopAd = ref(true)
-const showBottomAd = ref(true)
-const showRightAd = ref(true)
 
 const myTweak = (offset: number): void => {
   gs.offsetTop = offset ?? 0
@@ -175,70 +166,6 @@ const isMySpace = computed(() =>
 const expandedAdmin = ref<boolean>(false)
 const isAdmin = computed(() =>
   ['adminUser', 'adminItem', 'adminAffix'].includes(route.name as string)
-)
-
-// about screen size
-const size = computed(() =>
-  $q.screen.width < 468
-    ? 'width:320px;max-height:100px;'
-    : $q.screen.width < 728
-      ? 'width:468px;height:60px;'
-      : 'width:728px;height:90px;'
-)
-
-watch([size, () => $q.screen.gt.md], async ([new1, new2], [old1, old2]) => {
-  if (new1 !== old1 || new2 !== old2) {
-    showAd.value = false
-
-    await nextTick()
-
-    topAdKey.value++
-    bottomAdKey.value++
-    rightAdKey.value++
-    gs.topAccessTimeStamp = Date.now()
-    gs.bottomAccessTimeStamp = Date.now()
-    gs.rightAccessTimeStamp = Date.now()
-
-    showAd.value = true
-  }
-})
-
-watch(
-  () => gs.reloadAdKey,
-  async () => {
-    const now = Date.now()
-    const reloadTopAd =
-      topAdRef.value?.isUnfilled() || now - gs.topAccessTimeStamp > gs.timeLimit
-    const reloadBottomAd = now - gs.bottomAccessTimeStamp > gs.timeLimit
-    const reloadRightAd = now - gs.rightAccessTimeStamp > gs.timeLimit
-
-    if (!reloadTopAd && !reloadBottomAd && !reloadRightAd) return
-
-    if (reloadTopAd) showTopAd.value = false
-    if (reloadBottomAd) showBottomAd.value = false
-    if (reloadRightAd) showRightAd.value = false
-
-    await nextTick()
-
-    if (reloadTopAd) {
-      topAdKey.value++
-      gs.topAccessTimeStamp = now
-    }
-
-    if (reloadBottomAd) {
-      bottomAdKey.value++
-      gs.bottomAccessTimeStamp = now
-    }
-
-    if (reloadRightAd) {
-      rightAdKey.value++
-      gs.rightAccessTimeStamp = now
-    }
-
-    if (reloadTopAd) showTopAd.value = true
-    if (reloadBottomAd) showBottomAd.value = true
-    if (reloadRightAd) showRightAd.value = true
-  }
 )
 
 watch(
@@ -1269,12 +1196,12 @@ watch(
             <div class="view max-width">
               <div class="row justify-center top-ads">
                 <Adsense
-                  v-if="showAd && showTopAd"
-                  ref="topAdRef"
-                  :style="`display:inline-block;${size}`"
+                  class="ad-top"
+                  data-ad-client="ca-pub-5110777286519562"
                   data-ad-slot="6532261129"
+                  data-ad-format="horizontal"
                   :data-adtest="!prod"
-                  :key="`top-${topAdKey}`"
+                  :key="`top-${reloadAdKey}`"
                 />
               </div>
               <RouterView :filter="d4Filter" />
@@ -1282,19 +1209,13 @@ watch(
             <div class="q-py-xl"></div>
             <div v-if="$q.screen.width <= 1439" class="row justify-center">
               <Adsense
-                v-if="showAd && showBottomAd"
-                ref="bottomAdRef"
-                style="
-                  display: block;
-                  width: 100%;
-                  max-width: 100%;
-                  overflow: hidden;
-                "
+                class="ad-right"
+                data-ad-client="ca-pub-5110777286519562"
                 data-ad-slot="9284600281"
                 :data-adtest="!prod"
                 data-ad-format="auto"
                 data-full-width-responsive="true"
-                :key="`bottom-${bottomAdKey}`"
+                :key="`bottom-${reloadAdKey}`"
               />
             </div>
             <div class="q-py-md"></div>
@@ -1329,12 +1250,12 @@ watch(
             >
               <div :style="`position:sticky;top:${asideTop}`" class="column">
                 <Adsense
-                  ref="rightAdRef"
-                  v-if="showAd && showRightAd && $q.screen.width > 1439"
-                  style="display: inline-block; width: 160px; height: 600px"
+                  v-if="$q.screen.width > 1439"
+                  class="ad-right"
+                  data-ad-client="ca-pub-5110777286519562"
                   data-ad-slot="6574447551"
                   :data-adtest="!prod"
-                  :key="`right-${rightAdKey}`"
+                  :key="`right-${reloadAdKey}`"
                 />
                 <div class="q-mt-xl">
                   <UsefulLinks />
@@ -1544,5 +1465,32 @@ watch(
   height: 1px;
   margin: -1px;
   overflow: hidden;
+}
+
+.ad-top {
+  display: block;
+  width: 100%;
+  max-width: 728px;
+  height: 90px;
+}
+
+@media (max-width: 600px) {
+  .ad-top {
+    height: auto;
+    min-height: 50px;
+    max-height: 100px;
+    overflow: hidden;
+  }
+}
+
+.ad-bottom {
+  display: block;
+  width: 100%;
+}
+
+.ad-right {
+  display: inline-block;
+  width: 160px;
+  height: 600px;
 }
 </style>
