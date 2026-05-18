@@ -1477,7 +1477,7 @@ watch(
 @media (max-width: 600px) {
   .ad-top {
     min-height: 50px;
-    height: 100px;
+    height: 50px;
     overflow: hidden;
   }
 }
