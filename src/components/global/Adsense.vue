@@ -85,7 +85,7 @@ ins.adsbygoogle::after {
 
 ins.adsbygoogle[data-ad-status='unfilled'] {
   height: 0 !important;
-  max-height: 0 !important;
+  min-height: 0 !important;
   box-shadow: none !important;
   overflow: hidden;
 }
