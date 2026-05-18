@@ -28,8 +28,10 @@ const onPush = () => {
 const render = async () => {
   await nextTick()
 
-  if (window.adsenseLoaded) onPush()
-  else window.addEventListener('adsense-loaded', onPush)
+  window.setTimeout(() => {
+    if (window.adsenseLoaded) onPush()
+    else window.addEventListener('adsense-loaded', onPush, { once: true })
+  }, 100)
 }
 
 onMounted(async () => {
@@ -59,7 +61,6 @@ ins.adsbygoogle {
   background-color: rgba(255, 255, 255, 0.05);
   position: relative;
   min-height: 50px;
-  transition: height 0.3s ease-in-out;
 
   &[data-ad-status='filled'] {
     box-shadow: none;
@@ -84,10 +85,7 @@ ins.adsbygoogle::after {
 }
 
 ins.adsbygoogle[data-ad-status='unfilled'] {
-  height: 0 !important;
-  min-height: 0 !important;
-  box-shadow: none !important;
-  overflow: hidden;
+  opacity: 0.35;
 }
 
 .body--light ins.adsbygoogle::after {

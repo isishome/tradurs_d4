@@ -1,4 +1,6 @@
 User-agent: *
+Allow: /ads.txt
+Allow: /sitemap.xml
 Disallow: /messages/
 Disallow: /blocks/
 Disallow: /history/
