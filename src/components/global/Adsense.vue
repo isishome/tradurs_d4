@@ -59,7 +59,7 @@ ins.adsbygoogle {
   background-color: rgba(255, 255, 255, 0.05);
   position: relative;
   min-height: 50px;
-  transition: height 0.3s ease-out;
+  transition: height 0.3s ease-in-out;
 
   &[data-ad-status='filled'] {
     box-shadow: none;
