@@ -228,10 +228,7 @@ const updateTypeValue1 = (val: string) => {
             : val === 'summoning'
               ? (summonings[0].value as string)
               : ''
-  _quality.value =
-    ['gem'].includes(_typeValue1.value) && findGem(_typeValue2.value)
-      ? 'normal'
-      : _quality.value
+
   updateTypeValue2(_typeValue2.value)
 }
 
