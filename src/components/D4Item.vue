@@ -60,6 +60,7 @@ const {
   findEquipClass,
   filterFixedItems,
   findSummoning,
+  findGem,
   runeTypes,
   aspectCategories,
   gems,
@@ -227,9 +228,10 @@ const updateTypeValue1 = (val: string) => {
             : val === 'summoning'
               ? (summonings[0].value as string)
               : ''
-  _quality.value = ['gem'].includes(_typeValue1.value)
-    ? 'normal'
-    : _quality.value
+  _quality.value =
+    ['gem'].includes(_typeValue1.value) && findGem(_typeValue2.value)
+      ? 'normal'
+      : _quality.value
   updateTypeValue2(_typeValue2.value)
 }
 
@@ -241,10 +243,12 @@ const updateTypeValue2 = (val: string) => {
       : undefined
 
   const selectedSummoning = findSummoning(val)
+  const selectedGem = findGem(val)
 
   _quality.value =
     selectedRune?.quality ??
     selectedSummoning?.quality ??
+    selectedGem?.itemQuality ??
     (['aspect'].includes(_type.value)
       ? 'legendary'
       : !qualifiable.value

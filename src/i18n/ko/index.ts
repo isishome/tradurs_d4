@@ -436,46 +436,71 @@ export default {
   },
   notice: {
     title: '업데이트 안내',
-    top: '안녕하세요, 트레이더스입니다.\nDiablo 4 Season of Reckoning / Lord of Hatred 데이터 반영 업데이트를 안내드립니다.',
+    top: '안녕하세요, 트레이더스입니다.\nDiablo 4 최신 데이터 반영 업데이트를 안내드립니다.',
     contents: [
-      { type: 'head', value: '◆ 신규 아이템 데이터 추가' },
+      { type: 'head', value: '◆ 호라드림 보석 품질 추가' },
       {
         type: 'list',
         value:
-          '신규 고유 아이템 112종, 신화 아이템 3종, 세트 부적 209개와 세트 그룹 44종이 추가되었습니다.',
+          '호라드림, 온전한 호라드림 보석 품질이 추가되었습니다.',
         class: 'text-body1'
       },
       {
         type: 'list',
         value:
-          '신규 아이템의 이름, 장비 부위, 고유 효과, 신화 효과, 세트 효과 정보가 함께 반영되었습니다.',
+          '보석 품질에 마법/희귀 등급 정보가 반영되어 아이템 표시와 검색 정확도가 개선되었습니다.',
         class: 'text-body1'
       },
-      { type: 'head', value: '◆ 보스 소굴 열쇠 추가' },
+      { type: 'head', value: '◆ 신규 속성 데이터 추가' },
       {
         type: 'list',
         value:
-          '소굴 열쇠, 상급 소굴 열쇠, 거짓 예언자의 핵심 등 시즌 13 보스 비축고 개봉 재료가 추가되었습니다.',
-        class: 'text-body1'
-      },
-      {
-        type: 'list',
-        value:
-          '바르샨, 그리구아르, 얼음속의 야수, 지르, 우리바르, 두리엘, 안다리엘, 증오의 전령, 벨리알, 메피스토의 필요 재료 정보가 갱신되었습니다.',
-        class: 'text-body1'
-      },
-      { type: 'head', value: '◆ 거래 데이터 개선' },
-      {
-        type: 'list',
-        value:
-          '신규 아이템을 더 정확하게 표시하고 검색할 수 있도록 거래 데이터 구조가 개선되었습니다.',
+          '부적 칸, 행운의 적중 냉기 피해, 암흑 저항, 먼지 돌풍 기술 속성이 추가되었습니다.',
         class: 'text-body1'
       },
       {
         type: 'list',
         value:
-          '최대 생명력 증가 옵션과 호라드림 문장, 부적 아이템 분류가 추가되었습니다.',
+          '금화 획득 확률 속성 표기가 최신 데이터에 맞게 갱신되었습니다.',
         class: 'text-body1'
+      },
+      { type: 'head', value: '◆ 위상 데이터 갱신' },
+      {
+        type: 'list',
+        value:
+          '해일 위상 정보가 갱신되었고, 완파의 위상이 새로 추가되었습니다.',
+        class: 'text-body1'
+      },
+      {
+        type: 'list',
+        value:
+          '위상 분류와 적용 장비 정보가 최신 데이터에 맞게 정리되었습니다.',
+        class: 'text-body1'
+      },
+      { type: 'head', value: '◆ 중요 안내', class: 'text-warning' },
+      {
+        type: 'list',
+        value:
+          '아이템명이나 설명에 배틀태그를 직접 적어 연락을 유도하는 행위는 제재 대상이 될 수 있습니다.',
+        class: 'text-body1 text-warning'
+      },
+      {
+        type: 'list',
+        value:
+          '배틀태그는 거래 요청과 수락이 모두 완료된 뒤 거래 당사자에게만 공개됩니다.',
+        class: 'text-body1'
+      },
+      {
+        type: 'list',
+        value:
+          '안전한 거래를 위해 아이템명, 설명 등 공개 영역에는 배틀태그를 작성하지 말아 주세요.',
+        class: 'text-body1'
+      },
+      {
+        type: 'list',
+        value:
+          '현금 거래를 시도하거나 유도하는 경우에는 즉시 계정 제재가 적용됩니다.',
+        class: 'text-body1 text-warning'
       },
       { type: 'space' },
       { type: 'space' }

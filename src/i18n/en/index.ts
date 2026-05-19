@@ -442,46 +442,71 @@ export default {
   },
   notice: {
     title: 'Update Notice',
-    top: 'Hello, this is Tradurs.\nThis update reflects Diablo 4 Season of Reckoning / Lord of Hatred data.',
+    top: 'Hello, this is Tradurs.\nThis update reflects the latest Diablo 4 data.',
     contents: [
-      { type: 'head', value: '◆ New Item Data' },
+      { type: 'head', value: '◆ Horadric Gem Qualities' },
       {
         type: 'list',
         value:
-          'Added 112 new Unique items, 3 Mythic items, 209 Set Charms, and 44 Set groups.',
+          'Added Horadric and Flawless Horadric gem qualities.',
         class: 'text-body1'
       },
       {
         type: 'list',
         value:
-          'New item names, equipment slots, Unique effects, Mythic effects, and Set bonuses have been reflected.',
+          'Gem qualities now include Magic/Rare quality data for more accurate item display and search.',
         class: 'text-body1'
       },
-      { type: 'head', value: '◆ Boss Lair Keys' },
+      { type: 'head', value: '◆ New Affix Data' },
       {
         type: 'list',
         value:
-          'Added Season 13 boss hoard materials including Lair Key, Greater Lair Key, and Crux of the False Prophet.',
-        class: 'text-body1'
-      },
-      {
-        type: 'list',
-        value:
-          'Updated required materials for Varshan, Grigoire, The Beast in the Ice, Zir, Urivar, Duriel, Andariel, Harbinger of Hatred, Belial, and Mephisto.',
-        class: 'text-body1'
-      },
-      { type: 'head', value: '◆ Trade Data Improvements' },
-      {
-        type: 'list',
-        value:
-          'Trade data has been improved so the new items can be displayed and searched more accurately.',
+          'Added Charm Slots, Lucky Hit Cold Damage, Shadow Resistance, and Dust Devil Skills affixes.',
         class: 'text-body1'
       },
       {
         type: 'list',
         value:
-          'Added the Maximum Life percentage option, Horadric Seal data, and Charm item classifications.',
+          'Updated the Gold Find affix text to match the latest data.',
         class: 'text-body1'
+      },
+      { type: 'head', value: '◆ Aspect Data Updates' },
+      {
+        type: 'list',
+        value:
+          'Updated Tidal Aspect and added Aspect of Walloping.',
+        class: 'text-body1'
+      },
+      {
+        type: 'list',
+        value:
+          'Aspect categories and eligible equipment data have been aligned with the latest data.',
+        class: 'text-body1'
+      },
+      { type: 'head', value: '◆ Important Notice', class: 'text-warning' },
+      {
+        type: 'list',
+        value:
+          'Adding a BattleTag to an item name or description to encourage direct contact may result in account restrictions.',
+        class: 'text-body1 text-warning'
+      },
+      {
+        type: 'list',
+        value:
+          'BattleTags are shown only to the trade participants after both the trade request and acceptance are complete.',
+        class: 'text-body1'
+      },
+      {
+        type: 'list',
+        value:
+          'For safer trading, please do not enter BattleTags in public fields such as item names or descriptions.',
+        class: 'text-body1'
+      },
+      {
+        type: 'list',
+        value:
+          'Attempting or encouraging real-money trading will result in immediate account restrictions.',
+        class: 'text-body1 text-warning'
       },
       { type: 'space' },
       { type: 'space' }

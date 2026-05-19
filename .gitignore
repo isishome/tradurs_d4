@@ -49,5 +49,5 @@ cypress.env.json
 .env.*
 
 # codex
-research.md
+AGENTS.md
 plan.md

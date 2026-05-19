@@ -46,6 +46,7 @@ export interface Gem extends ILabel {
   quality: string
   qualityName: string
   level: number | null
+  itemQuality: string
 }
 
 export interface Elixir extends ILabel {
@@ -545,6 +546,10 @@ export const useItemStore = defineStore('item', {
     findSetGroup: (state) => {
       return (groupId: number): SetGroup | undefined =>
         state.setGroups.data.find((sg) => sg.value === groupId)
+    },
+    findGem: (state) => {
+      return (gemTypeValue2: string): Gem | undefined =>
+        state.gems.find((g) => g.value === gemTypeValue2)
     },
     needExpand: (state) => {
       return !(
