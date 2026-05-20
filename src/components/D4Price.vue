@@ -74,6 +74,13 @@ const currencyValueName = computed(() =>
           ? store.findGem(_price.currencyValue as string)?.label
           : ''
 )
+const runeLabel = computed(() => {
+  const rune = store.findRune(_price.currencyValue as string)
+
+  return rune
+    ? `${rune.label} ${findType('rune')?.label}`
+    : `${t('item.rune')} ${t('searchOrSelect')}`
+})
 
 if (!props.offer)
   currencies.unshift({ value: 'offer', label: t('price.getOffer') })
@@ -179,6 +186,7 @@ watch(
       <div v-show="_price.currency === 'rune'" style="max-width: 120px">
         <q-select
           ref="runeRef"
+          class="price-rune-select"
           v-model="_price.currencyValue"
           :disable="disable || fixed"
           outlined
@@ -192,17 +200,15 @@ watch(
           transition-show="none"
           transition-hide="none"
           :transition-duration="0"
+          :label="runeLabel"
+          display-value=""
+          hide-selected
           :options="runes(undefined, needle)"
           dropdown-icon="img:/images/icons/dropdown.svg"
           @update:model-value="update"
           @input.stop="filterRunes"
           @blur="() => (needle = undefined)"
         >
-          <template #selected-item="scope">
-            <div class="ellipsis">
-              {{ scope.opt.label }} {{ findType('rune')?.label }}
-            </div>
-          </template>
           <template #option="scope">
             <q-item v-bind="scope.itemProps">
               <q-item-section avatar>
@@ -440,5 +446,17 @@ watch(
   transform: translate(-20px, 14px) rotate(45deg);
   z-index: -1;
   background-color: var(--q-negative);
+}
+
+.price-rune-select :deep(.q-field__control),
+.price-rune-select :deep(.q-field__marginal) {
+  height: 40px;
+  min-height: 40px;
+}
+
+.price-rune-select :deep(.q-field__native) {
+  min-height: 40px;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 </style>
