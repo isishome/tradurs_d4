@@ -441,48 +441,9 @@ export default {
     close: 'Do not open for 24 hours'
   },
   notice: {
-    title: 'Update Notice',
-    top: 'Hello, this is Tradurs.\nThis update reflects the latest Diablo 4 data.',
+    title: 'Update and Important Notice',
+    top: 'Hello, this is Tradurs.\nPlease review the safe trading notice and the latest Diablo 4 data updates.',
     contents: [
-      { type: 'head', value: '◆ Horadric Gem Qualities' },
-      {
-        type: 'list',
-        value:
-          'Added Horadric and Flawless Horadric gem qualities.',
-        class: 'text-body1'
-      },
-      {
-        type: 'list',
-        value:
-          'Gem qualities now include Magic/Rare quality data for more accurate item display and search.',
-        class: 'text-body1'
-      },
-      { type: 'head', value: '◆ New Affix Data' },
-      {
-        type: 'list',
-        value:
-          'Added Charm Slots, Lucky Hit Cold Damage, Shadow Resistance, and Dust Devil Skills affixes.',
-        class: 'text-body1'
-      },
-      {
-        type: 'list',
-        value:
-          'Updated the Gold Find affix text to match the latest data.',
-        class: 'text-body1'
-      },
-      { type: 'head', value: '◆ Aspect Data Updates' },
-      {
-        type: 'list',
-        value:
-          'Updated Tidal Aspect and added Aspect of Walloping.',
-        class: 'text-body1'
-      },
-      {
-        type: 'list',
-        value:
-          'Aspect categories and eligible equipment data have been aligned with the latest data.',
-        class: 'text-body1'
-      },
       { type: 'head', value: '◆ Important Notice', class: 'text-warning' },
       {
         type: 'list',
@@ -507,6 +468,31 @@ export default {
         value:
           'Attempting or encouraging real-money trading will result in immediate account restrictions.',
         class: 'text-body1 text-warning'
+      },
+      { type: 'head', value: '◆ Today\'s Data Updates' },
+      {
+        type: 'list',
+        value:
+          'Added Fury Regeneration and Overpower Critical Damage affixes.',
+        class: 'text-body1'
+      },
+      {
+        type: 'list',
+        value:
+          'Updated Ancient Skills and All Damage Multiplier affix search data to match the latest data.',
+        class: 'text-body1'
+      },
+      {
+        type: 'list',
+        value:
+          'Applied Horadric gem qualities and gem trade currency classification updates.',
+        class: 'text-body1'
+      },
+      {
+        type: 'list',
+        value:
+          'Awards aggregation now uses only data from Monday through Sunday of the previous week.',
+        class: 'text-body1'
       },
       { type: 'space' },
       { type: 'space' }

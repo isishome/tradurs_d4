@@ -42,17 +42,24 @@ const _priceError = ref<boolean>(false)
 const findType = store.findType
 const runes = store.filterRunesByType
 const currencies = store.currencies()
+const gems = store.gems
 const summonings = store.summonings
+const currencyOptionImg = (currency: string) =>
+  currency === 'gem'
+    ? `/images/items/inventory/gem/${gems?.[0]?.value ?? 'royal_diamond'}.webp`
+    : `/images/items/currencies/${currency}.webp`
 const currencyValueImg = computed(() =>
   _price.currency === 'rune'
     ? `/images/items/rune/${
         store.findRune(_price.currencyValue as string)?.type
       }/${_price.currencyValue}.webp`
     : _price.currency === 'gold'
-    ? '/images/items/currencies/gold.webp'
-    : _price.currency === 'summoning'
-    ? `/images/items/consumables/summoning/${_price.currencyValue}.webp`
-    : ''
+      ? '/images/items/currencies/gold.webp'
+      : _price.currency === 'summoning'
+        ? `/images/items/consumables/summoning/${_price.currencyValue}.webp`
+        : _price.currency === 'gem'
+          ? `/images/items/inventory/gem/${_price.currencyValue}.webp`
+          : ''
 )
 const currencyValueName = computed(() =>
   _price.currency === 'rune'
@@ -60,10 +67,12 @@ const currencyValueName = computed(() =>
         currencies.find((c) => c.value === _price.currency)?.label
       }`
     : _price.currency === 'gold'
-    ? currencies.find((c) => c.value === _price.currency)?.label
-    : _price.currency === 'summoning'
-    ? store.summonings.find((s) => s.value === _price.currencyValue)?.label
-    : ''
+      ? currencies.find((c) => c.value === _price.currency)?.label
+      : _price.currency === 'summoning'
+        ? store.summonings.find((s) => s.value === _price.currencyValue)?.label
+        : _price.currency === 'gem'
+          ? store.findGem(_price.currencyValue as string)?.label
+          : ''
 )
 
 if (!props.offer)
@@ -78,7 +87,7 @@ const update = (): void => {
         _price.currencyValue =
           Math.floor(Number(_price.currencyValue as number) / 100000) * 100000
       else _priceError.value = true
-    } else runeRef.value?.blur()
+    } else if (_price.currency === 'rune') runeRef.value?.blur()
 
     emit('update', _price)
   })
@@ -90,8 +99,10 @@ const updateCurrency = (val: string | null): void => {
     val === 'rune'
       ? store.runes?.[0].value
       : val === 'summoning'
-      ? summonings?.[0]?.value
-      : null
+        ? summonings?.[0]?.value
+        : val === 'gem'
+          ? gems?.[0]?.value
+          : null
   _price.quantity = 1
   update()
 }
@@ -152,7 +163,7 @@ watch(
             <q-item v-bind="scope.itemProps">
               <q-item-section avatar>
                 <img
-                  :src="`/images/items/currencies/${scope.opt.value}.webp`"
+                  :src="currencyOptionImg(scope.opt.value)"
                   width="24"
                   height="24"
                   alt="Tradurs Gold Icon"
@@ -240,12 +251,24 @@ watch(
           @focus="focus"
           @blur="_priceError = false"
           input-class="text-right"
-          :label="$n(Number.parseFloat(_price.currencyValue && Number.isInteger(parseInt(_price.currencyValue as string)) ? _price.currencyValue.toString() : '0'), 'decimal', { notation: 'compact' })"
+          :label="
+            $n(
+              Number.parseFloat(
+                _price.currencyValue &&
+                  Number.isInteger(parseInt(_price.currencyValue as string))
+                  ? _price.currencyValue.toString()
+                  : '0'
+              ),
+              'decimal',
+              { notation: 'compact' }
+            )
+          "
           :rules="[
-            (val) =>
-              (Number.isInteger(parseInt(val)) &&
-                parseInt(val) > 0 &&
-                parseInt(val) % 100000 === 0) ||
+            (val: string | number | null) =>
+              (!!val &&
+                Number.isInteger(parseInt(`${val}`)) &&
+                parseInt(`${val}`) > 0 &&
+                parseInt(`${val}`) % 100000 === 0) ||
               ''
           ]"
         >
@@ -304,6 +327,45 @@ watch(
           </template>
         </q-select>
       </div>
+      <div v-else-if="_price.currency === 'gem'" class="col-xs-3">
+        <q-select
+          v-model="_price.currencyValue"
+          :disable="disable || fixed"
+          outlined
+          dense
+          no-error-icon
+          hide-bottom-space
+          emit-value
+          map-options
+          transition-show="none"
+          transition-hide="none"
+          :transition-duration="0"
+          :label="t('item.selectGem')"
+          dropdown-icon="img:/images/icons/dropdown.svg"
+          :options="gems"
+          popup-content-class="scroll bordered limit-select"
+          options-dense
+          @update:model-value="update"
+        >
+          <template #selected-item="scope">
+            <div class="ellipsis">{{ scope.opt.label }}</div>
+          </template>
+          <template #option="scope">
+            <q-item clickable v-bind="scope.itemProps">
+              <q-item-section avatar>
+                <img
+                  height="36"
+                  :src="`/images/items/inventory/gem/${scope.opt.value}.webp`"
+                  alt="Tradurs Gem Images"
+                />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ scope.opt.label }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </template>
+        </q-select>
+      </div>
       <D4Counter
         v-if="!['offer', 'gold'].includes(_price.currency)"
         v-model="_price.quantity"
@@ -329,11 +391,6 @@ watch(
         <div>{{ t('offer.title') }}</div>
       </div>
       <div v-else class="row items-center q-gutter-xs relative-position">
-        <!-- <template v-if="_price.currency === 'rune'">
-          <img :src="(runes().find(r => r.value === _price.currencyValue) || {}).img" width="24" height="24"
-            alt="Tradurs Rune Image" />
-          <div class="q-ml-xs">{{ (runes().find(r => r.value === _price.currencyValue) || {}).label }}</div>
-        </template> -->
         <template v-if="['gold'].includes(data.currency)">
           <img
             :src="currencyValueImg"

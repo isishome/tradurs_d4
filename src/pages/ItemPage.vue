@@ -270,14 +270,16 @@ const parseOfferPrice = (priceStr?: string) => {
     price.currency === 'gold'
       ? t('item.gold')
       : price.currency === 'summoning'
-      ? is.summonings.find((s) => s.value === price.currencyValue)?.label
-      : ''
+        ? is.summonings.find((s) => s.value === price.currencyValue)?.label
+        : price.currency === 'gem'
+          ? is.gems.find((g) => g.value === price.currencyValue)?.label
+          : ''
   const currencyValue =
     price.currency === 'gold'
       ? ` : ${n(Number.parseFloat(price.currencyValue as string), 'decimal')}`
-      : price.currency === 'summoning'
-      ? ` x ${price.quantity}`
-      : ''
+      : ['summoning', 'gem'].includes(price.currency ?? '')
+        ? ` x ${price.quantity}`
+        : ''
 
   return { currencyName, currencyValue }
 }

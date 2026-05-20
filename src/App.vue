@@ -137,7 +137,7 @@ const notice = reactive<{ open: boolean; close: boolean }>({
 })
 
 const close = () => {
-  $q.cookies.set('d4.update.20260519', 'confirm', { expires: 7, path: '/' })
+  $q.cookies.set('d4.update.20260520', 'confirm', { expires: 7, path: '/' })
   notice.open = false
 }
 
@@ -171,7 +171,7 @@ onMounted(() => {
   document.documentElement.setAttribute('lang', locale.value as string)
   view.value = true
   showBT.value = !!as.signed && !(as.info.battleTag && as.info.battleTag !== '')
-  notice.open = !$q.cookies.has('d4.update.20260519')
+  notice.open = !$q.cookies.has('d4.update.20260520')
   checkAd()
 })
 </script>

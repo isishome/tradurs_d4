@@ -48,6 +48,6 @@ cypress.env.json
 # env
 .env.*
 
-# codex
-AGENTS.md
-plan.md
+# root markdown docs
+/*.md
+!/README.md

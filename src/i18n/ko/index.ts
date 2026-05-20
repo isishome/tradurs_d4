@@ -435,48 +435,9 @@ export default {
     close: '24시간 동안 열지 않기'
   },
   notice: {
-    title: '업데이트 안내',
-    top: '안녕하세요, 트레이더스입니다.\nDiablo 4 최신 데이터 반영 업데이트를 안내드립니다.',
+    title: '업데이트 및 중요 안내',
+    top: '안녕하세요, 트레이더스입니다.\n안전한 거래 이용 안내와 Diablo 4 데이터 반영 내용을 안내드립니다.',
     contents: [
-      { type: 'head', value: '◆ 호라드림 보석 품질 추가' },
-      {
-        type: 'list',
-        value:
-          '호라드림, 온전한 호라드림 보석 품질이 추가되었습니다.',
-        class: 'text-body1'
-      },
-      {
-        type: 'list',
-        value:
-          '보석 품질에 마법/희귀 등급 정보가 반영되어 아이템 표시와 검색 정확도가 개선되었습니다.',
-        class: 'text-body1'
-      },
-      { type: 'head', value: '◆ 신규 속성 데이터 추가' },
-      {
-        type: 'list',
-        value:
-          '부적 칸, 행운의 적중 냉기 피해, 암흑 저항, 먼지 돌풍 기술 속성이 추가되었습니다.',
-        class: 'text-body1'
-      },
-      {
-        type: 'list',
-        value:
-          '금화 획득 확률 속성 표기가 최신 데이터에 맞게 갱신되었습니다.',
-        class: 'text-body1'
-      },
-      { type: 'head', value: '◆ 위상 데이터 갱신' },
-      {
-        type: 'list',
-        value:
-          '해일 위상 정보가 갱신되었고, 완파의 위상이 새로 추가되었습니다.',
-        class: 'text-body1'
-      },
-      {
-        type: 'list',
-        value:
-          '위상 분류와 적용 장비 정보가 최신 데이터에 맞게 정리되었습니다.',
-        class: 'text-body1'
-      },
       { type: 'head', value: '◆ 중요 안내', class: 'text-warning' },
       {
         type: 'list',
@@ -501,6 +462,31 @@ export default {
         value:
           '현금 거래를 시도하거나 유도하는 경우에는 즉시 계정 제재가 적용됩니다.',
         class: 'text-body1 text-warning'
+      },
+      { type: 'head', value: '◆ 오늘 데이터 반영' },
+      {
+        type: 'list',
+        value:
+          '신규 속성 분노 재생, 제압 극대화 피해가 추가되었습니다.',
+        class: 'text-body1'
+      },
+      {
+        type: 'list',
+        value:
+          '선조 기술, 모든 피해 계수 속성 검색 데이터가 최신 기준에 맞게 정리되었습니다.',
+        class: 'text-body1'
+      },
+      {
+        type: 'list',
+        value:
+          '호라드림 보석 품질과 보석 거래 재화 분류가 반영되었습니다.',
+        class: 'text-body1'
+      },
+      {
+        type: 'list',
+        value:
+          '어워즈 집계 기준이 지난주 월요일부터 일요일까지의 데이터만 반영하도록 정리되었습니다.',
+        class: 'text-body1'
       },
       { type: 'space' },
       { type: 'space' }
