@@ -10,11 +10,23 @@ export const numberFormats = {
   'ko': {
     decimal: {
       style: 'decimal'
+    },
+    goldCompact: {
+      style: 'decimal',
+      notation: 'compact',
+      compactDisplay: 'short',
+      maximumFractionDigits: 1
     }
   },
   'en': {
     decimal: {
       style: 'decimal'
+    },
+    goldCompact: {
+      style: 'decimal',
+      notation: 'compact',
+      compactDisplay: 'short',
+      maximumFractionDigits: 1
     }
   }
 }

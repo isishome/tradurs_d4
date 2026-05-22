@@ -265,8 +265,7 @@ watch(
                   ? _price.currencyValue.toString()
                   : '0'
               ),
-              'decimal',
-              { notation: 'compact' }
+              'goldCompact'
             )
           "
           :rules="[
@@ -409,7 +408,7 @@ watch(
               Number.parseFloat(
                 data.currencyValue ? data.currencyValue.toString() : '0'
               ),
-              'decimal'
+              'goldCompact'
             )
           }}
         </template>
@@ -425,7 +424,22 @@ watch(
         </template>
         <D4Tooltip padding="sm" :dark="dark">
           <div class="break-keep text-caption" style="max-width: 160px">
-            {{ currencyValueName }}
+            <div class="column no-wrap items-center">
+              <div>
+                {{ currencyValueName }}
+              </div>
+              <div v-if="data.currency === 'gold'">
+                {{
+                  $n(
+                    Number.parseFloat(
+                      data.currencyValue ? data.currencyValue.toString() : '0'
+                    ),
+                    'decimal'
+                  )
+                }}
+              </div>
+              <div v-else>x {{ data.quantity }}</div>
+            </div>
           </div>
         </D4Tooltip>
       </div>

@@ -18,6 +18,32 @@
 .body--dark .card-item {
   border-image-width: 20px !important;
   border-image: url('/images/frames/outer.webp') 20;
+  --card-surface: var(--q-dark-normal);
+}
+
+.body--dark .card-item.magic,
+.body--dark .card-item.consumables {
+  --card-surface: var(--q-dark-magic);
+}
+
+.body--dark .card-item.rare {
+  --card-surface: var(--q-dark-rare);
+}
+
+.body--dark .card-item.set {
+  --card-surface: var(--q-dark-set);
+}
+
+.body--dark .card-item.legendary {
+  --card-surface: var(--q-dark-legendary);
+}
+
+.body--dark .card-item.unique {
+  --card-surface: var(--q-dark-unique);
+}
+
+.body--dark .card-item.mythic {
+  --card-surface: var(--q-dark-mythic);
 }
 
 .body--light .card-item.magic {
@@ -171,6 +197,58 @@
   );
 }
 
+.body--dark .card-item .inner {
+  background:
+    radial-gradient(
+      ellipse at 60% -8%,
+      rgba(215, 112, 48, 0.144),
+      transparent 44%
+    ),
+    radial-gradient(
+      ellipse at 60% 38%,
+      rgba(255, 226, 175, 0.072),
+      transparent 32%
+    ),
+    radial-gradient(
+      ellipse at 16% 18%,
+      rgba(255, 223, 174, 0.044),
+      transparent 24%
+    ),
+    radial-gradient(
+      ellipse at 78% 32%,
+      rgba(255, 164, 91, 0.032),
+      transparent 28%
+    ),
+    radial-gradient(
+      ellipse at 18% 82%,
+      rgba(0, 0, 0, 0.336),
+      transparent 34%
+    ),
+    radial-gradient(
+      ellipse at 88% 88%,
+      rgba(0, 0, 0, 0.4),
+      transparent 38%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(255, 238, 200, 0.036) 0%,
+      transparent 20%,
+      rgba(0, 0, 0, 0.192) 66%,
+      rgba(0, 0, 0, 0.368) 100%
+    ),
+    linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.224) 0%,
+      transparent 16%,
+      transparent 84%,
+      rgba(0, 0, 0, 0.272) 100%
+    ),
+    linear-gradient(to bottom, var(--card-surface), var(--q-dark-page));
+  box-shadow:
+    inset 0 0 44px rgba(0, 0, 0, 0.224),
+    inset 0 -28px 54px rgba(0, 0, 0, 0.304);
+}
+
 .body--dark .inner::after {
   content: '';
   position: absolute;
@@ -184,6 +262,40 @@
   border-image-width: 30px;
   background-color: transparent !important;
   filter: brightness(0) saturate(100%);
+  z-index: 1;
+  pointer-events: none;
+  transform: translate(0, 0);
+}
+
+.body--dark .inner::before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 4px;
+  right: 4px;
+  border-style: solid;
+  border-color: inherit;
+  border-image: url('/images/frames/inner.webp') 40;
+  border-image-width: 30px;
+  background-color: transparent !important;
+  filter: brightness(0) saturate(100%);
+  opacity: 1;
+  z-index: 2;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    transparent 26%,
+    rgba(0, 0, 0, 0.72) 56%,
+    #000 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    transparent 26%,
+    rgba(0, 0, 0, 0.72) 56%,
+    #000 100%
+  );
   pointer-events: none;
   transform: translate(0, 0);
 }
