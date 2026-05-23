@@ -19,6 +19,21 @@
   border-image-width: 20px !important;
   border-image: url('/images/frames/outer.webp') 20;
   --card-surface: var(--q-dark-normal);
+  --card-glow-top: rgba(180, 188, 190, 0.056);
+  --card-glow-mid: rgba(230, 236, 238, 0.032);
+  --card-glow-soft: rgba(220, 226, 228, 0.02);
+  --card-glow-side: rgba(126, 112, 94, 0.024);
+  --card-soot-center: transparent;
+  --card-scorch-left: rgba(0, 0, 0, 0.336);
+  --card-scorch-right: rgba(0, 0, 0, 0.4);
+  --card-scorch-diagonal: rgba(0, 0, 0, 0.192);
+  --card-scorch-bottom: rgba(0, 0, 0, 0.368);
+  --card-burn-haze: transparent;
+  --card-burn-deep: transparent;
+  --card-edge-left: rgba(0, 0, 0, 0.224);
+  --card-edge-right: rgba(0, 0, 0, 0.272);
+  --card-inner-shadow: rgba(0, 0, 0, 0.224);
+  --card-lower-shadow: rgba(0, 0, 0, 0.304);
 }
 
 .body--dark .card-item.magic,
@@ -28,6 +43,21 @@
 
 .body--dark .card-item.rare {
   --card-surface: var(--q-dark-rare);
+  --card-glow-top: rgba(255, 205, 82, 0.052);
+  --card-glow-mid: rgba(255, 230, 154, 0.024);
+  --card-glow-soft: rgba(255, 247, 199, 0.012);
+  --card-glow-side: rgba(67, 38, 4, 0.18);
+  --card-soot-center: rgba(0, 0, 0, 0.32);
+  --card-scorch-left: rgba(0, 0, 0, 0.62);
+  --card-scorch-right: rgba(0, 0, 0, 0.72);
+  --card-scorch-diagonal: rgba(0, 0, 0, 0.42);
+  --card-scorch-bottom: rgba(0, 0, 0, 0.74);
+  --card-burn-haze: rgba(0, 0, 0, 0.22);
+  --card-burn-deep: rgba(0, 0, 0, 0.58);
+  --card-edge-left: rgba(0, 0, 0, 0.42);
+  --card-edge-right: rgba(0, 0, 0, 0.52);
+  --card-inner-shadow: rgba(0, 0, 0, 0.38);
+  --card-lower-shadow: rgba(0, 0, 0, 0.62);
 }
 
 .body--dark .card-item.set {
@@ -36,6 +66,21 @@
 
 .body--dark .card-item.legendary {
   --card-surface: var(--q-dark-legendary);
+  --card-glow-top: rgba(255, 126, 28, 0.052);
+  --card-glow-mid: rgba(255, 184, 82, 0.028);
+  --card-glow-soft: rgba(255, 235, 185, 0.012);
+  --card-glow-side: rgba(55, 11, 3, 0.2);
+  --card-soot-center: rgba(0, 0, 0, 0.28);
+  --card-scorch-left: rgba(0, 0, 0, 0.64);
+  --card-scorch-right: rgba(0, 0, 0, 0.76);
+  --card-scorch-diagonal: rgba(0, 0, 0, 0.46);
+  --card-scorch-bottom: rgba(0, 0, 0, 0.78);
+  --card-burn-haze: rgba(0, 0, 0, 0.24);
+  --card-burn-deep: rgba(0, 0, 0, 0.62);
+  --card-edge-left: rgba(0, 0, 0, 0.44);
+  --card-edge-right: rgba(0, 0, 0, 0.56);
+  --card-inner-shadow: rgba(0, 0, 0, 0.4);
+  --card-lower-shadow: rgba(0, 0, 0, 0.66);
 }
 
 .body--dark .card-item.unique {
@@ -198,55 +243,68 @@
 }
 
 .body--dark .card-item .inner {
+  background-blend-mode: normal;
   background:
     radial-gradient(
       ellipse at 60% -8%,
-      rgba(215, 112, 48, 0.144),
+      var(--card-glow-top),
       transparent 44%
     ),
     radial-gradient(
-      ellipse at 60% 38%,
-      rgba(255, 226, 175, 0.072),
+      ellipse at 60% 32%,
+      var(--card-glow-mid),
       transparent 32%
     ),
     radial-gradient(
-      ellipse at 16% 18%,
-      rgba(255, 223, 174, 0.044),
+      ellipse at 16% 14%,
+      var(--card-glow-soft),
       transparent 24%
     ),
     radial-gradient(
-      ellipse at 78% 32%,
-      rgba(255, 164, 91, 0.032),
+      ellipse at 78% 26%,
+      var(--card-glow-side),
       transparent 28%
     ),
     radial-gradient(
-      ellipse at 18% 82%,
-      rgba(0, 0, 0, 0.336),
+      ellipse at 52% 40%,
+      var(--card-soot-center),
+      transparent 48%
+    ),
+    radial-gradient(
+      ellipse at 18% 72%,
+      var(--card-scorch-left),
       transparent 34%
     ),
     radial-gradient(
-      ellipse at 88% 88%,
-      rgba(0, 0, 0, 0.4),
+      ellipse at 88% 78%,
+      var(--card-scorch-right),
       transparent 38%
     ),
     linear-gradient(
       145deg,
       rgba(255, 238, 200, 0.036) 0%,
       transparent 20%,
-      rgba(0, 0, 0, 0.192) 66%,
-      rgba(0, 0, 0, 0.368) 100%
+      var(--card-scorch-diagonal) 66%,
+      var(--card-scorch-bottom) 100%
     ),
     linear-gradient(
       90deg,
-      rgba(0, 0, 0, 0.224) 0%,
+      var(--card-edge-left) 0%,
       transparent 16%,
       transparent 84%,
-      rgba(0, 0, 0, 0.272) 100%
+      var(--card-edge-right) 100%
+    ),
+    linear-gradient(
+      to bottom,
+      transparent 0%,
+      transparent 26%,
+      var(--card-burn-haze) 52%,
+      var(--card-burn-deep) 100%
     ),
     linear-gradient(to bottom, var(--card-surface), var(--q-dark-page));
   box-shadow:
-    inset 0 0 44px rgba(0, 0, 0, 0.224),
-    inset 0 -28px 54px rgba(0, 0, 0, 0.304);
+    inset 0 0 44px var(--card-inner-shadow),
+    inset 0 -28px 54px var(--card-lower-shadow);
 }
 
 .body--dark .inner::after {
@@ -285,15 +343,17 @@
   mask-image: linear-gradient(
     to bottom,
     transparent 0%,
-    transparent 26%,
-    rgba(0, 0, 0, 0.72) 56%,
+    transparent 20%,
+    rgba(0, 0, 0, 0.58) 44%,
+    rgba(0, 0, 0, 0.92) 72%,
     #000 100%
   );
   -webkit-mask-image: linear-gradient(
     to bottom,
     transparent 0%,
-    transparent 26%,
-    rgba(0, 0, 0, 0.72) 56%,
+    transparent 20%,
+    rgba(0, 0, 0, 0.58) 44%,
+    rgba(0, 0, 0, 0.92) 72%,
     #000 100%
   );
   pointer-events: none;
