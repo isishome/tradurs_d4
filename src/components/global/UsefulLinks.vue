@@ -14,6 +14,11 @@ const links = [
     color: 'red-6'
   },
   {
+    href: 'https://deckard.tradurs.com',
+    label: 'Deckard | Diablo® II Tradurs',
+    color: 'orange-6'
+  },
+  {
     href: 'https://mobalytics.gg/diablo-4',
     label: 'Mobalytics Diablo IV'
   },
