@@ -48,10 +48,8 @@ cypress.env.json
 # env
 .env.*
 
-# tools
-/tools/*
-!/tools/dev/
-!/tools/dev/**
+# Local tools
+/tools/
 
 # root markdown docs
 /*.md
