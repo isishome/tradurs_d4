@@ -50,13 +50,7 @@ const asideHeight = computed<string>(
   () => `calc(100vh - ${screen.value.gt.sm ? gs.offsetTop : 0}px)`
 )
 const asideTop = computed<string>(() => `${gs.offsetTop + 10}px`)
-const newAwards = computed(
-  () =>
-    (is.awards > 0 &&
-      new Date().getDay() === 1 &&
-      new Date().getHours() >= 9) ||
-    new Date().getDay() === 2
-)
+const newAwards = computed(() => is.awards > 0)
 const isNarrow = computed(() => $q.screen.width <= 1100)
 const d4Filter = ref<InstanceType<typeof D4Filter>>()
 

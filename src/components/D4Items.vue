@@ -82,6 +82,15 @@ const affix = computed(() => (itemTypeValue2: string) => ({
   affixGreater: false,
   affixValues: []
 }))
+const fixedItemFor = (item?: Item) =>
+  item?.fixedItemId
+    ? is
+        .filterFixedItems(item.quality, item.itemTypeValue1)
+        .find((fi) => fi.value === item.fixedItemId)
+    : undefined
+const isGuaranteedAffix = (item: Item | undefined, affix: Affix) =>
+  !!affix.affixId &&
+  !!fixedItemFor(item)?.guaranteedAffixes?.includes(affix.affixId)
 
 // about copy item
 const copy = (itemId: string) => {
@@ -995,6 +1004,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
               v-for="affix in rewardItem.affixes"
               :key="affix.valueId"
               :data="affix"
+              :guaranteed="isGuaranteedAffix(rewardItem, affix)"
             />
           </template>
           <template v-if="requestRestrictions > 0" #restrictions>
@@ -1148,6 +1158,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
               v-for="affix in item.affixes"
               :key="affix.valueId"
               :data="affix"
+              :guaranteed="isGuaranteedAffix(item, affix)"
             />
           </template>
           <template v-if="requestRestrictions > 0" #restrictions>
@@ -1444,9 +1455,13 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
             )"
             :key="affix.valueId || uid()"
             :data="affix"
+            :guaranteed="isGuaranteedAffix(activatedItem, affix)"
             editable
             :disable="disable"
-            :necessary="activatedItem.itemType === 'aspect'"
+            :necessary="
+              activatedItem.itemType === 'aspect' ||
+              isGuaranteedAffix(activatedItem, affix)
+            "
             @update="updateAffix"
             @remove="removeAffix"
           />

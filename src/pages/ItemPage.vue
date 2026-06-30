@@ -51,6 +51,7 @@ import { useAccountStore } from 'stores/account-store'
 
 import D4Items from 'components/D4Items.vue'
 import D4Filter from 'components/D4Filter.vue'
+import { formatGoldCompact } from 'src/utils/price'
 
 const props = defineProps<{
   itemid: string
@@ -60,7 +61,7 @@ const props = defineProps<{
 // init module
 const route = useRoute()
 const router = useRouter()
-const { t, n } = useI18n({ useScope: 'global' })
+const { t, locale } = useI18n({ useScope: 'global' })
 const $q = useQuasar()
 const is = useItemStore()
 const gs = useGlobalStore()
@@ -276,7 +277,7 @@ const parseOfferPrice = (priceStr?: string) => {
           : ''
   const currencyValue =
     price.currency === 'gold'
-      ? ` : ${n(Number.parseFloat(price.currencyValue as string), 'decimal')}`
+      ? ` : ${formatGoldCompact(price.currencyValue, locale.value)}`
       : ['summoning', 'gem'].includes(price.currency ?? '')
         ? ` x ${price.quantity}`
         : ''

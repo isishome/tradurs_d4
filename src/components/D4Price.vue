@@ -6,6 +6,13 @@ import { useI18n } from 'vue-i18n'
 import { useItemStore } from 'stores/item-store'
 import { Price } from 'src/types/item'
 import { focus } from 'src/common'
+import {
+  clampGoldPrice,
+  formatGold,
+  formatGoldCompact,
+  isValidGoldPrice,
+  normalizeGoldInput
+} from 'src/utils/price'
 
 interface IProps {
   data: Price
@@ -30,7 +37,7 @@ const emit = defineEmits(['update'])
 
 // common variable
 const $q = useQuasar()
-const { t } = useI18n({ useScope: 'global' })
+const { t, locale } = useI18n({ useScope: 'global' })
 const store = useItemStore()
 
 // variable
@@ -44,6 +51,20 @@ const runes = store.filterRunesByType
 const currencies = store.currencies()
 const gems = store.gems
 const summonings = store.summonings
+const isSelectableSummoning = (summoning: (typeof summonings)[number]) =>
+  summoning.tradeable !== false &&
+  summoning.tradeable !== 0 &&
+  summoning.visible !== false &&
+  summoning.visible !== 0 &&
+  summoning.deprecated !== true &&
+  summoning.deprecated !== 1
+const summoningOptions = computed(() => summonings.filter(isSelectableSummoning))
+const goldLabel = computed(() =>
+  formatGoldCompact(_price.currencyValue, locale.value)
+)
+const formatGoldPrice = (value: unknown) =>
+  formatGoldCompact(value, locale.value)
+const formatGoldFull = (value: unknown) => formatGold(value, locale.value)
 const currencyOptionImg = (currency: string) =>
   currency === 'gem'
     ? `/images/items/inventory/gem/${gems?.[0]?.value ?? 'royal_diamond'}.webp`
@@ -85,19 +106,47 @@ const runeLabel = computed(() => {
 if (!props.offer)
   currencies.unshift({ value: 'offer', label: t('price.getOffer') })
 
+const syncGoldInput = (value: string | number | null): void => {
+  _price.currencyValue = normalizeGoldInput(value)
+  _priceError.value = !_price.currencyValue
+    ? false
+    : !isValidGoldInput(_price.currencyValue)
+}
+
+const commitGoldPrice = (): boolean => {
+  const clamped = clampGoldPrice(_price.currencyValue)
+
+  _price.currencyValue = clamped
+  _priceError.value = !isValidGoldPrice(clamped)
+
+  return !_priceError.value
+}
+
+const isValidGoldInput = (value: string | number | null): boolean => {
+  return isValidGoldPrice(normalizeGoldInput(value))
+}
+
 const update = (): void => {
   nextTick(() => {
-    if (_price.currency === 'gold') {
-      _priceError.value = false
-
-      if (Number(_price.currencyValue as number) >= 100000)
-        _price.currencyValue =
-          Math.floor(Number(_price.currencyValue as number) / 100000) * 100000
-      else _priceError.value = true
-    } else if (_price.currency === 'rune') runeRef.value?.blur()
+    if (_price.currency === 'rune') runeRef.value?.blur()
 
     emit('update', _price)
   })
+}
+
+const onGoldBlur = () => {
+  if (_price.currency !== 'gold') return
+  if (!commitGoldPrice()) return
+
+  emit('update', _price)
+}
+
+const onGoldInput = (value: string | number | null): void => {
+  syncGoldInput(value)
+  if (!_price.currencyValue) return
+  if (!commitGoldPrice()) return
+
+  emit('update', _price)
 }
 
 const updateCurrency = (val: string | null): void => {
@@ -106,11 +155,17 @@ const updateCurrency = (val: string | null): void => {
     val === 'rune'
       ? store.runes?.[0].value
       : val === 'summoning'
-        ? summonings?.[0]?.value
+        ? summoningOptions.value?.[0]?.value
         : val === 'gem'
           ? gems?.[0]?.value
           : null
   _price.quantity = 1
+
+  if (val === 'gold') {
+    emit('update', _price)
+    return
+  }
+
   update()
 }
 
@@ -247,35 +302,18 @@ watch(
           no-error-icon
           hide-bottom-space
           outlined
-          v-model.number="_price.currencyValue"
-          maxlength="11"
-          reverse-fill-mask
-          unmasked-value
+          v-model="_price.currencyValue"
+          maxlength="12"
+          inputmode="numeric"
+          pattern="[0-9]*"
           debounce="500"
           :error="_priceError"
-          @update:model-value="update"
+          @update:model-value="onGoldInput"
           @focus="focus"
-          @blur="_priceError = false"
-          input-class="text-right"
-          :label="
-            $n(
-              Number.parseFloat(
-                _price.currencyValue &&
-                  Number.isInteger(parseInt(_price.currencyValue as string))
-                  ? _price.currencyValue.toString()
-                  : '0'
-              ),
-              'goldCompact'
-            )
-          "
-          :rules="[
-            (val: string | number | null) =>
-              (!!val &&
-                Number.isInteger(parseInt(`${val}`)) &&
-                parseInt(`${val}`) > 0 &&
-                parseInt(`${val}`) % 100000 === 0) ||
-              ''
-          ]"
+          @blur="onGoldBlur"
+          input-class="text-right price-gold-input"
+          :label="goldLabel"
+          :rules="[(val: string | number | null) => isValidGoldInput(val) || '']"
         >
           <q-tooltip
             v-model="_priceError"
@@ -308,7 +346,7 @@ watch(
           :transition-duration="0"
           :label="t('item.selectSummoning')"
           dropdown-icon="img:/images/icons/dropdown.svg"
-          :options="summonings"
+          :options="summoningOptions"
           popup-content-class="scroll bordered limit-select"
           options-dense
           @update:model-value="update"
@@ -403,14 +441,9 @@ watch(
             height="24"
             alt="Tradurs Price Icon"
           />
-          {{
-            $n(
-              Number.parseFloat(
-                data.currencyValue ? data.currencyValue.toString() : '0'
-              ),
-              'goldCompact'
-            )
-          }}
+          <span class="price-gold-text">
+            {{ formatGoldPrice(data.currencyValue) }}
+          </span>
         </template>
         <template v-else>
           <img
@@ -428,15 +461,8 @@ watch(
               <div>
                 {{ currencyValueName }}
               </div>
-              <div v-if="data.currency === 'gold'">
-                {{
-                  $n(
-                    Number.parseFloat(
-                      data.currencyValue ? data.currencyValue.toString() : '0'
-                    ),
-                    'decimal'
-                  )
-                }}
+              <div v-if="data.currency === 'gold'" class="price-gold-tooltip">
+                {{ formatGoldFull(data.currencyValue) }}
               </div>
               <div v-else>x {{ data.quantity }}</div>
             </div>
@@ -472,5 +498,22 @@ watch(
   min-height: 40px;
   padding-top: 0;
   padding-bottom: 0;
+}
+
+.price {
+  min-width: 0;
+}
+
+.price-gold-input {
+  font-variant-numeric: tabular-nums;
+}
+
+.price-gold-text,
+.price-gold-tooltip {
+  font-variant-numeric: tabular-nums;
+  max-width: min(180px, 42vw);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>

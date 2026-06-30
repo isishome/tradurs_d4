@@ -82,7 +82,7 @@ export default {
     message: 'Do you want to delete this preset?'
   },
   season: {
-    bg: '/images/season/013/season_emblem_en.webp',
+    bg: '/images/season/014/season_emblem_en.webp',
     first: {
       socket:
         'During Season of the Malignant, the more accurately you select the socket type in the accessory item affixes, the more often your items will be seen'
@@ -94,6 +94,13 @@ export default {
       eternity: 'Eternity'
     },
     color: 'text-primary'
+  },
+  season14: {
+    mythicConversion: {
+      title: 'Mythic Unique Conversion',
+      description:
+        'Mythic Unique conversion results are limited to the same equipment slot as the Unique item used as the material.'
+    }
   },
   noFilterdItems: 'No search results matched your criteria',
   noFilterdItemsDesc: 'Check out the item filters',
@@ -250,7 +257,7 @@ export default {
   item: {
     hardcore: 'Hardcore',
     softcore: 'Softcore',
-    ladder: 'Season of RECKONING',
+    ladder: 'Season of Death Awakening',
     seasonal: 'Seasonal',
     eternal: 'Eternal',
     quality: 'Item Quality',
@@ -275,14 +282,16 @@ export default {
     forDisplay: 'For Display',
     expanded: 'Always expand items',
     unknown: 'Unknown Item',
-    manualInput: 'Manual Input'
+    manualInput: 'Manual Input',
+    guaranteedAffix: 'Guaranteed'
   },
   price: {
     title: 'Price',
     currency: 'Currency',
     quantity: 'Quantity',
     getOffer: 'Get An Offer',
-    restrictGold: 'Must have a minimum sale/purchase price of 100,000 gold'
+    restrictGold:
+      'Gold price must be at least 100,000 and no more than 999,999,999,999.'
   },
   offer: {
     title: 'Get An Offer',
@@ -442,9 +451,9 @@ export default {
   },
   notice: {
     title: 'Update and Important Notice',
-    top: 'Hello, this is Tradurs.\nPlease review the safe trading notice and the latest Diablo 4 data updates.',
+    top: 'Hello, this is Tradurs.\nPlease review the safe trading notice and the latest update summary.',
     contents: [
-      { type: 'head', value: '◆ Important Notice', class: 'text-warning' },
+      { type: 'head', value: 'Important Notice', class: 'text-warning' },
       {
         type: 'list',
         value:
@@ -469,29 +478,35 @@ export default {
           'Attempting or encouraging real-money trading will result in immediate account restrictions.',
         class: 'text-body1 text-warning'
       },
-      { type: 'head', value: '◆ Today\'s Data Updates' },
+      { type: 'head', value: 'Update Highlights' },
       {
         type: 'list',
         value:
-          'Added Fury Regeneration and Overpower Critical Damage affixes.',
+          'Season 14 images and names were updated to Season of Death Awakening.',
         class: 'text-body1'
       },
       {
         type: 'list',
         value:
-          'Updated Ancient Skills and All Damage Multiplier affix search data to match the latest data.',
+          'Mythic Unique conversion guidance was added: results are limited to the same equipment slot as the material Unique item.',
         class: 'text-body1'
       },
       {
         type: 'list',
         value:
-          'Applied Horadric gem qualities and gem trade currency classification updates.',
+          'Gold price input and display were improved. Values can start from 100,000, up to 999,999,999,999, with 100,000-unit normalization and clearer short and full-number display.',
         class: 'text-body1'
       },
       {
         type: 'list',
         value:
-          'Awards aggregation now uses only data from Monday through Sunday of the previous week.',
+          'Gem currency and message display were improved.',
+        class: 'text-body1'
+      },
+      {
+        type: 'list',
+        value:
+          'Summoning material data was expanded to support tradeable status, visibility, deprecated entries, and replacement item links.',
         class: 'text-body1'
       },
       { type: 'space' },

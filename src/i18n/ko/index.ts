@@ -81,7 +81,7 @@ export default {
     message: '해당 프리셋을 삭제할까요?'
   },
   season: {
-    bg: '/images/season/013/season_emblem_ko.webp',
+    bg: '/images/season/014/season_emblem_ko.webp',
     first: {
       socket:
         '악의 종자 시즌에는 장신구 아이템 옵션의 홈 유형을 정확하게 선택할수록 아이템의 노출 빈도가 높아집니다'
@@ -93,6 +93,13 @@ export default {
       eternity: '영원'
     },
     color: 'text-primary'
+  },
+  season14: {
+    mythicConversion: {
+      title: '신화 고유 변환 안내',
+      description:
+        '신화 고유 변환 결과는 재료로 사용한 고유 아이템과 동일한 장비 슬롯 안에서만 결정됩니다.'
+    }
   },
   noFilterdItems: '조건에 맞는 검색 결과가 없습니다',
   noFilterdItemsDesc: '아이템 필터를 확인해 보세요',
@@ -244,7 +251,7 @@ export default {
   item: {
     hardcore: '하드코어',
     softcore: '소프트코어',
-    ladder: '결전의 시즌',
+    ladder: '죽음의 각성 시즌',
     seasonal: '시즌',
     eternal: '영원',
     quality: '아이템 등급',
@@ -269,14 +276,16 @@ export default {
     forDisplay: '전시용',
     expanded: '항상 아이템 확장',
     unknown: '알 수 없는 아이템',
-    manualInput: '직접 입력'
+    manualInput: '직접 입력',
+    guaranteedAffix: '보장'
   },
   price: {
     title: '가격',
     currency: '화폐 유형',
     quantity: '수량',
     getOffer: '제안받기',
-    restrictGold: '판매/구매 가격은 최저 100,000 금화 이상 설정해야 합니다'
+    restrictGold:
+      '금화 가격은 100,000 이상, 최대 999,999,999,999까지 입력할 수 있습니다'
   },
   offer: {
     title: '가격 제안',
@@ -436,63 +445,69 @@ export default {
   },
   notice: {
     title: '업데이트 및 중요 안내',
-    top: '안녕하세요, 트레이더스입니다.\n안전한 거래 이용 안내와 Diablo 4 데이터 반영 내용을 안내드립니다.',
+    top: '안녕하세요, Tradurs입니다.\n이번 업데이트에 포함된 주요 변경 사항과 안전 거래 안내를 함께 알려드립니다.',
     contents: [
-      { type: 'head', value: '◆ 중요 안내', class: 'text-warning' },
+      { type: 'head', value: '중요 안내', class: 'text-warning' },
       {
         type: 'list',
         value:
-          '아이템명이나 설명에 배틀태그를 직접 적어 연락을 유도하는 행위는 제재 대상이 될 수 있습니다.',
+          '아이템 이름이나 설명에 BattleTag를 직접 적어 연락을 유도하면 제재될 수 있습니다.',
         class: 'text-body1 text-warning'
       },
       {
         type: 'list',
         value:
-          '배틀태그는 거래 요청과 수락이 모두 완료된 뒤 거래 당사자에게만 공개됩니다.',
+          'BattleTag는 거래 요청과 수락이 모두 끝난 뒤, 거래 당사자에게만 표시됩니다.',
         class: 'text-body1'
       },
       {
         type: 'list',
         value:
-          '안전한 거래를 위해 아이템명, 설명 등 공개 영역에는 배틀태그를 작성하지 말아 주세요.',
+          '안전을 위해 아이템 이름, 설명 같은 공개 영역에는 BattleTag를 입력하지 마세요.',
         class: 'text-body1'
       },
       {
         type: 'list',
         value:
-          '현금 거래를 시도하거나 유도하는 경우에는 즉시 계정 제재가 적용됩니다.',
+          '현금 거래를 시도하거나 유도하는 행위는 즉시 계정 제재 대상입니다.',
         class: 'text-body1 text-warning'
       },
-      { type: 'head', value: '◆ 오늘 데이터 반영' },
+      { type: 'head', value: '이번 업데이트' },
       {
         type: 'list',
         value:
-          '신규 속성 분노 재생, 제압 극대화 피해가 추가되었습니다.',
+          '시즌 14 이미지와 명칭을 죽음의 각성 시즌으로 반영했습니다.',
         class: 'text-body1'
       },
       {
         type: 'list',
         value:
-          '선조 기술, 모든 피해 계수 속성 검색 데이터가 최신 기준에 맞게 정리되었습니다.',
+          '신화 고유 변환 결과는 재료로 사용한 고유 아이템과 같은 장비 슬롯에서만 결정되도록 안내를 추가했습니다.',
         class: 'text-body1'
       },
       {
         type: 'list',
         value:
-          '호라드림 보석 품질과 보석 거래 재화 분류가 반영되었습니다.',
+          '금화 가격 입력과 표시를 개선했습니다. 100,000 이상부터 최대 999,999,999,999까지 입력할 수 있으며, 100,000 단위 보정과 축약/전체 표기를 더 명확하게 정리했습니다.',
         class: 'text-body1'
       },
       {
         type: 'list',
         value:
-          '어워즈 집계 기준이 지난주 월요일부터 일요일까지의 데이터만 반영하도록 정리되었습니다.',
+          '보석 화폐와 메시지 표시를 개선했습니다.',
+        class: 'text-body1'
+      },
+      {
+        type: 'list',
+        value:
+          '소환 재료 데이터에 거래 가능 여부, 노출 여부, 사용 중단 여부, 대체 항목 정보를 반영할 수 있도록 확장했습니다.',
         class: 'text-body1'
       },
       { type: 'space' },
       { type: 'space' }
     ],
     bottom: '감사합니다.',
-    close: '일주일 동안 보지 않기'
+    close: '1주일 동안 보지 않기'
   },
   adblock: {
     title: '트레이더스에서 광고를 허용해 주세요',

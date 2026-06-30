@@ -7,12 +7,13 @@ import { useGlobalStore } from 'src/stores/global-store'
 import { useAccountStore } from 'src/stores/account-store'
 import { useItemStore } from 'src/stores/item-store'
 import { IMessage, IAnswer } from 'src/types/user'
+import { formatGoldCompact } from 'src/utils/price'
 
 const $q = useQuasar()
 const gs = useGlobalStore()
 const as = useAccountStore()
 const is = useItemStore()
-const { t, n } = useI18n({ useScope: 'global' })
+const { t, locale } = useI18n({ useScope: 'global' })
 const route = useRoute()
 const router = useRouter()
 
@@ -248,9 +249,7 @@ onMounted(() => {
             </q-item-label>
             <q-item-label caption lines="2" v-if="message.currency === 'gold'">
               {{
-                `${t('item.gold')} : ${n(
-                  Number.parseFloat(message.currencyValue as string)
-                )} `
+                `${t('item.gold')} : ${formatGoldCompact(message.currencyValue, locale.value)} `
               }}
             </q-item-label>
             <q-item-label
@@ -276,7 +275,20 @@ onMounted(() => {
                 } x ${message.quantity} `
               }}
             </q-item-label>
+            <q-item-label
+              caption
+              lines="2"
+              v-else-if="message.currency === 'gem'"
+            >
+              {{
+                `${
+                  is.findGem(message.currencyValue as string)?.label ??
+                  message.currencyValue
+                } x ${message.quantity} `
+              }}
+            </q-item-label>
           </q-item-section>
+
           <q-item-section side top>
             <q-item-label lines="2" style="max-width: 60px" class="text-right">
               {{
@@ -364,6 +376,7 @@ onMounted(() => {
               <q-skeleton type="text" width="80px" height="18px" />
             </q-item-label>
           </q-item-section>
+
           <q-item-section side top>
             <q-item-label class="column items-end">
               <q-skeleton type="text" width="60px" height="24px" />

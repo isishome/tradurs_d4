@@ -14,6 +14,7 @@ import { useI18n } from 'vue-i18n'
 import { useQuasar, uid } from 'quasar'
 import { Item, IPrice } from 'src/types/item'
 import { scrollPos } from 'src/common'
+import { formatGoldCompact } from 'src/utils/price'
 
 import D4Items from 'components/D4Items.vue'
 import D4Filter from 'components/D4Filter.vue'
@@ -30,7 +31,7 @@ const router = useRouter()
 const is = useItemStore()
 const gs = useGlobalStore()
 const as = useAccountStore()
-const { t, tm, n } = useI18n({ useScope: 'global' })
+const { t, tm, locale } = useI18n({ useScope: 'global' })
 const $q = useQuasar()
 
 // loading variable
@@ -355,7 +356,7 @@ const parseOfferPrice = (priceStr?: string) => {
           : ''
   const currencyValue =
     price.currency === 'gold'
-      ? ` : ${n(Number.parseFloat(price.currencyValue as string), 'decimal')}`
+      ? ` : ${formatGoldCompact(price.currencyValue, locale.value)}`
       : ['summoning', 'gem'].includes(price.currency ?? '')
         ? ` x ${price.quantity}`
         : ''

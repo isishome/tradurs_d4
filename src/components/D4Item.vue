@@ -10,7 +10,7 @@ import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { useItemStore } from 'stores/item-store'
 
-import type { Gem, Elixir, Affix } from 'stores/item-store'
+import type { Gem, Elixir, Affix, Summoning } from 'stores/item-store'
 import type { QCard, QSelect } from 'quasar'
 import { Item, Price } from 'src/types/item'
 import { checkName } from 'src/common'
@@ -71,6 +71,15 @@ const {
 } = useItemStore()
 const { t } = useI18n({ useScope: 'global' })
 
+const isSelectableSummoning = (summoning: Summoning) =>
+  summoning.tradeable !== false &&
+  summoning.tradeable !== 0 &&
+  summoning.visible !== false &&
+  summoning.visible !== 0 &&
+  summoning.deprecated !== true &&
+  summoning.deprecated !== 1
+const summoningOptions = computed(() => summonings.filter(isSelectableSummoning))
+
 // variable
 const editWrap = ref<QCard | null>(null)
 const _fixedItemId = ref<number>(props.data.fixedItemId)
@@ -95,7 +104,7 @@ const _typeValue2 = ref<string>(
       : _typeValue1.value === 'elixir'
         ? (elixirs[0].value as string)
         : _typeValue1.value === 'summoning'
-          ? (summonings[0].value as string)
+          ? (summoningOptions.value[0]?.value as string)
           : '')
 )
 const _power = ref<number>(props.data.power)
@@ -226,7 +235,7 @@ const updateTypeValue1 = (val: string) => {
           : val === 'elixir'
             ? (elixirs[0].value as string)
             : val === 'summoning'
-              ? (summonings[0].value as string)
+              ? (summoningOptions.value[0]?.value as string)
               : ''
 
   updateTypeValue2(_typeValue2.value)
@@ -283,7 +292,14 @@ const updateFixedItem = () => {
       .forEach((fip) => {
         emit('update:property', fip)
       })
-    ;(findFixedItem.affixes ?? [])
+    const guaranteedAffixes = findFixedItem.guaranteedAffixes ?? []
+    const fixedAffixes = [
+      ...guaranteedAffixes,
+      ...(findFixedItem.affixes ?? []).filter(
+        (fia) => !guaranteedAffixes.includes(fia)
+      )
+    ]
+    fixedAffixes
       .filter((fia) => !affixes.includes(fia))
       .forEach((fia) => {
         emit('update:affix', fia)
@@ -756,7 +772,7 @@ defineExpose({ scrollEnd })
                 :transition-duration="0"
                 :label="t('item.selectSummoning')"
                 dropdown-icon="img:/images/icons/dropdown.svg"
-                :options="summonings"
+                :options="summoningOptions"
                 popup-content-class="scroll bordered limit-select"
                 options-dense
                 @update:model-value="updateTypeValue2"

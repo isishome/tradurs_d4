@@ -23,8 +23,8 @@ const presetLabel = computed(() =>
   props.options.length === 0
     ? t('filter.noPreset')
     : !preset.value
-    ? t('filter.selectPreset')
-    : undefined
+      ? t('filter.selectPreset')
+      : undefined
 )
 const optionStyle = computed(() =>
   !$q.platform.is.mobile
@@ -131,7 +131,7 @@ watch(
                 outlined
                 :label="t('filter.presetName')"
                 maxlength="32"
-                :rules="[(val) => (val && val.trim() !== '') || '']"
+                :rules="[(val: string) => (val && val.trim() !== '') || '']"
                 class="col"
               />
               <q-btn

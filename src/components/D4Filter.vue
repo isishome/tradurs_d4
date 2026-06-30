@@ -11,6 +11,7 @@ import NotifyKo from '/images/filter/notify_ko.webp'
 import D4Preset from 'components/D4Preset.vue'
 import D4Analysis from 'components/D4Analysis.vue'
 import D4Attribute from 'components/D4Attribute.vue'
+import D4MythicConversionNotice from 'components/D4MythicConversionNotice.vue'
 
 interface IProps {
   disable?: boolean
@@ -525,7 +526,12 @@ defineExpose({
         </q-item-section>
       </q-item>
       <q-separator inset />
-      <q-item-label header>{{ t('item.quality') }}</q-item-label>
+      <q-item-label header>
+        <div class="row items-center q-gutter-xs">
+          <div>{{ t('item.quality') }}</div>
+          <D4MythicConversionNotice />
+        </div>
+      </q-item-label>
       <q-item :disable="filterLoading">
         <q-item-section>
           <q-option-group
@@ -554,7 +560,7 @@ defineExpose({
             :options="filterTypes()"
             type="checkbox"
             v-model="filter.itemTypes"
-            @update:model-value="(val) => update(val)"
+            @update:model-value="(val: string[]) => update(val)"
           />
         </q-item-section>
       </q-item>

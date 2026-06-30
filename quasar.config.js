@@ -20,7 +20,7 @@ module.exports = configure(function (/* ctx */) {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
-    boot: ['i18n', 'axios', 'register', 'appearance'],
+    boot: ['i18n', 'axios', 'register', 'appearance', 'image-fallback'],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#css
     css: ['app.css', 'common.css', 'fonts.css'],
@@ -86,8 +86,8 @@ module.exports = configure(function (/* ctx */) {
           hmr: {
             protocol: 'ws',
             host: 'localhost',
-            port: 24680,
-            clientPort: 24680
+            port: 24690,
+            clientPort: 24690
           }
         }
       },

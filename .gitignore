@@ -48,6 +48,19 @@ cypress.env.json
 # env
 .env.*
 
+# tools
+/tools/*
+!/tools/dev/
+!/tools/dev/**
+
 # root markdown docs
 /*.md
 !/README.md
+
+# Local/private agent and harness files
+/.codex/
+/.agents/
+/harness/
+/AGENTS.md
+/CURRENCY_GEM.md
+/plan.md

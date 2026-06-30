@@ -63,6 +63,10 @@ export interface Summoning extends ILabel {
   summoningGroup?: string
   quantity?: number
   quality?: string
+  tradeable?: boolean | number
+  visible?: boolean | number
+  deprecated?: boolean | number
+  aliasOf?: string | null
 }
 
 export interface ItemType extends ILabel {
@@ -109,6 +113,7 @@ export interface FixedItem extends ILabel {
   equipmentClass?: string
   properties?: number[]
   affixes?: number[]
+  guaranteedAffixes?: number[]
   restrictions?: number[]
   setGroups?: number[]
 }
