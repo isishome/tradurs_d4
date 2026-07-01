@@ -29,4 +29,4 @@ export const numberFormats = {
       maximumFractionDigits: 1
     }
   }
-}
+} as const
