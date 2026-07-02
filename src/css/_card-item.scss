@@ -25,6 +25,7 @@
 
 .body--dark .card-item.mythic:deep(.stress) {
   color: var(--q-mythic);
+  text-shadow: 0 0 10px rgba(216, 167, 255, 0.28);
 }
 
 .body--dark .card-item.set:deep(.stress) {
@@ -72,6 +73,12 @@
   color: var(--q-unique);
 }
 
+.body--dark .card-item.mythic .unique {
+  font-weight: 600;
+  color: var(--q-mythic);
+  text-shadow: 0 0 10px rgba(216, 167, 255, 0.24);
+}
+
 .body--dark .card-item.magic .unique .icon {
   filter: var(--q-filter-magic) !important;
 }
@@ -90,6 +97,10 @@
 
 .body--dark .card-item.unique .unique .icon {
   filter: var(--q-filter-unique) !important;
+}
+
+.body--dark .card-item.mythic .unique .icon {
+  filter: var(--q-filter-mythic) !important;
 }
 
 .no-expanded::after {

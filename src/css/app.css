@@ -32,9 +32,9 @@
   --q-unique: #d9a879;
   --q-light-unique: #6c4a00;
   --q-dark-unique: #20211c;
-  --q-mythic: #b891cd;
-  --q-light-mythic: #b891cd;
-  --q-dark-mythic: #1c002b;
+  --q-mythic: #d8a7ff;
+  --q-light-mythic: #8f45c7;
+  --q-dark-mythic: #2a073f;
   --q-tiny: rgba(200, 200, 200, 0.1);
   --q-cloud: #99999916;
   --q-half: rgba(150, 150, 150, 0.2);
@@ -51,8 +51,8 @@
     brightness(93%) contrast(97%);
   --q-filter-unique: invert(57%) sepia(68%) saturate(273%) hue-rotate(349deg)
     brightness(87%) contrast(93%);
-  --q-filter-mythic: invert(69%) sepia(11%) saturate(1048%) hue-rotate(235deg)
-    brightness(87%) contrast(99%);
+  --q-filter-mythic: invert(72%) sepia(43%) saturate(879%) hue-rotate(217deg)
+    brightness(103%) contrast(101%);
 }
 
 body {
