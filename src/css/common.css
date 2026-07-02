@@ -558,3 +558,21 @@
     'Roboto', '-apple-system', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   letter-spacing: 0.02em;
 }
+@media (max-width: 600px) {
+  .body--dark .card-item.mythic {
+    --card-particle-field:
+      radial-gradient(circle at 72% 9%, rgba(255, 245, 255, 0.82) 0 0.8px, rgba(255, 245, 255, 0.18) 1.7px, transparent 4.2px),
+      radial-gradient(circle at 79% 10%, rgba(246, 218, 255, 0.88) 0 1.2px, rgba(196, 94, 255, 0.24) 2.8px, transparent 6px),
+      radial-gradient(circle at 86% 12%, rgba(246, 218, 255, 0.52) 0 0.9px, rgba(246, 218, 255, 0.12) 2.4px, transparent 5px),
+      radial-gradient(circle at 69% 15%, rgba(218, 146, 255, 0.54) 0 1.1px, rgba(218, 146, 255, 0.14) 3px, transparent 6.4px),
+      radial-gradient(circle at 76% 16%, rgba(255, 238, 255, 0.62) 0 0.8px, rgba(255, 238, 255, 0.13) 2.2px, transparent 4.8px),
+      radial-gradient(circle at 84% 17%, rgba(218, 146, 255, 0.66) 0 1.6px, rgba(218, 146, 255, 0.16) 3.6px, transparent 7.5px),
+      radial-gradient(circle at 90% 19%, rgba(255, 238, 255, 0.42) 0 0.8px, rgba(255, 238, 255, 0.09) 2px, transparent 4.4px),
+      radial-gradient(circle at 71% 23%, rgba(255, 238, 255, 0.58) 0 0.8px, rgba(255, 238, 255, 0.12) 2.3px, transparent 5px),
+      radial-gradient(circle at 79% 24%, rgba(195, 91, 255, 0.5) 0 1.3px, rgba(195, 91, 255, 0.13) 3.4px, transparent 7px),
+      radial-gradient(circle at 88% 25%, rgba(247, 212, 255, 0.52) 0 1px, rgba(247, 212, 255, 0.12) 2.8px, transparent 6px),
+      radial-gradient(circle at 73% 30%, rgba(205, 122, 255, 0.26) 0 0.9px, rgba(205, 122, 255, 0.07) 2.5px, transparent 5.5px),
+      radial-gradient(circle at 81% 31%, rgba(218, 146, 255, 0.34) 0 1.1px, rgba(218, 146, 255, 0.09) 3px, transparent 6.5px),
+      radial-gradient(circle at 87% 32%, rgba(255, 232, 255, 0.3) 0 0.8px, rgba(255, 232, 255, 0.08) 2.4px, transparent 5.5px);
+  }
+}
