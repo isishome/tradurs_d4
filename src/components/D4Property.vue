@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useItemStore } from 'stores/item-store'
 import { parse, focus } from 'src/common'
 
@@ -15,11 +16,16 @@ const props = defineProps({
   disable: {
     type: Boolean,
     default: false
+  },
+  guaranteed: {
+    type: Boolean,
+    default: false
   }
 })
 
 const emit = defineEmits(['update', 'remove'])
 
+const { t } = useI18n()
 const is = useItemStore()
 
 const findProperty = computed(() => is.findProperty(props.data.propertyId))
@@ -105,6 +111,13 @@ const remove = () => {
             @focus="focus"
           />
         </template>
+        <q-badge
+          v-if="guaranteed"
+          class="guaranteed-badge"
+          color="amber-8"
+          text-color="dark"
+          :label="t('item.guaranteedAffix')"
+        />
         <q-btn
           v-show="editable"
           :disable="disable"
@@ -153,5 +166,12 @@ const remove = () => {
 .list {
   width: 22px;
   height: 22px;
+}
+
+.guaranteed-badge {
+  font-size: 10px;
+  height: 18px;
+  line-height: 18px;
+  padding: 0 6px;
 }
 </style>

@@ -287,7 +287,14 @@ const updateFixedItem = () => {
     const restrictions = props.data.restrictions.map(
       (r) => r.restrictId as number
     )
-    ;(findFixedItem.properties ?? [])
+    const guaranteedProperties = findFixedItem.guaranteedProperties ?? []
+    const fixedProperties = [
+      ...guaranteedProperties,
+      ...(findFixedItem.properties ?? []).filter(
+        (fip) => !guaranteedProperties.includes(fip)
+      )
+    ]
+    fixedProperties
       .filter((fip) => !properties.includes(fip))
       .forEach((fip) => {
         emit('update:property', fip)

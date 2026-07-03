@@ -112,6 +112,7 @@ export interface FixedItem extends ILabel {
   quality?: string
   equipmentClass?: string
   properties?: number[]
+  guaranteedProperties?: number[]
   affixes?: number[]
   guaranteedAffixes?: number[]
   restrictions?: number[]

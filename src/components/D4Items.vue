@@ -91,6 +91,9 @@ const fixedItemFor = (item?: Item) =>
 const isGuaranteedAffix = (item: Item | undefined, affix: Affix) =>
   !!affix.affixId &&
   !!fixedItemFor(item)?.guaranteedAffixes?.includes(affix.affixId)
+const isGuaranteedProperty = (item: Item | undefined, property: Property) =>
+  !!property.propertyId &&
+  !!fixedItemFor(item)?.guaranteedProperties?.includes(property.propertyId)
 
 // about copy item
 const copy = (itemId: string) => {
@@ -944,6 +947,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
               v-for="property in rewardItem.properties"
               :key="property.valueId"
               :data="property"
+              :guaranteed="isGuaranteedProperty(rewardItem, property)"
             />
           </template>
           <template v-if="rewardItem.itemType === 'rune'" #description>
@@ -1102,6 +1106,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
               v-for="property in item.properties"
               :key="property.valueId"
               :data="property"
+              :guaranteed="isGuaranteedProperty(item, property)"
             />
           </template>
           <template v-if="item.itemType === 'rune'" #description>
@@ -1351,7 +1356,8 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
             :key="property.valueId || uid()"
             :data="property"
             editable
-            :disable="disable"
+            :guaranteed="isGuaranteedProperty(activatedItem, property)"
+            :disable="disable || isGuaranteedProperty(activatedItem, property)"
             @update="updateProperty"
             @remove="removeProperty"
           />
