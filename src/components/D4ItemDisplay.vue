@@ -723,6 +723,12 @@ onUnmounted(() => {
   width: 60%;
 }
 
+.name[role='link']:focus-visible {
+  border-radius: 2px;
+  outline: 2px solid var(--q-primary);
+  outline-offset: 2px;
+}
+
 .card-item.set .name-place .stress {
   color: var(--q-light-legendary);
 }

@@ -139,9 +139,14 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <section v-if="loading || items.length > 0" class="related-slider">
+  <section
+    v-if="loading || items.length > 0"
+    class="related-slider"
+    role="region"
+    :aria-label="label"
+  >
     <div class="row items-center justify-between q-mb-sm">
-      <div class="text-h6">{{ label }}</div>
+      <h2 class="slider-title text-h6">{{ label }}</h2>
       <div class="slider-controls row no-wrap">
         <q-btn
           flat
@@ -187,10 +192,16 @@ onUnmounted(() => {
       <div
         ref="scroller"
         class="related-scroller"
+        :tabindex="items.length > 1 ? 0 : undefined"
+        :aria-label="label"
         :class="{
           'fade-previous': canPrevious,
           'fade-next': canNext
         }"
+        @focus="showScrollbar"
+        @blur="hideScrollbar()"
+        @keydown.left.prevent="move(-1)"
+        @keydown.right.prevent="move(1)"
         @scroll.passive="onScroll"
       >
         <div
@@ -210,6 +221,7 @@ onUnmounted(() => {
       <div
         class="slider-scrollbar"
         :class="{ visible: scrollbarVisible && thumbWidth < 100 }"
+        aria-hidden="true"
         @pointerdown="onScrollbarPointerDown"
         @pointermove="onScrollbarPointerMove"
         @pointerup="onScrollbarPointerUp"
@@ -228,9 +240,18 @@ onUnmounted(() => {
   margin: 0 auto;
 }
 
+.slider-title {
+  margin: 0;
+}
+
 .scroller-wrap {
   position: relative;
   padding-bottom: 8px;
+}
+
+.related-scroller:focus-visible {
+  outline: 2px solid var(--q-primary);
+  outline-offset: 2px;
 }
 
 .related-scroller {
