@@ -364,6 +364,12 @@ onUnmounted(() => {
   scroll-snap-align: center;
 }
 
+.related-card :deep(.item-image-wrap) {
+  top: 8px;
+  width: clamp(56px, 9vw, 68px);
+  height: clamp(56px, 9vw, 68px);
+}
+
 @media (max-width: 600px) {
   .slider-controls {
     display: none;
@@ -377,6 +383,15 @@ onUnmounted(() => {
   .related-card {
     width: 86%;
     min-width: 86%;
+  }
+
+  .related-card :deep(.item-image-wrap),
+  .related-card :deep(.user-area) {
+    display: none;
+  }
+
+  .related-card :deep(.name-place) {
+    width: 100%;
   }
 }
 </style>

@@ -179,10 +179,13 @@
 }
 
 .name {
+  min-width: 0;
+  max-width: 100%;
   font-size: 18px;
   line-height: 24px;
   font-weight: 700;
   word-break: keep-all;
+  overflow-wrap: anywhere;
 }
 
 .price {
