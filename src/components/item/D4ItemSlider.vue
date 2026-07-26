@@ -357,6 +357,7 @@ onUnmounted(() => {
 }
 
 .related-card {
+  position: relative;
   width: min(728px, 86%);
   min-width: min(728px, 86%);
   flex: 0 0 auto;
