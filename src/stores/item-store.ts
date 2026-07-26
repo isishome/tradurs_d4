@@ -160,6 +160,11 @@ export interface AwardsItem {
   ladder: boolean
 }
 
+export interface RelatedItems {
+  sellerItems: Item[]
+  similarItems: Item[]
+}
+
 export type OfferInfo = { itemName: string; itemId: string; price?: string }
 
 export interface IStorage {
@@ -325,6 +330,11 @@ export const useItemStore = defineStore('item', {
       fixed: false
     } as IFilter,
     detailItem: [] as Array<Item>,
+    detailRequest: 0,
+    relatedItems: {
+      sellerItems: [],
+      similarItems: []
+    } as RelatedItems,
     itemPage: {
       rows: 20 as number,
       over: false as boolean,
@@ -900,6 +910,18 @@ export const useItemStore = defineStore('item', {
               this.itemPage.more = response.data.length > this.itemPage.rows
               response.data.splice(this.itemPage.rows, 1)
             }
+            resolve(response.data)
+          })
+          .catch((e) => {
+            reject(e)
+          })
+      })
+    },
+    getRelatedItems(itemId: string, options?: AxiosRequestConfig) {
+      return new Promise<RelatedItems>((resolve, reject) => {
+        api
+          .get(`/d4/item/${itemId}/related`, options)
+          .then((response) => {
             resolve(response.data)
           })
           .catch((e) => {

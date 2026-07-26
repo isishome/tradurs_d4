@@ -1,12 +1,17 @@
 <script lang="ts">
 import { useGlobalStore } from 'src/stores/global-store'
-import { useItemStore, type OfferInfo } from 'stores/item-store'
+import {
+  useItemStore,
+  type OfferInfo,
+  type RelatedItems
+} from 'stores/item-store'
 import { Item, IPrice } from 'src/types/item'
 
 export default {
   async preFetch({ store, currentRoute, ssrContext }) {
     const is = useItemStore(store)
     const gs = useGlobalStore(store)
+    const request = ++is.detailRequest
 
     is.clearSocket()
 
@@ -26,18 +31,39 @@ export default {
         }
       : undefined
 
-    return is.getItems(1, currentRoute.params.itemid, options).then(
-      (result: Array<Item>) => {
-        if (result.length > 0) {
-          result[0].expanded = true
-          gs.itemName = result[0].name
-          is.detailItem.splice(0, 1, result[0])
-        } else is.detailItem.splice(0, 1)
-      },
-      () => {
-        is.detailItem.splice(0, 1)
-      }
-    )
+    is.relatedItems = { sellerItems: [], similarItems: [] }
+
+    return is
+      .getItems(1, currentRoute.params.itemid, options)
+      .then(async (result: Array<Item>) => {
+        if (request !== is.detailRequest) return
+
+        if (result.length === 0) {
+          is.detailItem.splice(0, 1)
+          return
+        }
+
+        result[0].expanded = true
+        gs.itemName = result[0].name
+        is.detailItem.splice(0, 1, result[0])
+
+        try {
+          const relatedItems = await is.getRelatedItems(
+            result[0].itemId,
+            options
+          )
+          if (request === is.detailRequest) is.relatedItems = relatedItems
+        } catch {
+          if (request === is.detailRequest)
+            is.relatedItems = { sellerItems: [], similarItems: [] }
+        }
+      })
+      .catch(() => {
+        if (request === is.detailRequest) {
+          is.detailItem.splice(0, 1)
+          is.relatedItems = { sellerItems: [], similarItems: [] }
+        }
+      })
   }
 }
 </script>
@@ -70,6 +96,7 @@ const as = useAccountStore()
 // loading variable
 const completeInfo = ref(false)
 const disable = ref(false)
+const relatedLoading = ref(false)
 const newItems = computed(() => is.socket.newItems)
 const newOffer = computed(() => is.socket.newOffer)
 const acceptedOffer = computed(() => is.socket.acceptedOffer)
@@ -79,6 +106,30 @@ const complete = computed(() => is.socket.complete)
 
 // variable
 const itemsRef = ref<typeof D4Items | null>(null)
+let detailController: AbortController | null = null
+
+const clearRelatedItems = () => {
+  is.relatedItems = { sellerItems: [], similarItems: [] }
+}
+
+const loadRelatedItems = async (
+  itemId: string,
+  request: number,
+  options?: { signal?: AbortSignal }
+) => {
+  relatedLoading.value = true
+  clearRelatedItems()
+
+  try {
+    const relatedItems: RelatedItems = await is.getRelatedItems(itemId, options)
+    if (request === is.detailRequest && props.itemid === itemId)
+      is.relatedItems = relatedItems
+  } catch {
+    if (request === is.detailRequest) clearRelatedItems()
+  } finally {
+    if (request === is.detailRequest) relatedLoading.value = false
+  }
+}
 
 // insert or update item
 const upsertItem = (item: Item, done: Function) => {
@@ -205,7 +256,15 @@ const favorite = (itemId: string, favorite: boolean) => {
 }
 
 const getItem = () => {
+  const request = ++is.detailRequest
+  detailController?.abort()
+  const controller = new AbortController()
+  const itemId = props.itemid
+  detailController = controller
+
   is.clearSocket()
+  clearRelatedItems()
+  relatedLoading.value = true
 
   const tempItem = new Item()
   tempItem.quality = 'normal'
@@ -214,8 +273,10 @@ const getItem = () => {
   tempItem.price.loading = true
   is.detailItem.splice(0, 1, tempItem)
 
-  is.getItems(1, props.itemid)
+  is.getItems(1, itemId, { signal: controller.signal })
     .then((result: Array<Item>) => {
+      if (request !== is.detailRequest || props.itemid !== itemId) return
+
       if (result.length > 0) {
         result[0].loading = false
         result[0].expanded = true
@@ -223,12 +284,24 @@ const getItem = () => {
         result[0].price.loading = false
 
         is.detailItem.splice(0, 1, result[0])
-      } else is.detailItem.splice(0, 1)
+        return loadRelatedItems(result[0].itemId, request, {
+          signal: controller.signal
+        })
+      } else {
+        is.detailItem.splice(0, 1)
+        relatedLoading.value = false
+      }
     })
     .catch(() => {
-      is.detailItem.splice(0, 1)
+      if (request === is.detailRequest) {
+        is.detailItem.splice(0, 1)
+        clearRelatedItems()
+        relatedLoading.value = false
+      }
     })
     .then(() => {
+      if (request !== is.detailRequest) return
+
       disable.value = false
 
       if (history.state.offers) {
@@ -436,8 +509,12 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
+  is.detailRequest++
+  detailController?.abort()
+  detailController = null
   gs.itemName = null
   is.detailItem.splice(0, is.detailItem.length)
+  clearRelatedItems()
 })
 </script>
 
