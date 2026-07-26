@@ -456,63 +456,57 @@ export default {
     close: 'Do not open for 24 hours'
   },
   notice: {
-    title: 'Update and Important Notice',
-    top: 'Hello, this is Tradurs.\nPlease review the safe trading notice and the latest update summary.',
+    title: 'July 26, 2026 Update',
+    top: 'Hello, this is Tradurs.\nRelated listings are now available on item detail pages.',
     contents: [
-      { type: 'head', value: 'Important Notice', class: 'text-warning' },
+      { type: 'head', value: 'Related Listings' },
       {
         type: 'list',
         value:
-          'Adding a BattleTag to an item name or description to encourage direct contact may result in account restrictions.',
-        class: 'text-body1 text-warning'
-      },
-      {
-        type: 'list',
-        value:
-          'BattleTags are shown only to the trade participants after both the trade request and acceptance are complete.',
+          'Item detail pages now show other active listings from the same seller.',
         class: 'text-body1'
       },
       {
         type: 'list',
         value:
-          'For safer trading, please do not enter BattleTags in public fields such as item names or descriptions.',
+          'Similar items with the same equipment type and at least three matching affixes are also displayed.',
         class: 'text-body1'
       },
       {
         type: 'list',
         value:
-          'Attempting or encouraging real-money trading will result in immediate account restrictions.',
-        class: 'text-body1 text-warning'
-      },
-      { type: 'head', value: 'Update Highlights' },
-      {
-        type: 'list',
-        value:
-          'Season 14 images and names were updated to Season of Death Awakening.',
+          'Listings already shown in the seller section are excluded from similar items to prevent duplicates.',
         class: 'text-body1'
       },
       {
         type: 'list',
         value:
-          'Mythic Unique conversion guidance was added: results are limited to the same equipment slot as the material Unique item.',
+          'Only active listings in the same Softcore or Hardcore and Seasonal or Eternal realm are included.',
+        class: 'text-body1'
+      },
+      { type: 'head', value: 'Interface and Usability' },
+      {
+        type: 'list',
+        value:
+          'Related listings use a horizontal slider with mouse, trackpad, and touch swipe support.',
         class: 'text-body1'
       },
       {
         type: 'list',
         value:
-          'Gold price input and display were improved. Values can start from 100,000, up to 999,999,999,999, with 100,000-unit normalization and clearer short and full-number display.',
+          'Previous and next controls, card snapping, and a scroll position indicator make browsing easier.',
         class: 'text-body1'
       },
       {
         type: 'list',
         value:
-          'Gem currency and message display were improved.',
+          'Responsive layouts and readability have been improved for both light and dark themes.',
         class: 'text-body1'
       },
       {
         type: 'list',
         value:
-          'Summoning material data was expanded to support tradeable status, visibility, deprecated entries, and replacement item links.',
+          'Keyboard focus, arrow-key navigation, and Enter navigation from item names improve accessibility.',
         class: 'text-body1'
       },
       { type: 'space' },
