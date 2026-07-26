@@ -77,6 +77,7 @@ import { useAccountStore } from 'stores/account-store'
 
 import D4Items from 'components/D4Items.vue'
 import D4Filter from 'components/D4Filter.vue'
+import D4ItemSlider from 'components/item/D4ItemSlider.vue'
 import { formatGoldCompact } from 'src/utils/price'
 
 const props = defineProps<{
@@ -535,6 +536,31 @@ onUnmounted(() => {
         @favorite="favorite"
       />
     </div>
+    <div
+      v-if="
+        relatedLoading ||
+        is.relatedItems.sellerItems.length > 0 ||
+        is.relatedItems.similarItems.length > 0
+      "
+      class="related-panel"
+    >
+      <div class="related-sections column q-px-md">
+        <D4ItemSlider
+          :items="is.relatedItems.sellerItems"
+          :loading="relatedLoading"
+          :label="t('relatedItems.sellerTitle')"
+          :previous-label="t('relatedItems.previous')"
+          :next-label="t('relatedItems.next')"
+        />
+        <D4ItemSlider
+          :items="is.relatedItems.similarItems"
+          :loading="relatedLoading"
+          :label="t('relatedItems.similarTitle')"
+          :previous-label="t('relatedItems.previous')"
+          :next-label="t('relatedItems.next')"
+        />
+      </div>
+    </div>
     <div class="q-py-lg"></div>
     <D4Btn
       v-if="completeInfo"
@@ -563,7 +589,31 @@ onUnmounted(() => {
   z-index: 1;
 }
 
+.related-panel {
+  margin-top: 104px;
+  padding: 48px 0 56px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.body--light .related-panel {
+  border-top-color: rgba(0, 0, 0, 0.08);
+  background: rgba(0, 0, 0, 0.018);
+}
+
+.related-sections {
+  gap: 72px;
+}
+
 @media (max-width: 600px) {
+  .related-panel {
+    margin-top: 64px;
+    padding: 32px 0 40px;
+  }
+
+  .related-sections {
+    gap: 48px;
+  }
   .sticky-btn {
     bottom: 10px;
   }

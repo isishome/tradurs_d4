@@ -104,6 +104,12 @@ export default {
   noFilterdItems: '조건에 맞는 검색 결과가 없습니다',
   noFilterdItemsDesc: '아이템 필터를 확인해 보세요',
   noItem: '아이템 정보가 존재하지 않습니다',
+  relatedItems: {
+    sellerTitle: '판매자의 다른 물품',
+    similarTitle: '유사한 아이템',
+    previous: '이전 아이템',
+    next: '다음 아이템'
+  },
   seller: '판매자',
   offerer: '제안자',
   user: {

@@ -26,13 +26,17 @@ interface IProps {
   loading?: boolean
   disable?: boolean
   history?: boolean
+  navigable?: boolean
+  showActionsMenu?: boolean
 }
 
 const props = withDefaults(defineProps<IProps>(), {
   editable: false,
   loading: false,
   disable: false,
-  history: false
+  history: false,
+  navigable: false,
+  showActionsMenu: true
 })
 
 const emit = defineEmits([
@@ -1333,6 +1337,8 @@ defineExpose({ scrollEnd })
     :loading="loading"
     :disable="disable"
     :history="history"
+    :navigable="navigable"
+    :show-actions-menu="showActionsMenu"
     @favorite="() => emit('favorite', data.itemId, !data.favorite)"
     @copy="() => emit('copy', data.itemId)"
     @update-only="(val: string) => emit('update-only', val)"

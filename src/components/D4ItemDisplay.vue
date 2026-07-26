@@ -26,12 +26,16 @@ type Props = {
   loading?: boolean
   disable?: boolean
   history?: boolean
+  navigable?: boolean
+  showActionsMenu?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   loading: false,
   disable: false,
-  history: false
+  history: false,
+  navigable: false,
+  showActionsMenu: true
 })
 const emit = defineEmits(['copy', 'favorite', 'update-only'])
 
@@ -175,6 +179,7 @@ const itemName = computed(
                   : undefined) ?? t('item.unknown')) as string
 )
 const isList = computed(() => route.name === 'tradeList')
+const canNavigate = computed(() => props.navigable || isList.value)
 const setBonusAffixLabel = computed(
   () => (label?: string) =>
     (label ?? '')
@@ -193,7 +198,7 @@ const onClickUser = (identity: string | null) => {
 }
 
 const goItemDetail = () => {
-  if (isList.value)
+  if (canNavigate.value)
     router.push({
       name: 'itemInfo',
       params: { itemid: props.data.itemId, lang: route.params.lang ?? 'ko' }
@@ -355,10 +360,13 @@ onUnmounted(() => {
                 class="name stress"
                 :title="itemName"
                 :class="[
-                  { 'cursor-pointer': isList },
+                  { 'cursor-pointer': canNavigate },
                   { 'ellipsis-2-lines': route.name !== 'itemInfo' }
                 ]"
+                :tabindex="canNavigate ? 0 : undefined"
+                :role="canNavigate ? 'link' : undefined"
                 @click="goItemDetail"
+                @keydown.enter="goItemDetail"
               >
                 {{ itemName }}
               </div>
@@ -369,7 +377,7 @@ onUnmounted(() => {
                 <div class="text-lowercase">x</div>
                 <div>{{ data.quantity }}</div>
               </div>
-              <div v-if="!history" class="more-action">
+              <div v-if="!history && showActionsMenu" class="more-action">
                 <q-btn
                   dense
                   flat

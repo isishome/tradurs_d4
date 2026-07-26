@@ -105,6 +105,12 @@ export default {
   noFilterdItems: 'No search results matched your criteria',
   noFilterdItemsDesc: 'Check out the item filters',
   noItem: 'Item information does not exist',
+  relatedItems: {
+    sellerTitle: 'More from this seller',
+    similarTitle: 'Similar items',
+    previous: 'Previous items',
+    next: 'Next items'
+  },
   seller: 'Seller',
   offerer: 'Offerer',
   user: {
