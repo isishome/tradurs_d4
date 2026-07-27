@@ -233,6 +233,8 @@ export default {
     unblock: '차단 해제',
     bulkUnblock: '일괄 차단 해제',
     showMore: '더보기',
+    showItemInfo: '정보 보기',
+    hideItemInfo: '정보 닫기',
     leave: '나가기',
     open: '만들기',
     join: '입장',

@@ -238,6 +238,8 @@ export default {
     unblock: 'Unblock',
     bulkUnblock: 'Bulk Unblock',
     showMore: 'Show More',
+    showItemInfo: 'Show details',
+    hideItemInfo: 'Hide details',
     leave: 'Leave',
     open: 'Open',
     join: 'Join',

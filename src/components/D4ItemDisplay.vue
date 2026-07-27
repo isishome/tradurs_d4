@@ -64,6 +64,7 @@ const {
 } = useItemStore()
 
 const slots = useSlots()
+const showSetDetails = ref(false)
 
 const hour = 60 * 60
 const minute = 60
@@ -599,43 +600,71 @@ onUnmounted(() => {
           </div>
         </div>
       </q-card-section>
-      <q-card-section v-if="setGroup" class="set-description">
-        <div>{{ setGroup?.label }}</div>
-        <ul class="group-list">
-          <li
-            v-for="fi in setGroup?.fixedItems"
-            :key="fi.value"
-            :class="[fixedItem?.value === fi.value ? 'stress' : 'text-grey']"
+      <template v-if="setGroup && !loading">
+        <q-card-section class="set-details-toggle">
+          <q-btn
+            flat
+            dense
+            no-caps
+            class="full-width no-hover set-details-toggle__button"
+            :label="
+              showSetDetails ? t('btn.hideItemInfo') : t('btn.showItemInfo')
+            "
+            :aria-expanded="showSetDetails"
+            @click="showSetDetails = !showSetDetails"
           >
-            {{ fi.label }}
-          </li>
-        </ul>
-        <div class="stress">
-          {{ setGroup?.label }} {{ `(1/${setGroup?.fixedItemIds?.length})` }}
-        </div>
-        <div
-          v-show="setGroup.bonusAffixes && setGroup.bonusAffixes.length > 0"
-          class="stress q-mt-xs q-px-sm"
-        >
-          <div class="column no-wrap q-gutter-sm">
-            <div v-for="bonus in setGroup.bonusAffixes" :key="bonus.affix">
-              <div>
-                {{ `(${bonus.setCount}) ${findQuality(data.quality)?.label}` }}
-              </div>
-              <ul class="bonus-list">
-                <li
-                  v-for="(ba, idx) in (
-                    findAffix(bonus.affix)?.label ?? ''
-                  ).split(/\n/)"
-                  :key="idx"
-                  class="q-px-sm"
-                  v-html="setBonusAffixLabel(ba)"
-                ></li>
-              </ul>
+            <img
+              src="/images/icons/dropdown.svg"
+              width="14"
+              height="14"
+              class="icon q-ml-xs set-details-toggle__icon"
+              :class="{ 'set-details-toggle__icon--open': showSetDetails }"
+              alt="Tradurs Expand Icon"
+            />
+          </q-btn>
+        </q-card-section>
+        <q-slide-transition>
+          <q-card-section v-show="showSetDetails" class="set-description">
+            <div>{{ setGroup.label }}</div>
+            <ul class="group-list">
+              <li
+                v-for="fi in setGroup.fixedItems"
+                :key="fi.value"
+                :class="[fixedItem?.value === fi.value ? 'stress' : 'text-grey']"
+              >
+                {{ fi.label }}
+              </li>
+            </ul>
+            <div class="stress">
+              {{ setGroup.label }} {{ `(1/${setGroup.fixedItemIds?.length})` }}
             </div>
-          </div>
-        </div>
-      </q-card-section>
+            <div
+              v-show="setGroup.bonusAffixes && setGroup.bonusAffixes.length > 0"
+              class="stress q-mt-xs q-px-sm"
+            >
+              <div class="column no-wrap q-gutter-sm">
+                <div v-for="bonus in setGroup.bonusAffixes" :key="bonus.affix">
+                  <div>
+                    {{
+                      `(${bonus.setCount}) ${findQuality(data.quality)?.label}`
+                    }}
+                  </div>
+                  <ul class="bonus-list">
+                    <li
+                      v-for="(ba, idx) in (
+                        findAffix(bonus.affix)?.label ?? ''
+                      ).split(/\n/)"
+                      :key="idx"
+                      class="q-px-sm"
+                      v-html="setBonusAffixLabel(ba)"
+                    ></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </q-card-section>
+        </q-slide-transition>
+      </template>
       <q-card-section
         v-show="
           !loading &&
@@ -819,6 +848,27 @@ onUnmounted(() => {
       padding-left: 0;
     }
   }
+}
+
+.set-details-toggle {
+  padding: 6px 16px;
+}
+
+.set-details-toggle__button {
+  min-height: 28px;
+  border: 1px solid rgba(128, 128, 128, 0.3);
+  border-radius: 4px;
+  background-color: rgba(128, 128, 128, 0.1);
+  font-size: 11px;
+  line-height: 1.2;
+}
+
+.set-details-toggle__icon {
+  transition: transform 0.2s ease;
+}
+
+.set-details-toggle__icon--open {
+  transform: rotate(180deg);
 }
 
 @media (max-width: 724px) {
