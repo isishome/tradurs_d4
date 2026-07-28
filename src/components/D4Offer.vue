@@ -225,10 +225,10 @@ const parsEvaluations = computed(() =>
   <q-form
     v-if="make"
     @submit="makeOffer"
-    class="q-pt-md row justify-end items-center q-col-gutter-sm q-pa-md"
+    class="offer-maker q-pt-md row justify-end items-center q-col-gutter-sm q-pa-md"
     :class="{ 'q-pt-lg': !$q.screen.lt.sm }"
   >
-    <div class="col">
+    <div class="offer-maker__price col">
       <D4Price
         offer
         :fixed="fixed"
@@ -244,6 +244,7 @@ const parsEvaluations = computed(() =>
       :disable="disable"
       :progress="progress"
       type="submit"
+      class="offer-maker__submit"
     />
   </q-form>
   <div v-else>
@@ -347,3 +348,22 @@ const parsEvaluations = computed(() =>
     </q-item>
   </div>
 </template>
+
+<style scoped>
+@media (max-width: 599px) {
+  .offer-maker {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 8px;
+  }
+
+  .offer-maker__price {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .offer-maker__submit {
+    justify-self: end;
+  }
+}
+</style>

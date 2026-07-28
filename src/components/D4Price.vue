@@ -194,11 +194,11 @@ watch(
 
 <template>
   <div v-if="editable">
-    <div class="row justify-end items-center q-gutter-sm no-wrap">
-      <div style="min-width: 30px">
+    <div class="price-editor row justify-end items-center no-wrap">
+      <div class="price-editor__title">
         {{ t('price.title') }}
       </div>
-      <div class="col-xs-3">
+      <div class="price-editor__currency col-xs-3">
         <q-select
           data-cy="price-currency-select"
           v-model="_price.currency"
@@ -238,7 +238,10 @@ watch(
           </template>
         </q-select>
       </div>
-      <div v-show="_price.currency === 'rune'" style="max-width: 120px">
+      <div
+        v-show="_price.currency === 'rune'"
+        class="price-editor__value price-editor__rune"
+      >
         <q-select
           ref="runeRef"
           class="price-rune-select"
@@ -294,7 +297,7 @@ watch(
       <div
         v-if="_price.currency === 'gold'"
         data-cy="price-gold-input"
-        class="col-xs-5 col-sm-3"
+        class="price-editor__value col-xs-5 col-sm-3"
       >
         <q-input
           :disable="disable"
@@ -331,7 +334,10 @@ watch(
           </q-tooltip>
         </q-input>
       </div>
-      <div v-else-if="_price.currency === 'summoning'" class="col-xs-3">
+      <div
+        v-else-if="_price.currency === 'summoning'"
+        class="price-editor__value col-xs-3"
+      >
         <q-select
           v-model="_price.currencyValue"
           :disable="disable || fixed"
@@ -370,7 +376,10 @@ watch(
           </template>
         </q-select>
       </div>
-      <div v-else-if="_price.currency === 'gem'" class="col-xs-3">
+      <div
+        v-else-if="_price.currency === 'gem'"
+        class="price-editor__value col-xs-3"
+      >
         <q-select
           v-model="_price.currencyValue"
           :disable="disable || fixed"
@@ -415,6 +424,7 @@ watch(
         :disable="disable"
         @update:model-value="update"
         :no-button="$q.screen.lt.sm"
+        class="price-editor__quantity"
       />
     </div>
   </div>
@@ -478,6 +488,24 @@ watch(
   max-width: 200px;
 }
 
+.price-editor {
+  gap: 8px;
+}
+
+.price-editor__title {
+  min-width: 30px;
+}
+
+.price-editor__currency,
+.price-editor__value,
+.price-editor__quantity {
+  min-width: 0;
+}
+
+.price-editor__rune {
+  max-width: 120px;
+}
+
 .tooltip::after {
   content: '';
   position: fixed;
@@ -515,5 +543,28 @@ watch(
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+@media (max-width: 599px) {
+  .price-editor {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+    width: 100%;
+  }
+
+  .price-editor__title {
+    grid-column: 1 / -1;
+  }
+
+  .price-editor__currency,
+  .price-editor__value {
+    width: 100%;
+    max-width: none;
+  }
+
+  .price-editor__quantity {
+    grid-column: 3;
+    justify-self: end;
+  }
 }
 </style>
