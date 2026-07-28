@@ -63,8 +63,8 @@ const affixColor = computed(
 const isStandard = computed(() =>
   ['standard'].includes(findAffix.value?.type ?? '')
 )
-const isMythic = computed(() =>
-  ['mythic'].includes(findAffix.value?.type ?? '')
+const isRotated = computed(() =>
+  ['standard', 'mythic', 'set'].includes(findAffix.value?.type ?? '')
 )
 const isToggle = computed(
   () => props.editable && ['standard'].includes(findAffix.value?.type ?? '')
@@ -163,7 +163,7 @@ const remove = (): void => {
           v-show="editable"
           class="icon"
           :class="{
-            'rotate-45': isStandard || isMythic,
+            'rotate-45': isRotated,
             greater: isStandard,
             active: affixGreater
           }"
@@ -174,7 +174,7 @@ const remove = (): void => {
           v-show="!editable"
           class="icon"
           :class="{
-            'rotate-45': isStandard || isMythic,
+            'rotate-45': isRotated,
             'greater active': affixGreater
           }"
           size="10px"
