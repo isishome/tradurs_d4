@@ -464,26 +464,59 @@ export default {
     close: 'Do not open for 24 hours'
   },
   notice: {
-    title: 'July 26, 2026 Update',
-    top: 'Hello, this is Tradurs.\nRelated listings are now available on item detail pages.',
+    title: 'July 28, 2026 Update',
+    top: 'Hello, this is Tradurs.\nTrade offers and item browsing and registration have been improved.',
     contents: [
-      { type: 'head', value: 'Related Listings' },
+      { type: 'head', value: 'Trade Offer Improvements' },
       {
         type: 'list',
         value:
-          'Item detail pages now show other active listings from the same seller.',
+          'When another user has an active offer in the same currency, a new offer must have a higher amount or quantity than the current highest offer.',
         class: 'text-body1'
       },
       {
         type: 'list',
         value:
-          'Similar items with the same equipment type and at least three matching affixes are also displayed.',
+          'Gold offers compete by amount. Non-gold offers compete by quantity only when both the currency category and item are the same.',
         class: 'text-body1'
       },
       {
         type: 'list',
         value:
-          'Listings already shown in the seller section are excluded from similar items to prevent duplicates.',
+          'Offers that do not meet the competitive requirement are not registered. Other unselected offers keep their existing status when a trade proceeds.',
+        class: 'text-body1'
+      },
+      { type: 'head', value: 'Item Registration Improvements' },
+      {
+        type: 'list',
+        value:
+          'Your work is temporarily saved if you close the item registration dialog, so you can continue when you return.',
+        class: 'text-body1'
+      },
+      {
+        type: 'list',
+        value:
+          'Price and offer fields now fit the available screen width on mobile devices.',
+        class: 'text-body1'
+      },
+      { type: 'head', value: 'Set Item Information' },
+      {
+        type: 'list',
+        value:
+          'Long set composition and bonus details are collapsed by default.',
+        class: 'text-body1'
+      },
+      {
+        type: 'list',
+        value:
+          'Item affixes remain visible, and set details can be expanded with the View Information button.',
+        class: 'text-body1'
+      },
+      { type: 'head', value: 'Related Listings on Item Details' },
+      {
+        type: 'list',
+        value:
+          'A dedicated panel shows other active listings from the same seller and similar items with at least three matching affixes.',
         class: 'text-body1'
       },
       {
@@ -492,29 +525,10 @@ export default {
           'Only active listings in the same Softcore or Hardcore and Seasonal or Eternal realm are included.',
         class: 'text-body1'
       },
-      { type: 'head', value: 'Interface and Usability' },
       {
         type: 'list',
         value:
-          'Related listings use a horizontal slider with mouse, trackpad, and touch swipe support.',
-        class: 'text-body1'
-      },
-      {
-        type: 'list',
-        value:
-          'Previous and next controls, card snapping, and a scroll position indicator make browsing easier.',
-        class: 'text-body1'
-      },
-      {
-        type: 'list',
-        value:
-          'Responsive layouts and readability have been improved for both light and dark themes.',
-        class: 'text-body1'
-      },
-      {
-        type: 'list',
-        value:
-          'Keyboard focus, arrow-key navigation, and Enter navigation from item names improve accessibility.',
+          'The related listings panel supports mouse, trackpad, touch swipe, previous and next controls, and keyboard navigation.',
         class: 'text-body1'
       },
       { type: 'space' },
