@@ -185,6 +185,12 @@ export default {
     message: '삭제할 수 없는 아이템이 선택된 경우 처리 중 제외됩니다.',
     failedTitle: '아이템 일괄 삭제 실패 항목'
   },
+  itemDraft: {
+    title: '임시 저장된 아이템',
+    message: '작성 중이던 아이템 정보를 복구할까요?',
+    restore: '복구하기',
+    discard: '새로 작성'
+  },
   blockUser: {
     title: '사용자 차단',
     unblockTitle: '사용자 차단 해제',

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, reactive, nextTick } from 'vue'
+import { ref, computed, reactive, nextTick, watch } from 'vue'
 import { useQuasar, QInput, QSelect, uid } from 'quasar'
 
 import { useI18n } from 'vue-i18n'
@@ -9,6 +9,11 @@ import { useItemStore } from 'stores/item-store'
 
 import { checkAttribute, scrollPos } from 'src/common'
 import { itemImgs } from 'src/common/items'
+import {
+  clearItemDraft,
+  loadItemDraft,
+  saveItemDraft
+} from 'src/composables/item-draft'
 import {
   Item,
   Offer,
@@ -109,6 +114,20 @@ const favorite = (itemId: string, favorite: boolean) => {
 const activatedRef = ref<typeof D4Item | null>(null)
 const activateShow = ref<boolean>(false)
 const activatedItem = ref<Item>(new Item(''))
+let draftTimer: ReturnType<typeof setTimeout> | undefined
+
+watch(
+  activatedItem,
+  (item) => {
+    if (!activateShow.value || item.itemId) return
+
+    if (draftTimer) clearTimeout(draftTimer)
+    draftTimer = setTimeout(() => {
+      saveItemDraft(item, as.info.id)
+    }, 500)
+  },
+  { deep: true }
+)
 
 const setDefaultProperties = () => {
   const findEquipClass = is.findEquipClass(activatedItem.value.itemTypeValue1)
@@ -252,6 +271,14 @@ const done = () => {
 }
 
 const hideEditable = () => {
+  if (progress.value && !activatedItem.value.itemId)
+    clearItemDraft(as.info.id)
+
+  if (draftTimer) {
+    clearTimeout(draftTimer)
+    draftTimer = undefined
+  }
+
   done()
   activatedItem.value = new Item('')
   activateShow.value = false
@@ -895,13 +922,43 @@ const failedAnalyze = (msg: string) => {
   })
 }
 
-const create = () => {
+const openNewItem = () => {
+  activatedItem.value = new Item('')
   activatedItem.value.hardcore = is.storage.data.hardcore || false
   activatedItem.value.ladder = is.storage.data.ladder || true
   activatedItem.value.itemType = 'weapon'
   activatedItem.value.itemTypeValue1 = 'axe'
   setDefaultProperties()
   activateShow.value = true
+}
+
+const create = () => {
+  const draft = loadItemDraft(as.info.id)
+
+  if (!draft) {
+    openNewItem()
+    return
+  }
+
+  $q.dialog({
+    title: t('itemDraft.title'),
+    message: t('itemDraft.message'),
+    persistent: true,
+    ok: { label: t('itemDraft.restore'), color: 'primary' },
+    cancel: {
+      label: t('itemDraft.discard'),
+      color: 'grey',
+      outline: true
+    }
+  })
+    .onOk(() => {
+      activatedItem.value = draft
+      activateShow.value = true
+    })
+    .onCancel(() => {
+      clearItemDraft(as.info.id)
+      openNewItem()
+    })
 }
 
 const openOffers = (itemId: string) => {

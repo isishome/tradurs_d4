@@ -190,6 +190,12 @@ export default {
       'If items are selected that cannot be deleted, they will be excluded during processing',
     failedTitle: 'Failed to delete items'
   },
+  itemDraft: {
+    title: 'Saved item draft',
+    message: 'Do you want to restore the item you were creating?',
+    restore: 'Restore',
+    discard: 'Start over'
+  },
   blockUser: {
     title: 'Block user',
     unblockTitle: 'Unblock user',
