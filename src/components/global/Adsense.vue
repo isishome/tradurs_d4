@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, nextTick, onUnmounted } from 'vue'
+import { onMounted, nextTick, onUnmounted, ref } from 'vue'
 
 type Props = {
   dataAdClient: string
@@ -12,12 +12,28 @@ type Props = {
 const props = withDefaults(defineProps<Props>(), {
   dataAdFormat: undefined,
   dataAdtest: undefined,
-  dataFullWidthResponsive: 'false'
+  dataFullWidthResponsive: undefined
 })
 
 const prod: boolean = import.meta.env.PROD
+const adElement = ref<HTMLElement>()
+let active = false
+let pushRequested = false
+let pushed = false
+let renderTimer: number | undefined
+let resizeObserver: ResizeObserver | undefined
 
 const onPush = () => {
+  if (!active || !pushRequested || pushed || !window.adsenseLoaded) return
+
+  const element = adElement.value
+  if (!element?.isConnected) return
+
+  const { width, height } = element.getBoundingClientRect()
+  if (width <= 0 || height <= 0) return
+
+  pushed = true
+
   try {
     ;(window.adsbygoogle = window.adsbygoogle || []).push({})
   } catch (e) {
@@ -28,23 +44,38 @@ const onPush = () => {
 const render = async () => {
   await nextTick()
 
-  window.setTimeout(() => {
+  renderTimer = window.setTimeout(() => {
+    pushRequested = true
+
     if (window.adsenseLoaded) onPush()
     else window.addEventListener('adsense-loaded', onPush, { once: true })
   }, 100)
 }
 
 onMounted(async () => {
-  if (prod && !(!props.dataAdClient || !props.dataAdSlot)) await render()
+  active = true
+
+  if (prod && props.dataAdClient && props.dataAdSlot) {
+    if (typeof ResizeObserver !== 'undefined') {
+      resizeObserver = new ResizeObserver(onPush)
+      if (adElement.value) resizeObserver.observe(adElement.value)
+    }
+
+    await render()
+  }
 })
 
 onUnmounted(() => {
+  active = false
+  if (renderTimer !== undefined) window.clearTimeout(renderTimer)
+  resizeObserver?.disconnect()
   window.removeEventListener('adsense-loaded', onPush)
 })
 </script>
 
 <template>
   <ins
+    ref="adElement"
     class="adsbygoogle"
     :data-ad-client="dataAdClient"
     :data-ad-slot="dataAdSlot"

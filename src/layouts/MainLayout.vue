@@ -46,6 +46,24 @@ const newMessages = computed<boolean>(
   () => as.newMessages || as.messagePage.unread > 0
 )
 const screen = computed<Screen>(() => $q.screen)
+const topAdSize = computed(() => {
+  const viewportWidth = screen.value.width
+
+  if (viewportWidth >= 600)
+    return { width: '728px', height: '90px' }
+  if (viewportWidth >= 484)
+    return { width: '468px', height: '60px' }
+  if (viewportWidth >= 336)
+    return { width: '320px', height: '50px' }
+
+  return { width: '100%', height: '50px' }
+})
+const topAdStyle = computed(() => ({
+  display: 'block',
+  flex: 'none',
+  width: topAdSize.value.width,
+  height: topAdSize.value.height
+}))
 const asideHeight = computed<string>(
   () => `calc(100vh - ${screen.value.gt.sm ? gs.offsetTop : 0}px)`
 )
@@ -1191,9 +1209,9 @@ watch(
               <div class="row justify-center top-ads">
                 <Adsense
                   class="ad-top"
+                  :style="topAdStyle"
                   data-ad-client="ca-pub-5110777286519562"
                   data-ad-slot="6532261129"
-                  data-ad-format="horizontal"
                   :data-adtest="!prod"
                   :key="`top-${reloadAdKey}`"
                 />
@@ -1249,6 +1267,7 @@ watch(
                   data-ad-client="ca-pub-5110777286519562"
                   data-ad-slot="6574447551"
                   :data-adtest="!prod"
+                  data-full-width-responsive="false"
                   :key="`right-${reloadAdKey}`"
                 />
                 <div class="q-mt-xl">
@@ -1463,17 +1482,7 @@ watch(
 
 .ad-top {
   display: block;
-  width: 100%;
-  max-width: 728px;
-  height: 90px;
-}
-
-@media (max-width: 600px) {
-  .ad-top {
-    min-height: 50px;
-    height: 50px;
-    overflow: hidden;
-  }
+  flex: none;
 }
 
 .ad-bottom {
