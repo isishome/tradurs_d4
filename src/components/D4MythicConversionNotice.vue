@@ -9,10 +9,10 @@ const { t } = useI18n({ useScope: 'global' })
     <D4Tooltip>
       <div class="text-caption mythic-conversion-tooltip">
         <div class="text-weight-bold">
-          {{ t('season14.mythicConversion.title') }}
+          {{ t('season15.mythicConversion.title') }}
         </div>
         <div>
-          {{ t('season14.mythicConversion.description') }}
+          {{ t('season15.mythicConversion.description') }}
         </div>
       </div>
     </D4Tooltip>

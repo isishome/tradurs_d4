@@ -82,7 +82,7 @@ export default {
     message: 'Do you want to delete this preset?'
   },
   season: {
-    bg: '/images/season/014/season_emblem_en.webp',
+    bg: '/images/season/015/season_emblem_en.webp',
     first: {
       socket:
         'During Season of the Malignant, the more accurately you select the socket type in the accessory item affixes, the more often your items will be seen'
@@ -95,11 +95,11 @@ export default {
     },
     color: 'text-primary'
   },
-  season14: {
+  season15: {
     mythicConversion: {
-      title: 'Mythic Unique Conversion',
+      title: 'Direct Mythic Unique Upgrade',
       description:
-        'Mythic Unique conversion results are limited to the same equipment slot as the Unique item used as the material.'
+        'Upgrading directly in the Horadric Cube converts the target Unique into its Mythic Unique version while retaining its affixes and modifications. It gains the Crafted tag, and only one Crafted item can be equipped. Unmodifiable items cannot be used.'
     }
   },
   noFilterdItems: 'No search results matched your criteria',
@@ -271,7 +271,7 @@ export default {
   item: {
     hardcore: 'Hardcore',
     softcore: 'Softcore',
-    ladder: 'Season of Death Awakening',
+    ladder: "Season of Hell's Legacy",
     seasonal: 'Seasonal',
     eternal: 'Eternal',
     quality: 'Item Quality',
@@ -464,71 +464,66 @@ export default {
     close: 'Do not open for 24 hours'
   },
   notice: {
-    title: 'July 28, 2026 Update',
-    top: 'Hello, this is Tradurs.\nTrade offers and item browsing and registration have been improved.',
+    title: 'September 15, 2026 Season 15 Update',
+    top: "Hello, this is Tradurs.\nItem registration and search data have been updated for Diablo IV Season 15: Season of Hell's Legacy.",
     contents: [
-      { type: 'head', value: 'Trade Offer Improvements' },
+      { type: 'head', value: 'Season 15 Support' },
       {
         type: 'list',
         value:
-          'When another user has an active offer in the same currency, a new offer must have a higher amount or quantity than the current highest offer.',
+          "The season name and emblem have been updated for Season 15: Season of Hell's Legacy.",
         class: 'text-body1'
       },
       {
         type: 'list',
         value:
-          'Gold offers compete by amount. Non-gold offers compete by quantity only when both the currency category and item are the same.',
+          'Your selected Seasonal or Eternal realm setting is now preserved correctly when registering an item.',
+        class: 'text-body1'
+      },
+      { type: 'head', value: 'Existing Item Data Updates' },
+      {
+        type: 'list',
+        value:
+          'Legendary Aspect and Unique item effects changed in patch 3.2.1 have been updated in both Korean and English.',
         class: 'text-body1'
       },
       {
         type: 'list',
         value:
-          'Offers that do not meet the competitive requirement are not registered. Other unselected offers keep their existing status when a trade proceeds.',
-        class: 'text-body1'
-      },
-      { type: 'head', value: 'Item Registration Improvements' },
-      {
-        type: 'list',
-        value:
-          'Your work is temporarily saved if you close the item registration dialog, so you can continue when you return.',
+          'Effects containing multiple values now preserve the correct input and display order for each value.',
         class: 'text-body1'
       },
       {
         type: 'list',
         value:
-          'Price and offer fields now fit the available screen width on mobile devices.',
+          "Gauntlets of Sheol's fixed affixes have been updated to Primary Core Stat and Critical Strike Chance.",
         class: 'text-body1'
       },
-      { type: 'head', value: 'Set Item Information' },
+      { type: 'head', value: 'Shield Classification' },
       {
         type: 'list',
         value:
-          'Long set composition and bonus details are collapsed by default.',
+          'Shields have moved from Weapons to Armor. Normal and Unique Shields can now be registered and searched under Armor > Shield.',
         class: 'text-body1'
       },
+      { type: 'head', value: 'Direct Mythic Unique Upgrade' },
       {
         type: 'list',
         value:
-          'Item affixes remain visible, and set details can be expanded with the View Information button.',
-        class: 'text-body1'
-      },
-      { type: 'head', value: 'Related Listings on Item Details' },
-      {
-        type: 'list',
-        value:
-          'A dedicated panel shows other active listings from the same seller and similar items with at least three matching affixes.',
+          'A Mythic Unique upgraded directly through the Horadric Cube retains the original item affixes and modifications and receives the Crafted tag.',
         class: 'text-body1'
       },
       {
         type: 'list',
         value:
-          'Only active listings in the same Softcore or Hardcore and Seasonal or Eternal realm are included.',
+          'Only one item with the Crafted tag can be equipped, and Unmodifiable items cannot be used for the direct upgrade.',
         class: 'text-body1'
       },
+      { type: 'head', value: 'New Item Data' },
       {
         type: 'list',
         value:
-          'The related listings panel supports mouse, trackpad, touch swipe, previous and next controls, and keyboard navigation.',
+          'Detailed affixes for new Season 15 items will be added after verification against the live game and final tooltips.',
         class: 'text-body1'
       },
       { type: 'space' },

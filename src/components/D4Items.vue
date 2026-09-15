@@ -904,7 +904,7 @@ const endAnalyze = (item: Item) => {
   disable.value = false
   item.itemId = activatedItem.value.itemId
   item.hardcore = is.storage.data.hardcore || false
-  item.ladder = is.storage.data.ladder || true
+  item.ladder = is.storage.data.ladder ?? true
   item.authorized = activatedItem.value.authorized
   item.editable = activatedItem.value.editable
   activatedItem.value = item
@@ -925,7 +925,7 @@ const failedAnalyze = (msg: string) => {
 const openNewItem = () => {
   activatedItem.value = new Item('')
   activatedItem.value.hardcore = is.storage.data.hardcore || false
-  activatedItem.value.ladder = is.storage.data.ladder || true
+  activatedItem.value.ladder = is.storage.data.ladder ?? true
   activatedItem.value.itemType = 'weapon'
   activatedItem.value.itemTypeValue1 = 'axe'
   setDefaultProperties()
