@@ -519,11 +519,23 @@ export default {
           'Only one item with the Crafted tag can be equipped, and Unmodifiable items cannot be used for the direct upgrade.',
         class: 'text-body1'
       },
-      { type: 'head', value: 'New Item Data' },
+      { type: 'head', value: 'New Legacy Unique Items' },
       {
         type: 'list',
         value:
-          'Detailed affixes for new Season 15 items will be added after verification against the live game and final tooltips.',
+          "Equipment classes, class restrictions, fixed affixes, and Unique effects have been added for Leoric's Crown, Nemesis Bracers, Stone of Jordan, Squirt's Blouse, Arioc's Needle, Henri's Perquisition, In-Geom, and The Furnace.",
+        class: 'text-body1'
+      },
+      {
+        type: 'list',
+        value:
+          "Messerschmidt's Reaver will be added after its final effect and fixed affixes are confirmed.",
+        class: 'text-body1'
+      },
+      {
+        type: 'list',
+        value:
+          'Korean effect text and detailed values for the new items may be corrected after verification against the final in-game tooltips.',
         class: 'text-body1'
       },
       { type: 'space' },
