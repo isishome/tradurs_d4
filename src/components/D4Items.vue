@@ -1004,7 +1004,6 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
               v-for="property in rewardItem.properties"
               :key="property.valueId"
               :data="property"
-              :guaranteed="isGuaranteedProperty(rewardItem, property)"
             />
           </template>
           <template v-if="rewardItem.itemType === 'rune'" #description>
@@ -1065,7 +1064,6 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
               v-for="affix in rewardItem.affixes"
               :key="affix.valueId"
               :data="affix"
-              :guaranteed="isGuaranteedAffix(rewardItem, affix)"
             />
           </template>
           <template v-if="requestRestrictions > 0" #restrictions>
@@ -1163,7 +1161,6 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
               v-for="property in item.properties"
               :key="property.valueId"
               :data="property"
-              :guaranteed="isGuaranteedProperty(item, property)"
             />
           </template>
           <template v-if="item.itemType === 'rune'" #description>
@@ -1220,7 +1217,6 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
               v-for="affix in item.affixes"
               :key="affix.valueId"
               :data="affix"
-              :guaranteed="isGuaranteedAffix(item, affix)"
             />
           </template>
           <template v-if="requestRestrictions > 0" #restrictions>
@@ -1413,8 +1409,8 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
             :key="property.valueId || uid()"
             :data="property"
             editable
-            :guaranteed="isGuaranteedProperty(activatedItem, property)"
-            :disable="disable || isGuaranteedProperty(activatedItem, property)"
+            :necessary="isGuaranteedProperty(activatedItem, property)"
+            :disable="disable"
             @update="updateProperty"
             @remove="removeProperty"
           />
@@ -1518,7 +1514,6 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
             )"
             :key="affix.valueId || uid()"
             :data="affix"
-            :guaranteed="isGuaranteedAffix(activatedItem, affix)"
             editable
             :disable="disable"
             :necessary="

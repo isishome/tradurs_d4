@@ -19,6 +19,8 @@ export default {
     tradeList: '거래 목록',
     itemInfo: '아이템 정보',
     awards: '어워즈',
+    knowledge: '지식',
+    knowledgeRuneword: '룬어 사전',
     mySpace: '내 공간',
     messages: '메시지',
     blocks: '차단 관리',
@@ -100,6 +102,19 @@ export default {
       description:
         '호라드림의 함에서 직접 업그레이드하면 대상 고유 아이템의 접사와 개조를 유지한 채 같은 아이템의 신화 고유 버전으로 전환됩니다. 제작됨 태그가 붙으며 해당 태그 아이템은 하나만 착용할 수 있습니다. 속성 변경 불가 아이템에는 사용할 수 없습니다.'
     }
+  },
+  runewordKnowledge: {
+    title: '룬어 사전',
+    description:
+      '시즌 15 유산 룬어 19종의 조합 순서와 적용 장비, 속성을 확인할 수 있습니다.',
+    search: '룬어, 룬 또는 장비 검색',
+    list: '룬어',
+    empty: '검색 결과가 없습니다.',
+    recipeOrder: '표시된 순서대로 룬을 조합합니다.',
+    base: '적용 장비',
+    variantCount: '적용 가능한 장비 유형 {count}개',
+    valueNotice:
+      '실제 수치는 아이템 위력과 상급 접사 등에 따라 달라질 수 있습니다. ?는 실제 아이템에 표시된 값을 확인해야 하는 항목입니다.'
   },
   noFilterdItems: '조건에 맞는 검색 결과가 없습니다',
   noFilterdItemsDesc: '아이템 필터를 확인해 보세요',
@@ -291,7 +306,8 @@ export default {
     expanded: '항상 아이템 확장',
     unknown: '알 수 없는 아이템',
     manualInput: '직접 입력',
-    guaranteedAffix: '보장'
+    uniqueItems: '고유 아이템',
+    runewordItems: '룬어 아이템'
   },
   price: {
     title: '가격',
@@ -458,7 +474,7 @@ export default {
     close: '24시간 동안 열지 않기'
   },
   notice: {
-    title: '2026년 9월 16일 시즌 15 업데이트',
+    title: '2026년 9월 17일 시즌 15 최종 데이터 업데이트',
     top: '안녕하세요, Tradurs입니다.\n디아블로 IV 시즌 15: 지옥의 유산에 맞춰 아이템 등록과 검색 정보를 업데이트했습니다.',
     contents: [
       { type: 'head', value: '시즌 15 지원' },
@@ -479,6 +495,12 @@ export default {
         type: 'list',
         value:
           '3.2.1 패치에서 변경된 전설 위상과 고유 아이템 효과를 한국어와 영어 정보에 반영했습니다.',
+        class: 'text-body1'
+      },
+      {
+        type: 'list',
+        value:
+          '서슬판금, 걸신들린 자의 반지, 붉은 열광의 반지, 규탄, 티볼트의 의지, 라말라드니의 역작, 하로가스의 분노, 가틀렌의 생득권, 니르미트루크의 죽음가면, 유목민의 동경하는 마음, 곰의 힘과 화쇄류 위상의 최신 효과를 추가 보정했습니다.',
         class: 'text-body1'
       },
       {
@@ -530,6 +552,57 @@ export default {
         type: 'list',
         value:
           '신규 아이템의 한국어 효과 문구와 세부 수치는 실제 게임의 최종 툴팁 확인 결과에 따라 보정될 수 있습니다.',
+        class: 'text-body1'
+      },
+      { type: 'head', value: '시즌 15 유산 룬어' },
+      {
+        type: 'list',
+        value:
+          '유산 룬어 19종을 장비 베이스별 83개 완성품으로 등록 및 검색 데이터에 추가했습니다. 현재 제작할 수 없는 영혼 방패는 목록에서 제외했습니다.',
+        class: 'text-body1'
+      },
+      {
+        type: 'list',
+        value:
+          '룬어 한국어 문구와 게임 데이터에서 계산되지 않은 일부 매물 수치는 실제 게임의 최종 툴팁 확인 결과에 따라 보정될 수 있습니다.',
+        class: 'text-body1'
+      },
+      {
+        type: 'list',
+        value:
+          '룬어 아이템 카드의 기본 속성 위에 실제 조합 순서를 표시하고, 지식 > 룬어 사전에서 19종의 조합식과 적용 장비, 속성을 확인할 수 있도록 했습니다.',
+        class: 'text-body1'
+      },
+      { type: 'head', value: '아이템 등록 및 카드 표시 개선' },
+      {
+        type: 'list',
+        value:
+          '룬어 완성품의 고유 속성 수치는 실제 매물 값으로 수정할 수 있으며, 룬어가 보장하는 속성은 실수로 삭제되지 않도록 유지됩니다.',
+        class: 'text-body1'
+      },
+      {
+        type: 'list',
+        value:
+          '등록 화면과 아이템 카드의 보장 표시는 제거했습니다. 이 변경은 표시만 단순화하며 룬어의 필수 속성 관계에는 영향을 주지 않습니다.',
+        class: 'text-body1'
+      },
+      {
+        type: 'list',
+        value:
+          '고유 아이템 선택 목록에서 일반 고유 아이템과 룬어 아이템을 구분해 표시합니다.',
+        class: 'text-body1'
+      },
+      {
+        type: 'list',
+        value:
+          '룬어의 적용 가능 직업은 등록 카드의 제약 조건 목록에 반복해서 표시하지 않으며, 기존과 같이 직업 필터 검색에는 적용됩니다.',
+        class: 'text-body1'
+      },
+      { type: 'head', value: '거래 등록 범위' },
+      {
+        type: 'list',
+        value:
+          '영혼 가시는 계정 귀속 시즌 아이템으로 확인되어 거래 등록 대상에 포함하지 않았습니다. 신규 룬과 영물은 별도 데이터 검증이 끝난 뒤 지원할 예정입니다.',
         class: 'text-body1'
       },
       { type: 'space' },

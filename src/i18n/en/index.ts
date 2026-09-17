@@ -19,6 +19,8 @@ export default {
     tradeList: 'Trade List',
     itemInfo: 'Item Information',
     awards: 'Awards',
+    knowledge: 'Knowledge',
+    knowledgeRuneword: 'Runewords',
     mySpace: 'My Space',
     messages: 'Messages',
     blocks: 'Blocks',
@@ -101,6 +103,19 @@ export default {
       description:
         'Upgrading directly in the Horadric Cube converts the target Unique into its Mythic Unique version while retaining its affixes and modifications. It gains the Crafted tag, and only one Crafted item can be equipped. Unmodifiable items cannot be used.'
     }
+  },
+  runewordKnowledge: {
+    title: 'Runewords',
+    description:
+      'Browse the recipes, eligible equipment, and attributes for all 19 Season 15 Legacy Runewords.',
+    search: 'Search runewords, runes, or equipment',
+    list: 'Runewords',
+    empty: 'No matching runewords found.',
+    recipeOrder: 'Combine the runes in the order shown.',
+    base: 'Eligible Equipment',
+    variantCount: '{count} eligible equipment types',
+    valueNotice:
+      'Actual values may vary with Item Power and Greater Affixes. A ? indicates a value that must be checked on the actual item.'
   },
   noFilterdItems: 'No search results matched your criteria',
   noFilterdItemsDesc: 'Check out the item filters',
@@ -297,7 +312,8 @@ export default {
     expanded: 'Always expand items',
     unknown: 'Unknown Item',
     manualInput: 'Manual Input',
-    guaranteedAffix: 'Guaranteed'
+    uniqueItems: 'Unique Items',
+    runewordItems: 'Runeword Items'
   },
   price: {
     title: 'Price',
@@ -464,7 +480,7 @@ export default {
     close: 'Do not open for 24 hours'
   },
   notice: {
-    title: 'September 15, 2026 Season 15 Update',
+    title: 'September 17, 2026 Season 15 Final Data Update',
     top: "Hello, this is Tradurs.\nItem registration and search data have been updated for Diablo IV Season 15: Season of Hell's Legacy.",
     contents: [
       { type: 'head', value: 'Season 15 Support' },
@@ -485,6 +501,12 @@ export default {
         type: 'list',
         value:
           'Legendary Aspect and Unique item effects changed in patch 3.2.1 have been updated in both Korean and English.',
+        class: 'text-body1'
+      },
+      {
+        type: 'list',
+        value:
+          "The latest effects have been corrected for Razorplate, Ring of the Ravenous, Ring of Red Furor, Condemnation, Tibault's Will, Ramaladni's Magnum Opus, Rage of Harrogath, Gathlen's Birthright, Deathmask of Nirmitruq, Nomad's Longing Heart, Might of the Ursine, and Pyroclastic Aspect.",
         class: 'text-body1'
       },
       {
@@ -536,6 +558,57 @@ export default {
         type: 'list',
         value:
           'Korean effect text and detailed values for the new items may be corrected after verification against the final in-game tooltips.',
+        class: 'text-body1'
+      },
+      { type: 'head', value: 'Season 15 Legacy Runewords' },
+      {
+        type: 'list',
+        value:
+          'All 19 Legacy Runewords have been added to registration and search as 83 equipment-base variants. The currently unavailable Spirit Shield is excluded.',
+        class: 'text-body1'
+      },
+      {
+        type: 'list',
+        value:
+          'Korean runeword text and some listing values that cannot be resolved from the game data may be corrected after verification against final in-game tooltips.',
+        class: 'text-body1'
+      },
+      {
+        type: 'list',
+        value:
+          'Runeword item cards now show the recipe above base properties, and Knowledge > Runewords provides all 19 recipes with eligible equipment and attributes.',
+        class: 'text-body1'
+      },
+      { type: 'head', value: 'Item Registration and Card Display' },
+      {
+        type: 'list',
+        value:
+          'Characteristic values on completed Runewords can be edited to match the listed item, while required Runeword attributes remain protected from accidental removal.',
+        class: 'text-body1'
+      },
+      {
+        type: 'list',
+        value:
+          'Guaranteed badges have been removed from registration and item cards. This only simplifies the display and does not change required Runeword attribute relationships.',
+        class: 'text-body1'
+      },
+      {
+        type: 'list',
+        value:
+          'The Unique item selector now separates ordinary Unique items from Runeword items.',
+        class: 'text-body1'
+      },
+      {
+        type: 'list',
+        value:
+          'Eligible Runeword classes are no longer repeated in the listing restriction area, while class-filter searches continue to include those listings.',
+        class: 'text-body1'
+      },
+      { type: 'head', value: 'Trade Listing Scope' },
+      {
+        type: 'list',
+        value:
+          'Soul Splinters are account-bound seasonal items and are not available for trade listings. New runes and talismans will be supported after their data is verified separately.',
         class: 'text-body1'
       },
       { type: 'space' },

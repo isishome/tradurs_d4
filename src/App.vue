@@ -135,7 +135,7 @@ const notice = reactive<{ open: boolean; close: boolean }>({
   open: false,
   close: false
 })
-const noticeCookie = 'd4.update.20260916.2'
+const noticeCookie = 'd4.update.20260917.3'
 
 const close = () => {
   $q.cookies.set(noticeCookie, 'confirm', { expires: 7, path: '/' })

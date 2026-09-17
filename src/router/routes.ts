@@ -23,6 +23,11 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/AwardsPage.vue')
       },
       {
+        name: 'knowledgeRuneword',
+        path: 'knowledge/runewords/:runeword?',
+        component: () => import('pages/RunewordKnowledgePage.vue')
+      },
+      {
         name: 'messages',
         path: 'messages',
         component: () => import('pages/MessagesPage.vue'),

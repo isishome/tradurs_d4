@@ -157,6 +157,11 @@ const expandedMobile = ref<boolean>(false)
 const isMySpace = computed(() =>
   ['messages', 'blocks', 'history'].includes(route.name as string)
 )
+const expandedKnowledge = ref<boolean>(false)
+const expandedKnowledgeMobile = ref<boolean>(false)
+const isKnowledge = computed(() =>
+  ['knowledgeRuneword'].includes(route.name as string)
+)
 const expandedAdmin = ref<boolean>(false)
 const isAdmin = computed(() =>
   ['adminUser', 'adminItem', 'adminAffix'].includes(route.name as string)
@@ -462,6 +467,37 @@ watch(
                 />
               </q-item-section>
             </q-item>
+            <q-expansion-item
+              v-model="expandedKnowledge"
+              expand-icon="img:/images/icons/dropdown.svg"
+              :default-opened="isKnowledge"
+              :header-class="{ active: isKnowledge }"
+              :class="expandedKnowledge ? 'expanded rounded-borders' : ''"
+            >
+              <template #header>
+                <q-item-section>
+                  {{ t('page.knowledge') }}
+                </q-item-section>
+              </template>
+              <q-list bordered class="sub rounded-borders">
+                <q-item
+                  :inset-level="0.4"
+                  v-ripple
+                  clickable
+                  :to="{
+                    name: 'knowledgeRuneword',
+                    params: { lang: route.params.lang }
+                  }"
+                  active-class="active"
+                >
+                  <q-item-section side>
+                    <q-item-label>
+                      {{ t('page.knowledgeRuneword') }}
+                    </q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-expansion-item>
             <q-expansion-item
               v-if="as.signed"
               v-model="expanded"
@@ -789,6 +825,40 @@ watch(
                   />
                 </div>
               </q-btn>
+              <q-btn-dropdown
+                v-model="expandedKnowledgeMobile"
+                flat
+                content-class="no-shadow"
+                no-caps
+                :ripple="false"
+                class="no-hover"
+                :class="{ active: isKnowledge }"
+                transition-show="none"
+                transition-hide="none"
+                transition-duration="0"
+                dropdown-icon="img:/images/icons/dropdown.svg"
+              >
+                <template #label>
+                  {{ t('page.knowledge') }}
+                </template>
+                <q-list bordered class="page rounded-borders">
+                  <q-item
+                    v-ripple
+                    clickable
+                    :to="{
+                      name: 'knowledgeRuneword',
+                      params: { lang: route.params.lang }
+                    }"
+                    active-class="active"
+                  >
+                    <q-item-section side>
+                      <q-item-label>
+                        {{ t('page.knowledgeRuneword') }}
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </q-btn-dropdown>
               <q-btn-dropdown
                 v-if="as.signed"
                 v-model="expandedMobile"

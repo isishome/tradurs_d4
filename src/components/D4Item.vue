@@ -10,15 +10,23 @@ import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { useItemStore } from 'stores/item-store'
 
-import type { Gem, Elixir, Affix, Summoning } from 'stores/item-store'
+import type {
+  Gem,
+  Elixir,
+  Affix,
+  Summoning,
+  FixedItem
+} from 'stores/item-store'
 import type { QCard, QSelect } from 'quasar'
 import { Item, Price } from 'src/types/item'
 import { checkName } from 'src/common'
 import { itemImgs } from 'src/common/items'
 
 import D4Price from 'components/D4Price.vue'
+import D4RunewordSequence from 'components/D4RunewordSequence.vue'
 import D4Separator from 'components/D4Separator.vue'
 import D4ItemDisplay from './D4ItemDisplay.vue'
+import { findLegacyRuneword } from 'src/data/legacy-runewords'
 
 interface IProps {
   data: Item
@@ -28,6 +36,11 @@ interface IProps {
   history?: boolean
   navigable?: boolean
   showActionsMenu?: boolean
+}
+
+interface FixedItemSelectOption extends FixedItem {
+  disable?: boolean
+  group?: boolean
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -172,17 +185,54 @@ const noLevel = computed(() => ['summoning'].includes(_typeValue1.value))
 const powerful = computed(
   () => !['rune', 'inventory', 'consumables'].includes(_type.value)
 )
+const runeword = computed(() =>
+  findLegacyRuneword(
+    props.editable ? _fixedItemId.value : props.data.fixedItemId
+  )
+)
 const attributes = computed(() =>
   [
     { label: t('properties'), value: 'properties', hide: !hasProperties.value },
     { label: t('affixes'), value: 'affixes' },
-    { label: t('restrictions'), value: 'restrictions' }
+    {
+      label: t('restrictions'),
+      value: 'restrictions',
+      hide: !!runeword.value
+    }
   ].filter((a) => !a.hide)
 )
-const fixedItems = computed(() => [
+const fixedItems = computed<FixedItem[]>(() => [
   { value: 0, label: t('item.manualInput') },
   ...filterFixedItems(_quality.value, _typeValue1.value)
 ])
+const fixedItemOptions = computed<FixedItemSelectOption[]>(() => {
+  const [manualInput, ...items] = fixedItems.value
+  const uniqueItems = items.filter((item) => !findLegacyRuneword(item.value))
+  const runewordItems = items.filter((item) => findLegacyRuneword(item.value))
+  const options: FixedItemSelectOption[] = []
+
+  if (manualInput) options.push(manualInput)
+  if (uniqueItems.length > 0) {
+    options.push({
+      value: -1,
+      label: t('item.uniqueItems'),
+      disable: true,
+      group: true
+    })
+    options.push(...uniqueItems)
+  }
+  if (runewordItems.length > 0) {
+    options.push({
+      value: -2,
+      label: t('item.runewordItems'),
+      disable: true,
+      group: true
+    })
+    options.push(...runewordItems)
+  }
+
+  return options
+})
 
 const updateTier = (val: string) => {
   _tier.value = _tier.value === val ? null : val
@@ -286,6 +336,8 @@ const updateFixedItem = () => {
   )
 
   if (findFixedItem) {
+    if (runeword.value) attribute.value = 'affixes'
+
     const properties = props.data.properties.map((p) => p.propertyId as number)
     const affixes = props.data.affixes.map((a) => a.affixId as number)
     const restrictions = props.data.restrictions.map(
@@ -315,6 +367,10 @@ const updateFixedItem = () => {
       .forEach((fia) => {
         emit('update:affix', fia)
       })
+    // These rows remain attached to the listing because the current search
+    // query uses item_restrictions for class filtering. Runeword class
+    // eligibility is hidden from the editor/card and remains visible in the
+    // knowledge dictionary instead.
     ;(findFixedItem.restrictions ?? [])
       .filter((fir) => !restrictions.includes(fir))
       .forEach((fir) => {
@@ -827,7 +883,7 @@ defineExpose({ scrollEnd })
                     })
                   "
                   dropdown-icon="img:/images/icons/dropdown.svg"
-                  :options="fixedItems"
+                  :options="fixedItemOptions"
                   popup-content-class="scroll bordered limit-select"
                   options-dense
                   @update:model-value="updateFixedItem"
@@ -836,7 +892,19 @@ defineExpose({ scrollEnd })
                     <div class="ellipsis">{{ scope.opt.label }}</div>
                   </template>
                   <template #option="scope">
-                    <q-item clickable v-bind="scope.itemProps">
+                    <q-item
+                      v-if="scope.opt.group"
+                      dense
+                      v-bind="scope.itemProps"
+                      class="fixed-item-group"
+                    >
+                      <q-item-section>
+                        <q-item-label overline>
+                          {{ scope.opt.label }}
+                        </q-item-label>
+                      </q-item-section>
+                    </q-item>
+                    <q-item v-else clickable v-bind="scope.itemProps">
                       <q-item-section v-if="scope.opt.quality" avatar>
                         <img
                           height="36"
@@ -1006,6 +1074,12 @@ defineExpose({ scrollEnd })
         />
       </q-card-section>
       <template v-if="qualifiable || data.itemType === 'aspect'">
+        <template v-if="runeword">
+          <D4Separator />
+          <q-card-section class="q-py-sm">
+            <D4RunewordSequence :rune-codes="runeword.runeCodes" />
+          </q-card-section>
+        </template>
         <template v-if="slots['base-end']">
           <D4Separator />
           <q-card-section>

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { useI18n } from 'vue-i18n'
 import { useQuasar, QInput, uid } from 'quasar'
 import type { Affix, Rune } from 'stores/item-store'
 import { useItemStore } from 'stores/item-store'
@@ -23,17 +22,12 @@ const props = defineProps({
   necessary: {
     type: Boolean,
     default: false
-  },
-  guaranteed: {
-    type: Boolean,
-    default: false
   }
 })
 
 const emit = defineEmits(['update', 'remove'])
 
 const $q = useQuasar()
-const { t } = useI18n({ useScope: 'global' })
 const is = useItemStore()
 
 const findType = is.findType
@@ -314,12 +308,6 @@ const remove = (): void => {
             </div>
           </template>
         </template>
-        <q-badge
-          v-if="guaranteed"
-          class="guaranteed-badge"
-          outline
-          :label="t('item.guaranteedAffix')"
-        />
         <q-btn
           v-show="editable && !necessary"
           :disable="disable"
@@ -406,14 +394,6 @@ const remove = (): void => {
 
 .body--light .minmax-text {
   color: rgba(0, 0, 220, 0.6);
-}
-
-.guaranteed-badge {
-  color: var(--q-unique);
-  border-color: var(--q-unique);
-  font-size: 10px;
-  line-height: 14px;
-  padding: 0 4px;
 }
 
 .minmax {

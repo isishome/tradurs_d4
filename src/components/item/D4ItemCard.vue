@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import { useItemStore } from 'stores/item-store'
-import type { Affix, Item, Property } from 'src/types/item'
+import type { Item } from 'src/types/item'
 
 import D4Affix from 'components/D4Affix.vue'
 import D4Description from 'components/D4Description.vue'
@@ -14,18 +14,6 @@ defineProps<{ item: Item }>()
 
 const { t } = useI18n({ useScope: 'global' })
 const is = useItemStore()
-
-const fixedItem = (item: Item) =>
-  is
-    .filterFixedItems(item.quality, item.itemTypeValue1)
-    .find((fixed) => fixed.value === item.fixedItemId)
-
-const isGuaranteedProperty = (item: Item, property: Property) =>
-  fixedItem(item)?.guaranteedProperties?.includes(property.propertyId) ?? false
-
-const isGuaranteedAffix = (item: Item, affix: Affix) =>
-  affix.affixId !== undefined &&
-  (fixedItem(item)?.guaranteedAffixes?.includes(affix.affixId) ?? false)
 </script>
 
 <template>
@@ -41,7 +29,6 @@ const isGuaranteedAffix = (item: Item, affix: Affix) =>
         v-for="property in item.properties"
         :key="property.valueId"
         :data="property"
-        :guaranteed="isGuaranteedProperty(item, property)"
       />
     </template>
     <template v-if="item.itemType === 'rune'" #description>
@@ -92,7 +79,6 @@ const isGuaranteedAffix = (item: Item, affix: Affix) =>
         v-for="affix in item.affixes"
         :key="affix.valueId"
         :data="affix"
-        :guaranteed="isGuaranteedAffix(item, affix)"
       />
     </template>
     <template #restrictions>

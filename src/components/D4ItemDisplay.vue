@@ -17,9 +17,11 @@ import { Item } from 'src/types/item'
 import { clipboard } from 'src/common'
 
 import D4Price from './D4Price.vue'
+import D4RunewordSequence from './D4RunewordSequence.vue'
 import D4Separator from './D4Separator.vue'
 import D4User from './D4User.vue'
 import { setgroups } from 'process'
+import { findLegacyRuneword } from 'src/data/legacy-runewords'
 
 type Props = {
   data: Item
@@ -107,6 +109,7 @@ const fixedItem = computed(() =>
     (fi) => fi.value === props.data.fixedItemId
   )
 )
+const runeword = computed(() => findLegacyRuneword(props.data.fixedItemId))
 const setGroup = computed(() => {
   const findSet = findSetGroup(fixedItem.value?.setGroups?.[0] ?? 0)
 
@@ -519,6 +522,10 @@ onUnmounted(() => {
       </q-card-section>
       <D4Separator v-show="qualifiable || descriptable" type="left" />
 
+      <q-card-section v-if="runeword && !loading" class="q-py-sm">
+        <D4RunewordSequence :rune-codes="runeword.runeCodes" />
+      </q-card-section>
+
       <q-card-section
         v-show="
           loading ||
@@ -711,7 +718,10 @@ onUnmounted(() => {
             </div>
             <slot
               v-if="
-                slots.restrictions && !loading && data.restrictions.length > 0
+                !runeword &&
+                slots.restrictions &&
+                !loading &&
+                data.restrictions.length > 0
               "
               name="restrictions"
             >
