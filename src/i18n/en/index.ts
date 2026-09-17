@@ -107,7 +107,7 @@ export default {
   runewordKnowledge: {
     title: 'Runewords',
     description:
-      'Browse the recipes, eligible equipment, and attributes for all 19 Season 15 Legacy Runewords.',
+      'Prepare eligible equipment and the required Runes, then combine the Runes in the shown order in the Horadric Cube to create a Runeword item. Browse the recipes, equipment, and attributes for all 19 Season 15 Legacy Runewords.',
     search: 'Search runewords, runes, or equipment',
     list: 'Runewords',
     empty: 'No matching runewords found.',

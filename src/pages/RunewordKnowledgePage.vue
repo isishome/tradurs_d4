@@ -93,8 +93,6 @@ const templateLabel = (label?: string) => label?.replaceAll('{x}', '?') ?? ''
   <div class="runeword-knowledge">
     <div class="top-space"></div>
     <header class="knowledge-header q-mb-lg">
-      <div class="text-overline text-primary">{{ t('page.knowledge') }}</div>
-      <h2 class="text-h5 q-my-xs">{{ t('runewordKnowledge.title') }}</h2>
       <p class="text-body2 text-grey q-mb-none">
         {{ t('runewordKnowledge.description') }}
       </p>
