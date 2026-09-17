@@ -82,7 +82,9 @@ const selectedVariant = computed(() =>
 const variantOptions = computed(() =>
   variants.value.map((item) => ({
     value: item.value,
-    label: equipmentLabel(item)
+    label: equipmentLabel(item),
+    quality: item.quality,
+    sort: item.sort
   }))
 )
 
@@ -193,14 +195,39 @@ const templateLabel = (label?: string) => label?.replaceAll('{x}', '?') ?? ''
           </div>
           <q-select
             v-model="selectedFixedItemId"
+            class="runeword-variant-select"
             :options="variantOptions"
             emit-value
             map-options
             outlined
             dense
+            no-error-icon
+            hide-bottom-space
+            transition-show="none"
+            transition-hide="none"
+            :transition-duration="0"
             options-dense
             dropdown-icon="img:/images/icons/dropdown.svg"
-          />
+            popup-content-class="scroll bordered limit-select"
+          >
+            <template #selected-item="scope">
+              <div class="ellipsis">{{ scope.opt.label }}</div>
+            </template>
+            <template #option="scope">
+              <q-item clickable v-bind="scope.itemProps">
+                <q-item-section avatar>
+                  <img
+                    height="36"
+                    :src="`/images/items/fixed/${scope.opt.quality}-${scope.opt.sort}.webp`"
+                    alt=""
+                  />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>{{ scope.opt.label }}</q-item-label>
+                </q-item-section>
+              </q-item>
+            </template>
+          </q-select>
           <div class="text-caption text-grey q-mt-sm">
             {{ t('runewordKnowledge.variantCount', { count: variants.length }) }}
           </div>
@@ -285,6 +312,11 @@ const templateLabel = (label?: string) => label?.replaceAll('{x}', '?') ?? ''
 .detail-image {
   flex: 0 0 auto;
   background: rgba(0, 0, 0, 0.14);
+}
+
+.runeword-variant-select :deep(.q-field__control),
+.runeword-variant-select :deep(.q-field__marginal) {
+  min-height: 34px;
 }
 
 .detail-section ul {
