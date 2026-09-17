@@ -490,16 +490,18 @@ watch(
                   }"
                   active-class="active"
                 >
-                  <q-item-section side>
-                    <q-item-label class="row items-center no-wrap q-gutter-x-xs">
-                      <span>{{ t('page.knowledgeRuneword') }}</span>
-                      <q-badge
-                        outline
-                        color="primary"
-                        label="beta"
-                        class="seasonal-beta-badge"
-                      />
+                  <q-item-section>
+                    <q-item-label>
+                      {{ t('page.knowledgeRuneword') }}
                     </q-item-label>
+                  </q-item-section>
+                  <q-item-section side>
+                    <q-badge
+                      outline
+                      color="primary"
+                      label="beta"
+                      class="seasonal-beta-badge"
+                    />
                   </q-item-section>
                 </q-item>
               </q-list>
@@ -857,16 +859,18 @@ watch(
                     }"
                     active-class="active"
                   >
-                    <q-item-section side>
-                      <q-item-label class="row items-center no-wrap q-gutter-x-xs">
-                        <span>{{ t('page.knowledgeRuneword') }}</span>
-                        <q-badge
-                          outline
-                          color="primary"
-                          label="beta"
-                          class="seasonal-beta-badge"
-                        />
+                    <q-item-section>
+                      <q-item-label>
+                        {{ t('page.knowledgeRuneword') }}
                       </q-item-label>
+                    </q-item-section>
+                    <q-item-section side>
+                      <q-badge
+                        outline
+                        color="primary"
+                        label="beta"
+                        class="seasonal-beta-badge"
+                      />
                     </q-item-section>
                   </q-item>
                 </q-list>

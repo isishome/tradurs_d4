@@ -227,7 +227,6 @@ watch(
       v-if="isMobile && selectedDefinition"
       v-model="mobileDetailOpen"
       maximized
-      :no-route-dismiss="false"
       @hide="closeMobileDetail"
     >
       <template #middle>
