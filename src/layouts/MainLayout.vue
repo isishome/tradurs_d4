@@ -491,8 +491,14 @@ watch(
                   active-class="active"
                 >
                   <q-item-section side>
-                    <q-item-label>
-                      {{ t('page.knowledgeRuneword') }}
+                    <q-item-label class="row items-center no-wrap q-gutter-x-xs">
+                      <span>{{ t('page.knowledgeRuneword') }}</span>
+                      <q-badge
+                        outline
+                        color="primary"
+                        label="beta"
+                        class="seasonal-beta-badge"
+                      />
                     </q-item-label>
                   </q-item-section>
                 </q-item>
@@ -852,8 +858,14 @@ watch(
                     active-class="active"
                   >
                     <q-item-section side>
-                      <q-item-label>
-                        {{ t('page.knowledgeRuneword') }}
+                      <q-item-label class="row items-center no-wrap q-gutter-x-xs">
+                        <span>{{ t('page.knowledgeRuneword') }}</span>
+                        <q-badge
+                          outline
+                          color="primary"
+                          label="beta"
+                          class="seasonal-beta-badge"
+                        />
                       </q-item-label>
                     </q-item-section>
                   </q-item>
@@ -1538,6 +1550,14 @@ watch(
   width: 100%;
   max-width: 728px;
   height: 90px;
+}
+
+.seasonal-beta-badge {
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 9px;
+  line-height: 12px;
+  letter-spacing: 0.04em;
 }
 
 @media (max-width: 600px) {

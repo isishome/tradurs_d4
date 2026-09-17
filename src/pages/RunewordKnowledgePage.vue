@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import { useQuasar } from 'quasar'
 import { useItemStore, type FixedItem } from 'stores/item-store'
 import D4RunewordSequence from 'components/D4RunewordSequence.vue'
+import D4RunewordKnowledgeDetail from 'components/knowledge/D4RunewordKnowledgeDetail.vue'
 import {
   legacyRuneLabel,
   legacyRunewords,
@@ -11,10 +13,14 @@ import {
 } from 'src/data/legacy-runewords'
 
 const route = useRoute()
+const router = useRouter()
+const $q = useQuasar()
 const { t, locale } = useI18n({ useScope: 'global' })
 const is = useItemStore()
 const query = ref('')
 const selectedFixedItemId = ref<number>()
+const mobileDetailOpen = ref(false)
+const isMobile = computed(() => $q.screen.lt.sm)
 
 const localeKey = computed<'ko' | 'en'>(() =>
   locale.value.toLowerCase().startsWith('ko') ? 'ko' : 'en'
@@ -27,6 +33,13 @@ const fixedItemsFor = (definition: LegacyRunewordDefinition): FixedItem[] =>
 
 const nameFor = (definition: LegacyRunewordDefinition) =>
   fixedItemsFor(definition)[0]?.label ?? definition.name[localeKey.value]
+
+const imageFor = (definition: LegacyRunewordDefinition) => {
+  const item = fixedItemsFor(definition)[0]
+  return item
+    ? `/images/items/fixed/${item.quality}-${item.sort}.webp`
+    : undefined
+}
 
 const equipmentLabel = (item: FixedItem) =>
   is.findEquipClass(item.equipmentClass)?.label ?? item.equipmentClass ?? ''
@@ -75,26 +88,39 @@ watch(
   { immediate: true }
 )
 
-const selectedVariant = computed(() =>
-  variants.value.find((item) => item.value === selectedFixedItemId.value)
-)
+const openMobileDetail = () => {
+  if (isMobile.value) mobileDetailOpen.value = true
+}
 
-const variantOptions = computed(() =>
-  variants.value.map((item) => ({
-    value: item.value,
-    label: equipmentLabel(item),
-    quality: item.quality,
-    sort: item.sort
-  }))
-)
+const closeMobileDetail = () => {
+  if (
+    isMobile.value &&
+    route.name === 'knowledgeRuneword' &&
+    route.params.runeword
+  ) {
+    void router.replace({
+      name: 'knowledgeRuneword',
+      params: { lang: route.params.lang }
+    })
+  }
+}
 
-const templateLabel = (label?: string) => label?.replaceAll('{x}', '?') ?? ''
+watch(
+  [() => route.params.runeword, isMobile],
+  ([runeword, mobile]) => {
+    const validRuneword = legacyRunewords.some(
+      (definition) => definition.key === String(runeword ?? '')
+    )
+    mobileDetailOpen.value = Boolean(mobile && validRuneword)
+  },
+  { immediate: true }
+)
 </script>
 
 <template>
   <div class="runeword-knowledge">
     <div class="top-space"></div>
-    <header class="knowledge-header q-mb-lg">
+    <header class="knowledge-header q-mb-md">
       <p class="text-body2 text-grey q-mb-none">
         {{ t('runewordKnowledge.description') }}
       </p>
@@ -105,7 +131,7 @@ const templateLabel = (label?: string) => label?.replaceAll('{x}', '?') ?? ''
       outlined
       dense
       clearable
-      class="q-mb-lg"
+      class="runeword-search q-mb-lg"
       :label="t('runewordKnowledge.search')"
     >
       <template #prepend>
@@ -120,161 +146,117 @@ const templateLabel = (label?: string) => label?.replaceAll('{x}', '?') ?? ''
     </q-input>
 
     <div class="knowledge-grid">
-      <q-list bordered separator class="rounded-borders runeword-list">
-        <q-item-label header class="row justify-between items-center">
-          <span>{{ t('runewordKnowledge.list') }}</span>
-          <q-badge color="grey-8" :label="filteredRunewords.length" />
+      <q-card flat bordered class="runeword-list-card">
+        <q-item-label header class="list-header row justify-between items-center">
+          <span class="text-subtitle2">{{ t('runewordKnowledge.list') }}</span>
+          <q-badge outline color="primary" :label="filteredRunewords.length" />
         </q-item-label>
-        <q-item
-          v-for="definition in filteredRunewords"
-          :key="definition.key"
-          v-ripple
-          clickable
-          :active="selectedDefinition?.key === definition.key"
-          active-class="runeword-active"
-          :to="{
-            name: 'knowledgeRuneword',
-            params: { lang: route.params.lang, runeword: definition.key }
-          }"
-        >
-          <q-item-section>
-            <q-item-label class="text-weight-bold">
-              {{ nameFor(definition) }}
-            </q-item-label>
-            <q-item-label caption>
-              <D4RunewordSequence
-                separated
-                :rune-codes="definition.runeCodes"
-              />
-            </q-item-label>
-          </q-item-section>
-          <q-item-section side>
-            <q-badge
-              outline
-              color="grey-6"
-              :label="definition.fixedItemIds.length"
-            />
-          </q-item-section>
-        </q-item>
-        <q-item v-if="filteredRunewords.length === 0">
-          <q-item-section class="text-grey text-center q-py-xl">
-            {{ t('runewordKnowledge.empty') }}
-          </q-item-section>
-        </q-item>
-      </q-list>
-
-      <q-card v-if="selectedDefinition" flat bordered class="detail-card">
-        <q-card-section class="row no-wrap items-start q-gutter-md">
-          <q-img
-            v-if="selectedVariant"
-            :src="`/images/items/fixed/${selectedVariant.quality}-${selectedVariant.sort}.webp`"
-            width="88px"
-            height="108px"
-            fit="contain"
-            class="rounded-borders detail-image"
-          />
-          <div class="col">
-            <div class="text-h6 text-unique">
-              {{ nameFor(selectedDefinition) }}
-            </div>
-            <D4RunewordSequence
-              separated
-              :rune-codes="selectedDefinition.runeCodes"
-              class="q-mt-sm"
-            />
-            <div class="text-caption text-grey q-mt-sm">
-              {{ t('runewordKnowledge.recipeOrder') }}
-            </div>
-          </div>
-        </q-card-section>
-
-        <q-separator />
-        <q-card-section>
-          <div class="text-subtitle2 q-mb-sm">
-            {{ t('runewordKnowledge.base') }}
-          </div>
-          <q-select
-            v-model="selectedFixedItemId"
-            class="runeword-variant-select"
-            :options="variantOptions"
-            emit-value
-            map-options
-            outlined
-            dense
-            no-error-icon
-            hide-bottom-space
-            transition-show="none"
-            transition-hide="none"
-            :transition-duration="0"
-            options-dense
-            dropdown-icon="img:/images/icons/dropdown.svg"
-            popup-content-class="scroll bordered limit-select"
+        <q-list separator class="runeword-list">
+          <q-item
+            v-for="definition in filteredRunewords"
+            :key="definition.key"
+            v-ripple
+            clickable
+            :active="selectedDefinition?.key === definition.key"
+            active-class="runeword-active"
+            :to="{
+              name: 'knowledgeRuneword',
+              params: { lang: route.params.lang, runeword: definition.key }
+            }"
+            @click="openMobileDetail"
           >
-            <template #selected-item="scope">
-              <div class="ellipsis">{{ scope.opt.label }}</div>
-            </template>
-            <template #option="scope">
-              <q-item clickable v-bind="scope.itemProps">
-                <q-item-section avatar>
-                  <img
-                    height="36"
-                    :src="`/images/items/fixed/${scope.opt.quality}-${scope.opt.sort}.webp`"
-                    alt=""
-                  />
-                </q-item-section>
-                <q-item-section>
-                  <q-item-label>{{ scope.opt.label }}</q-item-label>
-                </q-item-section>
-              </q-item>
-            </template>
-          </q-select>
-          <div class="text-caption text-grey q-mt-sm">
-            {{ t('runewordKnowledge.variantCount', { count: variants.length }) }}
-          </div>
-        </q-card-section>
+            <q-item-section avatar class="runeword-thumb-section">
+              <q-img
+                v-if="imageFor(definition)"
+                :src="imageFor(definition)"
+                width="42px"
+                height="48px"
+                fit="contain"
+                class="runeword-thumb"
+              />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label class="text-weight-bold">
+                {{ nameFor(definition) }}
+              </q-item-label>
+              <q-item-label caption>
+                <D4RunewordSequence
+                  separated
+                  :rune-codes="definition.runeCodes"
+                />
+              </q-item-label>
+            </q-item-section>
+            <q-item-section side class="row no-wrap items-center q-gutter-x-sm">
+              <q-badge
+                outline
+                color="primary"
+                :label="definition.fixedItemIds.length"
+              />
+              <img
+                src="/images/icons/chevron_right.svg"
+                width="16"
+                height="16"
+                class="icon list-chevron"
+                alt=""
+              />
+            </q-item-section>
+          </q-item>
+          <q-item v-if="filteredRunewords.length === 0">
+            <q-item-section class="text-grey text-center q-py-xl">
+              {{ t('runewordKnowledge.empty') }}
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </q-card>
 
-        <template v-if="selectedVariant">
-          <q-separator />
-          <q-card-section class="detail-section">
-            <div class="text-subtitle2">{{ t('properties') }}</div>
-            <ul>
-              <li v-for="id in selectedVariant.properties" :key="`property-${id}`">
-                {{ templateLabel(is.findProperty(id)?.label) }}
-              </li>
-            </ul>
-          </q-card-section>
-
-          <q-separator />
-          <q-card-section class="detail-section">
-            <div class="text-subtitle2">{{ t('affixes') }}</div>
-            <ul>
-              <li v-for="id in selectedVariant.affixes" :key="`affix-${id}`">
-                {{ templateLabel(is.findAffix(id)?.label) }}
-              </li>
-            </ul>
-          </q-card-section>
-
-          <template v-if="selectedVariant.restrictions?.length">
-            <q-separator />
-            <q-card-section class="detail-section">
-              <div class="text-subtitle2">{{ t('restrictions') }}</div>
-              <ul>
-                <li
-                  v-for="id in selectedVariant.restrictions"
-                  :key="`restriction-${id}`"
-                >
-                  {{ templateLabel(is.findRestriction(id)?.label) }}
-                </li>
-              </ul>
-            </q-card-section>
-          </template>
-        </template>
-
-        <q-card-section class="text-caption text-grey">
-          {{ t('runewordKnowledge.valueNotice') }}
-        </q-card-section>
+      <q-card
+        v-if="selectedDefinition && !isMobile"
+        flat
+        class="card-item unique detail-card"
+      >
+        <div class="inner">
+          <D4RunewordKnowledgeDetail
+            v-model="selectedFixedItemId"
+            :definition="selectedDefinition"
+          />
+        </div>
       </q-card>
     </div>
+
+    <D4Dialog
+      v-if="isMobile && selectedDefinition"
+      v-model="mobileDetailOpen"
+      maximized
+      :no-route-dismiss="false"
+      @hide="closeMobileDetail"
+    >
+      <template #middle>
+        <D4RunewordKnowledgeDetail
+          v-model="selectedFixedItemId"
+          :definition="selectedDefinition"
+          class="col scroll mobile-detail"
+        >
+          <template #actions>
+            <q-btn
+              flat
+              round
+              dense
+              :aria-label="t('btn.close')"
+              class="no-hover icon"
+              :ripple="false"
+              @click="mobileDetailOpen = false"
+            >
+              <img
+                src="/images/icons/close.svg"
+                width="22"
+                height="22"
+                alt=""
+              />
+            </q-btn>
+          </template>
+        </D4RunewordKnowledgeDetail>
+      </template>
+    </D4Dialog>
   </div>
 </template>
 
@@ -284,58 +266,95 @@ const templateLabel = (label?: string) => label?.replaceAll('{x}', '?') ?? ''
 }
 
 .knowledge-header {
+  position: relative;
   border-left: 3px solid var(--q-primary);
-  padding-left: 16px;
+  border-radius: 0 4px 4px 0;
+  padding: 12px 16px;
+  background: linear-gradient(90deg, var(--q-cloud), transparent 78%);
+}
+
+.knowledge-header p {
+  line-height: 1.65;
+}
+
+.runeword-search :deep(.q-field__control) {
+  background: var(--q-cloud);
 }
 
 .knowledge-grid {
   display: grid;
-  grid-template-columns: minmax(250px, 0.8fr) minmax(0, 1.2fr);
+  grid-template-columns: minmax(280px, 0.8fr) minmax(0, 1.2fr);
   align-items: start;
   gap: 20px;
 }
 
-.runeword-list,
-.detail-card {
-  background: rgba(30, 30, 30, 0.92);
+.runeword-list-card {
+  overflow: hidden;
+  border-color: var(--q-dark-border);
+  background: linear-gradient(180deg, rgba(32, 33, 28, 0.96), rgba(4, 4, 4, 0.96));
+}
+
+.list-header {
+  min-height: 48px;
+  border-bottom: 1px solid var(--q-dark-border);
+  color: var(--q-primary);
+}
+
+.runeword-list :deep(.q-item) {
+  min-height: 68px;
+  border-left: 3px solid transparent;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.runeword-list :deep(.q-item:hover) {
+  background: var(--q-cloud);
+}
+
+.runeword-thumb-section {
+  min-width: 54px;
+  padding-right: 8px;
+}
+
+.runeword-thumb {
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.16);
+}
+
+.list-chevron {
+  opacity: 0.45;
 }
 
 .runeword-active {
-  background: rgba(181, 140, 78, 0.16);
+  border-left-color: var(--q-primary) !important;
+  background: rgba(165, 146, 99, 0.14) !important;
   color: inherit;
 }
 
 .detail-card {
+  width: 100%;
   overflow: hidden;
 }
 
-.detail-image {
-  flex: 0 0 auto;
-  background: rgba(0, 0, 0, 0.14);
+.body--light .runeword-list-card {
+  border-color: var(--q-light-border);
+  background: rgba(255, 255, 255, 0.9);
 }
 
-.runeword-variant-select :deep(.q-field__control),
-.runeword-variant-select :deep(.q-field__marginal) {
-  min-height: 34px;
-}
+@media (max-width: 599px) {
+  .knowledge-header {
+    padding: 10px 12px;
+  }
 
-.detail-section ul {
-  margin: 10px 0 0;
-  padding-left: 20px;
-}
-
-.detail-section li + li {
-  margin-top: 6px;
-}
-
-.body--light .runeword-list,
-.body--light .detail-card {
-  background: rgba(255, 255, 255, 0.86);
-}
-
-@media (max-width: 700px) {
   .knowledge-grid {
     grid-template-columns: 1fr;
+  }
+
+  .runeword-list :deep(.q-item) {
+    min-height: 64px;
+  }
+
+  .mobile-detail {
+    overscroll-behavior: contain;
   }
 }
 </style>
