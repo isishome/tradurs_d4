@@ -18,7 +18,6 @@ const $q = useQuasar()
 const { t, locale } = useI18n({ useScope: 'global' })
 const is = useItemStore()
 const query = ref('')
-const queryNeedle = ref('')
 const selectedFixedItemId = ref<number>()
 const mobileDetailOpen = ref(false)
 const isMobile = computed(() => $q.screen.lt.sm)
@@ -60,7 +59,7 @@ const searchableText = (definition: LegacyRunewordDefinition) =>
     .toLowerCase()
 
 const filteredRunewords = computed(() => {
-  const needle = queryNeedle.value.trim().toLowerCase()
+  const needle = query.value.trim().toLowerCase()
   return needle
     ? legacyRunewords.filter((definition) =>
         searchableText(definition).includes(needle)
@@ -93,13 +92,14 @@ const openMobileDetail = () => {
   if (isMobile.value) mobileDetailOpen.value = true
 }
 
-const filterQuery = (event: KeyboardEvent) => {
-  queryNeedle.value = (event.target as HTMLInputElement).value
+const updateQuery = (event: Event) => {
+  // QInput defers model updates while qComposing is true. Read the native
+  // control directly so unfinished Korean/Japanese composition can filter.
+  query.value = (event.target as HTMLInputElement).value
 }
 
 const clearQuery = () => {
   query.value = ''
-  queryNeedle.value = ''
 }
 
 const closeMobileDetail = () => {
@@ -125,10 +125,6 @@ watch(
   },
   { immediate: true }
 )
-
-watch(query, (value) => {
-  queryNeedle.value = value
-})
 </script>
 
 <template>
@@ -140,13 +136,12 @@ watch(query, (value) => {
       </p>
     </header>
 
-    <q-input
-      v-model="query"
+    <q-field
+      :model-value="query"
       outlined
       dense
       class="runeword-search q-mb-lg"
       :label="t('runewordKnowledge.search')"
-      @input.stop="filterQuery"
     >
       <template #prepend>
         <img
@@ -157,10 +152,21 @@ watch(query, (value) => {
           alt=""
         />
       </template>
+      <template #control="{ id }">
+        <input
+          :id="id"
+          :value="query"
+          type="text"
+          autocomplete="off"
+          class="q-field__input col"
+          :aria-label="t('runewordKnowledge.search')"
+          @input="updateQuery"
+        />
+      </template>
       <template #append>
         <div class="runeword-search-clear-slot">
           <q-btn
-            v-show="queryNeedle"
+            v-show="query"
             flat
             dense
             size="xs"
@@ -177,7 +183,7 @@ watch(query, (value) => {
           </q-btn>
         </div>
       </template>
-    </q-input>
+    </q-field>
 
     <div class="knowledge-grid">
       <q-card flat bordered class="runeword-list-card">
