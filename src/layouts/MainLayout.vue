@@ -499,7 +499,7 @@ watch(
                     <q-badge
                       outline
                       color="primary"
-                      label="beta"
+                      :label="t('runewordKnowledge.seasonOnly')"
                       class="seasonal-beta-badge"
                     />
                   </q-item-section>
@@ -868,7 +868,7 @@ watch(
                       <q-badge
                         outline
                         color="primary"
-                        label="beta"
+                        :label="t('runewordKnowledge.seasonOnly')"
                         class="seasonal-beta-badge"
                       />
                     </q-item-section>

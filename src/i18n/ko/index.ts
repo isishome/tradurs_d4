@@ -105,6 +105,7 @@ export default {
   },
   runewordKnowledge: {
     title: '룬어 사전',
+    seasonOnly: '시즌 전용',
     description:
       '적용 가능한 장비와 필요한 룬을 준비한 뒤, 호라드림의 함에서 표시된 순서대로 룬을 조합하면 룬어 아이템을 만들 수 있습니다. 시즌 15 유산 룬어 19종의 조합 순서와 적용 장비, 속성을 확인해 보세요.',
     search: '룬어, 룬 또는 장비 검색',

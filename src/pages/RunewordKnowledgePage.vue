@@ -17,7 +17,7 @@ const router = useRouter()
 const $q = useQuasar()
 const { t, locale } = useI18n({ useScope: 'global' })
 const is = useItemStore()
-const query = ref('')
+const query = ref<string | null>('')
 const selectedFixedItemId = ref<number>()
 const mobileDetailOpen = ref(false)
 const isMobile = computed(() => $q.screen.lt.sm)
@@ -59,7 +59,7 @@ const searchableText = (definition: LegacyRunewordDefinition) =>
     .toLowerCase()
 
 const filteredRunewords = computed(() => {
-  const needle = query.value.trim().toLowerCase()
+  const needle = query.value?.trim().toLowerCase() ?? ''
   return needle
     ? legacyRunewords.filter((definition) =>
         searchableText(definition).includes(needle)
@@ -90,6 +90,17 @@ watch(
 
 const openMobileDetail = () => {
   if (isMobile.value) mobileDetailOpen.value = true
+}
+
+const updateQueryFromInput = (event: Event | string | number | null) => {
+  if (typeof event === 'string' || typeof event === 'number') {
+    query.value = String(event)
+    return
+  }
+
+  const value = ((event as Event | null)?.target as HTMLInputElement | null)
+    ?.value
+  if (typeof value === 'string') query.value = value
 }
 
 const closeMobileDetail = () => {
@@ -131,8 +142,11 @@ watch(
       outlined
       dense
       clearable
+      clear-icon="img:/images/icons/close.svg"
       class="runeword-search q-mb-lg"
       :label="t('runewordKnowledge.search')"
+      @input="updateQueryFromInput"
+      @compositionupdate="updateQueryFromInput"
     >
       <template #prepend>
         <img
