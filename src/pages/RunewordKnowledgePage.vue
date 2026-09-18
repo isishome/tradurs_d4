@@ -17,7 +17,8 @@ const router = useRouter()
 const $q = useQuasar()
 const { t, locale } = useI18n({ useScope: 'global' })
 const is = useItemStore()
-const query = ref<string | null>('')
+const query = ref('')
+const queryNeedle = ref('')
 const selectedFixedItemId = ref<number>()
 const mobileDetailOpen = ref(false)
 const isMobile = computed(() => $q.screen.lt.sm)
@@ -59,7 +60,7 @@ const searchableText = (definition: LegacyRunewordDefinition) =>
     .toLowerCase()
 
 const filteredRunewords = computed(() => {
-  const needle = query.value?.trim().toLowerCase() ?? ''
+  const needle = queryNeedle.value.trim().toLowerCase()
   return needle
     ? legacyRunewords.filter((definition) =>
         searchableText(definition).includes(needle)
@@ -92,15 +93,13 @@ const openMobileDetail = () => {
   if (isMobile.value) mobileDetailOpen.value = true
 }
 
-const updateQueryFromInput = (event: Event | string | number | null) => {
-  if (typeof event === 'string' || typeof event === 'number') {
-    query.value = String(event)
-    return
-  }
+const filterQuery = (event: KeyboardEvent) => {
+  queryNeedle.value = (event.target as HTMLInputElement).value
+}
 
-  const value = ((event as Event | null)?.target as HTMLInputElement | null)
-    ?.value
-  if (typeof value === 'string') query.value = value
+const clearQuery = () => {
+  query.value = ''
+  queryNeedle.value = ''
 }
 
 const closeMobileDetail = () => {
@@ -126,6 +125,10 @@ watch(
   },
   { immediate: true }
 )
+
+watch(query, (value) => {
+  queryNeedle.value = value
+})
 </script>
 
 <template>
@@ -141,12 +144,9 @@ watch(
       v-model="query"
       outlined
       dense
-      clearable
-      clear-icon="img:/images/icons/close.svg"
       class="runeword-search q-mb-lg"
       :label="t('runewordKnowledge.search')"
-      @input="updateQueryFromInput"
-      @compositionupdate="updateQueryFromInput"
+      @input.stop="filterQuery"
     >
       <template #prepend>
         <img
@@ -156,6 +156,26 @@ watch(
           src="/images/icons/search.svg"
           alt=""
         />
+      </template>
+      <template #append>
+        <div class="runeword-search-clear-slot">
+          <q-btn
+            v-show="queryNeedle"
+            flat
+            dense
+            size="xs"
+            :ripple="false"
+            class="no-hover runeword-search-clear"
+            :aria-label="t('btn.delete')"
+            @click="clearQuery"
+          >
+            <q-icon
+              class="icon"
+              name="img:/images/icons/close.svg"
+              size="xs"
+            />
+          </q-btn>
+        </div>
       </template>
     </q-input>
 
@@ -292,6 +312,14 @@ watch(
 
 .runeword-search :deep(.q-field__control) {
   background: var(--q-cloud);
+}
+
+.runeword-search-clear-slot {
+  width: 24px;
+}
+
+.runeword-search-clear {
+  background: transparent !important;
 }
 
 .knowledge-grid {
