@@ -17,6 +17,7 @@ export default {
     awards: '어워즈',
     knowledge: '지식',
     knowledgeRuneword: '룬어 사전',
+    knowledgeRuneRecipe: '룬 조합 레시피',
     mySpace: '내 공간',
     messages: '메시지',
     blocks: '차단 관리',
@@ -112,6 +113,29 @@ export default {
     variantCount: '적용 가능한 장비 유형 {count}개',
     valueNotice:
       '실제 수치는 아이템 위력과 상급 접사 등에 따라 달라질 수 있습니다. ?는 실제 아이템에 표시된 값을 확인해야 하는 항목입니다.'
+  },
+  runeUpgradeKnowledge: {
+    description:
+      '호라드림의 함에서 같은 룬과 지정된 보석을 조합해 다음 단계 룬을 제작할 수 있습니다. 시즌 15에서 확인된 14개 룬 조합을 살펴보세요.',
+    search: '재료 룬, 결과 룬 또는 보석 검색',
+    list: '룬 조합',
+    empty: '검색 결과가 없습니다.',
+    lowChain: '하위 룬 조합',
+    highChain: '상위 룬 조합',
+    input: '필요 재료',
+    output: '제작 결과',
+    quantity: '{name} 룬 ×{count}',
+    gemQuantity: '{name} ×{count}',
+    noGem: '추가 보석 없음',
+    gapTitle: 'Sol → Mal 조합 없음',
+    gapDescription:
+      '현재 확인된 레시피에는 솔 룬을 말 룬으로 올리는 조합이 없습니다. 두 조합 사이는 별개의 제작 경로입니다.',
+    sourceTitle: '출처와 데이터 범위',
+    sourceNotice:
+      '커뮤니티에서 확인된 현재 게임 정보를 정리한 화면입니다. 블리자드가 개별 레시피 표를 공식 공개한 것은 아니며, 변경 시 다시 검토될 수 있습니다.',
+    sourceMobalytics: 'Mobalytics 레시피 표',
+    sourceIcyVeins: 'Icy Veins 교차 확인',
+    sourceD4Guides: 'D4Guides 시즌 15 룬 정리'
   },
   noFilterdItems: '조건에 맞는 검색 결과가 없습니다',
   noFilterdItemsDesc: '아이템 필터를 확인해 보세요',
@@ -472,8 +496,8 @@ export default {
     close: '24시간 동안 열지 않기'
   },
   notice: {
-    title: '2026년 9월 17일 시즌 15 최종 데이터 업데이트',
-    top: '안녕하세요, Tradurs입니다.\n디아블로 IV 시즌 15: 지옥의 유산에 맞춰 아이템 등록과 검색 정보를 업데이트했습니다.',
+    title: '2026년 9월 21일 시즌 15 룬어 및 지식 업데이트',
+    top: '안녕하세요, Tradurs입니다.\n디아블로 IV 시즌 15 룬어 제작 세트와 룬 조합 레시피 정보를 추가했습니다.',
     contents: [
       { type: 'head', value: '시즌 15 지원' },
       {
@@ -571,6 +595,32 @@ export default {
           '룬어 아이템 카드의 기본 속성 위에 실제 조합 순서를 표시하고, 지식 > 룬어 사전에서 19종의 조합식과 적용 장비, 속성을 확인할 수 있도록 했습니다.',
         class: 'text-body1'
       },
+      { type: 'head', value: '룬어 제작 세트 등록' },
+      {
+        type: 'list',
+        value:
+          '시즌 아이템 등록의 소비용품에서 룬어 제작 세트 19종을 선택할 수 있습니다. 세트명과 포함 룬 이름 또는 코드로 검색할 수 있으며, 영원 영역에서는 해당 항목이 표시되지 않습니다.',
+        class: 'text-body1'
+      },
+      {
+        type: 'list',
+        value:
+          '등록된 제작 세트에는 필요한 룬 이미지와 이름, 수량, 조합 순서가 표시됩니다. 수량은 낱개 룬이 아닌 완성 가능한 전체 세트 수를 의미합니다.',
+        class: 'text-body1'
+      },
+      { type: 'head', value: '룬 조합 레시피' },
+      {
+        type: 'list',
+        value:
+          '지식 > 룬 조합 레시피에서 시즌 15에 확인된 룬 승급 조합 14종과 필요한 보석을 확인하고, 입력 룬·결과 룬·보석 이름으로 검색할 수 있습니다.',
+        class: 'text-body1'
+      },
+      {
+        type: 'list',
+        value:
+          '현재 확인된 정보에는 솔에서 말로 이어지는 조합이 없습니다. 페이지에 표시된 두 조합 계열과 출처 안내를 함께 확인해 주세요.',
+        class: 'text-body1'
+      },
       { type: 'head', value: '아이템 등록 및 카드 표시 개선' },
       {
         type: 'list',
@@ -600,7 +650,7 @@ export default {
       {
         type: 'list',
         value:
-          '영혼 가시는 계정 귀속 시즌 아이템으로 확인되어 거래 등록 대상에 포함하지 않았습니다. 신규 룬과 영물은 별도 데이터 검증이 끝난 뒤 지원할 예정입니다.',
+          '영혼 가시는 계정 귀속 시즌 아이템으로 확인되어 거래 등록 대상에 포함하지 않았습니다. 룬어 제작 세트는 지원하지만, 신규 룬의 개별 거래와 가격 재화 및 영물은 별도 데이터 검증이 끝난 뒤 지원할 예정입니다.',
         class: 'text-body1'
       },
       { type: 'space' },

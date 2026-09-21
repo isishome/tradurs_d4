@@ -160,7 +160,7 @@ const isMySpace = computed(() =>
 const expandedKnowledge = ref<boolean>(false)
 const expandedKnowledgeMobile = ref<boolean>(false)
 const isKnowledge = computed(() =>
-  ['knowledgeRuneword'].includes(route.name as string)
+  ['knowledgeRuneword', 'knowledgeRuneRecipe'].includes(route.name as string)
 )
 const expandedAdmin = ref<boolean>(false)
 const isAdmin = computed(() =>
@@ -455,6 +455,30 @@ watch(
                   <q-item-section>
                     <q-item-label>
                       {{ t('page.knowledgeRuneword') }}
+                    </q-item-label>
+                  </q-item-section>
+                  <q-item-section side>
+                    <q-badge
+                      outline
+                      color="primary"
+                      :label="t('runewordKnowledge.seasonOnly')"
+                      class="seasonal-beta-badge"
+                    />
+                  </q-item-section>
+                </q-item>
+                <q-item
+                  :inset-level="0.4"
+                  v-ripple
+                  clickable
+                  :to="{
+                    name: 'knowledgeRuneRecipe',
+                    params: { lang: route.params.lang }
+                  }"
+                  active-class="active"
+                >
+                  <q-item-section>
+                    <q-item-label>
+                      {{ t('page.knowledgeRuneRecipe') }}
                     </q-item-label>
                   </q-item-section>
                   <q-item-section side>
@@ -824,6 +848,29 @@ watch(
                     <q-item-section>
                       <q-item-label>
                         {{ t('page.knowledgeRuneword') }}
+                      </q-item-label>
+                    </q-item-section>
+                    <q-item-section side>
+                      <q-badge
+                        outline
+                        color="primary"
+                        :label="t('runewordKnowledge.seasonOnly')"
+                        class="seasonal-beta-badge"
+                      />
+                    </q-item-section>
+                  </q-item>
+                  <q-item
+                    v-ripple
+                    clickable
+                    :to="{
+                      name: 'knowledgeRuneRecipe',
+                      params: { lang: route.params.lang }
+                    }"
+                    active-class="active"
+                  >
+                    <q-item-section>
+                      <q-item-label>
+                        {{ t('page.knowledgeRuneRecipe') }}
                       </q-item-label>
                     </q-item-section>
                     <q-item-section side>

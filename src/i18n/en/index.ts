@@ -17,6 +17,7 @@ export default {
     awards: 'Awards',
     knowledge: 'Knowledge',
     knowledgeRuneword: 'Runewords',
+    knowledgeRuneRecipe: 'Rune Crafting Recipes',
     mySpace: 'My Space',
     messages: 'Messages',
     blocks: 'Blocks',
@@ -113,6 +114,29 @@ export default {
     variantCount: '{count} eligible equipment types',
     valueNotice:
       'Actual values may vary with Item Power and Greater Affixes. A ? indicates a value that must be checked on the actual item.'
+  },
+  runeUpgradeKnowledge: {
+    description:
+      'Combine matching Runes and the specified Gem in the Horadric Cube to craft the next Rune. Browse the 14 Rune upgrades confirmed for Season 15.',
+    search: 'Search input Rune, output Rune, or Gem',
+    list: 'Rune Recipes',
+    empty: 'No matching recipes found.',
+    lowChain: 'Lower Rune Chain',
+    highChain: 'Higher Rune Chain',
+    input: 'Required Materials',
+    output: 'Crafted Result',
+    quantity: '{name} Rune ×{count}',
+    gemQuantity: '{name} ×{count}',
+    noGem: 'No additional Gem',
+    gapTitle: 'No Sol → Mal Recipe',
+    gapDescription:
+      'The currently confirmed recipes do not include an upgrade from Sol to Mal. These are two separate crafting chains.',
+    sourceTitle: 'Sources and Data Scope',
+    sourceNotice:
+      'This page summarizes current-game information confirmed by community sources. Blizzard has not published an official individual recipe table, and the data may be reviewed again after changes.',
+    sourceMobalytics: 'Mobalytics recipe table',
+    sourceIcyVeins: 'Icy Veins cross-check',
+    sourceD4Guides: 'D4Guides Season 15 Rune overview'
   },
   noFilterdItems: 'No search results matched your criteria',
   noFilterdItemsDesc: 'Check out the item filters',
@@ -478,8 +502,8 @@ export default {
     close: 'Do not open for 24 hours'
   },
   notice: {
-    title: 'September 17, 2026 Season 15 Final Data Update',
-    top: "Hello, this is Tradurs.\nItem registration and search data have been updated for Diablo IV Season 15: Season of Hell's Legacy.",
+    title: 'September 21, 2026 Season 15 Runeword and Knowledge Update',
+    top: 'Hello, this is Tradurs.\nRuneword Crafting Sets and rune-upgrade recipe information have been added for Diablo IV Season 15.',
     contents: [
       { type: 'head', value: 'Season 15 Support' },
       {
@@ -577,6 +601,32 @@ export default {
           'Runeword item cards now show the recipe above base properties, and Knowledge > Runewords provides all 19 recipes with eligible equipment and attributes.',
         class: 'text-body1'
       },
+      { type: 'head', value: 'Runeword Crafting Set Listings' },
+      {
+        type: 'list',
+        value:
+          'Seasonal item registration now offers all 19 Runeword Crafting Sets under Consumables. Search by set name or included rune name/code; this subtype is hidden in the Eternal realm.',
+        class: 'text-body1'
+      },
+      {
+        type: 'list',
+        value:
+          'Registered sets show each required rune image, name, quantity, and recipe order. Listing quantity represents the number of complete crafting sets, not individual runes.',
+        class: 'text-body1'
+      },
+      { type: 'head', value: 'Rune Crafting Recipes' },
+      {
+        type: 'list',
+        value:
+          'Knowledge > Rune Crafting Recipes provides the fourteen discovered Season 15 rune upgrades and their required gems, searchable by input rune, output rune, or gem name.',
+        class: 'text-body1'
+      },
+      {
+        type: 'list',
+        value:
+          'No Sol-to-Mal conversion is present in the currently verified information. The page shows the two separate upgrade chains together with their source notes.',
+        class: 'text-body1'
+      },
       { type: 'head', value: 'Item Registration and Card Display' },
       {
         type: 'list',
@@ -606,7 +656,7 @@ export default {
       {
         type: 'list',
         value:
-          'Soul Splinters are account-bound seasonal items and are not available for trade listings. New runes and talismans will be supported after their data is verified separately.',
+          'Soul Splinters are account-bound seasonal items and are not available for trade listings. Runeword Crafting Sets are supported, while standalone trading and price-currency use of the new runes, as well as talismans, remain pending separate data verification.',
         class: 'text-body1'
       },
       { type: 'space' },

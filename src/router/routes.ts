@@ -28,6 +28,11 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/RunewordKnowledgePage.vue')
       },
       {
+        name: 'knowledgeRuneRecipe',
+        path: 'knowledge/rune-recipes/:recipe?',
+        component: () => import('pages/RuneUpgradeKnowledgePage.vue')
+      },
+      {
         name: 'messages',
         path: 'messages',
         component: () => import('pages/MessagesPage.vue'),
