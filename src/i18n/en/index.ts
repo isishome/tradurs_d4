@@ -1,9 +1,5 @@
 export default {
   language: 'Language',
-  font: {
-    kodia: 'Kodia Font',
-    system: 'System Font'
-  },
   decimal: {
     style: 'decimal',
     minimumSignificantDigits: 3,
@@ -108,7 +104,7 @@ export default {
     title: 'Runewords',
     seasonOnly: 'Season Only',
     description:
-      'Prepare eligible equipment and the required Runes, then combine the Runes in the shown order in the Horadric Cube to create a Runeword item. Browse the recipes, equipment, and attributes for all 19 Season 15 Legacy Runewords.',
+      'Prepare eligible equipment and the required Runes, then combine the Runes in the shown order in the Horadric Cube to create a Runeword item. Browse the recipes, equipment, and attributes for all 19 Season 15 Legacy Runewords. These Runes and Runewords are Season 15 only and may not be available next season.',
     search: 'Search runewords, runes, or equipment',
     list: 'Runewords',
     empty: 'No matching runewords found.',
@@ -300,6 +296,7 @@ export default {
     selectGem: 'Select Gem',
     selectElixir: 'Select Elixir',
     selectSummoning: 'Select Summoning material',
+    selectRunewordSet: 'Select Runeword Crafting Set',
     selectFixedItem: 'Select {typeValue1} material',
     selectImage: 'Select {tv} Image',
     name: 'Item Name',

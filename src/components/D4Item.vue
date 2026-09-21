@@ -5,7 +5,15 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { reactive, ref, computed, useSlots, nextTick, ComputedRef } from 'vue'
+import {
+  reactive,
+  ref,
+  computed,
+  useSlots,
+  nextTick,
+  watch,
+  ComputedRef
+} from 'vue'
 import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { useItemStore } from 'stores/item-store'
@@ -15,6 +23,7 @@ import type {
   Elixir,
   Affix,
   Summoning,
+  RunewordSet,
   FixedItem
 } from 'stores/item-store'
 import type { QCard, QSelect } from 'quasar'
@@ -24,6 +33,7 @@ import { itemImgs } from 'src/common/items'
 
 import D4Price from 'components/D4Price.vue'
 import D4RunewordSequence from 'components/D4RunewordSequence.vue'
+import D4RunewordMaterialStack from 'components/D4RunewordMaterialStack.vue'
 import D4Separator from 'components/D4Separator.vue'
 import D4ItemDisplay from './D4ItemDisplay.vue'
 import { findLegacyRuneword } from 'src/data/legacy-runewords'
@@ -83,6 +93,8 @@ const {
   gems,
   elixirs,
   summonings,
+  runewordSets,
+  filterRunewordSetRunes,
   tiers,
   storage
 } = useItemStore()
@@ -96,6 +108,36 @@ const isSelectableSummoning = (summoning: Summoning) =>
   summoning.deprecated !== true &&
   summoning.deprecated !== 1
 const summoningOptions = computed(() => summonings.filter(isSelectableSummoning))
+const filterAvailableClasses = (type?: string) =>
+  filterClasses(type).filter(
+    (option) => option.value !== 'runewordset' || storage.data.ladder
+  )
+const isSelectableRunewordSet = (set: RunewordSet) =>
+  set.tradeable !== false &&
+  set.tradeable !== 0 &&
+  set.visible !== false &&
+  set.visible !== 0 &&
+  set.deprecated !== true &&
+  set.deprecated !== 1
+const typeValue2Needle = ref<string>()
+const runewordSetOptions = computed(() => {
+  const needle = typeValue2Needle.value?.trim().toLowerCase()
+
+  return runewordSets.filter(isSelectableRunewordSet).filter((set) => {
+    if (!needle) return true
+
+    return (
+      set.label.toLowerCase().includes(needle) ||
+      String(set.value).toLowerCase().includes(needle) ||
+      filterRunewordSetRunes(String(set.value)).some(
+        (rune) =>
+          rune.label.toLowerCase().includes(needle) ||
+          rune.runeCode.toLowerCase().includes(needle)
+      )
+    )
+  })
+})
+const typeValue1Options = computed(() => filterAvailableClasses(_type.value))
 
 // variable
 const editWrap = ref<QCard | null>(null)
@@ -111,7 +153,7 @@ const _typeValue1 = ref<string>(
   props.data.itemTypeValue1 ||
     (_type.value === 'aspect'
       ? (aspectCategories[0].value as string)
-      : (filterClasses(_type.value)[0].value as string))
+      : (filterAvailableClasses(_type.value)[0].value as string))
 )
 
 const _typeValue2 = ref<string>(
@@ -122,7 +164,12 @@ const _typeValue2 = ref<string>(
         ? (elixirs[0].value as string)
         : _typeValue1.value === 'summoning'
           ? (summoningOptions.value[0]?.value as string)
+          : _typeValue1.value === 'runewordset'
+            ? (runewordSetOptions.value[0]?.value as string)
           : '')
+)
+const runewordSetSelectedLabel = computed(
+  () => runewordSets.find((set) => set.value === _typeValue2.value)?.label
 )
 const _power = ref<number>(props.data.power)
 const _upgrade = ref<number>(props.data.upgrade)
@@ -131,7 +178,6 @@ const _level = ref<number | null>(
 )
 const _favorite = ref<boolean>(props.data.favorite)
 const typeValue2Ref = ref<QSelect | null>(null)
-const typeValue2Needle = ref<string>()
 const hasProperties = computed(
   () => findEquipClass(_typeValue1.value)?.properties.length !== 0
 )
@@ -181,7 +227,9 @@ const qualifiable = computed(
       ['inventory'].includes(_type.value) && ['gem'].includes(_typeValue1.value)
     ) && !['rune', 'aspect', 'consumables'].includes(_type.value)
 )
-const noLevel = computed(() => ['summoning'].includes(_typeValue1.value))
+const noLevel = computed(() =>
+  ['summoning', 'runewordset'].includes(_typeValue1.value)
+)
 const powerful = computed(
   () => !['rune', 'inventory', 'consumables'].includes(_type.value)
 )
@@ -265,8 +313,8 @@ const updateType = (val: string) => {
     val === 'rune'
       ? (runeTypes?.[0].value as string)
       : val === 'aspect'
-        ? (aspectCategories[0].value as string)
-        : (filterClasses(val)[0].value as string)
+      ? (aspectCategories[0].value as string)
+        : (filterAvailableClasses(val)[0].value as string)
 
   attribute.value = val === 'aspect' ? 'affixes' : attribute.value
 
@@ -290,20 +338,31 @@ const updateTypeValue1 = (val: string) => {
             ? (elixirs[0].value as string)
             : val === 'summoning'
               ? (summoningOptions.value[0]?.value as string)
+              : val === 'runewordset'
+                ? (runewordSetOptions.value[0]?.value as string)
               : ''
 
   updateTypeValue2(_typeValue2.value)
 }
 
-const updateTypeValue2 = (val: string) => {
+const updateTypeValue2 = (val: string | null) => {
+  const value = val ?? ''
+  if (_typeValue1.value === 'runewordset') {
+    typeValue2Needle.value = undefined
+    nextTick(() => typeValue2Ref.value?.updateInputValue('', true))
+  }
+  if (val === null) {
+    _typeValue2.value = ''
+  }
+
   _fixedItemId.value = 0
   const selectedRune =
     _type.value === 'rune'
-      ? filterRunesByType(_typeValue1.value)?.find((r) => r.value === val)
+      ? filterRunesByType(_typeValue1.value)?.find((r) => r.value === value)
       : undefined
 
-  const selectedSummoning = findSummoning(val)
-  const selectedGem = findGem(val)
+  const selectedSummoning = findSummoning(value)
+  const selectedGem = findGem(value)
 
   _quality.value =
     selectedRune?.quality ??
@@ -317,13 +376,26 @@ const updateTypeValue2 = (val: string) => {
 
   _level.value =
     _typeValue1.value === 'gem'
-      ? gems.find((g: Gem) => g.value === val)?.level || null
+      ? gems.find((g: Gem) => g.value === value)?.level || null
       : _typeValue1.value === 'elixir'
-        ? elixirs.find((e: Elixir) => e.value === val)?.level || null
+        ? elixirs.find((e: Elixir) => e.value === value)?.level || null
         : (selectedRune?.level ?? null)
 
   update()
 }
+
+watch(
+  () => storage.data.ladder,
+  (ladder) => {
+    if (ladder || _typeValue1.value !== 'runewordset') return
+
+    const fallback = typeValue1Options.value[0]
+    if (!fallback) return
+
+    _typeValue1.value = fallback.value as string
+    updateTypeValue1(_typeValue1.value)
+  }
+)
 
 const updateFixedItem = () => {
   _name.value = ''
@@ -728,7 +800,7 @@ defineExpose({ scrollEnd })
                   })
                 "
                 dropdown-icon="img:/images/icons/dropdown.svg"
-                :options="filterClasses(_type)"
+                :options="typeValue1Options"
                 popup-content-class="scroll bordered limit-select"
                 @update:model-value="updateTypeValue1"
               >
@@ -858,6 +930,83 @@ defineExpose({ scrollEnd })
                     </q-item-section>
                     <q-item-section>
                       <q-item-label>{{ scope.opt.label }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
+            </div>
+            <div class="col" v-else-if="_typeValue1 === 'runewordset'">
+              <q-select
+                ref="typeValue2Ref"
+                class="runeword-set-select"
+                v-model="_typeValue2"
+                :disable="disable"
+                outlined
+                dense
+                no-error-icon
+                use-input
+                clearable
+                clear-icon="img:/images/icons/close.svg"
+                hide-bottom-space
+                emit-value
+                map-options
+                transition-show="none"
+                transition-hide="none"
+                :transition-duration="0"
+                :label="t('item.selectRunewordSet')"
+                dropdown-icon="img:/images/icons/dropdown.svg"
+                :options="runewordSetOptions"
+                popup-content-class="scroll bordered limit-select"
+                options-dense
+                @update:model-value="updateTypeValue2"
+                @input.stop="filterTypeValue"
+                @blur="() => (typeValue2Needle = undefined)"
+              >
+                <template #selected>
+                  <div
+                    v-if="runewordSetSelectedLabel"
+                    class="runeword-set-selected ellipsis"
+                  >
+                    {{ runewordSetSelectedLabel }}
+                  </div>
+                </template>
+                <template #option="scope">
+                  <q-item
+                    clickable
+                    v-bind="scope.itemProps"
+                    class="runeword-set-option-item q-py-md"
+                  >
+                    <q-item-section
+                      class="runeword-set-option column items-start"
+                    >
+                      <div class="runeword-set-option__images row items-center">
+                        <D4RunewordMaterialStack
+                          :runes="filterRunewordSetRunes(scope.opt.value)"
+                          :size="42"
+                          :overlap="0"
+                          scale-legacy
+                        />
+                      </div>
+                      <q-item-label
+                        caption
+                        class="runeword-set-option__runes ellipsis"
+                      >
+                        {{
+                          filterRunewordSetRunes(scope.opt.value)
+                            .map((rune) => rune.label)
+                            .join(' · ')
+                        }}
+                      </q-item-label>
+                      <q-item-label class="runeword-set-option__name ellipsis">
+                        {{ scope.opt.label }}
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </template>
+                <template #no-option>
+                  <q-item>
+                    <q-item-section class="text-grey">
+                      {{ t('noMessage', { attr: t('item.selectRunewordSet') }) }}
                     </q-item-section>
                   </q-item>
                 </template>
@@ -1491,5 +1640,40 @@ defineExpose({ scrollEnd })
 
 .bg-primary-cloud {
   background-color: var(--q-primary-cloud) !important;
+}
+
+.runeword-set-option {
+  gap: 2px;
+  min-width: 0;
+  width: 100%;
+}
+
+.runeword-set-option__images,
+.runeword-set-option__name,
+.runeword-set-option__runes {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.runeword-set-select :deep(.q-field__control) {
+  min-height: 40px;
+  height: 40px;
+}
+
+.runeword-set-select :deep(.q-field__native) {
+  flex-wrap: nowrap;
+  overflow: hidden;
+}
+
+.runeword-set-selected {
+  flex: 0 1 auto;
+  max-width: 60%;
+  min-width: 0;
+}
+
+.runeword-set-select :deep(.q-field__input) {
+  flex: 1 1 0;
+  width: 0;
+  min-width: 0;
 }
 </style>

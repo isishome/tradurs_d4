@@ -383,6 +383,10 @@ const deleteConfirm = (deleteItem?: Item) => {
 const apply = () => {
   disable.value = true
   progress.value = true
+  if (!activatedItem.value.itemId) {
+    activatedItem.value.hardcore = is.storage.data.hardcore || false
+    activatedItem.value.ladder = is.storage.data.ladder ?? true
+  }
   // check attribute
   activatedItem.value.properties.forEach((p) => {
     p.action =

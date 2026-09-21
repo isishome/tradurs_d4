@@ -566,11 +566,6 @@
   height: 30px;
 }
 
-.attr-area {
-  font-family:
-    'Roboto', '-apple-system', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  letter-spacing: 0.02em;
-}
 @media (max-width: 600px) {
   .body--dark .card-item.mythic {
     --card-particle-field:

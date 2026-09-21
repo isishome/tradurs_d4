@@ -1,9 +1,5 @@
 export default {
   language: '언어',
-  font: {
-    kodia: 'Kodia 폰트',
-    system: 'System 폰트'
-  },
   decimal: {
     style: 'decimal',
     minimumSignificantDigits: 3,
@@ -107,7 +103,7 @@ export default {
     title: '룬어 사전',
     seasonOnly: '시즌 전용',
     description:
-      '적용 가능한 장비와 필요한 룬을 준비한 뒤, 호라드림의 함에서 표시된 순서대로 룬을 조합하면 룬어 아이템을 만들 수 있습니다. 시즌 15 유산 룬어 19종의 조합 순서와 적용 장비, 속성을 확인해 보세요.',
+      '적용 가능한 장비와 필요한 룬을 준비한 뒤, 호라드림의 함에서 표시된 순서대로 룬을 조합하면 룬어 아이템을 만들 수 있습니다. 시즌 15 유산 룬어 19종의 조합 순서와 적용 장비, 속성을 확인해 보세요. 해당 룬과 룬어는 시즌 15 전용이며 다음 시즌에는 사용되지 않을 수 있습니다.',
     search: '룬어, 룬 또는 장비 검색',
     list: '룬어',
     empty: '검색 결과가 없습니다.',
@@ -294,6 +290,7 @@ export default {
     selectGem: '보석 선택',
     selectElixir: '비약 선택',
     selectSummoning: '소환 재료 선택',
+    selectRunewordSet: '룬어 제작 세트 선택',
     selectFixedItem: '{typeValue1} 아이템 선택',
     selectImage: '{tv} 이미지 선택',
     name: '아이템 명',

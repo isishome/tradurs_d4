@@ -388,6 +388,8 @@ const itemInfo = (item?: Item) => {
         : item?.itemTypeValue1 === 'summoning'
         ? is.summonings.find((s) => s.value === item?.itemTypeValue2)?.label ??
           ''
+        : item?.itemTypeValue1 === 'runewordset'
+        ? is.findRunewordSet(item?.itemTypeValue2)?.label ?? ''
         : item?.name ?? '',
     quality: item?.quality
   }

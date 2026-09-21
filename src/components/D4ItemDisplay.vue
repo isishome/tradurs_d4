@@ -18,8 +18,10 @@ import { clipboard } from 'src/common'
 
 import D4Price from './D4Price.vue'
 import D4RunewordSequence from './D4RunewordSequence.vue'
+import D4RunewordMaterialStack from './D4RunewordMaterialStack.vue'
 import D4Separator from './D4Separator.vue'
 import D4User from './D4User.vue'
+import D4Material from './D4Material.vue'
 import { setgroups } from 'process'
 import { findLegacyRuneword } from 'src/data/legacy-runewords'
 
@@ -55,6 +57,8 @@ const {
   findType,
   filterTypes,
   filterMaterials,
+  findRunewordSet,
+  filterRunewordSetRunes,
   findAspect,
   filterFixedItems,
   findSetGroup,
@@ -110,6 +114,16 @@ const fixedItem = computed(() =>
   )
 )
 const runeword = computed(() => findLegacyRuneword(props.data.fixedItemId))
+const runewordSet = computed(() =>
+  props.data.itemTypeValue1 === 'runewordset'
+    ? findRunewordSet(props.data.itemTypeValue2)
+    : undefined
+)
+const runewordSetRunes = computed(() =>
+  props.data.itemTypeValue1 === 'runewordset'
+    ? filterRunewordSetRunes(props.data.itemTypeValue2)
+    : []
+)
 const setGroup = computed(() => {
   const findSet = findSetGroup(fixedItem.value?.setGroups?.[0] ?? 0)
 
@@ -123,7 +137,9 @@ const setGroup = computed(() => {
   return findSet
 })
 const imgSrc = computed(() =>
-  props.data.itemType === 'rune'
+  props.data.itemTypeValue1 === 'runewordset' && runewordSetRunes.value[0]
+    ? `/images/items/rune/${runewordSetRunes.value[0].imageType}/${runewordSetRunes.value[0].imageKey}.webp`
+    : props.data.itemType === 'rune'
     ? `/images/items/rune/${props.data.itemTypeValue1}/${props.data.itemTypeValue2}.webp`
     : props.data.itemType === 'aspect'
       ? `/images/items/aspect/legendary/${props.data.itemTypeValue2}.webp`
@@ -154,10 +170,11 @@ const qualifiable = computed(
 const descriptable = computed(
   () =>
     filterMaterials(props.data.itemTypeValue2).length > 0 ||
+    runewordSetRunes.value.length > 0 ||
     ['rune', 'aspect'].includes(itemType.value)
 )
 const noLevel = computed(() =>
-  ['summoning'].includes(props.data.itemTypeValue1)
+  ['summoning', 'runewordset'].includes(props.data.itemTypeValue1)
 )
 const itemName = computed(
   () =>
@@ -180,6 +197,8 @@ const itemName = computed(
                   ? summonings.find(
                       (s) => s.value === props.data.itemTypeValue2
                     )?.label
+                  : props.data.itemTypeValue1 === 'runewordset'
+                    ? runewordSet.value?.label
                   : undefined) ?? t('item.unknown')) as string
 )
 const isList = computed(() => route.name === 'tradeList')
@@ -253,8 +272,14 @@ onUnmounted(() => {
     <div class="inner">
       <q-card-section>
         <div class="item-image-wrap">
+          <D4RunewordMaterialStack
+            v-if="!loading && runewordSetRunes.length > 0"
+            :runes="runewordSetRunes"
+            fill
+            scale-legacy
+          />
           <q-img
-            v-show="!loading"
+            v-else-if="!loading"
             class="item-image"
             fit="contain"
             position="center"
@@ -532,7 +557,7 @@ onUnmounted(() => {
           (!loading &&
             (['rune', 'aspect'].includes(data.itemType) ||
               data.properties?.length > 0 ||
-              data.itemTypeValue1 === 'summoning'))
+              ['summoning', 'runewordset'].includes(data.itemTypeValue1)))
         "
       >
         <div class="q-px-sm">
@@ -563,6 +588,16 @@ onUnmounted(() => {
           >
             <slot name="properties"> </slot>
             <slot name="description"> </slot>
+          </div>
+          <div
+            v-if="runewordSetRunes.length > 0 && !loading"
+            class="column q-gutter-y-xs"
+          >
+            <D4Material
+              v-for="rune in runewordSetRunes"
+              :key="rune.position"
+              :data="rune"
+            />
           </div>
         </div>
       </q-card-section>
@@ -701,7 +736,7 @@ onUnmounted(() => {
             </q-item-section>
           </q-item>
           <div
-            v-show="data.itemTypeValue1 !== 'summoning'"
+            v-show="!['summoning', 'runewordset'].includes(data.itemTypeValue1)"
             class="column"
             :class="{ 'q-gutter-y-xs': !$q.screen.lt.sm }"
           >

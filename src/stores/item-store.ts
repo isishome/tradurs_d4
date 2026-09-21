@@ -160,6 +160,22 @@ export interface AwardsItem {
   ladder: boolean
 }
 
+export interface RunewordSet extends ILabel {
+  season: number
+  tradeable?: boolean | number
+  visible?: boolean | number
+  deprecated?: boolean | number
+}
+
+export interface RunewordSetRune extends ILabel {
+  runewordSet: string
+  position: number
+  runeCode: string
+  imageType: 'ritual' | 'invocation'
+  imageKey: string
+  quantity: number
+}
+
 export interface RelatedItems {
   sellerItems: Item[]
   similarItems: Item[]
@@ -262,6 +278,8 @@ export const useItemStore = defineStore('item', {
     elixirs: [] as Array<Elixir>,
     summonings: [] as Array<Summoning>,
     materials: [] as Array<Summoning>,
+    runewordSets: [] as Array<RunewordSet>,
+    runewordSetRunes: [] as Array<RunewordSetRune>,
     types: [] as Array<ItemType>,
     equipClasses: [] as Array<EquipmentClass>,
     attributeTypes: [] as Array<AttributeType>,
@@ -562,6 +580,16 @@ export const useItemStore = defineStore('item', {
     findSetGroup: (state) => {
       return (groupId: number): SetGroup | undefined =>
         state.setGroups.data.find((sg) => sg.value === groupId)
+    },
+    findRunewordSet: (state) => {
+      return (runewordSet: string): RunewordSet | undefined =>
+        state.runewordSets.find((set) => set.value === runewordSet)
+    },
+    filterRunewordSetRunes: (state) => {
+      return (runewordSet: string): Array<RunewordSetRune> =>
+        state.runewordSetRunes
+          .filter((rune) => rune.runewordSet === runewordSet)
+          .sort((a, b) => a.position - b.position)
     },
     findGem: (state) => {
       return (gemTypeValue2: string): Gem | undefined =>

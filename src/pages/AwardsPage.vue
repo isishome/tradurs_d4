@@ -73,6 +73,8 @@ const itemName = computed(
         : typeValue1 === 'summoning'
         ? is.summonings.find((s: Summoning) => s.value === typeValue2)?.label ||
           null
+        : typeValue1 === 'runewordset'
+        ? is.findRunewordSet(typeValue2 ?? '')?.label || null
         : itemName) ?? t('item.unknown')
 )
 
@@ -80,6 +82,15 @@ const itemImage = computed(
   () => (awards: Award) =>
     awards.itemType === 'rune'
       ? `/images/items/rune/${awards.itemTypeValue1}/${awards.itemTypeValue2}.webp`
+      : awards.itemTypeValue1 === 'runewordset'
+      ? (() => {
+          const rune = is.filterRunewordSetRunes(
+            awards.itemTypeValue2 ?? ''
+          )[0]
+          return rune
+            ? `/images/items/rune/${rune.imageType}/${rune.imageKey}.webp`
+            : ''
+        })()
       : awards.itemType === 'aspect'
       ? `/images/items/aspect/legendary/${awards.itemTypeValue2}.webp`
       : ['gem', 'summoning'].includes(awards.itemTypeValue1 ?? '')
