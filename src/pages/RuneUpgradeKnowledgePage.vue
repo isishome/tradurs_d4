@@ -306,18 +306,22 @@ watch(
   transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 
+.recipe-list :deep(.recipe-list-item) {
+  padding-right: 14px;
+  padding-left: 4px;
+}
+
 .recipe-list :deep(.q-item:hover) {
   background: var(--q-cloud);
 }
 
 .recipe-rune-section {
-  flex: 0 0 58px;
-  width: 58px;
-  min-width: 58px;
+  flex: 0 0 50px;
+  width: 50px;
+  min-width: 50px;
   align-items: center;
   justify-content: center;
   padding-right: 0;
-  transform: translateX(4px);
 }
 
 .recipe-rune-image {
@@ -327,12 +331,12 @@ watch(
 }
 
 .legacy-rune-image {
-  transform: scale(0.7);
+  transform: translateX(-3px) scale(0.7);
 }
 
 .recipe-summary-section {
   min-width: 0;
-  padding-left: 8px;
+  padding-left: 4px;
 }
 
 .recipe-title,
