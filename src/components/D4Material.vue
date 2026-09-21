@@ -16,8 +16,8 @@ defineProps({
     <div
       class="row items-center justify-center no-wrap"
       :style="{
-        width: data.imageType && data.imageKey ? '42px' : '21px',
-        height: data.imageType && data.imageKey ? '42px' : '21px'
+        width: data.imageType && data.imageKey ? '28px' : '21px',
+        height: data.imageType && data.imageKey ? '28px' : '21px'
       }"
     >
       <img
@@ -37,9 +37,7 @@ defineProps({
     </div>
     <div class="row items-center q-gutter-x-xs q-ml-none col">
       <div>{{ data.label }}</div>
-      <div v-if="data.runeCode" class="text-grey-6">
-        ({{ data.runeCode }})
-      </div>
+      <div v-if="data.runeCode" class="text-grey-6">({{ data.runeCode }})</div>
       <div>x</div>
       <div>{{ data.quantity }}</div>
     </div>
