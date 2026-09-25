@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useItemStore, type FixedItem } from 'stores/item-store'
+import D4Affix from 'components/D4Affix.vue'
 import D4RunewordSequence from 'components/D4RunewordSequence.vue'
 import type { LegacyRunewordDefinition } from 'src/data/legacy-runewords'
 
@@ -57,16 +58,6 @@ const name = computed(
 const templateLabel = (label?: string) => label?.replaceAll('{x}', '?') ?? ''
 
 const isUniqueAffix = (id: number) => is.findAffix(id)?.type === 'unique'
-
-type TemplateSegment = { text?: string; figure?: string }
-
-const templateSegments = (label?: string): TemplateSegment[] =>
-  (label ?? '')
-    .split('{x}')
-    .flatMap((text, idx) =>
-      idx === 0 ? [{ text }] : [{ figure: '?' }, { text }]
-    )
-    .filter((segment: TemplateSegment) => segment.figure || segment.text)
 </script>
 
 <template>
@@ -153,7 +144,9 @@ const templateSegments = (label?: string): TemplateSegment[] =>
         <div class="detail-title text-subtitle2">{{ t('properties') }}</div>
         <ul class="detail-values">
           <li v-for="id in selectedVariant.properties" :key="`property-${id}`">
-            {{ templateLabel(is.findProperty(id)?.label) }}
+            <span class="affix-text">
+              {{ templateLabel(is.findProperty(id)?.label) }}
+            </span>
           </li>
         </ul>
       </q-card-section>
@@ -167,28 +160,11 @@ const templateSegments = (label?: string): TemplateSegment[] =>
             :key="`affix-${id}`"
             :class="{ 'unique-affix': isUniqueAffix(id) }"
           >
-            <template v-if="isUniqueAffix(id)">
-              <img
-                class="affix-icon"
-                src="/images/attribute_types/unique.svg"
-                width="10"
-                height="10"
-                alt=""
-              />
-              <span class="affix-text">
-                <template
-                  v-for="(segment, idx) in templateSegments(
-                    is.findAffix(id)?.label
-                  )"
-                  :key="idx"
-                >
-                  <span v-if="segment.figure" class="figure">{{
-                    segment.figure
-                  }}</span>
-                  <template v-else>{{ segment.text }}</template>
-                </template>
-              </span>
-            </template>
+            <D4Affix
+              v-if="isUniqueAffix(id)"
+              class="col"
+              :data="{ affixId: id, affixValues: [] }"
+            />
             <span v-else class="affix-text">
               {{ templateLabel(is.findAffix(id)?.label) }}
             </span>
@@ -287,61 +263,41 @@ const templateSegments = (label?: string): TemplateSegment[] =>
   list-style: none;
 }
 
+/* Match D4Affix: 22px icon box, then a 4px (q-gutter-x-xs) gap before the text. */
 .detail-values li {
-  position: relative;
-  padding-left: 16px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
   line-height: 1.45;
 }
 
 .detail-values li::before {
   content: '◆';
-  position: absolute;
-  top: 0.12em;
-  left: 1px;
+  flex: 0 0 22px;
+  text-align: center;
   color: var(--q-primary);
   font-size: 7px;
 }
 
-.detail-values.affix-values li {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding-left: 0;
-}
-
-.detail-values.affix-values li::before {
-  position: static;
-  flex: 0 0 10px;
-  text-align: center;
-}
-
-.detail-values.affix-values li.unique-affix::before {
+.detail-values li.unique-affix::before {
   content: none;
-}
-
-.affix-icon {
-  flex: 0 0 10px;
-  filter: var(--q-filter-unique);
 }
 
 .affix-text {
   min-width: 0;
 }
 
-.unique-affix .affix-text {
+/* Mirror `.card-item.unique` item-card rules for the shared D4Affix row. */
+.unique-affix :deep(.stress) {
   font-weight: 700;
 }
 
-.body--dark .unique-affix .affix-text {
+.body--dark .unique-affix :deep(.stress) {
   color: var(--q-unique);
 }
 
-.unique-affix .figure {
-  color: rgb(123, 123, 234);
-}
-
-.body--dark .unique-affix .figure {
-  color: rgb(163, 163, 234);
+.unique-affix :deep(.stress .icon) {
+  filter: var(--q-filter-unique) !important;
 }
 
 .restriction-list :deep(.q-badge) {
