@@ -55,6 +55,18 @@ const name = computed(
 )
 
 const templateLabel = (label?: string) => label?.replaceAll('{x}', '?') ?? ''
+
+const isUniqueAffix = (id: number) => is.findAffix(id)?.type === 'unique'
+
+type TemplateSegment = { text?: string; figure?: string }
+
+const templateSegments = (label?: string): TemplateSegment[] =>
+  (label ?? '')
+    .split('{x}')
+    .flatMap((text, idx) =>
+      idx === 0 ? [{ text }] : [{ figure: '?' }, { text }]
+    )
+    .filter((segment: TemplateSegment) => segment.figure || segment.text)
 </script>
 
 <template>
@@ -149,9 +161,37 @@ const templateLabel = (label?: string) => label?.replaceAll('{x}', '?') ?? ''
       <q-separator />
       <q-card-section class="detail-block">
         <div class="detail-title text-subtitle2">{{ t('affixes') }}</div>
-        <ul class="detail-values">
-          <li v-for="id in selectedVariant.affixes" :key="`affix-${id}`">
-            {{ templateLabel(is.findAffix(id)?.label) }}
+        <ul class="detail-values affix-values">
+          <li
+            v-for="id in selectedVariant.affixes"
+            :key="`affix-${id}`"
+            :class="{ 'unique-affix': isUniqueAffix(id) }"
+          >
+            <template v-if="isUniqueAffix(id)">
+              <img
+                class="affix-icon"
+                src="/images/attribute_types/unique.svg"
+                width="10"
+                height="10"
+                alt=""
+              />
+              <span class="affix-text">
+                <template
+                  v-for="(segment, idx) in templateSegments(
+                    is.findAffix(id)?.label
+                  )"
+                  :key="idx"
+                >
+                  <span v-if="segment.figure" class="figure">{{
+                    segment.figure
+                  }}</span>
+                  <template v-else>{{ segment.text }}</template>
+                </template>
+              </span>
+            </template>
+            <span v-else class="affix-text">
+              {{ templateLabel(is.findAffix(id)?.label) }}
+            </span>
           </li>
         </ul>
       </q-card-section>
@@ -260,6 +300,48 @@ const templateLabel = (label?: string) => label?.replaceAll('{x}', '?') ?? ''
   left: 1px;
   color: var(--q-primary);
   font-size: 7px;
+}
+
+.detail-values.affix-values li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-left: 0;
+}
+
+.detail-values.affix-values li::before {
+  position: static;
+  flex: 0 0 10px;
+  text-align: center;
+}
+
+.detail-values.affix-values li.unique-affix::before {
+  content: none;
+}
+
+.affix-icon {
+  flex: 0 0 10px;
+  filter: var(--q-filter-unique);
+}
+
+.affix-text {
+  min-width: 0;
+}
+
+.unique-affix .affix-text {
+  font-weight: 700;
+}
+
+.body--dark .unique-affix .affix-text {
+  color: var(--q-unique);
+}
+
+.unique-affix .figure {
+  color: rgb(123, 123, 234);
+}
+
+.body--dark .unique-affix .figure {
+  color: rgb(163, 163, 234);
 }
 
 .restriction-list :deep(.q-badge) {
