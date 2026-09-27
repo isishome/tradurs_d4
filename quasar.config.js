@@ -12,7 +12,7 @@ const { configure } = require('quasar/wrappers')
 const path = require('path')
 //const { mergeConfig } = require('vite')
 
-module.exports = configure(function (/* ctx */) {
+module.exports = configure(function (ctx = {}) {
   return {
     // https://v2.quasar.dev/quasar-cli-vite/prefetch-feature
     preFetch: true,
@@ -63,6 +63,51 @@ module.exports = configure(function (/* ctx */) {
 
       extendViteConf(viteConf) {
         viteConf.define.__VUE_PROD_HYDRATION_MISMATCH_DETAILS__ = false
+        {
+          // Keep ONNX's variable WASM import out of Vite 2 import analysis:
+          // it injects /@vite/client (DOM-only) into the worker dependency.
+          // Use the identical pinned ESM runtime as the production worker.
+          viteConf.resolve = {
+            ...viteConf.resolve,
+            alias: [
+              { find: /^onnxruntime-web$/, replacement: 'https://cdn.jsdelivr.net/npm/onnxruntime-web@1.30.0/dist/ort.wasm.min.mjs' },
+              ...(Array.isArray(viteConf.resolve?.alias)
+                ? viteConf.resolve.alias
+                : Object.entries(viteConf.resolve?.alias || {}).map(([find, replacement]) => ({ find, replacement })))
+            ]
+          }
+        }
+        // The initial dependency scan does not traverse the lazy OCR worker.
+        // Discovering these on the first scan triggers Vite's full-page reload.
+        viteConf.optimizeDeps = {
+          ...viteConf.optimizeDeps,
+          include: [...new Set([
+            ...(viteConf.optimizeDeps?.include || []),
+            'ppu-paddle-ocr/web'
+          ])],
+          // ONNX uses native BigInt. This affects development prebundling only;
+          // keep the existing production browser target unchanged.
+          esbuildOptions: {
+            ...viteConf.optimizeDeps?.esbuildOptions,
+            target: 'es2020'
+          }
+        }
+        // ONNX's WASM-only ESM runtime requires modern syntax. Load its pinned
+        // distribution in the OCR worker without changing the site's target.
+        viteConf.worker = {
+          ...viteConf.worker,
+          format: 'es',
+          plugins: [{
+            name: 'ocr-onnx-wasm-runtime',
+            enforce: 'pre',
+            resolveId(id) {
+              if (id === 'onnxruntime-web') return {
+                id: 'https://cdn.jsdelivr.net/npm/onnxruntime-web@1.30.0/dist/ort.wasm.min.mjs',
+                external: true
+              }
+            }
+          }]
+        }
         // viteConf.build = mergeConfig(viteConf.build, {
         //   rollupOptions: {
         //     output: {

@@ -5,12 +5,12 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { nextTick, reactive, ref } from 'vue'
+import { nextTick, onBeforeUnmount, reactive, ref } from 'vue'
 import { QFile, uid, useQuasar } from 'quasar'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { type ILabel, useItemStore } from 'src/stores/item-store'
-import { Item, Property } from 'src/types/item'
+import { Item } from 'src/types/item'
 import CompareWorker from 'src/common/worker?worker'
 import { similarity } from 'src/common'
 import { CompareParams, type Result } from 'src/common/worker'
@@ -46,16 +46,20 @@ const route = useRoute()
 const { t } = useI18n({ useScope: 'global' })
 const is = useItemStore()
 
-const worker = new CompareWorker()
+let worker: Worker | undefined
 const compare = (params: CompareParams): Promise<Array<Result>> => {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
+    worker ??= new CompareWorker()
     worker.onmessage = (event) => resolve(event.data)
+    worker.onerror = () => { terminate(); reject(new Error('Tooltip matching failed')) }
     worker.postMessage(JSON.stringify(params))
   })
 }
 const terminate = () => {
-  worker.terminate()
+  worker?.terminate()
+  worker = undefined
 }
+onBeforeUnmount(terminate)
 
 let plainText: string
 let restrictionsPhase: string[]
@@ -112,6 +116,7 @@ const endScan = () => {
 }
 
 const failedScan = (msg: string) => {
+  terminate()
   showProgress.value = false
 
   emit('failed', msg)
@@ -333,6 +338,7 @@ const checkInfo = (textArray: string[]) => {
 
     if (item.itemTypeValue1 === '')
       return failedScan(t('analyze.typeValueNotFound'))
+  }
 
     // check item power
     const powerText = `아이템.*위력|item.*power`
@@ -348,7 +354,6 @@ const checkInfo = (textArray: string[]) => {
 
       textArray.splice(0, indexPower + 1)
     }
-  }
 
   // check item Requires Level
   const requiresText = `요구.*레벨|requires.*level`
@@ -361,8 +366,8 @@ const checkInfo = (textArray: string[]) => {
     if (!isNaN(parseFloat(levelPhase))) item.level = parseFloat(levelPhase)
   }
 
-  restrictionsPhase = textArray
-    .splice(indexRequires, textArray.length)
+  restrictionsPhase = (indexRequires === -1 ? [] : textArray
+    .splice(indexRequires, textArray.length))
     .map((ta: string) => ta.replace(/[\+ ]/g, ''))
 
   // remove lost when epuipped
@@ -376,7 +381,7 @@ const checkInfo = (textArray: string[]) => {
   let tArray = textArray
     .map((ta: string) =>
       ta
-        .replace(/[\+ ]/g, '')
+        .replace(/ /g, '')
         .replace(/([0-9]*?)(\,)([0-9.]{1,})/g, '$1$3')
         .replace(/[\[]{2,}/g, '[')
         .replace(/[\]]{2,}/g, ']')
@@ -387,137 +392,52 @@ const checkInfo = (textArray: string[]) => {
 
   setTimeout(() => {
     checkedItem.value.push('info')
-    checkProperties(tArray)
+    checkProperties(tArray).catch(() => failedScan(t('analyze.failedAnalyze')))
   }, timeout)
+}
+
+const affixCandidates = () => {
+  const fixed = is.fixedItems.data.find(fi => fi.value === item.fixedItemId)
+  return is.affixes.data.filter(a => !fixed ||
+    ['standard', 'socket'].includes(a.type) || fixed.affixes?.includes(a.value as number))
 }
 
 const checkProperties = async (tArray: string[]) => {
   currentCheck.value = 'properties'
-
-  if (item.fixedItemId) {
-    item.properties = is.properties.data
-      .filter((p) =>
-        (
-          is.fixedItems.data.find((fi) => fi.value === item.fixedItemId)
-            ?.properties ?? []
-        ).includes(p.value as number)
-      )
-      .map((p) => ({
-        propertyId: p.value as number,
-        propertyValues: Array.from(
-          { length: (p.label?.match(/\{x\}/gi) || []).length },
-          () => 0
-        ),
-        action: 2
-      }))
-  } else {
-    const findEquipClass = is.findEquipClass(item.itemTypeValue1)
-
-    if (findEquipClass) {
-      try {
-        const data = await compare({
-          standard: is.properties.data,
-          target: tArray,
-          cutoffSim,
-          cutoffDis,
-          layer: 3,
-          phase
-        })
-
-        let start = -1
-        let end = 0
-
-        item.properties = data.reduce((acc: Array<Property>, c: any) => {
-          if (
-            acc.filter((a) => a.propertyId === c.id).length === 0 &&
-            start + 4 > c.index
-          ) {
-            if (start === -1) start = c.index
-
-            end = c.index + c.len
-
-            acc.push({
-              valueId: uid(),
-              propertyId: c.id,
-              propertyValues: c.values.returnValues,
-              action: 2
-            })
-          }
-
-          return acc
-        }, [])
-
-        tArray.splice(0, end)
-      } catch (e) {
-        terminate()
-        console.log(e)
-        return failedScan(t('analyze.failedAnalyze'))
-      }
-    }
-  }
-
+  const fixed = is.fixedItems.data.find(fi => fi.value === item.fixedItemId)
+  const equip = is.findEquipClass(item.itemTypeValue1)
+  const propertyIds = new Set([...(equip?.properties ?? []), ...(fixed?.properties ?? [])])
+  const data = await compare({
+    standard: is.properties.data.filter(p => propertyIds.has(p.value as number)),
+    propertyAffixes: affixCandidates(),
+    target: tArray, cutoffSim, cutoffDis, layer: 3, phase
+  })
+  item.properties = data.map(r => ({
+    valueId: uid(), propertyId: r.id, propertyValues: r.values.returnValues, action: 2
+  }))
+  // Remove only recognized implicit lines; preserve the rolled affixes and sockets.
+  for (const r of [...data].reverse()) tArray.splice(r.index, r.len)
   setTimeout(() => {
     checkedItem.value.push('properties')
-    checkAffixes(tArray)
+    checkAffixes(tArray).catch(() => failedScan(t('analyze.failedAnalyze')))
   }, timeout)
 }
 
 const checkAffixes = async (tArray: string[]) => {
   currentCheck.value = 'affixes'
-
-  if (item.fixedItemId) {
-    item.affixes = is.affixes.data
-      .filter((a) =>
-        (
-          is.fixedItems.data.find((fi) => fi.value === item.fixedItemId)
-            ?.affixes ?? []
-        ).includes(a.value as number)
-      )
-      .map((a) => ({
-        ...a,
-        values: Array.from(
-          { length: (a.label?.match(/\{x\}/gi) || []).length },
-          () => 0
-        )
-      }))
-      .map((a) => ({
-        valueId: uid(),
-        affixId: a.value as number,
-        affixValues: Array.from({ length: a.values.length }, () => {
-          const tempRangeId = uid()
-          return { valueRangeId: tempRangeId, value: 0, min: 0, max: 0 }
-        }),
-        action: 2
-      }))
-  } else {
-    try {
-      const data = await compare({
-        standard: is.affixes.data,
-        target: tArray,
-        cutoffSim,
-        cutoffDis,
-        layer: 10,
-        phase
-      })
-
-      item.affixes = data.map((r: Result) => ({
-        valueId: uid(),
-        affixId: r.id,
-        affixValues: r.values.returnValues.map((rv, i) => ({
-          valueRangeId: uid(),
-          value: rv,
-          min: r.values.returnRangeValues[i].min,
-          max: r.values.returnRangeValues[i].max
-        })),
-        action: 2
-      }))
-    } catch (e) {
-      terminate()
-      console.log(e)
-      return failedScan(t('analyze.failedAnalyze'))
-    }
-  }
-
+  const standard = affixCandidates()
+  const data = await compare({
+    standard, target: tArray, cutoffSim, cutoffDis, layer: 10, phase
+  })
+  // A catalog describes possible/default rolls; it is not OCR evidence.
+  item.affixes = data.map((r: Result) => ({
+    valueId: uid(), affixId: r.id,
+    affixValues: r.values.returnValues.map((value, i) => ({
+      valueRangeId: uid(), value,
+      min: r.values.returnRangeValues[i].min,
+      max: r.values.returnRangeValues[i].max
+    })), action: 2
+  }))
   setTimeout(() => {
     checkedItem.value.push('affixes')
     checkRestrictions()
@@ -527,33 +447,10 @@ const checkAffixes = async (tArray: string[]) => {
 const checkRestrictions = async () => {
   currentCheck.value = 'restrictions'
 
-  if (item.fixedItemId) {
-    item.restrictions = is.restrictions.data
-      .filter((r) =>
-        (
-          is.fixedItems.data.find((fi) => fi.value === item.fixedItemId)
-            ?.restrictions ?? []
-        ).includes(r.value as number)
-      )
-      .map((r) => ({
-        restrictId: r.value as number,
-        restrictValues: Array.from(
-          { length: (r.label?.match(/\{x\}/gi) || []).length },
-          () => 0
-        ),
-        action: 2
-      }))
-  } else {
     try {
-      const plainTArray = restrictionsPhase.map((rp) =>
-        rp
-          .replace(/\([^\)]*\)?/g, '')
-          .replace(new RegExp(`[^%${phase}]`, 'g'), '')
-      )
-
       const data = await compare({
         standard: is.restrictions.data,
-        target: plainTArray,
+        target: restrictionsPhase,
         cutoffSim,
         cutoffDis,
         layer: 3,
@@ -572,8 +469,6 @@ const checkRestrictions = async () => {
     } finally {
       terminate()
     }
-  }
-
   setTimeout(() => {
     checkedItem.value.push('restrictions')
     aggregate()
@@ -581,6 +476,7 @@ const checkRestrictions = async () => {
 }
 
 const aggregate = () => {
+  terminate()
   currentCheck.value = 'aggregate'
   setTimeout(() => {
     checkedItem.value.push('aggregate')
@@ -614,11 +510,12 @@ const onShowCropBox = async () => {
   })
 
   const selection = cropper.getCropperSelection()
+  const image = await cropper.getCropperImage()?.$ready()
 
-  if (selection) {
-    selection.initialAspectRatio =
-      cropImage.value.width / cropImage.value.height
-    selection.initialCoverage = 0.98
+  if (selection && image) {
+    selection.precise = true
+    selection.initialAspectRatio = image.naturalWidth / image.naturalHeight
+    selection.initialCoverage = 1
     selection.zoomable = false
   }
 
@@ -633,6 +530,7 @@ const onBeforeHideCropBox = () => {
 }
 
 const onStartFilter = async () => {
+  if (cropBox.loading || !cropper) return
   const selection = cropper.getCropperSelection()
   const cropperImage = cropper.getCropperImage()
 
@@ -645,10 +543,28 @@ const onStartFilter = async () => {
   const scaleX = image.naturalWidth / imageRect.width
   const scaleY = image.naturalHeight / imageRect.height
 
-  const realCanvas = await selection.$toCanvas({
-    width: Math.round(selection.width * scaleX),
-    height: Math.round(selection.height * scaleY)
-  })
+  let realCanvas: HTMLCanvasElement
+  const [a, b, c, d] = cropperImage.$getTransform()
+  if (a > 0 && d > 0 && b === 0 && c === 0) {
+    // A normal crop is a pixel-aligned copy, not a resampling of the CSS transform.
+    // The old 98% default + fractional transform changed OCR digits on real tooltips.
+    const rect = selection.getBoundingClientRect()
+    const left = Math.max(0, Math.min(image.naturalWidth, Math.round((rect.left - imageRect.left) * scaleX)))
+    const top = Math.max(0, Math.min(image.naturalHeight, Math.round((rect.top - imageRect.top) * scaleY)))
+    const right = Math.max(left, Math.min(image.naturalWidth, Math.round((rect.right - imageRect.left) * scaleX)))
+    const bottom = Math.max(top, Math.min(image.naturalHeight, Math.round((rect.bottom - imageRect.top) * scaleY)))
+    if (right === left || bottom === top) return failedScan(t('analyze.failedAnalyze'))
+    realCanvas = document.createElement('canvas')
+    realCanvas.width = right - left
+    realCanvas.height = bottom - top
+    realCanvas.getContext('2d')?.drawImage(image, left, top, realCanvas.width, realCanvas.height,
+      0, 0, realCanvas.width, realCanvas.height)
+  } else {
+    realCanvas = await selection.$toCanvas({
+      width: Math.round(selection.width * scaleX),
+      height: Math.round(selection.height * scaleY)
+    })
+  }
 
   realCanvas?.toBlob((blob) => {
     if (blob) {
@@ -660,107 +576,22 @@ const onStartFilter = async () => {
   })
 }
 
-const binarize = (
-  ctx: CanvasRenderingContext2D,
-  width: number,
-  height: number
-) => {
-  const imgData = ctx.getImageData(0, 0, width, height)
-  const data = imgData.data
-  for (let i = 0; i < data.length; i += 4) {
-    const avg = (data[i] + data[i + 1] + data[i + 2]) / 3
-    const threshold = 140
-    const color = avg > threshold ? 255 : 0
-    data[i] = data[i + 1] = data[i + 2] = color
-  }
-  ctx.putImageData(imgData, 0, 0)
-}
-
-const filtering = (f: Blob) => {
+const filtering = async (f: Blob) => {
+  Object.assign(item, new Item(''))
   checkedItem.value.splice(0, checkedItem.value.length)
   currentCheck.value = 'analyze'
   showProgress.value = true
 
-  const canvas = document.createElement('canvas')
-  const ctx = canvas.getContext('2d')
-  const fr = new FileReader()
-  fr.readAsDataURL(f)
-
-  fr.onload = () => {
-    const image = new Image()
-    image.src = fr.result as string
-    image.onload = () => {
-      const isTransparent = f.type.toLowerCase().match(/image\/(png|webp)/g)
-      const scale = Math.round((700 / image.width) * 1000) / 1000
-      const iWidth = image.width
-      const iHeight = image.height
-      const predictWidth = Math.ceil(iWidth * 0.32)
-      const predictHeight = Math.ceil(iWidth * 0.36)
-      canvas.width = iWidth * scale
-      canvas.height = iHeight * scale
-
-      if (!ctx) {
-        failedScan(t('analyze.failedAnalyze'))
-        return
-      }
-
-      if (isTransparent) {
-        ctx.fillStyle = '#443322'
-        ctx.fillRect(0, 0, canvas.width, canvas.height)
-      }
-
-      ctx.drawImage(
-        image,
-        0,
-        0,
-        iWidth - predictWidth,
-        predictHeight,
-        0,
-        0,
-        Math.round((iWidth - predictWidth) * scale),
-        Math.round(predictHeight * scale)
-      )
-
-      ctx.drawImage(
-        image,
-        0,
-        predictHeight,
-        iWidth,
-        iHeight - predictHeight,
-        0,
-        Math.round(predictHeight * scale),
-        iWidth * scale,
-        Math.round((iHeight - predictHeight) * scale)
-      )
-
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
-      const data = imageData.data
-      let colorSum = 0
-
-      for (let i = 0; i < data.length; i += 4) {
-        colorSum += 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2]
-      }
-
-      const brightness = colorSum / (canvas.width * canvas.height)
-
-      ctx.filter =
-        brightness < 60
-          ? 'brightness(1) contrast(1.4) blur(.6px) sepia(1)'
-          : 'grayscale(1) contrast(2) brightness(1.2)'
-      ctx.drawImage(canvas, 0, 0)
-
-      if (brightness >= 60) binarize(ctx, canvas.width, canvas.height)
-
-      is.recognize(canvas, lang)
-        .then((text) => {
-          plainText = text
-          checkedItem.value.push('analyze')
-          checkText()
-        })
-        .catch(() => {
-          failedScan(t('analyze.failedAnalyze'))
-        })
-    }
+  try {
+    // Paddle detects colored tooltip text from the selected original crop.
+    // Thresholding can erase rarity and Account Bound lines.
+    const text = await is.recognize(f, lang)
+    if (!text.trim()) throw new Error('Empty OCR result')
+    plainText = text
+    checkedItem.value.push('analyze')
+    checkText()
+  } catch {
+    failedScan(t('analyze.failedAnalyze'))
   }
 }
 
@@ -954,7 +785,7 @@ const beforeHideDropBox = () => {
           <D4Btn
             :label="t('btn.recognizeSelectedArea')"
             :loading="loading"
-            :disable="disable"
+            :disable="disable || cropBox.loading"
             color="var(--q-light-unique)"
             @click="onStartFilter"
           />

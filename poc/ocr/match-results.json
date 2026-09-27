@@ -1,0 +1,2734 @@
+[
+  {
+    "id": "ko-stealth",
+    "engine": "baseline",
+    "dictionarySize": 2046,
+    "matches": [
+      {
+        "id": 619,
+        "label": "탈것 방어도 +1,000",
+        "index": 2,
+        "len": 2,
+        "values": {
+          "returnValues": [],
+          "returnRangeValues": []
+        }
+      },
+      {
+        "id": 105,
+        "label": "최대 생명력 +{x}",
+        "index": 4,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            2200
+          ],
+          "returnRangeValues": [
+            {
+              "min": 1831,
+              "max": 2200
+            }
+          ]
+        }
+      },
+      {
+        "id": 133,
+        "label": "자원 생성량 {x}%",
+        "index": 6,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            15
+          ],
+          "returnRangeValues": [
+            {
+              "min": 15,
+              "max": 15
+            }
+          ]
+        }
+      },
+      {
+        "id": 5042,
+        "label": "공격 속도 +{x}%[+]\n이동 속도 +{x}%[+]",
+        "index": 7,
+        "len": 2,
+        "values": {
+          "returnValues": [
+            25,
+            25
+          ],
+          "returnRangeValues": [
+            {
+              "min": 25,
+              "max": 25
+            },
+            {
+              "min": 25,
+              "max": 25
+            }
+          ]
+        }
+      },
+      {
+        "id": 33,
+        "label": "피해 감소 {x}%",
+        "index": 9,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            18.8
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": 355,
+        "label": "방해 효과 감소 {x}%",
+        "index": 10,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            25
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": 1,
+        "label": "빈 홈",
+        "index": 12,
+        "len": 1,
+        "values": {
+          "returnValues": [],
+          "returnRangeValues": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "ko-stealth",
+    "engine": "paddle-old-parser",
+    "dictionarySize": 2046,
+    "matches": [
+      {
+        "id": 105,
+        "label": "최대 생명력 +{x}",
+        "index": 5,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            2200
+          ],
+          "returnRangeValues": [
+            {
+              "min": 1831,
+              "max": 2200
+            }
+          ]
+        }
+      },
+      {
+        "id": 133,
+        "label": "자원 생성량 {x}%",
+        "index": 7,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            15
+          ],
+          "returnRangeValues": [
+            {
+              "min": 15,
+              "max": 15
+            }
+          ]
+        }
+      },
+      {
+        "id": 5042,
+        "label": "공격 속도 +{x}%[+]\n이동 속도 +{x}%[+]",
+        "index": 8,
+        "len": 2,
+        "values": {
+          "returnValues": [
+            25,
+            6.2
+          ],
+          "returnRangeValues": [
+            {
+              "min": 25,
+              "max": 25
+            },
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": 33,
+        "label": "피해 감소 {x}%",
+        "index": 10,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            18.8
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": 355,
+        "label": "방해 효과 감소 {x}%",
+        "index": 11,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            25
+          ],
+          "returnRangeValues": [
+            {
+              "min": 25,
+              "max": 25
+            }
+          ]
+        }
+      },
+      {
+        "id": 1,
+        "label": "빈 홈",
+        "index": 12,
+        "len": 1,
+        "values": {
+          "returnValues": [],
+          "returnRangeValues": []
+        }
+      },
+      {
+        "id": 1,
+        "label": "빈 홈",
+        "index": 13,
+        "len": 1,
+        "values": {
+          "returnValues": [],
+          "returnRangeValues": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "ko-stealth",
+    "engine": "paddle-new-parser",
+    "dictionarySize": 2046,
+    "matches": [
+      {
+        "id": 354,
+        "label": "방어도 +{x}",
+        "index": 4,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            2805
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": 105,
+        "label": "최대 생명력 +{x}",
+        "index": 5,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            2200
+          ],
+          "returnRangeValues": [
+            {
+              "min": 1831,
+              "max": 2200
+            }
+          ]
+        }
+      },
+      {
+        "id": 133,
+        "label": "자원 생성량 {x}%",
+        "index": 7,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            15
+          ],
+          "returnRangeValues": [
+            {
+              "min": 15,
+              "max": 15
+            }
+          ]
+        }
+      },
+      {
+        "id": 7,
+        "label": "공격 속도 +{x}%",
+        "index": 8,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            25
+          ],
+          "returnRangeValues": [
+            {
+              "min": 25,
+              "max": 25
+            }
+          ]
+        }
+      },
+      {
+        "id": 117,
+        "label": "이동 속도 +{x}%",
+        "index": 9,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            25
+          ],
+          "returnRangeValues": [
+            {
+              "min": 25,
+              "max": 25
+            }
+          ]
+        }
+      },
+      {
+        "id": 33,
+        "label": "피해 감소 {x}%",
+        "index": 10,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            18.8
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": 355,
+        "label": "방해 효과 감소 {x}%",
+        "index": 11,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            25
+          ],
+          "returnRangeValues": [
+            {
+              "min": 25,
+              "max": 25
+            }
+          ]
+        }
+      },
+      {
+        "id": 1,
+        "label": "빈 홈",
+        "index": 12,
+        "len": 1,
+        "values": {
+          "returnValues": [],
+          "returnRangeValues": []
+        }
+      },
+      {
+        "id": 1,
+        "label": "빈 홈",
+        "index": 13,
+        "len": 1,
+        "values": {
+          "returnValues": [],
+          "returnRangeValues": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "ko-insight",
+    "engine": "baseline",
+    "dictionarySize": 2046,
+    "matches": [
+      {
+        "id": 937,
+        "label": "5초당 생명력 +{x}",
+        "index": 6,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            4533
+          ],
+          "returnRangeValues": [
+            {
+              "min": 4269,
+              "max": 5805
+            }
+          ]
+        }
+      },
+      {
+        "id": 977,
+        "label": "무기 공격력 +{x}",
+        "index": 9,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            431
+          ],
+          "returnRangeValues": [
+            {
+              "min": 207,
+              "max": 345
+            }
+          ]
+        }
+      },
+      {
+        "id": 26,
+        "label": "모든 능력치 +{x}",
+        "index": 10,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            450
+          ],
+          "returnRangeValues": [
+            {
+              "min": 300,
+              "max": 360
+            }
+          ]
+        }
+      },
+      {
+        "id": 1025,
+        "label": "분노 재생 +{x}",
+        "index": 11,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            38
+          ],
+          "returnRangeValues": [
+            {
+              "min": 3,
+              "max": 3
+            }
+          ]
+        }
+      },
+      {
+        "id": 7,
+        "label": "공격 속도 +{x}%",
+        "index": 12,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            43.8
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": 27,
+        "label": "극대화 확률 +{x}%",
+        "index": 13,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            92
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": 980,
+        "label": "극대화 피해 계수 x{x}%",
+        "index": 14,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            250
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": 29,
+        "label": "극대화 피해 +{x}%",
+        "index": 15,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            1509
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "ko-insight",
+    "engine": "paddle-old-parser",
+    "dictionarySize": 2046,
+    "matches": [
+      {
+        "id": 937,
+        "label": "5초당 생명력 +{x}",
+        "index": 7,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            4533
+          ],
+          "returnRangeValues": [
+            {
+              "min": 4269,
+              "max": 5805
+            }
+          ]
+        }
+      },
+      {
+        "id": 977,
+        "label": "무기 공격력 +{x}",
+        "index": 10,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            431
+          ],
+          "returnRangeValues": [
+            {
+              "min": 207,
+              "max": 345
+            }
+          ]
+        }
+      },
+      {
+        "id": 26,
+        "label": "모든 능력치 +{x}",
+        "index": 11,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            450
+          ],
+          "returnRangeValues": [
+            {
+              "min": 300,
+              "max": 360
+            }
+          ]
+        }
+      },
+      {
+        "id": 1025,
+        "label": "분노 재생 +{x}",
+        "index": 12,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            38
+          ],
+          "returnRangeValues": [
+            {
+              "min": 30,
+              "max": 30
+            }
+          ]
+        }
+      },
+      {
+        "id": 7,
+        "label": "공격 속도 +{x}%",
+        "index": 13,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            43.8
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": 27,
+        "label": "극대화 확률 +{x}%",
+        "index": 14,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            92
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": 980,
+        "label": "극대화 피해 계수 x{x}%",
+        "index": 15,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            250
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": 29,
+        "label": "극대화 피해 +{x}%",
+        "index": 16,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            150
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": 983,
+        "label": "물리 피해 계수 x{x}%",
+        "index": 17,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            24
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": 983,
+        "label": "물리 피해 계수 x{x}%",
+        "index": 18,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            24
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "ko-insight",
+    "engine": "paddle-new-parser",
+    "dictionarySize": 2046,
+    "matches": [
+      {
+        "id": 977,
+        "label": "무기 공격력 +{x}",
+        "index": 10,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            431
+          ],
+          "returnRangeValues": [
+            {
+              "min": 207,
+              "max": 345
+            }
+          ]
+        }
+      },
+      {
+        "id": 26,
+        "label": "모든 능력치 +{x}",
+        "index": 11,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            450
+          ],
+          "returnRangeValues": [
+            {
+              "min": 300,
+              "max": 360
+            }
+          ]
+        }
+      },
+      {
+        "id": 1025,
+        "label": "분노 재생 +{x}",
+        "index": 12,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            38
+          ],
+          "returnRangeValues": [
+            {
+              "min": 30,
+              "max": 30
+            }
+          ]
+        }
+      },
+      {
+        "id": 7,
+        "label": "공격 속도 +{x}%",
+        "index": 13,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            43.8
+          ],
+          "returnRangeValues": [
+            {
+              "min": 35,
+              "max": 35
+            }
+          ]
+        }
+      },
+      {
+        "id": 27,
+        "label": "극대화 확률 +{x}%",
+        "index": 14,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            92
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": 980,
+        "label": "극대화 피해 계수 x{x}%",
+        "index": 15,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            250
+          ],
+          "returnRangeValues": [
+            {
+              "min": 200,
+              "max": 200
+            }
+          ]
+        }
+      },
+      {
+        "id": 29,
+        "label": "극대화 피해 +{x}%",
+        "index": 16,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            150
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": 983,
+        "label": "물리 피해 계수 x{x}%",
+        "index": 17,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            24
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": 983,
+        "label": "물리 피해 계수 x{x}%",
+        "index": 18,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            24
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "ko-spirit",
+    "engine": "baseline",
+    "dictionarySize": 2046,
+    "matches": [
+      {
+        "id": 937,
+        "label": "5초당 생명력 +{x}",
+        "index": 6,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            2238
+          ],
+          "returnRangeValues": [
+            {
+              "min": 1721,
+              "max": 2349
+            }
+          ]
+        }
+      },
+      {
+        "id": 977,
+        "label": "무기 공격력 +{x}",
+        "index": 9,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            151
+          ],
+          "returnRangeValues": [
+            {
+              "min": 94,
+              "max": 157
+            }
+          ]
+        }
+      },
+      {
+        "id": 144,
+        "label": "최대 자원 +{x}",
+        "index": 10,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            63
+          ],
+          "returnRangeValues": [
+            {
+              "min": 20,
+              "max": 56
+            }
+          ]
+        }
+      },
+      {
+        "id": 942,
+        "label": "모든 피해 계수 x{x}%",
+        "index": 11,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            63
+          ],
+          "returnRangeValues": [
+            {
+              "min": 50,
+              "max": 50
+            }
+          ]
+        }
+      },
+      {
+        "id": 7,
+        "label": "공격 속도 +{x}%",
+        "index": 12,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            37.5
+          ],
+          "returnRangeValues": [
+            {
+              "min": 25,
+              "max": 35
+            }
+          ]
+        }
+      },
+      {
+        "id": 355,
+        "label": "방해 효과 감소 {x}%",
+        "index": 13,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            62.5
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": 941,
+        "label": "모든 기술 +{x}",
+        "index": 14,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            10
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": 27,
+        "label": "극대화 확률 +{x}%",
+        "index": 15,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            5.6
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": 1131,
+        "label": "화염 및 신성 피해 계수 x{x}%",
+        "index": 16,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            22
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "ko-spirit",
+    "engine": "paddle-old-parser",
+    "dictionarySize": 2046,
+    "matches": [
+      {
+        "id": 242,
+        "label": "뼈 영혼 +{x}",
+        "index": 1,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            0
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": 937,
+        "label": "5초당 생명력 +{x}",
+        "index": 7,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            2238
+          ],
+          "returnRangeValues": [
+            {
+              "min": 1721,
+              "max": 2349
+            }
+          ]
+        }
+      },
+      {
+        "id": 977,
+        "label": "무기 공격력 +{x}",
+        "index": 10,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            151
+          ],
+          "returnRangeValues": [
+            {
+              "min": 94,
+              "max": 157
+            }
+          ]
+        }
+      },
+      {
+        "id": 144,
+        "label": "최대 자원 +{x}",
+        "index": 11,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            63
+          ],
+          "returnRangeValues": [
+            {
+              "min": 20,
+              "max": 56
+            }
+          ]
+        }
+      },
+      {
+        "id": 942,
+        "label": "모든 피해 계수 x{x}%",
+        "index": 12,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            63
+          ],
+          "returnRangeValues": [
+            {
+              "min": 5,
+              "max": 5
+            }
+          ]
+        }
+      },
+      {
+        "id": 7,
+        "label": "공격 속도 +{x}%",
+        "index": 13,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            37.5
+          ],
+          "returnRangeValues": [
+            {
+              "min": 25,
+              "max": 35
+            }
+          ]
+        }
+      },
+      {
+        "id": 355,
+        "label": "방해 효과 감소 {x}%",
+        "index": 14,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            62.5
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": 941,
+        "label": "모든 기술 +{x}",
+        "index": 15,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            10
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": 27,
+        "label": "극대화 확률 +{x}%",
+        "index": 16,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            5.6
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": 1131,
+        "label": "화염 및 신성 피해 계수 x{x}%",
+        "index": 17,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            22
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "ko-spirit",
+    "engine": "paddle-new-parser",
+    "dictionarySize": 2046,
+    "matches": [
+      {
+        "id": 977,
+        "label": "무기 공격력 +{x}",
+        "index": 10,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            151
+          ],
+          "returnRangeValues": [
+            {
+              "min": 94,
+              "max": 157
+            }
+          ]
+        }
+      },
+      {
+        "id": 144,
+        "label": "최대 자원 +{x}",
+        "index": 11,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            63
+          ],
+          "returnRangeValues": [
+            {
+              "min": 20,
+              "max": 56
+            }
+          ]
+        }
+      },
+      {
+        "id": 942,
+        "label": "모든 피해 계수 x{x}%",
+        "index": 12,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            63
+          ],
+          "returnRangeValues": [
+            {
+              "min": 5,
+              "max": 5
+            }
+          ]
+        }
+      },
+      {
+        "id": 7,
+        "label": "공격 속도 +{x}%",
+        "index": 13,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            37.5
+          ],
+          "returnRangeValues": [
+            {
+              "min": 25,
+              "max": 35
+            }
+          ]
+        }
+      },
+      {
+        "id": 355,
+        "label": "방해 효과 감소 {x}%",
+        "index": 14,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            62.5
+          ],
+          "returnRangeValues": [
+            {
+              "min": 50,
+              "max": 50
+            }
+          ]
+        }
+      },
+      {
+        "id": 941,
+        "label": "모든 기술 +{x}",
+        "index": 15,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            10
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": 27,
+        "label": "극대화 확률 +{x}%",
+        "index": 16,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            5.6
+          ],
+          "returnRangeValues": [
+            {
+              "min": 2.5,
+              "max": 5
+            }
+          ]
+        }
+      },
+      {
+        "id": 1131,
+        "label": "화염 및 신성 피해 계수 x{x}%",
+        "index": 17,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            22
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "ko-call-to-arms",
+    "engine": "baseline",
+    "dictionarySize": 2046,
+    "matches": [
+      {
+        "id": 937,
+        "label": "5초당 생명력 +{x}",
+        "index": 6,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            2391
+          ],
+          "returnRangeValues": [
+            {
+              "min": 860,
+              "max": 2488
+            }
+          ]
+        }
+      },
+      {
+        "id": 977,
+        "label": "무기 공격력 +{x}",
+        "index": 9,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            290
+          ],
+          "returnRangeValues": [
+            {
+              "min": 200,
+              "max": 250
+            }
+          ]
+        }
+      },
+      {
+        "id": 942,
+        "label": "모든 피해 계수 x{x}%",
+        "index": 10,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            50
+          ],
+          "returnRangeValues": [
+            {
+              "min": 40,
+              "max": 40
+            }
+          ]
+        }
+      },
+      {
+        "id": 7,
+        "label": "공격 속도 +{x}%",
+        "index": 11,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            50
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": 941,
+        "label": "모든 기술 +{x}",
+        "index": 12,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            1
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": 1082,
+        "label": "외침 기술 +{x}",
+        "index": 13,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            8
+          ],
+          "returnRangeValues": [
+            {
+              "min": 5,
+              "max": 5
+            }
+          ]
+        }
+      },
+      {
+        "id": 27,
+        "label": "극대화 확률 +{x}%",
+        "index": 14,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            6.3
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": 27,
+        "label": "극대화 확률 +{x}%",
+        "index": 15,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            3.8
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": 992,
+        "label": "비술 기술 등급 +{x}",
+        "index": 18,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            5
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": 105,
+        "label": "최대 생명력 +{x}",
+        "index": 19,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            15
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": 144,
+        "label": "최대 자원 +{x}",
+        "index": 20,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            15
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": 983,
+        "label": "물리 피해 계수 x{x}%",
+        "index": 21,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            0
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "ko-call-to-arms",
+    "engine": "paddle-old-parser",
+    "dictionarySize": 2046,
+    "matches": [
+      {
+        "id": 937,
+        "label": "5초당 생명력 +{x}",
+        "index": 6,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            2391
+          ],
+          "returnRangeValues": [
+            {
+              "min": 1860,
+              "max": 2488
+            }
+          ]
+        }
+      },
+      {
+        "id": 977,
+        "label": "무기 공격력 +{x}",
+        "index": 9,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            290
+          ],
+          "returnRangeValues": [
+            {
+              "min": 200,
+              "max": 250
+            }
+          ]
+        }
+      },
+      {
+        "id": 942,
+        "label": "모든 피해 계수 x{x}%",
+        "index": 10,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            50
+          ],
+          "returnRangeValues": [
+            {
+              "min": 4,
+              "max": 4
+            }
+          ]
+        }
+      },
+      {
+        "id": 7,
+        "label": "공격 속도 +{x}%",
+        "index": 11,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            50
+          ],
+          "returnRangeValues": [
+            {
+              "min": 40,
+              "max": 40
+            }
+          ]
+        }
+      },
+      {
+        "id": 941,
+        "label": "모든 기술 +{x}",
+        "index": 12,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            1
+          ],
+          "returnRangeValues": [
+            {
+              "min": 1,
+              "max": 1
+            }
+          ]
+        }
+      },
+      {
+        "id": 1082,
+        "label": "외침 기술 +{x}",
+        "index": 13,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            8
+          ],
+          "returnRangeValues": [
+            {
+              "min": 5,
+              "max": 5
+            }
+          ]
+        }
+      },
+      {
+        "id": 27,
+        "label": "극대화 확률 +{x}%",
+        "index": 14,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            6.3
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": 27,
+        "label": "극대화 확률 +{x}%",
+        "index": 15,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            3.8
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": 992,
+        "label": "비술 기술 등급 +{x}",
+        "index": 18,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            5
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": 105,
+        "label": "최대 생명력 +{x}",
+        "index": 19,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            15
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": 144,
+        "label": "최대 자원 +{x}",
+        "index": 20,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            15
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": 983,
+        "label": "물리 피해 계수 x{x}%",
+        "index": 21,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            24
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "ko-call-to-arms",
+    "engine": "paddle-new-parser",
+    "dictionarySize": 2046,
+    "matches": [
+      {
+        "id": 977,
+        "label": "무기 공격력 +{x}",
+        "index": 9,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            290
+          ],
+          "returnRangeValues": [
+            {
+              "min": 200,
+              "max": 250
+            }
+          ]
+        }
+      },
+      {
+        "id": 942,
+        "label": "모든 피해 계수 x{x}%",
+        "index": 10,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            50
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": 7,
+        "label": "공격 속도 +{x}%",
+        "index": 11,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            50
+          ],
+          "returnRangeValues": [
+            {
+              "min": 40,
+              "max": 40
+            }
+          ]
+        }
+      },
+      {
+        "id": 941,
+        "label": "모든 기술 +{x}",
+        "index": 12,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            1
+          ],
+          "returnRangeValues": [
+            {
+              "min": 1,
+              "max": 1
+            }
+          ]
+        }
+      },
+      {
+        "id": 1082,
+        "label": "외침 기술 +{x}",
+        "index": 13,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            8
+          ],
+          "returnRangeValues": [
+            {
+              "min": 5,
+              "max": 5
+            }
+          ]
+        }
+      },
+      {
+        "id": 27,
+        "label": "극대화 확률 +{x}%",
+        "index": 14,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            6.3
+          ],
+          "returnRangeValues": [
+            {
+              "min": 4,
+              "max": 5
+            }
+          ]
+        }
+      },
+      {
+        "id": 27,
+        "label": "극대화 확률 +{x}%",
+        "index": 15,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            3.8
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": 1009,
+        "label": "최대 생명력 +{x}%",
+        "index": 19,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            15
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": 983,
+        "label": "물리 피해 계수 x{x}%",
+        "index": 21,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            24
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "ko-grief",
+    "engine": "baseline",
+    "dictionarySize": 2046,
+    "matches": [
+      {
+        "id": 937,
+        "label": "5초당 생명력 +{x}",
+        "index": 4,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            1651
+          ],
+          "returnRangeValues": [
+            {
+              "min": 11070,
+              "max": 1139
+            }
+          ]
+        }
+      },
+      {
+        "id": 940,
+        "label": "파괴 불가",
+        "index": 7,
+        "len": 1,
+        "values": {
+          "returnValues": [],
+          "returnRangeValues": []
+        }
+      },
+      {
+        "id": 977,
+        "label": "무기 공격력 +{x}",
+        "index": 8,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            945
+          ],
+          "returnRangeValues": [
+            {
+              "min": 750,
+              "max": 100
+            }
+          ]
+        }
+      },
+      {
+        "id": 7,
+        "label": "공격 속도 +{x}%",
+        "index": 9,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            40
+          ],
+          "returnRangeValues": [
+            {
+              "min": 30,
+              "max": 40
+            }
+          ]
+        }
+      },
+      {
+        "id": 1081,
+        "label": "치명적 공격 확률 +{x}%",
+        "index": 11,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            20
+          ],
+          "returnRangeValues": [
+            {
+              "min": 20,
+              "max": 20
+            }
+          ]
+        }
+      },
+      {
+        "id": 1079,
+        "label": "악마에게 주는 피해 +{x}%",
+        "index": 13,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            100
+          ],
+          "returnRangeValues": [
+            {
+              "min": 100,
+              "max": 100
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "ko-grief",
+    "engine": "paddle-old-parser",
+    "dictionarySize": 2046,
+    "matches": [
+      {
+        "id": 937,
+        "label": "5초당 생명력 +{x}",
+        "index": 4,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            1651
+          ],
+          "returnRangeValues": [
+            {
+              "min": 1070,
+              "max": 1132
+            }
+          ]
+        }
+      },
+      {
+        "id": 940,
+        "label": "파괴 불가",
+        "index": 8,
+        "len": 1,
+        "values": {
+          "returnValues": [],
+          "returnRangeValues": []
+        }
+      },
+      {
+        "id": 977,
+        "label": "무기 공격력 +{x}",
+        "index": 9,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            945
+          ],
+          "returnRangeValues": [
+            {
+              "min": 750,
+              "max": 1000
+            }
+          ]
+        }
+      },
+      {
+        "id": 7,
+        "label": "공격 속도 +{x}%",
+        "index": 10,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            40
+          ],
+          "returnRangeValues": [
+            {
+              "min": 30,
+              "max": 40
+            }
+          ]
+        }
+      },
+      {
+        "id": 1081,
+        "label": "치명적 공격 확률 +{x}%",
+        "index": 12,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            20
+          ],
+          "returnRangeValues": [
+            {
+              "min": 20,
+              "max": 20
+            }
+          ]
+        }
+      },
+      {
+        "id": 1079,
+        "label": "악마에게 주는 피해 +{x}%",
+        "index": 14,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            100
+          ],
+          "returnRangeValues": [
+            {
+              "min": 100,
+              "max": 100
+            }
+          ]
+        }
+      },
+      {
+        "id": 1078,
+        "label": "처치 시 주 자원 +{x}",
+        "index": 16,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            2
+          ],
+          "returnRangeValues": [
+            {
+              "min": 2,
+              "max": 2
+            }
+          ]
+        }
+      },
+      {
+        "id": 1,
+        "label": "빈 홈",
+        "index": 19,
+        "len": 1,
+        "values": {
+          "returnValues": [],
+          "returnRangeValues": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "ko-grief",
+    "engine": "paddle-new-parser",
+    "dictionarySize": 2046,
+    "matches": [
+      {
+        "id": 940,
+        "label": "파괴 불가",
+        "index": 8,
+        "len": 1,
+        "values": {
+          "returnValues": [],
+          "returnRangeValues": []
+        }
+      },
+      {
+        "id": 977,
+        "label": "무기 공격력 +{x}",
+        "index": 9,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            945
+          ],
+          "returnRangeValues": [
+            {
+              "min": 750,
+              "max": 1000
+            }
+          ]
+        }
+      },
+      {
+        "id": 7,
+        "label": "공격 속도 +{x}%",
+        "index": 10,
+        "len": 2,
+        "values": {
+          "returnValues": [
+            40
+          ],
+          "returnRangeValues": [
+            {
+              "min": 30,
+              "max": 40
+            }
+          ]
+        }
+      },
+      {
+        "id": 1081,
+        "label": "치명적 공격 확률 +{x}%",
+        "index": 12,
+        "len": 2,
+        "values": {
+          "returnValues": [
+            20
+          ],
+          "returnRangeValues": [
+            {
+              "min": 20,
+              "max": 20
+            }
+          ]
+        }
+      },
+      {
+        "id": 1079,
+        "label": "악마에게 주는 피해 +{x}%",
+        "index": 14,
+        "len": 2,
+        "values": {
+          "returnValues": [
+            100
+          ],
+          "returnRangeValues": [
+            {
+              "min": 100,
+              "max": 100
+            }
+          ]
+        }
+      },
+      {
+        "id": 1078,
+        "label": "처치 시 주 자원 +{x}",
+        "index": 16,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            2
+          ],
+          "returnRangeValues": [
+            {
+              "min": 2,
+              "max": 2
+            }
+          ]
+        }
+      },
+      {
+        "id": 1,
+        "label": "빈 홈",
+        "index": 19,
+        "len": 1,
+        "values": {
+          "returnValues": [],
+          "returnRangeValues": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "en-howl",
+    "engine": "baseline",
+    "dictionarySize": 2046,
+    "matches": [
+      {
+        "id": 354,
+        "label": "+{x} Armor",
+        "index": 4,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            397
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": 107,
+        "label": "+{x}% Lucky Hit Chance",
+        "index": 5,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            9.3
+          ],
+          "returnRangeValues": [
+            {
+              "min": 8.1,
+              "max": 16.5
+            }
+          ]
+        }
+      },
+      {
+        "id": 313,
+        "label": "Lucky Hit: Up to a +{x}% Chance to Stun",
+        "index": 8,
+        "len": 2,
+        "values": {
+          "returnValues": [
+            14.2
+          ],
+          "returnRangeValues": [
+            {
+              "min": 10.5,
+              "max": 21
+            }
+          ]
+        }
+      },
+      {
+        "id": 314,
+        "label": "Lucky Hit: Up to a +{x}% Chance to Fear",
+        "index": 10,
+        "len": 2,
+        "values": {
+          "returnValues": [
+            24.8
+          ],
+          "returnRangeValues": [
+            {
+              "min": 14.2,
+              "max": 24.8
+            }
+          ]
+        }
+      },
+      {
+        "id": 3080,
+        "label": "Instead of detonating immediately, Corpse Explosion summons a Volatile Skeleton that charges at a random enemy and explodes. Corpse Explosion's damage is increased by {x}%.",
+        "index": 12,
+        "len": 6,
+        "values": {
+          "returnValues": [
+            40
+          ],
+          "returnRangeValues": [
+            {
+              "min": 30,
+              "max": 40
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "en-howl",
+    "engine": "paddle-old-parser",
+    "dictionarySize": 2046,
+    "matches": [
+      {
+        "id": 354,
+        "label": "+{x} Armor",
+        "index": 5,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            397
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": 107,
+        "label": "+{x}% Lucky Hit Chance",
+        "index": 6,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            9.3
+          ],
+          "returnRangeValues": [
+            {
+              "min": 8.1,
+              "max": 16.5
+            }
+          ]
+        }
+      },
+      {
+        "id": 313,
+        "label": "Lucky Hit: Up to a +{x}% Chance to Stun",
+        "index": 9,
+        "len": 2,
+        "values": {
+          "returnValues": [
+            14.2
+          ],
+          "returnRangeValues": [
+            {
+              "min": 10.5,
+              "max": 21
+            }
+          ]
+        }
+      },
+      {
+        "id": 314,
+        "label": "Lucky Hit: Up to a +{x}% Chance to Fear",
+        "index": 11,
+        "len": 2,
+        "values": {
+          "returnValues": [
+            24.8
+          ],
+          "returnRangeValues": [
+            {
+              "min": 14.224,
+              "max": 14.224
+            }
+          ]
+        }
+      },
+      {
+        "id": 3080,
+        "label": "Instead of detonating immediately, Corpse Explosion summons a Volatile Skeleton that charges at a random enemy and explodes. Corpse Explosion's damage is increased by {x}%.",
+        "index": 13,
+        "len": 6,
+        "values": {
+          "returnValues": [
+            40
+          ],
+          "returnRangeValues": [
+            {
+              "min": 30,
+              "max": 40
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "en-howl",
+    "engine": "paddle-new-parser",
+    "dictionarySize": 2046,
+    "matches": [
+      {
+        "id": 354,
+        "label": "+{x} Armor",
+        "index": 4,
+        "len": 2,
+        "values": {
+          "returnValues": [
+            397
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": 107,
+        "label": "+{x}% Lucky Hit Chance",
+        "index": 6,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            9.3
+          ],
+          "returnRangeValues": [
+            {
+              "min": 8.1,
+              "max": 16.5
+            }
+          ]
+        }
+      },
+      {
+        "id": 313,
+        "label": "Lucky Hit: Up to a +{x}% Chance to Stun",
+        "index": 9,
+        "len": 2,
+        "values": {
+          "returnValues": [
+            14.2
+          ],
+          "returnRangeValues": [
+            {
+              "min": 10.5,
+              "max": 21
+            }
+          ]
+        }
+      },
+      {
+        "id": 314,
+        "label": "Lucky Hit: Up to a +{x}% Chance to Fear",
+        "index": 11,
+        "len": 2,
+        "values": {
+          "returnValues": [
+            24.8
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": 3080,
+        "label": "Instead of detonating immediately, Corpse Explosion summons a Volatile Skeleton that charges at a random enemy and explodes. Corpse Explosion's damage is increased by {x}%.",
+        "index": 13,
+        "len": 6,
+        "values": {
+          "returnValues": [
+            40
+          ],
+          "returnRangeValues": [
+            {
+              "min": 30,
+              "max": 40
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "en-prestige",
+    "engine": "baseline",
+    "dictionarySize": 2046,
+    "matches": [
+      {
+        "id": 338,
+        "label": "+{x}% Resistance to All Elements",
+        "index": 3,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            17.6
+          ],
+          "returnRangeValues": [
+            {
+              "min": 17.6,
+              "max": 17.6
+            }
+          ]
+        }
+      },
+      {
+        "id": 25,
+        "label": "+{x} Willpower",
+        "index": 7,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            6.7
+          ],
+          "returnRangeValues": [
+            {
+              "min": 3.1,
+              "max": 7.3
+            }
+          ]
+        }
+      },
+      {
+        "id": 136,
+        "label": "{x}% Essence Cost Reduction",
+        "index": 10,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            16.5
+          ],
+          "returnRangeValues": [
+            {
+              "min": 9.5,
+              "max": 16.51
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "en-prestige",
+    "engine": "paddle-old-parser",
+    "dictionarySize": 2046,
+    "matches": [
+      {
+        "id": 338,
+        "label": "+{x}% Resistance to All Elements",
+        "index": 3,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            17.6
+          ],
+          "returnRangeValues": [
+            {
+              "min": 17.6,
+              "max": 17.6
+            }
+          ]
+        }
+      },
+      {
+        "id": 25,
+        "label": "+{x} Willpower",
+        "index": 7,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            6.7
+          ],
+          "returnRangeValues": [
+            {
+              "min": 3.17,
+              "max": 3.17
+            }
+          ]
+        }
+      },
+      {
+        "id": 136,
+        "label": "{x}% Essence Cost Reduction",
+        "index": 10,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            16.5
+          ],
+          "returnRangeValues": [
+            {
+              "min": 9.5,
+              "max": 16.5
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "en-prestige",
+    "engine": "paddle-new-parser",
+    "dictionarySize": 2046,
+    "matches": [
+      {
+        "id": 338,
+        "label": "+{x}% Resistance to All Elements",
+        "index": 3,
+        "len": 2,
+        "values": {
+          "returnValues": [
+            17.6
+          ],
+          "returnRangeValues": [
+            {
+              "min": 17.6,
+              "max": 17.6
+            }
+          ]
+        }
+      },
+      {
+        "id": 168,
+        "label": "+{x} to Gloom",
+        "index": 5,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            2
+          ],
+          "returnRangeValues": [
+            {
+              "min": 12,
+              "max": 12
+            }
+          ]
+        }
+      },
+      {
+        "id": 495,
+        "label": "+{x}% Willpower",
+        "index": 7,
+        "len": 1,
+        "values": {
+          "returnValues": [
+            6.7
+          ],
+          "returnRangeValues": [
+            {
+              "min": 0,
+              "max": 0
+            }
+          ]
+        }
+      },
+      {
+        "id": 136,
+        "label": "{x}% Essence Cost Reduction",
+        "index": 10,
+        "len": 2,
+        "values": {
+          "returnValues": [
+            16.5
+          ],
+          "returnRangeValues": [
+            {
+              "min": 9.5,
+              "max": 16.5
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,750 @@
+[
+  {
+    "lang": "ko",
+    "processed": false,
+    "engine": "currentText",
+    "fields": 71,
+    "exact": 46,
+    "fieldRecall": 0.647887323943662,
+    "fieldCharacterError": 0.09228441754916793,
+    "medianMs": 930.1000000000931,
+    "failures": [
+      {
+        "id": "ko-stealth",
+        "field": "잠행"
+      },
+      {
+        "id": "ko-stealth",
+        "field": "아이템 위력 900"
+      },
+      {
+        "id": "ko-stealth",
+        "field": "방어도 2,805"
+      },
+      {
+        "id": "ko-stealth",
+        "field": "이동 속도 +25%"
+      },
+      {
+        "id": "ko-stealth",
+        "field": "방해 효과 감소 25.0%"
+      },
+      {
+        "id": "ko-insight",
+        "field": "통찰"
+      },
+      {
+        "id": "ko-insight",
+        "field": "극대화 피해 계수 x250%"
+      },
+      {
+        "id": "ko-insight",
+        "field": "극대화 피해 +150%"
+      },
+      {
+        "id": "ko-insight",
+        "field": "물리 피해 계수 x24%"
+      },
+      {
+        "id": "ko-spirit",
+        "field": "품질 25"
+      },
+      {
+        "id": "ko-spirit",
+        "field": "적중당 공격력 [1,721 - 2,349]"
+      },
+      {
+        "id": "ko-spirit",
+        "field": "모든 피해 계수 x63%"
+      },
+      {
+        "id": "ko-spirit",
+        "field": "화염 및 신성 피해 계수 x22%"
+      },
+      {
+        "id": "ko-call-to-arms",
+        "field": "적중당 공격력 [1,860 - 2,488]"
+      },
+      {
+        "id": "ko-call-to-arms",
+        "field": "초당 공격 횟수 1.10"
+      },
+      {
+        "id": "ko-call-to-arms",
+        "field": "모든 피해 계수 x50%"
+      },
+      {
+        "id": "ko-call-to-arms",
+        "field": "모든 기술 +1"
+      },
+      {
+        "id": "ko-call-to-arms",
+        "field": "모든 기술 등급 +5"
+      },
+      {
+        "id": "ko-call-to-arms",
+        "field": "최대 생명력 +15%"
+      },
+      {
+        "id": "ko-call-to-arms",
+        "field": "물리 피해 계수 x24%"
+      },
+      {
+        "id": "ko-grief",
+        "field": "슬픔"
+      },
+      {
+        "id": "ko-grief",
+        "field": "적중당 공격력 [1,070 - 1,132]"
+      },
+      {
+        "id": "ko-grief",
+        "field": "치명적 공격 확률 +20.0%"
+      },
+      {
+        "id": "ko-grief",
+        "field": "악마에게 주는 피해 +100.0%"
+      },
+      {
+        "id": "ko-grief",
+        "field": "직접 피해를 주면 5초에 걸쳐 40%의 보너스 중독 피해를 줍니다."
+      }
+    ]
+  },
+  {
+    "lang": "ko",
+    "processed": false,
+    "engine": "allBlockText",
+    "fields": 71,
+    "exact": 46,
+    "fieldRecall": 0.647887323943662,
+    "fieldCharacterError": 0.09228441754916793,
+    "medianMs": 930.1000000000931,
+    "failures": [
+      {
+        "id": "ko-stealth",
+        "field": "잠행"
+      },
+      {
+        "id": "ko-stealth",
+        "field": "아이템 위력 900"
+      },
+      {
+        "id": "ko-stealth",
+        "field": "방어도 2,805"
+      },
+      {
+        "id": "ko-stealth",
+        "field": "이동 속도 +25%"
+      },
+      {
+        "id": "ko-stealth",
+        "field": "방해 효과 감소 25.0%"
+      },
+      {
+        "id": "ko-insight",
+        "field": "통찰"
+      },
+      {
+        "id": "ko-insight",
+        "field": "극대화 피해 계수 x250%"
+      },
+      {
+        "id": "ko-insight",
+        "field": "극대화 피해 +150%"
+      },
+      {
+        "id": "ko-insight",
+        "field": "물리 피해 계수 x24%"
+      },
+      {
+        "id": "ko-spirit",
+        "field": "품질 25"
+      },
+      {
+        "id": "ko-spirit",
+        "field": "적중당 공격력 [1,721 - 2,349]"
+      },
+      {
+        "id": "ko-spirit",
+        "field": "모든 피해 계수 x63%"
+      },
+      {
+        "id": "ko-spirit",
+        "field": "화염 및 신성 피해 계수 x22%"
+      },
+      {
+        "id": "ko-call-to-arms",
+        "field": "적중당 공격력 [1,860 - 2,488]"
+      },
+      {
+        "id": "ko-call-to-arms",
+        "field": "초당 공격 횟수 1.10"
+      },
+      {
+        "id": "ko-call-to-arms",
+        "field": "모든 피해 계수 x50%"
+      },
+      {
+        "id": "ko-call-to-arms",
+        "field": "모든 기술 +1"
+      },
+      {
+        "id": "ko-call-to-arms",
+        "field": "모든 기술 등급 +5"
+      },
+      {
+        "id": "ko-call-to-arms",
+        "field": "최대 생명력 +15%"
+      },
+      {
+        "id": "ko-call-to-arms",
+        "field": "물리 피해 계수 x24%"
+      },
+      {
+        "id": "ko-grief",
+        "field": "슬픔"
+      },
+      {
+        "id": "ko-grief",
+        "field": "적중당 공격력 [1,070 - 1,132]"
+      },
+      {
+        "id": "ko-grief",
+        "field": "치명적 공격 확률 +20.0%"
+      },
+      {
+        "id": "ko-grief",
+        "field": "악마에게 주는 피해 +100.0%"
+      },
+      {
+        "id": "ko-grief",
+        "field": "직접 피해를 주면 5초에 걸쳐 40%의 보너스 중독 피해를 줍니다."
+      }
+    ]
+  },
+  {
+    "lang": "ko",
+    "processed": false,
+    "engine": "text",
+    "fields": 71,
+    "exact": 48,
+    "fieldRecall": 0.676056338028169,
+    "fieldCharacterError": 0.06354009077155824,
+    "medianMs": 930.1000000000931,
+    "failures": [
+      {
+        "id": "ko-stealth",
+        "field": "잠행"
+      },
+      {
+        "id": "ko-stealth",
+        "field": "방어도 2,805"
+      },
+      {
+        "id": "ko-stealth",
+        "field": "방해 효과 감소 25.0%"
+      },
+      {
+        "id": "ko-insight",
+        "field": "통찰"
+      },
+      {
+        "id": "ko-insight",
+        "field": "극대화 피해 계수 x250%"
+      },
+      {
+        "id": "ko-insight",
+        "field": "극대화 피해 +150%"
+      },
+      {
+        "id": "ko-insight",
+        "field": "물리 피해 계수 x24%"
+      },
+      {
+        "id": "ko-spirit",
+        "field": "품질 25"
+      },
+      {
+        "id": "ko-spirit",
+        "field": "적중당 공격력 [1,721 - 2,349]"
+      },
+      {
+        "id": "ko-spirit",
+        "field": "모든 피해 계수 x63%"
+      },
+      {
+        "id": "ko-spirit",
+        "field": "화염 및 신성 피해 계수 x22%"
+      },
+      {
+        "id": "ko-call-to-arms",
+        "field": "적중당 공격력 [1,860 - 2,488]"
+      },
+      {
+        "id": "ko-call-to-arms",
+        "field": "초당 공격 횟수 1.10"
+      },
+      {
+        "id": "ko-call-to-arms",
+        "field": "모든 피해 계수 x50%"
+      },
+      {
+        "id": "ko-call-to-arms",
+        "field": "모든 기술 +1"
+      },
+      {
+        "id": "ko-call-to-arms",
+        "field": "모든 기술 등급 +5"
+      },
+      {
+        "id": "ko-call-to-arms",
+        "field": "최대 생명력 +15%"
+      },
+      {
+        "id": "ko-call-to-arms",
+        "field": "물리 피해 계수 x24%"
+      },
+      {
+        "id": "ko-grief",
+        "field": "슬픔"
+      },
+      {
+        "id": "ko-grief",
+        "field": "적중당 공격력 [1,070 - 1,132]"
+      },
+      {
+        "id": "ko-grief",
+        "field": "치명적 공격 확률 +20.0%"
+      },
+      {
+        "id": "ko-grief",
+        "field": "악마에게 주는 피해 +100.0%"
+      },
+      {
+        "id": "ko-grief",
+        "field": "직접 피해를 주면 5초에 걸쳐 40%의 보너스 중독 피해를 줍니다."
+      }
+    ]
+  },
+  {
+    "lang": "ko",
+    "processed": false,
+    "engine": "paddle",
+    "fields": 71,
+    "exact": 69,
+    "fieldRecall": 0.971830985915493,
+    "fieldCharacterError": 0.0030257186081694403,
+    "medianMs": 2302.8000000000466,
+    "failures": [
+      {
+        "id": "ko-insight",
+        "field": "극대화 피해 +150%"
+      },
+      {
+        "id": "ko-call-to-arms",
+        "field": "극대화 확률 +3.8%"
+      }
+    ]
+  },
+  {
+    "lang": "ko",
+    "processed": true,
+    "engine": "currentText",
+    "fields": 71,
+    "exact": 55,
+    "fieldRecall": 0.7746478873239436,
+    "fieldCharacterError": 0.04084720121028744,
+    "medianMs": 903,
+    "failures": [
+      {
+        "id": "ko-stealth",
+        "field": "잠행"
+      },
+      {
+        "id": "ko-insight",
+        "field": "통찰"
+      },
+      {
+        "id": "ko-insight",
+        "field": "극대화 피해 계수 x250%"
+      },
+      {
+        "id": "ko-insight",
+        "field": "극대화 피해 +150%"
+      },
+      {
+        "id": "ko-insight",
+        "field": "물리 피해 계수 x24%"
+      },
+      {
+        "id": "ko-spirit",
+        "field": "영혼"
+      },
+      {
+        "id": "ko-spirit",
+        "field": "적중당 공격력 [1,721 - 2,349]"
+      },
+      {
+        "id": "ko-spirit",
+        "field": "모든 피해 계수 x63%"
+      },
+      {
+        "id": "ko-spirit",
+        "field": "화염 및 신성 피해 계수 x22%"
+      },
+      {
+        "id": "ko-call-to-arms",
+        "field": "적중당 공격력 [1,860 - 2,488]"
+      },
+      {
+        "id": "ko-call-to-arms",
+        "field": "모든 피해 계수 x50%"
+      },
+      {
+        "id": "ko-call-to-arms",
+        "field": "물리 피해 계수 x24%"
+      },
+      {
+        "id": "ko-grief",
+        "field": "슬픔"
+      },
+      {
+        "id": "ko-grief",
+        "field": "1,651 초당 공격력"
+      },
+      {
+        "id": "ko-grief",
+        "field": "적중당 공격력 [1,070 - 1,132]"
+      },
+      {
+        "id": "ko-grief",
+        "field": "처치 시 주 자원 생성 +2"
+      }
+    ]
+  },
+  {
+    "lang": "ko",
+    "processed": true,
+    "engine": "allBlockText",
+    "fields": 71,
+    "exact": 55,
+    "fieldRecall": 0.7746478873239436,
+    "fieldCharacterError": 0.04084720121028744,
+    "medianMs": 903,
+    "failures": [
+      {
+        "id": "ko-stealth",
+        "field": "잠행"
+      },
+      {
+        "id": "ko-insight",
+        "field": "통찰"
+      },
+      {
+        "id": "ko-insight",
+        "field": "극대화 피해 계수 x250%"
+      },
+      {
+        "id": "ko-insight",
+        "field": "극대화 피해 +150%"
+      },
+      {
+        "id": "ko-insight",
+        "field": "물리 피해 계수 x24%"
+      },
+      {
+        "id": "ko-spirit",
+        "field": "영혼"
+      },
+      {
+        "id": "ko-spirit",
+        "field": "적중당 공격력 [1,721 - 2,349]"
+      },
+      {
+        "id": "ko-spirit",
+        "field": "모든 피해 계수 x63%"
+      },
+      {
+        "id": "ko-spirit",
+        "field": "화염 및 신성 피해 계수 x22%"
+      },
+      {
+        "id": "ko-call-to-arms",
+        "field": "적중당 공격력 [1,860 - 2,488]"
+      },
+      {
+        "id": "ko-call-to-arms",
+        "field": "모든 피해 계수 x50%"
+      },
+      {
+        "id": "ko-call-to-arms",
+        "field": "물리 피해 계수 x24%"
+      },
+      {
+        "id": "ko-grief",
+        "field": "슬픔"
+      },
+      {
+        "id": "ko-grief",
+        "field": "1,651 초당 공격력"
+      },
+      {
+        "id": "ko-grief",
+        "field": "적중당 공격력 [1,070 - 1,132]"
+      },
+      {
+        "id": "ko-grief",
+        "field": "처치 시 주 자원 생성 +2"
+      }
+    ]
+  },
+  {
+    "lang": "ko",
+    "processed": true,
+    "engine": "text",
+    "fields": 71,
+    "exact": 56,
+    "fieldRecall": 0.7887323943661971,
+    "fieldCharacterError": 0.03177004538577912,
+    "medianMs": 903,
+    "failures": [
+      {
+        "id": "ko-stealth",
+        "field": "잠행"
+      },
+      {
+        "id": "ko-insight",
+        "field": "통찰"
+      },
+      {
+        "id": "ko-insight",
+        "field": "극대화 피해 계수 x250%"
+      },
+      {
+        "id": "ko-insight",
+        "field": "극대화 피해 +150%"
+      },
+      {
+        "id": "ko-insight",
+        "field": "물리 피해 계수 x24%"
+      },
+      {
+        "id": "ko-spirit",
+        "field": "영혼"
+      },
+      {
+        "id": "ko-spirit",
+        "field": "적중당 공격력 [1,721 - 2,349]"
+      },
+      {
+        "id": "ko-spirit",
+        "field": "모든 피해 계수 x63%"
+      },
+      {
+        "id": "ko-spirit",
+        "field": "화염 및 신성 피해 계수 x22%"
+      },
+      {
+        "id": "ko-call-to-arms",
+        "field": "적중당 공격력 [1,860 - 2,488]"
+      },
+      {
+        "id": "ko-call-to-arms",
+        "field": "모든 피해 계수 x50%"
+      },
+      {
+        "id": "ko-call-to-arms",
+        "field": "물리 피해 계수 x24%"
+      },
+      {
+        "id": "ko-grief",
+        "field": "1,651 초당 공격력"
+      },
+      {
+        "id": "ko-grief",
+        "field": "적중당 공격력 [1,070 - 1,132]"
+      },
+      {
+        "id": "ko-grief",
+        "field": "처치 시 주 자원 생성 +2"
+      }
+    ]
+  },
+  {
+    "lang": "ko",
+    "processed": true,
+    "engine": "paddle",
+    "fields": 71,
+    "exact": 70,
+    "fieldRecall": 0.9859154929577465,
+    "fieldCharacterError": 0.0015128593040847202,
+    "medianMs": 2255.8000000000466,
+    "failures": [
+      {
+        "id": "ko-insight",
+        "field": "무기 공격력 +431"
+      }
+    ]
+  },
+  {
+    "lang": "en",
+    "processed": false,
+    "engine": "currentText",
+    "fields": 20,
+    "exact": 18,
+    "fieldRecall": 0.9,
+    "fieldCharacterError": 0.015463917525773196,
+    "medianMs": 837.4000000000233,
+    "failures": [
+      {
+        "id": "en-howl",
+        "field": "+9.3% Lucky Hit Chance"
+      },
+      {
+        "id": "en-prestige",
+        "field": "744 Item Power"
+      }
+    ]
+  },
+  {
+    "lang": "en",
+    "processed": false,
+    "engine": "allBlockText",
+    "fields": 20,
+    "exact": 18,
+    "fieldRecall": 0.9,
+    "fieldCharacterError": 0.015463917525773196,
+    "medianMs": 837.4000000000233,
+    "failures": [
+      {
+        "id": "en-howl",
+        "field": "+9.3% Lucky Hit Chance"
+      },
+      {
+        "id": "en-prestige",
+        "field": "744 Item Power"
+      }
+    ]
+  },
+  {
+    "lang": "en",
+    "processed": false,
+    "engine": "text",
+    "fields": 20,
+    "exact": 19,
+    "fieldRecall": 0.95,
+    "fieldCharacterError": 0.002577319587628866,
+    "medianMs": 837.4000000000233,
+    "failures": [
+      {
+        "id": "en-howl",
+        "field": "+9.3% Lucky Hit Chance"
+      }
+    ]
+  },
+  {
+    "lang": "en",
+    "processed": false,
+    "engine": "paddle",
+    "fields": 20,
+    "exact": 19,
+    "fieldRecall": 0.95,
+    "fieldCharacterError": 0.002577319587628866,
+    "medianMs": 2234.5500000000466,
+    "failures": [
+      {
+        "id": "en-prestige",
+        "field": "Prestige Salvation"
+      }
+    ]
+  },
+  {
+    "lang": "en",
+    "processed": true,
+    "engine": "currentText",
+    "fields": 20,
+    "exact": 17,
+    "fieldRecall": 0.85,
+    "fieldCharacterError": 0.007731958762886598,
+    "medianMs": 871.2000000001863,
+    "failures": [
+      {
+        "id": "en-howl",
+        "field": "Lucky Hit: Up to a +24.8% Chance to Fear"
+      },
+      {
+        "id": "en-howl",
+        "field": "40%[x] [30 - 40]%"
+      },
+      {
+        "id": "en-prestige",
+        "field": "Prestige Salvation"
+      }
+    ]
+  },
+  {
+    "lang": "en",
+    "processed": true,
+    "engine": "allBlockText",
+    "fields": 20,
+    "exact": 17,
+    "fieldRecall": 0.85,
+    "fieldCharacterError": 0.007731958762886598,
+    "medianMs": 871.2000000001863,
+    "failures": [
+      {
+        "id": "en-howl",
+        "field": "Lucky Hit: Up to a +24.8% Chance to Fear"
+      },
+      {
+        "id": "en-howl",
+        "field": "40%[x] [30 - 40]%"
+      },
+      {
+        "id": "en-prestige",
+        "field": "Prestige Salvation"
+      }
+    ]
+  },
+  {
+    "lang": "en",
+    "processed": true,
+    "engine": "text",
+    "fields": 20,
+    "exact": 17,
+    "fieldRecall": 0.85,
+    "fieldCharacterError": 0.007731958762886598,
+    "medianMs": 871.2000000001863,
+    "failures": [
+      {
+        "id": "en-howl",
+        "field": "Lucky Hit: Up to a +24.8% Chance to Fear"
+      },
+      {
+        "id": "en-howl",
+        "field": "40%[x] [30 - 40]%"
+      },
+      {
+        "id": "en-prestige",
+        "field": "Prestige Salvation"
+      }
+    ]
+  },
+  {
+    "lang": "en",
+    "processed": true,
+    "engine": "paddle",
+    "fields": 20,
+    "exact": 19,
+    "fieldRecall": 0.95,
+    "fieldCharacterError": 0.023195876288659795,
+    "medianMs": 2595.1999999999534,
+    "failures": [
+      {
+        "id": "en-prestige",
+        "field": "Ancestral Rare Amulet"
+      }
+    ]
+  }
+]

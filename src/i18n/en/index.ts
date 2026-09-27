@@ -502,168 +502,90 @@ export default {
     close: 'Do not open for 24 hours'
   },
   notice: {
-    title: 'September 21, 2026 Season 15 Runeword and Knowledge Update',
-    top: 'Hello, this is Tradurs.\nRuneword Crafting Sets and rune-upgrade recipe information have been added for Diablo IV Season 15.',
+    title: 'September 27, 2026 Image Recognition and Item Affix Update',
+    top: 'Hello, this is Tradurs.\nWe have improved item image recognition and affix matching, and corrected confirmed item affix data.',
     contents: [
-      { type: 'head', value: 'Season 15 Support' },
+      { type: 'head', value: 'Improved Item Image Recognition' },
       {
         type: 'list',
         value:
-          "The season name and emblem have been updated for Season 15: Season of Hell's Legacy.",
+          'Improved recognition of Korean item text and numerical values in item images.',
         class: 'text-body1'
       },
       {
         type: 'list',
         value:
-          'Your selected Seasonal or Eternal realm setting is now preserved correctly when registering an item.',
-        class: 'text-body1'
-      },
-      { type: 'head', value: 'Existing Item Data Updates' },
-      {
-        type: 'list',
-        value:
-          'Legendary Aspect and Unique item effects changed in patch 3.2.1 have been updated in both Korean and English.',
+          'Cropping now preserves the original image quality and selects the entire image by default.',
         class: 'text-body1'
       },
       {
         type: 'list',
         value:
-          "The latest effects have been corrected for Razorplate, Ring of the Ravenous, Ring of Red Furor, Condemnation, Tibault's Will, Ramaladni's Magnum Opus, Rage of Harrogath, Gathlen's Birthright, Deathmask of Nirmitruq, Nomad's Longing Heart, Might of the Ursine, and Pyroclastic Aspect.",
+          'Fixed page reloads and recognition failures during image analysis, and improved repeated scans.',
+        class: 'text-body1'
+      },
+      { type: 'head', value: 'More Accurate Affix and Value Matching' },
+      {
+        type: 'list',
+        value:
+          'Fixed default Unique item affixes overwriting recognition results. Recognized affixes and empty sockets are now preserved.',
         class: 'text-body1'
       },
       {
         type: 'list',
         value:
-          'Effects containing multiple values now preserve the correct input and display order for each value.',
+          'Improved extraction of Armor, Item Power, affix values, and Unique effect ranges.',
+        class: 'text-body1'
+      },
+      {
+        type: 'list',
+        value: 'Improved separation of base Armor from bonus Armor, and corrected ring implicit All Resistance being selected as a regular affix.',
         class: 'text-body1'
       },
       {
         type: 'list',
         value:
-          "Gauntlets of Sheol's fixed affixes have been updated to Primary Core Stat and Critical Strike Chance.",
+          'Corrected missing or incorrectly selected affixes on items such as Leoric\'s Crown and Elegy.',
         class: 'text-body1'
       },
-      { type: 'head', value: 'Shield Classification' },
+      { type: 'head', value: 'Item Affix Corrections' },
       {
         type: 'list',
         value:
-          'Shields have moved from Weapons to Armor. Normal and Unique Shields can now be registered and searched under Armor > Shield.',
-        class: 'text-body1'
-      },
-      { type: 'head', value: 'Direct Mythic Unique Upgrade' },
-      {
-        type: 'list',
-        value:
-          'A Mythic Unique upgraded directly through the Horadric Cube retains the original item affixes and modifications and receives the Crafted tag.',
+          'Corrected Unique effect wording for Leoric\'s Crown, Elegy, Gauntlets of Sheol, and Infernal Homunculus.',
         class: 'text-body1'
       },
       {
         type: 'list',
         value:
-          'Only one item with the Crafted tag can be equipped, and Unmodifiable items cannot be used for the direct upgrade.',
-        class: 'text-body1'
-      },
-      { type: 'head', value: 'New Legacy Unique Items' },
-      {
-        type: 'list',
-        value:
-          "Equipment classes, class restrictions, fixed affixes, and Unique effects have been added for Leoric's Crown, Nemesis Bracers, Stone of Jordan, Squirt's Blouse, Arioc's Needle, Henri's Perquisition, In-Geom, and The Furnace.",
+          'Updated the Korean All Resistance label and added flat Fire Resistance and Fire and Holy Damage Multiplier to registration and search.',
         class: 'text-body1'
       },
       {
         type: 'list',
         value:
-          "Messerschmidt's Reaver will be added after its final effect and fixed affixes are confirmed.",
+          'Corrected the Korean Enigma effect text for Evade becoming Sorcerer Teleport, and made its Primary Resource cost editable.',
+        class: 'text-body1'
+      },
+      { type: 'head', value: 'Legendary Aspect Data Update' },
+      {
+        type: 'list',
+        value: 'Updated confirmed Korean and English effect descriptions and value fields for 173 Legendary Aspects.',
         class: 'text-body1'
       },
       {
         type: 'list',
-        value:
-          'Korean effect text and detailed values for the new items may be corrected after verification against the final in-game tooltips.',
-        class: 'text-body1'
-      },
-      { type: 'head', value: 'Season 15 Legacy Runewords' },
-      {
-        type: 'list',
-        value:
-          'All 19 Legacy Runewords have been added to registration and search as 83 equipment-base variants. The currently unavailable Spirit Shield is excluded.',
+        value: 'Reflected updated effects for Starlight, Anger Management, Disobedience, Untimely Death, and other Aspects to improve image recognition and affix selection.',
         class: 'text-body1'
       },
       {
         type: 'list',
-        value:
-          'Korean runeword text and some listing values that cannot be resolved from the game data may be corrected after verification against final in-game tooltips.',
+        value: 'Separated fixed effect values from editable rolls and corrected confirmed Korean terminology, including Greater Demon Skills.',
         class: 'text-body1'
-      },
-      {
-        type: 'list',
-        value:
-          'Runeword item cards now show the recipe above base properties, and Knowledge > Runewords provides all 19 recipes with eligible equipment and attributes.',
-        class: 'text-body1'
-      },
-      { type: 'head', value: 'Runeword Crafting Set Listings' },
-      {
-        type: 'list',
-        value:
-          'Seasonal item registration now offers all 19 Runeword Crafting Sets under Consumables. Search by set name or included rune name/code; this subtype is hidden in the Eternal realm.',
-        class: 'text-body1'
-      },
-      {
-        type: 'list',
-        value:
-          'Registered sets show each required rune image, name, quantity, and recipe order. Listing quantity represents the number of complete crafting sets, not individual runes.',
-        class: 'text-body1'
-      },
-      { type: 'head', value: 'Rune Crafting Recipes' },
-      {
-        type: 'list',
-        value:
-          'Knowledge > Rune Crafting Recipes provides the fourteen discovered Season 15 rune upgrades and their required gems, searchable by input rune, output rune, or gem name.',
-        class: 'text-body1'
-      },
-      {
-        type: 'list',
-        value:
-          'No Sol-to-Mal conversion is present in the currently verified information. The page shows the two separate upgrade chains together with their source notes.',
-        class: 'text-body1'
-      },
-      { type: 'head', value: 'Item Registration and Card Display' },
-      {
-        type: 'list',
-        value:
-          'Characteristic values on completed Runewords can be edited to match the listed item, while required Runeword attributes remain protected from accidental removal.',
-        class: 'text-body1'
-      },
-      {
-        type: 'list',
-        value:
-          'Guaranteed badges have been removed from registration and item cards. This only simplifies the display and does not change required Runeword attribute relationships.',
-        class: 'text-body1'
-      },
-      {
-        type: 'list',
-        value:
-          'The Unique item selector now separates ordinary Unique items from Runeword items.',
-        class: 'text-body1'
-      },
-      {
-        type: 'list',
-        value:
-          'Eligible Runeword classes are no longer repeated in the listing restriction area, while class-filter searches continue to include those listings.',
-        class: 'text-body1'
-      },
-      { type: 'head', value: 'Trade Listing Scope' },
-      {
-        type: 'list',
-        value:
-          'Soul Splinters are account-bound seasonal items and are not available for trade listings. Runeword Crafting Sets are supported, while standalone trading and price-currency use of the new runes, as well as talismans, remain pending separate data verification.',
-        class: 'text-body1'
-      },
-      { type: 'space' },
-      { type: 'space' }
+      }
     ],
     bottom: 'Thank you.',
-    close: 'Do not show again for 1 week'
+    close: 'Do not show for one week'
   },
   adblock: {
     title: 'Please allow ads on Tradurs',
@@ -810,7 +732,7 @@ export default {
         {
           type: 'answer',
           contents:
-            "→ We're working on it, but images of items that are not game captures with low resolution (300 DPI is the recommended resolution for the engine you're using) are not recognized."
+            '→ Select the entire item tooltip from an original in-game screenshot. Small text, blur, and heavy compression reduce accuracy. Check the recognized affixes and values before listing.'
         },
         {
           type: 'question',

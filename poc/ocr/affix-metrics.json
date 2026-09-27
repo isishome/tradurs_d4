@@ -1,0 +1,344 @@
+[
+  {
+    "engine": "baseline",
+    "total": 46,
+    "ids": 37,
+    "exact": 35,
+    "falsePositives": 10,
+    "idRecall": 0.8043478260869565,
+    "idAndValueRecall": 0.7608695652173914,
+    "details": [
+      {
+        "image": "ko-stealth",
+        "missed": [
+          7,
+          25
+        ]
+      },
+      {
+        "image": "ko-stealth",
+        "missed": [
+          117,
+          25
+        ]
+      },
+      {
+        "image": "ko-stealth",
+        "unmatched": [
+          [
+            619
+          ],
+          [
+            5042,
+            25,
+            25
+          ]
+        ]
+      },
+      {
+        "image": "ko-insight",
+        "missed": [
+          29,
+          150
+        ]
+      },
+      {
+        "image": "ko-insight",
+        "missed": [
+          983,
+          24
+        ]
+      },
+      {
+        "image": "ko-insight",
+        "missed": [
+          983,
+          24
+        ]
+      },
+      {
+        "image": "ko-insight",
+        "unmatched": [
+          [
+            937,
+            4533
+          ]
+        ]
+      },
+      {
+        "image": "ko-spirit",
+        "unmatched": [
+          [
+            937,
+            2238
+          ]
+        ]
+      },
+      {
+        "image": "ko-call-to-arms",
+        "missed": [
+          3316
+        ]
+      },
+      {
+        "image": "ko-call-to-arms",
+        "missed": [
+          983,
+          24
+        ]
+      },
+      {
+        "image": "ko-call-to-arms",
+        "unmatched": [
+          [
+            937,
+            2391
+          ],
+          [
+            992,
+            5
+          ],
+          [
+            105,
+            15
+          ],
+          [
+            144,
+            15
+          ]
+        ]
+      },
+      {
+        "image": "ko-grief",
+        "missed": [
+          1078,
+          2
+        ]
+      },
+      {
+        "image": "ko-grief",
+        "missed": [
+          3317
+        ]
+      },
+      {
+        "image": "ko-grief",
+        "unmatched": [
+          [
+            937,
+            1651
+          ]
+        ]
+      },
+      {
+        "image": "en-howl",
+        "unmatched": []
+      },
+      {
+        "image": "en-prestige",
+        "missed": [
+          168,
+          2
+        ]
+      },
+      {
+        "image": "en-prestige",
+        "missed": [
+          495,
+          6.7
+        ]
+      },
+      {
+        "image": "en-prestige",
+        "unmatched": [
+          [
+            25,
+            6.7
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "engine": "paddle-old-parser",
+    "total": 46,
+    "ids": 40,
+    "exact": 40,
+    "falsePositives": 10,
+    "idRecall": 0.8695652173913043,
+    "idAndValueRecall": 0.8695652173913043,
+    "details": [
+      {
+        "image": "ko-stealth",
+        "missed": [
+          7,
+          25
+        ]
+      },
+      {
+        "image": "ko-stealth",
+        "missed": [
+          117,
+          25
+        ]
+      },
+      {
+        "image": "ko-stealth",
+        "unmatched": [
+          [
+            5042,
+            25,
+            6.2
+          ]
+        ]
+      },
+      {
+        "image": "ko-insight",
+        "unmatched": [
+          [
+            937,
+            4533
+          ]
+        ]
+      },
+      {
+        "image": "ko-spirit",
+        "unmatched": [
+          [
+            242,
+            0
+          ],
+          [
+            937,
+            2238
+          ]
+        ]
+      },
+      {
+        "image": "ko-call-to-arms",
+        "missed": [
+          3316
+        ]
+      },
+      {
+        "image": "ko-call-to-arms",
+        "unmatched": [
+          [
+            937,
+            2391
+          ],
+          [
+            992,
+            5
+          ],
+          [
+            105,
+            15
+          ],
+          [
+            144,
+            15
+          ]
+        ]
+      },
+      {
+        "image": "ko-grief",
+        "missed": [
+          3317
+        ]
+      },
+      {
+        "image": "ko-grief",
+        "unmatched": [
+          [
+            937,
+            1651
+          ]
+        ]
+      },
+      {
+        "image": "en-howl",
+        "unmatched": []
+      },
+      {
+        "image": "en-prestige",
+        "missed": [
+          168,
+          2
+        ]
+      },
+      {
+        "image": "en-prestige",
+        "missed": [
+          495,
+          6.7
+        ]
+      },
+      {
+        "image": "en-prestige",
+        "unmatched": [
+          [
+            25,
+            6.7
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "engine": "paddle-new-parser",
+    "total": 46,
+    "ids": 44,
+    "exact": 44,
+    "falsePositives": 1,
+    "idRecall": 0.9565217391304348,
+    "idAndValueRecall": 0.9565217391304348,
+    "details": [
+      {
+        "image": "ko-stealth",
+        "unmatched": []
+      },
+      {
+        "image": "ko-insight",
+        "unmatched": []
+      },
+      {
+        "image": "ko-spirit",
+        "unmatched": []
+      },
+      {
+        "image": "ko-call-to-arms",
+        "missed": [
+          3316
+        ]
+      },
+      {
+        "image": "ko-call-to-arms",
+        "unmatched": [
+          [
+            1009,
+            15
+          ]
+        ]
+      },
+      {
+        "image": "ko-grief",
+        "missed": [
+          3317
+        ]
+      },
+      {
+        "image": "ko-grief",
+        "unmatched": []
+      },
+      {
+        "image": "en-howl",
+        "unmatched": []
+      },
+      {
+        "image": "en-prestige",
+        "unmatched": []
+      }
+    ]
+  }
+]
