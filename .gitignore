@@ -5,7 +5,13 @@ node_modules
 # Quasar core related directories
 .quasar
 /dist
-/src-ssr
+/src-ssr/*
+!/src-ssr/server.ts
+!/src-ssr/ssr-flag.d.ts
+!/src-ssr/middlewares/
+/src-ssr/middlewares/*
+!/src-ssr/middlewares/render.ts
+!/src-ssr/middlewares/resource-status.ts
 
 # affix file
 /affix

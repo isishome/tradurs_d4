@@ -5,7 +5,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref, useSlots } from 'vue'
+import { computed, ref, useSlots } from 'vue'
 import { date } from 'quasar'
 
 import { useI18n } from 'vue-i18n'
@@ -24,6 +24,7 @@ import D4User from './D4User.vue'
 import D4Material from './D4Material.vue'
 import { setgroups } from 'process'
 import { findLegacyRuneword } from 'src/data/legacy-runewords'
+import { useSharedClock } from 'src/composables/shared-clock'
 
 type Props = {
   data: Item
@@ -74,22 +75,17 @@ const showSetDetails = ref(false)
 
 const hour = 60 * 60
 const minute = 60
-const endDate = new Date(props.data.endDate)
-const expDate = new Date(props.data.expDate)
-const remainDate = ref<number>(
+const now = useSharedClock(() =>
+  !props.loading && ['000', '002', '003'].includes(props.data.statusCode)
+)
+const remainDate = computed(() =>
   date.getDateDiff(
-    ['000', '002'].includes(props.data.statusCode) ? endDate : expDate,
-    new Date(),
+    new Date(['000', '002'].includes(props.data.statusCode)
+      ? props.data.endDate : props.data.expDate),
+    new Date(now.value),
     'seconds'
   )
 )
-let remainInterval: NodeJS.Timeout
-
-const executeInterval = () => {
-  remainInterval = setInterval(() => {
-    remainDate.value--
-  }, 1000)
-}
 const remainHours = computed(() =>
   Math.floor(Math.max(remainDate.value / hour, 0))
     .toString()
@@ -128,10 +124,13 @@ const setGroup = computed(() => {
   const findSet = findSetGroup(fixedItem.value?.setGroups?.[0] ?? 0)
 
   if (findSet) {
-    findSet.fixedItems = filterFixedItems(
-      props.data.quality,
-      props.data.itemTypeValue1
-    ).filter((fi) => findSet.fixedItemIds?.includes(fi.value as number))
+    return {
+      ...findSet,
+      fixedItems: filterFixedItems(
+        props.data.quality,
+        props.data.itemTypeValue1
+      ).filter((fi) => findSet.fixedItemIds?.includes(fi.value as number))
+    }
   }
 
   return findSet
@@ -237,13 +236,6 @@ const onCopy = () => {
   )
 }
 
-onMounted(() => {
-  if (['000', '002', '003'].includes(props.data.statusCode)) executeInterval()
-})
-
-onUnmounted(() => {
-  clearInterval(remainInterval)
-})
 </script>
 
 <template>
@@ -285,6 +277,8 @@ onUnmounted(() => {
             position="center"
             :src="imgSrc"
             alt="Tradurs Item Image"
+            no-spinner
+            no-transition
           />
         </div>
         <div class="user-area row justify-end">
@@ -293,11 +287,11 @@ onUnmounted(() => {
             :class="{ 'q-gutter-xs': !$q.screen.lt.sm || loading }"
           >
             <q-skeleton
-              v-show="loading"
+              v-if="loading"
               width="40px"
               :height="$q.screen.lt.sm ? '16px' : '18px'"
             />
-            <div v-show="!loading" class="row items-center q-gutter-x-sm">
+            <div v-if="!loading" class="row items-center q-gutter-x-sm">
               <template v-if="!data.forDisplay && !history">
                 <div
                   v-if="['000', '002', '003'].includes(data.statusCode)"
@@ -340,7 +334,7 @@ onUnmounted(() => {
           class="column items-start q-pa-sm relative-position"
           :class="{ 'q-gutter-xs': !$q.screen.lt.sm || loading }"
         >
-          <div v-show="loading">
+          <div v-if="loading">
             <q-skeleton
               width="100px"
               :height="$q.screen.lt.sm ? '10px' : '16px'"
@@ -348,7 +342,7 @@ onUnmounted(() => {
           </div>
           <div>
             <div
-              v-show="!loading"
+              v-if="!loading"
               class="row items-center q-gutter-x-xs text-overline no-wrap"
               style="line-height: 1.6"
             >
@@ -361,7 +355,7 @@ onUnmounted(() => {
               </div>
             </div>
           </div>
-          <div v-show="loading">
+          <div v-if="loading">
             <q-skeleton
               width="150px"
               :height="$q.screen.lt.sm ? '16px' : '24px'"
@@ -369,7 +363,7 @@ onUnmounted(() => {
           </div>
           <div class="name-place">
             <div
-              v-show="!loading"
+              v-if="!loading"
               class="row items-center q-gutter-xs q-mb-xs no-wrap"
             >
               <q-checkbox
@@ -501,7 +495,7 @@ onUnmounted(() => {
               </div>
             </div>
           </div>
-          <div v-show="loading">
+          <div v-if="loading">
             <q-skeleton
               width="100px"
               :height="$q.screen.lt.sm ? '16px' : '18px'"
@@ -537,7 +531,7 @@ onUnmounted(() => {
               })
             }}
           </div>
-          <div v-show="loading">
+          <div v-if="loading">
             <q-skeleton
               width="130px"
               :height="$q.screen.lt.sm ? '16px' : '18px'"
@@ -562,7 +556,7 @@ onUnmounted(() => {
       >
         <div class="q-px-sm">
           <q-item
-            v-show="loading"
+            v-if="loading"
             v-for="c in 2"
             :key="c"
             style="min-height: 10px; padding: 3px"
@@ -614,7 +608,7 @@ onUnmounted(() => {
       >
         <div class="q-px-sm">
           <q-item
-            v-show="loading"
+            v-if="loading"
             v-for="c in 3"
             :key="c"
             style="min-height: 10px; padding: 3px"
@@ -720,7 +714,7 @@ onUnmounted(() => {
       <q-card-section class="row justify-end">
         <div class="q-px-sm">
           <q-item
-            v-show="loading"
+            v-if="loading"
             v-for="c in 2"
             :key="c"
             style="min-height: 10px; padding: 3px"

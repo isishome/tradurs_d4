@@ -34,9 +34,15 @@ jobs:
           VITE_APP_BACKEND: ${{ secrets.VITE_APP_BACKEND }}
           VITE_APP_SOCKET: ${{ secrets.VITE_APP_SOCKET }}
           VITE_APP_TRADURS: ${{ secrets.VITE_APP_TRADURS }}
-          VITE_APP_VERSION: 1.15.9
+          VITE_APP_VERSION: 1.15.10
 
-      - name: Copy Dockerfile
+      - name: Verify production SSR and performance artifacts
+        # The performance suite imports the production renderer, so run it only
+        # after building. It mocks network calls and does not start a server.
+        # Full dictionary/OCR tests additionally need the sibling query repo.
+        run: npm run test:performance
+
+      - name: Copy Dockerfile to deploy output
         run: |
           cp Dockerfile ./dist/ssr/
 

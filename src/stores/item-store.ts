@@ -1,8 +1,8 @@
-import { api } from 'boot/axios'
 import { defineStore } from 'pinia'
 import { AxiosRequestConfig } from 'axios'
 import { LocalStorage } from 'quasar'
 import { Item, Offer } from 'src/types/item'
+import { indexByValue } from 'src/common/catalog-index'
 
 export interface ILabel {
   value: number | string
@@ -351,6 +351,7 @@ export const useItemStore = defineStore('item', {
       similarItems: []
     } as RelatedItems,
     itemPage: {
+      request: 0,
       rows: 20 as number,
       over: false as boolean,
       more: false as boolean
@@ -379,6 +380,11 @@ export const useItemStore = defineStore('item', {
     }
   }),
   getters: {
+    propertiesById: (state) => indexByValue(state.properties.data),
+    affixesById: (state) => indexByValue(state.affixes.data),
+    restrictionsById: (state) => indexByValue(state.restrictions.data),
+    runesById: (state) => indexByValue(state.runes),
+    setGroupsById: (state) => indexByValue(state.setGroups.data),
     findPreset: (state) => {
       return (id: number): IPreset | undefined =>
         state.storage.data.presets?.find((p) => p.value === id)
@@ -446,9 +452,8 @@ export const useItemStore = defineStore('item', {
       return (type?: string): RuneType | undefined =>
         state.runeTypes.find((rt) => rt.value === type)
     },
-    findRune: (state) => {
-      return (id: string): Rune | undefined =>
-        state.runes.find((r) => r.value === id)
+    findRune(): (id: string) => Rune | undefined {
+      return (id) => this.runesById.get(id)
     },
     filterRunesByType: (state) => {
       return (type?: string, word?: string): Array<Rune> =>
@@ -488,9 +493,8 @@ export const useItemStore = defineStore('item', {
               )
               .map((a) => ({ ...a, label: a.aspectName as string }))
     },
-    findAspect: (state) => {
-      return (id: number): Affix | undefined =>
-        state.affixes.data.find((a) => a.value === id)
+    findAspect(): (id: number) => Affix | undefined {
+      return (id) => this.affixesById.get(id)
     },
     filterAttributeTypes: (state) => {
       return (attribute?: string): Array<AttributeType> =>
@@ -533,18 +537,16 @@ export const useItemStore = defineStore('item', {
             )
           : state.restrictions.data
     },
-    findProperty: (state) => {
-      return (propertyId: number): Property | undefined =>
-        state.properties.data.find((p) => p.value === propertyId)
+    findProperty(): (propertyId: number) => Property | undefined {
+      return (propertyId) => this.propertiesById.get(propertyId)
     },
-    findAffix: (state) => {
-      return (id?: number | string): Affix | Rune | undefined =>
-        state.affixes.data.find((a) => a.value === id) ??
-        state.runes.find((r) => r.value === id)
+    findAffix(): (id?: number | string) => Affix | Rune | undefined {
+      // Read the getter at call time: consumers destructure this function, and
+      // must continue to see new dictionaries after a load or language change.
+      return (id) => this.affixesById.get(id) ?? this.runesById.get(id)
     },
-    findRestriction: (state) => {
-      return (restrictId: number): Restriction | undefined =>
-        state.restrictions.data.find((r) => r.value === restrictId)
+    findRestriction(): (restrictId: number) => Restriction | undefined {
+      return (restrictId) => this.restrictionsById.get(restrictId)
     },
     matchAffixes: (state) => {
       return (type: string, attribute: string): boolean =>
@@ -574,9 +576,8 @@ export const useItemStore = defineStore('item', {
               fi.equipmentClass === equipmentClass
           )
     },
-    findSetGroup: (state) => {
-      return (groupId: number): SetGroup | undefined =>
-        state.setGroups.data.find((sg) => sg.value === groupId)
+    findSetGroup(): (groupId: number) => SetGroup | undefined {
+      return (groupId) => this.setGroupsById.get(groupId)
     },
     findRunewordSet: (state) => {
       return (runewordSet: string): RunewordSet | undefined =>
@@ -659,7 +660,7 @@ export const useItemStore = defineStore('item', {
         let error: unknown = null
         if (this.storage.request === 0 || isForced) {
           this.storage.request++
-          api
+          this.$api
             .get('/d4/account/storage', options)
             .then((response) => {
               this.storage.data = response.data
@@ -678,7 +679,7 @@ export const useItemStore = defineStore('item', {
     },
     setStorage(data: IStorage) {
       return new Promise<void>((resolve, reject) => {
-        api
+        this.$api
           .post('/d4/account/storage/update', data)
           .then(() => {
             resolve()
@@ -699,7 +700,7 @@ export const useItemStore = defineStore('item', {
         } else if (this.base.request === 0) {
           this.base.request++
           this.base.loading = true
-          api
+          this.$api
             .get('/d4/item/base')
             .then((response) => {
               LocalStorage.setItem('base', JSON.stringify(response.data))
@@ -728,7 +729,7 @@ export const useItemStore = defineStore('item', {
         } else if (this.properties.request === 0) {
           this.properties.request++
           this.properties.loading = true
-          api
+          this.$api
             .get('/d4/item/properties')
             .then((response) => {
               LocalStorage.setItem('properties', JSON.stringify(response.data))
@@ -758,7 +759,7 @@ export const useItemStore = defineStore('item', {
         } else if (this.affixes.request === 0) {
           this.affixes.request++
           this.affixes.loading = true
-          api
+          this.$api
             .get('/d4/item/affixes')
             .then((response) => {
               LocalStorage.setItem('affixes', JSON.stringify(response.data))
@@ -787,7 +788,7 @@ export const useItemStore = defineStore('item', {
         } else if (this.restrictions.request === 0) {
           this.restrictions.request++
           this.restrictions.loading = true
-          api
+          this.$api
             .get('/d4/item/restrictions')
             .then((response) => {
               LocalStorage.setItem(
@@ -819,7 +820,7 @@ export const useItemStore = defineStore('item', {
         } else if (this.fixedItems.request === 0) {
           this.fixedItems.request++
           this.fixedItems.loading = true
-          api
+          this.$api
             .get('/d4/item/fixed-items')
             .then((response) => {
               LocalStorage.setItem('fixedItems', JSON.stringify(response.data))
@@ -848,7 +849,7 @@ export const useItemStore = defineStore('item', {
         } else if (this.setGroups.request === 0) {
           this.setGroups.request++
           this.setGroups.loading = true
-          api
+          this.$api
             .get('/d4/item/set-groups')
             .then((response) => {
               LocalStorage.setItem('setGroups', JSON.stringify(response.data))
@@ -872,7 +873,7 @@ export const useItemStore = defineStore('item', {
         if (this.pacts.request === 0) {
           this.pacts.request++
           this.pacts.loading = true
-          api
+          this.$api
             .get('/d4/item/pacts', options)
             .then((response) => {
               this.pacts.data = response.data
@@ -889,10 +890,11 @@ export const useItemStore = defineStore('item', {
         } else resolve()
       })
     },
-    getReward() {
+    getReward(options?: { timeout?: number }) {
       return new Promise<Array<Item>>((resolve, reject) => {
-        api
+        this.$api
           .get('/d4/item/reward', {
+            ...options,
             params: {
               hardcore: this.storage.data.hardcore,
               ladder: this.storage.data.ladder
@@ -912,8 +914,9 @@ export const useItemStore = defineStore('item', {
       itemId?: string | string[],
       options?: AxiosRequestConfig
     ) {
+      const request = itemId ? this.itemPage.request : ++this.itemPage.request
       return new Promise<Array<Item>>((resolve, reject) => {
-        api
+        this.$api
           .post(
             '/d4/item',
             {
@@ -931,8 +934,10 @@ export const useItemStore = defineStore('item', {
           )
           .then((response) => {
             if (!itemId) {
-              this.itemPage.over = page > 1
-              this.itemPage.more = response.data.length > this.itemPage.rows
+              if (request === this.itemPage.request) {
+                this.itemPage.over = page > 1
+                this.itemPage.more = response.data.length > this.itemPage.rows
+              }
               response.data.splice(this.itemPage.rows, 1)
             }
             resolve(response.data)
@@ -944,7 +949,7 @@ export const useItemStore = defineStore('item', {
     },
     getRelatedItems(itemId: string, options?: AxiosRequestConfig) {
       return new Promise<RelatedItems>((resolve, reject) => {
-        api
+        this.$api
           .get(`/d4/item/${itemId}/related`, options)
           .then((response) => {
             resolve(response.data)
@@ -959,7 +964,7 @@ export const useItemStore = defineStore('item', {
       attribute: Property | Affix | Restriction
     ) {
       return new Promise<void>((resolve, reject) => {
-        api
+        this.$api
           .post('/d4/item/attribute', {
             category: category,
             attribute: attribute
@@ -974,7 +979,7 @@ export const useItemStore = defineStore('item', {
     },
     addItem(item: Item) {
       return new Promise<Item>((resolve, reject) => {
-        api
+        this.$api
           .post('/d4/item/add', { item })
           .then((response) => {
             resolve(response.data)
@@ -986,7 +991,7 @@ export const useItemStore = defineStore('item', {
     },
     updateItem(item: Item) {
       return new Promise<void>((resolve, reject) => {
-        api
+        this.$api
           .post('/d4/item/update', { item })
           .then(() => {
             resolve()
@@ -998,7 +1003,7 @@ export const useItemStore = defineStore('item', {
     },
     relistItem(itemId: string) {
       return new Promise<void>((resolve, reject) => {
-        api
+        this.$api
           .post('/d4/item/relist', { itemId })
           .then(() => {
             resolve()
@@ -1010,7 +1015,7 @@ export const useItemStore = defineStore('item', {
     },
     relistItems(itemIds: Array<string>) {
       return new Promise<Array<IErrorItem>>((resolve, reject) => {
-        api
+        this.$api
           .post('/d4/item/relist/batch', { itemIds })
           .then((response) => {
             resolve(response.data)
@@ -1022,7 +1027,7 @@ export const useItemStore = defineStore('item', {
     },
     statusItem(itemId: string) {
       return new Promise<void>((resolve, reject) => {
-        api
+        this.$api
           .post('/d4/item/status', { itemId: itemId })
           .then(() => {
             resolve()
@@ -1034,7 +1039,7 @@ export const useItemStore = defineStore('item', {
     },
     statusItems(itemIds: Array<string>, status: string) {
       return new Promise<Array<IErrorItem>>((resolve, reject) => {
-        api
+        this.$api
           .post('/d4/item/status/batch', { itemIds, status })
           .then((response) => {
             resolve(response.data)
@@ -1046,7 +1051,7 @@ export const useItemStore = defineStore('item', {
     },
     reRegisterItem(itemId: string) {
       return new Promise<void>((resolve, reject) => {
-        api
+        this.$api
           .post('/d4/item/reregister', { itemId })
           .then(() => {
             resolve()
@@ -1058,7 +1063,7 @@ export const useItemStore = defineStore('item', {
     },
     reRegisterItems(itemIds: Array<string>) {
       return new Promise<Array<IErrorItem>>((resolve, reject) => {
-        api
+        this.$api
           .post('/d4/item/reregister/batch', { itemIds })
           .then((response) => {
             resolve(response.data)
@@ -1070,7 +1075,7 @@ export const useItemStore = defineStore('item', {
     },
     deleteItem(itemId: string) {
       return new Promise<void>((resolve, reject) => {
-        api
+        this.$api
           .post('/d4/item/delete', { itemId: itemId })
           .then(() => {
             resolve()
@@ -1082,7 +1087,7 @@ export const useItemStore = defineStore('item', {
     },
     deleteItems(itemIds: Array<string>) {
       return new Promise<Array<IErrorItem>>((resolve, reject) => {
-        api
+        this.$api
           .post('/d4/item/delete/batch', { itemIds })
           .then((response) => {
             resolve(response.data)
@@ -1094,7 +1099,7 @@ export const useItemStore = defineStore('item', {
     },
     getOffers(itemId: string, offerId?: string) {
       return new Promise<Array<Offer>>((resolve, reject) => {
-        api
+        this.$api
           .get('/d4/item/offer', { params: { itemId, offerId } })
           .then((response) => {
             resolve(response.data)
@@ -1106,7 +1111,7 @@ export const useItemStore = defineStore('item', {
     },
     makeOffer(offer: Offer) {
       return new Promise<Offer>((resolve, reject) => {
-        api
+        this.$api
           .post('/d4/item/offer/make', { offer })
           .then((response) => {
             resolve(response.data)
@@ -1118,7 +1123,7 @@ export const useItemStore = defineStore('item', {
     },
     acceptOffer(offer: Offer) {
       return new Promise<void>((resolve, reject) => {
-        api
+        this.$api
           .post('/d4/item/offer/accept', { offer })
           .then(() => {
             resolve()
@@ -1130,7 +1135,7 @@ export const useItemStore = defineStore('item', {
     },
     retractOffer(offerId: string) {
       return new Promise<void>((resolve, reject) => {
-        api
+        this.$api
           .post('/d4/item/offer/retract', { offerId })
           .then(() => {
             resolve()
@@ -1142,7 +1147,7 @@ export const useItemStore = defineStore('item', {
     },
     turnDownOffer(offerId: string) {
       return new Promise<void>((resolve, reject) => {
-        api
+        this.$api
           .post('/d4/item/offer/turndown', { offerId })
           .then(() => {
             resolve()
@@ -1154,7 +1159,7 @@ export const useItemStore = defineStore('item', {
     },
     addEvaluations(itemId: string, evaluations: Array<number>) {
       return new Promise<void>((resolve, reject) => {
-        api
+        this.$api
           .post('/d4/item/evaluations/add', { itemId, evaluations })
           .then(() => {
             resolve()
@@ -1166,7 +1171,7 @@ export const useItemStore = defineStore('item', {
     },
     favorite(itemId: string, favorite: boolean) {
       return new Promise<void>((resolve, reject) => {
-        api
+        this.$api
           .post('/d4/item/favorite', { itemId, favorite })
           .then(() => {
             resolve()
@@ -1178,7 +1183,7 @@ export const useItemStore = defineStore('item', {
     },
     getAwards() {
       return new Promise<Awards>((resolve, reject) => {
-        api
+        this.$api
           .get('/d4/awards')
           .then((response) => {
             resolve(response.data)
@@ -1195,7 +1200,7 @@ export const useItemStore = defineStore('item', {
         delete cloneFilter.loading
         delete cloneFilter.fixed
 
-        api
+        this.$api
           .post('/d4/account/preset/add', { name, preset: cloneFilter })
           .then((response) => {
             ;(this.storage.data.presets ?? []).push({
@@ -1212,7 +1217,7 @@ export const useItemStore = defineStore('item', {
     },
     removePreset(id: number) {
       return new Promise<void>((resolve, reject) => {
-        api
+        this.$api
           .post('/d4/account/preset/remove', { id })
           .then(() => {
             const presetIndex =

@@ -1,0 +1,12 @@
+# Tradurs Diablo IV
+
+> A Korean and English Diablo IV item trading community with seasonal rune guides.
+
+## Public pages
+
+- [한국어 거래 목록](https://d4.tradurs.com/ko): Browse Diablo IV item listings.
+- [English trade listings](https://d4.tradurs.com/en): Browse items in English.
+- [룬어 가이드](https://d4.tradurs.com/ko/knowledge/runewords): Korean runeword reference.
+- [Rune recipes](https://d4.tradurs.com/en/knowledge/rune-recipes): English rune recipe reference.
+
+Listings change over time. Account actions require authentication and user intent.

@@ -1,6 +1,5 @@
 import { nextTick } from 'vue'
 import { copyToClipboard, Notify, Platform, LocalStorage } from 'quasar'
-import stringComparison from 'string-comparison'
 import { i18n } from 'src/boot/i18n'
 import { AffixValue } from 'src/types/item'
 import { MinMax } from 'src/stores/item-store'
@@ -162,15 +161,6 @@ export const clearLocalStorage = () => {
   LocalStorage.removeItem('fixedItems')
   LocalStorage.removeItem('setGroups')
   LocalStorage.removeItem('evaluations')
-}
-
-const lev = stringComparison.levenshtein
-
-export const similarity = (a: string, b: string) => {
-  return lev.similarity(a, b)
-}
-export const distance = (a: string, b: string) => {
-  return lev.distance(a, b)
 }
 
 export const simplify = (sentense: string, phase: string) => {

@@ -9,7 +9,7 @@ import {
   Sort
 } from 'stores/item-store'
 import { useAccountStore } from 'stores/account-store'
-import { ref, computed, onMounted, watch, reactive, nextTick } from 'vue'
+import { ref, computed, onMounted, watch, reactive, nextTick, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useQuasar, uid } from 'quasar'
 import { Item, IPrice } from 'src/types/item'
@@ -17,7 +17,9 @@ import { scrollPos } from 'src/common'
 import { formatGoldCompact } from 'src/utils/price'
 
 import D4Items from 'components/D4Items.vue'
-import D4Filter from 'components/D4Filter.vue'
+import type D4Filter from 'components/D4Filter.vue'
+import TradePlaceholder from 'components/global/TradePlaceholder.vue'
+import { loadInitialTrade } from 'src/common/initial-trade'
 
 interface IProps {
   filter?: InstanceType<typeof D4Filter>
@@ -255,65 +257,46 @@ const create = (item?: Item) => {
   itemsRef.value?.create(item)
 }
 
+let listRequest = 0
+const listLoading = ref(true)
+onUnmounted(() => {
+  listRequest++
+  is.filter.loading = false
+})
+
 const getList = async (scrollTop?: boolean) => {
+  const request = ++listRequest
   is.filter.loading = true
   disable.value = true
+  listLoading.value = true
+  completeList.value = false
 
-  items.value = Array.from(
-    { length: items.value.length || is.itemPage.rows },
-    () => {
-      const item = new Item()
-      item.quality = 'normal'
-      item.loading = true
-      item.expanded = isExpanded.value
-      item.user.loading = true
-      item.price.loading = true
-      return item
-    }
-  )
-
-  is.getItems(page.value)
-    .then((result: Array<Item>) => {
-      // auto expanded
-      result.forEach((i: Item) => {
-        i.expanded = is.needExpand || isExpanded.value
-      })
-
-      let i = 0
-      while (i < items.value.length) {
-        const item = result.shift()
-        if (item) {
-          items.value[i] = item
-          i++
-        } else {
-          items.value.splice(i)
-          break
-        }
-      }
-      items.value.push(...result)
-    })
-    .catch(() => {
-      items.value = []
-    })
-    .then(() => {
+  try {
+    const result = await loadInitialTrade(
+      gs.loadCatalog((route.params.lang as string) || 'ko'),
+      is.getItems(page.value),
+      is.showRewardItem ? is.getReward({ timeout: 5000 }) : Promise.resolve([])
+    )
+    if (request !== listRequest) return
+    items.value = result.items.map((item) => ({
+      ...item, expanded: is.needExpand || isExpanded.value
+    }))
+    rewardItem.value = result.reward
+      ? { ...result.reward, reward: true, expanded: isExpanded.value }
+      : undefined
+  } catch {
+    if (request !== listRequest) return
+    items.value = []
+    rewardItem.value = undefined
+  } finally {
+    if (request === listRequest) {
       is.filter.loading = false
       disable.value = false
-      setTimeout(() => {
-        completeList.value = true
-        if (!!scrollTop) scrollPos()
-      }, 100)
-    })
-
-  rewardItem.value = undefined
-
-  if (is.showRewardItem) {
-    is.getReward().then(() => {
-      rewardItem.value = is.rewardItems.map((ri: Item) => ({
-        ...ri,
-        reward: true,
-        expanded: isExpanded.value
-      }))?.[0]
-    })
+      listLoading.value = false
+      completeList.value = true
+      await nextTick()
+      if (scrollTop && request === listRequest) scrollPos()
+    }
   }
 }
 
@@ -921,7 +904,10 @@ onMounted(() => {
     </div>
     <div>
       <div class="row justify-center items-center">
+        <TradePlaceholder v-if="listLoading" />
         <D4Items
+          v-if="gs.catalogReady && (!listLoading || items.length > 0)"
+          v-show="!listLoading"
           ref="itemsRef"
           class="item-list"
           :items="items"

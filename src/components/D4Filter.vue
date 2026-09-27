@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, reactive, ref, watch } from 'vue'
+import { computed, reactive, ref, watch, defineAsyncComponent } from 'vue'
 import { QList, QSelect, debounce, useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { Item } from 'src/types/item'
@@ -9,7 +9,7 @@ import NotifyEn from '/images/filter/notify_en.webp'
 import NotifyKo from '/images/filter/notify_ko.webp'
 
 import D4Preset from 'components/D4Preset.vue'
-import D4Analysis from 'components/D4Analysis.vue'
+const D4Analysis = defineAsyncComponent(() => import('components/D4Analysis.vue'))
 import D4Attribute from 'components/D4Attribute.vue'
 import D4MythicConversionNotice from 'components/D4MythicConversionNotice.vue'
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, reactive, nextTick, watch } from 'vue'
+import { ref, computed, reactive, nextTick, watch, defineAsyncComponent } from 'vue'
 import { useQuasar, QInput, QSelect, uid } from 'quasar'
 
 import { useI18n } from 'vue-i18n'
@@ -26,7 +26,8 @@ import {
 } from 'src/types/item'
 import { User } from 'src/types/user'
 
-import D4Item from 'components/D4Item.vue'
+import D4ItemDisplay from 'components/D4ItemDisplay.vue'
+const D4Item = defineAsyncComponent(() => import('components/D4Item.vue'))
 import D4Property from 'components/D4Property.vue'
 import D4Material from 'components/D4Material.vue'
 import D4Description from 'components/D4Description.vue'
@@ -34,7 +35,7 @@ import D4Affix from 'components/D4Affix.vue'
 import D4Restriction from 'components/D4Restriction.vue'
 import D4Offer from 'components/D4Offer.vue'
 import D4User from 'components/D4User.vue'
-import D4Analysis from 'components/D4Analysis.vue'
+const D4Analysis = defineAsyncComponent(() => import('components/D4Analysis.vue'))
 
 interface IProps {
   items: Array<Item>
@@ -995,7 +996,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
         }`"
         data-itemid="reward-item"
       >
-        <D4Item
+        <D4ItemDisplay
           :data="rewardItem"
           :loading="rewardItem.loading"
           @favorite="favorite"
@@ -1079,7 +1080,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
           </template>
           <template #actions>
             <div
-              v-show="rewardItem.expanded"
+              v-if="rewardItem.expanded"
               class="row justify-between items-center q-pt-lg"
             >
               <div>
@@ -1138,7 +1139,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
               />
             </q-btn>
           </template>
-        </D4Item>
+        </D4ItemDisplay>
       </div>
       <div
         v-for="(item, idx) in items as Array<Item>"
@@ -1149,7 +1150,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
           item.expanded ? '100%' : `${itemHeight}px`
         }`"
       >
-        <D4Item
+        <D4ItemDisplay
           :data="item"
           :loading="item.loading"
           @favorite="favorite"
@@ -1232,7 +1233,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
           </template>
           <template #actions>
             <div
-              v-show="item.expanded"
+              v-if="item.expanded"
               class="row justify-between items-center q-pt-lg"
             >
               <div>
@@ -1306,7 +1307,7 @@ defineExpose({ copyItem, create, hideEditable, openOffers, hideOffers })
               />
             </q-btn>
           </template>
-        </D4Item>
+        </D4ItemDisplay>
       </div>
       <div
         v-show="items.length === 0"

@@ -12,7 +12,7 @@ import { useI18n } from 'vue-i18n'
 import { type ILabel, useItemStore } from 'src/stores/item-store'
 import { Item } from 'src/types/item'
 import CompareWorker from 'src/common/worker?worker'
-import { similarity } from 'src/common'
+import { similarity } from 'src/common/similarity'
 import { CompareParams, type Result } from 'src/common/worker'
 import type Cropper from 'cropperjs'
 

@@ -55,7 +55,6 @@ const gs = useGlobalStore()
 const { t, tm, locale } = useI18n({ useScope: 'global' })
 const { check } = useAdBlock()
 
-const view = ref<boolean>(false)
 const isDark = ref(
   $q.cookies.has('d4.dark')
     ? $q.cookies.get('d4.dark') === 'true'
@@ -64,7 +63,7 @@ const isDark = ref(
 $q.dark.set(isDark.value)
 
 const battleTag = ref<string>('')
-const showBT = ref<boolean>(false)
+const showBT = ref(!!as.signed && !as.info.battleTag)
 const loading = ref<boolean>(false)
 const reloadAdKey = computed(() => gs.reloadAdKey)
 
@@ -77,6 +76,7 @@ const updateBattleTag = () => {
 
 const lang = (route.params.lang as string) || 'ko'
 locale.value = lang
+$q.lang.set({ ...$q.lang, isoName: lang })
 
 // about Meta
 const pageName = computed(() =>
@@ -170,7 +170,6 @@ watch(reloadAdKey, (val, old) => {
 
 onMounted(() => {
   document.documentElement.setAttribute('lang', locale.value as string)
-  view.value = true
   showBT.value = !!as.signed && !(as.info.battleTag && as.info.battleTag !== '')
   notice.open = !$q.cookies.has(noticeCookie)
   checkAd()
@@ -339,7 +338,7 @@ onMounted(() => {
       </q-card-section>
     </template>
   </D4Dialog>
-  <router-view v-if="!showBT && view" />
+  <router-view v-if="!showBT" />
 </template>
 
 <style scoped>

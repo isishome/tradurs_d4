@@ -5,15 +5,11 @@ import {
   createWebHashHistory,
   createWebHistory
 } from 'vue-router'
-import { LocalStorage } from 'quasar'
-import { i18n } from 'src/boot/i18n'
 import routes from './routes'
-import { api } from 'boot/axios'
 import { useGlobalStore } from 'src/stores/global-store'
 import { useAccountStore } from 'src/stores/account-store'
 import { useItemStore } from 'stores/item-store'
 import { initMessenger } from 'src/sockets/messenger'
-import { clearLocalStorage } from 'src/common'
 
 const prod = import.meta.env.PROD
 
@@ -37,6 +33,7 @@ export default route(function (
 
   const Router = createRouter({
     scrollBehavior(to, from, savedPosition) {
+      if (process.env.SERVER) return
       if (!!history.state.noScrollTop) return
       else if (!!history.state.scrollTop) return { left: 0, top: 0 }
 
@@ -52,45 +49,14 @@ export default route(function (
 
   Router.beforeEach(async (to, from, next) => {
     const lang = to.params.lang || 'ko'
-    api.defaults.headers.common['Accept-Language'] = lang
 
     const gs = useGlobalStore(store)
     const as = useAccountStore(store)
     const is = useItemStore(store)
+    as.$api.defaults.headers.common['Accept-Language'] = lang
     const onlyAdmin = !!to.matched.some((m) => m.meta.onlyAdmin)
     const onlyDev = !!to.matched.some((m) => m.meta.onlyDev)
     const requireAuth = !!to.matched.some((m) => m.meta.requireAuth)
-
-    if (!process.env.SERVER && !['pnf', 'ftc'].includes(to.name as string)) {
-      try {
-        const appVersion = LocalStorage.getItem<string>('APP_VERSION')
-        const locale = LocalStorage.getItem<string>('lang')
-
-        if (
-          appVersion !== import.meta.env.VITE_APP_VERSION ||
-          locale !== lang
-        ) {
-          clearLocalStorage()
-          LocalStorage.setItem('APP_VERSION', import.meta.env.VITE_APP_VERSION)
-          LocalStorage.setItem('lang', lang)
-        }
-
-        const promises = [
-          is.getBase(),
-          is.getProperties(),
-          is.getAffixes(),
-          is.getRestrictions(),
-          is.getFixedItems(),
-          is.getSetGroups(),
-          as.getEvaluations(),
-          gs.checkHealth()
-        ]
-
-        await Promise.all(promises)
-      } catch {
-        return next({ name: 'ftc' })
-      }
-    }
 
     if (as.signed === null && !['pnf', 'ftc'].includes(to.name as string)) {
       const options = process.env.SERVER

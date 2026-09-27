@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, computed, watch, nextTick } from 'vue'
+import { ref, computed, watch, onMounted, defineAsyncComponent } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useQuasar, Screen, QBtnDropdown } from 'quasar'
+import { useQuasar, useMeta, Screen, QBtnDropdown } from 'quasar'
 import { useI18n } from 'vue-i18n'
 
 import { useGlobalStore } from 'src/stores/global-store'
@@ -9,10 +9,12 @@ import { useAccountStore } from 'stores/account-store'
 import { useItemStore } from 'stores/item-store'
 import { checkName, scrollPosDirect } from 'src/common'
 
-import D4Filter from 'components/D4Filter.vue'
+import type D4FilterComponent from 'components/D4Filter.vue'
+const D4Filter = defineAsyncComponent(() => import('components/D4Filter.vue'))
 import D4User from 'components/D4User.vue'
 import Adsense from 'components/global/Adsense.vue'
 import UsefulLinks from 'src/components/global/UsefulLinks.vue'
+import TradePlaceholder from 'src/components/global/TradePlaceholder.vue'
 
 const props = defineProps<{
   lang: string
@@ -52,7 +54,23 @@ const asideHeight = computed<string>(
 const asideTop = computed<string>(() => `${gs.offsetTop + 10}px`)
 const newAwards = computed(() => is.awards > 0)
 const isNarrow = computed(() => $q.screen.width <= 1100)
-const d4Filter = ref<InstanceType<typeof D4Filter>>()
+const d4Filter = ref<InstanceType<typeof D4FilterComponent>>()
+const showSeason = computed(() =>
+  ['tradeList', 'itemInfo'].includes(route.name as string) &&
+  !!is.storage.data.ladder
+)
+useMeta(() => ({
+  link: showSeason.value ? {
+    seasonImage: {
+      rel: 'preload', as: 'image', type: 'image/webp',
+      href: t('season.bg'), fetchpriority: 'high'
+    }
+  } : {}
+}))
+
+onMounted(() => {
+  void gs.loadCatalog(props.lang || 'ko').catch(() => {})
+})
 
 const myTweak = (offset: number): void => {
   gs.offsetTop = offset ?? 0
@@ -185,10 +203,7 @@ watch(
 <template>
   <q-layout view="hHh lpR lFf" :key="mainKey" @scroll="onScroll">
     <div
-      v-show="
-        ['tradeList', 'itemInfo'].includes(route.name as string) &&
-        is.storage.data.ladder
-      "
+      v-show="showSeason"
       class="bg-season"
       :style="`--tradurs-season-image:url('${t('season.bg')}');`"
     ></div>
@@ -205,12 +220,15 @@ watch(
       style="overflow-x: hidden"
       @before-show="beforeShow"
     >
-      <D4Filter
-        ref="d4Filter"
-        :disable="route.name !== 'tradeList'"
-        class="q-pa-lg"
-        style="width: 300px"
-      />
+      <q-no-ssr>
+        <D4Filter
+          v-if="gs.catalogReady"
+          ref="d4Filter"
+          :disable="route.name !== 'tradeList'"
+          class="q-pa-lg"
+          style="width: 300px"
+        />
+      </q-no-ssr>
     </q-drawer>
     <q-drawer
       show-if-above
@@ -1242,10 +1260,7 @@ watch(
           style="z-index: 9999; position: fixed"
         />
         <div class="row justify-center">
-          <div
-            :class="screen.lt.sm ? 'q-pa-sm' : 'q-pa-xl'"
-            :style="screen.lt.sm ? 'width:100%' : 'width:830px'"
-          >
+          <div class="main-content">
             <div class="view max-width">
               <div class="row justify-center top-ads">
                 <Adsense
@@ -1258,12 +1273,23 @@ watch(
                   :key="`top-${reloadAdKey}`"
                 />
               </div>
-              <RouterView :filter="d4Filter" />
+              <q-no-ssr>
+                <div v-if="gs.catalogFailed" class="q-pa-xl text-center" role="alert">
+                  {{ t('page.ftc') }}
+                </div>
+                <RouterView
+                  v-else-if="gs.catalogReady || route.name === 'tradeList'"
+                  :filter="d4Filter"
+                />
+                <TradePlaceholder v-else />
+                <template #placeholder><TradePlaceholder /></template>
+              </q-no-ssr>
             </div>
             <div class="q-py-xl"></div>
             <div v-if="$q.screen.width <= 1439" class="row justify-center">
               <Adsense
                 class="ad-bottom"
+                lazy
                 data-ad-client="ca-pub-5110777286519562"
                 data-ad-slot="9284600281"
                 :data-adtest="!prod"
@@ -1388,6 +1414,16 @@ watch(
 .view {
   position: relative;
   min-height: 40vh;
+}
+
+/* Apply the correct first-paint dimensions before Quasar hydrates Screen. */
+.main-content {
+  width: 830px;
+  max-width: 100%;
+  padding: 48px;
+}
+@media (max-width: 599px) {
+  .main-content { width: 100%; padding: 8px; }
 }
 
 .page:deep(.sub) {

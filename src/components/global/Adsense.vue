@@ -7,12 +7,14 @@ type Props = {
   dataAdFormat?: string
   dataAdtest?: boolean
   dataFullWidthResponsive?: string
+  lazy?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   dataAdFormat: undefined,
   dataAdtest: undefined,
-  dataFullWidthResponsive: undefined
+  dataFullWidthResponsive: undefined,
+  lazy: false
 })
 
 const prod: boolean = import.meta.env.PROD
@@ -22,9 +24,11 @@ let pushRequested = false
 let pushed = false
 let renderTimer: number | undefined
 let resizeObserver: ResizeObserver | undefined
+let intersectionObserver: IntersectionObserver | undefined
+let visible = !props.lazy
 
 const onPush = () => {
-  if (!active || !pushRequested || pushed || !window.adsenseLoaded) return
+  if (!active || !visible || !pushRequested || pushed || !window.adsenseLoaded) return
 
   const element = adElement.value
   if (!element?.isConnected) return
@@ -33,6 +37,8 @@ const onPush = () => {
   if (width <= 0 || height <= 0) return
 
   pushed = true
+  resizeObserver?.disconnect()
+  intersectionObserver?.disconnect()
 
   try {
     ;(window.adsbygoogle = window.adsbygoogle || []).push({})
@@ -56,6 +62,13 @@ onMounted(async () => {
   active = true
 
   if (prod && props.dataAdClient && props.dataAdSlot) {
+    if (props.lazy && typeof IntersectionObserver !== 'undefined') {
+      intersectionObserver = new IntersectionObserver((entries) => {
+        visible = entries.some((entry) => entry.isIntersecting)
+        if (visible) onPush()
+      }, { rootMargin: '200px' })
+      if (adElement.value) intersectionObserver.observe(adElement.value)
+    } else visible = true
     if (typeof ResizeObserver !== 'undefined') {
       resizeObserver = new ResizeObserver(onPush)
       if (adElement.value) resizeObserver.observe(adElement.value)
@@ -69,6 +82,7 @@ onUnmounted(() => {
   active = false
   if (renderTimer !== undefined) window.clearTimeout(renderTimer)
   resizeObserver?.disconnect()
+  intersectionObserver?.disconnect()
   window.removeEventListener('adsense-loaded', onPush)
 })
 </script>

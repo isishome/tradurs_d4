@@ -4,6 +4,7 @@ import { Notify, QNotifyUpdateOptions } from 'quasar'
 import { useAccountStore } from 'stores/account-store'
 import { User } from 'src/types/user'
 import { i18n } from './i18n'
+import { markRaw } from 'vue'
 
 let api: AxiosInstance
 let dismiss:
@@ -18,12 +19,17 @@ let dismiss:
 export default boot(
   ({ app, ssrContext, store, router } /* { app, router, ... } */) => {
     // something to do
-    api = axios.create({
+    const requestApi = axios.create({
       baseURL: import.meta.env.VITE_APP_BACKEND,
       withCredentials: true
     })
 
-    api.interceptors.response.use(
+    // Stores must retain their own SSR request's client, not a module binding
+    // that the next simultaneous render can replace.
+    store.use(() => ({ $api: markRaw(requestApi) }))
+    if (!process.env.SERVER) api = requestApi
+
+    requestApi.interceptors.response.use(
       function (response) {
         return response
       },
@@ -34,7 +40,7 @@ export default boot(
         const caption = (typeof message === 'object' && message.caption) || ''
         message = (typeof message === 'object' && message.body) || message
 
-        if (process.env.SERVER || dismiss) return
+        if (process.env.SERVER || dismiss) return Promise.reject(error)
 
         if ([401, 403].includes(status)) {
           const accountStore = useAccountStore(store)
@@ -99,13 +105,13 @@ export default boot(
       }
     )
 
-    app.provide('axios', api)
+    app.provide('axios', requestApi)
 
     app.config.globalProperties.$axios = axios
     // ^ ^ ^ this will allow you to use this.$axios (for Vue Options API form)
     //       so you won't necessarily have to import axios in each vue file
 
-    app.config.globalProperties.$api = api
+    app.config.globalProperties.$api = requestApi
     // ^ ^ ^ this will allow you to use this.$api (for Vue Options API form)
     //       so you can easily perform requests against your app's API
   }

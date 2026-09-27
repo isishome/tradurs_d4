@@ -1,4 +1,3 @@
-import { api } from 'boot/axios'
 import { defineStore } from 'pinia'
 import { AxiosRequestConfig } from 'axios'
 import { LocalStorage } from 'quasar'
@@ -78,7 +77,7 @@ export const useAccountStore = defineStore('account', {
   actions: {
     checkSign(options?: AxiosRequestConfig) {
       return new Promise<void>((resolve, reject) => {
-        api
+        this.$api
           .get('/account/signed', options)
           .then((response) => {
             this.info = response.data
@@ -92,7 +91,7 @@ export const useAccountStore = defineStore('account', {
     },
     sign(options?: AxiosRequestConfig) {
       return new Promise<boolean>((resolve) => {
-        api.get('/account/signOut', options).then(() => {
+        this.$api.get('/account/signOut', options).then(() => {
           this.signed = null
           this.info = {} as User
           this.messenger?.disconnect()
@@ -108,7 +107,7 @@ export const useAccountStore = defineStore('account', {
         if (this.historyTypes.request === 0) {
           this.historyTypes.request++
           this.historyTypes.loading = true
-          api
+          this.$api
             .get('/history/types')
             .then((response) => {
               this.historyTypes.data = response.data
@@ -136,7 +135,7 @@ export const useAccountStore = defineStore('account', {
         } else if (this.evaluations.request === 0) {
           this.evaluations.request++
           this.evaluations.loading = true
-          api
+          this.$api
             .get('/account/evaluations')
             .then((response) => {
               LocalStorage.setItem('evaluations', JSON.stringify(response.data))
@@ -156,14 +155,14 @@ export const useAccountStore = defineStore('account', {
     },
     updateBattleTag(battleTag: string) {
       return new Promise<void>((resolve) => {
-        api.post('/battlenet/tag/update', { battleTag }).then(() => {
+        this.$api.post('/battlenet/tag/update', { battleTag }).then(() => {
           resolve()
         })
       })
     },
     // notify(notify: INotify) {
     //   return new Promise<void>((resolve, reject) => {
-    //     api.post('/account/notify', notify)
+    //     this.$api.post('/account/notify', notify)
     //       .then(() => {
     //         resolve()
     //       })
@@ -174,7 +173,7 @@ export const useAccountStore = defineStore('account', {
     // },
     getMessages(page: number) {
       return new Promise<void>((resolve, reject) => {
-        api
+        this.$api
           .post('/account/messages', { page, rows: this.messagePage.rows })
           .then((response) => {
             this.messagePage.over = page > 1
@@ -189,7 +188,7 @@ export const useAccountStore = defineStore('account', {
     },
     getBlocks(page: number) {
       return new Promise<void>((resolve, reject) => {
-        api
+        this.$api
           .post('/d4/account/blocks', { page, rows: this.blockPage.rows })
           .then((response) => {
             this.blockPage.over = page > 1
@@ -204,7 +203,7 @@ export const useAccountStore = defineStore('account', {
     },
     readMessage(msgIds: Array<number>) {
       return new Promise<void>((resolve, reject) => {
-        api
+        this.$api
           .post('/account/messages/read', { msgIds })
           .then(() => {
             resolve()
@@ -216,7 +215,7 @@ export const useAccountStore = defineStore('account', {
     },
     unreadMessages(options?: AxiosRequestConfig) {
       return new Promise<void>((resolve, reject) => {
-        api
+        this.$api
           .get('/account/messages/unread', options)
           .then((response) => {
             this.messagePage.unread = response.data.unread
@@ -229,7 +228,7 @@ export const useAccountStore = defineStore('account', {
     },
     block(battleTag: string) {
       return new Promise<void>((resolve, reject) => {
-        api
+        this.$api
           .post('/d4/account/block', { battleTag })
           .then(() => {
             resolve()
@@ -241,7 +240,7 @@ export const useAccountStore = defineStore('account', {
     },
     unblock(battleTags: Array<string>) {
       return new Promise<void>((resolve, reject) => {
-        api
+        this.$api
           .post('/d4/account/unblock', { battleTags })
           .then(() => {
             resolve()
@@ -253,7 +252,7 @@ export const useAccountStore = defineStore('account', {
     },
     getHistory(service: string, historyType?: string, period?: number) {
       return new Promise<Array<IHistory>>((resolve, reject) => {
-        api
+        this.$api
           .post(`/history/${service}/${historyType}`, {
             rows: this.historyPage.rows,
             nextHistoryId: this.historyPage.nextHistoryId,

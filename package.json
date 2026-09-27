@@ -1,13 +1,16 @@
 {
   "name": "d4-ssr",
-  "version": "1.15.9",
+  "version": "1.15.10",
   "description": "Diablo4 Trade App",
   "productName": "D4 App",
   "author": "SeraSome",
   "private": true,
   "scripts": {
-    "test": "echo \"No test specified\" && exit 0",
+    "test": "npm run check:ssr-source && npm run test:ocr:client",
+    "check:ssr-source": "node scripts/check-ssr-source.mjs",
+    "test:ocr:client": "node --test tests/ocr/client.test.mjs tests/ocr/dev-deps.test.mjs",
     "test:ocr": "node tests/ocr/prepare.mjs && node --test tests/ocr/*.test.mjs",
+    "test:performance": "node tests/performance/prepare.mjs && node --test tests/performance/*.test.mjs",
     "dev": "npx quasar dev -m ssr -p 6090",
     "typecheck": "tsc --noEmit --skipLibCheck",
     "build": "npx quasar build -m ssr",
