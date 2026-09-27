@@ -741,33 +741,35 @@ watch(
           <div
             class="row no-wrap items-center q-gutter-md header-search"
           >
-            <h1 class="h1 header-narrow">
-              <q-btn
-                flat
-                padding="0"
-                :ripple="false"
-                class="no-hover"
-                aria-label="Tradurs Home Button"
-                @click="main"
-              >
-                <span class="h1">
-                  <img
-                    v-show="$q.dark.isActive"
-                    :src="`/images/logo.webp?v=${version}`"
-                    width="36"
-                    height="36"
-                    alt="Tradurs Logo Image"
-                  />
-                  <img
-                    v-show="!$q.dark.isActive"
-                    :src="`/images/logo_light.webp?v=${version}`"
-                    width="36"
-                    height="36"
-                    alt="Tradurs Light Logo Image"
-                  />
-                </span>
-              </q-btn>
-            </h1>
+            <div class="header-narrow row no-wrap items-center">
+              <h1 class="h1">
+                <q-btn
+                  flat
+                  padding="0"
+                  :ripple="false"
+                  class="no-hover"
+                  aria-label="Tradurs Home Button"
+                  @click="main"
+                >
+                  <span class="h1">
+                    <img
+                      v-show="$q.dark.isActive"
+                      :src="`/images/logo.webp?v=${version}`"
+                      width="36"
+                      height="36"
+                      alt="Tradurs Logo Image"
+                    />
+                    <img
+                      v-show="!$q.dark.isActive"
+                      :src="`/images/logo_light.webp?v=${version}`"
+                      width="36"
+                      height="36"
+                      alt="Tradurs Light Logo Image"
+                    />
+                  </span>
+                </q-btn>
+              </h1>
+            </div>
             <q-input
               for="header-item-search"
               outlined
