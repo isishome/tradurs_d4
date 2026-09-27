@@ -80,6 +80,19 @@ body.body--dark {
   color: var(--q-light-page);
 }
 
+/* The SSR header is visible before the lazy layout stylesheet is loaded. */
+.q-header.tradurs-header {
+  background-color: var(--q-dark);
+  color: var(--q-light);
+  box-shadow: inset 0 -1px 0 0 var(--q-dark-border);
+}
+
+.body--light .q-header.tradurs-header {
+  background-color: var(--q-light);
+  color: var(--q-dark);
+  box-shadow: inset 0 -1px 0 0 var(--q-light-border);
+}
+
 .invert,
 .invert-icon img,
 .body--dark .icon,

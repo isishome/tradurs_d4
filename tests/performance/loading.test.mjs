@@ -1,5 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
+import { readFileSync } from 'node:fs'
+import { createRequire } from 'node:module'
 import { createApp, markRaw } from 'vue'
 import { createPinia, setActivePinia } from 'pinia'
 import { loadInitialTrade, useGlobalStore, useItemStore, resourceStatus } from './.generated/loaders.mjs'
@@ -82,10 +84,30 @@ test('old listing response cannot overwrite the current pagination flags', async
   assert.equal(items.itemPage.more, true)
 })
 
-test('unpublished manifest paths return a real non-HTML 404', () => {
-  let registered, handler
-  resourceStatus({ app: { get(paths, fn) { registered = paths; handler = fn } }, resolve: { urlPath: p => `/${p}` } })
-  assert.deepEqual(registered, ['/ai-catalog.json', '/.well-known/ai-catalog.json'])
-  const response = { status(code) { assert.equal(code, 404); return this }, type(type) { assert.equal(type, 'text/plain'); return this }, send(body) { assert.equal(body, 'Not Found') } }
-  handler({}, response)
+test('manifest routes match real Express paths with the installed Quasar URL resolver', () => {
+  const require = createRequire(import.meta.url)
+  const { Router } = require('express')
+  const template = readFileSync(new URL('../../node_modules/@quasar/app-vite/templates/entry/ssr-prod-webserver.js', import.meta.url), 'utf8')
+  const resolverSource = template.slice(template.indexOf('const doubleSlashRE'), template.indexOf('const rootFolder'))
+  assert.ok(resolverSource.includes('const resolveUrlPath'))
+  for (const base of ['/', '/app/']) {
+    const urlPath = new Function(resolverSource.replace('<%= build.publicPath %>', base) + '; return resolveUrlPath')()
+    const router = Router()
+    resourceStatus({ app: router, resolve: { urlPath } })
+    for (const file of ['ai-catalog.json', '.well-known/ai-catalog.json']) {
+      for (const method of ['GET', 'HEAD']) {
+        let sent = false
+        const response = {
+          status(code) { assert.equal(code, 404); return this },
+          type(type) { assert.equal(type, 'text/plain'); return this },
+          send(body) { assert.equal(body, 'Not Found'); sent = true }
+        }
+        router.handle({ method, url: `${base}${file}?audit=1` }, response, () => {})
+        assert.equal(sent, true, `${method} ${base}${file} fell through to SSR`)
+      }
+    }
+    let fallthrough = false
+    router.handle({ method: 'GET', url: `${base}ko` }, {}, () => { fallthrough = true })
+    assert.equal(fallthrough, true, 'ordinary pages must reach the SSR renderer')
+  }
 })

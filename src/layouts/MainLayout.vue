@@ -685,7 +685,7 @@ watch(
     </q-drawer>
     <q-header
       :elevated="!$q.dark.isActive"
-      class="q-py-sm header row justify-center"
+      class="q-py-sm header tradurs-header row justify-center"
     >
       <q-toolbar class="toolbar">
         <div :style="$q.screen.gt.sm ? 'min-width:120px' : ''">
@@ -1370,18 +1370,6 @@ watch(
 </template>
 
 <style scoped>
-.header {
-  background-color: var(--q-dark);
-  color: var(--q-light);
-  box-shadow: inset 0 -1px 0 0 var(--q-dark-border);
-}
-
-.body--light .header {
-  box-shadow: inset 0 -1px 0 0 var(--q-light-border);
-  background-color: var(--q-light);
-  color: var(--q-dark);
-}
-
 .header:deep(.q-btn .icon),
 .icons:deep(.q-btn .icon) {
   filter: contrast(0%);
