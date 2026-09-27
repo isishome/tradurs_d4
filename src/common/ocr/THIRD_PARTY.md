@@ -10,4 +10,6 @@ the pinned jsDelivr package. The selected image is processed in a browser worker
 to these hosts. Network access to Hugging Face and jsDelivr is needed on first use. The worker
 is released after one idle minute. No Tesseract fallback is included.
 
-Reference design: sibling d2r_v2 ADR-024. D4-specific comparison: `poc/ocr/README.md`.
+Reference design: sibling d2r_v2 ADR-024. Maintained regressions: `tests/ocr/README.md`.
+The completed engine-comparison PoC was removed on 2026-09-27; historical results
+remain in Git history and `query/d4/docs/tasks/task-csj-008.md`.
