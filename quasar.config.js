@@ -10,6 +10,7 @@
 
 const { configure } = require('quasar/wrappers')
 const path = require('path')
+const { quasarHtml } = require('./scripts/quasar-html.cjs')
 //const { mergeConfig } = require('vite')
 
 module.exports = configure(function (ctx = {}) {
@@ -40,6 +41,7 @@ module.exports = configure(function (ctx = {}) {
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#build
     build: {
+      devQuasarTreeshaking: true,
       target: {
         browser: ['es2019', 'edge88', 'firefox78', 'chrome87', 'safari13.1'],
         node: 'node20'
@@ -62,6 +64,7 @@ module.exports = configure(function (ctx = {}) {
       // distDir
 
       extendViteConf(viteConf) {
+        viteConf.plugins = [...(viteConf.plugins || []), quasarHtml()]
         viteConf.define.__VUE_PROD_HYDRATION_MISMATCH_DETAILS__ = false
         {
           // Keep ONNX's variable WASM import out of Vite 2 import analysis:
@@ -81,6 +84,7 @@ module.exports = configure(function (ctx = {}) {
         // Discovering these on the first scan triggers Vite's full-page reload.
         viteConf.optimizeDeps = {
           ...viteConf.optimizeDeps,
+          exclude: [...new Set([...(viteConf.optimizeDeps?.exclude || []), 'quasar'])],
           include: [...new Set([
             ...(viteConf.optimizeDeps?.include || []),
             'ppu-paddle-ocr/web'

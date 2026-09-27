@@ -2,11 +2,35 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { createRequire } from 'node:module'
 import { renderToString } from 'vue/server-renderer'
+import { parse } from '@vue/compiler-dom'
 
 const require = createRequire(import.meta.url)
 const axios = require('axios')
 // Import only the renderer factory. Never import index.js/start a webserver.
 const createApp = require('../../dist/ssr/server/server-entry.js').default
+
+// Inspect the original SSR tree, before a browser can repair invalid nesting.
+function assertValidShell(html) {
+  const attr = (node, name) => node.props?.find(prop => prop.name === name)
+  const blocks = new Set(['div', 'h1', 'h2', 'h3', 'p', 'section', 'ul', 'ol'])
+  function visit(node, parents = []) {
+    if (node.type === 1) {
+      assert.equal(node.tag === 'a' && !!attr(node, 'tag'), false, 'invalid anchor tag attribute')
+      if (node.tag === 'img') assert.ok(attr(node, 'alt'), 'img needs alt')
+      if (attr(node, 'tabindex')) {
+        assert.equal(parents.some(p => p.tag === 'a' || attr(p, 'role')?.value?.content === 'button'), false,
+          'focusable descendant of link/button role')
+      }
+      if (blocks.has(node.tag)) {
+        assert.equal(parents.some(p => ['span', 'label', 'button'].includes(p.tag)), false,
+          `${node.tag} inside phrasing content`)
+      }
+      parents = [...parents, node]
+    }
+    for (const child of node.children || []) visit(child, parents)
+  }
+  visit(parse(html))
+}
 
 const contextFor = (url, cookie = '', desktop = false) => {
   const callbacks = []
@@ -42,6 +66,7 @@ test('production SSR outputs the shell and localized preload without catalog req
     const html = await Promise.all(apps.map((app, i) => renderToString(app, contexts[i])))
     await Promise.all(contexts.map(context => context.finish()))
     for (const body of html) {
+      assertValidShell(body)
       assert.match(body, /bg-season/)
       assert.match(body, /Tradurs Logo Image/)
       assert.match(body, /trade-placeholder/)

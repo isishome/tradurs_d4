@@ -22,7 +22,7 @@ test('lazy OCR worker dependencies are optimized before first recognition', asyn
     const alias = other.resolve.alias.find(a => a.find.test?.('onnxruntime-web'))
     assert.equal(alias?.replacement, 'https://cdn.jsdelivr.net/npm/onnxruntime-web@1.30.0/dist/ort.wasm.min.mjs')
   }
-  assert.deepEqual(config.optimizeDeps.exclude, ['test-existing-exclusion'])
+  assert.deepEqual(config.optimizeDeps.exclude, ['test-existing-exclusion', 'quasar'])
   assert.equal(config.optimizeDeps.esbuildOptions.target, 'es2020')
   for (const dependency of ['vue', 'ppu-paddle-ocr/web']) {
     assert.ok(config.optimizeDeps.include.includes(dependency))

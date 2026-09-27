@@ -215,6 +215,7 @@ watch(
       v-model="leftDrawerOpen"
       side="left"
       :breakpoint="1100"
+      :behavior="$q.screen.width > 1100 ? 'desktop' : 'mobile'"
       class="row justify-end"
       style="overflow-x: hidden"
       @before-show="beforeShow"
@@ -251,7 +252,6 @@ watch(
             flat
             aria-label="Tradurs Discord Button"
             :ripple="!$q.dark.isActive"
-            tag="a"
             href="https://discord.gg/dwRuWq4enx"
             target="_blank"
             rel="noopener noreferrer"
@@ -522,11 +522,11 @@ watch(
                   <div>
                     <span class="relative-position"
                       >{{ t('page.mySpace') }}
-                      <div
+                      <span
                         v-show="newMessages && !expanded"
                         class="alert"
                         style="top: -6px"
-                      ></div>
+                      ></span>
                     </span>
                   </div>
                 </q-item-section>
@@ -689,33 +689,35 @@ watch(
     >
       <q-toolbar class="toolbar">
         <div class="header-start">
-          <q-btn
-            class="no-hover q-ml-lg header-wide"
-            dense
-            flat
-            aria-label="Tradurs Home Button"
-            padding="0"
-            :ripple="!$q.dark.isActive"
-            @click="main"
-          >
-            <h1 class="h1">
-              <img
-                v-show="$q.dark.isActive"
-                :src="`/images/logo.webp?v=${version}`"
-                width="48"
-                height="48"
-                alt="Tradurs Logo Image"
-              />
-              <img
-                v-show="!$q.dark.isActive"
-                :src="`/images/logo_light.webp?v=${version}`"
-                width="48"
-                height="48"
-                alt="Tradurs Light Logo Image"
-              />
-              <span class="blind">{{ t('seo.title') }}</span>
-            </h1>
-          </q-btn>
+          <h1 class="h1 header-wide">
+            <q-btn
+              class="no-hover q-ml-lg header-wide"
+              dense
+              flat
+              aria-label="Tradurs Home Button"
+              padding="0"
+              :ripple="!$q.dark.isActive"
+              @click="main"
+            >
+              <span class="h1">
+                <img
+                  v-show="$q.dark.isActive"
+                  :src="`/images/logo.webp?v=${version}`"
+                  width="48"
+                  height="48"
+                  alt="Tradurs Logo Image"
+                />
+                <img
+                  v-show="!$q.dark.isActive"
+                  :src="`/images/logo_light.webp?v=${version}`"
+                  width="48"
+                  height="48"
+                  alt="Tradurs Light Logo Image"
+                />
+                <span class="blind">{{ t('seo.title') }}</span>
+              </span>
+            </q-btn>
+          </h1>
           <q-btn
             class="header-narrow"
             flat
@@ -739,31 +741,35 @@ watch(
           <div
             class="row no-wrap items-center q-gutter-md header-search"
           >
-            <q-btn
-              flat
-              padding="0"
-              :ripple="false"
-              class="no-hover header-narrow"
-              @click="main"
-            >
-              <h1 class="h1">
-                <img
-                  v-show="$q.dark.isActive"
-                  :src="`/images/logo.webp?v=${version}`"
-                  width="36"
-                  height="36"
-                  alt="Tradurs Logo Image"
-                />
-                <img
-                  v-show="!$q.dark.isActive"
-                  :src="`/images/logo_light.webp?v=${version}`"
-                  width="36"
-                  height="36"
-                  alt="Tradurs Light Logo Image"
-                />
-              </h1>
-            </q-btn>
+            <h1 class="h1 header-narrow">
+              <q-btn
+                flat
+                padding="0"
+                :ripple="false"
+                class="no-hover"
+                aria-label="Tradurs Home Button"
+                @click="main"
+              >
+                <span class="h1">
+                  <img
+                    v-show="$q.dark.isActive"
+                    :src="`/images/logo.webp?v=${version}`"
+                    width="36"
+                    height="36"
+                    alt="Tradurs Logo Image"
+                  />
+                  <img
+                    v-show="!$q.dark.isActive"
+                    :src="`/images/logo_light.webp?v=${version}`"
+                    width="36"
+                    height="36"
+                    alt="Tradurs Light Logo Image"
+                  />
+                </span>
+              </q-btn>
+            </h1>
             <q-input
+              for="header-item-search"
               outlined
               dense
               no-error-icon
@@ -821,17 +827,16 @@ watch(
                 :class="{ active: route.name === 'awards' }"
                 :to="{ name: 'awards', params: { lang: route.params.lang } }"
               >
-                <div class="relative-position">
+                <span class="relative-position">
                   {{ t('page.awards') }}
-                  <q-badge
+                  <span
                     v-show="newAwards"
-                    floating
-                    label="N"
-                    color="orange-8"
-                    class="new-badge2"
+                    role="status"
+                    aria-label="N"
+                    class="q-badge flex inline items-center no-wrap q-badge--single-line q-badge--floating bg-orange-8 new-badge2"
                     style="top: -4px"
-                  />
-                </div>
+                  >N</span>
+                </span>
               </q-btn>
               <q-btn-dropdown
                 v-model="expandedKnowledgeMobile"
@@ -915,14 +920,14 @@ watch(
                 dropdown-icon="img:/images/icons/dropdown.svg"
               >
                 <template #label>
-                  <div class="relative-position">
+                  <span class="relative-position">
                     {{ t('page.mySpace') }}
-                    <div
+                    <span
                       v-show="newMessages && !expandedMobile"
                       class="alert"
                       style="top: -2px"
-                    ></div>
-                  </div>
+                    ></span>
+                  </span>
                 </template>
                 <q-list bordered class="page rounded-borders">
                   <q-item
@@ -1084,7 +1089,6 @@ watch(
             flat
             aria-label="Tradurs Discord Button"
             :ripple="!$q.dark.isActive"
-            tag="a"
             href="https://discord.gg/dwRuWq4enx"
             target="_blank"
             rel="noopener noreferrer"
