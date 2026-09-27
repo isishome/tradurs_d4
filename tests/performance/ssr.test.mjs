@@ -8,10 +8,10 @@ const axios = require('axios')
 // Import only the renderer factory. Never import index.js/start a webserver.
 const createApp = require('../../dist/ssr/server/server-entry.js').default
 
-const contextFor = (url, cookie = '') => {
+const contextFor = (url, cookie = '', desktop = false) => {
   const callbacks = []
   return {
-    req: { url, headers: { cookie, 'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 Mobile/15E148' } },
+    req: { url, headers: { cookie, 'user-agent': desktop ? 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/136.0.0.0 Safari/537.36' : 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 Mobile/15E148' } },
     res: { setHeader() {}, getHeader() {} },
     _meta: { htmlAttrs: '', headTags: '', bodyAttrs: '', bodyTags: '' },
     onRendered: fn => callbacks.push(fn),
@@ -34,7 +34,7 @@ test('production SSR outputs the shell and localized preload without catalog req
     return { data, status: 200, statusText: 'OK', headers: {}, config }
   }
   try {
-    const contexts = [contextFor('/ko'), contextFor('/en'), contextFor('/ko', 'eternal')]
+    const contexts = [contextFor('/ko'), contextFor('/en'), contextFor('/ko', 'eternal'), contextFor('/ko', '', true)]
     const apps = await Promise.all(contexts.map(context => createApp(context)))
     assert.notEqual(apps[0].config.globalProperties.$api, apps[1].config.globalProperties.$api)
     assert.equal(apps[0].config.globalProperties.$api.defaults.headers.common['Accept-Language'], 'ko')
@@ -45,6 +45,10 @@ test('production SSR outputs the shell and localized preload without catalog req
       assert.match(body, /bg-season/)
       assert.match(body, /Tradurs Logo Image/)
       assert.match(body, /trade-placeholder/)
+      assert.match(body, /class="[^"]*trade-page-container[^"]*"[^>]*style="[^"]*padding-top:66px/)
+      assert.match(body, /header-wide/)
+      assert.match(body, /header-narrow/)
+      assert.doesNotMatch(body, /class="[^"]*header-(?:wide|narrow)[^"]*"[^>]*style="[^"]*display:none/)
       assert.doesNotMatch(body, /q-spinner/)
     }
     assert.match(contexts[0]._meta.headTags, /rel="preload"[^>]*season_emblem_ko.webp[^>]*fetchpriority="high"/)
@@ -52,7 +56,9 @@ test('production SSR outputs the shell and localized preload without catalog req
     assert.doesNotMatch(contexts[2]._meta.headTags, /rel="preload"/)
     assert.match(contexts[0]._meta.htmlAttrs, /lang=["']?ko\b/)
     assert.match(contexts[1]._meta.htmlAttrs, /lang=["']?en\b/)
-    assert.equal(requests.length, 9)
+    assert.match(html[3], /<button[^>]*aria-label="지식"/)
+    assert.doesNotMatch(html[3], /<button[^>]*aria-label="Expand"/)
+    assert.equal(requests.length, 12)
   } finally {
     axios.defaults.adapter = previous
   }

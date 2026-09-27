@@ -11,6 +11,9 @@
  */
 import express from 'express';
 import compression from 'compression';
+import { readFileSync } from 'fs';
+import { join } from 'path';
+import { createCriticalCssRenderer } from './critical-css';
 import {
   ssrClose,
   ssrCreate,
@@ -96,6 +99,9 @@ const woff2RE = /\.woff2$/;
 const gifRE = /\.gif$/;
 const jpgRE = /\.jpe?g$/;
 const pngRE = /\.png$/;
+const renderCriticalCss = createCriticalCssRenderer((name) =>
+  readFileSync(join(__dirname, 'client', 'assets', name), 'utf8')
+);
 
 /**
  * Should return a String with HTML output
@@ -107,6 +113,10 @@ export const renderPreloadTag = ssrRenderPreloadTag((file) => {
   }
 
   if (cssRE.test(file) === true) {
+    if (process.env.PROD) {
+      const inline = renderCriticalCss(file);
+      if (inline !== undefined) return inline;
+    }
     return `<link rel="stylesheet" href="${file}">`;
   }
 

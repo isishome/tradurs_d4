@@ -80,11 +80,56 @@ body.body--dark {
   color: var(--q-light-page);
 }
 
+.trade-placeholder {
+  --placeholder-color: rgba(0, 0, 0, 0.12);
+  width: 100%;
+  padding-top: 40px;
+}
+.body--dark .trade-placeholder {
+  --placeholder-color: rgba(255, 255, 255, 0.05);
+}
+.trade-placeholder .placeholder-card {
+  height: 220px;
+  margin-bottom: 48px;
+  padding: 24px;
+  border: 1px solid var(--placeholder-color);
+  border-radius: 4px;
+}
+.trade-placeholder .placeholder-line {
+  height: 16px;
+  width: 60%;
+  margin-bottom: 16px;
+  background: var(--placeholder-color);
+  border-radius: 3px;
+}
+.trade-placeholder .placeholder-line.short { width: 35%; }
+@media (max-width: 599px) {
+  .trade-placeholder .placeholder-card { height: 170px; margin-bottom: 24px; }
+}
+
 /* The SSR header is visible before the lazy layout stylesheet is loaded. */
 .q-header.tradurs-header {
+  min-height: 66px;
   background-color: var(--q-dark);
   color: var(--q-light);
   box-shadow: inset 0 -1px 0 0 var(--q-dark-border);
+}
+
+/* The wide drawer is permanent; reserve its space before QLayout measures it.
+   Below this breakpoint the drawer overlays the page and takes no page space. */
+.trade-page-container { padding-left: 0 !important; }
+.tradurs-header .header-wide { display: none !important; }
+.tradurs-header .header-center { justify-content: center; }
+.tradurs-header .header-search { width: 75%; }
+@media (min-width: 600px) {
+  .tradurs-header .header-start { min-width: 120px; }
+}
+@media (min-width: 1101px) {
+  .trade-page-container { padding-left: 300px !important; }
+  .tradurs-header .header-wide { display: flex !important; }
+  .tradurs-header .header-narrow { display: none !important; }
+  .tradurs-header .header-center { justify-content: space-between; }
+  .tradurs-header .header-search { width: 41.6667%; }
 }
 
 .body--light .q-header.tradurs-header {

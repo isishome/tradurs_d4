@@ -53,7 +53,6 @@ const asideHeight = computed<string>(
 )
 const asideTop = computed<string>(() => `${gs.offsetTop + 10}px`)
 const newAwards = computed(() => is.awards > 0)
-const isNarrow = computed(() => $q.screen.width <= 1100)
 const d4Filter = ref<InstanceType<typeof D4FilterComponent>>()
 const showSeason = computed(() =>
   ['tradeList', 'itemInfo'].includes(route.name as string) &&
@@ -215,7 +214,7 @@ watch(
       bordered
       v-model="leftDrawerOpen"
       side="left"
-      :behavior="screen.gt.md ? 'desktop' : 'mobile'"
+      :breakpoint="1100"
       class="row justify-end"
       style="overflow-x: hidden"
       @before-show="beforeShow"
@@ -684,14 +683,14 @@ watch(
       </div>
     </q-drawer>
     <q-header
+      :height-hint="66"
       :elevated="!$q.dark.isActive"
       class="q-py-sm header tradurs-header row justify-center"
     >
       <q-toolbar class="toolbar">
-        <div :style="$q.screen.gt.sm ? 'min-width:120px' : ''">
+        <div class="header-start">
           <q-btn
-            v-if="!isNarrow"
-            class="no-hover q-ml-lg"
+            class="no-hover q-ml-lg header-wide"
             dense
             flat
             aria-label="Tradurs Home Button"
@@ -718,7 +717,7 @@ watch(
             </h1>
           </q-btn>
           <q-btn
-            v-show="isNarrow"
+            class="header-narrow"
             flat
             round
             aria-label="Tradurs Filter Button"
@@ -735,32 +734,29 @@ watch(
           </q-btn>
         </div>
         <div
-          class="col row items-center"
-          :class="isNarrow ? 'justify-center' : 'justify-between'"
+          class="col row items-center header-center"
         >
           <div
-            :class="isNarrow ? 'col-9' : 'col-5'"
-            class="row no-wrap items-center q-gutter-md"
+            class="row no-wrap items-center q-gutter-md header-search"
           >
             <q-btn
-              v-if="isNarrow"
               flat
               padding="0"
               :ripple="false"
-              class="no-hover"
+              class="no-hover header-narrow"
               @click="main"
             >
               <h1 class="h1">
                 <img
                   v-show="$q.dark.isActive"
-                  src="/images/logo.webp?season=7"
+                  :src="`/images/logo.webp?v=${version}`"
                   width="36"
                   height="36"
                   alt="Tradurs Logo Image"
                 />
                 <img
                   v-show="!$q.dark.isActive"
-                  src="/images/logo_light.webp?season=7"
+                  :src="`/images/logo_light.webp?v=${version}`"
                   width="36"
                   height="36"
                   alt="Tradurs Light Logo Image"
@@ -805,7 +801,7 @@ watch(
             </q-input>
           </div>
           <div>
-            <q-toolbar v-show="!isNarrow" class="nav">
+            <q-toolbar class="nav header-wide">
               <q-btn
                 flat
                 no-caps
@@ -839,6 +835,7 @@ watch(
               </q-btn>
               <q-btn-dropdown
                 v-model="expandedKnowledgeMobile"
+                :toggle-aria-label="t('page.knowledge')"
                 flat
                 content-class="no-shadow"
                 no-caps
@@ -905,6 +902,7 @@ watch(
               <q-btn-dropdown
                 v-if="as.signed"
                 v-model="expandedMobile"
+                :toggle-aria-label="t('page.mySpace')"
                 flat
                 content-class="no-shadow"
                 no-caps
@@ -977,6 +975,7 @@ watch(
               </q-btn-dropdown>
               <q-btn-dropdown
                 v-if="as.signed && !!as.info.isAdmin"
+                :toggle-aria-label="t('page.admin')"
                 flat
                 content-class="no-shadow"
                 no-caps
@@ -1058,8 +1057,7 @@ watch(
           </div>
         </div>
         <div
-          v-show="isNarrow"
-          class="col-1 col-lg-3 row justify-end q-gutter-sm"
+          class="col-1 row justify-end q-gutter-sm header-narrow"
         >
           <q-btn
             round
@@ -1078,8 +1076,7 @@ watch(
           </q-btn>
         </div>
         <div
-          v-show="!isNarrow"
-          class="col-3 row justify-end items-center q-gutter-xs"
+          class="col-3 row justify-end items-center q-gutter-xs header-wide"
         >
           <q-btn
             round
@@ -1250,7 +1247,7 @@ watch(
         </div>
       </q-toolbar>
     </q-header>
-    <q-page-container>
+    <q-page-container class="trade-page-container">
       <q-page :style-fn="myTweak">
         <q-inner-loading
           :showing="loading"
@@ -1376,7 +1373,7 @@ watch(
 }
 
 .toolbar {
-  min-height: inherit;
+  min-height: 50px;
   width: 100vw;
   max-width: 1400px;
 }

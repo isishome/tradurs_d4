@@ -3,6 +3,20 @@ import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 
 const root = fileURLToPath(new URL('../../', import.meta.url))
+// Import only the webserver hooks, never the generated index.js/listen entry.
+await build({
+  entryPoints: [path.join(root, 'src-ssr/server.ts')],
+  bundle: true,
+  platform: 'node',
+  format: 'cjs',
+  external: ['express', 'compression', 'quasar/wrappers'],
+  define: {
+    'process.env.PROD': 'true',
+    'process.env.DEV': 'false',
+    '__dirname': JSON.stringify(path.join(root, 'dist/ssr'))
+  },
+  outfile: path.join(root, 'tests/performance/.generated/server-preload.cjs')
+})
 await build({
   stdin: {
     contents: `
@@ -11,6 +25,7 @@ await build({
       export { useItemStore } from './src/stores/item-store';
       export { createSharedClock, useSharedClock } from './src/composables/shared-clock';
       export { default as resourceStatus } from './src-ssr/middlewares/resource-status';
+      export { createCriticalCssRenderer } from './src-ssr/critical-css';
     `,
     resolveDir: root
   },

@@ -286,7 +286,7 @@ defineExpose({
 
 <template>
   <div>
-    <q-list dense class="filter" :class="{ disable: filterLoading }">
+    <q-list dense role="group" :aria-label="t('filter.basic')" class="filter" :class="{ disable: filterLoading }">
       <q-item-label header>
         <div class="row items-center q-gutter-sm">
           <div>
@@ -622,7 +622,7 @@ defineExpose({
             unelevated
             outline
             color="grey-6"
-            aria-label="Tradurs Refresh Button"
+            :aria-label="t('btn.resetFilter')"
             size="md"
             :ripple="false"
             class="no-hover break-keep q-ml-none"
@@ -633,7 +633,7 @@ defineExpose({
           <q-btn
             unelevated
             color="primary"
-            aria-label="Tradurs Search Attribute Button"
+            :aria-label="t('btn.attributeFilter')"
             size="md"
             :ripple="false"
             class="no-hover break-keep"

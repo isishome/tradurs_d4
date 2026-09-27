@@ -7,6 +7,7 @@ node_modules
 /dist
 /src-ssr/*
 !/src-ssr/server.ts
+!/src-ssr/critical-css.ts
 !/src-ssr/ssr-flag.d.ts
 !/src-ssr/middlewares/
 /src-ssr/middlewares/*
