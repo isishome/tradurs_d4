@@ -643,7 +643,7 @@ export default {
         {
           type: 'text',
           contents:
-            'The web standards check provided by W3C shows only 1 checked item.'
+            'All W3C markup validation checks have passed.'
         }
       ]
     },

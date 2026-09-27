@@ -34,7 +34,7 @@ jobs:
           VITE_APP_BACKEND: ${{ secrets.VITE_APP_BACKEND }}
           VITE_APP_SOCKET: ${{ secrets.VITE_APP_SOCKET }}
           VITE_APP_TRADURS: ${{ secrets.VITE_APP_TRADURS }}
-          VITE_APP_VERSION: 1.15.10
+          VITE_APP_VERSION: 1.15.11
 
       - name: Verify production SSR and performance artifacts
         # The performance suite imports the production renderer, so run it only
