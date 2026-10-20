@@ -37,6 +37,7 @@ import {
 import { useI18n } from 'vue-i18n'
 import { useGlobalStore } from 'stores/global-store'
 import { useAdBlock } from 'src/composables/adblock'
+import ConsentBanner from 'components/global/ConsentBanner.vue'
 
 interface IParagraph {
   type: string
@@ -339,6 +340,7 @@ onMounted(() => {
     </template>
   </D4Dialog>
   <router-view v-if="!showBT" />
+  <ConsentBanner />
 </template>
 
 <style scoped>

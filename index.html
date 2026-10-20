@@ -16,19 +16,7 @@
     <link rel="manifest" href="/site.webmanifest" />
     <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
     <% if (ctx.prod) { %>
-    <script
-      async
-      src="https://www.googletagmanager.com/gtag/js?id=G-S8LQETJ7W1"
-    ></script>
-    <script>
-      window.dataLayer = window.dataLayer || []
-      function gtag() {
-        dataLayer.push(arguments)
-      }
-      gtag('js', new Date())
-
-      gtag('config', 'G-S8LQETJ7W1')
-    </script>
+    <% /* Google Analytics는 쿠키 동의(분석) 후에만 src/common/consent.ts가 넣는다. AdSense는 동의와 무관(2026-10-20 결정). */ %>
     <script
       async
       src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5110777286519562"

@@ -501,6 +501,16 @@ export default {
       'We will notify you again when the server is normalized.\n\nThank you.',
     close: 'Do not open for 24 hours'
   },
+  consent: {
+    title: 'Choose how we use cookies',
+    body: 'We always use cookies needed for sign-in and security. Analytics cookies (Google Analytics) that help us improve the service are used only if you allow them. Your choice applies to all Tradurs services for 6 months.',
+    ads: 'Advertising cookies are used regardless of this choice.',
+    adsLink: 'Turn off personalized ads (Google ad settings)',
+    policy: 'Cookie Policy',
+    necessaryOnly: 'Necessary only',
+    acceptAll: 'Allow all',
+    success: 'Your cookie choice has been saved.'
+  },
   notice: {
     title: 'September 27, 2026 Image Recognition and Item Affix Update',
     top: 'Hello, this is Tradurs.\nWe have improved item image recognition and affix matching, and corrected confirmed item affix data.',
