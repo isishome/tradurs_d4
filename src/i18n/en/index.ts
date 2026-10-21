@@ -31,12 +31,11 @@ export default {
     pnf: 'Page not found',
     ftc: 'A problem has occurred with the data server'
   },
-  battlenet: {
-    title: 'Enter BattleTag™',
-    msg1: 'In order to provide useful services to you on ',
-    msg2: ', you must enter the BattleTag™ used in Battle.net.',
-    desc: 'BattleTag™ can always be edited on the user information page of the Tradurs site',
-    placeholder: 'leviathan#5112'
+  battleTagGuide: {
+    title: 'BattleTag™ verification required',
+    message:
+      'Trading features such as listing items and making offers are available only after BattleTag™ verification. Please register your BattleTag™ and verify it with Battle.net in the BattleTag™ section of your Tradurs account.',
+    move: 'Verify BattleTag™'
   },
   filter: {
     basic: 'Basic Filter',

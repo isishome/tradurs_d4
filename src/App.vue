@@ -37,6 +37,7 @@ import {
 import { useI18n } from 'vue-i18n'
 import { useGlobalStore } from 'stores/global-store'
 import { useAdBlock } from 'src/composables/adblock'
+import BattleTagGuide from 'components/global/BattleTagGuide.vue'
 import ConsentBanner from 'components/global/ConsentBanner.vue'
 
 interface IParagraph {
@@ -51,7 +52,6 @@ interface IParagraph {
 const $q = useQuasar()
 const route = useRoute()
 const router = useRouter()
-const as = useAccountStore()
 const gs = useGlobalStore()
 const { t, tm, locale } = useI18n({ useScope: 'global' })
 const { check } = useAdBlock()
@@ -63,17 +63,7 @@ const isDark = ref(
 )
 $q.dark.set(isDark.value)
 
-const battleTag = ref<string>('')
-const showBT = ref(!!as.signed && !as.info.battleTag)
-const loading = ref<boolean>(false)
 const reloadAdKey = computed(() => gs.reloadAdKey)
-
-const updateBattleTag = () => {
-  as.updateBattleTag(battleTag.value).then(() => {
-    as.info.battleTag = battleTag.value
-    showBT.value = false
-  })
-}
 
 const lang = (route.params.lang as string) || 'ko'
 locale.value = lang
@@ -171,7 +161,6 @@ watch(reloadAdKey, (val, old) => {
 
 onMounted(() => {
   document.documentElement.setAttribute('lang', locale.value as string)
-  showBT.value = !!as.signed && !(as.info.battleTag && as.info.battleTag !== '')
   notice.open = !$q.cookies.has(noticeCookie)
   checkAd()
 })
@@ -278,68 +267,8 @@ onMounted(() => {
       </q-card-section>
     </template>
   </D4Dialog>
-  <D4Dialog v-model="showBT" persistent @submit="updateBattleTag">
-    <template #top>
-      <q-card-section>
-        <div class="q-pa-md text-h6">{{ t('battlenet.title') }}</div>
-      </q-card-section>
-    </template>
-    <template #middle>
-      <q-card-section>
-        <div
-          class="q-px-lg"
-          :class="$q.screen.gt.sm ? 'text-body1' : 'text-body2'"
-        >
-          {{ t('battlenet.msg1') }}
-          <strong class="text-amber">Tradurs Diablo IV</strong>
-          {{ t('battlenet.msg2') }}
-        </div>
-      </q-card-section>
-      <q-card-section class="text-center">
-        <div
-          class="q-px-lg"
-          :class="$q.screen.gt.sm ? 'text-body2' : 'text-caption'"
-        >
-          {{ t('battlenet.desc') }}
-        </div>
-      </q-card-section>
-      <q-card-section>
-        <div class="q-px-lg q-py-md">
-          <q-input
-            autofocus
-            v-model="battleTag"
-            label="BattleTag™"
-            :placeholder="t('battlenet.placeholder')"
-            fill-mask
-            :disable="loading"
-            :rules="[
-              (val: string) =>
-                (val &&
-                  /^([가-힣ぁ-ゔァ-ヴー々〆〤一-龥]{1}[가-힣ぁ-ゔァ-ヴー々〆〤一-龥0-9]{1,7}#[0-9]{4,}|[a-zA-Z]{1}[a-zA-Z0-9]{2,11}#[0-9]{4,})$/g.test(
-                    val
-                  )) ||
-                ''
-            ]"
-            outlined
-            no-error-icon
-            hide-hint
-            maxlength="24"
-          />
-        </div>
-      </q-card-section>
-    </template>
-    <template #bottom>
-      <q-card-section :class="{ 'col-1': $q.screen.lt.sm }">
-        <div
-          class="row justify-end items-center q-gutter-sm q-px-md"
-          :class="{ 'q-pt-lg': $q.screen.lt.sm }"
-        >
-          <D4Btn :label="t('btn.apply')" :progress="loading" type="submit" />
-        </div>
-      </q-card-section>
-    </template>
-  </D4Dialog>
-  <router-view v-if="!showBT" />
+  <router-view />
+  <BattleTagGuide />
   <ConsentBanner />
 </template>
 

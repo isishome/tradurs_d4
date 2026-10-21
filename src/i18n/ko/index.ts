@@ -31,12 +31,11 @@ export default {
     pnf: '페이지를 찾을 수 없습니다',
     ftc: '데이터 서버에 문제가 발생했습니다'
   },
-  battlenet: {
-    title: 'BattleTag™ 입력',
-    msg1: '',
-    msg2: '의 정상적인 서비스 이용을 위해 Battle.net 에서 사용하는 BattleTag™를 입력해야 합니다.',
-    desc: '배틀태그는 Tradurs 사용자 정보 페이지에서 언제나 수정 가능합니다',
-    placeholder: '레비아탄#5112'
+  battleTagGuide: {
+    title: '배틀태그 인증이 필요합니다',
+    message:
+      '아이템 등록, 제안 등 거래 기능은 배틀태그 인증을 마친 사용자만 이용할 수 있습니다. Tradurs 내 정보의 배틀태그 항목에서 배틀태그를 등록하고 Battle.net 인증을 진행해 주세요.',
+    move: '배틀태그 인증하러 가기'
   },
   filter: {
     basic: '기본 필터',

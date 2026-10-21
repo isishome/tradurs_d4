@@ -36,6 +36,7 @@ export const useAccountStore = defineStore('account', {
     info: {} as User,
     messenger: null as Socket | null,
     newMessages: false as boolean,
+    battleTagGuide: false as boolean,
     historyTypes: {
       data: [] as Array<IHistoryTypes>,
       loading: false as boolean,
@@ -63,6 +64,9 @@ export const useAccountStore = defineStore('account', {
     }
   }),
   getters: {
+    // back과 같은 기준: 배틀태그가 있고 Battle.net 인증까지 마친 사용자만 거래 기능을 쓴다.
+    battleTagVerified: (state) =>
+      !!state.signed && !!state.info.battleTag && !!state.info.verified,
     filterEvaluations: (state) => {
       return (ids?: Array<number>) =>
         ids
@@ -153,12 +157,11 @@ export const useAccountStore = defineStore('account', {
         } else resolve()
       })
     },
-    updateBattleTag(battleTag: string) {
-      return new Promise<void>((resolve) => {
-        this.$api.post('/battlenet/tag/update', { battleTag }).then(() => {
-          resolve()
-        })
-      })
+    // 배틀태그 인증이 필요한 기능 앞에서 부른다. 미인증이면 front_v2 내 정보로 안내하는 대화상자를 연다.
+    requireBattleTag() {
+      if (this.battleTagVerified) return true
+      this.battleTagGuide = true
+      return false
     },
     // notify(notify: INotify) {
     //   return new Promise<void>((resolve, reject) => {

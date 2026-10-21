@@ -42,21 +42,19 @@ export default boot(
 
         if (process.env.SERVER || dismiss) return Promise.reject(error)
 
-        if ([401, 403].includes(status)) {
+        // 403은 back이 배틀태그 미인증 사용자를 거절한 경우다(0132). 로그인은 그대로 두고 인증 안내를 연다.
+        if (status === 403) {
+          useAccountStore(store).battleTagGuide = true
+        } else if (status === 401) {
           const accountStore = useAccountStore(store)
           accountStore.signed = false
           accountStore.info = new User()
           const lang = !!router.currentRoute.value.params.lang
             ? `/${router.currentRoute.value.params.lang}`
             : ''
-          const url =
-            status === 401
-              ? `${
-                  import.meta.env.VITE_APP_TRADURS
-                }${lang}/sign?redirect=${encodeURIComponent(
-                  document.location.href
-                )}`
-              : `${import.meta.env.VITE_APP_TRADURS}${lang}/info`
+          const url = `${
+            import.meta.env.VITE_APP_TRADURS
+          }${lang}/sign?redirect=${encodeURIComponent(document.location.href)}`
 
           dismiss = Notify.create({
             progress: true,

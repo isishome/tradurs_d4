@@ -146,6 +146,8 @@ const setAspectAffix = () => {
 }
 
 const editItem = (item: Item) => {
+  if (!as.requireBattleTag()) return
+
   const clone = JSON.parse(JSON.stringify(item))
   Object.assign(new Item(), clone)
   Object.setPrototypeOf(clone, Item.prototype)
@@ -154,6 +156,8 @@ const editItem = (item: Item) => {
 }
 
 const copyItem = (item: Item) => {
+  if (!as.requireBattleTag()) return
+
   const clone = JSON.parse(JSON.stringify(item))
   Object.assign(new Item(), clone)
   Object.setPrototypeOf(clone, Item.prototype)
@@ -780,6 +784,9 @@ const isMakingOffer = computed(
     offerItem.value?.statusCode === '000'
 )
 const makingOffer = (offer: Offer) => {
+  // 제안 폼은 그대로 보여 주고, 제출할 때 배틀태그 인증을 확인한다.
+  if (!as.requireBattleTag()) return
+
   progressOffer.value = true
 
   is.makeOffer(offer)
@@ -938,6 +945,8 @@ const openNewItem = () => {
 }
 
 const create = () => {
+  if (!as.requireBattleTag()) return
+
   const draft = loadItemDraft(as.info.id)
 
   if (!draft) {
