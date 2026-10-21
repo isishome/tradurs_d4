@@ -19,7 +19,7 @@ const policyUrl = computed(
 )
 const open = ref(false)
 
-// 두 선택은 같은 버튼·같은 강조로 둔다(거부를 동의보다 어렵게 만들지 않는다).
+// 두 선택은 같은 크기·같은 채움 버튼으로 두고 색만 구분한다(거부를 동의보다 어렵게 만들지 않는다).
 const choose = (analytics: boolean) => {
   saveConsent(analytics)
   open.value = false
@@ -54,7 +54,11 @@ onMounted(() => {
     </p>
     <div class="consent-actions">
       <a class="consent-policy" :href="policyUrl">{{ t('consent.policy') }}</a>
-      <D4Btn :label="t('consent.necessaryOnly')" @click="choose(false)" />
+      <D4Btn
+        :label="t('consent.necessaryOnly')"
+        color="var(--q-secondary)"
+        @click="choose(false)"
+      />
       <D4Btn :label="t('consent.acceptAll')" @click="choose(true)" />
     </div>
   </section>
