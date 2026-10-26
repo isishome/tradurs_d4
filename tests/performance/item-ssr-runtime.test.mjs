@@ -28,10 +28,14 @@ const { renderToString } = rootRequire('vue/server-renderer')
 const createApp = require(${JSON.stringify(path.join(root, 'dist/ssr/server/server-entry.js'))}).default
 axios.defaults.adapter = async config => {
   let data
-  if (config.url === '/account/signed') data = {}
+  if (config.url === '/account/signed')
+    data = process.env.SIGNED_CSRF ? { id: 'enc-id', csrf: process.env.SIGNED_CSRF } : {}
   else if (config.url === '/d4/account/storage') data = { ladder: true, hardcore: false }
   else if (config.url === '/account/messages/unread') data = { unread: 0 }
-  else if (config.url === '/d4/item') data = []
+  else if (config.url === '/d4/item') {
+    process.stdout.write('ITEM_CSRF=' + (config.headers.get('X-CSRF-Token') || '-') + '\\n')
+    data = []
+  }
   else if (/^\\/d4\\/item\\/\\d+\\/related$/.test(config.url)) data = { sellerItems: [], similarItems: [] }
   else throw new Error('Unexpected live API request: ' + config.url)
   return { data, status: 200, statusText: 'OK', headers: {}, config }
@@ -44,11 +48,11 @@ const context = {
 }
 createApp(context)
   .then(app => renderToString(app, context))
-  .then(html => { process.stdout.write('RENDERED ' + html.length); process.exit(0) })
+  .then(html => { process.stdout.write('RENDERED ' + html.length + '\\n'); process.exit(0) })
   .catch(error => { process.stderr.write(String(error && error.stack || error)); process.exit(1) })
 `
 
-test('item detail SSR renders with the production Node flags', () => {
+const renderItem = (env = {}) => {
   // Run a file, not `node -e`: eval mode exposes the crypto module as a global and hides the bug.
   const script = path.join(root, 'tests/performance/.generated/render-item-page.cjs')
   mkdirSync(path.dirname(script), { recursive: true })
@@ -56,8 +60,19 @@ test('item detail SSR renders with the production Node flags', () => {
   const result = spawnSync(process.execPath, [...productionNodeFlags(), script], {
     cwd: root,
     encoding: 'utf8',
-    timeout: 60000
+    timeout: 60000,
+    env: { ...process.env, ...env }
   })
   assert.equal(result.status, 0, result.stderr)
-  assert.match(result.stdout, /^RENDERED \d+/)
+  assert.match(result.stdout, /RENDERED \d+/)
+  return result.stdout
+}
+
+test('item detail SSR renders with the production Node flags', () => {
+  assert.match(renderItem(), /ITEM_CSRF=-/)
+})
+
+// back task-csj-006: the SSR request for a signed-in user carries the CSRF token from /account/signed.
+test('signed-in item detail SSR sends the CSRF token', () => {
+  assert.match(renderItem({ SIGNED_CSRF: 'token-a' }), /ITEM_CSRF=token-a/)
 })

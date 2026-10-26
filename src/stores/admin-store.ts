@@ -144,7 +144,7 @@ export const useAdminStore = defineStore('admin', () => {
 
   const refreshAffixes = () => {
     return new Promise<void>((resolve, reject) => {
-      api.get('/d4/admin/affix/refresh')
+      api.post('/d4/admin/affix/refresh')
         .then(() => {
           resolve()
         })

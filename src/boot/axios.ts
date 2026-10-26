@@ -1,10 +1,17 @@
 import { boot } from 'quasar/wrappers'
-import axios, { AxiosInstance } from 'axios'
+import axios, {
+  AxiosInstance,
+  AxiosRequestConfig,
+  InternalAxiosRequestConfig
+} from 'axios'
 import { Notify, QNotifyUpdateOptions } from 'quasar'
 import { useAccountStore } from 'stores/account-store'
 import { User } from 'src/types/user'
 import { i18n } from './i18n'
 import { markRaw } from 'vue'
+
+const CSRF_HEADER = 'X-CSRF-Token'
+const CSRF_ERROR_CODE = '0160'
 
 let api: AxiosInstance
 let dismiss:
@@ -29,11 +36,41 @@ export default boot(
     store.use(() => ({ $api: markRaw(requestApi) }))
     if (!process.env.SERVER) api = requestApi
 
+    // 상태 변경 요청에 CSRF 토큰을 붙인다(back task-csj-006). SSR 상태를 이어받은 브라우저도
+    // 같은 값을 쓰도록 요청할 때마다 store에서 읽는다.
+    requestApi.interceptors.request.use((config) => {
+      const csrf = useAccountStore(store).csrf
+      if (csrf && config.method !== 'get') config.headers.set(CSRF_HEADER, csrf)
+      return config
+    })
+
+    // back이 CSRF 토큰을 거부하면(0160) 새 토큰을 받아 한 번만 다시 보낸다.
+    const csrfRetried = new WeakSet<object>()
+    const retryWithNewCsrf = async (config: InternalAxiosRequestConfig) => {
+      csrfRetried.add(config)
+      const options = process.env.SERVER
+        ? { headers: { Cookie: config.headers.get('Cookie') } }
+        : undefined
+      await useAccountStore(store)
+        .checkSign(options as AxiosRequestConfig | undefined)
+        .catch(() => undefined)
+      return requestApi(config)
+    }
+
     requestApi.interceptors.response.use(
       function (response) {
         return response
       },
       function (error) {
+        const config: InternalAxiosRequestConfig | undefined = error.config
+        if (
+          error.response?.headers?.['x-error-code'] === CSRF_ERROR_CODE &&
+          config &&
+          config.method !== 'get' &&
+          !csrfRetried.has(config)
+        )
+          return retryWithNewCsrf(config)
+
         const status =
           error.response && error.response.status ? error.response.status : null
         let message = (error.response && error.response.data) || error.message

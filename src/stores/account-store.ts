@@ -34,6 +34,8 @@ export const useAccountStore = defineStore('account', {
   state: () => ({
     signed: null as boolean | null,
     info: {} as User,
+    // 상태 변경 요청 헤더로 돌려보내는 CSRF 토큰(back task-csj-006). 화면 정보(info)와 분리해 둔다.
+    csrf: '' as string,
     messenger: null as Socket | null,
     newMessages: false as boolean,
     battleTagGuide: false as boolean,
@@ -84,8 +86,10 @@ export const useAccountStore = defineStore('account', {
         this.$api
           .get('/account/signed', options)
           .then((response) => {
-            this.info = response.data
-            this.signed = typeof response.data.id !== 'undefined'
+            const { csrf, ...info } = response.data
+            this.info = info
+            this.csrf = csrf ?? ''
+            this.signed = typeof info.id !== 'undefined'
             resolve()
           })
           .catch(() => {
@@ -95,14 +99,19 @@ export const useAccountStore = defineStore('account', {
     },
     sign(options?: AxiosRequestConfig) {
       return new Promise<boolean>((resolve) => {
-        this.$api.get('/account/signOut', options).then(() => {
-          this.signed = null
-          this.info = {} as User
-          this.messenger?.disconnect()
-          this.messenger = null
-          this.newMessages = false
-          resolve(false)
-        })
+        // 로그아웃 요청이 실패해도 화면은 로그아웃 상태로 돌린다.
+        this.$api
+          .post('/account/signout', undefined, options)
+          .catch(() => undefined)
+          .then(() => {
+            this.signed = null
+            this.info = {} as User
+            this.csrf = ''
+            this.messenger?.disconnect()
+            this.messenger = null
+            this.newMessages = false
+            resolve(false)
+          })
       })
     },
     getHistoryTypes() {
