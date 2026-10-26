@@ -48,10 +48,6 @@ export const initMessenger = async (as: AccountStore, is: ItemStore) => {
     })
   }
 
-  as.messenger.on('connect', () => {
-    as.messenger?.emit('join', as.info.id)
-  })
-
   as.messenger.on("connect_error", () => {
     if (!!!as.signed)
       return
