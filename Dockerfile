@@ -1,4 +1,4 @@
-FROM node:18-alpine
+FROM node:24.22.1-alpine
 
 WORKDIR /app
 
@@ -8,5 +8,5 @@ RUN npm install
 
 EXPOSE 6090
 
-# Node 18 has no global Web Crypto by default; Quasar >= 2.27 uid() needs it during SSR.
-ENTRYPOINT ["node", "--experimental-global-webcrypto", "--max-old-space-size=100", "index.js"]
+# Pinned Node 24 (includes the CVE-2026-111497 Brotli fix); global Web Crypto is built in.
+ENTRYPOINT ["node", "--max-old-space-size=100", "index.js"]
