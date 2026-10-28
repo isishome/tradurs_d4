@@ -23,11 +23,6 @@ export default {
     blocks: '차단 관리',
     history: '활동 내역',
     support: '도움말',
-    admin: '관리자',
-    adminUser: '사용자 관리',
-    adminItem: '아이템 관리',
-    adminAffix: '속성 관리',
-    adminNotice: '공지 전송',
     pnf: '페이지를 찾을 수 없습니다',
     ftc: '데이터 서버에 문제가 발생했습니다'
   },

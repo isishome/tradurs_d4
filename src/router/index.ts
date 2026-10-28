@@ -54,7 +54,6 @@ export default route(function (
     const as = useAccountStore(store)
     const is = useItemStore(store)
     as.$api.defaults.headers.common['Accept-Language'] = lang
-    const onlyAdmin = !!to.matched.some((m) => m.meta.onlyAdmin)
     const onlyDev = !!to.matched.some((m) => m.meta.onlyDev)
     const requireAuth = !!to.matched.some((m) => m.meta.requireAuth)
 
@@ -81,7 +80,6 @@ export default route(function (
         !gs.localeOptions
           .map((lo) => lo.value)
           .includes(to.params.lang as string)) ||
-        (onlyAdmin && !as.info.isAdmin) ||
         (onlyDev && prod)) &&
       to.name !== 'pnf'
     )

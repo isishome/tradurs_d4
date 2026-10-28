@@ -215,10 +215,6 @@ const setBonusAffixLabel = computed(
       )
 )
 
-const onClickUser = (identity: string | null) => {
-  if (as.info.isAdmin) router.push({ name: 'adminUser', params: { identity } })
-}
-
 const goItemDetail = () => {
   if (canNavigate.value)
     router.push({
@@ -326,7 +322,6 @@ const onCopy = () => {
               :progress="loading"
               :authorized="data.authorized"
               @update="() => emit('update-only', data.itemId)"
-              @click="onClickUser(data.user.id)"
             />
           </div>
         </div>

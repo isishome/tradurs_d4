@@ -7,8 +7,7 @@ export interface IUser {
   temperature: number,
   online: boolean,
   blockable: boolean,
-  unblockable: boolean,
-  isAdmin?: boolean
+  unblockable: boolean
 }
 
 export interface IMessage {
@@ -53,7 +52,6 @@ export class User implements IUser {
   public blockable = false
   public unblockable = false
   public loading = false
-  public isAdmin = false
   constructor(id?: string) {
     this.id = id || null
   }

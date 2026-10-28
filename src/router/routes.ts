@@ -62,38 +62,6 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/SupportPage.vue'),
         props: true
       },
-      {
-        name: 'admin',
-        path: 'admin',
-        meta: {
-          onlyAdmin: true
-        },
-        redirect: { name: 'adminUser' },
-        children: [
-          {
-            name: 'adminUser',
-            path: 'user/:identity([a-zA-Z0-9_-]{1,})?',
-            component: () => import('pages/admin/UserPage.vue'),
-            props: true
-          },
-          {
-            name: 'adminItem',
-            path: 'item/:identity([a-zA-Z0-9_-]{1,})?',
-            component: () => import('pages/admin/ItemPage.vue'),
-            props: true
-          },
-          {
-            name: 'adminAffix',
-            path: 'affix',
-            component: () => import('pages/admin/AffixPage.vue')
-          },
-          {
-            name: 'adminNotice',
-            path: 'notice',
-            component: () => import('pages/admin/NoticePage.vue')
-          }
-        ]
-      },
       // {
       //   name: 'dev',
       //   path: 'dev',

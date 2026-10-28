@@ -179,10 +179,6 @@ const expandedKnowledgeMobile = ref<boolean>(false)
 const isKnowledge = computed(() =>
   ['knowledgeRuneword', 'knowledgeRuneRecipe'].includes(route.name as string)
 )
-const expandedAdmin = ref<boolean>(false)
-const isAdmin = computed(() =>
-  ['adminUser', 'adminItem', 'adminAffix'].includes(route.name as string)
-)
 
 watch(
   () => $q.screen.gt.sm,
@@ -577,86 +573,6 @@ watch(
                 </q-item>
               </q-list>
             </q-expansion-item>
-            <q-expansion-item
-              v-if="as.signed && !!as.info.isAdmin"
-              v-model="expandedAdmin"
-              expand-icon="img:/images/icons/dropdown.svg"
-              :default-opened="isAdmin"
-              :header-class="{ active: isAdmin }"
-              :class="expandedAdmin ? 'expanded rounded-borders' : ''"
-            >
-              <template #header>
-                <q-item-section>
-                  {{ t('page.admin') }}
-                </q-item-section>
-              </template>
-              <q-list bordered class="sub rounded-borders">
-                <q-item
-                  :inset-level="0.4"
-                  v-ripple
-                  clickable
-                  :to="{
-                    name: 'adminUser',
-                    params: { lang: route.params.lang }
-                  }"
-                  active-class="active"
-                >
-                  <q-item-section side>
-                    <q-item-label>
-                      {{ t('page.adminUser') }}
-                    </q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-item
-                  :inset-level="0.4"
-                  v-ripple
-                  clickable
-                  :to="{
-                    name: 'adminItem',
-                    params: { lang: route.params.lang }
-                  }"
-                  active-class="active"
-                >
-                  <q-item-section side>
-                    <q-item-label>
-                      {{ t('page.adminItem') }}
-                    </q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-item
-                  :inset-level="0.4"
-                  v-ripple
-                  clickable
-                  :to="{
-                    name: 'adminAffix',
-                    params: { lang: route.params.lang }
-                  }"
-                  active-class="active"
-                >
-                  <q-item-section side>
-                    <q-item-label>
-                      {{ t('page.adminAffix') }}
-                    </q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-item
-                  :inset-level="0.4"
-                  v-ripple
-                  clickable
-                  :to="{
-                    name: 'adminNotice',
-                    params: { lang: route.params.lang }
-                  }"
-                  active-class="active"
-                >
-                  <q-item-section side>
-                    <q-item-label>
-                      {{ t('page.adminNotice') }}
-                    </q-item-label>
-                  </q-item-section>
-                </q-item>
-              </q-list>
-            </q-expansion-item>
           </q-list>
           <q-separator />
           <UsefulLinks mode="listitem" />
@@ -975,86 +891,6 @@ watch(
                     <q-item-section side>
                       <q-item-label>
                         {{ t('page.history') }}
-                      </q-item-label>
-                    </q-item-section>
-                  </q-item>
-                </q-list>
-              </q-btn-dropdown>
-              <q-btn-dropdown
-                v-if="as.signed && !!as.info.isAdmin"
-                :toggle-aria-label="t('page.admin')"
-                flat
-                content-class="no-shadow"
-                no-caps
-                :ripple="false"
-                class="no-hover"
-                :class="{ active: isAdmin }"
-                transition-show="none"
-                transition-hide="none"
-                transition-duration="0"
-                dropdown-icon="img:/images/icons/dropdown.svg"
-              >
-                <template #label>
-                  {{ t('page.admin') }}
-                </template>
-                <q-list bordered class="page rounded-borders">
-                  <q-item
-                    v-ripple
-                    clickable
-                    :to="{
-                      name: 'adminUser',
-                      params: { lang: route.params.lang }
-                    }"
-                    active-class="active"
-                  >
-                    <q-item-section side>
-                      <q-item-label>
-                        {{ t('page.adminUser') }}
-                      </q-item-label>
-                    </q-item-section>
-                  </q-item>
-                  <q-item
-                    v-ripple
-                    clickable
-                    :to="{
-                      name: 'adminItem',
-                      params: { lang: route.params.lang }
-                    }"
-                    active-class="active"
-                  >
-                    <q-item-section side>
-                      <q-item-label>
-                        {{ t('page.adminItem') }}
-                      </q-item-label>
-                    </q-item-section>
-                  </q-item>
-                  <q-item
-                    v-ripple
-                    clickable
-                    :to="{
-                      name: 'adminAffix',
-                      params: { lang: route.params.lang }
-                    }"
-                    active-class="active"
-                  >
-                    <q-item-section side>
-                      <q-item-label>
-                        {{ t('page.adminAffix') }}
-                      </q-item-label>
-                    </q-item-section>
-                  </q-item>
-                  <q-item
-                    v-ripple
-                    clickable
-                    :to="{
-                      name: 'adminNotice',
-                      params: { lang: route.params.lang }
-                    }"
-                    active-class="active"
-                  >
-                    <q-item-section side>
-                      <q-item-label>
-                        {{ t('page.adminNotice') }}
                       </q-item-label>
                     </q-item-section>
                   </q-item>

@@ -149,6 +149,10 @@ body.body--dark {
   filter: invert(100%) !important;
 }
 
+.q-notification.notice-text .q-notification__message {
+  white-space: pre-line;
+}
+
 .q-focus-helper {
   opacity: 0.05 !important;
 }

@@ -132,11 +132,11 @@ export const initMessenger = async (as: AccountStore, is: ItemStore) => {
   as.messenger.on('notice', ({ message, caption }: { message: { ko: string, en: string }, caption: string }) => {
     Notify.create({
       icon: 'img:/images/icons/warning.svg',
-      classes: 'no-invert',
+      // 글자 그대로 표시한다(HTML 해석 안 함, back task-csj-025 G4). 줄바꿈은 notice-text CSS로 유지.
+      classes: 'no-invert notice-text',
       color: 'warning',
       textColor: 'dark',
       multiLine: true,
-      html: true,
       message: message[(i18n.global.locale.value ?? 'ko') as keyof typeof message],
       caption,
       timeout: 0,
