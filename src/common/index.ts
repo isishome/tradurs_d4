@@ -3,6 +3,7 @@ import { copyToClipboard, Notify, Platform, LocalStorage } from 'quasar'
 import { i18n } from 'src/boot/i18n'
 import { AffixValue } from 'src/types/item'
 import { MinMax } from 'src/stores/item-store'
+import { isValidAttributeText } from './attribute-text'
 
 export const checkName = (name: string) => {
   return (
@@ -11,11 +12,8 @@ export const checkName = (name: string) => {
   )
 }
 
-export const checkAttribute = (attribute: string) => {
-  return /^((\{x\})?[0-9a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣\s,\.'"%\(\)\[\]\+\-\:]+(\{x\})?)+$/gi.test(
-    attribute
-  )
-}
+export const checkAttribute = (attribute: string) =>
+  isValidAttributeText(attribute)
 
 export const checkEmail = (email: string) => {
   return /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/.test(

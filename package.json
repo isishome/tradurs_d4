@@ -6,10 +6,11 @@
   "author": "SeraSome",
   "private": true,
   "scripts": {
-    "test": "npm run check:ssr-source && npm run test:ocr:client && npm run test:consent",
+    "test": "npm run check:ssr-source && npm run test:ocr:client && npm run test:consent && npm run test:attribute",
     "check:ssr-source": "node scripts/check-ssr-source.mjs",
     "test:ocr:client": "node --test tests/ocr/client.test.mjs tests/ocr/dev-deps.test.mjs",
     "test:consent": "node --test tests/consent/consent.test.mjs",
+    "test:attribute": "node --test tests/attribute/attribute-text.test.mjs",
     "test:ocr": "node tests/ocr/prepare.mjs && node --test tests/ocr/*.test.mjs",
     "test:performance": "node tests/performance/prepare.mjs && node --test tests/performance/*.test.mjs",
     "dev": "npx quasar dev -m ssr -p 6090",
