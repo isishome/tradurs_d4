@@ -1,8 +1,8 @@
 import { Item, Price } from 'src/types/item'
 import { User } from 'src/types/user'
+import { DRAFT_MAX_AGE, draftKey, sweepItemDrafts } from './item-draft-key'
 
 const DRAFT_VERSION = 1
-const DRAFT_MAX_AGE = 7 * 24 * 60 * 60 * 1000
 
 type ItemDraft = {
   version: number
@@ -11,9 +11,6 @@ type ItemDraft = {
 }
 
 const storageAvailable = () => typeof window !== 'undefined'
-
-const draftKey = (identity?: string | null) =>
-  `d4.item-draft.${identity || 'anonymous'}`
 
 export const hydrateItemDraft = (value: Item): Item => {
   const item = Object.assign(new Item(''), value)
@@ -29,12 +26,18 @@ export const hydrateItemDraft = (value: Item): Item => {
   return item
 }
 
-export const loadItemDraft = (identity?: string | null): Item | null => {
+export const loadItemDraft = (owner?: string | null): Item | null => {
   if (!storageAvailable()) return null
 
   try {
+    sweepItemDrafts(window.localStorage, Date.now())
+  } catch {
+    // Storage access may be blocked by browser privacy settings.
+  }
+
+  try {
     const draft = JSON.parse(
-      window.localStorage.getItem(draftKey(identity)) ?? ''
+      window.localStorage.getItem(draftKey(owner)) ?? ''
     ) as ItemDraft
 
     if (
@@ -43,20 +46,20 @@ export const loadItemDraft = (identity?: string | null): Item | null => {
       Date.now() - draft.savedAt > DRAFT_MAX_AGE ||
       !draft.item
     ) {
-      clearItemDraft(identity)
+      clearItemDraft(owner)
       return null
     }
 
     return hydrateItemDraft(draft.item)
   } catch {
-    clearItemDraft(identity)
+    clearItemDraft(owner)
     return null
   }
 }
 
 export const saveItemDraft = (
   item: Item,
-  identity?: string | null
+  owner?: string | null
 ): void => {
   if (!storageAvailable() || item.itemId) return
 
@@ -67,17 +70,17 @@ export const saveItemDraft = (
   }
 
   try {
-    window.localStorage.setItem(draftKey(identity), JSON.stringify(draft))
+    window.localStorage.setItem(draftKey(owner), JSON.stringify(draft))
   } catch {
     // Draft persistence must never interrupt item editing.
   }
 }
 
-export const clearItemDraft = (identity?: string | null): void => {
+export const clearItemDraft = (owner?: string | null): void => {
   if (!storageAvailable()) return
 
   try {
-    window.localStorage.removeItem(draftKey(identity))
+    window.localStorage.removeItem(draftKey(owner))
   } catch {
     // Storage access may be blocked by browser privacy settings.
   }

@@ -124,7 +124,7 @@ watch(
 
     if (draftTimer) clearTimeout(draftTimer)
     draftTimer = setTimeout(() => {
-      saveItemDraft(item, as.info.id)
+      saveItemDraft(item, as.info.battleTag)
     }, 500)
   },
   { deep: true }
@@ -277,7 +277,7 @@ const done = () => {
 
 const hideEditable = () => {
   if (progress.value && !activatedItem.value.itemId)
-    clearItemDraft(as.info.id)
+    clearItemDraft(as.info.battleTag)
 
   if (draftTimer) {
     clearTimeout(draftTimer)
@@ -947,7 +947,7 @@ const openNewItem = () => {
 const create = () => {
   if (!as.requireBattleTag()) return
 
-  const draft = loadItemDraft(as.info.id)
+  const draft = loadItemDraft(as.info.battleTag)
 
   if (!draft) {
     openNewItem()
@@ -970,7 +970,7 @@ const create = () => {
       activateShow.value = true
     })
     .onCancel(() => {
-      clearItemDraft(as.info.id)
+      clearItemDraft(as.info.battleTag)
       openNewItem()
     })
 }
