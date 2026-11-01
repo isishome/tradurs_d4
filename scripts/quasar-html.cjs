@@ -60,11 +60,11 @@ function quasarHtml() {
     // transforms so SSR and development also use the same patched source.
     enforce: 'post',
     configResolved(config) {
-      server = config.define.__QUASAR_SSR_SERVER__ === true
+      server = config.define['import.meta.env.QUASAR_SERVER'] === 'true'
     },
     buildStart() {
       transformed.clear()
-      if (version !== '2.27.0') throw new Error('Review Quasar HTML fixes before upgrading Quasar')
+      if (version !== '2.35.2') throw new Error('Review Quasar HTML fixes before upgrading Quasar')
       for (const file of Object.keys(patches)) {
         patchSource(fs.readFileSync(path.join(root, 'src', file), 'utf8'), file)
       }

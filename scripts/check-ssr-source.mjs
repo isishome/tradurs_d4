@@ -4,6 +4,8 @@ import { fileURLToPath } from 'node:url'
 
 const root = fileURLToPath(new URL('../', import.meta.url))
 const required = [
+  'src-ssr/package.json',
+  'src-ssr/package-lock.json',
   'src-ssr/server.ts',
   'src-ssr/critical-css.ts',
   'src-ssr/ssr-flag.d.ts',

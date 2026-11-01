@@ -1,4 +1,4 @@
-import { boot } from 'quasar/wrappers'
+import { defineBoot as boot } from '#q-app'
 
 import D4Btn from 'components/UI/D4Btn.vue'
 import D4Counter from 'components/UI/D4Counter.vue'

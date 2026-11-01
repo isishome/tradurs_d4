@@ -6,21 +6,31 @@
  */
 
 /**
- * Make sure to yarn add / npm install (in your project root)
- * anything you import here (except for express and compression).
+ * Install webserver dependencies in /src-ssr.
  */
 import express from 'express';
+import type { Application, Request, Response } from 'express';
+import type { Server } from 'node:http';
+declare module '#q-app' {
+  interface SsrDriver {
+    app: Application;
+    listenResult: Server;
+    request: Request;
+    response: Response;
+  }
+}
 import compression from 'compression';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { createCriticalCssRenderer } from './critical-css';
 import {
-  ssrClose,
-  ssrCreate,
-  ssrListen,
-  ssrRenderPreloadTag,
-  ssrServeStaticContent,
-} from 'quasar/wrappers';
+  defineSsrClose as ssrClose,
+  defineSsrCreate as ssrCreate,
+  defineSsrInjectDevMiddleware,
+  defineSsrListen as ssrListen,
+  defineSsrRenderPreloadTag as ssrRenderPreloadTag,
+  defineSsrServeStaticContent as ssrServeStaticContent,
+} from '#q-app';
 
 /**
  * Create your webserver and return its instance.
@@ -38,7 +48,7 @@ export const create = ssrCreate((/* { ... } */) => {
 
   // place here any middlewares that
   // absolutely need to run before anything else
-  if (process.env.PROD) {
+  if (import.meta.env.QUASAR_PROD) {
     app.use(compression());
   }
 
@@ -56,10 +66,11 @@ export const create = ssrCreate((/* { ... } */) => {
  * For production, you can instead export your
  * handler for serverless use or whatever else fits your needs.
  */
-export const listen = ssrListen(async ({ app, port, isReady }) => {
-  await isReady();
+export const injectDevMiddleware = defineSsrInjectDevMiddleware(({ app }) => middleware => { app.use(middleware); });
+
+export const listen = ssrListen(async ({ app, port }) => {
   return app.listen(port, () => {
-    if (process.env.PROD) {
+    if (import.meta.env.QUASAR_PROD) {
       console.log('Server listening at port ' + port);
     }
   });
@@ -79,17 +90,14 @@ export const close = ssrClose(({ listenResult }) => {
   return listenResult.close();
 });
 
-const maxAge = process.env.DEV ? 0 : 1000 * 60 * 60 * 24 * 30;
+const maxAge = import.meta.env.QUASAR_DEV ? 0 : 1000 * 60 * 60 * 24 * 30;
 
 /**
  * Should return middleware that serves the indicated path
  * with static content.
  */
-export const serveStaticContent = ssrServeStaticContent((path, opts) => {
-  return express.static(path, {
-    maxAge,
-    ...opts,
-  });
+export const serveStaticContent = ssrServeStaticContent(({ app, resolve }) => ({ urlPath, pathToServe, opts = {} }) => {
+  app.use(resolve.urlPath(urlPath), express.static(resolve.public(pathToServe), { maxAge, ...opts }));
 });
 
 const jsRE = /\.js$/;
@@ -100,7 +108,7 @@ const gifRE = /\.gif$/;
 const jpgRE = /\.jpe?g$/;
 const pngRE = /\.png$/;
 const renderCriticalCss = createCriticalCssRenderer((name) =>
-  readFileSync(join(__dirname, 'client', 'assets', name), 'utf8')
+  readFileSync(join(import.meta.dirname, 'client', 'assets', name), 'utf8')
 );
 
 /**
@@ -113,7 +121,7 @@ export const renderPreloadTag = ssrRenderPreloadTag((file) => {
   }
 
   if (cssRE.test(file) === true) {
-    if (process.env.PROD) {
+    if (import.meta.env.QUASAR_PROD) {
       const inline = renderCriticalCss(file);
       if (inline !== undefined) return inline;
     }

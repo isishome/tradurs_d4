@@ -1,4 +1,4 @@
-import { ssrMiddleware } from 'quasar/wrappers'
+import { defineSsrMiddleware as ssrMiddleware } from '#q-app'
 
 export default ssrMiddleware(({ app, resolve }) => {
   // Static files are served first. Unpublished optional manifests must not

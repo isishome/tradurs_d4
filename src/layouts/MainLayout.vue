@@ -16,9 +16,9 @@ import Adsense from 'components/global/Adsense.vue'
 import UsefulLinks from 'src/components/global/UsefulLinks.vue'
 import TradePlaceholder from 'src/components/global/TradePlaceholder.vue'
 
-const props = defineProps<{
-  lang: string
-}>()
+const props = withDefaults(defineProps<{
+  lang?: string
+}>(), { lang: 'ko' })
 
 const prod: boolean = import.meta.env.PROD
 const version = import.meta.env.VITE_APP_VERSION

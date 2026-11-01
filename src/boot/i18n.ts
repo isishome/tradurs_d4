@@ -1,4 +1,4 @@
-import { boot } from 'quasar/wrappers'
+import { defineBoot as boot } from '#q-app'
 import { createI18n } from 'vue-i18n'
 import { messages, numberFormats } from 'src/i18n'
 

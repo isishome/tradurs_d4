@@ -3,6 +3,7 @@ import { ref, reactive, computed, watch, onMounted } from 'vue'
 import { useQuasar, scroll, QExpansionItem } from 'quasar'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { resolveMessages } from 'src/i18n/resolve-messages'
 import { useGlobalStore } from 'stores/global-store'
 import { useAccountStore } from 'stores/account-store'
 
@@ -28,12 +29,12 @@ const $q = useQuasar()
 const { getScrollTarget, setVerticalScrollPosition } = scroll
 const route = useRoute()
 const router = useRouter()
-const { t, tm } = useI18n({ useScope: 'global' })
+const { t, tm, rt } = useI18n({ useScope: 'global' })
 const gs = useGlobalStore()
 const as = useAccountStore()
 
 const supportRefs = ref<Array<QExpansionItem>>([])
-const support = computed(() => tm('support') as Array<Support>)
+const support = computed(() => reactive(resolveMessages(tm('support'), message => rt(message, { x: '{x}' })) as Array<Support>))
 const findSection = ref<string>(props.section || 'basic')
 const contact = reactive<{
   show: boolean

@@ -1,4 +1,4 @@
-import { boot } from 'quasar/wrappers'
+import { defineBoot as boot } from '#q-app'
 import axios, {
   AxiosInstance,
   AxiosRequestConfig,
@@ -34,7 +34,7 @@ export default boot(
     // Stores must retain their own SSR request's client, not a module binding
     // that the next simultaneous render can replace.
     store.use(() => ({ $api: markRaw(requestApi) }))
-    if (!process.env.SERVER) api = requestApi
+    if (!import.meta.env.QUASAR_SERVER) api = requestApi
 
     // 상태 변경 요청에 CSRF 토큰을 붙인다(back task-csj-006). SSR 상태를 이어받은 브라우저도
     // 같은 값을 쓰도록 요청할 때마다 store에서 읽는다.
@@ -48,7 +48,7 @@ export default boot(
     const csrfRetried = new WeakSet<object>()
     const retryWithNewCsrf = async (config: InternalAxiosRequestConfig) => {
       csrfRetried.add(config)
-      const options = process.env.SERVER
+      const options = import.meta.env.QUASAR_SERVER
         ? { headers: { Cookie: config.headers.get('Cookie') } }
         : undefined
       await useAccountStore(store)
@@ -77,7 +77,7 @@ export default boot(
         const caption = (typeof message === 'object' && message.caption) || ''
         message = (typeof message === 'object' && message.body) || message
 
-        if (process.env.SERVER || dismiss) return Promise.reject(error)
+        if (import.meta.env.QUASAR_SERVER || dismiss) return Promise.reject(error)
 
         // 403은 back이 배틀태그 미인증 사용자를 거절한 경우다(0132). 로그인은 그대로 두고 인증 안내를 연다.
         if (status === 403) {

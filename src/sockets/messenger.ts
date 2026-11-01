@@ -12,7 +12,7 @@ const reconnectionAttempts = 3
 let reconnectionCount = 0
 
 export const initMessenger = async (as: AccountStore, is: ItemStore) => {
-  if (process.env.SERVER)
+  if (import.meta.env.QUASAR_SERVER)
     return
 
   const manager = new Manager(import.meta.env.VITE_APP_SOCKET, {

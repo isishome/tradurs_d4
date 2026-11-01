@@ -8,12 +8,15 @@
 // Configuration for your app
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js
 
-const { configure } = require('quasar/wrappers')
-const path = require('path')
-const { quasarHtml } = require('./scripts/quasar-html.cjs')
+import { defineConfig as configure } from '#q-app'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+import htmlPatches from './scripts/quasar-html.cjs'
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const { quasarHtml } = htmlPatches
 //const { mergeConfig } = require('vite')
 
-module.exports = configure(function (ctx = {}) {
+export default configure(function (ctx = {}) {
   return {
     // https://v2.quasar.dev/quasar-cli-vite/prefetch-feature
     preFetch: true,
@@ -41,10 +44,15 @@ module.exports = configure(function (ctx = {}) {
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#build
     build: {
-      devQuasarTreeshaking: true,
+      env: {
+        clientPrefix: ['VITE_'],
+        file: [ctx.dev ? '.env.development' : '.env.production', ctx.dev ? '.env.development.local' : '.env.production.local']
+      },
+      vueOptionsAPI: true,
+      alias: Object.fromEntries(['src', 'boot', 'stores', 'components', 'layouts', 'pages', 'assets'].map(name => [name, path.resolve(__dirname, name === 'src' ? 'src' : `src/${name}`)])),
       target: {
         browser: ['es2019', 'edge88', 'firefox78', 'chrome87', 'safari13.1'],
-        node: 'node20'
+        node: 'node22'
       },
 
       vueRouterMode: 'history', // available values: 'hash', 'history'
@@ -63,11 +71,28 @@ module.exports = configure(function (ctx = {}) {
       // polyfillModulePreload: true,
       // distDir
 
-      extendViteConf(viteConf) {
+      extendViteConf(viteConf, { isServer = false } = {}) {
         viteConf.plugins = [...(viteConf.plugins || []), quasarHtml()]
+        // The HTML patches must also transform Quasar's source in SSR.
+        viteConf.ssr = { ...viteConf.ssr, noExternal: [...(viteConf.ssr?.noExternal || []), 'quasar'] }
+        if (!isServer) {
+          viteConf.build = {
+            ...viteConf.build,
+            rolldownOptions: {
+              ...viteConf.build?.rolldownOptions,
+              // Preserve the immutable filenames used by critical CSS selection.
+              output: {
+                entryFileNames: 'assets/[name].[hash].js',
+                chunkFileNames: 'assets/[name].[hash].js',
+                assetFileNames: 'assets/[name].[hash][extname]',
+                hashCharacters: 'hex'
+              }
+            }
+          }
+        }
         viteConf.define.__VUE_PROD_HYDRATION_MISMATCH_DETAILS__ = false
         {
-          // Keep ONNX's variable WASM import out of Vite 2 import analysis:
+          // Keep ONNX's variable WASM import out of Vite import analysis:
           // it injects /@vite/client (DOM-only) into the worker dependency.
           // Use the identical pinned ESM runtime as the production worker.
           viteConf.resolve = {
@@ -91,9 +116,9 @@ module.exports = configure(function (ctx = {}) {
           ])],
           // ONNX uses native BigInt. This affects development prebundling only;
           // keep the existing production browser target unchanged.
-          esbuildOptions: {
-            ...viteConf.optimizeDeps?.esbuildOptions,
-            target: 'es2020'
+          rolldownOptions: {
+            ...viteConf.optimizeDeps?.rolldownOptions,
+            transform: { target: 'es2020' }
           }
         }
         // ONNX's WASM-only ESM runtime requires modern syntax. Load its pinned
@@ -101,7 +126,7 @@ module.exports = configure(function (ctx = {}) {
         viteConf.worker = {
           ...viteConf.worker,
           format: 'es',
-          plugins: [{
+          plugins: () => [{
             name: 'ocr-onnx-wasm-runtime',
             enforce: 'pre',
             resolveId(id) {
@@ -130,7 +155,7 @@ module.exports = configure(function (ctx = {}) {
         //   }
         // })
 
-        viteConf.server = {
+        if (!isServer) viteConf.server = {
           ...(viteConf.server || {}),
           hmr: {
             protocol: 'ws',
@@ -144,15 +169,16 @@ module.exports = configure(function (ctx = {}) {
 
       vitePlugins: [
         [
-          '@intlify/vite-plugin-vue-i18n',
+          '@intlify/unplugin-vue-i18n/vite',
           {
             // if you want to use Vue I18n Legacy API, you need to set `compositionOnly: false`
             // compositionOnly: false,
 
             runtimeOnly: false,
+            ssr: true,
 
             // you need to set i18n resource including paths !
-            include: path.resolve(__dirname, './src/i18n/**')
+            include: [path.resolve(__dirname, './src/i18n/ko/index.ts'), path.resolve(__dirname, './src/i18n/en/index.ts')]
           }
         ]
       ]

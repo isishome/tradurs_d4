@@ -7,7 +7,7 @@ export default {
     const as = useAccountStore(store)
     const is = useItemStore(store)
 
-    const options = process.env.SERVER
+    const options = import.meta.env.QUASAR_SERVER
       ? {
           headers: {
             Cookie: ssrContext?.req.headers['cookie'],
@@ -35,6 +35,7 @@ import {
   RouteParamsRaw
 } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { resolveMessages } from 'src/i18n/resolve-messages'
 import { useGlobalStore } from 'stores/global-store'
 import { useAdBlock } from 'src/composables/adblock'
 import BattleTagGuide from 'components/global/BattleTagGuide.vue'
@@ -53,7 +54,8 @@ const $q = useQuasar()
 const route = useRoute()
 const router = useRouter()
 const gs = useGlobalStore()
-const { t, tm, locale } = useI18n({ useScope: 'global' })
+const { t, tm, rt, locale } = useI18n({ useScope: 'global' })
+const noticeContents = computed(() => resolveMessages(tm('notice.contents'), rt) as Array<IParagraph>)
 const { check } = useAdBlock()
 
 const isDark = ref(
@@ -203,7 +205,7 @@ onMounted(() => {
           <div class="text-area">{{ t('notice.top') }}</div>
           <div>
             <template
-              v-for="(c, i) in tm('notice.contents') as Array<IParagraph>"
+              v-for="(c, i) in noticeContents"
               :key="i"
             >
               <div

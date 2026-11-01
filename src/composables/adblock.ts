@@ -5,7 +5,7 @@ const prod: boolean = import.meta.env.PROD
 
 export function useAdBlock() {
   const check = ({ actions }: { actions?: Array<QNotifyAction> }) => {
-    if (Math.random() > .8 && prod && !process.env.SERVER) {
+    if (Math.random() > .8 && prod && !import.meta.env.QUASAR_SERVER) {
       fetch('https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js').then(() => { }).catch(() => {
         Notify.create({
           progress: true,

@@ -1,13 +1,12 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { createRequire } from 'node:module'
+import axios from 'axios'
 import { renderToString } from 'vue/server-renderer'
 import { parse } from '@vue/compiler-dom'
+import { resolveMessages, koMessages, enMessages } from './.generated/loaders.mjs'
 
-const require = createRequire(import.meta.url)
-const axios = require('axios')
 // Import only the renderer factory. Never import index.js/start a webserver.
-const createApp = require('../../dist/ssr/server/server-entry.js').default
+const createApp = (await import('../../dist/ssr/server/server-entry.js')).default
 
 // Inspect the original SSR tree, before a browser can repair invalid nesting.
 function assertValidShell(html) {
@@ -58,12 +57,31 @@ test('production SSR outputs the shell and localized preload without catalog req
     return { data, status: 200, statusText: 'OK', headers: {}, config }
   }
   try {
-    const contexts = [contextFor('/ko'), contextFor('/en'), contextFor('/ko', 'eternal'), contextFor('/ko', '', true)]
+    const contexts = [contextFor('/ko'), contextFor('/en'), contextFor('/ko', 'eternal'), contextFor('/ko', '', true), contextFor('/')]
     const apps = await Promise.all(contexts.map(context => createApp(context)))
     assert.notEqual(apps[0].config.globalProperties.$api, apps[1].config.globalProperties.$api)
     assert.equal(apps[0].config.globalProperties.$api.defaults.headers.common['Accept-Language'], 'ko')
     assert.equal(apps[1].config.globalProperties.$api.defaults.headers.common['Accept-Language'], 'en')
     const html = await Promise.all(apps.map((app, i) => renderToString(app, contexts[i])))
+    // App/MainLayout select the route locale during setup, i.e. while rendering.
+    assert.equal(apps[0].config.globalProperties.$t('item.unknown'), '알 수 없는 아이템')
+    assert.equal(apps[1].config.globalProperties.$t('item.unknown'), 'Unknown Item')
+    assert.equal(apps[0].config.globalProperties.$n(12000, 'goldCompact'), '1.2만')
+    assert.equal(apps[1].config.globalProperties.$n(12000, 'goldCompact'), '12K')
+    for (const [index, source] of [[0, koMessages], [1, enMessages], [4, koMessages]]) {
+      const gp = apps[index].config.globalProperties
+      for (const [key, expected] of [
+        ['notice.contents', source.notice.contents],
+        ['support', source.support],
+        ['sort.options', source.sort.options]
+      ]) {
+        const raw = gp.$tm(key)
+        const before = JSON.stringify(raw)
+        const resolved = resolveMessages(raw, key === 'support' ? message => gp.$rt(message, { x: '{x}' }) : gp.$rt)
+        assert.deepEqual(resolved, expected, `${contexts[index].req.url}: ${key}`)
+        assert.equal(JSON.stringify(raw), before, 'resolution must not mutate locale resources')
+      }
+    }
     await Promise.all(contexts.map(context => context.finish()))
     for (const body of html) {
       assertValidShell(body)
@@ -83,7 +101,7 @@ test('production SSR outputs the shell and localized preload without catalog req
     assert.match(contexts[1]._meta.htmlAttrs, /lang=["']?en\b/)
     assert.match(html[3], /<button[^>]*aria-label="지식"/)
     assert.doesNotMatch(html[3], /<button[^>]*aria-label="Expand"/)
-    assert.equal(requests.length, 12)
+    assert.equal(requests.length, 15)
   } finally {
     axios.defaults.adapter = previous
   }

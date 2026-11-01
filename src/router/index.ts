@@ -1,4 +1,4 @@
-import { route } from 'quasar/wrappers'
+import { defineRouter as route } from '#q-app'
 import {
   createMemoryHistory,
   createRouter,
@@ -25,15 +25,15 @@ const prod = import.meta.env.PROD
 export default route(function (
   { store, ssrContext } /* { store, ssrContext } */
 ) {
-  const createHistory = process.env.SERVER
+  const createHistory = import.meta.env.QUASAR_SERVER
     ? createMemoryHistory
-    : process.env.VUE_ROUTER_MODE === 'history'
+    : import.meta.env.QUASAR_VUE_ROUTER_MODE === 'history'
       ? createWebHistory
       : createWebHashHistory
 
   const Router = createRouter({
     scrollBehavior(to, from, savedPosition) {
-      if (process.env.SERVER) return
+      if (import.meta.env.QUASAR_SERVER) return
       if (!!history.state.noScrollTop) return
       else if (!!history.state.scrollTop) return { left: 0, top: 0 }
 
@@ -44,10 +44,10 @@ export default route(function (
     // Leave this as is and make changes in quasar.conf.js instead!
     // quasar.conf.js -> build -> vueRouterMode
     // quasar.conf.js -> build -> publicPath
-    history: createHistory(process.env.VUE_ROUTER_BASE)
+    history: createHistory(import.meta.env.QUASAR_VUE_ROUTER_BASE)
   })
 
-  Router.beforeEach(async (to, from, next) => {
+  Router.beforeEach(async (to) => {
     const lang = to.params.lang || 'ko'
 
     const gs = useGlobalStore(store)
@@ -58,7 +58,7 @@ export default route(function (
     const requireAuth = !!to.matched.some((m) => m.meta.requireAuth)
 
     if (as.signed === null && !['pnf', 'ftc'].includes(to.name as string)) {
-      const options = process.env.SERVER
+      const options = import.meta.env.QUASAR_SERVER
         ? {
             headers: {
               Cookie: ssrContext?.req.headers['cookie'],
@@ -83,10 +83,10 @@ export default route(function (
         (onlyDev && prod)) &&
       to.name !== 'pnf'
     )
-      return next({ name: 'pnf' })
+      return { name: 'pnf' }
 
     if (requireAuth && !as.info.id)
-      return next({ name: 'tradeList', params: { lang: to.params.lang } })
+      return { name: 'tradeList', params: { lang: to.params.lang } }
 
     if (
       !!as.info.id &&
@@ -96,11 +96,11 @@ export default route(function (
       try {
         await initMessenger(as, is)
       } catch {
-        return next({ name: 'ftc' })
+        return { name: 'ftc' }
       }
     }
 
-    return next()
+    return
   })
 
   Router.afterEach((to, from) => {

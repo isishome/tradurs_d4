@@ -85,13 +85,13 @@ test('old listing response cannot overwrite the current pagination flags', async
 })
 
 test('manifest routes match real Express paths with the installed Quasar URL resolver', () => {
-  const require = createRequire(import.meta.url)
+  const require = createRequire(new URL('../../src-ssr/package.json', import.meta.url))
   const { Router } = require('express')
   const template = readFileSync(new URL('../../node_modules/@quasar/app-vite/templates/entry/ssr-prod-webserver.js', import.meta.url), 'utf8')
-  const resolverSource = template.slice(template.indexOf('const doubleSlashRE'), template.indexOf('const rootFolder'))
+  const resolverSource = template.slice(template.indexOf('const multiSlashRE'), template.indexOf('const rootFolder'))
   assert.ok(resolverSource.includes('const resolveUrlPath'))
   for (const base of ['/', '/app/']) {
-    const urlPath = new Function(resolverSource.replace('<%= build.publicPath %>', base) + '; return resolveUrlPath')()
+    const urlPath = new Function(resolverSource.replace('<%= quasarConf.build.publicPath %>', base) + '; return resolveUrlPath')()
     const router = Router()
     resourceStatus({ app: router, resolve: { urlPath } })
     for (const file of ['ai-catalog.json', '.well-known/ai-catalog.json']) {

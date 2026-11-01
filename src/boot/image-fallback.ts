@@ -1,4 +1,4 @@
-import { boot } from 'quasar/wrappers'
+import { defineBoot as boot } from '#q-app'
 
 const ITEM_IMAGE_PREFIX = '/images/items/'
 const FALLBACK_IMAGE = '/images/unknown.webp'
@@ -23,7 +23,7 @@ const isFallbackPath = (src: string): boolean => {
 }
 
 export default boot(() => {
-  if (process.env.SERVER) return
+  if (import.meta.env.QUASAR_SERVER) return
 
   document.addEventListener(
     'error',

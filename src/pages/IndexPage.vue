@@ -11,6 +11,7 @@ import {
 import { useAccountStore } from 'stores/account-store'
 import { ref, computed, onMounted, watch, reactive, nextTick, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { resolveMessages } from 'src/i18n/resolve-messages'
 import { useQuasar, uid } from 'quasar'
 import { Item, IPrice } from 'src/types/item'
 import { scrollPos } from 'src/common'
@@ -33,7 +34,7 @@ const router = useRouter()
 const is = useItemStore()
 const gs = useGlobalStore()
 const as = useAccountStore()
-const { t, tm, locale } = useI18n({ useScope: 'global' })
+const { t, tm, rt, locale } = useI18n({ useScope: 'global' })
 const $q = useQuasar()
 
 // loading variable
@@ -58,9 +59,7 @@ const over = computed(() => is.itemPage.over)
 const more = computed(() => is.itemPage.more)
 const listHeaderRef = ref<HTMLDivElement | undefined>()
 const selectedAll = ref<boolean>(false)
-const sortOptions = reactive<Array<{ value: string; label: string }>>(
-  tm('sort.options')
-)
+const sortOptions = computed(() => resolveMessages(tm('sort.options'), rt))
 const isExpanded = computed(() => is.storage.data.expanded || false)
 const noSelected = computed(
   () => items.value.filter((i) => i.selected).length === 0

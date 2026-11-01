@@ -1,4 +1,4 @@
-import { boot } from 'quasar/wrappers'
+import { defineBoot as boot } from '#q-app'
 import { useAccountStore } from 'src/stores/account-store'
 import { useItemStore } from 'src/stores/item-store'
 import { initMessenger } from 'src/sockets/messenger'
@@ -6,7 +6,7 @@ import { initMessenger } from 'src/sockets/messenger'
 // 뒤로 가기 캐시(bfcache)로 되살아난 화면은 떠날 때 상태 그대로다. 다른 사이트(tradurs.com 내 정보 등)에서
 // 바꾼 로그인·계정 정보를 다시 확인하고, 떠날 때 닫은 메신저 소켓을 다시 연다.
 export default boot(({ store }) => {
-  if (process.env.SERVER) return
+  if (import.meta.env.QUASAR_SERVER) return
 
   const as = useAccountStore(store)
 

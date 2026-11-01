@@ -1,4 +1,4 @@
-import { store } from 'quasar/wrappers'
+import { defineStore as store } from '#q-app'
 import { createPinia } from 'pinia'
 import { Router } from 'vue-router'
 import type { AxiosInstance } from 'axios'

@@ -2,7 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { spawnSync } from 'node:child_process'
-import { fileURLToPath } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 import path from 'node:path'
 
 const root = fileURLToPath(new URL('../../', import.meta.url))
@@ -21,11 +21,9 @@ function productionNodeFlags() {
 // process with the production flags so CI on the production Node version catches a missing
 // Web Crypto global (2026-10-26: every /item/:id refresh returned 500 on node:18-alpine).
 const renderItemPage = `
-const { createRequire } = require('node:module')
-const rootRequire = createRequire(${JSON.stringify(path.join(root, 'package.json'))})
-const axios = rootRequire('axios')
-const { renderToString } = rootRequire('vue/server-renderer')
-const createApp = require(${JSON.stringify(path.join(root, 'dist/ssr/server/server-entry.js'))}).default
+import axios from 'axios'
+import { renderToString } from 'vue/server-renderer'
+import createApp from ${JSON.stringify(pathToFileURL(path.join(root, 'dist/ssr/server/server-entry.js')).href)}
 axios.defaults.adapter = async config => {
   let data
   if (config.url === '/account/signed')
@@ -54,7 +52,7 @@ createApp(context)
 
 const renderItem = (env = {}) => {
   // Run a file, not `node -e`: eval mode exposes the crypto module as a global and hides the bug.
-  const script = path.join(root, 'tests/performance/.generated/render-item-page.cjs')
+  const script = path.join(root, 'tests/performance/.generated/render-item-page.mjs')
   mkdirSync(path.dirname(script), { recursive: true })
   writeFileSync(script, renderItemPage)
   const result = spawnSync(process.execPath, [...productionNodeFlags(), script], {

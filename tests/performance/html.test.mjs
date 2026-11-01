@@ -13,7 +13,7 @@ const require = createRequire(import.meta.url)
 const { quasarHtml, patchSource, patches } = require('../../scripts/quasar-html.cjs')
 const root = fileURLToPath(new URL('../../', import.meta.url))
 const plugin = quasarHtml()
-plugin.configResolved({ define: { __QUASAR_SSR_SERVER__: true } })
+plugin.configResolved({ define: { 'import.meta.env.QUASAR_SERVER': 'true' } })
 plugin.buildStart()
 await build({
   stdin: {
@@ -27,7 +27,7 @@ await build({
   external: ['vue'],
   outfile: path.join(root, 'tests/performance/.generated/html.mjs'),
   define: {
-    __QUASAR_VERSION__: '"2.27.0"', __QUASAR_SSR__: 'true',
+    __QUASAR_VERSION__: '"2.35.2"', __QUASAR_SSR__: 'true',
     __QUASAR_SSR_SERVER__: 'true', __QUASAR_SSR_CLIENT__: 'false',
     __QUASAR_SSR_PWA__: 'false', 'process.env.NODE_ENV': '"production"'
   },
@@ -93,7 +93,7 @@ test('dependency drift fails rather than silently dropping a fix', () => {
 
 test('development versioned module IDs receive the same HTML fixes as SSR', () => {
   const client = quasarHtml()
-  client.configResolved({ define: { __QUASAR_SSR_SERVER__: false } })
+  client.configResolved({ define: { 'import.meta.env.QUASAR_SERVER': 'false' } })
   client.buildStart()
   for (const file of Object.keys(patches)) {
     const id = require.resolve(`quasar/src/${file}`)

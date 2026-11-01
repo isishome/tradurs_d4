@@ -22,7 +22,7 @@ export default {
     tempItem.price.loading = true
     is.detailItem.splice(0, 1, tempItem)
 
-    const options = process.env.SERVER
+    const options = import.meta.env.QUASAR_SERVER
       ? {
           headers: {
             Cookie: ssrContext?.req.headers['cookie'],
