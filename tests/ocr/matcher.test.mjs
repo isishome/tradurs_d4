@@ -68,7 +68,7 @@ test('Leoric live wording preserves actual affixes and duplicate sockets, not ca
     {value:25,label:'의지력 +{x}'}, {value:7,label:'공격 속도 +{x}%'},
     {value:925,label:'모든 저항 +{x}'}, {value:338,label:'모든 원소 저항 +{x}%'},
     {value:105,label:'최대 생명력 +{x}'}, {value:1030,label:'주 능력치 +{x}'},
-    {value:1023,label:'암흑 저항 +{x}'}, {value:128,label:'화염 저항 {x}%'},
+    {value:1023,label:'저항 +{x} 암흑'}, {value:128,label:'화염 저항 {x}%'},
     ...(await readCatalog()).filter(r=>[3303,1130].includes(r.id)&&r.language==='ko').map(r=>({value:r.id,label:r.label})),
     {value:1,label:'빈 홈'}
   ]
@@ -80,4 +80,14 @@ test('Leoric live wording preserves actual affixes and duplicate sockets, not ca
   assert.deepEqual(actual.find(r=>r.id===3303).values.returnRangeValues,[{min:35,max:50}])
   // Flat Fire Resistance has its own ID, never percent or Shadow resistance.
   assert.ok(!actual.some(r=>[105,1030,1023,128,338].includes(r.id)))
+})
+test('flat elemental resistance lines use the live `저항 +{x} 원소` IDs, not percent IDs', async () => {
+  const rows = (await readCatalog()).filter(r=>r.type==='standard')
+  const ko = rows.filter(r=>r.language==='ko').map(r=>({value:r.id,label:r.label}))
+  const lines = ['저항+3,500화염(+3,500)','저항+421냉기','저항+2,980독(+150)','저항+450번개','저항+1,200암흑','저항+300물리']
+  assert.deepEqual(match(ko,lines,'가-힣').map(r=>[r.id,...r.values.returnValues]),
+    [[1130,3500],[1134,421],[1135,2980],[1085,450],[1023,1200],[938,300]])
+  const en = rows.filter(r=>r.language==='en').map(r=>({value:r.id,label:r.label}))
+  assert.deepEqual(match(en,['+421 Cold Resistance','+2,980 Poison Resistance']).map(r=>[r.id,...r.values.returnValues]),
+    [[1134,421],[1135,2980]])
 })
