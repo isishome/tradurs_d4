@@ -54,3 +54,25 @@ test('requested-affix patch contains both canonical languages and only dictionar
   assert.match(sql, /SIGNAL SQLSTATE/)
   assert.doesNotMatch(sql, /\b(?:DROP|DELETE|TRUNCATE|ALTER|item_affixes|item_affix_values)\b/i)
 })
+
+test('Hellfire Torch set-count lines match their own set ID in both languages (task036)', async () => {
+  const setCount = catalog.filter(r => r.type === 'standard' && (r.id === 1133 || (r.id >= 1136 && r.id <= 1172)))
+  assert.equal(setCount.length, 76)
+  for (const row of setCount) {
+    assert.equal(row.placeholders, 0)
+    const lines = row.language === 'ko'
+      ? [row.label.replace(' 추가됩니다.', ''), '추가됩니다.'].map(s => s.replaceAll(' ', ''))
+      : [row.label]
+    const result = match(lines, row.language)
+    assert.equal(result.length, 1, `${row.id} ${row.language}`)
+    assert.equal(result[0].id, row.id, `${row.label} matched ${result[0].id}`)
+    assert.deepEqual(result[0].values.returnValues, [])
+  }
+  assert.equal(catalog.find(r => r.id === 1137 && r.language === 'ko').label, '광전사의 도가니 세트 개수가 +1 추가됩니다.')
+  const sql = await readFile(new URL('../../../query/d4/season/15/requested_affixes_20261104.sql', import.meta.url), 'utf8')
+  for (const row of setCount.filter(r => r.id !== 1133)) {
+    assert.ok(sql.includes(`(${row.id}, '${row.label.replaceAll("'", "''")}', '${row.language}')`), `${row.id} ${row.language}`)
+  }
+  assert.match(sql, /SIGNAL SQLSTATE/)
+  assert.doesNotMatch(sql, /\b(?:DROP TABLE|DELETE|TRUNCATE|ALTER|INSERT INTO item_affixes|item_affix_values)\b/i)
+})

@@ -37,6 +37,7 @@ import D4RunewordMaterialStack from 'components/D4RunewordMaterialStack.vue'
 import D4Separator from 'components/D4Separator.vue'
 import D4ItemDisplay from './D4ItemDisplay.vue'
 import { findLegacyRuneword } from 'src/data/legacy-runewords'
+import { filterFixedItemsByNeedle } from 'src/common/fixed-item-search'
 
 interface IProps {
   data: Item
@@ -178,6 +179,8 @@ const _level = ref<number | null>(
 )
 const _favorite = ref<boolean>(props.data.favorite)
 const typeValue2Ref = ref<QSelect | null>(null)
+const fixedItemRef = ref<QSelect | null>(null)
+const fixedItemNeedle = ref<string>()
 const hasProperties = computed(
   () => findEquipClass(_typeValue1.value)?.properties.length !== 0
 )
@@ -255,8 +258,13 @@ const fixedItems = computed<FixedItem[]>(() => [
 ])
 const fixedItemOptions = computed<FixedItemSelectOption[]>(() => {
   const [manualInput, ...items] = fixedItems.value
-  const uniqueItems = items.filter((item) => !findLegacyRuneword(item.value))
-  const runewordItems = items.filter((item) => findLegacyRuneword(item.value))
+  const searchedItems = filterFixedItemsByNeedle(items, fixedItemNeedle.value)
+  const uniqueItems = searchedItems.filter(
+    (item) => !findLegacyRuneword(item.value)
+  )
+  const runewordItems = searchedItems.filter((item) =>
+    findLegacyRuneword(item.value)
+  )
   const options: FixedItemSelectOption[] = []
 
   if (manualInput) options.push(manualInput)
@@ -398,6 +406,8 @@ watch(
 )
 
 const updateFixedItem = () => {
+  fixedItemNeedle.value = undefined
+  nextTick(() => fixedItemRef.value?.updateInputValue('', true))
   _name.value = ''
   _quantity.value = 1
 
@@ -468,6 +478,13 @@ const update = () => {
     price: _price,
     favorite: _favorite
   })
+}
+
+const filterFixedItem = (e: KeyboardEvent) => {
+  const val = (e.target as HTMLInputElement).value
+  fixedItemRef.value?.showPopup()
+  fixedItemRef.value?.updateInputValue(val)
+  fixedItemNeedle.value = val
 }
 
 const filterTypeValue = (e: KeyboardEvent) => {
@@ -1015,6 +1032,8 @@ defineExpose({ scrollEnd })
             <template v-else>
               <div v-show="fixed">
                 <q-select
+                  ref="fixedItemRef"
+                  use-input
                   v-model="_fixedItemId"
                   :disable="disable"
                   outlined
@@ -1036,6 +1055,8 @@ defineExpose({ scrollEnd })
                   popup-content-class="scroll bordered limit-select"
                   options-dense
                   @update:model-value="updateFixedItem"
+                  @input.stop="filterFixedItem"
+                  @blur="() => (fixedItemNeedle = undefined)"
                 >
                   <template #selected-item="scope">
                     <div class="ellipsis">{{ scope.opt.label }}</div>
