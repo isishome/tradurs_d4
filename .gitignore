@@ -71,3 +71,6 @@ cypress.env.json
 /AGENTS.md
 /CURRENCY_GEM.md
 /plan.md
+
+# Report
+.report
