@@ -1030,9 +1030,10 @@ defineExpose({ scrollEnd })
               </q-select>
             </div>
             <template v-else>
-              <div v-show="fixed">
+              <div v-show="fixed" class="col">
                 <q-select
                   ref="fixedItemRef"
+                  class="fixed-item-select"
                   use-input
                   v-model="_fixedItemId"
                   :disable="disable"
@@ -1059,7 +1060,7 @@ defineExpose({ scrollEnd })
                   @blur="() => (fixedItemNeedle = undefined)"
                 >
                   <template #selected-item="scope">
-                    <div class="ellipsis">{{ scope.opt.label }}</div>
+                    <div class="fixed-item-selected ellipsis">{{ scope.opt.label }}</div>
                   </template>
                   <template #option="scope">
                     <q-item
@@ -1693,6 +1694,29 @@ defineExpose({ scrollEnd })
 }
 
 .runeword-set-select :deep(.q-field__input) {
+  flex: 1 1 0;
+  width: 0;
+  min-width: 0;
+}
+/* Same no-wrap contract as the runeword set select: a narrow (mobile) row must not push the search
+   input onto a second line and grow this field taller than the item type selects. */
+.fixed-item-select :deep(.q-field__control) {
+  min-height: 40px;
+  height: 40px;
+}
+
+.fixed-item-select :deep(.q-field__native) {
+  flex-wrap: nowrap;
+  overflow: hidden;
+}
+
+.fixed-item-selected {
+  flex: 0 1 auto;
+  max-width: 60%;
+  min-width: 0;
+}
+
+.fixed-item-select :deep(.q-field__input) {
   flex: 1 1 0;
   width: 0;
   min-width: 0;

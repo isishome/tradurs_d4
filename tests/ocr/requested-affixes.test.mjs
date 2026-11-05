@@ -76,3 +76,20 @@ test('Hellfire Torch set-count lines match their own set ID in both languages (t
   assert.match(sql, /SIGNAL SQLSTATE/)
   assert.doesNotMatch(sql, /\b(?:DROP TABLE|DELETE|TRUNCATE|ALTER|INSERT INTO item_affixes|item_affix_values)\b/i)
 })
+
+test('iconic unique powers and DoT duration resolve to their own IDs (query task-csj-042)', () => {
+  for (const [language, lines, id, values] of [
+    ['ko', ['지속 피해 지속시간 +44% [30 - 50]%'], 1173, [44]],
+    ['en', ['+44% Damage Over Time Duration'], 1173, [44]],
+    ['ko', ['모든 기술 등급을 +6 획득합니다.'], 4009, []],
+    ['en', ['Gain +6 Rank to all Skills.'], 4009, []],
+    ['ko', ['극대화 피해가 120%[x] [100 - 140]% 증가', '합니다.'], 4006, [120]],
+    ['ko', ['2초마다 근처의 적에게 무작위로 표식을', '찍습니다. 표식이 찍힌 적은 취약해지고,',
+      '해당 적에 대한 공격이 확정적으로 극대화', '적중합니다. 표식이 찍힌 적을 5번 적중시키', '면 표식이 사라집니다.'], 4015, [5]]
+  ]) {
+    const result = match(lines, language)
+    assert.equal(result.length, 1, `${language} ${lines[0]}`)
+    assert.equal(result[0].id, id)
+    assert.deepEqual(result[0].values.returnValues, values)
+  }
+})

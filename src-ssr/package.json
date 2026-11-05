@@ -1,6 +1,6 @@
 {
   "name": "d4-ssr-server",
-  "version": "1.15.17",
+  "version": "1.15.18",
   "private": true,
   "type": "module",
   "dependencies": {
