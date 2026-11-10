@@ -5,6 +5,14 @@ on:
     branches:
       - main
 
+# The image is built in CI and pushed to GHCR; the server only pulls it (back task-csj-039).
+permissions:
+  contents: read
+  packages: write
+
+env:
+  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/tradurs-d4
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -46,15 +54,37 @@ jobs:
         run: |
           cp Dockerfile ./dist/ssr/
 
-      - name: Upload file to Lightsail server
-        uses: appleboy/scp-action@v0.1.7
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
+
+      - name: Build SSR image
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
         with:
-          host: ${{ secrets.LIGHTSAIL_HOST }}
-          port: ${{ secrets.LIGHTSAIL_PORT }}
-          username: ${{ secrets.LIGHTSAIL_USER }}
-          key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
-          source: './dist/ssr/'
-          target: '/home/ec2-user/tradurs.d4/'
+          context: ./dist/ssr
+          file: ./dist/ssr/Dockerfile
+          load: true
+          push: false
+          tags: ${{ env.IMAGE_NAME }}:${{ github.sha }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+          cache-from: type=gha,scope=d4-ssr
+          cache-to: type=gha,mode=max,scope=d4-ssr
+
+      - name: Check image has no env files
+        run: |
+          found=$(docker run --rm --entrypoint sh "$IMAGE_NAME:${{ github.sha }}" -c 'find / -xdev -path /proc -prune -o -name ".env*" -type f -print 2>/dev/null | grep -v "/node_modules/" | head -5')
+          if [ -n "$found" ]; then echo "image contains env files: $found" >&2; exit 1; fi
+
+      - name: Log in to GHCR
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push SSR image
+        run: docker push "$IMAGE_NAME:${{ github.sha }}"
 
       - name: SSH into Lightsail and run container
         uses: appleboy/ssh-action@v1.0.3
@@ -64,12 +94,26 @@ jobs:
           username: ${{ secrets.LIGHTSAIL_USER }}
           key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
           script: |
-            cd /home/ec2-user/tradurs.d4/dist/ssr
-            sudo docker build -t tradurs:d4 .
+            set -euo pipefail
+            IMAGE_TAG="${{ env.IMAGE_NAME }}:${{ github.sha }}"
+            PREV_IMAGE="$(sudo docker inspect --format '{{.Config.Image}}' tradurs.d4 2>/dev/null || true)"
+            # No build on the server. Pull with the root Docker GHCR login; on failure the running container is left as is.
+            sudo docker pull "$IMAGE_TAG"
             sudo docker stop "tradurs.d4" || true
             sudo docker rm -f "tradurs.d4" || true
             sudo docker run -d --restart always --cpuset-cpus="0" --cpu-shares=2048 \
               --cpu-period=100000 --memory="384m" --memory-swap="512m" --publish 6090:6090 \
-              --name tradurs.d4 tradurs:d4
+              --name tradurs.d4 "$IMAGE_TAG"
+
+            # Keep the two newest images plus the current and previous ones; count the old
+            # server-built tag (tradurs:d4) too. Removal failures only warn.
+            KEPT=0
+            for image in $(sudo docker images --format '{{.Repository}}:{{.Tag}}' | grep -E '^(tradurs:d4$|${{ env.IMAGE_NAME }}:)' || true); do
+              KEPT=$((KEPT + 1))
+              if [ "$KEPT" -le 2 ] || [ "$image" = "$IMAGE_TAG" ] || [ "$image" = "$PREV_IMAGE" ]; then
+                continue
+              fi
+              sudo docker rmi "$image" >/dev/null || echo "warning: could not remove old image: $image"
+            done
+
             sudo docker system prune -f
-            sudo docker buildx prune -f
