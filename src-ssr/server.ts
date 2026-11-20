@@ -69,10 +69,12 @@ export const create = ssrCreate((/* { ... } */) => {
 export const injectDevMiddleware = defineSsrInjectDevMiddleware(({ app }) => middleware => { app.use(middleware); });
 
 export const listen = ssrListen(async ({ app, port }) => {
+  // Quasar does not pass devServer.host to listen(); bind dev to loopback only, keep prod on all interfaces.
+  if (import.meta.env.QUASAR_DEV) {
+    return app.listen(port, 'localhost');
+  }
   return app.listen(port, () => {
-    if (import.meta.env.QUASAR_PROD) {
-      console.log('Server listening at port ' + port);
-    }
+    console.log('Server listening at port ' + port);
   });
 });
 

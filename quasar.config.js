@@ -187,6 +187,7 @@ export default configure(function (ctx = {}) {
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
     devServer: {
       // https: true
+      host: 'localhost', // bind dev server to loopback only (not exposed on the network)
       open: false // opens browser window automatically
     },
 
